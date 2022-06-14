@@ -1,0 +1,74 @@
+
+// 3DEditorDoc.h : interface of the CMy3DEditorDoc class
+//
+
+
+#pragma once
+
+#include "RDFModel.h"
+#include "RDFController.h"
+
+// ------------------------------------------------------------------------------------------------
+class CMy3DEditorDoc
+	: public CDocument
+	, public CRDFController
+{
+
+private: // Members
+
+	// --------------------------------------------------------------------------------------------
+	// Model (MVC)
+	CRDFModel * m_pModel;
+
+public: // Methods
+
+	// --------------------------------------------------------------------------------------------
+	// CRDFController
+	virtual void LoadModel(LPCTSTR szFileName);
+
+protected: // create from serialization only
+	CMy3DEditorDoc();
+	DECLARE_DYNCREATE(CMy3DEditorDoc)
+
+// Attributes
+public:
+
+// Operations
+public:
+
+// Overrides
+public:
+	virtual BOOL OnNewDocument();
+	virtual void Serialize(CArchive& ar);
+#ifdef SHARED_HANDLERS
+	virtual void InitializeSearchContent();
+	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
+#endif // SHARED_HANDLERS
+
+// Implementation
+public:
+	virtual ~CMy3DEditorDoc();
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+protected:
+
+// Generated message map functions
+protected:
+	DECLARE_MESSAGE_MAP()
+
+#ifdef SHARED_HANDLERS
+	// Helper function that sets search content for a Search Handler
+	void SetSearchContent(const CString& value);
+#endif // SHARED_HANDLERS
+public:
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
+	afx_msg void OnViewCheckForUniqueVertices();
+	afx_msg void OnViewScaleAndCenterAllGeometry();
+	afx_msg void OnFileOpen();
+	afx_msg void OnFileImport();
+	afx_msg void OnUpdateFileImport(CCmdUI* pCmdUI);
+};

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="InstancesDialog">
+		<title>Instances</title>
+		<pos>10,10</pos>
+		<style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
+		<object class="wxListBox" name="ID_LISTBOX_INSTANCES" variable="m_lbInstances" member="yes">
+			<default>-1</default>
+			<pos>208,200</pos>
+			<style>wxLB_MULTIPLE</style>
+			<handler function="OnInstancesSelect" entry="EVT_LISTBOX" />
+		</object>
+	</object>
+</wxsmith>

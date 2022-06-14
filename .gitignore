@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/3DEditor/3DEditor.vcxproj.user
+/RDFViewer/RDFViewer.vcxproj.user
