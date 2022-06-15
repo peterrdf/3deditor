@@ -686,7 +686,17 @@ void _octree::buildMesh()
 		return;
 	}
 
-	unique_ptr<Model> pModel(new Model(m_iModel));
+	/*
+	* Classes
+	*/
+	int64_t iCollectionClass = GetClassByName(m_iModel, "Collection");
+	assert(iCollectionClass != 0);
+
+	int64_t iPoint3DSetClass = GetClassByName(m_iModel, "Point3DSet");
+	assert(iPoint3DSetClass != 0);
+
+	int64_t iTriangleSetClass = GetClassByName(m_iModel, "TriangleSet");
+	assert(iTriangleSetClass != 0);
 
 	/*
 	* Distance; 2% of the octants
@@ -697,11 +707,8 @@ void _octree::buildMesh()
 	int64_t iPointsCount = 0;
 	for (size_t iOctant = 0; iOctant < m_vecOctants.size(); iOctant++)
 	{
-		auto pOctantCollection = pModel->create<Collection>();
-		pOctantCollection->setNameW((L"Octant " + to_wstring(iOctant)).c_str());
-
-		auto pPoint3DSet = pModel->create<Point3DSet>();
-		pPoint3DSet->setNameW(L"Points");
+		int64_t iCollectionInstance = CreateInstance(iCollectionClass, ("Octant " + to_string(iOctant)).c_str());
+		int64_t iPoint3DSetInstance = CreateInstance(iPoint3DSetClass, "Points");
 
 		if (m_vecOctants[iOctant] == nullptr)
 		{
@@ -750,34 +757,30 @@ void _octree::buildMesh()
 			vecPoints.push_back((*itPoint)->getZ());
 		}
 
-		pPoint3DSet->coordinates = vecPoints;
+		SetDataTypeProperty(iPoint3DSetInstance, GetPropertyByName(m_iModel, "coordinates"), vecPoints.data(), vecPoints.size());
 
-		pOctantCollection->objects = vector<GeometricItem*>{ pPoint3DSet };
+		vector<int64_t> vecPoint3DSets { iPoint3DSetInstance };
+		SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), vecPoint3DSets.data(), vecPoint3DSets.size());
 	} // for (size_t iOctant = ...	
 
 	assert(iPointsCount == (int64_t)m_setPoints.size());
 
-	auto pTriangleSet = pModel->create<TriangleSet>();
-	pTriangleSet->setNameW(L"Triangles");
-
-	vector<double> vecVertices;
-
 	/*
 	* Build the triangles
 	*/
+	_vector3f vecBottomLeftCorner(m_dXmin, m_dYmin, m_dZmin);
 
 	// Sorted by distance
 	multimap<double, _octree_point*> mapSortedPoints;
-
-	_vector3f vecBottomLeftCorener(m_dXmin, m_dYmin, m_dZmin);
-
 	auto itPoint = m_setPoints.begin();
 	for (; itPoint != m_setPoints.end(); itPoint++)
 	{
 		_octree_point* pPoint = *itPoint;
 
-		mapSortedPoints.insert(pair<double, _octree_point*>(pPoint->distanceTo(vecBottomLeftCorener), pPoint));
+		mapSortedPoints.insert(pair<double, _octree_point*>(pPoint->distanceTo(vecBottomLeftCorner), pPoint));
 	}
+
+	vector<double> vecVertices;
 
 	auto itSortedPoint = mapSortedPoints.begin();
 	for (; itSortedPoint != mapSortedPoints.end(); itSortedPoint++)
@@ -799,8 +802,9 @@ void _octree::buildMesh()
 		vecIndices.push_back(iVertex);
 	}
 
-	pTriangleSet->vertices = vecVertices;
-	pTriangleSet->indices = vecIndices;
+	int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, "Triangles");
+	SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "vertices"), vecVertices.data(), vecVertices.size());
+	SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "indices"), vecIndices.data(), vecIndices.size());
 }
 
 // ------------------------------------------------------------------------------------------------
