@@ -285,7 +285,7 @@ void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 
 void CMy3DEditorDoc::OnFileOpen()
 {
-	TCHAR szFilters[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|E57 Files (*.e57)|*.e57|CityGML Files (*.gml;*citygml)|*.gml;*citygml|All Files (*.*)|*.*||");
+	TCHAR szFilters[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|E57 Files (*.e57)|*.e57|CityGML Files (*.gml;*citygml)|*.gml;*citygml|Autocad DXF Files (*.dxf)|*.dxf|All Files (*.*)|*.*||");
 
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 

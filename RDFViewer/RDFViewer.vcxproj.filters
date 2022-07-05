@@ -146,6 +146,9 @@
     <ClCompile Include="..\3DEditor\conceptMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\3DEditor\_dxp_parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="RDFViewer.reg" />

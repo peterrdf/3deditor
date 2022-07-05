@@ -8,6 +8,8 @@ using namespace e57;
 
 #include "CityGMLParser.h"
 
+#include "_dxp_parser.h"
+
 #include <bitset>
 #include <algorithm>
 #include <iostream>
@@ -932,6 +934,35 @@ void CRDFModel::Load(const wchar_t * szPath)
 		return;
 	} // if ((strExtension == L".GML") || ...
 	// CityGML TEST
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// Autocad DXF TEST
+	if (strExtension == L".DXF")
+	{
+		m_iModel = OpenModelW(nullptr);
+		ASSERT(m_iModel != 0);
+
+		SetFormatSettings(m_iModel);
+
+		LoadRDFModel();
+
+		try
+		{
+			_dxf::_parser parser(m_iModel);
+			parser.load(szPath);
+		}
+		catch (const std::runtime_error& ex)
+		{
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
+
+			return;
+		}
+
+		LoadRDFInstances();
+
+		return;
+	} // if (strExtension == L".DXF")
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef _LINUX
