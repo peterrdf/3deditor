@@ -28,6 +28,7 @@ namespace _dxf
 	public:
 		_dxf_reader(ifstream&);
 		virtual ~_dxf_reader();
+		vector<string>& buffer();
 		bool read();
 	};
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,6 +90,7 @@ namespace _dxf
 	public:
 		_entities_section();
 		virtual ~_entities_section();
+		void load(_dxf_reader& dxfReader);
 	};
 	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -99,6 +101,7 @@ namespace _dxf
 	{
 	private:
 		int64_t m_iModel;
+		vector<_section*> m_vecSections;
 
 	public:
 		_parser(int64_t iModel);
