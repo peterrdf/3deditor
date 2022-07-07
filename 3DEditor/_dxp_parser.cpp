@@ -22,134 +22,196 @@ static inline string& trim(string& s)
 
 namespace _dxf
 {
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	// _dxf_reader
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	_dxf_reader::_dxf_reader(ifstream& dxfFile)
-		: m_dxfFile(dxfFile)
-		, m_vecBuffer()
+	// --------------------------------------------------------------------------------------------
+	// _exception
+	// --------------------------------------------------------------------------------------------
+	_exception::_exception(const string& error)
+		: runtime_error(error)
 	{
 	}
+	// _exception
+	// --------------------------------------------------------------------------------------------
 
-	/*virtual*/ _dxf_reader::~_dxf_reader()
-	{
-	}
-
-	vector<string>& _dxf_reader::buffer()
-	{
-		return m_vecBuffer;
-	}
-
-	bool _dxf_reader::read()
-	{
-		string line;
-		if (m_dxfFile.eof() || !getline(m_dxfFile, line))
-		{
-			m_vecBuffer.clear();
-
-			return false;
-		}
-
-		line = trim(line);
-		if (line == _group_codes::eof)
-		{
-			m_vecBuffer.clear();
-
-			return false;
-		}
-
-		m_vecBuffer.push_back(line);
-
-		return true;
-	}
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
 	// _group_codes
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	
+	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::start = "0";
 	/*static*/ const string _group_codes::name = "2";
 	/*static*/ const string _group_codes::eof = "EOF";
 	/*static*/ const string _group_codes::section = "SECTION";
-	/*static*/ const string _group_codes::end_section = "ENDSEC";
+	/*static*/ const string _group_codes::endsec = "ENDSEC";
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// _group_codes
+	// --------------------------------------------------------------------------------------------
 
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
+	// _reader
+	// --------------------------------------------------------------------------------------------
+	_reader::_reader(ifstream& dxfFile)
+		: m_dxfFile(dxfFile)
+		, m_vecRows()
+		, m_iRow(0)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _reader::~_reader()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const string& _reader::row()
+	{
+		return m_vecRows[m_iRow];
+	}
+
+	// --------------------------------------------------------------------------------------------
+	bool _reader::read()
+	{
+		string line;
+		if (m_dxfFile.eof() || !getline(m_dxfFile, line))
+		{
+			return false;
+		}
+
+		line = trim(line);
+		m_vecRows.push_back(line);
+
+		m_iRow = m_vecRows.size() - 1;
+
+		return true;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _reader::back()
+	{
+		if (m_iRow == 0)
+		{
+			throw _exception("Internal error");
+		}
+
+		m_iRow--;
+
+		if (m_iRow >= m_vecRows.size())
+		{
+			throw _exception("Internal error");
+		}
+	}
+	// _reader
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _group
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	
+	// --------------------------------------------------------------------------------------------
 	_group::_group(const string& strName)
 		: m_strName(strName)
 	{
 		assert(!m_strName.empty());
 	}
 	
+	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _group::~_group()
 	{
 	}
 
+	// --------------------------------------------------------------------------------------------
 	const string& _group::name() const
 	{
 		return m_strName;
 	}
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// _group
+	// --------------------------------------------------------------------------------------------
 
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
 	// _section
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
 	_section::_section(const string& strName)
 		: _group(strName)
 	{
 	}
 		
+	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _section::~_section()
 	{
 	}
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// --------------------------------------------------------------------------------------------
 
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
 	// _entities_section
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	_entities_section::_entities_section()
 		: _section("ENTITIES")
 	{
 	}
 
+	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _entities_section::~_entities_section()
 	{
 	}
 
-	void _entities_section::load(_dxf_reader& dxfReader)
+	// --------------------------------------------------------------------------------------------
+	void _entities_section::load(_reader& reader)
 	{
 		while (true)
 		{
-			if (!dxfReader.read())
+			if (!reader.read())
 			{
 				break; // EOF
 			}
 
-			if (dxfReader.buffer().back() == _group_codes::line)
+			if (reader.row() == _group_codes::line)
 			{
-				dxfReader.buffer().clear();
-
 				/*auto pEntitiesSection = new _entities_section();
 				m_vecSections.push_back(pEntitiesSection);
 
-				pEntitiesSection->load(dxfReader);*/
+				pEntitiesSection->load(reader);*/
 			}
 			else
 			{
-				//ENTITIES
+				//ENTITIES except line
 				continue; // todo
 			}
 		} // while (true)
 	}
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// _section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _entity
+	// --------------------------------------------------------------------------------------------
+	_entity::_entity(const string& strName)
+		: _group(strName)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _entity::~_entity()
+	{	
+	}
+	// _entity
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _line
+	// --------------------------------------------------------------------------------------------
 	
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+	// --------------------------------------------------------------------------------------------
+	_line::_line()
+		: _entity(_group_codes::line)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _line::~_line()
+	{
+	}
+	// _line
+	// --------------------------------------------------------------------------------------------
+	
+	// --------------------------------------------------------------------------------------------
 	// _parser
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	// --------------------------------------------------------------------------------------------
 	_parser::_parser(int64_t iModel)
 		: m_iModel(iModel)
 		, m_vecSections()
@@ -157,6 +219,7 @@ namespace _dxf
 		assert(m_iModel != 0);
 	}
 
+	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _parser::~_parser()
 	{
 		for (size_t i = 0; i < m_vecSections.size(); i++)
@@ -166,6 +229,7 @@ namespace _dxf
 		m_vecSections.clear();
 	}
 
+	// --------------------------------------------------------------------------------------------
 	void _parser::load(const wchar_t* szFile)
 	{
 		if ((szFile == nullptr) || (wcslen(szFile) == 0))
@@ -179,78 +243,61 @@ namespace _dxf
 			return;// #ex
 		}
 
-		_dxf_reader dxfReader(dxfFile);
+		_reader reader(dxfFile);
 		while (true)
 		{
-			if (!dxfReader.read())
+			if (!reader.read())
 			{
 				break; // EOF
 			}
 
-			if (dxfReader.buffer().back() == _group_codes::start)
+			if (reader.row() == _group_codes::start)
 			{
-				if (!dxfReader.read())
+				if (!reader.read())
 				{
 					break; // EOF
 				}
 
-				if (dxfReader.buffer().back() == _group_codes::section)
+				if (reader.row() == _group_codes::eof)
 				{
-					if (!dxfReader.read())
+					break; // EOF
+				}
+
+				if (reader.row() == _group_codes::section)
+				{
+					if (!reader.read())
 					{
 						break; // EOF
 					}
 
-					if (dxfReader.buffer().back() != _group_codes::name)
+					if (reader.row() != _group_codes::name)
 					{
 						continue; // Wrong format
 					}
 
-					if (dxfReader.buffer().back() == _group_codes::entities)
+					if (!reader.read())
+					{
+						break; // EOF
+					}
+
+					if (reader.row() == _group_codes::entities)
 					{
 						auto pEntitiesSection = new _entities_section();
 						m_vecSections.push_back(pEntitiesSection);
 
-						pEntitiesSection->load(dxfReader);
+						pEntitiesSection->load(reader);
 					}
 					else
 					{
 						//HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, THUMBNAILIMAGE
 						continue; // todo
 					}					
-				} // if (dxfReader.buffer().back() == _group_codes::section)
-			} // if (dxfReader.buffer().back() == _group_codes::start)
+				} // if (reader.buffer().back() == _group_codes::section)
+			} // if (reader.row() == _group_codes::start)
 		} // while (true)
-
-		//// The first Group
-		//string line;
-		//while (getline(dxfFile, line))
-		//{
-		//	line = trim(line);			
-		//	/*if (line == _group_codes::start)
-		//	{
-		//		break;
-		//	}*/
-		//} // while (getline(dxfFile, line))
-
-		//if (line == _group_codes::start)
-		//{
-		//	if (getline(dxfFile, line))
-		//	{
-		//		line = trim(line);
-		//		if (line == _group_codes::entities)
-		//		{
-
-		//		}
-		//	}
-		//}
-
-		/*if (dxfFile.eof())
-		{
-			std::wcout << L"hhhhhhhhhhhhhhhhhh";
-		}*/
 
 		dxfFile.close();
 	}
-	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// _parser
+	// --------------------------------------------------------------------------------------------
 }
