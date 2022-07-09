@@ -248,6 +248,12 @@ namespace _dxf
 	// _line
 	_line::_line()
 		: _entity(_group_codes::line)
+		, m_dX1(0.)
+		, m_dY1(0.)
+		, m_dZ1(0.)
+		, m_dX2(0.)
+		, m_dY2(0.)
+		, m_dZ2(0.)
 	{
 	}
 
@@ -275,37 +281,37 @@ namespace _dxf
 			if (reader.row() == _group_codes::start_point_x)
 			{
 				reader.forth();
-				//save
+				m_dX1 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else if (reader.row() == _group_codes::start_point_y)
 			{
 				reader.forth();
-				//save
+				m_dY1 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else if (reader.row() == _group_codes::start_point_z)
 			{
 				reader.forth();
-				//save
+				m_dZ1 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else if (reader.row() == _group_codes::end_point_x)
 			{
 				reader.forth();
-				//save
+				m_dX2 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else if (reader.row() == _group_codes::end_point_y)
 			{
 				reader.forth();
-				//save
+				m_dY2 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else if (reader.row() == _group_codes::end_point_z)
 			{
 				reader.forth();
-				//save
+				m_dZ2 = atof(reader.row().c_str());
 				reader.forth();
 			}
 			else
