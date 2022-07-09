@@ -23,13 +23,20 @@ static inline string& trim(string& s)
 namespace _dxf
 {
 	// --------------------------------------------------------------------------------------------
-	// _exception
+	// _error
 	// --------------------------------------------------------------------------------------------
-	_exception::_exception(const string& error)
+	/*static*/ const string _error::file_not_found = "File not found";
+	/*static*/ const string _error::invalid_argument = "Invalid argument";
+	/*static*/ const string _error::sof = "Start of file";
+	/*static*/ const string _error::eof = "End of file";
+	/*static*/ const string _error::invalid_format = "Invalid format";
+
+	// --------------------------------------------------------------------------------------------
+	_error::_error(const string& error)
 		: runtime_error(error)
 	{
 	}
-	// _exception
+	// _error
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
@@ -42,6 +49,12 @@ namespace _dxf
 	/*static*/ const string _group_codes::endsec = "ENDSEC";
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
+	/*static*/ const string _group_codes::start_point_x = "10";
+	/*static*/ const string _group_codes::start_point_y = "20";
+	/*static*/ const string _group_codes::start_point_z = "30";
+	/*static*/ const string _group_codes::end_point_x = "11";
+	/*static*/ const string _group_codes::end_point_y = "21";
+	/*static*/ const string _group_codes::end_point_z = "31";
 	// _group_codes
 	// --------------------------------------------------------------------------------------------
 
@@ -61,26 +74,54 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
+	void _reader::load()
+	{
+		m_iRow = 0;
+		m_vecRows.clear();
+
+		string line;
+		while (getline(m_dxfFile, line))
+		{
+			line = trim(line);
+			if (!line.empty())
+			{
+				m_vecRows.push_back(line);
+			}
+		}
+
+		if (m_vecRows.empty())
+		{
+			throw _error(_error::invalid_format);
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const vector<string>& _reader::rows() const
+	{
+		return m_vecRows;
+	}
+
+	// ----------------------------------------------------------------------------------------
+	size_t _reader::rowIndex() const
+	{
+		return m_iRow;
+	}
+
+	// --------------------------------------------------------------------------------------------
 	const string& _reader::row()
 	{
 		return m_vecRows[m_iRow];
 	}
 
 	// --------------------------------------------------------------------------------------------
-	bool _reader::read()
+	void _reader::forth()
 	{
-		string line;
-		if (m_dxfFile.eof() || !getline(m_dxfFile, line))
+		m_iRow++;
+
+		if (m_iRow >= m_vecRows.size())
 		{
-			return false;
+			throw _error(_error::eof);
 		}
-
-		line = trim(line);
-		m_vecRows.push_back(line);
-
-		m_iRow = m_vecRows.size() - 1;
-
-		return true;
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -88,15 +129,10 @@ namespace _dxf
 	{
 		if (m_iRow == 0)
 		{
-			throw _exception("Internal error");
+			throw _error(_error::sof);
 		}
 
 		m_iRow--;
-
-		if (m_iRow >= m_vecRows.size())
-		{
-			throw _exception("Internal error");
-		}
 	}
 	// _reader
 	// --------------------------------------------------------------------------------------------
@@ -124,6 +160,21 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _entity
+	// --------------------------------------------------------------------------------------------
+	_entity::_entity(const string& strName)
+		: _group(strName)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _entity::~_entity()
+	{
+	}
+	// _entity
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _section
 	// --------------------------------------------------------------------------------------------
 	_section::_section(const string& strName)
@@ -141,12 +192,17 @@ namespace _dxf
 	// _entities_section
 	_entities_section::_entities_section()
 		: _section("ENTITIES")
+		, m_vecEntities()
 	{
 	}
 
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _entities_section::~_entities_section()
 	{
+		for (size_t i = 0; i < m_vecEntities.size(); i++)
+		{
+			delete m_vecEntities[i];
+		}
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -154,49 +210,42 @@ namespace _dxf
 	{
 		while (true)
 		{
-			if (!reader.read())
+			if (reader.row() == _group_codes::start)
 			{
-				break; // EOF
-			}
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.back();
 
-			if (reader.row() == _group_codes::line)
-			{
-				/*auto pEntitiesSection = new _entities_section();
-				m_vecSections.push_back(pEntitiesSection);
+					break;
+				}
 
-				pEntitiesSection->load(reader);*/
-			}
+				if (reader.row() == _group_codes::line)
+				{
+					reader.forth();
+
+					auto pLine = new _line();
+					m_vecEntities.push_back(pLine);
+
+					pLine->load(reader);
+				} // if (reader.row() == _group_codes::line)
+				else
+				{
+					// TODO: ALL ENTITIES
+					reader.forth();
+				}
+			} // if (reader.row() == _group_codes::start)
 			else
 			{
-				//ENTITIES except line
-				continue; // todo
+				reader.forth();
 			}
 		} // while (true)
 	}
 	// _section
 	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _entity
-	// --------------------------------------------------------------------------------------------
-	_entity::_entity(const string& strName)
-		: _group(strName)
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _entity::~_entity()
-	{	
-	}
-	// _entity
-	// --------------------------------------------------------------------------------------------
-
+	
 	// --------------------------------------------------------------------------------------------
 	// _line
-	// --------------------------------------------------------------------------------------------
-	
-
-	// --------------------------------------------------------------------------------------------
 	_line::_line()
 		: _entity(_group_codes::line)
 	{
@@ -206,6 +255,66 @@ namespace _dxf
 	/*virtual*/ _line::~_line()
 	{
 	}
+
+	// --------------------------------------------------------------------------------------------
+	void _line::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() != _group_codes::start_point_x)
+				{
+					reader.back();
+
+					break;
+				}
+			}
+
+			if (reader.row() == _group_codes::start_point_x)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else if (reader.row() == _group_codes::start_point_y)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else if (reader.row() == _group_codes::start_point_z)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else if (reader.row() == _group_codes::end_point_x)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else if (reader.row() == _group_codes::end_point_y)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else if (reader.row() == _group_codes::end_point_z)
+			{
+				reader.forth();
+				//save
+				reader.forth();
+			}
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+
 	// _line
 	// --------------------------------------------------------------------------------------------
 	
@@ -226,7 +335,6 @@ namespace _dxf
 		{
 			delete m_vecSections[i];
 		}
-		m_vecSections.clear();
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -234,69 +342,69 @@ namespace _dxf
 	{
 		if ((szFile == nullptr) || (wcslen(szFile) == 0))
 		{
-			assert(false);// #ex
+			throw _error(_error::invalid_argument);
 		}
 		
 		ifstream dxfFile(szFile);
 		if (!dxfFile)
 		{
-			return;// #ex
+			throw _error(_error::file_not_found);
 		}
 
 		_reader reader(dxfFile);
+		reader.load();		
+
 		while (true)
-		{
-			if (!reader.read())
+		{	
+			if (reader.row() == _group_codes::eof)
 			{
-				break; // EOF
+				break;
 			}
 
 			if (reader.row() == _group_codes::start)
 			{
-				if (!reader.read())
-				{
-					break; // EOF
-				}
-
-				if (reader.row() == _group_codes::eof)
-				{
-					break; // EOF
-				}
-
+				reader.forth();
 				if (reader.row() == _group_codes::section)
 				{
-					if (!reader.read())
+					reader.forth();
+					if (reader.row() == _group_codes::name)
 					{
-						break; // EOF
-					}
+						reader.forth();
+						if (reader.row() == _group_codes::entities)
+						{
+							reader.forth();
 
-					if (reader.row() != _group_codes::name)
-					{
-						continue; // Wrong format
-					}
+							auto pEntitiesSection = new _entities_section();
+							m_vecSections.push_back(pEntitiesSection);
 
-					if (!reader.read())
-					{
-						break; // EOF
-					}
-
-					if (reader.row() == _group_codes::entities)
-					{
-						auto pEntitiesSection = new _entities_section();
-						m_vecSections.push_back(pEntitiesSection);
-
-						pEntitiesSection->load(reader);
+							pEntitiesSection->load(reader);
+						}
+						else
+						{
+							// TODO: HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, THUMBNAILIMAGE
+							reader.forth();
+						}
 					}
 					else
 					{
-						//HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, THUMBNAILIMAGE
-						continue; // todo
-					}					
-				} // if (reader.buffer().back() == _group_codes::section)
+						throw _error(_error::invalid_format);
+					}								
+				} // if (reader.row() == _group_codes::section)
+				else if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+				}
 			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
 		} // while (true)
 
-		dxfFile.close();
+		/**
+		* ifcengine
+		*/
+		//todo create instances
 	}
 	// _parser
 	// --------------------------------------------------------------------------------------------
