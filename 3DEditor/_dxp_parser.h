@@ -50,6 +50,7 @@ namespace _dxf
 		static const string endsec;
 		static const string entities;
 		static const string line;
+		static const string subclass;
 		static const string start_point_x;
 		static const string start_point_y;
 		static const string start_point_z;

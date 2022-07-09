@@ -49,6 +49,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::endsec = "ENDSEC";
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
+	/*static*/ const string _group_codes::subclass = "100";
 	/*static*/ const string _group_codes::start_point_x = "10";
 	/*static*/ const string _group_codes::start_point_y = "20";
 	/*static*/ const string _group_codes::start_point_z = "30";
@@ -312,7 +313,17 @@ namespace _dxf
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
-				if (reader.row() != _group_codes::start_point_x)
+				if (reader.row() == _group_codes::subclass)
+				{
+					reader.forth();
+					// read
+					reader.forth();
+				}
+				else if (reader.row() == _group_codes::start_point_x)
+				{
+					continue;					
+				}
+				else
 				{
 					reader.back();
 
