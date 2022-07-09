@@ -205,6 +205,12 @@ namespace _dxf
 		}
 	}
 
+	// ----------------------------------------------------------------------------------------
+	const vector<_entity*>& _entities_section::entities() const
+	{
+		return m_vecEntities;
+	}
+
 	// --------------------------------------------------------------------------------------------
 	void _entities_section::load(_reader& reader)
 	{
@@ -263,6 +269,42 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
+	double _line::X1() const
+	{
+		return m_dX1;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _line::Y1() const
+	{
+		return m_dY1;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _line::Z1() const 
+	{
+		return m_dZ1;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _line::X2() const
+	{
+		return m_dX2;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _line::Y2() const
+	{
+		return m_dY2;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _line::Z2() const
+	{
+		return m_dZ2;
+	}
+
+	// --------------------------------------------------------------------------------------------
 	void _line::load(_reader& reader)
 	{
 		while (true)
@@ -276,7 +318,7 @@ namespace _dxf
 
 					break;
 				}
-			}
+			} // if (reader.row() == _group_codes::start)
 
 			if (reader.row() == _group_codes::start_point_x)
 			{
@@ -320,7 +362,6 @@ namespace _dxf
 			}
 		} // while (true)
 	}
-
 	// _line
 	// --------------------------------------------------------------------------------------------
 	
@@ -357,6 +398,9 @@ namespace _dxf
 			throw _error(_error::file_not_found);
 		}
 
+		/**
+		* Load
+		*/
 		_reader reader(dxfFile);
 		reader.load();		
 
@@ -384,13 +428,13 @@ namespace _dxf
 							m_vecSections.push_back(pEntitiesSection);
 
 							pEntitiesSection->load(reader);
-						}
+						} // if (reader.row() == _group_codes::entities)
 						else
 						{
 							// TODO: HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, THUMBNAILIMAGE
 							reader.forth();
 						}
-					}
+					} // if (reader.row() == _group_codes::name)
 					else
 					{
 						throw _error(_error::invalid_format);
@@ -410,7 +454,45 @@ namespace _dxf
 		/**
 		* ifcengine
 		*/
-		//todo create instances
+		createInstances();		
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _parser::createInstances()
+	{
+		int64_t iLine3DClass = GetClassByName(m_iModel, "Line3D");
+		assert(iLine3DClass != 0);
+
+		for (size_t iSection = 0; iSection < m_vecSections.size(); iSection++)
+		{
+			if (m_vecSections[iSection]->name() == _group_codes::entities)
+			{
+				auto pEntitiesSection = dynamic_cast<_entities_section*>(m_vecSections[iSection]);
+				assert(pEntitiesSection != nullptr);
+
+				for (size_t iEntity = 0; iEntity < pEntitiesSection->entities().size(); iEntity++)
+				{
+					if (pEntitiesSection->entities()[iEntity]->name() == _group_codes::line)
+					{
+						auto pLine = dynamic_cast<_line*>(pEntitiesSection->entities()[iEntity]);
+						assert(pLine != nullptr);
+
+						vector<double> vecVertices 
+						{ 
+							pLine->X1(),
+							pLine->Y1(),
+							pLine->Z1(),
+							pLine->X2(),
+							pLine->Y2(),
+							pLine->Z2(),
+						};
+
+						int64_t iLine3DInstance = CreateInstance(iLine3DClass, "Line");
+						SetDataTypeProperty(iLine3DInstance, GetPropertyByName(m_iModel, "points"), vecVertices.data(), vecVertices.size());
+					} // if (pEntitiesSection->entities()[iEntity]->name() == _group_codes::line)
+				} // for (size_t iEntity = ...
+			} // if (m_vecSections[iSection]->name() == _group_codes::entities)
+		} // for (size_t iSection = ...
 	}
 	// _parser
 	// --------------------------------------------------------------------------------------------
