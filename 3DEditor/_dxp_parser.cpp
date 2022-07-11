@@ -299,6 +299,30 @@ namespace _dxf
 	{
 	}
 
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _line::createInstance(int64_t iModel)
+	{
+		int64_t iClass = GetClassByName(iModel, "Line3D");
+		assert(iClass != 0);
+
+		vector<double> vecVertices
+		{
+			m_dX1,
+			m_dY1,
+			m_dZ1,
+			m_dX2,
+			m_dY2,
+			m_dZ2,
+		};
+
+		int64_t iInstance = CreateInstance(iClass, "Line");
+		assert(iInstance != 0);
+
+		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
+
+		return iInstance;
+	}
+
 	// --------------------------------------------------------------------------------------------
 	double _line::X1() const
 	{
@@ -499,9 +523,10 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	void _parser::createInstances()
 	{
-		int64_t iLine3DClass = GetClassByName(m_iModel, "Line3D");
-		assert(iLine3DClass != 0);
-
+		/**
+		* Create ifcengine instances
+		*/
+		map<string, vector<int64_t>> mapLayer2Instances;
 		for (size_t iSection = 0; iSection < m_vecSections.size(); iSection++)
 		{
 			if (m_vecSections[iSection]->name() == _group_codes::entities)
@@ -511,27 +536,42 @@ namespace _dxf
 
 				for (size_t iEntity = 0; iEntity < pEntitiesSection->entities().size(); iEntity++)
 				{
-					if (pEntitiesSection->entities()[iEntity]->name() == _group_codes::line)
+					auto pEntity = pEntitiesSection->entities()[iEntity];
+					assert(pEntity != nullptr);
+
+					auto iInstance = pEntity->createInstance(m_iModel);
+					assert(iInstance != 0);
+
+					auto strLayer = pEntity->layer();
+					
+					auto itLayer2Instances = mapLayer2Instances.find(strLayer);
+					if (itLayer2Instances != mapLayer2Instances.end())
 					{
-						auto pLine = dynamic_cast<_line*>(pEntitiesSection->entities()[iEntity]);
-						assert(pLine != nullptr);
-
-						vector<double> vecVertices 
-						{ 
-							pLine->X1(),
-							pLine->Y1(),
-							pLine->Z1(),
-							pLine->X2(),
-							pLine->Y2(),
-							pLine->Z2(),
-						};
-
-						int64_t iLine3DInstance = CreateInstance(iLine3DClass, "Line");
-						SetDataTypeProperty(iLine3DInstance, GetPropertyByName(m_iModel, "points"), vecVertices.data(), vecVertices.size());
-					} // if (pEntitiesSection->entities()[iEntity]->name() == _group_codes::line)
+						mapLayer2Instances[strLayer].push_back(iInstance);
+					}
+					else
+					{
+						mapLayer2Instances[strLayer] = vector<int64_t> { iInstance };
+					}
 				} // for (size_t iEntity = ...
 			} // if (m_vecSections[iSection]->name() == _group_codes::entities)
 		} // for (size_t iSection = ...
+
+		/**
+		* Create ifcengine collections
+		*/
+		int64_t iCollectionClass = GetClassByName(m_iModel, "Collection");
+		assert(iCollectionClass != 0);
+
+		auto itLayer2Instances = mapLayer2Instances.begin();
+		for (; itLayer2Instances != mapLayer2Instances.end(); itLayer2Instances++)
+		{
+			string strCollectionName = "Layer: ";
+			strCollectionName += itLayer2Instances->first;
+
+			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
+			SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), itLayer2Instances->second.data(), itLayer2Instances->second.size());
+		}
 	}
 	// _parser
 	// --------------------------------------------------------------------------------------------
