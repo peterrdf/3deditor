@@ -254,7 +254,7 @@ namespace _dxf
 				reader.forth();
 				if (reader.row() == _group_codes::endsec)
 				{
-					reader.back(); break;
+					reader.forth(); break;
 				}
 
 				if (reader.row() == _group_codes::line)

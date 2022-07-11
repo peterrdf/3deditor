@@ -24,6 +24,8 @@ namespace _dxf
 	{
 
 	public: // Members		
+
+		// ----------------------------------------------------------------------------------------
 		static const string file_not_found;
 		static const string invalid_argument;
 		static const string sof;
@@ -31,6 +33,8 @@ namespace _dxf
 		static const string invalid_format;		
 
 	public: // Methods
+
+		// ----------------------------------------------------------------------------------------
 		_error(const string& error);
 	};
 	// _error
@@ -44,9 +48,8 @@ namespace _dxf
 
 	public: // Members
 
-		// 0 Text string indicating the entity type (fixed)
+		// ----------------------------------------------------------------------------------------
 		static const string start;
-		// 2 Name (attribute tag, block name, and so on)
 		static const string name;
 		static const string eof;
 		static const string section;
@@ -181,8 +184,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _section : public _group
 	{
-
-	private:
 
 	public: // Methods
 
