@@ -49,7 +49,6 @@ namespace _dxf
 	/*static*/ const string _group_codes::endsec = "ENDSEC";
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
-	/*static*/ const string _group_codes::subclass = "100";
 	/*static*/ const string _group_codes::start_point_x = "10";
 	/*static*/ const string _group_codes::start_point_y = "20";
 	/*static*/ const string _group_codes::start_point_z = "30";
@@ -163,14 +162,47 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	// _entity
 	// --------------------------------------------------------------------------------------------
+	/*static*/ const string _entity::subclass_code = "100";
+	/*static*/ const string _entity::layer_code = "8";
+
+	// --------------------------------------------------------------------------------------------
 	_entity::_entity(const string& strName)
 		: _group(strName)
+		, m_strLayer("")
 	{
 	}
 
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _entity::~_entity()
 	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const string& _entity::layer() const
+	{
+		return m_strLayer;
+	}
+
+	// ----------------------------------------------------------------------------------------
+	bool _entity::_load(_reader& reader)
+	{
+		if (reader.row() == layer_code)
+		{
+			reader.forth();
+			m_strLayer = reader.row();
+
+			reader.forth(); return true;
+		}
+		
+		if (reader.row() == subclass_code)
+		{
+			reader.forth();
+			// TODO
+
+			reader.forth(); return true;
+		}
+
+		return false;
 	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
@@ -222,9 +254,7 @@ namespace _dxf
 				reader.forth();
 				if (reader.row() == _group_codes::endsec)
 				{
-					reader.back();
-
-					break;
+					reader.back(); break;
 				}
 
 				if (reader.row() == _group_codes::line)
@@ -310,67 +340,65 @@ namespace _dxf
 	{
 		while (true)
 		{
+			if (_load(reader))
+			{
+				continue;
+			}
+
 			if (reader.row() == _group_codes::start)
 			{
-				reader.forth();
-				if (reader.row() == _group_codes::subclass)
-				{
-					reader.forth();
-					// read
-					reader.forth();
-				}
-				else if (reader.row() == _group_codes::start_point_x)
-				{
-					continue;					
-				}
-				else
-				{
-					reader.back();
-
-					break;
-				}
-			} // if (reader.row() == _group_codes::start)
+				break;
+			}
 
 			if (reader.row() == _group_codes::start_point_x)
 			{
 				reader.forth();
 				m_dX1 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else if (reader.row() == _group_codes::start_point_y)
+
+			if (reader.row() == _group_codes::start_point_y)
 			{
 				reader.forth();
 				m_dY1 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else if (reader.row() == _group_codes::start_point_z)
+
+			if (reader.row() == _group_codes::start_point_z)
 			{
 				reader.forth();
 				m_dZ1 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else if (reader.row() == _group_codes::end_point_x)
+
+			if (reader.row() == _group_codes::end_point_x)
 			{
 				reader.forth();
 				m_dX2 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else if (reader.row() == _group_codes::end_point_y)
+			
+			if (reader.row() == _group_codes::end_point_y)
 			{
 				reader.forth();
 				m_dY2 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else if (reader.row() == _group_codes::end_point_z)
+			
+			if (reader.row() == _group_codes::end_point_z)
 			{
 				reader.forth();
 				m_dZ2 = atof(reader.row().c_str());
-				reader.forth();
+
+				reader.forth(); continue;
 			}
-			else
-			{
-				reader.forth();
-			}
+
+			reader.forth();
 		} // while (true)
 	}
 	// _line

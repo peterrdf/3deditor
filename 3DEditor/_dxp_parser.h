@@ -21,6 +21,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _error : public runtime_error
 	{
+
 	public: // Members		
 		static const string file_not_found;
 		static const string invalid_argument;
@@ -39,6 +40,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _group_codes
 	{
+
 	public: // Members
 
 		// 0 Text string indicating the entity type (fixed)
@@ -49,8 +51,7 @@ namespace _dxf
 		static const string section;
 		static const string endsec;
 		static const string entities;
-		static const string line;
-		static const string subclass;
+		static const string line;		
 		static const string start_point_x;
 		static const string start_point_y;
 		static const string start_point_z;
@@ -66,6 +67,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _reader
 	{
+
 	private: // Members
 
 		// ----------------------------------------------------------------------------------------
@@ -139,7 +141,17 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _entity : public _group
 	{
+
+	public: //  Members
+
+		// --------------------------------------------------------------------------------------------
+		static const string subclass_code;
+		static const string layer_code;
+
 	private: // Members
+
+		// ----------------------------------------------------------------------------------------
+		string m_strLayer;
 
 	public: // Methods
 
@@ -147,7 +159,15 @@ namespace _dxf
 		_entity(const string& strName);
 
 		// ----------------------------------------------------------------------------------------
-		virtual ~_entity();
+		virtual ~_entity();		
+
+		// ----------------------------------------------------------------------------------------
+		const string& layer() const;
+
+	protected: //  Methods
+
+		// ----------------------------------------------------------------------------------------
+		bool _load(_reader& reader);
 	};
 	// _entity
 	// --------------------------------------------------------------------------------------------
@@ -157,6 +177,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _section : public _group
 	{
+
 	private:
 
 	public: // Methods
@@ -175,6 +196,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _entities_section : public _section
 	{
+
 	private: // Members
 
 		// ----------------------------------------------------------------------------------------
@@ -202,6 +224,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _line : public _entity
 	{
+
 	private: // Members
 
 		// ----------------------------------------------------------------------------------------
@@ -253,6 +276,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	class _parser
 	{
+
 	private: // Members
 
 		// ----------------------------------------------------------------------------------------
