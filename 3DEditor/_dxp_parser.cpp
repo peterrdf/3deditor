@@ -47,10 +47,23 @@ namespace _dxf
 	/*static*/ const string _group_codes::eof = "EOF";
 	/*static*/ const string _group_codes::section = "SECTION";
 	/*static*/ const string _group_codes::endsec = "ENDSEC";
+
+	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
+	/*static*/ const string _group_codes::seqend = "SEQEND";
+
+	// --------------------------------------------------------------------------------------------
+	/*static*/ const string _group_codes::subclass = "100";
+	/*static*/ const string _group_codes::layer = "8";
+	/*static*/ const string _group_codes::x = "10";
+	/*static*/ const string _group_codes::y = "20";
+	/*static*/ const string _group_codes::z = "30";
+	/*static*/ const string _group_codes::x2 = "11";
+	/*static*/ const string _group_codes::y2 = "21";
+	/*static*/ const string _group_codes::z2 = "31";
 	// _group_codes
 	// --------------------------------------------------------------------------------------------
 
@@ -162,10 +175,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	// _entity
 	// --------------------------------------------------------------------------------------------
-	/*static*/ const string _entity::subclass_code = "100";
-	/*static*/ const string _entity::layer_code = "8";
-
-	// --------------------------------------------------------------------------------------------
 	_entity::_entity(const string& strName)
 		: _group(strName)
 		, m_mapCode2Value()
@@ -173,8 +182,8 @@ namespace _dxf
 		// Common Group Codes for Entities, page 61
 		m_mapCode2Value =
 		{
-			{ subclass_code, "" },
-			{ layer_code, "" },
+			{ _group_codes::subclass, "" },
+			{ _group_codes::layer, "" },
 		};
 	}
 
@@ -204,9 +213,9 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _entity::layer()
+	const string& _entity::value(const string& strCode)
 	{
-		return m_mapCode2Value[layer_code];
+		return m_mapCode2Value[strCode];
 	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
@@ -270,6 +279,15 @@ namespace _dxf
 
 					pLine->load(reader);
 				} // if (reader.row() == _group_codes::line)
+				else if (reader.row() == _group_codes::polyline)
+				{
+					reader.forth();
+
+					auto pPolyline = new _polyline();
+					m_vecEntities.push_back(pPolyline);
+
+					pPolyline->load(reader);
+				}
 				else
 				{
 					// TODO: ALL ENTITIES
@@ -293,12 +311,12 @@ namespace _dxf
 		// LINE, page 101
 		map<string, string> mapCode2Value =
 		{	
-			{"10", "0"}, // Start point (in WCS); DXF: X value; APP: 3D point
-			{"20", "0"}, // DXF: Y and Z values of start point (in WCS)
-			{"30", "0"}, // DXF: Y and Z values of start point (in WCS)
-			{"11", "0"}, // Endpoint (in WCS); DXF: X value; APP: 3D point
-			{"21", "0"}, // DXF: Y and Z values of endpoint (in WCS)
-			{"31", "0"}, // DXF: Y and Z values of endpoint (in WCS)
+			{_group_codes::x, "0"}, // Start point (in WCS); DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of start point (in WCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of start point (in WCS)
+			{_group_codes::x2, "0"}, // Endpoint (in WCS); DXF: X value; APP: 3D point
+			{_group_codes::y2, "0"}, // DXF: Y and Z values of endpoint (in WCS)
+			{_group_codes::z2, "0"}, // DXF: Y and Z values of endpoint (in WCS)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -317,15 +335,15 @@ namespace _dxf
 
 		vector<double> vecVertices
 		{
-			atof(m_mapCode2Value["10"].c_str()),
-			atof(m_mapCode2Value["20"].c_str()),
-			atof(m_mapCode2Value["30"].c_str()),
-			atof(m_mapCode2Value["11"].c_str()),
-			atof(m_mapCode2Value["21"].c_str()),
-			atof(m_mapCode2Value["31"].c_str()),
+			atof(m_mapCode2Value[_group_codes::x].c_str()),
+			atof(m_mapCode2Value[_group_codes::y].c_str()),
+			atof(m_mapCode2Value[_group_codes::z].c_str()),
+			atof(m_mapCode2Value[_group_codes::x2].c_str()),
+			atof(m_mapCode2Value[_group_codes::y2].c_str()),
+			atof(m_mapCode2Value[_group_codes::z2].c_str()),
 		};
 
-		int64_t iInstance = CreateInstance(iClass, "Line");
+		int64_t iInstance = CreateInstance(iClass, "LINE");
 		assert(iInstance != 0);
 
 		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
@@ -343,9 +361,9 @@ namespace _dxf
 		// VERTEX, page 149
 		map<string, string> mapCode2Value =
 		{
-			{"10", "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
-			{"20", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
-			{"30", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{_group_codes::x, "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -367,16 +385,41 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _seqend
+	_seqend::_seqend()
+		: _entity(_group_codes::seqend)
+	{
+		// SEQEND, page 128
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _seqend::~_seqend()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _seqend::createInstance(int64_t /*iModel*/)
+	{
+		assert(false); // Not implemented!
+
+		return 0;
+	}
+	// _seqend
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _polyline
 	_polyline::_polyline()
 		: _entity(_group_codes::polyline)
+		, m_vecVertices()
+		, m_pSeqend(nullptr)
 	{
-		// VERTEX, page 149
+		// VERTEX, page 124
 		map<string, string> mapCode2Value =
 		{
-			{"10", "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
-			{"20", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
-			{"30", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{_group_codes::x, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::y, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::z, "0"}, // DXF: polyline's elevation (in OCS when 2D; WCS when 3D)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -385,14 +428,72 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _polyline::~_polyline()
 	{
+		for (size_t i = 0; i < m_vecVertices.size(); i++)
+		{
+			delete m_vecVertices[i];
+		}
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _polyline::createInstance(int64_t /*iModel*/)
+	/*virtual*/ void _polyline::load(_reader& reader)
 	{
-		assert(false); // Not implemented!
+		while (true)
+		{
+			_entity::load(reader);
 
-		return 0;
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::seqend)
+				{
+					reader.forth();
+
+					assert(m_pSeqend == nullptr);
+
+					m_pSeqend = new _seqend();
+					m_pSeqend->load(reader);
+				}
+				else if (reader.row() == _group_codes::vertex)
+				{
+					reader.forth();
+
+					auto pVertex = new _vertex();
+					m_vecVertices.push_back(pVertex);
+
+					pVertex->load(reader);
+				} // if (reader.row() == _group_codes::line)
+				else
+				{	
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _polyline::createInstance(int64_t iModel)
+	{
+		int64_t iClass = GetClassByName(iModel, "PolyLine3D");
+		assert(iClass != 0);
+
+		vector<double> vecVertices;
+		for (auto itVertex : m_vecVertices)
+		{
+			vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
+			vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
+			vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+		}
+
+		int64_t iInstance = CreateInstance(iClass, "POLYLINE");
+		assert(iInstance != 0);
+
+		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
+
+		return iInstance;
 	}
 	// _polyline
 	// --------------------------------------------------------------------------------------------
@@ -511,7 +612,7 @@ namespace _dxf
 					auto iInstance = pEntity->createInstance(m_iModel);
 					assert(iInstance != 0);
 
-					auto strLayer = pEntity->layer();
+					auto strLayer = pEntity->value(_group_codes::layer);
 					
 					auto itLayer2Instances = mapLayer2Instances.find(strLayer);
 					if (itLayer2Instances != mapLayer2Instances.end())
@@ -535,8 +636,9 @@ namespace _dxf
 		auto itLayer2Instances = mapLayer2Instances.begin();
 		for (; itLayer2Instances != mapLayer2Instances.end(); itLayer2Instances++)
 		{
-			string strCollectionName = "Layer: ";
+			string strCollectionName = "Layer: '";
 			strCollectionName += itLayer2Instances->first;
+			strCollectionName += "'";
 
 			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), itLayer2Instances->second.data(), itLayer2Instances->second.size());
