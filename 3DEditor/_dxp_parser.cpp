@@ -188,6 +188,26 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
+	/*virtual*/ void _entity::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				break;
+			}
+
+			auto itCode2Value = m_mapCode2Value.find(reader.row());
+			if (itCode2Value != m_mapCode2Value.end())
+			{
+				itCode2Value->second = reader.forth();
+			}
+
+			reader.forth();
+		} // while (true)
+	}
+
+	// --------------------------------------------------------------------------------------------
 	const string& _entity::layer()
 	{
 		return m_mapCode2Value[layer_code];
@@ -315,26 +335,6 @@ namespace _dxf
 		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
 
 		return iInstance;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	void _line::load(_reader& reader)
-	{
-		while (true)
-		{
-			if (reader.row() == _group_codes::start)
-			{
-				break;
-			}		
-
-			auto itCode2Value = m_mapCode2Value.find(reader.row());
-			if (itCode2Value != m_mapCode2Value.end())
-			{
-				itCode2Value->second = reader.forth();
-			}
-
-			reader.forth();
-		} // while (true)
 	}
 	// _line
 	// --------------------------------------------------------------------------------------------
