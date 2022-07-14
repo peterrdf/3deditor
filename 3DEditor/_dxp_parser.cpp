@@ -114,7 +114,7 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _reader::forth()
+	const string& _reader::forth()
 	{
 		m_iRow++;
 
@@ -122,10 +122,12 @@ namespace _dxf
 		{
 			throw _error(_error::eof);
 		}
+
+		return row();
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _reader::back()
+	const string& _reader::back()
 	{
 		if (m_iRow == 0)
 		{
@@ -133,6 +135,8 @@ namespace _dxf
 		}
 
 		m_iRow--;
+
+		return row();
 	}
 	// _reader
 	// --------------------------------------------------------------------------------------------
@@ -168,8 +172,14 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	_entity::_entity(const string& strName)
 		: _group(strName)
-		, m_strLayer("")
+		, m_mapCode2Value()
 	{
+		// Common Group Codes for Entities, page 61
+		m_mapCode2Value =
+		{
+			{ subclass_code, "" },
+			{ layer_code, "" },
+		};
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -178,31 +188,9 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _entity::layer() const
+	const string& _entity::layer()
 	{
-		return m_strLayer;
-	}
-
-	// ----------------------------------------------------------------------------------------
-	bool _entity::_load(_reader& reader)
-	{
-		if (reader.row() == layer_code)
-		{
-			reader.forth();
-			m_strLayer = reader.row();
-
-			reader.forth(); return true;
-		}
-		
-		if (reader.row() == subclass_code)
-		{
-			reader.forth();
-			// TODO
-
-			reader.forth(); return true;
-		}
-
-		return false;
+		return m_mapCode2Value[layer_code];
 	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
@@ -285,13 +273,19 @@ namespace _dxf
 	// _line
 	_line::_line()
 		: _entity(_group_codes::line)
-		, m_dX1(0.)
-		, m_dY1(0.)
-		, m_dZ1(0.)
-		, m_dX2(0.)
-		, m_dY2(0.)
-		, m_dZ2(0.)
 	{
+		// LINE, page 101
+		map<string, string> mapCode2Value =
+		{	
+			{"10", "0"}, // Start point (in WCS); DXF: X value; APP: 3D point
+			{"20", "0"}, // DXF: Y and Z values of start point (in WCS)
+			{"30", "0"}, // DXF: Y and Z values of start point (in WCS)
+			{"11", "0"}, // Endpoint (in WCS); DXF: X value; APP: 3D point
+			{"21", "0"}, // DXF: Y and Z values of endpoint (in WCS)
+			{"31", "0"}, // DXF: Y and Z values of endpoint (in WCS)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -307,12 +301,12 @@ namespace _dxf
 
 		vector<double> vecVertices
 		{
-			m_dX1,
-			m_dY1,
-			m_dZ1,
-			m_dX2,
-			m_dY2,
-			m_dZ2,
+			atof(m_mapCode2Value["10"].c_str()),
+			atof(m_mapCode2Value["20"].c_str()),
+			atof(m_mapCode2Value["30"].c_str()),
+			atof(m_mapCode2Value["11"].c_str()),
+			atof(m_mapCode2Value["21"].c_str()),
+			atof(m_mapCode2Value["31"].c_str()),
 		};
 
 		int64_t iInstance = CreateInstance(iClass, "Line");
@@ -324,102 +318,19 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	double _line::X1() const
-	{
-		return m_dX1;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _line::Y1() const
-	{
-		return m_dY1;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _line::Z1() const 
-	{
-		return m_dZ1;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _line::X2() const
-	{
-		return m_dX2;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _line::Y2() const
-	{
-		return m_dY2;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _line::Z2() const
-	{
-		return m_dZ2;
-	}
-
-	// --------------------------------------------------------------------------------------------
 	void _line::load(_reader& reader)
 	{
 		while (true)
 		{
-			if (_load(reader))
-			{
-				continue;
-			}
-
 			if (reader.row() == _group_codes::start)
 			{
 				break;
-			}
+			}		
 
-			if (reader.row() == _group_codes::start_point_x)
+			auto itCode2Value = m_mapCode2Value.find(reader.row());
+			if (itCode2Value != m_mapCode2Value.end())
 			{
-				reader.forth();
-				m_dX1 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
-			}
-
-			if (reader.row() == _group_codes::start_point_y)
-			{
-				reader.forth();
-				m_dY1 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
-			}
-
-			if (reader.row() == _group_codes::start_point_z)
-			{
-				reader.forth();
-				m_dZ1 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
-			}
-
-			if (reader.row() == _group_codes::end_point_x)
-			{
-				reader.forth();
-				m_dX2 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
-			}
-			
-			if (reader.row() == _group_codes::end_point_y)
-			{
-				reader.forth();
-				m_dY2 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
-			}
-			
-			if (reader.row() == _group_codes::end_point_z)
-			{
-				reader.forth();
-				m_dZ2 = atof(reader.row().c_str());
-
-				reader.forth(); continue;
+				itCode2Value->second = reader.forth();
 			}
 
 			reader.forth();
