@@ -49,12 +49,8 @@ namespace _dxf
 	/*static*/ const string _group_codes::endsec = "ENDSEC";
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::line = "LINE";
-	/*static*/ const string _group_codes::start_point_x = "10";
-	/*static*/ const string _group_codes::start_point_y = "20";
-	/*static*/ const string _group_codes::start_point_z = "30";
-	/*static*/ const string _group_codes::end_point_x = "11";
-	/*static*/ const string _group_codes::end_point_y = "21";
-	/*static*/ const string _group_codes::end_point_z = "31";
+	/*static*/ const string _group_codes::vertex = "VERTEX";
+	/*static*/ const string _group_codes::polyline = "POLYLINE";
 	// _group_codes
 	// --------------------------------------------------------------------------------------------
 
@@ -337,6 +333,68 @@ namespace _dxf
 		return iInstance;
 	}
 	// _line
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _vertex
+	_vertex::_vertex()
+		: _entity(_group_codes::vertex)
+	{
+		// VERTEX, page 149
+		map<string, string> mapCode2Value =
+		{
+			{"10", "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
+			{"20", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{"30", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _vertex::~_vertex()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _vertex::createInstance(int64_t /*iModel*/)
+	{
+		assert(false); // Not implemented!
+
+		return 0;
+	}
+	// _vertex
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _polyline
+	_polyline::_polyline()
+		: _entity(_group_codes::polyline)
+	{
+		// VERTEX, page 149
+		map<string, string> mapCode2Value =
+		{
+			{"10", "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
+			{"20", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{"30", "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _polyline::~_polyline()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _polyline::createInstance(int64_t /*iModel*/)
+	{
+		assert(false); // Not implemented!
+
+		return 0;
+	}
+	// _polyline
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
