@@ -57,6 +57,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
 	/*static*/ const string _group_codes::seqend = "SEQEND";
+	/*static*/ const string _group_codes::circle = "CIRCLE";
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::subclass = "100";
@@ -67,6 +68,10 @@ namespace _dxf
 	/*static*/ const string _group_codes::x2 = "11";
 	/*static*/ const string _group_codes::y2 = "21";
 	/*static*/ const string _group_codes::z2 = "31";
+	/*static*/ const string _group_codes::radius = "40";
+	/*static*/ const string _group_codes::extrusion_x = "210";
+	/*static*/ const string _group_codes::extrusion_y = "220";
+	/*static*/ const string _group_codes::extrusion_z = "230";
 	// _group_codes
 	// --------------------------------------------------------------------------------------------
 
@@ -291,6 +296,15 @@ namespace _dxf
 
 					pPolyline->load(reader);
 				}
+				else if (reader.row() == _group_codes::circle)
+				{
+					reader.forth();
+
+					auto pCircle = new _circle();
+					m_vecEntities.push_back(pCircle);
+
+					pCircle->load(reader);
+				}
 				else
 				{
 					// TODO: ALL ENTITIES
@@ -493,6 +507,69 @@ namespace _dxf
 		return 0;
 	}
 	// _vertex
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _circle
+	_circle::_circle()
+		: _entity(_group_codes::circle)
+	{
+		// CIRCLE, page 77
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::x, "0"}, // Center point (in OCS) DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::radius, "0"}, // Radius
+			{_group_codes::radius, "0"}, // Radius
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _circle::~_circle()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _circle::createInstance(int64_t iModel)
+	{
+		int64_t iCircleClass = GetClassByName(iModel, "Circle");
+		assert(iCircleClass != 0);
+
+		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
+		assert(iTransformationClass != 0);
+
+		int64_t iExtrusionAreaSolidClass = GetClassByName(iModel, "ExtrusionAreaSolid");
+		assert(iExtrusionAreaSolidClass != 0);
+
+		int64_t iCircleInstance = CreateInstance(iCircleClass, "CIRCLE");
+		assert(iCircleInstance != 0);
+
+		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
+		SetDataTypeProperty(iCircleInstance, GetPropertyByName(iModel, "a"), &dValue, 1);
+
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass, "CIRCLE");
+		assert(iTransformationInstance != 0);
+
+		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
+		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
+
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iCircleInstance, 1);
+
+		/*int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "CIRCLE");
+		assert(iExtrusionAreaSolidInstance != 0);*/		
+
+		return iTransformationInstance;
+	}
+	// _circle
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
