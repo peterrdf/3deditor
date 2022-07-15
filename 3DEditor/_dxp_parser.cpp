@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "_dxp_parser.h"
 
+// ------------------------------------------------------------------------------------------------
 static inline string& ltrim(string& s) 
 {
 	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
@@ -8,6 +9,7 @@ static inline string& ltrim(string& s)
 	return s;
 }
 
+// ------------------------------------------------------------------------------------------------
 static inline string& rtrim(string& s) 
 {
 	s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
@@ -15,9 +17,34 @@ static inline string& rtrim(string& s)
 	return s;
 }
 
+// ------------------------------------------------------------------------------------------------
 static inline string& trim(string& s) 
 {	
 	return ltrim(rtrim(s));
+}
+
+// ------------------------------------------------------------------------------------------------
+static inline double vector3_normalize(double dX, double dY, double dZ)
+{
+	double dSize = pow(dX, 2.) + pow(dY, 2.) + pow(dZ, 2.);
+	if (dSize > 0.0000000000000001)
+	{
+		double dSqrtSize = sqrt(dSize);
+
+		dX /= dSqrtSize;
+		dY /= dSqrtSize;
+		dZ /= dSqrtSize;
+
+		return dSqrtSize;
+	}
+	else 
+	{
+		dX = 0.;
+		dY = 0.;
+		dZ = 0.;
+
+		return	0.;
+	}
 }
 
 namespace _dxf
@@ -521,7 +548,9 @@ namespace _dxf
 			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in OCS)
 			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in OCS)
 			{_group_codes::radius, "0"}, // Radius
-			{_group_codes::radius, "0"}, // Radius
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -536,36 +565,61 @@ namespace _dxf
 	/*virtual*/ int64_t _circle::createInstance(int64_t iModel)
 	{
 		int64_t iCircleClass = GetClassByName(iModel, "Circle");
-		assert(iCircleClass != 0);
-
-		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
-		assert(iTransformationClass != 0);
+		assert(iCircleClass != 0);		
 
 		int64_t iExtrusionAreaSolidClass = GetClassByName(iModel, "ExtrusionAreaSolid");
 		assert(iExtrusionAreaSolidClass != 0);
 
+		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
+		assert(iTransformationClass != 0);
+
+		int64_t iMatrixClass = GetClassByName(iModel, "Matrix");
+		assert(iMatrixClass != 0);
+
+		// Circle
 		int64_t iCircleInstance = CreateInstance(iCircleClass, "CIRCLE");
-		assert(iCircleInstance != 0);
+		assert(iCircleInstance != 0);		
 
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
-		SetDataTypeProperty(iCircleInstance, GetPropertyByName(iModel, "a"), &dValue, 1);
+		SetDataTypeProperty(iCircleInstance, GetPropertyByName(iModel, "a"), &dValue, 1);		
 
+		// ExtrusionAreaSolid
+		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "CIRCLE");
+		assert(iExtrusionAreaSolidInstance != 0);
+
+		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iCircleInstance, 1);		
+
+		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
+		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
+		double dExtrusionZ = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
+
+		dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
+
+		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionDirection"), vecValues.data(), vecValues.size());		
+		
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
+
+		// Matrix
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass, "CIRCLE");
+		assert(iMatrixInstance != 0);
+
+		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
+
+		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, "CIRCLE");
 		assert(iTransformationInstance != 0);
 
-		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
-		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
-		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
-
-		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
-		SetDataTypeProperty(iTransformationInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
-
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iCircleInstance, 1);
-
-		/*int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "CIRCLE");
-		assert(iExtrusionAreaSolidInstance != 0);*/		
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iExtrusionAreaSolidInstance, 1);
 
 		return iTransformationInstance;
 	}
