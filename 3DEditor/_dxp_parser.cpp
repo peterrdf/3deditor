@@ -507,6 +507,12 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _vertex
+	/*static*/ const string _vertex::polyface_mesh_vertex1 = "71";
+	/*static*/ const string _vertex::polyface_mesh_vertex2 = "72";
+	/*static*/ const string _vertex::polyface_mesh_vertex3 = "73";
+	/*static*/ const string _vertex::polyface_mesh_vertex4 = "74";
+
+	// --------------------------------------------------------------------------------------------
 	_vertex::_vertex()
 		: _entity(_group_codes::vertex)
 	{
@@ -516,6 +522,10 @@ namespace _dxf
 			{_group_codes::x, "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
 			{_group_codes::y, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{polyface_mesh_vertex1, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
+			{polyface_mesh_vertex2, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
+			{polyface_mesh_vertex3, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
+			{polyface_mesh_vertex4, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -739,9 +749,6 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(int64_t iModel)
 	{
-		int64_t iClass = GetClassByName(iModel, "PolyLine3D");
-		assert(iClass != 0);
-
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -755,20 +762,48 @@ namespace _dxf
 					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
 				}
 
+				int64_t iClass = GetClassByName(iModel, "PolyLine3D");
+				assert(iClass != 0);
+
 				int64_t iInstance = CreateInstance(iClass, "POLYLINE");
 				assert(iInstance != 0);
 
 				SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
 
 				return iInstance;
-			}
-			break;
+			} // case 1:
 
 			case 64:
-			{
-				assert(false);
-			}
-			break;
+			{	
+				int64_t iTriangleSetClass = GetClassByName(iModel, "TriangleSet");
+				assert(iTriangleSetClass != 0);
+
+				vector<double> vecVertices;
+				vector<int64_t> vecIndices;
+				for (auto itVertex : m_vecVertices)
+				{
+					if (itVertex->value(_group_codes::subclass) == "AcDbFaceRecord")
+					{
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex1).c_str())) - 1);
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex2).c_str())) - 1);
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex3).c_str())) - 1);
+
+						continue;
+					}
+
+					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
+					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
+					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+				}
+
+				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, "Triangles");
+				assert(iTriangleSetInstance != 0);
+
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(iModel, "vertices"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(iModel, "indices"), vecIndices.data(), vecIndices.size());
+
+				return iTriangleSetInstance;
+			} // case 64:
 
 			default:
 			{

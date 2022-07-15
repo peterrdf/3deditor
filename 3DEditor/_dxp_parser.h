@@ -309,6 +309,14 @@ namespace _dxf
 	class _vertex : public _entity
 	{
 
+	public: // Members
+
+		// ----------------------------------------------------------------------------------------
+		static const string polyface_mesh_vertex1;
+		static const string polyface_mesh_vertex2;
+		static const string polyface_mesh_vertex3;
+		static const string polyface_mesh_vertex4;
+
 	public: // Methods
 
 		// ----------------------------------------------------------------------------------------
