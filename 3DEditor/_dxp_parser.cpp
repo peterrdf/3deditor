@@ -651,9 +651,9 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _polyline
-	/*static*/ const string _polyline::flag;
-	/*static*/ const string _polyline::m;
-	/*static*/ const string _polyline::n;
+	/*static*/ const string _polyline::flag = "70";
+	/*static*/ const string _polyline::m = "71";
+	/*static*/ const string _polyline::n = "72";
 
 	// --------------------------------------------------------------------------------------------
 	_polyline::_polyline()
@@ -724,6 +724,8 @@ namespace _dxf
 				} // if (reader.row() == _group_codes::line)
 				else
 				{	
+					reader.back();
+
 					break;
 				}
 			} // if (reader.row() == _group_codes::start)
@@ -741,7 +743,6 @@ namespace _dxf
 		assert(iClass != 0);
 
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
-
 		switch (iFlag)
 		{
 			case 1:
@@ -920,19 +921,20 @@ namespace _dxf
 					assert(pEntity != nullptr);
 
 					auto iInstance = pEntity->createInstance(m_iModel);
-					assert(iInstance != 0);
+					if (iInstance != 0)
+					{
+						auto strLayer = pEntity->value(_group_codes::layer);
 
-					auto strLayer = pEntity->value(_group_codes::layer);
-					
-					auto itLayer2Instances = mapLayer2Instances.find(strLayer);
-					if (itLayer2Instances != mapLayer2Instances.end())
-					{
-						mapLayer2Instances[strLayer].push_back(iInstance);
-					}
-					else
-					{
-						mapLayer2Instances[strLayer] = vector<int64_t> { iInstance };
-					}
+						auto itLayer2Instances = mapLayer2Instances.find(strLayer);
+						if (itLayer2Instances != mapLayer2Instances.end())
+						{
+							mapLayer2Instances[strLayer].push_back(iInstance);
+						}
+						else
+						{
+							mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+						}
+					} // if (iInstance != 0)
 				} // for (size_t iEntity = ...
 			} // if (m_vecSections[iSection]->name() == _group_codes::entities)
 		} // for (size_t iSection = ...
