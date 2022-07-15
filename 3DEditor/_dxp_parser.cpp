@@ -50,6 +50,9 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::entities = "ENTITIES";
+	/*static*/ const string _group_codes::header = "HEADER";
+	/*static*/ const string _group_codes::tables = "TABLES";
+	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
@@ -232,12 +235,13 @@ namespace _dxf
 	/*virtual*/ _section::~_section()
 	{
 	}
+	// _section
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
 	// _entities_section
 	_entities_section::_entities_section()
-		: _section("ENTITIES")
+		: _section(_group_codes::entities)
 		, m_vecEntities()
 	{
 	}
@@ -267,7 +271,9 @@ namespace _dxf
 				reader.forth();
 				if (reader.row() == _group_codes::endsec)
 				{
-					reader.forth(); break;
+					reader.forth(); 
+					
+					break;
 				}
 
 				if (reader.row() == _group_codes::line)
@@ -300,7 +306,115 @@ namespace _dxf
 			}
 		} // while (true)
 	}
-	// _section
+	// _entities_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _header_section
+	_header_section::_header_section()
+		: _section(_group_codes::header)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _header_section::~_header_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _header_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth(); 
+					
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _header_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _tables_section
+	_tables_section::_tables_section()
+		: _section(_group_codes::tables)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _tables_section::~_tables_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _tables_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _tables_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _blocks_section
+	_blocks_section::_blocks_section()
+		: _section(_group_codes::blocks)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _blocks_section::~_blocks_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _blocks_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _blocks_section
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
@@ -562,9 +676,36 @@ namespace _dxf
 
 							pEntitiesSection->load(reader);
 						} // if (reader.row() == _group_codes::entities)
+						else if (reader.row() == _group_codes::header)
+						{
+							reader.forth();
+
+							auto pHeaderSection = new _header_section();
+							m_vecSections.push_back(pHeaderSection);
+
+							pHeaderSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::tables)
+						{
+							reader.forth();
+
+							auto pTablesSection = new _tables_section();
+							m_vecSections.push_back(pTablesSection);
+
+							pTablesSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::blocks)
+						{
+							reader.forth();
+
+							auto pBlocksSection = new _blocks_section();
+							m_vecSections.push_back(pBlocksSection);
+
+							pBlocksSection->load(reader);
+						}
 						else
 						{
-							// TODO: HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, THUMBNAILIMAGE
+							// TODO: CLASSES, OBJECTS, THUMBNAILIMAGE
 							reader.forth();
 						}
 					} // if (reader.row() == _group_codes::name)
@@ -632,16 +773,15 @@ namespace _dxf
 		*/
 		int64_t iCollectionClass = GetClassByName(m_iModel, "Collection");
 		assert(iCollectionClass != 0);
-
-		auto itLayer2Instances = mapLayer2Instances.begin();
-		for (; itLayer2Instances != mapLayer2Instances.end(); itLayer2Instances++)
+		
+		for (auto itLayer2Instances : mapLayer2Instances)
 		{
 			string strCollectionName = "Layer: '";
-			strCollectionName += itLayer2Instances->first;
+			strCollectionName += itLayer2Instances.first;
 			strCollectionName += "'";
 
 			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
-			SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), itLayer2Instances->second.data(), itLayer2Instances->second.size());
+			SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), itLayer2Instances.second.data(), itLayer2Instances.second.size());
 		}
 	}
 	// _parser
