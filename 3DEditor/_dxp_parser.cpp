@@ -95,10 +95,7 @@ namespace _dxf
 		while (getline(m_dxfFile, line))
 		{
 			line = trim(line);
-			if (!line.empty())
-			{
-				m_vecRows.push_back(line);
-			}
+			m_vecRows.push_back(line);
 		}
 
 		if (m_vecRows.empty())
