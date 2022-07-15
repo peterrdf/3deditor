@@ -651,17 +651,35 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _polyline
+	/*static*/ const string _polyline::flag;
+	/*static*/ const string _polyline::m;
+	/*static*/ const string _polyline::n;
+
+	// --------------------------------------------------------------------------------------------
 	_polyline::_polyline()
 		: _entity(_group_codes::polyline)
 		, m_vecVertices()
 		, m_pSeqend(nullptr)
 	{
-		// VERTEX, page 124
+		// POLYLINE, page 123
 		map<string, string> mapCode2Value =
 		{
 			{_group_codes::x, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
 			{_group_codes::y, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: polyline's elevation (in OCS when 2D; WCS when 3D)
+			{flag, "1"}, // Polyline flag (bit-coded; default = 0):
+			/*
+			1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+			2 = Curve-fit vertices have been added
+			4 = Spline-fit vertices have been added
+			8 = This is a 3D polyline
+			16 = This is a 3D polygon mesh
+			32 = The polygon mesh is closed in the N direction
+			64 = The polyline is a polyface mesh
+			128 = The linetype pattern is generated continuously around the vertices of this polyline
+			*/
+			{m, "0"}, // Polygon mesh M vertex count (optional; default = 0)
+			{n, "0"}, // Polygon mesh N vertex count (optional; default = 0)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -722,20 +740,43 @@ namespace _dxf
 		int64_t iClass = GetClassByName(iModel, "PolyLine3D");
 		assert(iClass != 0);
 
-		vector<double> vecVertices;
-		for (auto itVertex : m_vecVertices)
+		int iFlag = atoi(m_mapCode2Value[flag].c_str());
+
+		switch (iFlag)
 		{
-			vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
-			vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
-			vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
-		}
+			case 1:
+			{
+				vector<double> vecVertices;
+				for (auto itVertex : m_vecVertices)
+				{
+					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
+					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
+					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+				}
 
-		int64_t iInstance = CreateInstance(iClass, "POLYLINE");
-		assert(iInstance != 0);
+				int64_t iInstance = CreateInstance(iClass, "POLYLINE");
+				assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
 
-		return iInstance;
+				return iInstance;
+			}
+			break;
+
+			case 64:
+			{
+				assert(false);
+			}
+			break;
+
+			default:
+			{
+				assert(false);
+			}
+			break;
+		} // switch (iFlag)
+
+		return 0;
 	}
 	// _polyline
 	// --------------------------------------------------------------------------------------------
