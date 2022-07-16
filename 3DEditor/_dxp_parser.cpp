@@ -184,10 +184,10 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _group
-	_group::_group(const string& strName)
-		: m_strName(strName)
+	_group::_group(const string& strType)
+		: m_strType(strType)
 	{
-		assert(!m_strName.empty());
+		assert(!m_strType.empty());
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -196,9 +196,9 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _group::name() const
+	const string& _group::type() const
 	{
-		return m_strName;
+		return m_strType;
 	}
 	// _group
 	// --------------------------------------------------------------------------------------------
@@ -1232,7 +1232,7 @@ namespace _dxf
 	{
 		for (auto itSection : m_vecSections)
 		{
-			if (itSection->name() == _group_codes::blocks)
+			if (itSection->type() == _group_codes::blocks)
 			{
 				auto pBlocksSection = dynamic_cast<_blocks_section*>(itSection);
 				for (auto itBlock : pBlocksSection->blocks())
@@ -1257,7 +1257,7 @@ namespace _dxf
 		map<string, vector<int64_t>> mapLayer2Instances;
 		for (size_t iSection = 0; iSection < m_vecSections.size(); iSection++)
 		{
-			if (m_vecSections[iSection]->name() == _group_codes::entities)
+			if (m_vecSections[iSection]->type() == _group_codes::entities)
 			{
 				auto pEntitiesSection = dynamic_cast<_entities_section*>(m_vecSections[iSection]);
 				assert(pEntitiesSection != nullptr);
@@ -1283,7 +1283,7 @@ namespace _dxf
 						}
 					} // if (iInstance != 0)
 				} // for (size_t iEntity = ...
-			} // if (m_vecSections[iSection]->name() == _group_codes::entities)
+			} // if (m_vecSections[iSection]->type() == _group_codes::entities)
 		} // for (size_t iSection = ...
 
 		/**
