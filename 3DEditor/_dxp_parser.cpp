@@ -301,7 +301,7 @@ namespace _dxf
 			atof(m_mapCode2Value[_group_codes::z2].c_str()),
 		};
 
-		int64_t iInstance = CreateInstance(iClass, "LINE");
+		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
 		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
@@ -395,14 +395,14 @@ namespace _dxf
 		assert(iMatrixClass != 0);
 
 		// Circle
-		int64_t iCircleInstance = CreateInstance(iCircleClass, "CIRCLE");
+		int64_t iCircleInstance = CreateInstance(iCircleClass, type().c_str());
 		assert(iCircleInstance != 0);		
 
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
 		SetDataTypeProperty(iCircleInstance, GetPropertyByName(iModel, "a"), &dValue, 1);		
 
 		// ExtrusionAreaSolid
-		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "CIRCLE");
+		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
 		assert(iExtrusionAreaSolidInstance != 0);
 
 		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iCircleInstance, 1);		
@@ -419,7 +419,7 @@ namespace _dxf
 		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
 
 		// Matrix
-		int64_t iMatrixInstance = CreateInstance(iMatrixClass, "CIRCLE");
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
 		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
@@ -432,7 +432,7 @@ namespace _dxf
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
 
 		// Transformation
-		int64_t iTransformationInstance = CreateInstance(iTransformationClass, "CIRCLE");
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
 		assert(iTransformationInstance != 0);
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
@@ -577,7 +577,7 @@ namespace _dxf
 				int64_t iClass = GetClassByName(iModel, "PolyLine3D");
 				assert(iClass != 0);
 
-				int64_t iInstance = CreateInstance(iClass, "POLYLINE");
+				int64_t iInstance = CreateInstance(iClass, type().c_str());
 				assert(iInstance != 0);
 
 				SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
@@ -608,7 +608,7 @@ namespace _dxf
 					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
 				}
 
-				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, "Triangles");
+				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
 
 				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(iModel, "vertices"), vecVertices.data(), vecVertices.size());
@@ -825,7 +825,7 @@ namespace _dxf
 		assert(iMatrixClass != 0);
 
 		// ExtrusionAreaSolid
-		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "INSERT");
+		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
 		assert(iExtrusionAreaSolidInstance != 0);
 
 		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iBlockInstance, 1);
@@ -842,7 +842,7 @@ namespace _dxf
 		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
 
 		// Matrix
-		int64_t iMatrixInstance = CreateInstance(iMatrixClass, "INSERT");
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
 		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
@@ -855,7 +855,7 @@ namespace _dxf
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
 
 		// Transformation
-		int64_t iTransformationInstance = CreateInstance(iTransformationClass, "INSERT");
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
 		assert(iTransformationInstance != 0);
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
