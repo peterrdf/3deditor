@@ -164,6 +164,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::circle = "CIRCLE";	
 	/*static*/ const string _group_codes::block = "BLOCK";
 	/*static*/ const string _group_codes::endblock = "ENDBLK";
+	/*static*/ const string _group_codes::insert = "INSERT";
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::subclass = "100";
@@ -283,8 +284,10 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _line::createInstance(int64_t iModel)
+	/*virtual*/ int64_t _line::createInstance(_parser* pParser)
 	{
+		int64_t iModel = pParser->getModel();
+
 		int64_t iClass = GetClassByName(iModel, "Line3D");
 		assert(iClass != 0);
 
@@ -340,7 +343,7 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _vertex::createInstance(int64_t /*iModel*/)
+	/*virtual*/ int64_t _vertex::createInstance(_parser* /*pParser*/)
 	{
 		assert(false); // Not implemented!
 
@@ -375,8 +378,10 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _circle::createInstance(int64_t iModel)
+	/*virtual*/ int64_t _circle::createInstance(_parser* pParser)
 	{
+		int64_t iModel = pParser->getModel();
+
 		int64_t iCircleClass = GetClassByName(iModel, "Circle");
 		assert(iCircleClass != 0);		
 
@@ -453,7 +458,7 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _seqend::createInstance(int64_t /*iModel*/)
+	/*virtual*/ int64_t _seqend::createInstance(_parser* /*pParser*/)
 	{
 		assert(false); // Not implemented!
 
@@ -552,8 +557,10 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _polyline::createInstance(int64_t iModel)
+	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
+		int64_t iModel = pParser->getModel();
+
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -636,9 +643,9 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _endblk::createInstance(int64_t /*iModel*/)
+	/*virtual*/ int64_t _endblk::createInstance(_parser* /*pParser*/)
 	{
-		assert(false); // Not supported!
+		assert(false); // Not implemented!
 
 		return 0;
 	}
@@ -727,11 +734,135 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _block::createInstance(int64_t iModel)
+	/*virtual*/ int64_t _block::createInstance(_parser* pParser)
 	{
-		assert(0); // todo
+		/**
+		* Create ifcengine instances
+		*/
+		map<string, vector<int64_t>> mapLayer2Instances;
+		for (auto itEntity : m_vecEntities)
+		{
+			auto iInstance = itEntity->createInstance(pParser);
+			if (iInstance != 0)
+			{
+				auto strLayer = itEntity->value(_group_codes::layer);
 
-		return 0;
+				auto itLayer2Instances = mapLayer2Instances.find(strLayer);
+				if (itLayer2Instances != mapLayer2Instances.end())
+				{
+					mapLayer2Instances[strLayer].push_back(iInstance);
+				}
+				else
+				{
+					mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+				}
+			} // if (iInstance != 0)
+		} // for (size_t iEntity = ...
+
+		/**
+		* Create ifcengine collections
+		*/
+		int64_t iCollectionClass = GetClassByName(pParser->getModel(), "Collection");
+		assert(iCollectionClass != 0);
+
+		for (auto itLayer2Instances : mapLayer2Instances)
+		{
+			string strCollectionName = "Layer: '";
+			strCollectionName += itLayer2Instances.first;
+			strCollectionName += "'";
+
+			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
+			SetObjectProperty(iCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), itLayer2Instances.second.data(), itLayer2Instances.second.size());
+		}
+
+		return iCollectionClass;
+	}
+	// _block
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _insert
+	_insert::_insert()
+		: _entity(_group_codes::insert)
+	{
+		// INSERT, page 97
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::name, ""}, // Block name
+			{_group_codes::x, "0"}, // Insertion point (in OCS); DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of insertion point (in OCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of insertion point (in OCS)
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _insert::~_insert()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
+	{
+		int64_t iModel = pParser->getModel();
+
+		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
+		assert(pBlock != nullptr);
+
+		int64_t iBlockInstance = pBlock->createInstance(pParser);
+
+		int64_t iExtrusionAreaSolidClass = GetClassByName(iModel, "ExtrusionAreaSolid");
+		assert(iExtrusionAreaSolidClass != 0);
+
+		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
+		assert(iTransformationClass != 0);
+
+		int64_t iMatrixClass = GetClassByName(iModel, "Matrix");
+		assert(iMatrixClass != 0);
+
+		// ExtrusionAreaSolid
+		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, "INSERT");
+		assert(iExtrusionAreaSolidInstance != 0);
+
+		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iBlockInstance, 1);
+
+		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
+		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
+		double dExtrusionZ = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
+
+		double dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
+
+		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionDirection"), vecValues.data(), vecValues.size());
+
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
+
+		// Matrix
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass, "INSERT");
+		assert(iMatrixInstance != 0);
+
+		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
+
+		// Transformation
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass, "INSERT");
+		assert(iTransformationInstance != 0);
+
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
+
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iExtrusionAreaSolidInstance, 1);
+
+		return iTransformationInstance;
 	}
 	// _block
 	// --------------------------------------------------------------------------------------------
@@ -814,6 +945,15 @@ namespace _dxf
 					m_vecEntities.push_back(pCircle);
 
 					pCircle->load(reader);
+				}
+				else if (reader.row() == _group_codes::insert)
+				{
+					reader.forth();
+
+					auto pInsert = new _insert();
+					m_vecEntities.push_back(pInsert);
+
+					pInsert->load(reader);
 				}
 				else
 				{
@@ -920,6 +1060,12 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
+	const vector<_block*>& _blocks_section::blocks()
+	{
+		return m_vecBlocks;
+	}
+
+	// --------------------------------------------------------------------------------------------
 	void _blocks_section::load(_reader& reader)
 	{
 		while (true)
@@ -973,6 +1119,12 @@ namespace _dxf
 		{
 			delete m_vecSections[i];
 		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	int64_t _parser::getModel() const
+	{
+		return m_iModel;
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1074,6 +1226,27 @@ namespace _dxf
 		*/
 		createInstances();		
 	}
+	
+	// ----------------------------------------------------------------------------------------
+	_block* _parser::findBlockByName(const string& strBlockName)
+	{
+		for (auto itSection : m_vecSections)
+		{
+			if (itSection->name() == _group_codes::blocks)
+			{
+				auto pBlocksSection = dynamic_cast<_blocks_section*>(itSection);
+				for (auto itBlock : pBlocksSection->blocks())
+				{
+					if (itBlock->value(_group_codes::name) == strBlockName)
+					{
+						return itBlock;
+					}
+				}
+			}				
+		}
+
+		return nullptr;
+	}
 
 	// --------------------------------------------------------------------------------------------
 	void _parser::createInstances()
@@ -1094,7 +1267,7 @@ namespace _dxf
 					auto pEntity = pEntitiesSection->entities()[iEntity];
 					assert(pEntity != nullptr);
 
-					auto iInstance = pEntity->createInstance(m_iModel);
+					auto iInstance = pEntity->createInstance(this);
 					if (iInstance != 0)
 					{
 						auto strLayer = pEntity->value(_group_codes::layer);
