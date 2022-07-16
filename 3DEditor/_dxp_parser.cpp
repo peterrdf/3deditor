@@ -24,7 +24,7 @@ static inline string& trim(string& s)
 }
 
 // ------------------------------------------------------------------------------------------------
-static inline double vector3_normalize(double dX, double dY, double dZ)
+static inline double vector3_normalize(double& dX, double& dY, double& dZ)
 {
 	double dSize = pow(dX, 2.) + pow(dY, 2.) + pow(dZ, 2.);
 	if (dSize > 0.0000000000000001)
