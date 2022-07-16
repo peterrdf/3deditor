@@ -50,8 +50,7 @@ static inline double vector3_normalize(double& dX, double& dY, double& dZ)
 namespace _dxf
 {
 	// --------------------------------------------------------------------------------------------
-	// _error
-	// --------------------------------------------------------------------------------------------
+	// _error	
 	/*static*/ const string _error::file_not_found = "File not found";
 	/*static*/ const string _error::invalid_argument = "Invalid argument";
 	/*static*/ const string _error::sof = "Start of file";
@@ -67,44 +66,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
-	// _group_codes
-	// --------------------------------------------------------------------------------------------
-	/*static*/ const string _group_codes::start = "0";
-	/*static*/ const string _group_codes::name = "2";
-	/*static*/ const string _group_codes::eof = "EOF";
-	/*static*/ const string _group_codes::section = "SECTION";
-	/*static*/ const string _group_codes::endsec = "ENDSEC";
-
-	// --------------------------------------------------------------------------------------------
-	/*static*/ const string _group_codes::entities = "ENTITIES";
-	/*static*/ const string _group_codes::header = "HEADER";
-	/*static*/ const string _group_codes::tables = "TABLES";
-	/*static*/ const string _group_codes::blocks = "BLOCKS";
-	/*static*/ const string _group_codes::line = "LINE";
-	/*static*/ const string _group_codes::vertex = "VERTEX";
-	/*static*/ const string _group_codes::polyline = "POLYLINE";
-	/*static*/ const string _group_codes::seqend = "SEQEND";
-	/*static*/ const string _group_codes::circle = "CIRCLE";
-
-	// --------------------------------------------------------------------------------------------
-	/*static*/ const string _group_codes::subclass = "100";
-	/*static*/ const string _group_codes::layer = "8";
-	/*static*/ const string _group_codes::x = "10";
-	/*static*/ const string _group_codes::y = "20";
-	/*static*/ const string _group_codes::z = "30";
-	/*static*/ const string _group_codes::x2 = "11";
-	/*static*/ const string _group_codes::y2 = "21";
-	/*static*/ const string _group_codes::z2 = "31";
-	/*static*/ const string _group_codes::radius = "40";
-	/*static*/ const string _group_codes::extrusion_x = "210";
-	/*static*/ const string _group_codes::extrusion_y = "220";
-	/*static*/ const string _group_codes::extrusion_z = "230";
-	// _group_codes
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
 	// _reader
-	// --------------------------------------------------------------------------------------------
 	_reader::_reader(ifstream& dxfFile)
 		: m_dxfFile(dxfFile)
 		, m_vecRows()
@@ -183,8 +145,44 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
-	// _group
+	// _group_codes
+	/*static*/ const string _group_codes::start = "0";
+	/*static*/ const string _group_codes::name = "2";
+	/*static*/ const string _group_codes::eof = "EOF";
+	/*static*/ const string _group_codes::section = "SECTION";
+	/*static*/ const string _group_codes::endsec = "ENDSEC";
+
 	// --------------------------------------------------------------------------------------------
+	/*static*/ const string _group_codes::entities = "ENTITIES";
+	/*static*/ const string _group_codes::header = "HEADER";
+	/*static*/ const string _group_codes::tables = "TABLES";
+	/*static*/ const string _group_codes::blocks = "BLOCKS";
+	/*static*/ const string _group_codes::line = "LINE";
+	/*static*/ const string _group_codes::vertex = "VERTEX";
+	/*static*/ const string _group_codes::polyline = "POLYLINE";
+	/*static*/ const string _group_codes::seqend = "SEQEND";
+	/*static*/ const string _group_codes::circle = "CIRCLE";	
+	/*static*/ const string _group_codes::block = "BLOCK";
+	/*static*/ const string _group_codes::endblock = "ENDBLK";
+
+	// --------------------------------------------------------------------------------------------
+	/*static*/ const string _group_codes::subclass = "100";
+	/*static*/ const string _group_codes::layer = "8";
+	/*static*/ const string _group_codes::x = "10";
+	/*static*/ const string _group_codes::y = "20";
+	/*static*/ const string _group_codes::z = "30";
+	/*static*/ const string _group_codes::x2 = "11";
+	/*static*/ const string _group_codes::y2 = "21";
+	/*static*/ const string _group_codes::z2 = "31";
+	/*static*/ const string _group_codes::radius = "40";
+	/*static*/ const string _group_codes::extrusion_x = "210";
+	/*static*/ const string _group_codes::extrusion_y = "220";
+	/*static*/ const string _group_codes::extrusion_z = "230";
+	// _group_codes
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _group
 	_group::_group(const string& strName)
 		: m_strName(strName)
 	{
@@ -206,10 +204,10 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _entity
-	// --------------------------------------------------------------------------------------------
 	_entity::_entity(const string& strName)
 		: _group(strName)
 		, m_mapCode2Value()
+		, m_vecEntities()
 	{
 		// Common Group Codes for Entities, page 61
 		m_mapCode2Value =
@@ -222,6 +220,10 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _entity::~_entity()
 	{
+		for (size_t i = 0; i < m_vecEntities.size(); i++)
+		{
+			delete m_vecEntities[i];
+		}
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -239,6 +241,10 @@ namespace _dxf
 			{
 				itCode2Value->second = reader.forth();
 			}
+			else
+			{
+				reader.forth();
+			}
 
 			reader.forth();
 		} // while (true)
@@ -250,209 +256,6 @@ namespace _dxf
 		return m_mapCode2Value[strCode];
 	}
 	// _entity
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _section
-	// --------------------------------------------------------------------------------------------
-	_section::_section(const string& strName)
-		: _group(strName)
-	{
-	}
-		
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _section::~_section()
-	{
-	}
-	// _section
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _entities_section
-	_entities_section::_entities_section()
-		: _section(_group_codes::entities)
-		, m_vecEntities()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _entities_section::~_entities_section()
-	{
-		for (size_t i = 0; i < m_vecEntities.size(); i++)
-		{
-			delete m_vecEntities[i];
-		}
-	}
-
-	// ----------------------------------------------------------------------------------------
-	const vector<_entity*>& _entities_section::entities() const
-	{
-		return m_vecEntities;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	void _entities_section::load(_reader& reader)
-	{
-		while (true)
-		{
-			if (reader.row() == _group_codes::start)
-			{
-				reader.forth();
-				if (reader.row() == _group_codes::endsec)
-				{
-					reader.forth(); 
-					
-					break;
-				}
-
-				if (reader.row() == _group_codes::line)
-				{
-					reader.forth();
-
-					auto pLine = new _line();
-					m_vecEntities.push_back(pLine);
-
-					pLine->load(reader);
-				} // if (reader.row() == _group_codes::line)
-				else if (reader.row() == _group_codes::polyline)
-				{
-					reader.forth();
-
-					auto pPolyline = new _polyline();
-					m_vecEntities.push_back(pPolyline);
-
-					pPolyline->load(reader);
-				}
-				else if (reader.row() == _group_codes::circle)
-				{
-					reader.forth();
-
-					auto pCircle = new _circle();
-					m_vecEntities.push_back(pCircle);
-
-					pCircle->load(reader);
-				}
-				else
-				{
-					// TODO: ALL ENTITIES
-					reader.forth();
-				}
-			} // if (reader.row() == _group_codes::start)
-			else
-			{
-				reader.forth();
-			}
-		} // while (true)
-	}
-	// _entities_section
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _header_section
-	_header_section::_header_section()
-		: _section(_group_codes::header)
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _header_section::~_header_section()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	void _header_section::load(_reader& reader)
-	{
-		while (true)
-		{
-			if (reader.row() == _group_codes::start)
-			{
-				reader.forth();
-				if (reader.row() == _group_codes::endsec)
-				{
-					reader.forth(); 
-					
-					break;
-				}
-			} // if (reader.row() == _group_codes::start)
-			else
-			{
-				reader.forth();
-			}
-		} // while (true)
-	}
-	// _header_section
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _tables_section
-	_tables_section::_tables_section()
-		: _section(_group_codes::tables)
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _tables_section::~_tables_section()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	void _tables_section::load(_reader& reader)
-	{
-		while (true)
-		{
-			if (reader.row() == _group_codes::start)
-			{
-				reader.forth();
-				if (reader.row() == _group_codes::endsec)
-				{
-					reader.forth();
-
-					break;
-				}
-			} // if (reader.row() == _group_codes::start)
-			else
-			{
-				reader.forth();
-			}
-		} // while (true)
-	}
-	// _tables_section
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
-	// _blocks_section
-	_blocks_section::_blocks_section()
-		: _section(_group_codes::blocks)
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _blocks_section::~_blocks_section()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	void _blocks_section::load(_reader& reader)
-	{
-		while (true)
-		{
-			if (reader.row() == _group_codes::start)
-			{
-				reader.forth();
-				if (reader.row() == _group_codes::endsec)
-				{
-					reader.forth();
-
-					break;
-				}
-			} // if (reader.row() == _group_codes::start)
-			else
-			{
-				reader.forth();
-			}
-		} // while (true)
-	}
-	// _blocks_section
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
@@ -817,6 +620,340 @@ namespace _dxf
 		return 0;
 	}
 	// _polyline
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _endblk
+	_endblk::_endblk()
+		: _entity(_group_codes::endblock)
+	{
+		// ENDBLK, page 59
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _endblk::~_endblk()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _endblk::createInstance(int64_t /*iModel*/)
+	{
+		assert(false); // Not supported!
+
+		return 0;
+	}
+	// _endblk
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _block
+	_block::_block()
+		: _entity(_group_codes::block)
+		, m_pEndblk(nullptr)
+	{
+		// BLOCK, page 58
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::name, ""}, // Block name
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _block::~_block()
+	{
+		delete m_pEndblk;
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ void _block::load(_reader& reader)
+	{
+		while (true)
+		{
+			_entity::load(reader);
+
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endblock)
+				{
+					reader.forth();
+
+					assert(m_pEndblk == nullptr);
+
+					m_pEndblk = new _endblk();
+					m_pEndblk->load(reader);
+				}
+				else if (reader.row() == _group_codes::line)
+				{
+					reader.forth();
+
+					auto pLine = new _line();
+					m_vecEntities.push_back(pLine);
+
+					pLine->load(reader);
+				} // if (reader.row() == _group_codes::line)
+				else if (reader.row() == _group_codes::polyline)
+				{
+					reader.forth();
+
+					auto pPolyline = new _polyline();
+					m_vecEntities.push_back(pPolyline);
+
+					pPolyline->load(reader);
+				}
+				else if (reader.row() == _group_codes::circle)
+				{
+					reader.forth();
+
+					auto pCircle = new _circle();
+					m_vecEntities.push_back(pCircle);
+
+					pCircle->load(reader);
+				}
+				else
+				{
+					reader.back();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _block::createInstance(int64_t iModel)
+	{
+		assert(0); // todo
+
+		return 0;
+	}
+	// _block
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _section
+	_section::_section(const string& strName)
+		: _group(strName)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _section::~_section()
+	{
+	}
+	// _section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _entities_section
+	_entities_section::_entities_section()
+		: _section(_group_codes::entities)
+		, m_vecEntities()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _entities_section::~_entities_section()
+	{
+		for (size_t i = 0; i < m_vecEntities.size(); i++)
+		{
+			delete m_vecEntities[i];
+		}
+	}
+
+	// ----------------------------------------------------------------------------------------
+	const vector<_entity*>& _entities_section::entities() const
+	{
+		return m_vecEntities;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entities_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+
+				if (reader.row() == _group_codes::line)
+				{
+					reader.forth();
+
+					auto pLine = new _line();
+					m_vecEntities.push_back(pLine);
+
+					pLine->load(reader);
+				} // if (reader.row() == _group_codes::line)
+				else if (reader.row() == _group_codes::polyline)
+				{
+					reader.forth();
+
+					auto pPolyline = new _polyline();
+					m_vecEntities.push_back(pPolyline);
+
+					pPolyline->load(reader);
+				}
+				else if (reader.row() == _group_codes::circle)
+				{
+					reader.forth();
+
+					auto pCircle = new _circle();
+					m_vecEntities.push_back(pCircle);
+
+					pCircle->load(reader);
+				}
+				else
+				{
+					// TODO: ALL ENTITIES
+					reader.forth();
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _entities_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _header_section
+	_header_section::_header_section()
+		: _section(_group_codes::header)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _header_section::~_header_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _header_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _header_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _tables_section
+	_tables_section::_tables_section()
+		: _section(_group_codes::tables)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _tables_section::~_tables_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _tables_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _tables_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _blocks_section
+	_blocks_section::_blocks_section()
+		: _section(_group_codes::blocks)
+		, m_vecBlocks()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _blocks_section::~_blocks_section()
+	{
+		for (size_t i = 0; i < m_vecBlocks.size(); i++)
+		{
+			delete m_vecBlocks[i];
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _blocks_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+				else if (reader.row() == _group_codes::block)
+				{
+					reader.forth();
+
+					auto pBlock = new _block();
+					m_vecBlocks.push_back(pBlock);
+
+					pBlock->load(reader);
+				}
+				else
+				{
+					reader.forth();
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _blocks_section
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
