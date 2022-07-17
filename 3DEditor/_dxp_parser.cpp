@@ -286,9 +286,7 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _line::createInstance(_parser* pParser)
 	{
-		int64_t iModel = pParser->getModel();
-
-		int64_t iClass = GetClassByName(iModel, "Line3D");
+		int64_t iClass = GetClassByName(pParser->getModel(), "Line3D");
 		assert(iClass != 0);
 
 		vector<double> vecVertices
@@ -304,7 +302,7 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
 
 		return iInstance;
 	}
@@ -380,18 +378,16 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _circle::createInstance(_parser* pParser)
 	{
-		int64_t iModel = pParser->getModel();
-
-		int64_t iCircleClass = GetClassByName(iModel, "Circle");
+		int64_t iCircleClass = GetClassByName(pParser->getModel(), "Circle");
 		assert(iCircleClass != 0);		
 
-		int64_t iExtrusionAreaSolidClass = GetClassByName(iModel, "ExtrusionAreaSolid");
+		int64_t iExtrusionAreaSolidClass = GetClassByName(pParser->getModel(), "ExtrusionAreaSolid");
 		assert(iExtrusionAreaSolidClass != 0);
 
-		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
+		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
 		assert(iTransformationClass != 0);
 
-		int64_t iMatrixClass = GetClassByName(iModel, "Matrix");
+		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
 		assert(iMatrixClass != 0);
 
 		// Circle
@@ -399,13 +395,13 @@ namespace _dxf
 		assert(iCircleInstance != 0);		
 
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
-		SetDataTypeProperty(iCircleInstance, GetPropertyByName(iModel, "a"), &dValue, 1);		
+		SetDataTypeProperty(iCircleInstance, GetPropertyByName(pParser->getModel(), "a"), &dValue, 1);
 
 		// ExtrusionAreaSolid
 		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
 		assert(iExtrusionAreaSolidInstance != 0);
 
-		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iCircleInstance, 1);		
+		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionArea"), &iCircleInstance, 1);
 
 		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
 		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
@@ -414,30 +410,30 @@ namespace _dxf
 		dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
 
 		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionDirection"), vecValues.data(), vecValues.size());		
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionDirection"), vecValues.data(), vecValues.size());
 		
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionLength"), &dValue, 1);
 
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
 		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
 		assert(iTransformationInstance != 0);
 
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iExtrusionAreaSolidInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iExtrusionAreaSolidInstance, 1);
 
 		return iTransformationInstance;
 	}
@@ -559,8 +555,6 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
-		int64_t iModel = pParser->getModel();
-
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -574,20 +568,20 @@ namespace _dxf
 					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
 				}
 
-				int64_t iClass = GetClassByName(iModel, "PolyLine3D");
+				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
 				assert(iClass != 0);
 
 				int64_t iInstance = CreateInstance(iClass, type().c_str());
 				assert(iInstance != 0);
 
-				SetDataTypeProperty(iInstance, GetPropertyByName(iModel, "points"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
 
 				return iInstance;
 			} // case 1:
 
 			case 64:
 			{	
-				int64_t iTriangleSetClass = GetClassByName(iModel, "TriangleSet");
+				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
 				assert(iTriangleSetClass != 0);
 
 				vector<double> vecVertices;
@@ -596,9 +590,9 @@ namespace _dxf
 				{
 					if (itVertex->value(_group_codes::subclass) == "AcDbFaceRecord")
 					{
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex1).c_str())) - 1);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex2).c_str())) - 1);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex3).c_str())) - 1);
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
 
 						continue;
 					}
@@ -611,8 +605,8 @@ namespace _dxf
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
 
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(iModel, "vertices"), vecVertices.data(), vecVertices.size());
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(iModel, "indices"), vecIndices.data(), vecIndices.size());
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
 
 				return iTriangleSetInstance;
 			} // case 64:
@@ -808,27 +802,25 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
-		int64_t iModel = pParser->getModel();
-
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		assert(pBlock != nullptr);
 
 		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
-		int64_t iExtrusionAreaSolidClass = GetClassByName(iModel, "ExtrusionAreaSolid");
+		int64_t iExtrusionAreaSolidClass = GetClassByName(pParser->getModel(), "ExtrusionAreaSolid");
 		assert(iExtrusionAreaSolidClass != 0);
 
-		int64_t iTransformationClass = GetClassByName(iModel, "Transformation");
+		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
 		assert(iTransformationClass != 0);
 
-		int64_t iMatrixClass = GetClassByName(iModel, "Matrix");
+		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
 		assert(iMatrixClass != 0);
 
 		// ExtrusionAreaSolid
 		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
 		assert(iExtrusionAreaSolidInstance != 0);
 
-		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionArea"), &iBlockInstance, 1);
+		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionArea"), &iBlockInstance, 1);
 
 		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
 		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
@@ -837,30 +829,30 @@ namespace _dxf
 		double dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
 
 		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionDirection"), vecValues.data(), vecValues.size());
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionDirection"), vecValues.data(), vecValues.size());
 
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(iModel, "extrusionLength"), &dValue, 1);
+		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionLength"), &dValue, 1);
 
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
 		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_41"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_42"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_43"), &dValue, 1);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
 		assert(iTransformationInstance != 0);
 
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "matrix"), &iMatrixInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(iModel, "object"), &iExtrusionAreaSolidInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iExtrusionAreaSolidInstance, 1);
 
 		return iTransformationInstance;
 	}
