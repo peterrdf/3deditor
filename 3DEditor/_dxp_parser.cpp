@@ -356,6 +356,7 @@ namespace _dxf
 			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
 			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
 			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)			
+			{_polyline::flag, "0"}, // Polyline flag (bit-coded; default = 0): 1 = Closed; 128 = Plinegen
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -377,9 +378,6 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _lwpolyline::createInstance(_parser* pParser)
 	{
-		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
-		assert(iClass != 0);
-
 		vector<string> vecXValues;
 		_tokenize(m_mapCode2Value[_group_codes::x], VALUE_DELIMITER, vecXValues);
 
@@ -403,9 +401,24 @@ namespace _dxf
 			vecVertices.push_back(0.);
 		}
 
-		vecVertices.push_back(atof(vecXValues[0].c_str()));
-		vecVertices.push_back(atof(vecYValues[0].c_str()));
-		vecVertices.push_back(0.);
+		int iFlag = atoi(m_mapCode2Value[_polyline::flag].c_str());
+		if (iFlag == 1)
+		{
+			vecVertices.push_back(atof(vecXValues[0].c_str()));
+			vecVertices.push_back(atof(vecYValues[0].c_str()));
+			vecVertices.push_back(0.);
+		}
+		else if (iFlag == 128)
+		{
+			assert(false); // TODO
+		}
+		else
+		{
+			assert(false); // TODO
+		}
+
+		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
+		assert(iClass != 0);
 
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);

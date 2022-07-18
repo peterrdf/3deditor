@@ -311,12 +311,14 @@ namespace _dxf
 	class _polyline : public _entity
 	{
 
-	private: // Members
+	public: // Members
 
 		// ----------------------------------------------------------------------------------------
 		static const string flag;
 		static const string m;
 		static const string n;
+
+	private: // Members
 
 		// ----------------------------------------------------------------------------------------
 		vector<_vertex*> m_vecVertices;
