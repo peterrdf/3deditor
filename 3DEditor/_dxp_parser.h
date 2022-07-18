@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 
 using namespace std;
 
@@ -110,8 +111,9 @@ namespace _dxf
 		static const string tables;
 		static const string blocks;
 		static const string line;
-		static const string vertex;
+		static const string vertex;		
 		static const string polyline;
+		static const string lwpolyline;
 		static const string seqend;
 		static const string circle;
 		static const string block;
@@ -170,6 +172,9 @@ namespace _dxf
 		map<string, string> m_mapCode2Value;
 
 		// ----------------------------------------------------------------------------------------
+		set<string> m_setMultiValueCodes;
+
+		// ----------------------------------------------------------------------------------------
 		vector<_entity*> m_vecEntities;
 
 	public: // Methods
@@ -210,6 +215,26 @@ namespace _dxf
 		virtual int64_t createInstance(_parser* pParser);
 	};
 	// _line
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _lwpolyline
+	// --------------------------------------------------------------------------------------------
+	class _lwpolyline : public _entity
+	{
+
+	public: // Methods
+
+		// ----------------------------------------------------------------------------------------
+		_lwpolyline();
+
+		// ----------------------------------------------------------------------------------------
+		virtual ~_lwpolyline();
+
+		// ----------------------------------------------------------------------------------------
+		virtual int64_t createInstance(_parser* pParser);
+	};
+	// _lwpolyline
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------

@@ -3,6 +3,9 @@
 #include "conceptMesh.h"
 
 // ------------------------------------------------------------------------------------------------
+static char VALUE_DELIMITER = '\n';
+
+// ------------------------------------------------------------------------------------------------
 static inline string& ltrim(string& s) 
 {
 	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
@@ -25,7 +28,7 @@ static inline string& trim(string& s)
 }
 
 // ------------------------------------------------------------------------------------------------
-static inline double vector3_normalize(double& dX, double& dY, double& dZ)
+static inline double _vector3_normalize(double& dX, double& dY, double& dZ)
 {
 	double dSize = pow(dX, 2.) + pow(dY, 2.) + pow(dZ, 2.);
 	if (dSize > 0.0000000000000001)
@@ -45,6 +48,19 @@ static inline double vector3_normalize(double& dX, double& dY, double& dZ)
 		dZ = 0.;
 
 		return	0.;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+static inline void _tokenize(string const& str, const char delim, vector<std::string>& out)
+{
+	size_t start;
+	size_t end = 0;
+
+	while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+	{
+		end = str.find(delim, start);
+		out.push_back(str.substr(start, end - start));
 	}
 }
 
@@ -158,9 +174,10 @@ namespace _dxf
 	/*static*/ const string _group_codes::header = "HEADER";
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
-	/*static*/ const string _group_codes::line = "LINE";
+	/*static*/ const string _group_codes::line = "LINE";	
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
+	/*static*/ const string _group_codes::lwpolyline = "LWPOLYLINE";
 	/*static*/ const string _group_codes::seqend = "SEQEND";
 	/*static*/ const string _group_codes::circle = "CIRCLE";	
 	/*static*/ const string _group_codes::block = "BLOCK";
@@ -209,6 +226,7 @@ namespace _dxf
 	_entity::_entity(const string& strName)
 		: _group(strName)
 		, m_mapCode2Value()
+		, m_setMultiValueCodes()
 		, m_vecEntities()
 	{
 		// Common Group Codes for Entities, page 61
@@ -241,7 +259,22 @@ namespace _dxf
 			auto itCode2Value = m_mapCode2Value.find(reader.row());
 			if (itCode2Value != m_mapCode2Value.end())
 			{
-				itCode2Value->second = reader.forth();
+				auto strValue = reader.forth();
+
+				auto itMultiValueCode = m_setMultiValueCodes.find(itCode2Value->first);
+				if (itMultiValueCode != m_setMultiValueCodes.end())
+				{
+					if (!itCode2Value->second.empty())
+					{
+						itCode2Value->second += VALUE_DELIMITER;
+					}
+
+					itCode2Value->second += strValue;
+				}
+				else
+				{
+					itCode2Value->second = strValue;
+				}				
 			}
 			else
 			{
@@ -308,6 +341,80 @@ namespace _dxf
 		return iInstance;
 	}
 	// _line
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _lwpolyline
+	_lwpolyline::_lwpolyline()
+		: _entity(_group_codes::lwpolyline)
+	{
+		// LINE, page 101
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::x, ""}, // Vertex coordinates (in OCS), multiple entries; one entry for each vertex; DXF: X value; APP: 2D point
+			{_group_codes::y, ""}, // DXF: Y value of vertex coordinates (in OCS), multiple entries; one entry for each vertex
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)			
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+
+		set<string> setMultiValueCodes =
+		{
+			_group_codes::x,
+			_group_codes::y,
+		};
+
+		m_setMultiValueCodes.insert(setMultiValueCodes.begin(), setMultiValueCodes.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _lwpolyline::~_lwpolyline()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _lwpolyline::createInstance(_parser* pParser)
+	{
+		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
+		assert(iClass != 0);
+
+		vector<string> vecXValues;
+		_tokenize(m_mapCode2Value[_group_codes::x], VALUE_DELIMITER, vecXValues);
+
+		vector<string> vecYValues;
+		_tokenize(m_mapCode2Value[_group_codes::y], VALUE_DELIMITER, vecYValues);
+
+		if (vecXValues.empty() || vecYValues.empty())
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		assert(vecXValues.size() == vecYValues.size());
+
+		vector<double> vecVertices;
+		for (size_t i = 0; i < vecXValues.size(); i++)
+		{
+			vecVertices.push_back(atof(vecXValues[i].c_str()));
+			vecVertices.push_back(atof(vecYValues[i].c_str()));
+			vecVertices.push_back(0.);
+		}
+
+		vecVertices.push_back(atof(vecXValues[0].c_str()));
+		vecVertices.push_back(atof(vecYValues[0].c_str()));
+		vecVertices.push_back(0.);
+
+		int64_t iInstance = CreateInstance(iClass, type().c_str());
+		assert(iInstance != 0);
+
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+
+		return iInstance;
+	}
+	// _lwpolyline
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
@@ -539,7 +646,7 @@ namespace _dxf
 					m_vecVertices.push_back(pVertex);
 
 					pVertex->load(reader);
-				} // if (reader.row() == _group_codes::line)
+				}
 				else
 				{	
 					reader.back();
@@ -557,6 +664,13 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
+		if (m_vecVertices.empty())
+		{
+			assert(false);
+
+			return 0;
+		}
+
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -569,6 +683,10 @@ namespace _dxf
 					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
 					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
 				}
+
+				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::x).c_str()));
+				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::y).c_str()));
+				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::z).c_str()));
 
 				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
 				assert(iClass != 0);
@@ -696,7 +814,7 @@ namespace _dxf
 					m_vecEntities.push_back(pLine);
 
 					pLine->load(reader);
-				} // if (reader.row() == _group_codes::line)
+				}
 				else if (reader.row() == _group_codes::polyline)
 				{
 					reader.forth();
@@ -705,6 +823,15 @@ namespace _dxf
 					m_vecEntities.push_back(pPolyline);
 
 					pPolyline->load(reader);
+				}
+				else if (reader.row() == _group_codes::lwpolyline)
+				{
+					reader.forth();
+
+					auto pLWPolyline = new _lwpolyline();
+					m_vecEntities.push_back(pLWPolyline);
+
+					pLWPolyline->load(reader);
 				}
 				else if (reader.row() == _group_codes::circle)
 				{
@@ -922,7 +1049,7 @@ namespace _dxf
 					m_vecEntities.push_back(pLine);
 
 					pLine->load(reader);
-				} // if (reader.row() == _group_codes::line)
+				}
 				else if (reader.row() == _group_codes::polyline)
 				{
 					reader.forth();
@@ -931,6 +1058,15 @@ namespace _dxf
 					m_vecEntities.push_back(pPolyline);
 
 					pPolyline->load(reader);
+				}
+				else if (reader.row() == _group_codes::lwpolyline)
+				{
+					reader.forth();
+
+					auto pLWPolyline = new _lwpolyline();
+					m_vecEntities.push_back(pLWPolyline);
+
+					pLWPolyline->load(reader);
 				}
 				else if (reader.row() == _group_codes::circle)
 				{
