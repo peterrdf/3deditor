@@ -803,6 +803,8 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ void _block::load(_reader& reader)
 	{
+		_entity* pEntity = nullptr;
+
 		while (true)
 		{
 			_entity::load(reader);
@@ -819,41 +821,9 @@ namespace _dxf
 					m_pEndblk = new _endblk();
 					m_pEndblk->load(reader);
 				}
-				else if (reader.row() == _group_codes::line)
-				{
-					reader.forth();
-
-					auto pLine = new _line();
-					m_vecEntities.push_back(pLine);
-
-					pLine->load(reader);
-				}
-				else if (reader.row() == _group_codes::polyline)
-				{
-					reader.forth();
-
-					auto pPolyline = new _polyline();
-					m_vecEntities.push_back(pPolyline);
-
-					pPolyline->load(reader);
-				}
-				else if (reader.row() == _group_codes::lwpolyline)
-				{
-					reader.forth();
-
-					auto pLWPolyline = new _lwpolyline();
-					m_vecEntities.push_back(pLWPolyline);
-
-					pLWPolyline->load(reader);
-				}
-				else if (reader.row() == _group_codes::circle)
-				{
-					reader.forth();
-
-					auto pCircle = new _circle();
-					m_vecEntities.push_back(pCircle);
-
-					pCircle->load(reader);
+				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
+				{	
+					m_vecEntities.push_back(pEntity);
 				}
 				else
 				{
@@ -1042,6 +1012,8 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	void _entities_section::load(_reader& reader)
 	{
+		_entity* pEntity = nullptr;
+
 		while (true)
 		{
 			if (reader.row() == _group_codes::start)
@@ -1054,54 +1026,12 @@ namespace _dxf
 					break;
 				}
 
-				if (reader.row() == _group_codes::line)
+				if ((pEntity = _parser::loadEntity(reader)) != nullptr)
 				{
-					reader.forth();
-
-					auto pLine = new _line();
-					m_vecEntities.push_back(pLine);
-
-					pLine->load(reader);
-				}
-				else if (reader.row() == _group_codes::polyline)
-				{
-					reader.forth();
-
-					auto pPolyline = new _polyline();
-					m_vecEntities.push_back(pPolyline);
-
-					pPolyline->load(reader);
-				}
-				else if (reader.row() == _group_codes::lwpolyline)
-				{
-					reader.forth();
-
-					auto pLWPolyline = new _lwpolyline();
-					m_vecEntities.push_back(pLWPolyline);
-
-					pLWPolyline->load(reader);
-				}
-				else if (reader.row() == _group_codes::circle)
-				{
-					reader.forth();
-
-					auto pCircle = new _circle();
-					m_vecEntities.push_back(pCircle);
-
-					pCircle->load(reader);
-				}
-				else if (reader.row() == _group_codes::insert)
-				{
-					reader.forth();
-
-					auto pInsert = new _insert();
-					m_vecEntities.push_back(pInsert);
-
-					pInsert->load(reader);
+					m_vecEntities.push_back(pEntity);
 				}
 				else
-				{
-					// TODO: ALL ENTITIES
+				{					
 					reader.forth();
 				}
 			} // if (reader.row() == _group_codes::start)
@@ -1369,6 +1299,60 @@ namespace _dxf
 		* ifcengine
 		*/
 		createInstances();		
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*static*/ _entity* _parser::loadEntity(_reader& reader)
+	{
+		if (reader.row() == _group_codes::line)
+		{
+			reader.forth();
+
+			auto pLine = new _line();
+			pLine->load(reader);
+
+			return pLine;
+		}
+		else if (reader.row() == _group_codes::polyline)
+		{
+			reader.forth();
+
+			auto pPolyline = new _polyline();
+			pPolyline->load(reader);
+
+			return pPolyline;
+		}
+		else if (reader.row() == _group_codes::lwpolyline)
+		{
+			reader.forth();
+
+			auto pLWPolyline = new _lwpolyline();
+			pLWPolyline->load(reader);
+
+			return pLWPolyline;
+		}
+		else if (reader.row() == _group_codes::circle)
+		{
+			reader.forth();
+
+			auto pCircle = new _circle();
+			pCircle->load(reader);
+
+			return pCircle;
+		}
+		else if (reader.row() == _group_codes::insert)
+		{
+			reader.forth();
+
+			auto pInsert = new _insert();
+			pInsert->load(reader);
+
+			return pInsert;
+		}
+
+		// TODO: ALL ENTITIES
+
+		return nullptr;
 	}
 	
 	// ----------------------------------------------------------------------------------------

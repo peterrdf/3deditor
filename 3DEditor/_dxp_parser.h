@@ -544,6 +544,9 @@ namespace _dxf
 		void load(const wchar_t* szFile);
 
 		// ----------------------------------------------------------------------------------------
+		static _entity* loadEntity(_reader& reader);
+
+		// ----------------------------------------------------------------------------------------
 		_block* findBlockByName(const string& strBlockName);
 
 	private: // Methods
