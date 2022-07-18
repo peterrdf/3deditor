@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "_dxp_parser.h"
+#include "conceptMesh.h"
 
 // ------------------------------------------------------------------------------------------------
 static inline string& ltrim(string& s) 
@@ -379,10 +380,7 @@ namespace _dxf
 	/*virtual*/ int64_t _circle::createInstance(_parser* pParser)
 	{
 		int64_t iCircleClass = GetClassByName(pParser->getModel(), "Circle");
-		assert(iCircleClass != 0);		
-
-		int64_t iExtrusionAreaSolidClass = GetClassByName(pParser->getModel(), "ExtrusionAreaSolid");
-		assert(iExtrusionAreaSolidClass != 0);
+		assert(iCircleClass != 0);
 
 		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
 		assert(iTransformationClass != 0);
@@ -397,34 +395,39 @@ namespace _dxf
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
 		SetDataTypeProperty(iCircleInstance, GetPropertyByName(pParser->getModel(), "a"), &dValue, 1);
 
-		// ExtrusionAreaSolid
-		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
-		assert(iExtrusionAreaSolidInstance != 0);
+		// Arbitrary Axis Algorithm, page 252		
+		_vector3f Wy(0., 1., 0.);
+		_vector3f Wz(0., 0., 1.);
 
-		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionArea"), &iCircleInstance, 1);
+		double Nx = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
+		double Ny = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
+		double Nz = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
 
-		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
-		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
-		double dExtrusionZ = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
+		_vector3f N(Nx, Ny, Nz);
 
-		dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
+		_vector3f Ax;
+		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
+		{
+			Ax = Wy.cross(N);
+		}
+		else
+		{
+			Ax = Wz.cross(N);
+		}
 
-		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionDirection"), vecValues.data(), vecValues.size());
-		
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionLength"), &dValue, 1);
+		_vector3f Ay = N.cross(Ax);			
 
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
+		dValue = atof(m_mapCode2Value[_group_codes::x].c_str()) * Ax.getX();
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		dValue = atof(m_mapCode2Value[_group_codes::y].c_str()) * Ay.getY();
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		dValue = atof(m_mapCode2Value[_group_codes::z].c_str()) * Nz;
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
@@ -432,8 +435,7 @@ namespace _dxf
 		assert(iTransformationInstance != 0);
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
-
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iExtrusionAreaSolidInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iCircleInstance, 1);
 
 		return iTransformationInstance;
 	}
@@ -802,42 +804,44 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
+		// Arbitrary Axis Algorithm, page 252		
+		/*_vector3f Wy(0., 1., 0.);
+		_vector3f Wz(0., 0., 1.);
+
+		double Nx = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
+		double Ny = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
+		double Nz = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
+
+		_vector3f N(Nx, Ny, Nz);
+
+		_vector3f Ax;
+		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
+		{
+			Ax = Wy.cross(N);
+		}
+		else
+		{
+			Ax = Wz.cross(N);
+		}
+
+		_vector3f Ay = N.cross(Ax);*/
+
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		assert(pBlock != nullptr);
 
 		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
-		int64_t iExtrusionAreaSolidClass = GetClassByName(pParser->getModel(), "ExtrusionAreaSolid");
-		assert(iExtrusionAreaSolidClass != 0);
-
 		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
 		assert(iTransformationClass != 0);
 
 		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
-		assert(iMatrixClass != 0);
-
-		// ExtrusionAreaSolid
-		int64_t iExtrusionAreaSolidInstance = CreateInstance(iExtrusionAreaSolidClass, type().c_str());
-		assert(iExtrusionAreaSolidInstance != 0);
-
-		SetObjectProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionArea"), &iBlockInstance, 1);
-
-		double dExtrusionX = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
-		double dExtrusionY = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
-		double dExtrusionZ = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
-
-		double dValue = vector3_normalize(dExtrusionX, dExtrusionY, dExtrusionZ);
-
-		vector<double> vecValues = { dExtrusionX, dExtrusionY, dExtrusionZ };
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionDirection"), vecValues.data(), vecValues.size());
-
-		SetDataTypeProperty(iExtrusionAreaSolidInstance, GetPropertyByName(pParser->getModel(), "extrusionLength"), &dValue, 1);
+		assert(iMatrixClass != 0);		
 
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
+		double dValue = atof(m_mapCode2Value[_group_codes::x].c_str());;
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
@@ -851,8 +855,7 @@ namespace _dxf
 		assert(iTransformationInstance != 0);
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
-
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iExtrusionAreaSolidInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iBlockInstance, 1);
 
 		return iTransformationInstance;
 	}
