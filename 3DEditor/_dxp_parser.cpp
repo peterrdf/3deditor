@@ -871,6 +871,7 @@ namespace _dxf
 		int64_t iCollectionClass = GetClassByName(pParser->getModel(), "Collection");
 		assert(iCollectionClass != 0);
 
+		vector<int64_t> vecCollections;
 		for (auto itLayer2Instances : mapLayer2Instances)
 		{
 			string strCollectionName = "Layer: '";
@@ -879,9 +880,18 @@ namespace _dxf
 
 			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), itLayer2Instances.second.data(), itLayer2Instances.second.size());
+
+			vecCollections.push_back(iCollectionInstance);
 		}
 
-		return iCollectionClass;
+		string strCollectionName = "BLOCK: '";
+		strCollectionName += m_mapCode2Value[_group_codes::name];
+		strCollectionName += "'";
+
+		int64_t iBlockCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
+		SetObjectProperty(iBlockCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());
+
+		return iBlockCollectionInstance;
 	}
 	// _block
 	// --------------------------------------------------------------------------------------------
