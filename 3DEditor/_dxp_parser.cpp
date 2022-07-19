@@ -1212,9 +1212,9 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _parser::load(const wchar_t* szFile)
+	void _parser::load(const char* szFile)
 	{
-		if ((szFile == nullptr) || (wcslen(szFile) == 0))
+		if ((szFile == nullptr) || (strlen(szFile) == 0))
 		{
 			throw _error(_error::invalid_argument);
 		}

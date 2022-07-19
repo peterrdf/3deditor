@@ -950,7 +950,7 @@ void CRDFModel::Load(const wchar_t * szPath)
 		try
 		{
 			_dxf::_parser parser(m_iModel);
-			parser.load(szPath);
+			parser.load(CW2A(szPath));
 		}
 		catch (const std::runtime_error& ex)
 		{

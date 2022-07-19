@@ -541,7 +541,7 @@ namespace _dxf
 		int64_t getModel() const;
 
 		// ----------------------------------------------------------------------------------------
-		void load(const wchar_t* szFile);
+		void load(const char* szFile);
 
 		// ----------------------------------------------------------------------------------------
 		static _entity* loadEntity(_reader& reader);
