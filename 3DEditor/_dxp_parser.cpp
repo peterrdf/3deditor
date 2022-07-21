@@ -286,11 +286,41 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _entity::value(const string& strCode)
+	bool _entity::hasValue(const string& strCode)
+	{
+		return m_mapCode2Value.find(strCode) != m_mapCode2Value.end();
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const string& _entity::getValue(const string& strCode)
 	{
 		return m_mapCode2Value[strCode];
 	}
 	// _entity
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _extrusion
+	_extrusion::_extrusion(_entity* pEntity)
+		: m_pEntity(pEntity)
+		, m_mapMapping()
+		, m_dXExtrusion(1.)
+		, m_dYExtrusion(1.)
+		, m_dZExtrusion(1.)
+	{
+		m_mapMapping =
+		{
+			{_group_codes::x, _group_codes::x},
+			{_group_codes::y, _group_codes::y},
+			{_group_codes::z, _group_codes::z},
+		};
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _extrusion::~_extrusion()
+	{
+	}
+	// _extrusion
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
@@ -692,14 +722,14 @@ namespace _dxf
 				vector<double> vecVertices;
 				for (auto itVertex : m_vecVertices)
 				{
-					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
 				}
 
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::x).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::y).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::z).c_str()));
+				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::x).c_str()));
+				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::y).c_str()));
+				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::z).c_str()));
 
 				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
 				assert(iClass != 0);
@@ -721,18 +751,18 @@ namespace _dxf
 				vector<int64_t> vecIndices;
 				for (auto itVertex : m_vecVertices)
 				{
-					if (itVertex->value(_group_codes::subclass) == "AcDbFaceRecord")
+					if (itVertex->getValue(_group_codes::subclass) == "AcDbFaceRecord")
 					{
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
 
 						continue;
 					}
 
-					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
+					vecVertices.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
 				}
 
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
@@ -851,7 +881,7 @@ namespace _dxf
 			auto iInstance = itEntity->createInstance(pParser);
 			if (iInstance != 0)
 			{
-				auto strLayer = itEntity->value(_group_codes::layer);
+				auto strLayer = itEntity->getValue(_group_codes::layer);
 
 				auto itLayer2Instances = mapLayer2Instances.find(strLayer);
 				if (itLayer2Instances != mapLayer2Instances.end())
@@ -1375,7 +1405,7 @@ namespace _dxf
 				auto pBlocksSection = dynamic_cast<_blocks_section*>(itSection);
 				for (auto itBlock : pBlocksSection->blocks())
 				{
-					if (itBlock->value(_group_codes::name) == strBlockName)
+					if (itBlock->getValue(_group_codes::name) == strBlockName)
 					{
 						return itBlock;
 					}
@@ -1408,7 +1438,7 @@ namespace _dxf
 					auto iInstance = pEntity->createInstance(this);
 					if (iInstance != 0)
 					{
-						auto strLayer = pEntity->value(_group_codes::layer);
+						auto strLayer = pEntity->getValue(_group_codes::layer);
 
 						auto itLayer2Instances = mapLayer2Instances.find(strLayer);
 						if (itLayer2Instances != mapLayer2Instances.end())
