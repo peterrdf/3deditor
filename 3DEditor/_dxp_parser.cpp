@@ -401,21 +401,35 @@ namespace _dxf
 			// Z			
 			m_mapMapping[_group_codes::z] = _group_codes::z;
 
-			m_dZFactor = Nz;
-
-			assert(X != _group_codes::z);
-			assert(Y != _group_codes::z);
-			assert(X != Y);			
+			m_dZFactor = Nz;				
 		} // if (Nz != 0.)
 		else if (Nx != 0.)
 		{
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::z;
+
+			m_dXFactor = Nx;
+
+			// Y
+			string Y = getMapping(Ax);
+			m_mapMapping[_group_codes::y] = Y;
+
+			m_dYFactor = getFactor(Ax);
+
+			// Z
+			string Z = getMapping(Ay);
+			m_mapMapping[_group_codes::z] = Z;
+
+			m_dZFactor = getFactor(Ay);
 		}
 		else if (Ny != 0.)
 		{
 			assert(false); // TODO
 		}
+
+		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::y]);
+		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::z]);
+		assert(m_mapMapping[_group_codes::y] != m_mapMapping[_group_codes::z]);
 	}
 
 	// --------------------------------------------------------------------------------------------
