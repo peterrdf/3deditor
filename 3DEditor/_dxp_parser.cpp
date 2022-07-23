@@ -615,7 +615,7 @@ namespace _dxf
 			{polyface_mesh_vertex1, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex2, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex3, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
-			{polyface_mesh_vertex4, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
+			{polyface_mesh_vertex4, ""}, // Polyface mesh vertex index (optional; present only if nonzero)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -875,6 +875,13 @@ namespace _dxf
 						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
 						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
 						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+
+						if (itVertex->getValue(_vertex::polyface_mesh_vertex4) != "")						
+						{	
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex4).c_str())) - 1/*to 0-based index*/);
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
+						}						
 
 						continue;
 					}
