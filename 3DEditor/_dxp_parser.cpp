@@ -1322,6 +1322,20 @@ namespace _dxf
 		, m_vecSections()
 	{
 		assert(m_iModel != 0);
+
+		/*
+		* Default color
+		*/
+		// ((R * 255 + G) * 255 + B) * 255 + A
+		uint32_t iR = 122;
+		uint32_t iG = 122;
+		uint32_t iB = 122;
+		uint32_t iDefaultColor = 256 * 256 * 256 * iR +
+			256 * 256 * iG +
+			256 * iB +
+			255;
+
+		SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
 	}
 
 	// --------------------------------------------------------------------------------------------
