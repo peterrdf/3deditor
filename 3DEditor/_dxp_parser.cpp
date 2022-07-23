@@ -337,8 +337,14 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	double _extrusion::getValue(const string& strCode)
 	{
+		return getValue(m_pEntity,strCode);
+	}
+
+	// ----------------------------------------------------------------------------------------
+	double _extrusion::getValue(_entity* pEntity, const string& strCode)
+	{
 		string strMapping = m_mapMapping[strCode];
-		string strValue = m_pEntity->getValue(strMapping);
+		string strValue = pEntity->getValue(strMapping);
 
 		double dValue = atof(strValue.c_str());
 		if ((strCode == _group_codes::x) || (strCode == _group_codes::x2))
@@ -861,9 +867,9 @@ namespace _dxf
 						continue;
 					}
 
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
+					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::x));
+					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::y));
+					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::z));
 				}
 
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
