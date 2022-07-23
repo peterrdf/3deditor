@@ -296,6 +296,12 @@ namespace _dxf
 	{
 		return m_mapCode2Value[strCode];
 	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entity::setValue(const string& strCode, const string& strValue)
+	{
+		m_mapCode2Value[strCode] = strValue;
+	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
 
@@ -315,6 +321,9 @@ namespace _dxf
 			{_group_codes::x, _group_codes::x},
 			{_group_codes::y, _group_codes::y},
 			{_group_codes::z, _group_codes::z},
+			{_group_codes::x2, _group_codes::x2},
+			{_group_codes::y2, _group_codes::y2},
+			{_group_codes::z2, _group_codes::z2},
 		};
 
 		initialize();
@@ -332,15 +341,15 @@ namespace _dxf
 		string strValue = m_pEntity->getValue(strMapping);
 
 		double dValue = atof(strValue.c_str());
-		if (strCode == _group_codes::x)
+		if ((strCode == _group_codes::x) || (strCode == _group_codes::x2))
 		{
 			dValue *= m_dXFactor;
 		}
-		else if (strCode == _group_codes::y)
+		else if ((strCode == _group_codes::y) || (strCode == _group_codes::y2))
 		{
 			dValue *= m_dYFactor;
 		}
-		else if (strCode == _group_codes::z)
+		else if ((strCode == _group_codes::z) || (strCode == _group_codes::z2))
 		{
 			dValue *= m_dZFactor;
 		}
@@ -387,40 +396,33 @@ namespace _dxf
 		if (Nz != 0.)
 		{
 			// X
-			string X = getMapping(Ax);
-			m_mapMapping[_group_codes::x] = X;
-
-			m_dXFactor = getFactor(Ax);
+			m_mapMapping[_group_codes::x] = _group_codes::x;
+			m_dXFactor = Ax.getX();
 
 			// Y
-			string Y = getMapping(Ay);			
-			m_mapMapping[_group_codes::y] = Y;
-
-			m_dYFactor = getFactor(Ay);
+			m_mapMapping[_group_codes::y] = _group_codes::y;
+			m_dYFactor = Ay.getY();
 
 			// Z			
 			m_mapMapping[_group_codes::z] = _group_codes::z;
-
 			m_dZFactor = Nz;				
 		} // if (Nz != 0.)
 		else if (Nx != 0.)
 		{
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::z;
-
+			m_mapMapping[_group_codes::x2] = _group_codes::z2;
 			m_dXFactor = Nx;
 
 			// Y
-			string Y = getMapping(Ax);
-			m_mapMapping[_group_codes::y] = Y;
-
-			m_dYFactor = getFactor(Ax);
+			m_mapMapping[_group_codes::y] = _group_codes::x;
+			m_mapMapping[_group_codes::y2] = _group_codes::x2;
+			m_dYFactor = Ax.getY();
 
 			// Z
-			string Z = getMapping(Ay);
-			m_mapMapping[_group_codes::z] = Z;
-
-			m_dZFactor = getFactor(Ay);
+			m_mapMapping[_group_codes::z] = _group_codes::y;
+			m_mapMapping[_group_codes::z2] = _group_codes::y2;
+			m_dZFactor = Ay.getZ();
 		}
 		else if (Ny != 0.)
 		{
@@ -430,48 +432,6 @@ namespace _dxf
 		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::y]);
 		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::z]);
 		assert(m_mapMapping[_group_codes::y] != m_mapMapping[_group_codes::z]);
-	}
-
-	// --------------------------------------------------------------------------------------------
-	string _extrusion::getMapping(_vector3f& v)
-	{
-		if (v.getX() != 0.)
-		{
-			return _group_codes::x;
-		}
-		else if (v.getY() != 0.)
-		{
-			return _group_codes::y;
-		}
-		else if (v.getZ() != 0.)
-		{
-			return _group_codes::z;
-		}
-
-		assert(false); // Internal error!
-
-		return "";
-	}
-
-	// --------------------------------------------------------------------------------------------
-	double _extrusion::getFactor(_vector3f& v)
-	{
-		if (v.getX() != 0.)
-		{
-			return v.getX();
-		}
-		else if (v.getY() != 0.)
-		{
-			return v.getY();
-		}
-		else if (v.getZ() != 0.)
-		{
-			return v.getZ();
-		}
-
-		assert(false); // Internal error!
-
-		return 1.;
 	}
 	// _extrusion
 	// --------------------------------------------------------------------------------------------
@@ -506,14 +466,18 @@ namespace _dxf
 		int64_t iClass = GetClassByName(pParser->getModel(), "Line3D");
 		assert(iClass != 0);
 
+		// Extrusion
+		_extrusion extrusion(this);
+
 		vector<double> vecVertices
 		{
-			atof(m_mapCode2Value[_group_codes::x].c_str()),
-			atof(m_mapCode2Value[_group_codes::y].c_str()),
-			atof(m_mapCode2Value[_group_codes::z].c_str()),
-			atof(m_mapCode2Value[_group_codes::x2].c_str()),
-			atof(m_mapCode2Value[_group_codes::y2].c_str()),
-			atof(m_mapCode2Value[_group_codes::z2].c_str()),
+			extrusion.getValue(_group_codes::x),
+			extrusion.getValue(_group_codes::y),
+			extrusion.getValue(_group_codes::z),
+
+			extrusion.getValue(_group_codes::x2),
+			extrusion.getValue(_group_codes::y2),
+			extrusion.getValue(_group_codes::z2),
 		};
 
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
@@ -848,6 +812,9 @@ namespace _dxf
 			return 0;
 		}
 
+		// Extrusion
+		_extrusion extrusion(this);
+
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -953,6 +920,9 @@ namespace _dxf
 		map<string, string> mapCode2Value =
 		{
 			{_group_codes::name, ""}, // Block name
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -1012,6 +982,10 @@ namespace _dxf
 		map<string, vector<int64_t>> mapLayer2Instances;
 		for (auto itEntity : m_vecEntities)
 		{
+			itEntity->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
+			itEntity->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
+			itEntity->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
+
 			auto iInstance = itEntity->createInstance(pParser);
 			if (iInstance != 0)
 			{
@@ -1088,30 +1062,12 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
-		// Arbitrary Axis Algorithm, page 252		
-		/*_vector3f Wy(0., 1., 0.);
-		_vector3f Wz(0., 0., 1.);
-
-		double Nx = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
-		double Ny = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
-		double Nz = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
-
-		_vector3f N(Nx, Ny, Nz);
-
-		_vector3f Ax;
-		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
-		{
-			Ax = Wy.cross(N);
-		}
-		else
-		{
-			Ax = Wz.cross(N);
-		}
-
-		_vector3f Ay = N.cross(Ax);*/
-
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		assert(pBlock != nullptr);
+
+		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
+		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
+		pBlock->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
 
 		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
@@ -1121,17 +1077,19 @@ namespace _dxf
 		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
 		assert(iMatrixClass != 0);		
 
+		_extrusion extrusion(this);
+
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		double dValue = atof(m_mapCode2Value[_group_codes::x].c_str());;
+		double dValue = extrusion.getValue(_group_codes::x);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		dValue = extrusion.getValue(_group_codes::y);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		dValue = extrusion.getValue(_group_codes::z);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
