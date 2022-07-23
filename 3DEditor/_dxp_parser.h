@@ -287,11 +287,12 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	// _vertex
 	class _vertex : public _entity
-	{
+	{	
 
 	public: // Members
 
 		// ----------------------------------------------------------------------------------------
+		static const string flag;
 		static const string polyface_mesh_vertex1;
 		static const string polyface_mesh_vertex2;
 		static const string polyface_mesh_vertex3;

@@ -585,6 +585,7 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _vertex
+	/*static*/ const string _vertex::flag = "70";
 	/*static*/ const string _vertex::polyface_mesh_vertex1 = "71";
 	/*static*/ const string _vertex::polyface_mesh_vertex2 = "72";
 	/*static*/ const string _vertex::polyface_mesh_vertex3 = "73";
@@ -600,6 +601,17 @@ namespace _dxf
 			{_group_codes::x, "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
 			{_group_codes::y, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{flag, "0"}, // Vertex flags:
+			/*1 = Extra vertex created by curve - fitting
+			2 = Curve - fit tangent defined for this vertex.A curve - fit tangent direction of 0 may be omitted
+			from DXF output but is significant if this bit is set
+			4 = Not used
+			8 = Spline vertex created by spline - fitting
+			16 = Spline frame control point
+			32 = 3D polyline vertex
+			64 = 3D polygon mesh
+			128 = Polyface mesh vertex
+			*/
 			{polyface_mesh_vertex1, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex2, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex3, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
@@ -858,7 +870,7 @@ namespace _dxf
 				vector<int64_t> vecIndices;
 				for (auto itVertex : m_vecVertices)
 				{
-					if (itVertex->getValue(_group_codes::subclass) == "AcDbFaceRecord")
+					if (itVertex->getValue(_vertex::flag) == "128")
 					{
 						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
 						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
@@ -870,6 +882,13 @@ namespace _dxf
 					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::x));
 					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::y));
 					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::z));
+				}				
+
+				if (vecVertices.empty() || vecIndices.empty())
+				{
+					assert(false); // Internal error!
+
+					return 0;
 				}
 
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
