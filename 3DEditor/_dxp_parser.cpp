@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "_dxp_parser.h"
 #include "conceptMesh.h"
-#include "Text2RDF.h"
 
 // ------------------------------------------------------------------------------------------------
 static char VALUE_DELIMITER = '\n';
@@ -184,7 +183,6 @@ namespace _dxf
 	/*static*/ const string _group_codes::block = "BLOCK";
 	/*static*/ const string _group_codes::endblock = "ENDBLK";
 	/*static*/ const string _group_codes::insert = "INSERT";
-	/*static*/ const string _group_codes::text = "TEXT";
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::subclass = "100";
@@ -639,58 +637,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
-	// _text
-	/*static*/ const string _text::text = "1";
-	/*static*/ const string _text::height = "40";
-
-	// --------------------------------------------------------------------------------------------
-	_text::_text()
-		: _entity(_group_codes::text)
-	{
-		// TEXT, page 144
-		map<string, string> mapCode2Value =
-		{
-			{_group_codes::x, "0"}, // First alignment point (in OCS) DXF: X value; APP: 3D point
-			{_group_codes::y, "0"}, // DXF: Y and Z values of first alignment point (in OCS)
-			{_group_codes::z, "0"}, // DXF: Y and Z values of first alignment point (in OCS)
-
-			{text, ""}, // Default value (the string itself)
-			{height, ""}, // Text height
-		};
-
-		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
-	}
-
-	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _text::~_text()
-	{
-	}
-
-	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _text::createInstance(_parser* pParser)
-	{
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
-
-		CString strDefaultFont = szAppPath;
-		strDefaultFont.MakeLower();
-
-		int iLastSlash = strDefaultFont.ReverseFind(L'\\');
-		ASSERT(iLastSlash != -1);
-
-		strDefaultFont = strDefaultFont.Left(iLastSlash + 1);
-		strDefaultFont += L"OpenSans-Regular.ttf";
-
-		CText2RDF text2RDF(strDefaultFont, pParser->getModel(), LINES_AND_CURVES);// EXTRSUSION_AREA_SOLID_SET);
-		text2RDF.Text() = getValue(text).c_str();
-		text2RDF.Run();
-
-		return 0;
-	}
-	// _text
-	// --------------------------------------------------------------------------------------------
-
-	// --------------------------------------------------------------------------------------------
 	// _circle
 	_circle::_circle()
 		: _entity(_group_codes::circle)
@@ -835,8 +781,6 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ void _polyline::load(_reader& reader)
 	{
-		_entity* pEntity = nullptr;
-
 		while (true)
 		{
 			_entity::load(reader);
@@ -861,10 +805,6 @@ namespace _dxf
 					m_vecVertices.push_back(pVertex);
 
 					pVertex->load(reader);
-				}
-				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
-				{
-					m_vecEntities.push_back(pEntity);
 				}
 				else
 				{	
@@ -893,26 +833,6 @@ namespace _dxf
 		// Extrusion
 		_extrusion extrusion(this);
 
-		/**
-		* Create ifcengine instances
-		*/
-		vector<int64_t> vecTexts;
-		for (auto itEntity : m_vecEntities)
-		{
-			itEntity->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
-			itEntity->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
-			itEntity->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
-
-			auto iInstance = itEntity->createInstance(pParser);
-			if (iInstance != 0)
-			{
-				vecTexts.push_back(iInstance);				
-			}
-
-			// TEST
-			break;
-		} // for (size_t iEntity = ...
-
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
@@ -930,19 +850,22 @@ namespace _dxf
 				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::y).c_str()));
 				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::z).c_str()));
 
-				int64_t iPolyLine3DClass = GetClassByName(pParser->getModel(), "PolyLine3D");
-				assert(iPolyLine3DClass != 0);
+				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
+				assert(iClass != 0);
 
-				int64_t iPolyLine3DInstance = CreateInstance(iPolyLine3DClass, type().c_str());
-				assert(iPolyLine3DInstance != 0);
+				int64_t iInstance = CreateInstance(iClass, type().c_str());
+				assert(iInstance != 0);
 
-				SetDataTypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
 
-				return iPolyLine3DInstance;
+				return iInstance;
 			} // case 1:
 
 			case 64:
-			{
+			{	
+				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
+				assert(iTriangleSetClass != 0);
+
 				vector<double> vecVertices;
 				vector<int64_t> vecIndices;
 				for (auto itVertex : m_vecVertices)
@@ -974,9 +897,6 @@ namespace _dxf
 
 					return 0;
 				}
-
-				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
-				assert(iTriangleSetClass != 0);
 
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
@@ -1606,15 +1526,6 @@ namespace _dxf
 			pInsert->load(reader);
 
 			return pInsert;
-		}
-		else if (reader.row() == _group_codes::text)
-		{
-			reader.forth();
-
-			auto pText = new _text();
-			pText->load(reader);
-
-			return pText;
 		}
 
 		// TODO: ALL ENTITIES
