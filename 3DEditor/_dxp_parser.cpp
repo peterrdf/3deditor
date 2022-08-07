@@ -225,6 +225,7 @@ namespace _dxf
 	// _entity
 	_entity::_entity(const string& strName)
 		: _group(strName)
+		, m_pParent(nullptr)
 		, m_mapCode2Value()
 		, m_setMultiValueCodes()
 		, m_vecEntities()
@@ -244,6 +245,14 @@ namespace _dxf
 		{
 			delete m_vecEntities[i];
 		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entity::setParent(_entity* pParent)
+	{
+		assert(pParent != nullptr);
+
+		m_pParent = pParent;
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -475,7 +484,7 @@ namespace _dxf
 		// Extrusion
 		_extrusion extrusion(this);
 
-		vector<double> vecVertices
+		vector<double> vecPoints
 		{
 			extrusion.getValue(_group_codes::x),
 			extrusion.getValue(_group_codes::y),
@@ -489,7 +498,12 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+		
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iInstance);
+		}		
 
 		return iInstance;
 	}
@@ -546,20 +560,20 @@ namespace _dxf
 
 		assert(vecXValues.size() == vecYValues.size());
 
-		vector<double> vecVertices;
+		vector<double> vecPoints;
 		for (size_t i = 0; i < vecXValues.size(); i++)
 		{
-			vecVertices.push_back(atof(vecXValues[i].c_str()));
-			vecVertices.push_back(atof(vecYValues[i].c_str()));
-			vecVertices.push_back(0.);
+			vecPoints.push_back(atof(vecXValues[i].c_str()));
+			vecPoints.push_back(atof(vecYValues[i].c_str()));
+			vecPoints.push_back(0.);
 		}
 
 		int iFlag = atoi(m_mapCode2Value[_polyline::flag].c_str());
 		if (iFlag == 1)
 		{
-			vecVertices.push_back(atof(vecXValues[0].c_str()));
-			vecVertices.push_back(atof(vecYValues[0].c_str()));
-			vecVertices.push_back(0.);
+			vecPoints.push_back(atof(vecXValues[0].c_str()));
+			vecPoints.push_back(atof(vecYValues[0].c_str()));
+			vecPoints.push_back(0.);
 		}
 		else if (iFlag == 128)
 		{
@@ -576,7 +590,12 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iInstance);
+		}		
 
 		return iInstance;
 	}
@@ -702,6 +721,11 @@ namespace _dxf
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iCircleInstance, 1);
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iTransformationInstance);
+		}		
 
 		return iTransformationInstance;
 	}
@@ -855,6 +879,11 @@ namespace _dxf
 
 				SetDataTypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecPolyLine3DPoints.data(), vecPolyLine3DPoints.size());
 
+				if (m_pParent == nullptr)
+				{
+					pParser->onInstanceCreated(this, iPolyLine3DInstance);
+				}				
+
 				return iPolyLine3DInstance;
 			} // case 1:
 
@@ -900,6 +929,11 @@ namespace _dxf
 
 				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecTriangleSetVertices.data(), vecTriangleSetVertices.size());
 				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
+
+				if (m_pParent == nullptr)
+				{
+					pParser->onInstanceCreated(this, iTriangleSetInstance);
+				}				
 
 				return iTriangleSetInstance;
 			} // case 64:
@@ -1007,6 +1041,8 @@ namespace _dxf
 		map<string, vector<int64_t>> mapLayer2Instances;
 		for (auto itEntity : m_vecEntities)
 		{
+			itEntity->setParent(this);
+
 			itEntity->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
 			itEntity->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
 			itEntity->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
@@ -1052,7 +1088,7 @@ namespace _dxf
 		strCollectionName += "'";
 
 		int64_t iBlockCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
-		SetObjectProperty(iBlockCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());
+		SetObjectProperty(iBlockCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());		
 
 		return iBlockCollectionInstance;
 	}
@@ -1123,6 +1159,11 @@ namespace _dxf
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iBlockInstance, 1);
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iTransformationInstance);
+		}
 
 		return iTransformationInstance;
 	}
@@ -1339,6 +1380,7 @@ namespace _dxf
 	_parser::_parser(int64_t iModel)
 		: m_iModel(iModel)
 		, m_vecSections()
+		, m_mapLayer2Instances()
 	{
 		assert(m_iModel != 0);
 
@@ -1472,7 +1514,25 @@ namespace _dxf
 		createInstances();		
 	}
 
-	// ----------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	void _parser::onInstanceCreated(_entity* pEntity, int64_t iInstance)
+	{
+		assert(pEntity != nullptr);
+
+		auto strLayer = pEntity->getValue(_group_codes::layer);
+
+		auto itLayer2Instances = m_mapLayer2Instances.find(strLayer);
+		if (itLayer2Instances != m_mapLayer2Instances.end())
+		{
+			m_mapLayer2Instances[strLayer].push_back(iInstance);
+		}
+		else
+		{
+			m_mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
 	/*static*/ _entity* _parser::loadEntity(_reader& reader)
 	{
 		if (reader.row() == _group_codes::line)
@@ -1535,7 +1595,7 @@ namespace _dxf
 		return nullptr;
 	}
 	
-	// ----------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
 	_block* _parser::findBlockByName(const string& strBlockName)
 	{
 		for (auto itSection : m_vecSections)
@@ -1562,7 +1622,6 @@ namespace _dxf
 		/**
 		* Create ifcengine instances
 		*/
-		map<string, vector<int64_t>> mapLayer2Instances;
 		for (size_t iSection = 0; iSection < m_vecSections.size(); iSection++)
 		{
 			if (m_vecSections[iSection]->type() == _group_codes::entities)
@@ -1575,21 +1634,7 @@ namespace _dxf
 					auto pEntity = pEntitiesSection->entities()[iEntity];
 					assert(pEntity != nullptr);
 
-					auto iInstance = pEntity->createInstance(this);
-					if (iInstance != 0)
-					{
-						auto strLayer = pEntity->getValue(_group_codes::layer);
-
-						auto itLayer2Instances = mapLayer2Instances.find(strLayer);
-						if (itLayer2Instances != mapLayer2Instances.end())
-						{
-							mapLayer2Instances[strLayer].push_back(iInstance);
-						}
-						else
-						{
-							mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
-						}
-					} // if (iInstance != 0)
+					pEntity->createInstance(this);
 				} // for (size_t iEntity = ...
 			} // if (m_vecSections[iSection]->type() == _group_codes::entities)
 		} // for (size_t iSection = ...
@@ -1600,7 +1645,7 @@ namespace _dxf
 		int64_t iCollectionClass = GetClassByName(m_iModel, "Collection");
 		assert(iCollectionClass != 0);
 		
-		for (auto itLayer2Instances : mapLayer2Instances)
+		for (auto itLayer2Instances : m_mapLayer2Instances)
 		{
 			string strCollectionName = "Layer: '";
 			strCollectionName += itLayer2Instances.first;
