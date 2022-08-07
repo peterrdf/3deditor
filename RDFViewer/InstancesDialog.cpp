@@ -466,7 +466,10 @@ void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
 						continue;
 					}
 
-					itRFDInstances->second->setEnable(true);
+					if (!itRFDInstances->second->isReferenced())
+					{
+						itRFDInstances->second->setEnable(true);
+					}					
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
