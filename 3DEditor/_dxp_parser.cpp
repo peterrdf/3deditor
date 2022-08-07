@@ -740,7 +740,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	_polyline::_polyline()
 		: _entity(_group_codes::polyline)
-		, m_vecVertices()
 		, m_pSeqend(nullptr)
 	{
 		// POLYLINE, page 123
@@ -770,17 +769,14 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _polyline::~_polyline()
 	{
-		for (size_t i = 0; i < m_vecVertices.size(); i++)
-		{
-			delete m_vecVertices[i];
-		}
-
 		delete m_pSeqend;
 	}
 
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ void _polyline::load(_reader& reader)
 	{
+		_entity* pEntity = nullptr;
+
 		while (true)
 		{
 			_entity::load(reader);
@@ -796,22 +792,13 @@ namespace _dxf
 
 					m_pSeqend = new _seqend();
 					m_pSeqend->load(reader);
-				}
-				else if (reader.row() == _group_codes::vertex)
-				{
-					reader.forth();
-
-					auto pVertex = new _vertex();
-					m_vecVertices.push_back(pVertex);
-
-					pVertex->load(reader);
-				}
-				else
-				{	
-					reader.back();
 
 					break;
 				}
+				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
+				{
+					m_vecEntities.push_back(pEntity);
+				}				
 			} // if (reader.row() == _group_codes::start)
 			else
 			{
@@ -823,7 +810,17 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
-		if (m_vecVertices.empty())
+		// Vertices
+		vector<_entity*> vecVertices;
+		for (auto itEntity : m_vecEntities)
+		{
+			if (itEntity->type() == _group_codes::vertex)
+			{
+				vecVertices.push_back(itEntity);
+			}
+		}
+
+		if (vecVertices.empty())
 		{
 			assert(false);
 
@@ -838,37 +835,34 @@ namespace _dxf
 		{
 			case 1:
 			{
-				vector<double> vecVertices;
-				for (auto itVertex : m_vecVertices)
+				vector<double> vecPolyLine3DPoints;
+				for (auto itVertex : vecVertices)
 				{
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
 				}
 
-				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::x).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::y).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->getValue(_group_codes::z).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::x).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::y).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::z).c_str()));
 
-				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
-				assert(iClass != 0);
+				int64_t iPolyLine3DClass = GetClassByName(pParser->getModel(), "PolyLine3D");
+				assert(iPolyLine3DClass != 0);
 
-				int64_t iInstance = CreateInstance(iClass, type().c_str());
-				assert(iInstance != 0);
+				int64_t iPolyLine3DInstance = CreateInstance(iPolyLine3DClass, type().c_str());
+				assert(iPolyLine3DInstance != 0);
 
-				SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecPolyLine3DPoints.data(), vecPolyLine3DPoints.size());
 
-				return iInstance;
+				return iPolyLine3DInstance;
 			} // case 1:
 
 			case 64:
-			{	
-				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
-				assert(iTriangleSetClass != 0);
-
-				vector<double> vecVertices;
+			{
+				vector<double> vecTriangleSetVertices;
 				vector<int64_t> vecIndices;
-				for (auto itVertex : m_vecVertices)
+				for (auto itVertex : vecVertices)
 				{
 					if (itVertex->getValue(_vertex::flag) == "128")
 					{
@@ -886,22 +880,25 @@ namespace _dxf
 						continue;
 					}
 
-					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::x));
-					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::y));
-					vecVertices.push_back(extrusion.getValue(itVertex, _group_codes::z));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::x));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::y));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::z));
 				}				
 
-				if (vecVertices.empty() || vecIndices.empty())
+				if (vecTriangleSetVertices.empty() || vecIndices.empty())
 				{
 					assert(false); // Internal error!
 
 					return 0;
 				}
 
+				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
+				assert(iTriangleSetClass != 0);
+
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
 
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecTriangleSetVertices.data(), vecTriangleSetVertices.size());
 				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
 
 				return iTriangleSetInstance;
@@ -986,16 +983,12 @@ namespace _dxf
 
 					m_pEndblk = new _endblk();
 					m_pEndblk->load(reader);
+
+					break;
 				}
 				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
 				{	
 					m_vecEntities.push_back(pEntity);
-				}
-				else
-				{
-					reader.back();
-
-					break;
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
@@ -1499,6 +1492,15 @@ namespace _dxf
 			pPolyline->load(reader);
 
 			return pPolyline;
+		}
+		else if (reader.row() == _group_codes::vertex)
+		{
+			reader.forth();
+
+			auto pVertex = new _vertex();
+			pVertex->load(reader);
+
+			return pVertex;
 		}
 		else if (reader.row() == _group_codes::lwpolyline)
 		{
