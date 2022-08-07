@@ -977,6 +977,7 @@ namespace _dxf
 	// _block
 	_block::_block()
 		: _entity(_group_codes::block)
+		, m_iInstance(0)
 		, m_pEndblk(nullptr)
 	{
 		// BLOCK, page 58
@@ -1036,6 +1037,14 @@ namespace _dxf
 	/*virtual*/ int64_t _block::createInstance(_parser* pParser)
 	{
 		/**
+		* Reuse the Instance
+		*/
+		if (m_iInstance != 0)
+		{
+			return m_iInstance;
+		}
+
+		/**
 		* Create ifcengine instances
 		*/
 		map<string, vector<int64_t>> mapLayer2Instances;
@@ -1087,10 +1096,10 @@ namespace _dxf
 		strCollectionName += m_mapCode2Value[_group_codes::name];
 		strCollectionName += "'";
 
-		int64_t iBlockCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
-		SetObjectProperty(iBlockCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());		
+		m_iInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
+		SetObjectProperty(m_iInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());
 
-		return iBlockCollectionInstance;
+		return m_iInstance;
 	}
 	// _block
 	// --------------------------------------------------------------------------------------------
