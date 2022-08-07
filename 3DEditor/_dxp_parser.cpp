@@ -225,6 +225,7 @@ namespace _dxf
 	// _entity
 	_entity::_entity(const string& strName)
 		: _group(strName)
+		, m_pParent(nullptr)
 		, m_mapCode2Value()
 		, m_setMultiValueCodes()
 		, m_vecEntities()
@@ -244,6 +245,14 @@ namespace _dxf
 		{
 			delete m_vecEntities[i];
 		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entity::setParent(_entity* pParent)
+	{
+		assert(pParent != nullptr);
+
+		m_pParent = pParent;
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -286,11 +295,160 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _entity::value(const string& strCode)
+	bool _entity::hasValue(const string& strCode)
+	{
+		return m_mapCode2Value.find(strCode) != m_mapCode2Value.end();
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const string& _entity::getValue(const string& strCode)
 	{
 		return m_mapCode2Value[strCode];
 	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entity::setValue(const string& strCode, const string& strValue)
+	{
+		m_mapCode2Value[strCode] = strValue;
+	}
 	// _entity
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _extrusion
+	_extrusion::_extrusion(_entity* pEntity)
+		: m_pEntity(pEntity)
+		, m_mapMapping()
+		, m_dXFactor(1.)
+		, m_dYFactor(1.)
+		, m_dZFactor(1.)
+	{
+		assert(m_pEntity != nullptr);
+
+		m_mapMapping =
+		{
+			{_group_codes::x, _group_codes::x},
+			{_group_codes::y, _group_codes::y},
+			{_group_codes::z, _group_codes::z},
+			{_group_codes::x2, _group_codes::x2},
+			{_group_codes::y2, _group_codes::y2},
+			{_group_codes::z2, _group_codes::z2},
+		};
+
+		initialize();
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _extrusion::~_extrusion()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	double _extrusion::getValue(const string& strCode)
+	{
+		return getValue(m_pEntity,strCode);
+	}
+
+	// ----------------------------------------------------------------------------------------
+	double _extrusion::getValue(_entity* pEntity, const string& strCode)
+	{
+		string strMapping = m_mapMapping[strCode];
+		string strValue = pEntity->getValue(strMapping);
+
+		double dValue = atof(strValue.c_str());
+		if ((strCode == _group_codes::x) || (strCode == _group_codes::x2))
+		{
+			dValue *= m_dXFactor;
+		}
+		else if ((strCode == _group_codes::y) || (strCode == _group_codes::y2))
+		{
+			dValue *= m_dYFactor;
+		}
+		else if ((strCode == _group_codes::z) || (strCode == _group_codes::z2))
+		{
+			dValue *= m_dZFactor;
+		}
+		else
+		{
+			assert(false); // Internal error!
+		}
+
+		return dValue;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _extrusion::initialize()
+	{
+		if (!m_pEntity->hasValue(_group_codes::extrusion_x) ||
+			!m_pEntity->hasValue(_group_codes::extrusion_y) ||
+			!m_pEntity->hasValue(_group_codes::extrusion_z))
+		{
+			return;
+		}
+
+		// Arbitrary Axis Algorithm, page 252
+		double Nx = atof(m_pEntity->getValue(_group_codes::extrusion_x).c_str());
+		double Ny = atof(m_pEntity->getValue(_group_codes::extrusion_y).c_str());
+		double Nz = atof(m_pEntity->getValue(_group_codes::extrusion_z).c_str());
+				
+		_vector3f Wy(0., 1., 0.);
+		_vector3f Wz(0., 0., 1.);
+
+		_vector3f N(Nx, Ny, Nz);
+
+		_vector3f Ax;
+		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
+		{
+			Ax = Wy.cross(N);
+		}
+		else
+		{
+			Ax = Wz.cross(N);
+		}
+
+		_vector3f Ay = N.cross(Ax);
+
+		if (Nz != 0.)
+		{
+			// X
+			m_mapMapping[_group_codes::x] = _group_codes::x;
+			m_dXFactor = Ax.getX();
+
+			// Y
+			m_mapMapping[_group_codes::y] = _group_codes::y;
+			m_dYFactor = Ay.getY();
+
+			// Z			
+			m_mapMapping[_group_codes::z] = _group_codes::z;
+			m_dZFactor = Nz;				
+		} // if (Nz != 0.)
+		else if (Nx != 0.)
+		{
+			// X
+			m_mapMapping[_group_codes::x] = _group_codes::z;
+			m_mapMapping[_group_codes::x2] = _group_codes::z2;
+			m_dXFactor = Nx;
+
+			// Y
+			m_mapMapping[_group_codes::y] = _group_codes::x;
+			m_mapMapping[_group_codes::y2] = _group_codes::x2;
+			m_dYFactor = Ax.getY();
+
+			// Z
+			m_mapMapping[_group_codes::z] = _group_codes::y;
+			m_mapMapping[_group_codes::z2] = _group_codes::y2;
+			m_dZFactor = Ay.getZ();
+		}
+		else if (Ny != 0.)
+		{
+			assert(false); // TODO
+		}
+
+		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::y]);
+		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::z]);
+		assert(m_mapMapping[_group_codes::y] != m_mapMapping[_group_codes::z]);
+	}
+	// _extrusion
 	// --------------------------------------------------------------------------------------------
 	
 	// --------------------------------------------------------------------------------------------
@@ -323,20 +481,29 @@ namespace _dxf
 		int64_t iClass = GetClassByName(pParser->getModel(), "Line3D");
 		assert(iClass != 0);
 
-		vector<double> vecVertices
+		// Extrusion
+		_extrusion extrusion(this);
+
+		vector<double> vecPoints
 		{
-			atof(m_mapCode2Value[_group_codes::x].c_str()),
-			atof(m_mapCode2Value[_group_codes::y].c_str()),
-			atof(m_mapCode2Value[_group_codes::z].c_str()),
-			atof(m_mapCode2Value[_group_codes::x2].c_str()),
-			atof(m_mapCode2Value[_group_codes::y2].c_str()),
-			atof(m_mapCode2Value[_group_codes::z2].c_str()),
+			extrusion.getValue(_group_codes::x),
+			extrusion.getValue(_group_codes::y),
+			extrusion.getValue(_group_codes::z),
+
+			extrusion.getValue(_group_codes::x2),
+			extrusion.getValue(_group_codes::y2),
+			extrusion.getValue(_group_codes::z2),
 		};
 
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+		
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iInstance);
+		}		
 
 		return iInstance;
 	}
@@ -393,20 +560,20 @@ namespace _dxf
 
 		assert(vecXValues.size() == vecYValues.size());
 
-		vector<double> vecVertices;
+		vector<double> vecPoints;
 		for (size_t i = 0; i < vecXValues.size(); i++)
 		{
-			vecVertices.push_back(atof(vecXValues[i].c_str()));
-			vecVertices.push_back(atof(vecYValues[i].c_str()));
-			vecVertices.push_back(0.);
+			vecPoints.push_back(atof(vecXValues[i].c_str()));
+			vecPoints.push_back(atof(vecYValues[i].c_str()));
+			vecPoints.push_back(0.);
 		}
 
 		int iFlag = atoi(m_mapCode2Value[_polyline::flag].c_str());
 		if (iFlag == 1)
 		{
-			vecVertices.push_back(atof(vecXValues[0].c_str()));
-			vecVertices.push_back(atof(vecYValues[0].c_str()));
-			vecVertices.push_back(0.);
+			vecPoints.push_back(atof(vecXValues[0].c_str()));
+			vecPoints.push_back(atof(vecYValues[0].c_str()));
+			vecPoints.push_back(0.);
 		}
 		else if (iFlag == 128)
 		{
@@ -423,7 +590,12 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iInstance);
+		}		
 
 		return iInstance;
 	}
@@ -432,6 +604,7 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _vertex
+	/*static*/ const string _vertex::flag = "70";
 	/*static*/ const string _vertex::polyface_mesh_vertex1 = "71";
 	/*static*/ const string _vertex::polyface_mesh_vertex2 = "72";
 	/*static*/ const string _vertex::polyface_mesh_vertex3 = "73";
@@ -447,10 +620,21 @@ namespace _dxf
 			{_group_codes::x, "0"}, // Location point (in OCS when 2D, and WCS when 3D); DXF: X value; APP: 3D point
 			{_group_codes::y, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: Y and Z values of location point (in OCS when 2D, and WCS when 3D)
+			{flag, "0"}, // Vertex flags:
+			/*1 = Extra vertex created by curve - fitting
+			2 = Curve - fit tangent defined for this vertex.A curve - fit tangent direction of 0 may be omitted
+			from DXF output but is significant if this bit is set
+			4 = Not used
+			8 = Spline vertex created by spline - fitting
+			16 = Spline frame control point
+			32 = 3D polyline vertex
+			64 = 3D polygon mesh
+			128 = Polyface mesh vertex
+			*/
 			{polyface_mesh_vertex1, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex2, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
 			{polyface_mesh_vertex3, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
-			{polyface_mesh_vertex4, "0"}, // Polyface mesh vertex index (optional; present only if nonzero)
+			{polyface_mesh_vertex4, ""}, // Polyface mesh vertex index (optional; present only if nonzero)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -515,39 +699,20 @@ namespace _dxf
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
 		SetDataTypeProperty(iCircleInstance, GetPropertyByName(pParser->getModel(), "a"), &dValue, 1);
 
-		// Arbitrary Axis Algorithm, page 252		
-		_vector3f Wy(0., 1., 0.);
-		_vector3f Wz(0., 0., 1.);
-
-		double Nx = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
-		double Ny = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
-		double Nz = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
-
-		_vector3f N(Nx, Ny, Nz);
-
-		_vector3f Ax;
-		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
-		{
-			Ax = Wy.cross(N);
-		}
-		else
-		{
-			Ax = Wz.cross(N);
-		}
-
-		_vector3f Ay = N.cross(Ax);			
+		// Extrusion
+		_extrusion extrusion(this);		
 
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		dValue = atof(m_mapCode2Value[_group_codes::x].c_str()) * Ax.getX();
+		dValue = extrusion.getValue(_group_codes::x);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::y].c_str()) * Ay.getY();
+		dValue = extrusion.getValue(_group_codes::y);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::z].c_str()) * Nz;
+		dValue = extrusion.getValue(_group_codes::z);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
@@ -556,6 +721,11 @@ namespace _dxf
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iCircleInstance, 1);
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iTransformationInstance);
+		}		
 
 		return iTransformationInstance;
 	}
@@ -594,7 +764,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	_polyline::_polyline()
 		: _entity(_group_codes::polyline)
-		, m_vecVertices()
 		, m_pSeqend(nullptr)
 	{
 		// POLYLINE, page 123
@@ -624,17 +793,14 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _polyline::~_polyline()
 	{
-		for (size_t i = 0; i < m_vecVertices.size(); i++)
-		{
-			delete m_vecVertices[i];
-		}
-
 		delete m_pSeqend;
 	}
 
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ void _polyline::load(_reader& reader)
 	{
+		_entity* pEntity = nullptr;
+
 		while (true)
 		{
 			_entity::load(reader);
@@ -650,22 +816,13 @@ namespace _dxf
 
 					m_pSeqend = new _seqend();
 					m_pSeqend->load(reader);
-				}
-				else if (reader.row() == _group_codes::vertex)
-				{
-					reader.forth();
-
-					auto pVertex = new _vertex();
-					m_vecVertices.push_back(pVertex);
-
-					pVertex->load(reader);
-				}
-				else
-				{	
-					reader.back();
 
 					break;
 				}
+				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
+				{
+					m_vecEntities.push_back(pEntity);
+				}				
 			} // if (reader.row() == _group_codes::start)
 			else
 			{
@@ -677,69 +834,106 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
-		if (m_vecVertices.empty())
+		// Vertices
+		vector<_entity*> vecVertices;
+		for (auto itEntity : m_vecEntities)
+		{
+			if (itEntity->type() == _group_codes::vertex)
+			{
+				vecVertices.push_back(itEntity);
+			}
+		}
+
+		if (vecVertices.empty())
 		{
 			assert(false);
 
 			return 0;
 		}
 
+		// Extrusion
+		_extrusion extrusion(this);
+
 		int iFlag = atoi(m_mapCode2Value[flag].c_str());
 		switch (iFlag)
 		{
 			case 1:
 			{
-				vector<double> vecVertices;
-				for (auto itVertex : m_vecVertices)
+				vector<double> vecPolyLine3DPoints;
+				for (auto itVertex : vecVertices)
 				{
-					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::x).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::y).c_str()));
+					vecPolyLine3DPoints.push_back(atof(itVertex->getValue(_group_codes::z).c_str()));
 				}
 
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::x).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::y).c_str()));
-				vecVertices.push_back(atof(m_vecVertices[0]->value(_group_codes::z).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::x).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::y).c_str()));
+				vecPolyLine3DPoints.push_back(atof(vecVertices[0]->getValue(_group_codes::z).c_str()));
 
-				int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
-				assert(iClass != 0);
+				int64_t iPolyLine3DClass = GetClassByName(pParser->getModel(), "PolyLine3D");
+				assert(iPolyLine3DClass != 0);
 
-				int64_t iInstance = CreateInstance(iClass, type().c_str());
-				assert(iInstance != 0);
+				int64_t iPolyLine3DInstance = CreateInstance(iPolyLine3DClass, type().c_str());
+				assert(iPolyLine3DInstance != 0);
 
-				SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecPolyLine3DPoints.data(), vecPolyLine3DPoints.size());
 
-				return iInstance;
+				if (m_pParent == nullptr)
+				{
+					pParser->onInstanceCreated(this, iPolyLine3DInstance);
+				}				
+
+				return iPolyLine3DInstance;
 			} // case 1:
 
 			case 64:
-			{	
-				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
-				assert(iTriangleSetClass != 0);
-
-				vector<double> vecVertices;
+			{
+				vector<double> vecTriangleSetVertices;
 				vector<int64_t> vecIndices;
-				for (auto itVertex : m_vecVertices)
+				for (auto itVertex : vecVertices)
 				{
-					if (itVertex->value(_group_codes::subclass) == "AcDbFaceRecord")
+					if (itVertex->getValue(_vertex::flag) == "128")
 					{
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
-						vecIndices.push_back(abs(atoi(itVertex->value(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex2).c_str())) - 1/*to 0-based index*/);
+						vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+
+						if (itVertex->getValue(_vertex::polyface_mesh_vertex4) != "")						
+						{	
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex3).c_str())) - 1/*to 0-based index*/);
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex4).c_str())) - 1/*to 0-based index*/);
+							vecIndices.push_back(abs(atoi(itVertex->getValue(_vertex::polyface_mesh_vertex1).c_str())) - 1/*to 0-based index*/);
+						}						
 
 						continue;
 					}
 
-					vecVertices.push_back(atof(itVertex->value(_group_codes::x).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::y).c_str()));
-					vecVertices.push_back(atof(itVertex->value(_group_codes::z).c_str()));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::x));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::y));
+					vecTriangleSetVertices.push_back(extrusion.getValue(itVertex, _group_codes::z));
+				}				
+
+				if (vecTriangleSetVertices.empty() || vecIndices.empty())
+				{
+					assert(false); // Internal error!
+
+					return 0;
 				}
+
+				int64_t iTriangleSetClass = GetClassByName(pParser->getModel(), "TriangleSet");
+				assert(iTriangleSetClass != 0);
 
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
 
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecVertices.data(), vecVertices.size());
+				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecTriangleSetVertices.data(), vecTriangleSetVertices.size());
 				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
+
+				if (m_pParent == nullptr)
+				{
+					pParser->onInstanceCreated(this, iTriangleSetInstance);
+				}				
 
 				return iTriangleSetInstance;
 			} // case 64:
@@ -783,12 +977,16 @@ namespace _dxf
 	// _block
 	_block::_block()
 		: _entity(_group_codes::block)
+		, m_iInstance(0)
 		, m_pEndblk(nullptr)
 	{
 		// BLOCK, page 58
 		map<string, string> mapCode2Value =
 		{
 			{_group_codes::name, ""}, // Block name
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -820,16 +1018,12 @@ namespace _dxf
 
 					m_pEndblk = new _endblk();
 					m_pEndblk->load(reader);
+
+					break;
 				}
 				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
 				{	
 					m_vecEntities.push_back(pEntity);
-				}
-				else
-				{
-					reader.back();
-
-					break;
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
@@ -843,15 +1037,29 @@ namespace _dxf
 	/*virtual*/ int64_t _block::createInstance(_parser* pParser)
 	{
 		/**
+		* Reuse the Instance
+		*/
+		if (m_iInstance != 0)
+		{
+			return m_iInstance;
+		}
+
+		/**
 		* Create ifcengine instances
 		*/
 		map<string, vector<int64_t>> mapLayer2Instances;
 		for (auto itEntity : m_vecEntities)
 		{
+			itEntity->setParent(this);
+
+			itEntity->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
+			itEntity->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
+			itEntity->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
+
 			auto iInstance = itEntity->createInstance(pParser);
 			if (iInstance != 0)
 			{
-				auto strLayer = itEntity->value(_group_codes::layer);
+				auto strLayer = itEntity->getValue(_group_codes::layer);
 
 				auto itLayer2Instances = mapLayer2Instances.find(strLayer);
 				if (itLayer2Instances != mapLayer2Instances.end())
@@ -871,6 +1079,7 @@ namespace _dxf
 		int64_t iCollectionClass = GetClassByName(pParser->getModel(), "Collection");
 		assert(iCollectionClass != 0);
 
+		vector<int64_t> vecCollections;
 		for (auto itLayer2Instances : mapLayer2Instances)
 		{
 			string strCollectionName = "Layer: '";
@@ -879,9 +1088,18 @@ namespace _dxf
 
 			int64_t iCollectionInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(pParser->getModel(), "objects"), itLayer2Instances.second.data(), itLayer2Instances.second.size());
+
+			vecCollections.push_back(iCollectionInstance);
 		}
 
-		return iCollectionClass;
+		string strCollectionName = "BLOCK: '";
+		strCollectionName += m_mapCode2Value[_group_codes::name];
+		strCollectionName += "'";
+
+		m_iInstance = CreateInstance(iCollectionClass, strCollectionName.c_str());
+		SetObjectProperty(m_iInstance, GetPropertyByName(pParser->getModel(), "objects"), vecCollections.data(), vecCollections.size());
+
+		return m_iInstance;
 	}
 	// _block
 	// --------------------------------------------------------------------------------------------
@@ -914,30 +1132,12 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
-		// Arbitrary Axis Algorithm, page 252		
-		/*_vector3f Wy(0., 1., 0.);
-		_vector3f Wz(0., 0., 1.);
-
-		double Nx = atof(m_mapCode2Value[_group_codes::extrusion_x].c_str());
-		double Ny = atof(m_mapCode2Value[_group_codes::extrusion_y].c_str());
-		double Nz = atof(m_mapCode2Value[_group_codes::extrusion_z].c_str());
-
-		_vector3f N(Nx, Ny, Nz);
-
-		_vector3f Ax;
-		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
-		{
-			Ax = Wy.cross(N);
-		}
-		else
-		{
-			Ax = Wz.cross(N);
-		}
-
-		_vector3f Ay = N.cross(Ax);*/
-
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		assert(pBlock != nullptr);
+
+		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
+		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
+		pBlock->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
 
 		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
@@ -947,17 +1147,19 @@ namespace _dxf
 		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
 		assert(iMatrixClass != 0);		
 
+		_extrusion extrusion(this);
+
 		// Matrix
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		double dValue = atof(m_mapCode2Value[_group_codes::x].c_str());;
+		double dValue = extrusion.getValue(_group_codes::x);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
+		dValue = extrusion.getValue(_group_codes::y);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
-		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
+		dValue = extrusion.getValue(_group_codes::z);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
@@ -966,6 +1168,11 @@ namespace _dxf
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iBlockInstance, 1);
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iTransformationInstance);
+		}
 
 		return iTransformationInstance;
 	}
@@ -1182,8 +1389,23 @@ namespace _dxf
 	_parser::_parser(int64_t iModel)
 		: m_iModel(iModel)
 		, m_vecSections()
+		, m_mapLayer2Instances()
 	{
 		assert(m_iModel != 0);
+
+		/*
+		* Default color
+		*/
+		// ((R * 255 + G) * 255 + B) * 255 + A
+		uint32_t iR = 122;
+		uint32_t iG = 122;
+		uint32_t iB = 122;
+		uint32_t iDefaultColor = 256 * 256 * 256 * iR +
+			256 * 256 * iG +
+			256 * iB +
+			255;
+
+		SetDefaultColor(m_iModel, iDefaultColor, iDefaultColor, iDefaultColor, iDefaultColor);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1202,9 +1424,9 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _parser::load(const wchar_t* szFile)
+	void _parser::load(const char* szFile)
 	{
-		if ((szFile == nullptr) || (wcslen(szFile) == 0))
+		if ((szFile == nullptr) || (strlen(szFile) == 0))
 		{
 			throw _error(_error::invalid_argument);
 		}
@@ -1301,7 +1523,25 @@ namespace _dxf
 		createInstances();		
 	}
 
-	// ----------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
+	void _parser::onInstanceCreated(_entity* pEntity, int64_t iInstance)
+	{
+		assert(pEntity != nullptr);
+
+		auto strLayer = pEntity->getValue(_group_codes::layer);
+
+		auto itLayer2Instances = m_mapLayer2Instances.find(strLayer);
+		if (itLayer2Instances != m_mapLayer2Instances.end())
+		{
+			m_mapLayer2Instances[strLayer].push_back(iInstance);
+		}
+		else
+		{
+			m_mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
 	/*static*/ _entity* _parser::loadEntity(_reader& reader)
 	{
 		if (reader.row() == _group_codes::line)
@@ -1321,6 +1561,15 @@ namespace _dxf
 			pPolyline->load(reader);
 
 			return pPolyline;
+		}
+		else if (reader.row() == _group_codes::vertex)
+		{
+			reader.forth();
+
+			auto pVertex = new _vertex();
+			pVertex->load(reader);
+
+			return pVertex;
 		}
 		else if (reader.row() == _group_codes::lwpolyline)
 		{
@@ -1355,7 +1604,7 @@ namespace _dxf
 		return nullptr;
 	}
 	
-	// ----------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
 	_block* _parser::findBlockByName(const string& strBlockName)
 	{
 		for (auto itSection : m_vecSections)
@@ -1365,7 +1614,7 @@ namespace _dxf
 				auto pBlocksSection = dynamic_cast<_blocks_section*>(itSection);
 				for (auto itBlock : pBlocksSection->blocks())
 				{
-					if (itBlock->value(_group_codes::name) == strBlockName)
+					if (itBlock->getValue(_group_codes::name) == strBlockName)
 					{
 						return itBlock;
 					}
@@ -1382,7 +1631,6 @@ namespace _dxf
 		/**
 		* Create ifcengine instances
 		*/
-		map<string, vector<int64_t>> mapLayer2Instances;
 		for (size_t iSection = 0; iSection < m_vecSections.size(); iSection++)
 		{
 			if (m_vecSections[iSection]->type() == _group_codes::entities)
@@ -1395,21 +1643,7 @@ namespace _dxf
 					auto pEntity = pEntitiesSection->entities()[iEntity];
 					assert(pEntity != nullptr);
 
-					auto iInstance = pEntity->createInstance(this);
-					if (iInstance != 0)
-					{
-						auto strLayer = pEntity->value(_group_codes::layer);
-
-						auto itLayer2Instances = mapLayer2Instances.find(strLayer);
-						if (itLayer2Instances != mapLayer2Instances.end())
-						{
-							mapLayer2Instances[strLayer].push_back(iInstance);
-						}
-						else
-						{
-							mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
-						}
-					} // if (iInstance != 0)
+					pEntity->createInstance(this);
 				} // for (size_t iEntity = ...
 			} // if (m_vecSections[iSection]->type() == _group_codes::entities)
 		} // for (size_t iSection = ...
@@ -1420,7 +1654,7 @@ namespace _dxf
 		int64_t iCollectionClass = GetClassByName(m_iModel, "Collection");
 		assert(iCollectionClass != 0);
 		
-		for (auto itLayer2Instances : mapLayer2Instances)
+		for (auto itLayer2Instances : m_mapLayer2Instances)
 		{
 			string strCollectionName = "Layer: '";
 			strCollectionName += itLayer2Instances.first;
