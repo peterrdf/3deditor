@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "engineapi.h"
+#include "engine.h"
 
 using namespace std;
 
@@ -56,6 +56,173 @@ static void	Transform(const VECTOR3 * pV, const MATRIX *pM, VECTOR3 * pOut)
 	pOut->y = pTmp.y;
 	pOut->z = pTmp.z;
 }
+
+ 
+
+
+
+/**
+* C++ Wrapper
+*/
+template<class V>
+class _VertexBuffer
+{
+	/**
+	* Thing will populate the buffer
+	*/
+	friend class Thing;
+
+public: // Members
+
+	/**
+	* Vertices
+	*/
+	V* m_pVertices;
+
+	/**
+	* Count
+	*/
+	int64_t m_iVerticesCount;
+
+	/**
+	* Length
+	*/
+	int64_t m_iVertexLength;
+
+public: // Methods
+
+	/**
+	* ctor
+	*/
+	_VertexBuffer()
+		: m_pVertices(nullptr)
+		, m_iVerticesCount(0)
+		, m_iVertexLength(0)
+	{
+		static_assert(
+			is_same<V, float>::value ||
+			is_same<V, double>::value,
+			"V must be float or double type.");
+	}
+
+	/**
+	* dtor
+	*/
+	virtual ~_VertexBuffer()
+	{
+		delete[] m_pVertices;
+	}
+
+	/**
+	* Getter
+	*/
+	V* getVertices() const
+	{
+		return m_pVertices;
+	}
+
+	/**
+	* Getter
+	*/
+	int64_t getVerticesCount() const
+	{
+		return m_iVerticesCount;
+	}
+
+	/**
+	* Getter
+	*/
+	int64_t getVertexLength() const
+	{
+		return m_iVertexLength;
+	}
+};
+
+/**
+* C++ Wrapper
+*/
+template<class I>
+class _IndexBuffer
+{
+	/**
+	* Thing will populate the buffer
+	*/
+	friend class Thing;
+
+public: // Members
+
+	/**
+	* Indices
+	*/
+	I* m_pIndices;
+
+	/**
+	* Count
+	*/
+	int64_t m_iIndicesCount;
+
+public: // Methods
+
+	/**
+	* ctor
+	*/
+	_IndexBuffer()
+		: m_pIndices(nullptr)
+		, m_iIndicesCount(0)
+	{
+		static_assert(
+			is_same<I, int32_t>::value ||
+			is_same<I, int64_t>::value,
+			"I must be int32_t or int64_t type.");
+	}
+
+	/**
+	* dtor
+	*/
+	virtual ~_IndexBuffer()
+	{
+		delete[] m_pIndices;
+	}
+
+	/**
+	* Getter
+	*/
+	I* getIndices() const
+	{
+		return m_pIndices;
+	}
+
+	/**
+	* Getter
+	*/
+	int64_t getIndicesCount() const
+	{
+		return m_iIndicesCount;
+	}
+};
+
+/**
+* int32_t
+*/
+typedef _IndexBuffer<int32_t> IndexBuffer;
+
+/**
+* Double
+*/
+typedef _IndexBuffer<int64_t> DoubleIndexBuffer;
+
+/**
+* Float
+*/
+typedef _VertexBuffer<float> VertexBuffer;
+
+/**
+* Double
+*/
+typedef _VertexBuffer<double> DoubleVertexBuffer;
+
+
+
 
 // ------------------------------------------------------------------------------------------------
 class CRDFColor

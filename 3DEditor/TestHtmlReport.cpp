@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "TestHtmlReport.h"
 
+#include <xstring>
+
 // ------------------------------------------------------------------------------------------------
 CTestHtmlReport::CTestHtmlReport()
 	: m_htmlReport()

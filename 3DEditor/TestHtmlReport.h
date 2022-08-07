@@ -4,6 +4,8 @@
 #include <iostream>
 #include <codecvt>
 
+using namespace std;
+
 // ------------------------------------------------------------------------------------------------
 class CTestHtmlReport
 {

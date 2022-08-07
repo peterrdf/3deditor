@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "conceptMesh.h"
 
+#include <string>
+
 // ------------------------------------------------------------------------------------------------
 #define PI 3.14159265
 #define EPSILON 1E-6

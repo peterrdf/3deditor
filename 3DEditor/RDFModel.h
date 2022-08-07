@@ -31,7 +31,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Coordinate system and XY grid
-	Model* m_pCoordinateSystemModel;
+	int64_t m_pCoordinateSystemModel;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Class
@@ -131,7 +131,7 @@ public: // Methods
 	CRDFInstance * CreateNewInstance(int64_t iClassInstance);
 
 	// ------------------------------------------------------------------------------------------------
-	CRDFInstance* AddNewInstance(Thing* pThing);
+	CRDFInstance* AddNewInstance(int64_t pThing);
 
 	// --------------------------------------------------------------------------------------------
 	// Removes an instance
@@ -224,6 +224,6 @@ private: // Methods
 	
 	// --------------------------------------------------------------------------------------------
 	// Octants
-	void BuildOctants(_octant* pOctant, vector<GeometricItem*>& vecOctantsGeometry);
+	void BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry);
 };
 

@@ -9,7 +9,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 	m_iType = TYPE_OBJECTTYPE;
 
 #ifndef _LINUX
-	LOG_DEBUG("*** RESTRICTIONS ***");
+//	LOG_DEBUG("*** RESTRICTIONS ***");
 #endif // _LINUX
 
 	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getInstance(), 0);
@@ -19,7 +19,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 		GetNameOfClass(iRestrictionsClassInstance, &szRestrictionsClassName);
 
 #ifndef _LINUX
-		LOG_DEBUG("*** CLASS " << szRestrictionsClassName);
+//		LOG_DEBUG("*** CLASS " << szRestrictionsClassName);
 #endif // _LINUX
 
 		m_vecRestrictions.push_back(iRestrictionsClassInstance);
@@ -28,7 +28,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 	} // while (iRestrictionsClassInstance != 0)
 
 #ifndef _LINUX
-	LOG_DEBUG("*** END RESTRICTIONS ***");
+//	LOG_DEBUG("*** END RESTRICTIONS ***");
 #endif // _LINUX
 }
 

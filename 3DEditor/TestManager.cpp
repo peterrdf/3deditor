@@ -235,13 +235,13 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 		return;
 	}
 
-	CTestHtmlReport testHtmlReport;
-	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
-	{
-		AfxMessageBox(L"Error: can not create test report.");
-
-		return;
-	}
+//	CTestHtmlReport testHtmlReport;
+//	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
+//	{
+//		AfxMessageBox(L"Error: can not create test report.");
+//
+//		return;
+//	}
 
 	m_pController->BeginTestMode();
 
@@ -249,7 +249,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 	{
 		CString strInputFileName = lsInputFiles.GetNext(posInputFile);
 
-		testHtmlReport.BeginTest((LPCTSTR)strInputFileName);
+//		testHtmlReport.BeginTest((LPCTSTR)strInputFileName);
 
 		CString stTestDir = strTestsDir;
 		stTestDir += "\\";
@@ -260,9 +260,9 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 
 		if (lsTestFiles.IsEmpty())
 		{
-			testHtmlReport.WriteError(L"Error: There are no tests.");
+//			testHtmlReport.WriteError(L"Error: There are no tests.");
 
-			testHtmlReport.EndTest();
+//			testHtmlReport.EndTest();
 
 			continue;
 		}
@@ -286,32 +286,32 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 			CTest test(m_pOpenGLView);
 			if (!test.Load((LPCTSTR)strTestFilePath))
 			{
-				testHtmlReport.WriteError(L"Error: Can not load test file.");
+//				testHtmlReport.WriteError(L"Error: Can not load test file.");
 
 				continue;
 			}
 
 			CString strInfo;
 			strInfo.Format(L"Test: %s, engine.dll, revision %s", (LPCTSTR)strTestFileName, test.GetRevision());
-			testHtmlReport.WriteInfo((LPCTSTR)strInfo);
+//			testHtmlReport.WriteInfo((LPCTSTR)strInfo);
 
 			CString strScreenshotFilePath = stTestDir;
 			strScreenshotFilePath += L"\\";
 			strScreenshotFilePath += test.GetScreenshotFileName();		
 
-			Test((LPCTSTR)strInputFileName, (LPCTSTR)strTestFileName, (LPCTSTR)strScreenshotFilePath, &testHtmlReport);
+//			Test((LPCTSTR)strInputFileName, (LPCTSTR)strTestFileName, (LPCTSTR)strScreenshotFilePath, &testHtmlReport);
 		} // for (POSITION posTestFile = ...		
 
-		testHtmlReport.EndTest();
+//		testHtmlReport.EndTest();
 	} // for (POSITION posInputFile = ...
 
-	testHtmlReport.End();
+//	testHtmlReport.End();
 
 	m_pController->EndTestMode();
 }
 
 // ------------------------------------------------------------------------------------------------
-void CTestManager::Test(const wchar_t* szInputFileName, const wchar_t* szTestFileName, const wchar_t* szScreenShotFilePath, CTestHtmlReport* pReport)
+/*void CTestManager::Test(const wchar_t* szInputFileName, const wchar_t* szTestFileName, const wchar_t* szScreenShotFilePath, CTestHtmlReport* pReport)
 {
 	unsigned char* arPixels;
 	unsigned int iWidth;
@@ -349,13 +349,13 @@ void CTestManager::Test(const wchar_t* szInputFileName, const wchar_t* szTestFil
 		int iDifferences = 0;
 
 		// B
-		iDifferences += abs(arPixels[b + 0] - vecExpectedPixels[b + 0 + 54/*header*/]);
+		iDifferences += abs(arPixels[b + 0] - vecExpectedPixels[b + 0 + 54/*header* /]);
 
 		// G
-		iDifferences += abs(arPixels[b + 1] - vecExpectedPixels[b + 1 + 54/*header*/]);
+		iDifferences += abs(arPixels[b + 1] - vecExpectedPixels[b + 1 + 54/*header* /]);
 
 		// R
-		iDifferences += abs(arPixels[b + 2] - vecExpectedPixels[b + 2 + 54/*header*/]);
+		iDifferences += abs(arPixels[b + 2] - vecExpectedPixels[b + 2 + 54/*header* /]);
 
 		if (iDifferences > TOLERANCE_PER_PIXEL)
 		{
@@ -415,4 +415,4 @@ void CTestManager::Test(const wchar_t* szInputFileName, const wchar_t* szTestFil
 	}	
 
 	free(arPixels);
-}
+}	//	*/

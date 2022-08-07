@@ -67,9 +67,9 @@ CMy3DEditorApp theApp;
 
 BOOL CMy3DEditorApp::InitInstance()
 {
-	LOG_INIT("3DEditor_%N.log");
+//	LOG_INIT("3DEditor_%N.log");
 
-	LOG_INFO("3DEditor is starting...");
+//	LOG_INFO("3DEditor is starting...");
 
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -205,7 +205,7 @@ BOOL CMy3DEditorApp::InitInstance()
 
 int CMy3DEditorApp::ExitInstance()
 {
-	LOG_INFO("3DEditor is terminating...");
+//	LOG_INFO("3DEditor is terminating...");
 
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);

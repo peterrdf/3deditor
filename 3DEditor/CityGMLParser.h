@@ -25,7 +25,7 @@ private: // Members
 	int64_t m_iModel;
 
 	// --------------------------------------------------------------------------------------------
-	Model* m_pModel;
+	int64_t m_pModel;
 
 public: // Methods
 
@@ -41,12 +41,12 @@ public: // Methods
 private: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	void ImportObject(const citygml::CityObject& object, vector<GeometricItem*>& vecObjects);
+	void ImportObject(const citygml::CityObject& object, vector<GEOM::GeometricItem>& vecObjects);
 
 	// --------------------------------------------------------------------------------------------
-	void ImportImplictGeometry(const citygml::ImplicitGeometry& implicitGeometry, vector<GeometricItem*>& vecTriangleSets);
+	void ImportImplictGeometry(const citygml::ImplicitGeometry& implicitGeometry, vector<GEOM::GeometricItem>& vecTriangleSets);
 
 	// --------------------------------------------------------------------------------------------
-	void ImportGeometry(const citygml::Geometry& geometry, vector<GeometricItem*>& vecTriangleSets);
+	void ImportGeometry(const citygml::Geometry& geometry, vector<GEOM::GeometricItem>& vecTriangleSets);
 };
 

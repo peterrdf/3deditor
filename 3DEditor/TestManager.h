@@ -45,6 +45,6 @@ public: // Methods
 private: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	void Test(const wchar_t* szInputFileName, const wchar_t* szTestFileName, const wchar_t* szScreenShotFilePath, CTestHtmlReport* pReport);
+//	void Test(const wchar_t* szInputFileName, const wchar_t* szTestFileName, const wchar_t* szScreenShotFilePath, CTestHtmlReport* pReport);
 };
 

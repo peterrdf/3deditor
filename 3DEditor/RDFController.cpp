@@ -230,7 +230,7 @@ CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCl
 }
 
 // ------------------------------------------------------------------------------------------------
-CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, Thing* pThing)
+CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing)
 {
 	CRDFInstance* pNewRDFInstance = m_pModel->AddNewInstance(pThing);
 	ASSERT(pNewRDFInstance != NULL);

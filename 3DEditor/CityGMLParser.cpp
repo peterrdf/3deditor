@@ -5,13 +5,13 @@
 CCityGMLParser::CCityGMLParser(int64_t iModel)
 {
 	m_iModel = iModel;
-	m_pModel = new Model(m_iModel);
+	m_pModel = m_iModel;
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ CCityGMLParser::~CCityGMLParser()
 {
-	delete m_pModel;
+//	delete m_pModel;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -23,29 +23,27 @@ void CCityGMLParser::Import(const wchar_t* szGMLFile)
 	citygml::ParserParams params;
 	shared_ptr<const citygml::CityModel> city = citygml::load(file, params);
 	
-	auto pModelCollection = m_pModel->create<Collection>();
-	pModelCollection->setNameW(szGMLFile);
+	auto pModelCollection = GEOM::Collection::Create(m_pModel, szGMLFile);
 
-	vector<GeometricItem*> vecRootObjects;
+	vector<GEOM::GeometricItem> vecRootObjects;
 	for (unsigned int iRootObject = 0; iRootObject < city->getNumRootCityObjects(); iRootObject++)
 	{
 		const citygml::CityObject& rootObject = city->getRootCityObject(iRootObject);
 		ImportObject(rootObject, vecRootObjects);
 	}
 
-	pModelCollection->objects = vecRootObjects;
+	pModelCollection.set_objects(&vecRootObjects[0], vecRootObjects.size());
 }
 
 
 // ------------------------------------------------------------------------------------------------
-void CCityGMLParser::ImportObject(const citygml::CityObject& object, vector<GeometricItem*>& vecObjects)
+void CCityGMLParser::ImportObject(const citygml::CityObject& object, vector<GEOM::GeometricItem>& vecObjects)
 {
 	string strType = object.getTypeAsString();
-	auto pObjectCollection = m_pModel->create<Collection>();
-	pObjectCollection->setName(strType.c_str());
+	auto pObjectCollection = GEOM::Collection::Create(m_pModel, strType.c_str());
 	vecObjects.push_back(pObjectCollection);
 
-	vector<GeometricItem*> vecTriangleSets;
+	vector<GEOM::GeometricItem> vecTriangleSets;
 	for (unsigned int iGeometry = 0; iGeometry < object.getImplicitGeometryCount(); iGeometry++)
 	{
 		const citygml::ImplicitGeometry& implicitGeometry = object.getImplicitGeometry(iGeometry);
@@ -58,26 +56,25 @@ void CCityGMLParser::ImportObject(const citygml::CityObject& object, vector<Geom
 		ImportGeometry(geometry, vecTriangleSets);
 	}
 	
-	vector<GeometricItem*> vecChildObjects;
+	vector<GEOM::GeometricItem> vecChildObjects;
 	for (unsigned int iChildObject = 0; iChildObject < object.getChildCityObjectsCount(); iChildObject++)
 	{
 		const citygml::CityObject& childObject = object.getChildCityObject(iChildObject);
 		ImportObject(childObject, vecChildObjects);
 	}
 
-	auto pObjectGeometryCollection = m_pModel->create<Collection>();
-	pObjectGeometryCollection->setNameW(L"Geometry");
-	pObjectGeometryCollection->objects = vecTriangleSets;
+	auto pObjectGeometryCollection = GEOM::Collection::Create(m_pModel, L"Geometry");
+	pObjectGeometryCollection.set_objects(&vecTriangleSets[0], vecTriangleSets.size());
 
-	auto pObjectChildsCollection = m_pModel->create<Collection>();
-	pObjectChildsCollection->setNameW(L"Objects");
-	pObjectChildsCollection->objects = vecChildObjects;
+	auto pObjectChildsCollection = GEOM::Collection::Create(m_pModel, L"Objects");
+	pObjectChildsCollection.set_objects(&vecChildObjects[0], vecChildObjects.size());
 
-	pObjectCollection->objects = { pObjectGeometryCollection, pObjectChildsCollection };
+	GEOM::GeometricItem coll[2] = { pObjectGeometryCollection, pObjectChildsCollection };
+	pObjectCollection.set_objects(coll, 2);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CCityGMLParser::ImportImplictGeometry(const citygml::ImplicitGeometry& implicitGeometry, vector<GeometricItem*>& vecTriangleSets)
+void CCityGMLParser::ImportImplictGeometry(const citygml::ImplicitGeometry& implicitGeometry, vector<GEOM::GeometricItem>& vecTriangleSets)
 {
 	for (unsigned int iGeometry = 0; iGeometry < implicitGeometry.getGeometriesCount(); iGeometry++)
 	{
@@ -87,7 +84,7 @@ void CCityGMLParser::ImportImplictGeometry(const citygml::ImplicitGeometry& impl
 }
 
 // ------------------------------------------------------------------------------------------------
-void CCityGMLParser::ImportGeometry(const citygml::Geometry& geometry, vector<GeometricItem*>& vecTriangleSets)
+void CCityGMLParser::ImportGeometry(const citygml::Geometry& geometry, vector<GEOM::GeometricItem>& vecTriangleSets)
 {
 	/*auto pAmbient = m_pModel->create<ColorComponent>();
 	pAmbient->R = 0.;
@@ -121,11 +118,10 @@ void CCityGMLParser::ImportGeometry(const citygml::Geometry& geometry, vector<Ge
 			vecIndices.push_back(vecPolygonIndices[iIndex]);
 		}
 
-		auto pTriangleSet = m_pModel->create<TriangleSet>();
-		pTriangleSet->setNameW(L"Triangles");
+		auto pTriangleSet = GEOM::TriangleSet::Create(m_pModel, "Triangles");
 
-		pTriangleSet->vertices = vecVertices;
-		pTriangleSet->indices = vecIndices;
+		pTriangleSet.set_vertices(&vecVertices[0], vecVertices.size());
+		pTriangleSet.set_indices(&vecIndices[0], vecIndices.size());
 
 		shared_ptr<const citygml::Material> materail = polygon->getMaterialFor("", true);
 

@@ -835,7 +835,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CFileView::UpdateView()
 {
-	LOG_DEBUG("CFileView::UpdateView() BEGIN");
+//	LOG_DEBUG("CFileView::UpdateView() BEGIN");
 
 	m_pSearchDialog->Reset();
 
@@ -912,7 +912,7 @@ void CFileView::UpdateView()
 	m_bInitInProgress = false;
 	m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
 
-	LOG_DEBUG("CFileView::UpdateView() END");
+//	LOG_DEBUG("CFileView::UpdateView() END");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1900,10 +1900,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 					continue;
 				}
 
-				if (!itRFDInstances->second->isReferenced())
-				{
-					itRFDInstances->second->setEnable(true);
-				}				
+				itRFDInstances->second->setEnable(true);
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();

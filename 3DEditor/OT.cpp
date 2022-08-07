@@ -3,6 +3,8 @@
 #include "RDFController.h"
 #include "Vector.h"
 
+#include <string>
+
 // ------------------------------------------------------------------------------------------------
 #define PI 3.14159265
 #define EPSILON 1E-6
@@ -667,7 +669,8 @@ void COctree::buildMesh()
 		return;
 	}
 
-	unique_ptr<Model> pModel(new Model(s_iModel));
+//	unique_ptr<Model> pModel(new Model(s_iModel));
+	int64_t	pModel = CreateModel();
 
 #ifdef _DEBUG_OCTREE 
 	s_bStepByStepMode = true;
@@ -686,11 +689,9 @@ void COctree::buildMesh()
 	int64_t iPointsCount = 0;
 	for (size_t iOctant = 0; iOctant < m_vecOctants.size(); iOctant++)
 	{
-		auto pOctantCollection = pModel->create<Collection>();
-		pOctantCollection->setNameW((L"Octant " + to_wstring(iOctant)).c_str());
+		auto pOctantCollection = GEOM::Collection::Create(pModel, (L"Octant " + to_wstring(iOctant)).c_str());
 
-		auto pPoint3DSet = pModel->create<Point3DSet>();
-		pPoint3DSet->setNameW(L"Points");		
+		auto pPoint3DSet = GEOM::Point3DSet::Create(pModel, "Points");		
 
 		if (m_vecOctants[iOctant] == nullptr)
 		{
@@ -739,9 +740,9 @@ void COctree::buildMesh()
 			vecPoints.push_back((*itPoint)->getZ());
 		}		
 
-		pPoint3DSet->coordinates = vecPoints;		
+		pPoint3DSet.set_coordinates(&vecPoints[0], vecPoints.size());		
 
-		pOctantCollection->objects = vector<GeometricItem*> { pPoint3DSet };
+		pOctantCollection.set_objects(&pPoint3DSet, 1);
 
 #ifdef _DEBUG_OCTREE
 		COctree::s_pController->OnOctreeInstanceCreated(nullptr, pOctantCollection);
@@ -750,8 +751,7 @@ void COctree::buildMesh()
 
 	ASSERT(iPointsCount == (int64_t)s_setPoints.size());
 
-	auto pTriangleSet = pModel->create<TriangleSet>();
-	pTriangleSet->setNameW(L"Triangles");
+	auto pTriangleSet = GEOM::TriangleSet::Create(pModel, "Triangles");
 
 	vector<double> vecVertices;
 
@@ -792,8 +792,8 @@ void COctree::buildMesh()
 		vecIndices.push_back(iVertex);
 	}
 
-	pTriangleSet->vertices = vecVertices;
-	pTriangleSet->indices = vecIndices;
+	pTriangleSet.set_vertices(&vecVertices[0], vecVertices.size());
+	pTriangleSet.set_indices(&vecIndices[0], vecIndices.size());
 }
 
 // ------------------------------------------------------------------------------------------------

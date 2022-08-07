@@ -95,6 +95,6 @@ public: // Methods
 	static bool LoadTest(const wchar_t* szTestFilePath, TEST& test);
 
 	// --------------------------------------------------------------------------------------------
-	void Compare(const wchar_t* szTest, const wchar_t* szScreenshotFilePath1, const wchar_t* szScreenshotFilePath2, CTestHtmlReport* pReport);
+    void Compare(const wchar_t* szTest, const wchar_t* szScreenshotFilePath1, const wchar_t* szScreenshotFilePath2, CTestHtmlReport* pReport);
 };
 

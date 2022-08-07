@@ -11,6 +11,8 @@
 #include "EditObjectPropertyDialog.h"
 #include "SelectInstanceDialog.h"
 
+
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -2225,7 +2227,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 	if ((prSelectedInstanceProperty.first != NULL) && (prSelectedInstanceProperty.second != NULL))
 	{
-		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property BEGIN");
+//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property BEGIN");
 
 		CRDFInstance * pRDFInstance = prSelectedInstanceProperty.first;
 		CRDFProperty * pRDFProperty = prSelectedInstanceProperty.second;
@@ -2236,7 +2238,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		m_wndPropList.AddProperty(pInstanceGroup);
 
-		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property END");
+//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property END");
 
 		return;		
 	} // if ((prSelectedInstanceProperty.first != NULL) && ...
@@ -2252,7 +2254,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		const map<int64_t, CRDFProperty *> & mapRDFProperties = pModel->GetRDFProperties();
 
-		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance BEGIN");
+//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance BEGIN");
 
 		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getUniqueName());
 
@@ -2311,7 +2313,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		m_wndPropList.AddProperty(pInstanceGroup);
 
-		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance END");
+//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance END");
 
 		return;
 	} // if (pRDFInstance != NULL)
@@ -2506,7 +2508,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	{
 	case TYPE_OBJECTTYPE:
 	{	
-		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE BEGIN");
+//		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE BEGIN");
 
 		int64_t * piInstances = NULL;
 		int64_t iCard = 0;
@@ -2616,7 +2618,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 			}
 		} // if (iCard > 0)
 
-		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE END");
+//		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE END");
 	} // case TYPE_OBJECTTYPE:
 	break;
 
@@ -2950,7 +2952,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 0:   Check Design Tree Consistency
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit0) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Design Tree Consistency", (_variant_t)szResult, L"Check Design Tree Consistency");
 		pProperty->AllowEdit(FALSE);
@@ -2962,7 +2964,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 1:   Check Consistency for Triangle Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit1) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangle Output (through API)", (_variant_t)szResult, L"Check Consistency for Triangle Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -2974,7 +2976,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 2:   Check Consistency for Line Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit2) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Line Output (through API)", (_variant_t)szResult, L"Check Consistency for Line Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -2986,7 +2988,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 3:   Check Consistency for Point Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit3) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Point Output (through API)", (_variant_t)szResult, L"Check Consistency for Point Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -2998,7 +3000,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 4:   Check Consistency for Generated Surfaces (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit4) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (through API)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3010,7 +3012,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 5:   Check Consistency for Generated Surfaces (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit5) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (internal)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3022,7 +3024,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 6:   Check Consistency for Generated Solids (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit6) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (through API)", (_variant_t)szResult, L"Check Consistency for Generated Solids (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3034,7 +3036,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 7:   Check Consistency for Generated Solids (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit7) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (internal)", (_variant_t)szResult, L"Check Consistency for Generated Solids (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3046,7 +3048,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 8:   Check Consistency for BoundingBox's
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit8) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for BoundingBox's", (_variant_t)szResult, L"Check Consistency for BoundingBox's");
 		pProperty->AllowEdit(FALSE);
@@ -3058,7 +3060,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 9:   Check Consistency for Triangulation
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit9) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangulation", (_variant_t)szResult, L"Check Consistency for Triangulation");
 		pProperty->AllowEdit(FALSE);
@@ -3070,7 +3072,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 10:  Check Consistency for Relations (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit10) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Relations (through API)", (_variant_t)szResult, L"Check Consistency for Relations (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3082,7 +3084,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 16:   Contains (Closed) Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit16) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Solid(s)", (_variant_t)szResult, L"Contains (Closed) Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3094,7 +3096,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 18:   Contains (Closed) Infinite Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit18) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Infinite Solid(s)", (_variant_t)szResult, L"Contains (Closed) Infinite Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3106,7 +3108,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 20:   Contains Closed Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit20) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Surface(s)", (_variant_t)szResult, L"Contains Closed Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3118,7 +3120,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 21:   Contains Open Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit21) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Surface(s)", (_variant_t)szResult, L"Contains Open Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3130,7 +3132,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 22:   Contains Closed Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit22) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Surface(s)", (_variant_t)szResult, L"Contains Closed Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3142,7 +3144,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 23:   Contains Open Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit23) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Surface(s)", (_variant_t)szResult, L"Contains Open Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3154,7 +3156,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 24:   Contains Closed Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit24) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Line(s)", (_variant_t)szResult, L"Contains Closed Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3166,7 +3168,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 25:   Contains Open Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit25) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Line(s)", (_variant_t)szResult, L"Contains Open Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3178,7 +3180,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 26:   Contains Closed Infinite Line(s) [i.e. both ends in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit26) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Line(s)", (_variant_t)szResult, L"Contains Closed Infinite Line(s) [i.e. both ends in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -3190,7 +3192,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 27:   Contains Open Infinite Line(s) [i.e. one end in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit27) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Line(s)", (_variant_t)szResult, L"Contains Open Infinite Line(s) [i.e. one end in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -3202,7 +3204,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 28:   Contains (Closed) Point(s)
 	*/
 	{
-		wchar_t * szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), flagbit28) > 0 ? L"YES" : L"-";
+		wchar_t * szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Point(s)", (_variant_t)szResult, L"Contains (Closed) Point(s)");
 		pProperty->AllowEdit(FALSE);

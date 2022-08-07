@@ -2,6 +2,10 @@
 #include "CompareResults.h"
 #include "Generic.h"
 
+#include <string>
+
+using namespace std;
+
 // ------------------------------------------------------------------------------------------------
 CCompareResults::CCompareResults(const CString& strTestResults1, const CString& strTestResults2, const CString& strTestReportDir)
 	: m_iComparisonIndex(0)
@@ -38,13 +42,13 @@ void CCompareResults::Execute()
 
 	CString strMessage;
 
-	CTestHtmlReport testHtmlReport;
-	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
-	{
-		AfxMessageBox(L"Error: can not create test report.");
+//	CTestHtmlReport testHtmlReport;
+//	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
+//	{
+//		AfxMessageBox(L"Error: can not create test report.");
 
-		return;
-	}
+//		return;
+//	}
 
 	for (POSITION posTest = lsTests.GetHeadPosition(); posTest != NULL;)
 	{
@@ -57,13 +61,13 @@ void CCompareResults::Execute()
 		CStringList lsTestFiles;
 		FindFiles((LPCTSTR)stTestDir, L"*.3deditortest", lsTestFiles);
 
-		testHtmlReport.BeginTest((LPCTSTR)strTest);
+//		testHtmlReport.BeginTest((LPCTSTR)strTest);
 
 		if (lsTestFiles.IsEmpty())
 		{
-			testHtmlReport.WriteError(L"Error: There are no tests.");
+//			testHtmlReport.WriteError(L"Error: There are no tests.");
 
-			testHtmlReport.EndTest();
+//			testHtmlReport.EndTest();
 
 			continue;
 		}
@@ -85,7 +89,7 @@ void CCompareResults::Execute()
 			strTest2FilePath += strTestFileName;
 
 			strMessage.Format(L"Test: '%s' vs '%s'", (LPCTSTR)m_strTestResults1, (LPCTSTR)m_strTestResults2);
-			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
+//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
 
 			TEST test1;
 			if (!LoadTest(strTest1FilePath, test1))
@@ -93,7 +97,7 @@ void CCompareResults::Execute()
 				ASSERT(FALSE);				
 				
 				strMessage.Format(L"Error: can not load '%s'", (LPCTSTR)strTest1FilePath);
-				testHtmlReport.WriteError((LPCTSTR)strMessage);
+//				testHtmlReport.WriteError((LPCTSTR)strMessage);
 			}			
 
 			TEST test2;
@@ -102,14 +106,14 @@ void CCompareResults::Execute()
 				ASSERT(FALSE);
 				
 				strMessage.Format(L"Error: can not load '%s'", (LPCTSTR)strTest2FilePath);
-				testHtmlReport.WriteError((LPCTSTR)strMessage);
+//				testHtmlReport.WriteError((LPCTSTR)strMessage);
 			}
 
 			if (!AreTestIdentical(test1, test2))
 			{
 				ASSERT(FALSE);
 				
-				testHtmlReport.WriteError(L"Error: test settings do not match.");
+//				testHtmlReport.WriteError(L"Error: test settings do not match.");
 			}
 
 			CString strScreenshotFilePath1 = m_strTestResults1;
@@ -125,18 +129,18 @@ void CCompareResults::Execute()
 			strScreenshotFilePath2 += test2.SCREENSHOT;
 
 			strMessage.Format(L"Revision: '%s' vs '%s'", (LPCTSTR)test1.REVISION, (LPCTSTR)test2.REVISION);
-			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
+//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
 
 			strMessage.Format(L"Screenshot: '%s' vs '%s'", (LPCTSTR)strScreenshotFilePath1, (LPCTSTR)strScreenshotFilePath2);
-			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
+//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
 
-			Compare((LPCTSTR)strTest, (LPCTSTR)strScreenshotFilePath1, (LPCTSTR)strScreenshotFilePath2, &testHtmlReport);
+//			Compare((LPCTSTR)strTest, (LPCTSTR)strScreenshotFilePath1, (LPCTSTR)strScreenshotFilePath2, &testHtmlReport);
 
-			testHtmlReport.EndTest();
+//			testHtmlReport.EndTest();
 		} // for (POSITION posTestFile = ...
 	} // for (POSITION posTest = ...
 
-	testHtmlReport.End();
+//	testHtmlReport.End();
 }
 
 // ------------------------------------------------------------------------------------------------

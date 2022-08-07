@@ -14,7 +14,7 @@
 
 #ifndef _LINUX
 
-#include "log.hpp"
+//#include "log.hpp"
 
 
 #include "targetver.h"
@@ -51,13 +51,13 @@
 #endif
 #endif
 
-#include "glew.h"
-#include "wglew.h"
+#include "..\glew-2.2.0\include\GL\glew.h"
+#include "..\glew-2.2.0\include\GL\wglew.h"
 
 #endif // _LINUX
 
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "engineapi.h"
+#include "..\include\geom.h"
 

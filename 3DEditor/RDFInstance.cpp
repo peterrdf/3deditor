@@ -65,7 +65,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 
 	m_strUniqueName = szUniqueName;
 
-	LOG_DEBUG("*** INSTANCE " << m_strName.c_str());
+//	LOG_DEBUG("*** INSTANCE " << m_strName.c_str());
 #else
     m_strName = wxString(szName).wchar_str();
 

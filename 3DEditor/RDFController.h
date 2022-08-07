@@ -152,7 +152,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Factory
-	CRDFInstance* OnOctreeInstanceCreated(CRDFView* pSender, Thing* pThing);
+	CRDFInstance* OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing);
 
 	// --------------------------------------------------------------------------------------------
 	// Removes an instance

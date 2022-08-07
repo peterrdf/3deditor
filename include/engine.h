@@ -47,7 +47,83 @@
 #define		DATATYPEPROPERTY_TYPE_CHAR			3
 #define		DATATYPEPROPERTY_TYPE_INTEGER		4
 #define		DATATYPEPROPERTY_TYPE_DOUBLE		5
+#define		DATATYPEPROPERTY_TYPE_BYTE			6
 
+//
+// Flags can be used in bitwise combination for settings and masks to SetFormat, GetFormat and other functions working with settings
+//
+
+#define		FLAGBIT(n)									((int64_t) (((int64_t) 1L)<<(n)))
+
+//control precision / data size
+#define		FORMAT_SIZE_VERTEX_DOUBLE					FLAGBIT(2)		//	Vertex items returned as double (8 byte/64 bit) else - as float (4 byte/32 bit)
+#define		FORMAT_SIZE_INDEX_INT64						FLAGBIT(3)		//	Index items returned as int64_t (8 byte/64 bit) (only available in 64 bit mode) - else as int32_t (4 byte/32 bit)
+
+//control vertex data
+#define		FORMAT_VERTEX_POINT							FLAGBIT(4)		//	Vertex contains 3D point info
+#define		FORMAT_VERTEX_NORMAL						FLAGBIT(5)		//	Vertex contains normat info
+#define		FORMAT_VERTEX_TEXTURE_UV					FLAGBIT(6)		//	Vertex contains first 2D texture info
+#define		FORMAT_VERTEX_TEXTURE_TANGENT				FLAGBIT(28)		//	Vertex does contain tangent vector for first texture
+#define		FORMAT_VERTEX_TEXTURE_BINORMAL				FLAGBIT(29)		//	Vertex does contain binormal vector for first texture
+#define		FORMAT_VERTEX_TEXTURE2_UV					FLAGBIT(7)		//	Vertex contains second 2D texture info
+#define		FORMAT_VERTEX_TEXTURE2_TANGENT				FLAGBIT(30)		//	Vertex does contain tangent vector for second texture (only 64 bit platform)
+#define		FORMAT_VERTEX_TEXTURE2_BINORMAL				FLAGBIT(31)		//	Vertex does contain binormal vector for second texture (only 64 bit platform)
+#define		FORMAT_VERTEX_COLOR_AMBIENT					FLAGBIT(24)		//	Vertex does contain Ambient color information
+#define		FORMAT_VERTEX_COLOR_DIFFUSE					FLAGBIT(25)		//	Vertex does contain Diffuse color information
+#define		FORMAT_VERTEX_COLOR_EMISSIVE				FLAGBIT(26)		//	Vertex does contain Emissive color information
+#define		FORMAT_VERTEX_COLOR_SPECULAR				FLAGBIT(27)		//	Vertex does contain Specular color information
+
+//control CalculateInstance behaviour
+#define		FORMAT_EXPORT_TRIANGLES						FLAGBIT(8)		//	Object form triangles are exported (effective if instance contains faces and/or solids)(triangulated surface representation)
+#define		FORMAT_EXPORT_LINES							FLAGBIT(9)		//	Object polygon lines are exported (effective if instance contains line representations)
+#define		FORMAT_EXPORT_POINTS						FLAGBIT(10)		//	Object points are exported (effective if instance contains point representations)
+#define		FORMAT_EXPORT_FACE_POLYGONS					FLAGBIT(12)		//	Object face polygon lines (dense wireframe) are exported (requires FORMAT_FLAG_CONTAINS_TRIANGLES)
+#define		FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS		FLAGBIT(13)		//	Object conceptual face polygon lines (wireframe) are exported 
+#define		FORMAT_EXPORT_POLYGONS_AS_TUPLES			FLAGBIT(14)		//	Polygon lines (wireframe) exported as tuples (edges) - else as list (loop)
+#define		FORMAT_EXPORT_ADVANCED_NORMALS				FLAGBIT(15)		//	Normals are exported to be in line with the original semantic form description (orthogonal to conceprual face, could be non orthogonal to the planar face or triangle) - else all normals of triangles are transformed orthogonal to the palnar face or triangle they belong to
+#define		FORMAT_EXPORT_DIRECTX						FLAGBIT(16)		//	Where possible DirectX compatibility is given to exported data. Unsets FORMAT_FLAG_OPENGL, FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
+#define		FORMAT_EXPORT_OPENGL						FLAGBIT(17)		//	Where possible OpenGL compatibility is given to exported data. Unsets FORMAT_FLAG_DIRECTX. Sets FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
+#define		FORMAT_EXPORT_DOUBLE_SIDED					FLAGBIT(18)		//	Every face has exactly one opposite face (normally both index and vertex array are doubled in size)
+#define		FORMAT_EXPORT_VERSION_0001					FLAGBIT(20)		//	Opposite Triangle Rotation (RHS as expected by OpenGL) - else  Standard Triangle Rotation (LHS as expected by DirectX)
+#define		FORMAT_EXPORT_VERSION_0010					FLAGBIT(21)		//	X, Y, Z (nX, nY, nZ) formatted as , i.e. X, -Z, Y (nX, -nZ, nY) considering internal concepts (OpenGL) - else X, Y, Z (nX, nY, nZ) formatted as considering internal concepts
+#define		FORMAT_EXPORT_VERSION_0100					FLAGBIT(22)
+#define		FORMAT_EXPORT_VERSION_1000					FLAGBIT(23)
+
+#define GetVertexElementsCount(setting) GetVertexDataOffset(0, setting)	// Get number of elements in verctor data array with the format settings
+
+//
+//  Color pack/unpack
+//
+
+//get color from its components in range 0..255
+#define		COLOR_RGBW255(r,g,b,w)						(											\
+															((int32_t)(unsigned char)(r)	<<24)	\
+														|	((int32_t)(unsigned char)(g)	<<16)	\
+														|	((int32_t)(unsigned char)(b)	<<8	)	\
+														|	((int32_t)(unsigned char)(w)		)	\
+														)
+//get color from its components in range 0..1 
+#define		COLOR_RGBW(r,g,b,w)							COLOR_RGBW255(r*255,g*255,b*255,w*255)
+
+#define		COLOR_GET_R255(clr)							((unsigned char)(((int32_t)(clr)>>24)&0xFF))	//	get color red component in range 0..255
+#define		COLOR_GET_G255(clr)							((unsigned char)(((int32_t)(clr)>>16)&0xFF))	//	get color green component in range 0..255
+#define		COLOR_GET_B255(clr)							((unsigned char)(((int32_t)(clr)>>8 )&0xFF))	//	get color blue component in range 0..255
+#define		COLOR_GET_W255(clr)							((unsigned char)(((int32_t)(clr)	)&0xFF))	//	get color transparency in range 0..255
+
+#define		COLOR_GET_R(clr)							(COLOR_GET_R255(clr)/255.0)						//	get color red component in range 0..1
+#define		COLOR_GET_G(clr)							(COLOR_GET_G255(clr)/255.0)						//	get color green component in range 0..1
+#define		COLOR_GET_B(clr)							(COLOR_GET_B255(clr)/255.0)						//	get color blue component in range 0..1
+#define		COLOR_GET_W(clr)							(COLOR_GET_W255(clr)/255.0)						//	get color trancparency in range 0..1
+
+
+#define		COLOR_ARR_RGBW255(r)						COLOR_RGBW255(r[0],r[1],r[2],r[3])				//	get color from array of 4 components in range 0..255
+#define		COLOR_ARR_RGBW(r)							COLOR_RGBW(r[0],r[1],r[2],r[3])					//	get color from array of 4 components in range 0..1
+
+//get color comonents in range 0..255 to arry of 4 elements
+#define		COLOR_GET_COMPONENTS255(r,clr)				{r[0]=COLOR_GET_R255(clr); r[1]=COLOR_GET_G255(clr); r[2]=COLOR_GET_B255(clr); r[3]=COLOR_GET_W255(clr);}
+
+//get color comonents in range 0..1 to arry of 4 elements
+#define		COLOR_GET_COMPONENTS(r,clr)					{r[0]=COLOR_GET_R(clr); r[1]=COLOR_GET_G(clr); r[2]=COLOR_GET_B(clr); r[3]=COLOR_GET_W(clr);}
 
 //
 //  Meta information API Calls
@@ -485,6 +561,95 @@ void		DECL STDC	PeelArray(
 									const void			** inValue,
 									void				** outValue,
 									int64_t				elementSize
+								);
+
+//
+//		SetInternalCheck                            (http://rdf.bg/gkdoc/CP64/SetInternalCheck.html)
+//				int64_t				model								IN
+//				int64_t				setting								IN
+//				int64_t				mask								IN
+//
+//				void				returns
+//
+//	This function allows to enable or disable several active consistency checks. Enabling the checks can 
+//	introduce performance effects; it is helpfull for and meant for debugging on client side.
+//	If model is zero the consistency checks are set for all open and to be created models.
+//
+void		DECL STDC	SetInternalCheck(
+									int64_t				model,
+									int64_t				setting,
+									int64_t				mask
+								);
+
+//
+//		GetInternalCheck                            (http://rdf.bg/gkdoc/CP64/GetInternalCheck.html)
+//				int64_t				model								IN
+//				int64_t				mask								IN
+//
+//				int64_t				returns								OUT
+//
+//	This function returns all current enabled active consistency checks given the mask the function is 
+//	called for.
+//	When leaving mask and settinbg zero it will return all bits that can be set.
+//
+int64_t		DECL STDC	GetInternalCheck(
+									int64_t				model,
+									int64_t				mask
+								);
+
+//
+//		GetInternalCheckIssueCnt                    (http://rdf.bg/gkdoc/CP64/GetInternalCheckIssueCnt.html)
+//				int64_t				model								IN
+//
+//				int64_t				returns								OUT
+//
+//	This function returns all issues found and not retrieved by the hosting application through 
+//	GetInternalCheckIssue() / GetInternalCheckIssueW().
+//
+int64_t		DECL STDC	GetInternalCheckIssueCnt(
+									int64_t				model
+								);
+
+//
+//		GetInternalCheckIssue                       (http://rdf.bg/gkdoc/CP64/GetInternalCheckIssue.html)
+//				int64_t				model								IN
+//				char				** name								IN / OUT
+//				char				** description						IN / OUT
+//				int64_t				* relatedOwlInstance				IN / OUT
+//
+//				void				returns
+//
+//	This function returns the oldest issues in the list of issues and reduces the list of issues with 1.
+//	The name and description represent the issue as ASCII string, if relevant the relating owlInstance
+//	will be returned through relatedOwlInstance.
+//	Namer, Description and relatedOwlInstance are optional.
+//
+void		DECL STDC	GetInternalCheckIssue(
+									int64_t				model,
+									char				** name,
+									char				** description,
+									int64_t				* relatedOwlInstance
+								);
+
+//
+//		GetInternalCheckIssueW                      (http://rdf.bg/gkdoc/CP64/GetInternalCheckIssueW.html)
+//				int64_t				model								IN
+//				wchar_t				** name								IN / OUT
+//				wchar_t				** description						IN / OUT
+//				int64_t				* relatedOwlInstance				IN / OUT
+//
+//				void				returns
+//
+//	This function returns the oldest issues in the list of issues and reduces the list of issues with 1.
+//	The name and description represent the issue as Unicode string, if relevant the relating owlInstance
+//	will be returned through relatedOwlInstance.
+//	Namer, Description and relatedOwlInstance are optional.
+//
+void		DECL STDC	GetInternalCheckIssueW(
+									int64_t				model,
+									wchar_t				** name,
+									wchar_t				** description,
+									int64_t				* relatedOwlInstance
 								);
 
 //
@@ -939,7 +1104,7 @@ int64_t		DECL STDC	GetOverrideFileIO(
 //
 //		CopyInstanceTree                            (http://rdf.bg/gkdoc/CP64/CopyInstanceTree.html)
 //				int64_t				owlInstance							IN
-//				int64_t				model								IN
+//				int64_t				targetModel							IN
 //
 //				int64_t				returns								OUT
 //
@@ -954,14 +1119,14 @@ int64_t		DECL STDC	GetOverrideFileIO(
 //
 int64_t		DECL STDC	CopyInstanceTree(
 									int64_t				owlInstance,
-									int64_t				model
+									int64_t				targetModel
 								);
 
 //
 //		CopyInstanceNetwork                         (http://rdf.bg/gkdoc/CP64/CopyInstanceNetwork.html)
 //				int64_t				owlInstance							IN
 //				bool				includeInverseRelations				IN
-//				int64_t				model								IN
+//				int64_t				targetModel							IN
 //
 //				int64_t				returns								OUT
 //
@@ -982,7 +1147,7 @@ int64_t		DECL STDC	CopyInstanceTree(
 int64_t		DECL STDC	CopyInstanceNetwork(
 									int64_t				owlInstance,
 									bool				includeInverseRelations,
-									int64_t				model
+									int64_t				targetModel
 								);
 
 //
@@ -1155,7 +1320,7 @@ void		DECL STDC	SetClassParentEx(
 								);
 
 //
-//		GetParentsByIterator                        (http://rdf.bg/gkdoc/CP64/GetParentsByIterator.html)
+//		GetClassParentsByIterator                   (http://rdf.bg/gkdoc/CP64/GetClassParentsByIterator.html)
 //				int64_t				owlClass							IN
 //				int64_t				parentOwlClass						IN
 //
@@ -1165,7 +1330,7 @@ void		DECL STDC	SetClassParentEx(
 //	If input parent is zero, the handle will point to the first relevant parent.
 //	If all parent are past (or no relevant parent are found), the function will return 0.
 //
-int64_t		DECL STDC	GetParentsByIterator(
+int64_t		DECL STDC	GetClassParentsByIterator(
 									int64_t				owlClass,
 									int64_t				parentOwlClass
 								);
@@ -1554,6 +1719,44 @@ int64_t		DECL STDC	GetPropertiesByIterator(
 								);
 
 //
+//		SetPropertyRangeRestriction                 (http://rdf.bg/gkdoc/CP64/SetPropertyRangeRestriction.html)
+//				int64_t				rdfProperty							IN
+//				int64_t				owlClass							IN
+//				int64_t				setting								IN
+//
+//				void				returns
+//
+//	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
+//	be an objectp[roperty, i.e. relation.]
+//	If rdfProperty is not an object property this call has no effect.
+//
+void		DECL STDC	SetPropertyRangeRestriction(
+									int64_t				rdfProperty,
+									int64_t				owlClass,
+									int64_t				setting
+								);
+
+//
+//		SetPropertyRangeRestrictionEx               (http://rdf.bg/gkdoc/CP64/SetPropertyRangeRestrictionEx.html)
+//				int64_t				model								IN
+//				int64_t				rdfProperty							IN
+//				int64_t				owlClass							IN
+//				int64_t				setting								IN
+//
+//				void				returns
+//
+//	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
+//	be an objectp[roperty, i.e. relation.]
+//	If rdfProperty is not an object property this call has no effect.
+//
+void		DECL STDC	SetPropertyRangeRestrictionEx(
+									int64_t				model,
+									int64_t				rdfProperty,
+									int64_t				owlClass,
+									int64_t				setting
+								);
+
+//
 //		GetRangeRestrictionsByIterator              (http://rdf.bg/gkdoc/CP64/GetRangeRestrictionsByIterator.html)
 //				int64_t				rdfProperty							IN
 //				int64_t				owlClass							IN
@@ -1567,6 +1770,40 @@ int64_t		DECL STDC	GetPropertiesByIterator(
 int64_t		DECL STDC	GetRangeRestrictionsByIterator(
 									int64_t				rdfProperty,
 									int64_t				owlClass
+								);
+
+//
+//		GetRangeRestrictionsByIteratorEx            (http://rdf.bg/gkdoc/CP64/GetRangeRestrictionsByIteratorEx.html)
+//				int64_t				model								IN
+//				int64_t				rdfProperty							IN
+//				int64_t				owlClass							IN
+//
+//				int64_t				returns								OUT
+//
+//	Returns the next class the property is restricted to.
+//	If input class is zero, the handle will point to the first relevant class.
+//	If all classes are past (or no relevant classes are found), the function will return 0.
+//
+int64_t		DECL STDC	GetRangeRestrictionsByIteratorEx(
+									int64_t				model,
+									int64_t				rdfProperty,
+									int64_t				owlClass
+								);
+
+//
+//		GetPropertyParentsByIterator                (http://rdf.bg/gkdoc/CP64/GetPropertyParentsByIterator.html)
+//				int64_t				rdfProperty							IN
+//				int64_t				parentRdfProperty					IN
+//
+//				int64_t				returns								OUT
+//
+//	Returns the next parent of the property.
+//	If input parent is zero, the handle will point to the first relevant parent.
+//	If all parent are past (or no relevant parent are found), the function will return 0.
+//
+int64_t		DECL STDC	GetPropertyParentsByIterator(
+									int64_t				rdfProperty,
+									int64_t				parentRdfProperty
 								);
 
 //
@@ -2588,6 +2825,27 @@ int64_t		DECL STDC	UpdateInstanceVertexBuffer(
 								);
 
 //
+//		UpdateInstanceVertexBufferTrimmed           (http://rdf.bg/gkdoc/CP64/UpdateInstanceVertexBufferTrimmed.html)
+//				int64_t				owlInstance							IN
+//				void				* vertexBuffer						IN / OUT
+//				int64_t				offset								IN
+//				int64_t				size								IN
+//
+//				int64_t				returns								OUT
+//
+//	This function is an alternative for UpdateInstanceVertexBuffer(),
+//	in case the vertex buffer should be divided over a set of arrays
+//	this function allows to fill part of the vertex buffer given a
+//	certain offset and size (both calculated in vertex element count).
+//
+int64_t		DECL STDC	UpdateInstanceVertexBufferTrimmed(
+									int64_t				owlInstance,
+									void				* vertexBuffer,
+									int64_t				offset,
+									int64_t				size
+								);
+
+//
 //		UpdateInstanceIndexBuffer                   (http://rdf.bg/gkdoc/CP64/UpdateInstanceIndexBuffer.html)
 //				int64_t				owlInstance							IN
 //				void				* indexBuffer						IN / OUT
@@ -2606,6 +2864,27 @@ int64_t		DECL STDC	UpdateInstanceVertexBuffer(
 int64_t		DECL STDC	UpdateInstanceIndexBuffer(
 									int64_t				owlInstance,
 									void				* indexBuffer
+								);
+
+//
+//		UpdateInstanceIndexBufferTrimmed            (http://rdf.bg/gkdoc/CP64/UpdateInstanceIndexBufferTrimmed.html)
+//				int64_t				owlInstance							IN
+//				void				* indexBuffer						IN / OUT
+//				int64_t				offset								IN
+//				int64_t				size								IN
+//
+//				int64_t				returns								OUT
+//
+//	This function is an alternative for UpdateInstanceIndexBuffer(),
+//	in case the index buffer should be divided over a set of arrays
+//	this function allows to fill part of the index buffer given a
+//	certain offset and size.
+//
+int64_t		DECL STDC	UpdateInstanceIndexBufferTrimmed(
+									int64_t				owlInstance,
+									void				* indexBuffer,
+									int64_t				offset,
+									int64_t				size
 								);
 
 //
@@ -2881,67 +3160,67 @@ void		DECL STDC	GetDependingProperty(
 //				and OpenGL till version 2
 //			11	Nested Transformations are used, most optimal but till 2011 no known support of
 //				low level 3D interfaces like DirectX and OpenGL
-//		bit 2:
+//		bit 2:	(FORMAT_SIZE_VERTEX_DOUBLE)
 //			0	Vertex items returned as float (4 byte/32 bit)
 //			1	Vertex items returned as double (8 byte/64 bit)
-//		bit 3:
+//		bit 3:	(FORMAT_SIZE_INDEX_INT64)
 //			0	Index items returned as int32_t (4 byte/32 bit)
 //			1	Index items returned as int64_t (8 byte/64 bit) (only available in 64 bit mode)
 //
-//		bit 4:
+//		bit 4:	(FORMAT_VERTEX_POINT)
 //			0	Vertex does not contain 3D point info
 //			1	Vertex does contain 3D point info
-//		bit 5:
+//		bit 5:	(FORMAT_VERTEX_NORMAL)
 //			0	Vertex does not contain 3D normal vector info
 //			1	Vertex does contain 3D normal vector info => if set, bit 4 will also be set
-//		bit 6:
+//		bit 6:	(FORMAT_VERTEX_TEXTURE_UV)
 //			0	Vertex does not contain first 2D texture info
 //			1	Vertex does contain first 2D texture info
-//		bit 7:
+//		bit 7:	(FORMAT_VERTEX_TEXTURE2_UV)
 //			0	Vertex does not contain second 2D texture info
 //			1	Vertex does contain second 2D texture info => if set, bit 6 will also be set
 //
-//		bit 8:	
+//		bit 8:	(FORMAT_EXPORT_TRIANGLES)
 //			0	No object form triangles are exported
 //			1	Object form triangles are exported (effective if instance contains faces and/or solids)
-//		bit 9:
+//		bit 9:	(FORMAT_EXPORT_LINES)
 //			0	No object polygon lines are exported
 //			1	Object polygon lines are exported (effective if instance contains line representations)
-//		bit 10:
+//		bit 10:	(FORMAT_EXPORT_POINTS)
 //			0	No object points are exported
 //			1	Object points are exported (effective if instance contains point representations)
 //
 //		bit 11:	Reserved, by default 0
 //
-//		bit 12:
+//		bit 12:	(FORMAT_EXPORT_FACE_POLYGONS)
 //			0	No object face polygon lines are exported
 //			1	Object face polygon lines (dense wireframe) are exported => if set, bit 8 will also be set
-//		bit 13:
+//		bit 13:	(FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS)
 //			0	No object conceptual face polygon lines are exported
 //			1	Object conceptual face polygon lines (wireframe) are exported => if set, bit 12 will also be set
-//		bit 14:	
+//		bit 14:	(FORMAT_EXPORT_POLYGONS_AS_TUPLES)
 //			0	Polygon lines (wireframe) exported as list, i.e. typical 4 point polygon exported as  0 1 2 3 0 -1
 //			1	Polygon lines (wireframe) exported as tuples, i.e. typical 4 point polygon exported as 0 1 1 2 2 3 3 0
 //
-//		bit 15:
+//		bit 15:	(FORMAT_EXPORT_ADVANCED_NORMALS)
 //			0	All normals of triangles are transformed orthogonal to the 2D face they belong to
 //			1	Normals are exported to be in line with the original semantic form description (could be non orthogonal to the 2D face) 
 //
-//		bit 16: 
+//		bit 16:	(FORMAT_EXPORT_DIRECTX)
 //			0	no specific behavior
-//			1	Where possible DirectX compatibility is given to exported data (i.e. order of components in vertices)
+//			1	Where possible DirectX compatibility is given to exported data (i.e. order of components in vertex buffer)
 //					 => [bit 20, bit 21 both UNSET]
 //					 => if set, bit 17 will be unset
 //
-//		bit 17: 
+//		bit 17:	(FORMAT_EXPORT_OPENGL)
 //			0	no specific behavior
-//			1	Where possible OpenGL compatibility is given to exported data (i.e. order of components in vertices and inverted texture coordinates in Y direction)
+//			1	Where possible OpenGL compatibility is given to exported data (i.e. order of components in vertex buffer and inverted texture coordinates in Y direction)
 //					 => [bit 20, bit 21 both SET]
 //					 => if set, bit 16 will be unset
 //
-//		bit 18:
+//		bit 18:	(FORMAT_EXPORT_DOUBLE_SIDED)
 //			0	All faces are defined as calculated
-//			1	Every face has exactly one opposite face (normally both index and vertex array are doubled in size)
+//			1	Every face has exactly one opposite face (normally both index and vertex buffer are doubled in size)
 //
 //		bit 19:	Reserved, by default 0
 //
@@ -2950,36 +3229,36 @@ void		DECL STDC	GetDependingProperty(
 //			....	...
 //			1111	version 15
 //
-//		bit 20:
+//		bit 20:	(FORMAT_EXPORT_VERSION_0001)
 //			0	Standard Triangle Rotation (LHS as expected by DirectX) 
 //			1	Opposite Triangle Rotation (RHS as expected by OpenGL)
-//		bit 21:
+//		bit 21:	(FORMAT_EXPORT_VERSION_0010)
 //			0	X, Y, Z (nX, nY, nZ) formatted as <X Y Z> considering internal concepts
 //			1	X, Y, Z (nX, nY, nZ) formatted as <X -Z Y>, i.e. X, -Z, Y (nX, -nZ, nY) considering internal concepts (OpenGL)
 //
-//		bit 24:
+//		bit 24:	(FORMAT_VERTEX_COLOR_AMBIENT)
 //			0	Vertex does not contain Ambient color information
 //			1	Vertex does contain Ambient color information
-//		bit 25:
+//		bit 25:	(FORMAT_VERTEX_COLOR_DIFFUSE)
 //			0	Vertex does not contain Diffuse color information
 //			1	Vertex does contain Diffuse color information
-//		bit 26:
+//		bit 26:	(FORMAT_VERTEX_COLOR_EMISSIVE)
 //			0	Vertex does not contain Emissive color information
 //			1	Vertex does contain Emissive color information
-//		bit 27:
+//		bit 27:	(FORMAT_VERTEX_COLOR_SPECULAR)
 //			0	Vertex does not contain Specular color information
 //			1	Vertex does contain Specular color information
 //
-//		bit 28:
+//		bit 28:	(FORMAT_VERTEX_TEXTURE_TANGENT)
 //			0	Vertex does not contain tangent vector for first texture
 //			1	Vertex does contain tangent vector for first texture => if set, bit 6 will also be set
-//		bit 29:
+//		bit 29:	(FORMAT_VERTEX_TEXTURE_BINORMAL)
 //			0	Vertex does not contain binormal vector for first texture
 //			1	Vertex does contain binormal vector for first texture => if set, bit 6 will also be set
-//		bit 30:			ONLY WORKS IN 64 BIT MODE
+//		bit 30:	(FORMAT_VERTEX_TEXTURE2_TANGENT)		ONLY WORKS IN 64 BIT MODE
 //			0	Vertex does not contain tangent vector for second texture
 //			1	Vertex does contain tangent vector for second texture => if set, bit 6 will also be set
-//		bit 31:			ONLY WORKS IN 64 BIT MODE
+//		bit 31:	(FORMAT_VERTEX_TEXTURE2_BINORMAL)		ONLY WORKS IN 64 BIT MODE
 //			0	Vertex does not contain binormal vector for second texture
 //			1	Vertex does contain binormal vector for second texture => if set, bit 6 will also be set
 //
@@ -2988,6 +3267,26 @@ void		DECL STDC	GetDependingProperty(
 //		bit 32-63:	Reserved, by default 0
 //
 //	Note: default setting is 0000 0000 0000 0000   0000 0000 0000 0000  -  0000 0000 0000 0000   1000 0001  0011 0000 = h0000 0000 - 0000 8130 = 33072
+//
+//
+//	Depending on FORMAT_SIZE_VERTEX_DOUBLE each element in the vertex buffer is a double or float number.
+//	Number of elements for each vertex depends on format setting. You can get the number by GetVertexElementsCounts. 
+//	Each vertex block contains data items in an order according to the table below. The table also specifies when an item is present and number of elements 
+//	it occupied. Use GetVertexDataOffset or GetVertexColor to get required item. 
+//
+//	#	Vertex data item	Included when format setting bit is on					Size (num of elements)
+//	Point coordinates		X, Y, X				FORMAT_VERTEX_POINT	(bit 4)					3
+//	Normal coordinates		Nx, Ny, Nz			FORMAT_VERTEX_NORMAL (bit 5)				3
+//	Texture coordinates		T1u, T1v			FORMAT_VERTEX_TEXTURE_UV (bit 6)			2
+//	2nd Texture coordinates	T2u, T2v			FORMAT_VERTEX_TEXTURE2_UV (bit 7)			2
+//	Ambient color								FORMAT_VERTEX_COLOR_AMBIENT (bit 24)		1
+//	Diffuse color								FORMAT_VERTEX_COLOR_DIFFUSE (bit 25)		1
+//	Emissive color								FORMAT_VERTEX_COLOR _EMISSIVE (bit 26)		1
+//	Specular color								FORMAT_VERTEX_COLOR _SPECULAR (bit 27)		1
+//	Texture tangent			T1Tx, T1Ty, T1Tz	FORMAT_VERTEX_TEXTURE_TANGENT (bit 28)		3
+//	Texture binormal		T1BNx,T1BNy,T1BNz	FORMAT_VERTEX_TEXTURE_BINORMAL (bit 29)		3
+//	2nd texture tangent		T2Tx, T2Ty, T2Tz	FORMAT_VERTEX_TEXTURE2_TANGENT (bit 30)		3
+//	2nd texture binormal	T2BNx,T2BNy,T2BNz	FORMAT_VERTEX_TEXTURE2_BINORMAL (bit 31)	3
 //
 int64_t		DECL STDC	SetFormat(
 									int64_t				model,
@@ -3007,6 +3306,29 @@ int64_t		DECL STDC	SetFormat(
 int64_t		DECL STDC	GetFormat(
 									int64_t				model,
 									int64_t				mask
+								);
+
+//
+//		GetVertexDataOffset                         (http://rdf.bg/gkdoc/CP64/GetVertexDataOffset.html)
+//				int64_t				requiredData						IN
+//				int64_t				setting								IN
+//
+//				int32_t				returns								OUT
+//
+//	Returns offset of the required data in a vertex elements array with the specified format settings
+//	requiredData is one of the control vertex data bits (FORMAT_VERTEX...) or 0 to get count of all elements in vertex buffer
+//	Functions returns -1 if the required data are absent with the settings.
+//
+//	Ensure your settings are actual. They may be differ you pass to SetFormat (for example because of mask)
+//	It's preferable to inquire resulting setting with GetFormat(model, GetFormat(0, 0))
+//
+//	Note: vertex buffer element is a double or a float number depending on FORMAT_SIZE_VERTEX_DOUBLE flag. 
+//	If you need offset in bytes multiply by size of element.
+//	Compare to SetFormat that returns size of vertex data in bytes.
+//
+int32_t		DECL STDC	GetVertexDataOffset(
+									int64_t				requiredData,
+									int64_t				setting
 								);
 
 //
@@ -3054,7 +3376,7 @@ int64_t		DECL STDC	GetBehavior(
 //
 //		SetVertexBufferTransformation               (http://rdf.bg/gkdoc/CP64/SetVertexBufferTransformation.html)
 //				int64_t				model								IN
-//				double				* matrix							IN / OUT
+//				const double		* matrix							IN
 //
 //				void				returns
 //
@@ -3064,7 +3386,7 @@ int64_t		DECL STDC	GetBehavior(
 //
 void		DECL STDC	SetVertexBufferTransformation(
 									int64_t				model,
-									double				* matrix
+									const double		* matrix
 								);
 
 //
@@ -3267,7 +3589,7 @@ int64_t		DECL STDC	CheckConsistency(
 //
 //	If a bit in the mask is set and the result of the check has an issue, the resulting value will have this bit set.
 //	i.e. any non-zero return value in Check Consistency is an indication that something is wrong or unexpected regarding the given instance; 
-//	a zero return value in Contains is an indication that this type of geometry is expected regarding the given instance; 
+//	any non-zero return value in Contains is an indication that this type of geometry is expected regarding the given instance; 
 //
 int64_t		DECL STDC	CheckInstanceConsistency(
 									int64_t				owlInstance,
@@ -3308,7 +3630,7 @@ bool		DECL STDC	IsDuplicate(
 //
 //	Note: internally the call does not store its results, any optimization based on known
 //		  dependancies between instances need to be implemented on the client.
-//	Note: due to internal structure using already calculated vertices/indices does not
+//	Note: due to internal structure using already calculated vertex buffer / index buffer does not
 //		  give any performance benefits, in opposite to GetVolume and GetArea
 //
 double		DECL STDC	GetPerimeter(
@@ -3318,20 +3640,20 @@ double		DECL STDC	GetPerimeter(
 //
 //		GetArea                                     (http://rdf.bg/gkdoc/CP64/GetArea.html)
 //				int64_t				owlInstance							IN
-//				const void			* vertices							IN
-//				const void			* indices							IN
+//				const void			* vertexBuffer						IN
+//				const void			* indexBuffer						IN
 //
 //				double				returns								OUT
 //
 //	This function calculates the area of an instance.
-//	For perfomance reasons it is benefitial to call it with vertex and index array when
+//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
 //	the arrays are calculated anyway or Volume and Area are needed.
 //
 //	There are two ways to call GetVolume:
-//		vertices and indices are both zero: in this case the instance will be
+//		vertexBuffer and indexBuffer are both zero: in this case the instance will be
 //				recalculated when needed. It is expected the client does not
 //				need the arrays itself or there is no performance issue.
-//		vertices and indices are both given: the call is placed directly after
+//		vertexBuffer and indexBuffer are both given: the call is placed directly after
 //				updateBuffer calls and no structural change to depending instances have 
 //				been done in between. The transformationMatrix array is not needed,
 //				even if it is being used due to not giving any performance gain to this
@@ -3339,32 +3661,66 @@ double		DECL STDC	GetPerimeter(
 //
 //	Note: internally the call does not store its results, any optimization based on known
 //		  dependancies between instances need to be implemented on the client.
-//	Note: in case precision is important and vertex array is 32 bit it is advised to
-//		  set vertices and indices to 0 even if arrays are existing.
+//	Note: in case precision is important and vertex buffer is 32 bit it is advised to
+//		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
 //
 double		DECL STDC	GetArea(
 									int64_t				owlInstance,
-									const void			* vertices,
-									const void			* indices
+									const void			* vertexBuffer,
+									const void			* indexBuffer
 								);
 
 //
 //		GetVolume                                   (http://rdf.bg/gkdoc/CP64/GetVolume.html)
 //				int64_t				owlInstance							IN
-//				const void			* vertices							IN
-//				const void			* indices							IN
+//				const void			* vertexBuffer						IN
+//				const void			* indexBuffer						IN
 //
 //				double				returns								OUT
 //
 //	This function calculates the volume of an instance.
-//	For perfomance reasons it is benefitial to call it with vertex and index array when
+//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
 //	the arrays are calculated anyway or Volume and Area are needed.
 //
 //	There are two ways to call GetVolume:
-//		vertices and indices are both zero: in this case the instance will be
+//		vertexBuffer and indexBuffer are both zero: in this case the instance will be
 //				recalculated when needed. It is expected the client does not
 //				need the arrays itself or there is no performance issue.
-//		vertices and indices are both given: the call is placed directly after
+//		vertexBuffer and indexBuffer are both given: the call is placed directly after
+//				updateBuffer calls and no structural change to depending instances have 
+//				been done in between. The transformationMatrix array is not needed,
+//				even if it is being used due to not giving any performance gain to this
+//				operation.
+//
+//	Note: internally the call does not store its results, any optimization based on known
+//		  dependancies between instances need to be implemented on the client.
+//	Note: in case precision is important and vertex buffer is 32 bit it is advised to
+//		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
+//
+double		DECL STDC	GetVolume(
+									int64_t				owlInstance,
+									const void			* vertexBuffer,
+									const void			* indexBuffer
+								);
+
+//
+//		GetCenter                                   (http://rdf.bg/gkdoc/CP64/GetCenter.html)
+//				int64_t				owlInstance							IN
+//				const void			* vertexBuffer						IN
+//				const void			* indexBuffer						IN
+//				double				* center							IN / OUT
+//
+//				double				* returns							OUT
+//
+//	This function calculates the center of an instance.
+//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
+//	the arrays are calculated anyway or Volume and Area are needed.
+//
+//	There are two ways to call GetCenter:
+//		vertexBuffer and indexBuffer are both zero: in this case the instance will be
+//				recalculated when needed. It is expected the client does not
+//				need the arrays itself or there is no performance issue.
+//		vertexBuffer and indexBuffer are both given: the call is placed directly after
 //				updateBuffer calls and no structural change to depending instances have 
 //				been done in between. The transformationMatrix array is not needed,
 //				even if it is being used due to not giving any performance gain to this
@@ -3373,19 +3729,20 @@ double		DECL STDC	GetArea(
 //	Note: internally the call does not store its results, any optimization based on known
 //		  dependancies between instances need to be implemented on the client.
 //	Note: in case precision is important and vertex array is 32 bit it is advised to
-//		  set vertices and indices to 0 even if arrays are existing.
+//		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
 //
-double		DECL STDC	GetVolume(
+double		DECL * STDC	GetCenter(
 									int64_t				owlInstance,
-									const void			* vertices,
-									const void			* indices
+									const void			* vertexBuffer,
+									const void			* indexBuffer,
+									double				* center
 								);
 
 //
 //		GetCentroid                                 (http://rdf.bg/gkdoc/CP64/GetCentroid.html)
 //				int64_t				owlInstance							IN
-//				const void			* vertices							IN
-//				const void			* indices							IN
+//				const void			* vertexBuffer						IN
+//				const void			* indexBuffer						IN
 //				double				* centroid							IN / OUT
 //
 //				double				returns								OUT
@@ -3393,8 +3750,8 @@ double		DECL STDC	GetVolume(
 //
 double		DECL STDC	GetCentroid(
 									int64_t				owlInstance,
-									const void			* vertices,
-									const void			* indices,
+									const void			* vertexBuffer,
+									const void			* indexBuffer,
 									double				* centroid
 								);
 
@@ -3413,18 +3770,18 @@ double		DECL STDC	GetConceptualFacePerimeter(
 //
 //		GetConceptualFaceArea                       (http://rdf.bg/gkdoc/CP64/GetConceptualFaceArea.html)
 //				int64_t				conceptualFace						IN
-//				const void			* vertices							IN
-//				const void			* indices							IN
+//				const void			* vertexBuffer						IN
+//				const void			* indexBuffer						IN
 //
 //				double				returns								OUT
 //
-//	This function returns the area of a given Conceptual Face. The attributes vertices
-//	and indices are optional but will improve performance if defined.
+//	This function returns the area of a given Conceptual Face. The attributes vertex buffer
+//	and index buffer are optional but will improve performance if defined.
 //
 double		DECL STDC	GetConceptualFaceArea(
 									int64_t				conceptualFace,
-									const void			* vertices,
-									const void			* indices
+									const void			* vertexBuffer,
+									const void			* indexBuffer
 								);
 
 //
@@ -3490,6 +3847,52 @@ void		DECL STDC	GetRelativeTransformation(
 									int64_t				owlInstanceHead,
 									int64_t				owlInstanceTail,
 									double				* transformationMatrix
+								);
+
+//
+//		GetDistance                                 (http://rdf.bg/gkdoc/CP64/GetDistance.html)
+//				int64_t				firstOwlInstance					IN
+//				int64_t				secondOwlInstance					IN
+//				double				* pointFirstInstance				IN / OUT
+//				double				* pointSecondInstance				IN / OUT
+//
+//				double				returns								OUT
+//
+//	This function returns the shortest distance between two instances.
+//
+double		DECL STDC	GetDistance(
+									int64_t				firstOwlInstance,
+									int64_t				secondOwlInstance,
+									double				* pointFirstInstance,
+									double				* pointSecondInstance
+								);
+
+//
+//		GetVertexColor                              (http://rdf.bg/gkdoc/CP64/GetVertexColor.html)
+//				int64_t				model								IN
+//				const void			* vertexBuffer						IN
+//				int64_t				vertexIndex							IN
+//				int64_t				setting								IN
+//				int32_t				* ambient							IN / OUT
+//				int32_t				* diffuse							IN / OUT
+//				int32_t				* emissive							IN / OUT
+//				int32_t				* specular							IN / OUT
+//
+//				void				returns
+//
+//	Returns vertex color
+//	requiredColor is one of the control vertex data bits applied to colors (FORMAT_VERTEX_COLOR...) 
+//	If vertex format does provide required color, the model default color will be used
+//
+void		DECL STDC	GetVertexColor(
+									int64_t				model,
+									const void			* vertexBuffer,
+									int64_t				vertexIndex,
+									int64_t				setting,
+									int32_t				* ambient,
+									int32_t				* diffuse,
+									int32_t				* emissive,
+									int32_t				* specular
 								);
 
 //
@@ -3708,6 +4111,22 @@ int64_t		DECL STDC	GetPropertyByNameAndType(
 									int64_t				model,
 									const char			* name,
 									int64_t				rdfPropertyType
+								);
+
+//
+//		GetParentsByIterator                        (http://rdf.bg/gkdoc/CP64/GetParentsByIterator___.html)
+//				int64_t				owlClassOrRdfProperty				IN
+//				int64_t				parentOwlClassOrRdfProperty			IN
+//
+//				int64_t				returns								OUT
+//
+//	Returns the next parent of the class or property.
+//	If input parent is zero, the handle will point to the first relevant parent.
+//	If all parent are past (or no relevant parent are found), the function will return 0.
+//
+int64_t		DECL STDC	GetParentsByIterator(
+									int64_t				owlClassOrRdfProperty,
+									int64_t				parentOwlClassOrRdfProperty
 								);
 
 
