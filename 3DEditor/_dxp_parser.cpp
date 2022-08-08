@@ -177,6 +177,9 @@ namespace _dxf
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";	
+	/*static*/ const string _group_codes::text = "TEXT";
+	/*static*/ const string _group_codes::mtext = "MTEXT";
+	/*static*/ const string _group_codes::viewport = "VIEWPORT";
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
 	/*static*/ const string _group_codes::lwpolyline = "LWPOLYLINE";
@@ -510,6 +513,75 @@ namespace _dxf
 		return iInstance;
 	}
 	// _line
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _text
+	_text::_text()
+		: _entity(_group_codes::text)
+	{
+		// TEXT, page 144
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _text::~_text()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _text::createInstance(_parser* pParser)
+	{
+		assert(false); // TODO
+
+		return 0;
+	}
+	// _text
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _mtext
+	_mtext::_mtext()
+		: _entity(_group_codes::mtext)
+	{
+		// MTEXT, page 117
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _mtext::~_mtext()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _mtext::createInstance(_parser* pParser)
+	{
+		assert(false); // TODO
+
+		return 0;
+	}
+	// _mtext
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _viewport
+	_viewport::_viewport()
+		: _entity(_group_codes::viewport)
+	{
+		// VIEWPORT, page 150
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _viewport::~_viewport()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _viewport::createInstance(_parser* pParser)
+	{
+		assert(false); // TODO
+
+		return 0;
+	}
+	// _viewport
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
@@ -1644,6 +1716,33 @@ namespace _dxf
 			pLine->load(reader);
 
 			return pLine;
+		}
+		else if (reader.row() == _group_codes::text)
+		{
+			reader.forth();
+
+			auto pText = new _text();
+			pText->load(reader);
+
+			return pText;
+		}
+		else if (reader.row() == _group_codes::mtext)
+		{
+			reader.forth();
+
+			auto pMText = new _mtext();
+			pMText->load(reader);
+
+			return pMText;
+		}
+		else if (reader.row() == _group_codes::viewport)
+		{
+			reader.forth();
+
+			auto pViewport = new _viewport();
+			pViewport->load(reader);
+
+			return pViewport;
 		}
 		else if (reader.row() == _group_codes::polyline)
 		{
