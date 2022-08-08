@@ -177,6 +177,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";	
+	/*static*/ const string _group_codes::arc = "ARC";
 	/*static*/ const string _group_codes::text = "TEXT";
 	/*static*/ const string _group_codes::mtext = "MTEXT";
 	/*static*/ const string _group_codes::viewport = "VIEWPORT";
@@ -516,6 +517,41 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _arc
+	_arc::_arc()
+		: _entity(_group_codes::arc)
+	{
+		// ARC, page 66
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::x, "0"}, // Center point (in OCS) DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::radius, "0"}, // Radius
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _arc::~_arc()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _arc::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _arc
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _text
 	_text::_text()
 		: _entity(_group_codes::text)
@@ -529,9 +565,9 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _text::createInstance(_parser* pParser)
+	/*virtual*/ int64_t _text::createInstance(_parser* /*pParser*/)
 	{
-		assert(false); // TODO
+		// TODO
 
 		return 0;
 	}
@@ -552,9 +588,9 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _mtext::createInstance(_parser* pParser)
+	/*virtual*/ int64_t _mtext::createInstance(_parser* /*pParser*/)
 	{
-		assert(false); // TODO
+		// TODO
 
 		return 0;
 	}
@@ -575,9 +611,9 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _viewport::createInstance(_parser* pParser)
+	/*virtual*/ int64_t _viewport::createInstance(_parser* /*pParser*/)
 	{
-		assert(false); // TODO
+		// TODO
 
 		return 0;
 	}
@@ -655,7 +691,7 @@ namespace _dxf
 		}
 		else
 		{
-			assert(false); // TODO
+			// TODO
 		}
 
 		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
@@ -1207,7 +1243,10 @@ namespace _dxf
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
-		assert(pBlock != nullptr);
+		if (pBlock == nullptr)
+		{
+			return 0; // TODO
+		}
 
 		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
 		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
@@ -1716,6 +1755,15 @@ namespace _dxf
 			pLine->load(reader);
 
 			return pLine;
+		}
+		else if (reader.row() == _group_codes::arc)
+		{
+			reader.forth();
+
+			auto pArc = new _arc();
+			pArc->load(reader);
+
+			return pArc;
 		}
 		else if (reader.row() == _group_codes::text)
 		{
