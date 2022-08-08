@@ -173,6 +173,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::header = "HEADER";
 	/*static*/ const string _group_codes::classes = "CLASSES";
+	/*static*/ const string _group_codes::objects = "OBJECTS";
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";	
@@ -1325,6 +1326,42 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _objects_section
+	_objects_section::_objects_section()
+		: _section(_group_codes::objects)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _objects_section::~_objects_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _objects_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _objects_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _tables_section
 	_tables_section::_tables_section()
 		: _section(_group_codes::tables)
@@ -1531,6 +1568,15 @@ namespace _dxf
 							m_vecSections.push_back(pClassesSection);
 
 							pClassesSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::objects)
+						{
+							reader.forth();
+
+							auto pObjectsSection = new _objects_section();
+							m_vecSections.push_back(pObjectsSection);
+
+							pObjectsSection->load(reader);
 						}
 						else if (reader.row() == _group_codes::blocks)
 						{

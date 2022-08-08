@@ -112,6 +112,7 @@ namespace _dxf
 		static const string entities;
 		static const string header;
 		static const string classes;
+		static const string objects;
 		static const string tables;
 		static const string blocks;
 		static const string line;
@@ -538,6 +539,25 @@ namespace _dxf
 		void load(_reader& reader);
 	};
 	// _classes_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _objects_section
+	class _objects_section : public _section
+	{
+
+	public: // Methods
+
+		// ----------------------------------------------------------------------------------------
+		_objects_section();
+
+		// ----------------------------------------------------------------------------------------
+		virtual ~_objects_section();
+
+		// ----------------------------------------------------------------------------------------
+		void load(_reader& reader);
+	};
+	// _objects_section
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
