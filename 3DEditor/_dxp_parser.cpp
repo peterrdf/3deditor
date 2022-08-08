@@ -172,6 +172,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::header = "HEADER";
+	/*static*/ const string _group_codes::classes = "CLASSES";
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";	
@@ -1288,6 +1289,42 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _classes_section
+	_classes_section::_classes_section()
+		: _section(_group_codes::classes)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _classes_section::~_classes_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _classes_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _classes_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _tables_section
 	_tables_section::_tables_section()
 		: _section(_group_codes::tables)
@@ -1467,7 +1504,7 @@ namespace _dxf
 							m_vecSections.push_back(pEntitiesSection);
 
 							pEntitiesSection->load(reader);
-						} // if (reader.row() == _group_codes::entities)
+						}
 						else if (reader.row() == _group_codes::header)
 						{
 							reader.forth();
@@ -1485,6 +1522,15 @@ namespace _dxf
 							m_vecSections.push_back(pTablesSection);
 
 							pTablesSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::classes)
+						{
+							reader.forth();
+
+							auto pClassesSection = new _classes_section();
+							m_vecSections.push_back(pClassesSection);
+
+							pClassesSection->load(reader);
 						}
 						else if (reader.row() == _group_codes::blocks)
 						{
