@@ -172,9 +172,15 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::entities = "ENTITIES";
 	/*static*/ const string _group_codes::header = "HEADER";
+	/*static*/ const string _group_codes::classes = "CLASSES";
+	/*static*/ const string _group_codes::objects = "OBJECTS";
 	/*static*/ const string _group_codes::tables = "TABLES";
 	/*static*/ const string _group_codes::blocks = "BLOCKS";
 	/*static*/ const string _group_codes::line = "LINE";	
+	/*static*/ const string _group_codes::arc = "ARC";
+	/*static*/ const string _group_codes::text = "TEXT";
+	/*static*/ const string _group_codes::mtext = "MTEXT";
+	/*static*/ const string _group_codes::viewport = "VIEWPORT";
 	/*static*/ const string _group_codes::vertex = "VERTEX";
 	/*static*/ const string _group_codes::polyline = "POLYLINE";
 	/*static*/ const string _group_codes::lwpolyline = "LWPOLYLINE";
@@ -511,6 +517,110 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _arc
+	_arc::_arc()
+		: _entity(_group_codes::arc)
+	{
+		// ARC, page 66
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::x, "0"}, // Center point (in OCS) DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in OCS)
+			{_group_codes::radius, "0"}, // Radius
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _arc::~_arc()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _arc::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _arc
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _text
+	_text::_text()
+		: _entity(_group_codes::text)
+	{
+		// TEXT, page 144
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _text::~_text()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _text::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _text
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _mtext
+	_mtext::_mtext()
+		: _entity(_group_codes::mtext)
+	{
+		// MTEXT, page 117
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _mtext::~_mtext()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _mtext::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _mtext
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _viewport
+	_viewport::_viewport()
+		: _entity(_group_codes::viewport)
+	{
+		// VIEWPORT, page 150
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _viewport::~_viewport()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _viewport::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _viewport
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _lwpolyline
 	_lwpolyline::_lwpolyline()
 		: _entity(_group_codes::lwpolyline)
@@ -581,7 +691,7 @@ namespace _dxf
 		}
 		else
 		{
-			assert(false); // TODO
+			// TODO
 		}
 
 		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
@@ -1133,7 +1243,10 @@ namespace _dxf
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
-		assert(pBlock != nullptr);
+		if (pBlock == nullptr)
+		{
+			return 0; // TODO
+		}
 
 		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
 		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
@@ -1285,6 +1398,78 @@ namespace _dxf
 		} // while (true)
 	}
 	// _header_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _classes_section
+	_classes_section::_classes_section()
+		: _section(_group_codes::classes)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _classes_section::~_classes_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _classes_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _classes_section
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _objects_section
+	_objects_section::_objects_section()
+		: _section(_group_codes::objects)
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _objects_section::~_objects_section()
+	{
+	}
+
+	// --------------------------------------------------------------------------------------------
+	void _objects_section::load(_reader& reader)
+	{
+		while (true)
+		{
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endsec)
+				{
+					reader.forth();
+
+					break;
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _objects_section
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
@@ -1467,7 +1652,7 @@ namespace _dxf
 							m_vecSections.push_back(pEntitiesSection);
 
 							pEntitiesSection->load(reader);
-						} // if (reader.row() == _group_codes::entities)
+						}
 						else if (reader.row() == _group_codes::header)
 						{
 							reader.forth();
@@ -1485,6 +1670,24 @@ namespace _dxf
 							m_vecSections.push_back(pTablesSection);
 
 							pTablesSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::classes)
+						{
+							reader.forth();
+
+							auto pClassesSection = new _classes_section();
+							m_vecSections.push_back(pClassesSection);
+
+							pClassesSection->load(reader);
+						}
+						else if (reader.row() == _group_codes::objects)
+						{
+							reader.forth();
+
+							auto pObjectsSection = new _objects_section();
+							m_vecSections.push_back(pObjectsSection);
+
+							pObjectsSection->load(reader);
 						}
 						else if (reader.row() == _group_codes::blocks)
 						{
@@ -1552,6 +1755,42 @@ namespace _dxf
 			pLine->load(reader);
 
 			return pLine;
+		}
+		else if (reader.row() == _group_codes::arc)
+		{
+			reader.forth();
+
+			auto pArc = new _arc();
+			pArc->load(reader);
+
+			return pArc;
+		}
+		else if (reader.row() == _group_codes::text)
+		{
+			reader.forth();
+
+			auto pText = new _text();
+			pText->load(reader);
+
+			return pText;
+		}
+		else if (reader.row() == _group_codes::mtext)
+		{
+			reader.forth();
+
+			auto pMText = new _mtext();
+			pMText->load(reader);
+
+			return pMText;
+		}
+		else if (reader.row() == _group_codes::viewport)
+		{
+			reader.forth();
+
+			auto pViewport = new _viewport();
+			pViewport->load(reader);
+
+			return pViewport;
 		}
 		else if (reader.row() == _group_codes::polyline)
 		{
