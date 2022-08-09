@@ -688,11 +688,7 @@ namespace _dxf
 		else if (iFlag == 128)
 		{
 			assert(false); // TODO
-		}
-		else
-		{
-			// TODO
-		}
+		}		
 
 		int64_t iClass = GetClassByName(pParser->getModel(), "PolyLine3D");
 		assert(iClass != 0);
