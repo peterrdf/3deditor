@@ -518,6 +518,9 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _arc
+	/*static*/ const string _arc::start_angle = "50";
+	/*static*/ const string _arc::end_angle = "51";
+	
 	_arc::_arc()
 		: _entity(_group_codes::arc)
 	{
@@ -528,6 +531,8 @@ namespace _dxf
 			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in OCS)
 			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in OCS)
 			{_group_codes::radius, "0"}, // Radius
+			{start_angle, "0"}, // Start angle
+			{end_angle, "0"}, // End angle
 			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
 			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
 			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
@@ -542,11 +547,59 @@ namespace _dxf
 	}
 
 	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _arc::createInstance(_parser* /*pParser*/)
+	/*virtual*/ int64_t _arc::createInstance(_parser* pParser)
 	{
-		// TODO
+		int64_t iArc3DClass = GetClassByName(pParser->getModel(), "Arc3D");
+		assert(iArc3DClass != 0);
 
-		return 0;
+		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
+		assert(iTransformationClass != 0);
+
+		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
+		assert(iMatrixClass != 0);
+
+		// Arc3D
+		int64_t iArc3DInstance = CreateInstance(iArc3DClass, type().c_str());
+		assert(iArc3DInstance != 0);
+
+		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[start_angle].c_str());
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dValue, 1);
+
+		dValue = atof(m_mapCode2Value[end_angle].c_str());
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dValue, 1);
+
+		// Extrusion
+		_extrusion extrusion(this);
+
+		// Matrix
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
+		assert(iMatrixInstance != 0);
+
+		dValue = extrusion.getValue(_group_codes::x);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+
+		dValue = extrusion.getValue(_group_codes::y);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+
+		dValue = extrusion.getValue(_group_codes::z);
+		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+
+		// Transformation
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
+		assert(iTransformationInstance != 0);
+
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
+		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iArc3DInstance, 1);
+
+		if (m_pParent == nullptr)
+		{
+			pParser->onInstanceCreated(this, iTransformationInstance);
+		}
+
+		return iTransformationInstance;
 	}
 	// _arc
 	// --------------------------------------------------------------------------------------------

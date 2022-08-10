@@ -282,6 +282,10 @@ namespace _dxf
 	class _arc : public _entity
 	{
 
+	public: // Members
+		static const string start_angle;
+		static const string end_angle;
+
 	public: // Methods
 
 		// ----------------------------------------------------------------------------------------
