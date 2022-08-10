@@ -189,6 +189,8 @@ namespace _dxf
 	/*static*/ const string _group_codes::block = "BLOCK";
 	/*static*/ const string _group_codes::endblock = "ENDBLK";
 	/*static*/ const string _group_codes::insert = "INSERT";
+	/*static*/ const string _group_codes::table = "TABLE";
+	/*static*/ const string _group_codes::endtable = "ENDTAB";
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::subclass = "100";
@@ -228,33 +230,22 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
-	// _entity
-	_entity::_entity(const string& strName)
-		: _group(strName)
+	// _entry
+	_entry::_entry(const string& strType)
+		: _group(strType)
 		, m_pParent(nullptr)
 		, m_mapCode2Value()
 		, m_setMultiValueCodes()
-		, m_vecEntities()
 	{
-		// Common Group Codes for Entities, page 61
-		m_mapCode2Value =
-		{
-			{ _group_codes::subclass, "" },
-			{ _group_codes::layer, "" },
-		};
 	}
 
 	// --------------------------------------------------------------------------------------------
-	/*virtual*/ _entity::~_entity()
+	/*virtual*/ _entry::~_entry()
 	{
-		for (size_t i = 0; i < m_vecEntities.size(); i++)
-		{
-			delete m_vecEntities[i];
-		}
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _entity::setParent(_entity* pParent)
+	void _entry::setParent(_entry* pParent)
 	{
 		assert(pParent != nullptr);
 
@@ -262,7 +253,7 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	/*virtual*/ void _entity::load(_reader& reader)
+	/*virtual*/ void _entry::load(_reader& reader)
 	{
 		while (true)
 		{
@@ -289,7 +280,7 @@ namespace _dxf
 				else
 				{
 					itCode2Value->second = strValue;
-				}				
+				}
 			}
 			else
 			{
@@ -301,21 +292,46 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	bool _entity::hasValue(const string& strCode)
+	bool _entry::hasValue(const string& strCode)
 	{
 		return m_mapCode2Value.find(strCode) != m_mapCode2Value.end();
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const string& _entity::getValue(const string& strCode)
+	const string& _entry::getValue(const string& strCode)
 	{
 		return m_mapCode2Value[strCode];
 	}
 
 	// --------------------------------------------------------------------------------------------
-	void _entity::setValue(const string& strCode, const string& strValue)
+	void _entry::setValue(const string& strCode, const string& strValue)
 	{
 		m_mapCode2Value[strCode] = strValue;
+	}
+	// _entity
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _entity
+	_entity::_entity(const string& strType)
+		: _entry(strType)
+		, m_vecEntities()
+	{
+		// Common Group Codes for Entities, page 61
+		m_mapCode2Value =
+		{
+			{ _group_codes::subclass, "" },
+			{ _group_codes::layer, "" },
+		};
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _entity::~_entity()
+	{
+		for (size_t i = 0; i < m_vecEntities.size(); i++)
+		{
+			delete m_vecEntities[i];
+		}
 	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
@@ -962,7 +978,7 @@ namespace _dxf
 
 		while (true)
 		{
-			_entity::load(reader);
+			_entry::load(reader);
 
 			if (reader.row() == _group_codes::start)
 			{
@@ -1112,7 +1128,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	// _endblk
 	_endblk::_endblk()
-		: _entity(_group_codes::endblock)
+		: _entry(_group_codes::endblock)
 	{
 		// ENDBLK, page 59
 	}
@@ -1120,14 +1136,6 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _endblk::~_endblk()
 	{
-	}
-
-	// ----------------------------------------------------------------------------------------
-	/*virtual*/ int64_t _endblk::createInstance(_parser* /*pParser*/)
-	{
-		assert(false); // Not implemented!
-
-		return 0;
 	}
 	// _endblk
 	// --------------------------------------------------------------------------------------------
@@ -1164,7 +1172,7 @@ namespace _dxf
 
 		while (true)
 		{
-			_entity::load(reader);
+			_entry::load(reader);
 
 			if (reader.row() == _group_codes::start)
 			{
@@ -1343,8 +1351,8 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _section
-	_section::_section(const string& strName)
-		: _group(strName)
+	_section::_section(const string& strType)
+		: _group(strType)
 	{
 	}
 
@@ -1522,15 +1530,96 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _endtab
+	_endtab::_endtab()
+		: _entry(_group_codes::endtable)
+	{
+		// TABLE, page 138
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _endtab::~_endtab()
+	{
+	}
+	// _endtab
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _table
+	_table::_table()
+		: _entry(_group_codes::table)
+		, m_pEndtab(nullptr)
+	{
+		// TABLE, page 138
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::name, ""}, // Table name
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _table::~_table()
+	{
+		for (size_t i = 0; i < m_vecEntries.size(); i++)
+		{
+			delete m_vecEntries[i];
+		}		
+
+		delete m_pEndtab;
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ void _table::load(_reader& reader)
+	{
+		while (true)
+		{
+			_entry::load(reader);
+
+			if (reader.row() == _group_codes::start)
+			{
+				reader.forth();
+				if (reader.row() == _group_codes::endtable)
+				{
+					reader.forth();
+
+					assert(m_pEndtab == nullptr);
+
+					m_pEndtab = new _endtab();
+					m_pEndtab->load(reader);
+
+					break;
+				}
+				else
+				{
+					reader.forth();
+				}
+			} // if (reader.row() == _group_codes::start)
+			else
+			{
+				reader.forth();
+			}
+		} // while (true)
+	}
+	// _table
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _tables_section
 	_tables_section::_tables_section()
 		: _section(_group_codes::tables)
+		, m_vecTables()
 	{
 	}
 
 	// --------------------------------------------------------------------------------------------
 	/*virtual*/ _tables_section::~_tables_section()
 	{
+		for (size_t i = 0; i < m_vecTables.size(); i++)
+		{
+			delete m_vecTables[i];
+		}
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1546,6 +1635,19 @@ namespace _dxf
 					reader.forth();
 
 					break;
+				}
+				else if (reader.row() == _group_codes::table)
+				{
+					reader.forth();
+
+					auto pTable = new _table();
+					m_vecTables.push_back(pTable);
+
+					pTable->load(reader);
+				}
+				else
+				{
+					reader.forth();
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
