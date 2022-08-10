@@ -563,7 +563,7 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _section
-	class _section : public _group
+	class _section : public _entry
 	{
 
 	public: // Methods

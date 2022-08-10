@@ -997,7 +997,11 @@ namespace _dxf
 				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
 				{
 					m_vecEntities.push_back(pEntity);
-				}				
+				}	
+				else
+				{
+					reader.forth();
+				}
 			} // if (reader.row() == _group_codes::start)
 			else
 			{
@@ -1192,6 +1196,10 @@ namespace _dxf
 				{	
 					m_vecEntities.push_back(pEntity);
 				}
+				else
+				{
+					reader.forth();
+				}
 			} // if (reader.row() == _group_codes::start)
 			else
 			{
@@ -1352,8 +1360,14 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	// _section
 	_section::_section(const string& strType)
-		: _group(strType)
+		: _entry(strType)
 	{
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::name, ""}, // Table name
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1393,6 +1407,8 @@ namespace _dxf
 
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
@@ -1438,6 +1454,8 @@ namespace _dxf
 	{
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
@@ -1446,6 +1464,10 @@ namespace _dxf
 					reader.forth();
 
 					break;
+				}
+				else
+				{
+					reader.forth();
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
@@ -1474,6 +1496,8 @@ namespace _dxf
 	{
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
@@ -1482,6 +1506,10 @@ namespace _dxf
 					reader.forth();
 
 					break;
+				}
+				else
+				{
+					reader.forth();
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
@@ -1510,6 +1538,8 @@ namespace _dxf
 	{
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
@@ -1518,6 +1548,10 @@ namespace _dxf
 					reader.forth();
 
 					break;
+				}
+				else
+				{
+					reader.forth();
 				}
 			} // if (reader.row() == _group_codes::start)
 			else
@@ -1627,6 +1661,8 @@ namespace _dxf
 	{
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
@@ -1687,6 +1723,8 @@ namespace _dxf
 	{
 		while (true)
 		{
+			_entry::load(reader);
+
 			if (reader.row() == _group_codes::start)
 			{
 				reader.forth();
