@@ -589,15 +589,16 @@ namespace _dxf
 		int64_t iArc3DInstance = CreateInstance(iArc3DClass, type().c_str());
 		assert(iArc3DInstance != 0);
 
-		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dValue, 1);
+		double dRadius = atof(m_mapCode2Value[_group_codes::radius].c_str());
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
 
-		dValue = atof(m_mapCode2Value[start_angle].c_str());
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dValue, 1);
+		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str()) * (3.14159265 / 180.);
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
 
-		dValue = atof(m_mapCode2Value[end_angle].c_str());
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dValue, 1);
-
+		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str()) * (3.14159265 / 180.);
+		double dSize = dEndAngle - dStartAngle;		
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
+				
 		int64_t iValue = 36;
 		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "segmentationParts"), &iValue, 1);
 
@@ -608,7 +609,7 @@ namespace _dxf
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		dValue = extrusion.getValue(_group_codes::x);
+		double dValue = extrusion.getValue(_group_codes::x);
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::y);
