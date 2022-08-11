@@ -501,6 +501,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _line::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		int64_t iClass = GetClassByName(pParser->getModel(), "Line3D");
 		assert(iClass != 0);
 
@@ -566,6 +571,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _arc::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		int64_t iArc3DClass = GetClassByName(pParser->getModel(), "Arc3D");
 		assert(iArc3DClass != 0);
 
@@ -725,6 +735,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _lwpolyline::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		vector<string> vecXValues;
 		_tokenize(m_mapCode2Value[_group_codes::x], VALUE_DELIMITER, vecXValues);
 
@@ -859,6 +874,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _circle::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		int64_t iCircleClass = GetClassByName(pParser->getModel(), "Circle");
 		assert(iCircleClass != 0);
 
@@ -1014,6 +1034,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _polyline::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		// Vertices
 		vector<_entity*> vecVertices;
 		for (auto itEntity : m_vecEntities)
@@ -1212,6 +1237,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _block::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		/**
 		* Reuse the Instance
 		*/
@@ -1235,16 +1265,16 @@ namespace _dxf
 			auto iInstance = itEntity->createInstance(pParser);
 			if (iInstance != 0)
 			{
-				auto strLayer = itEntity->getValue(_group_codes::layer);
+				auto strLayerName = itEntity->getValue(_group_codes::layer);
 
-				auto itLayer2Instances = mapLayer2Instances.find(strLayer);
+				auto itLayer2Instances = mapLayer2Instances.find(strLayerName);
 				if (itLayer2Instances != mapLayer2Instances.end())
 				{
-					mapLayer2Instances[strLayer].push_back(iInstance);
+					mapLayer2Instances[strLayerName].push_back(iInstance);
 				}
 				else
 				{
-					mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+					mapLayer2Instances[strLayerName] = vector<int64_t>{ iInstance };
 				}
 			} // if (iInstance != 0)
 		} // for (size_t iEntity = ...
@@ -1308,6 +1338,11 @@ namespace _dxf
 	// ----------------------------------------------------------------------------------------
 	/*virtual*/ int64_t _insert::createInstance(_parser* pParser)
 	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		if (pBlock == nullptr)
 		{
@@ -1581,7 +1616,7 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _layer
-	/*static*/ const string _layer::color_number;
+	/*static*/ const string _layer::color_number = "62";
 
 	_layer::_layer()
 		: _entry(_group_codes::layer_table)
@@ -1629,7 +1664,7 @@ namespace _dxf
 		delete m_pEndtab;
 	}
 
-	// ----------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------
 	/*virtual*/ void _table::load(_reader& reader)
 	{
 		while (true)
@@ -1669,6 +1704,12 @@ namespace _dxf
 				reader.forth();
 			}
 		} // while (true)
+	}
+
+	// --------------------------------------------------------------------------------------------
+	const vector<_entry*>& _table::entries() const
+	{
+		return m_vecEntries;
 	}
 	// _table
 	// --------------------------------------------------------------------------------------------
@@ -1726,6 +1767,12 @@ namespace _dxf
 			}
 		} // while (true)
 	}
+
+	// --------------------------------------------------------------------------------------------
+	const vector<_table*>& _tables_section::tables() const
+	{
+		return m_vecTables;
+	}
 	// _tables_section
 	// --------------------------------------------------------------------------------------------
 
@@ -1747,7 +1794,7 @@ namespace _dxf
 	}
 
 	// --------------------------------------------------------------------------------------------
-	const vector<_block*>& _blocks_section::blocks()
+	const vector<_block*>& _blocks_section::blocks() const
 	{
 		return m_vecBlocks;
 	}
@@ -1954,16 +2001,16 @@ namespace _dxf
 	{
 		assert(pEntity != nullptr);
 
-		auto strLayer = pEntity->getValue(_group_codes::layer);
+		auto strLayerName = pEntity->getValue(_group_codes::layer);
 
-		auto itLayer2Instances = m_mapLayer2Instances.find(strLayer);
+		auto itLayer2Instances = m_mapLayer2Instances.find(strLayerName);
 		if (itLayer2Instances != m_mapLayer2Instances.end())
 		{
-			m_mapLayer2Instances[strLayer].push_back(iInstance);
+			m_mapLayer2Instances[strLayerName].push_back(iInstance);
 		}
 		else
 		{
-			m_mapLayer2Instances[strLayer] = vector<int64_t>{ iInstance };
+			m_mapLayer2Instances[strLayerName] = vector<int64_t>{ iInstance };
 		}
 	}
 
@@ -2085,6 +2132,57 @@ namespace _dxf
 		}
 
 		return nullptr;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	_layer* _parser::findLayerByName(const string& strLayerName)
+	{
+		for (auto itSection : m_vecSections)
+		{
+			if (itSection->type() == _group_codes::tables)
+			{
+				auto pTablesSection = dynamic_cast<_tables_section*>(itSection);
+				for (auto itTable : pTablesSection->tables())
+				{
+					if (itTable->getValue(_group_codes::name) == _group_codes::layer_table)
+					{
+						for (auto itEntry : itTable->entries())
+						{
+							if (itEntry->type() == _group_codes::layer_table)
+							{
+								auto pLayer = dynamic_cast<_layer*>(itEntry);
+								if (pLayer->getValue(_group_codes::name) == strLayerName)
+								{
+									return pLayer;
+								}
+							}
+						}
+					} // if (itTable->getValue(_group_codes::name) == _group_codes::layer_table)
+				} // for (auto itTable : pTablesSection->tables())
+			} // if (itSection->type() == _group_codes::tables)
+		} // for (auto itSection : m_vecSections)
+
+		return nullptr;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	bool _parser::isEntityOn(_entity* pEntity)
+	{
+		assert(pEntity != nullptr);
+
+		auto strLayerName = pEntity->getValue(_group_codes::layer);
+
+		_layer* pLayer = findLayerByName(strLayerName);
+		if (pLayer != nullptr)
+		{
+			auto strColorNumber = pLayer->getValue(_layer::color_number);
+			if (!strColorNumber.empty() && (atoi(strColorNumber.c_str()) < 0))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	// --------------------------------------------------------------------------------------------
