@@ -469,6 +469,11 @@ void CRDFModel::ScaleAndCenter()
 	map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
+		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		{
+			continue;
+		}
+
 		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
@@ -485,6 +490,11 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
+		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		{
+			continue;
+		}
+
 		itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
@@ -502,6 +512,11 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
+		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		{
+			continue;
+		}
+
 		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
