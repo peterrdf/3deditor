@@ -191,6 +191,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::insert = "INSERT";
 	/*static*/ const string _group_codes::table = "TABLE";
 	/*static*/ const string _group_codes::endtable = "ENDTAB";
+	/*static*/ const string _group_codes::layer_table = "LAYER";
 
 	// --------------------------------------------------------------------------------------------
 	/*static*/ const string _group_codes::subclass = "100";
@@ -1364,7 +1365,7 @@ namespace _dxf
 	{
 		map<string, string> mapCode2Value =
 		{
-			{_group_codes::name, ""}, // Table name
+			{_group_codes::name, ""}, // Section name
 		};
 
 		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
@@ -1579,6 +1580,30 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _layer
+	/*static*/ const string _layer::color_number;
+
+	_layer::_layer()
+		: _entry(_group_codes::layer_table)
+	{
+		// LAYER, page 43
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::name, ""}, // Layer name
+			{color_number, "0"}, // Color number (if negative, layer is off)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _layer::~_layer()
+	{
+	}
+	// _line
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _table
 	_table::_table()
 		: _entry(_group_codes::table)
@@ -1624,6 +1649,15 @@ namespace _dxf
 					m_pEndtab->load(reader);
 
 					break;
+				}
+				else if (reader.row() == _group_codes::layer_table)
+				{
+					reader.forth();
+
+					auto pLayer = new _layer();
+					pLayer->load(reader);
+
+					m_vecEntries.push_back(pLayer);
 				}
 				else
 				{
