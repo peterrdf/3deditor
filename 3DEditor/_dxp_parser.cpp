@@ -1346,7 +1346,9 @@ namespace _dxf
 		auto pBlock = pParser->findBlockByName(m_mapCode2Value[_group_codes::name]);
 		if (pBlock == nullptr)
 		{
-			return 0; // TODO
+			assert(false);
+
+			return 0;
 		}
 
 		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
