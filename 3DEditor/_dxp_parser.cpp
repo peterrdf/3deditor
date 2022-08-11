@@ -598,6 +598,9 @@ namespace _dxf
 		dValue = atof(m_mapCode2Value[end_angle].c_str());
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dValue, 1);
 
+		int64_t iValue = 36;
+		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "segmentationParts"), &iValue, 1);
+
 		// Extrusion
 		_extrusion extrusion(this);
 
