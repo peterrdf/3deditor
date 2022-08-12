@@ -117,6 +117,7 @@ namespace _dxf
 		static const string blocks;		
 		static const string line;
 		static const string arc;
+		static const string ellipse;
 		static const string text;
 		static const string mtext;
 		static const string viewport;
@@ -305,6 +306,8 @@ namespace _dxf
 	{
 
 	public: // Members
+
+		// ----------------------------------------------------------------------------------------
 		static const string start_angle;
 		static const string end_angle;
 
@@ -321,6 +324,36 @@ namespace _dxf
 	};
 	// _arc
 	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _ellipse
+	class _ellipse : public _entity
+	{
+
+	public: // Members
+
+		// ----------------------------------------------------------------------------------------
+		static const string endpoint_x;
+		static const string endpoint_y;
+		static const string endpoint_z;
+		static const string ratio;
+		static const string start;
+		static const string end;
+
+	public: // Methods
+
+		// ----------------------------------------------------------------------------------------
+		_ellipse();
+
+		// ----------------------------------------------------------------------------------------
+		virtual ~_ellipse();
+
+		// ----------------------------------------------------------------------------------------
+		virtual int64_t createInstance(_parser* pParser);
+	};
+	// _arc
+	// --------------------------------------------------------------------------------------------
+
 
 	// --------------------------------------------------------------------------------------------
 	// _text	

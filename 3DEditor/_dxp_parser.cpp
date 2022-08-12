@@ -179,6 +179,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::blocks = "BLOCKS";	
 	/*static*/ const string _group_codes::line = "LINE";	
 	/*static*/ const string _group_codes::arc = "ARC";
+	/*static*/ const string _group_codes::ellipse = "ELLIPSE";
 	/*static*/ const string _group_codes::text = "TEXT";
 	/*static*/ const string _group_codes::mtext = "MTEXT";
 	/*static*/ const string _group_codes::viewport = "VIEWPORT";
@@ -644,6 +645,120 @@ namespace _dxf
 		return iTransformationInstance;
 	}
 	// _arc
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _ellipse
+	/*static*/ const string _ellipse::endpoint_x = "11";
+	/*static*/ const string _ellipse::endpoint_y = "21";
+	/*static*/ const string _ellipse::endpoint_z = "31";
+	/*static*/ const string _ellipse::ratio = "40";
+	/*static*/ const string _ellipse::start = "41";
+	/*static*/ const string _ellipse::end = "42";
+
+	_ellipse::_ellipse()
+		: _entity(_group_codes::ellipse)
+	{
+		// ELLIPSE, page 86
+		map<string, string> mapCode2Value =
+		{
+			{_group_codes::x, "0"}, // Center point (in WCS); DXF: X value; APP: 3D point
+			{_group_codes::y, "0"}, // DXF: Y and Z values of center point (in WCS)
+			{_group_codes::z, "0"}, // DXF: Y and Z values of center point (in WCS)
+			{endpoint_x, "0"}, // Endpoint of major axis, relative to the center (in WCS); DXF: X value; APP: 3D point
+			{endpoint_y, "0"}, // DXF: Y and Z values of endpoint of major axis, relative to the center (in WCS)
+			{endpoint_z, "0"}, // DXF: Y and Z values of endpoint of major axis, relative to the center (in WCS)
+			{ratio, "0"}, // Ratio of minor axis to major axis
+			{start, "0"}, // Start parameter (this value is 0.0 for a full ellipse)
+			{end, "0"}, // End parameter (this value is 2pi for a full ellipse)
+			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
+			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)
+		};
+
+		m_mapCode2Value.insert(mapCode2Value.begin(), mapCode2Value.end());
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _ellipse::~_ellipse()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _ellipse::createInstance(_parser* pParser)
+	{
+		if (!pParser->isEntityOn(this))
+		{
+			return 0;
+		}
+
+		return 0; // TODO
+
+		//int64_t iArc3DClass = GetClassByName(pParser->getModel(), "Arc3D");
+		//assert(iArc3DClass != 0);
+
+		//int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
+		//assert(iTransformationClass != 0);
+
+		//int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
+		//assert(iMatrixClass != 0);
+
+		//// Arc3D
+		//int64_t iArc3DInstance = CreateInstance(iArc3DClass, type().c_str());
+		//assert(iArc3DInstance != 0);
+
+		//double dRadius = atof(m_mapCode2Value[_group_codes::radius].c_str());
+		//SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
+
+		//double dStartAngle = atof(m_mapCode2Value[start_angle].c_str());
+		//double dEndAngle = atof(m_mapCode2Value[end_angle].c_str());
+
+		//if (dStartAngle > dEndAngle)
+		//{
+		//	dStartAngle = dStartAngle - 360.;
+		//}
+
+		//dStartAngle *= PI / 180.;
+		//dEndAngle *= PI / 180.;
+		//double dSize = dEndAngle - dStartAngle;
+
+		//SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
+		//SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
+
+		//int64_t iValue = 36;
+		//SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "segmentationParts"), &iValue, 1);
+
+		//// Extrusion
+		//_extrusion extrusion(this);
+
+		//// Matrix
+		//int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
+		//assert(iMatrixInstance != 0);
+
+		//double dValue = extrusion.getValue(_group_codes::x);
+		//SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+
+		//dValue = extrusion.getValue(_group_codes::y);
+		//SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+
+		//dValue = extrusion.getValue(_group_codes::z);
+		//SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+
+		//// Transformation
+		//int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
+		//assert(iTransformationInstance != 0);
+
+		//SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
+		//SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iArc3DInstance, 1);
+
+		//if (m_pParent == nullptr)
+		//{
+		//	pParser->onInstanceCreated(this, iTransformationInstance);
+		//}
+
+		//return iTransformationInstance;
+	}
+	// _ellipse
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
@@ -2051,6 +2166,15 @@ namespace _dxf
 			pArc->load(reader);
 
 			return pArc;
+		}
+		else if (reader.row() == _group_codes::ellipse)
+		{
+			reader.forth();
+
+			auto pEllipse = new _ellipse();
+			pEllipse->load(reader);
+
+			return pEllipse;
 		}
 		else if (reader.row() == _group_codes::text)
 		{
