@@ -469,7 +469,7 @@ void CRDFModel::ScaleAndCenter()
 	map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		if (!itRDFInstances->second->getEnable())
 		{
 			continue;
 		}
@@ -490,7 +490,7 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		if (!itRDFInstances->second->getEnable())
 		{
 			continue;
 		}
@@ -512,7 +512,7 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (itRDFInstances->second->isReferenced() || !itRDFInstances->second->getEnable())
+		if (!itRDFInstances->second->getEnable())
 		{
 			continue;
 		}

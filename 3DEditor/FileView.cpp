@@ -1900,10 +1900,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 					continue;
 				}
 
-				if (!itRFDInstances->second->isReferenced())
-				{
-					itRFDInstances->second->setEnable(true);
-				}				
+				itRFDInstances->second->setEnable(true);
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
