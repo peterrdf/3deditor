@@ -176,7 +176,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::classes = "CLASSES";
 	/*static*/ const string _group_codes::objects = "OBJECTS";
 	/*static*/ const string _group_codes::tables = "TABLES";
-	/*static*/ const string _group_codes::blocks = "BLOCKS";
+	/*static*/ const string _group_codes::blocks = "BLOCKS";	
 	/*static*/ const string _group_codes::line = "LINE";	
 	/*static*/ const string _group_codes::arc = "ARC";
 	/*static*/ const string _group_codes::text = "TEXT";
@@ -195,6 +195,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::layer_table = "LAYER";
 
 	// --------------------------------------------------------------------------------------------
+	/*static*/ const string _group_codes::handle = "5";
 	/*static*/ const string _group_codes::subclass = "100";
 	/*static*/ const string _group_codes::layer = "8";
 	/*static*/ const string _group_codes::x = "10";
@@ -322,8 +323,9 @@ namespace _dxf
 		// Common Group Codes for Entities, page 61
 		m_mapCode2Value =
 		{
-			{ _group_codes::subclass, "" },
-			{ _group_codes::layer, "" },
+			{ _group_codes::handle, "" }, // Handle
+			{ _group_codes::subclass, "" }, // Subclass marker (AcDbEntity)
+			{ _group_codes::layer, "" }, // Layer name
 		};
 	}
 

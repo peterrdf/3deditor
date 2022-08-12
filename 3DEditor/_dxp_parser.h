@@ -109,12 +109,12 @@ namespace _dxf
 		static const string endsec;
 
 		// ----------------------------------------------------------------------------------------
-		static const string entities;
+		static const string entities;		
 		static const string header;
 		static const string classes;
 		static const string objects;
 		static const string tables;
-		static const string blocks;
+		static const string blocks;		
 		static const string line;
 		static const string arc;
 		static const string text;
@@ -133,6 +133,7 @@ namespace _dxf
 		static const string layer_table;
 
 		// ----------------------------------------------------------------------------------------
+		static const string handle;
 		static const string subclass;
 		static const string layer;
 		static const string x;
