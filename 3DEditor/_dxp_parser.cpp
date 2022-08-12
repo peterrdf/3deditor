@@ -600,7 +600,7 @@ namespace _dxf
 
 		if (dStartAngle > dEndAngle)
 		{
-			dStartAngle = 360. - dStartAngle;
+			dStartAngle = dStartAngle - 360.;
 		}
 
 		dStartAngle *= PI / 180.;
