@@ -593,11 +593,19 @@ namespace _dxf
 		double dRadius = atof(m_mapCode2Value[_group_codes::radius].c_str());
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
 
-		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str()) * (PI / 180.);
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
+		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str());
+		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str());
 
-		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str()) * (PI / 180.);
-		double dSize = dEndAngle - dStartAngle;		
+		if (dStartAngle > dEndAngle)
+		{
+			dStartAngle = 360. - dStartAngle;
+		}
+
+		dStartAngle *= PI / 180.;
+		dEndAngle *= PI / 180.;
+		double dSize = dEndAngle - dStartAngle;
+
+		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
 				
 		int64_t iValue = 36;
