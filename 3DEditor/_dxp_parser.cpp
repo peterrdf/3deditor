@@ -3,6 +3,7 @@
 #include "conceptMesh.h"
 
 // ------------------------------------------------------------------------------------------------
+static double PI = 3.14159265;
 static char VALUE_DELIMITER = '\n';
 
 // ------------------------------------------------------------------------------------------------
@@ -592,10 +593,10 @@ namespace _dxf
 		double dRadius = atof(m_mapCode2Value[_group_codes::radius].c_str());
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
 
-		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str()) * (3.14159265 / 180.);
+		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str()) * (PI / 180.);
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
 
-		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str()) * (3.14159265 / 180.);
+		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str()) * (PI / 180.);
 		double dSize = dEndAngle - dStartAngle;		
 		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
 				
