@@ -649,9 +649,9 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _ellipse
-	/*static*/ const string _ellipse::endpoint_x = "11";
-	/*static*/ const string _ellipse::endpoint_y = "21";
-	/*static*/ const string _ellipse::endpoint_z = "31";
+	/*static*/ const string _ellipse::endpoint_x = _group_codes::x2;
+	/*static*/ const string _ellipse::endpoint_y = _group_codes::y2;
+	/*static*/ const string _ellipse::endpoint_z = _group_codes::z2;
 	/*static*/ const string _ellipse::ratio = "40";
 	/*static*/ const string _ellipse::start = "41";
 	/*static*/ const string _ellipse::end = "42";
@@ -690,12 +690,6 @@ namespace _dxf
 		if (!pParser->isEntityOn(this))
 		{
 			return 0;
-		}		
-
-		return 0;// test
-		if (getValue(_group_codes::handle) != "B9405")
-		{
-			return 0;
 		}
 
 		int64_t iEllipseClass = GetClassByName(pParser->getModel(), "Ellipse");
@@ -718,9 +712,9 @@ namespace _dxf
 		double dStartY = extrusion.getValue(_group_codes::y);
 		double dStartZ = extrusion.getValue(_group_codes::z);
 
-		double dEndX = extrusion.getValue(endpoint_x);
-		double dEndY = extrusion.getValue(endpoint_y);
-		double dEndZ = extrusion.getValue(endpoint_z);
+		double dEndX = dStartX + extrusion.getValue(endpoint_x);
+		double dEndY = dStartY + extrusion.getValue(endpoint_y);
+		double dEndZ = dStartZ + extrusion.getValue(endpoint_z);
 
 		double dMajorAxis = sqrt(
 			pow(dEndX - dStartX, 2.) +
@@ -752,13 +746,13 @@ namespace _dxf
 		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
 		assert(iMatrixInstance != 0);
 
-		double dValue = extrusion.getValue(_group_codes::x);
+		double dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
-		dValue = extrusion.getValue(_group_codes::y);
+		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
-		dValue = extrusion.getValue(_group_codes::z);
+		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
 		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
