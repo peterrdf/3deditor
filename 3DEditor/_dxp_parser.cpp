@@ -692,6 +692,13 @@ namespace _dxf
 			return 0;
 		}
 
+		// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (getValue(_group_codes::handle) != "B9405")
+		{
+			return 0;
+		}
+		// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 		int64_t iEllipseClass = GetClassByName(pParser->getModel(), "Ellipse");
 		assert(iEllipseClass != 0);
 
