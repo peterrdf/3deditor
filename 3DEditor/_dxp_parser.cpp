@@ -740,7 +740,12 @@ namespace _dxf
 		}
 
 		double dSize = dEndAngle - dStartAngle;
+		double angle = atan2(dEndY, dEndX);
 
+		dStartAngle += angle + PI;
+		dSize = -dSize;
+		dStartAngle = -dStartAngle;
+		
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusI"), &dMajorAxis, 1);
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusII"), &dMinorAxis, 1);
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
@@ -1113,8 +1118,8 @@ namespace _dxf
 		// POLYLINE, page 123
 		map<string, string> mapCode2Value =
 		{
-			{_group_codes::x, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
-			{_group_codes::y, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::x, "0"}, // DXF: always 0; APP: a Â“dummyÂ” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::y, "0"}, // DXF: always 0; APP: a Â“dummyÂ” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: polyline's elevation (in OCS when 2D; WCS when 3D)
 			{flag, "1"}, // Polyline flag (bit-coded; default = 0):
 			/*
