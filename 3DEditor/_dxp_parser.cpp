@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "_dxp_parser.h"
 #include "conceptMesh.h"
 
@@ -649,6 +649,9 @@ namespace _dxf
 
 	// --------------------------------------------------------------------------------------------
 	// _ellipse
+//	/*static*/ const string _ellipse::startpoint_x = _group_codes::x1;
+//	/*static*/ const string _ellipse::startpoint_y = _group_codes::y1;
+//	/*static*/ const string _ellipse::startpoint_z = _group_codes::z1;
 	/*static*/ const string _ellipse::endpoint_x = _group_codes::x2;
 	/*static*/ const string _ellipse::endpoint_y = _group_codes::y2;
 	/*static*/ const string _ellipse::endpoint_z = _group_codes::z2;
@@ -692,14 +695,8 @@ namespace _dxf
 			return 0;
 		}
 
-		// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if (getValue(_group_codes::handle) != "B9405")
-		{
-			return 0;
-		}
-		// TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 		int64_t iEllipseClass = GetClassByName(pParser->getModel(), "Ellipse");
+//		int64_t iEllipseClass = GetClassByName(pParser->getModel(), "Sphere");
 		assert(iEllipseClass != 0);
 
 		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
@@ -715,37 +712,34 @@ namespace _dxf
 		int64_t iEllipseInstance = CreateInstance(iEllipseClass, type().c_str());
 		assert(iEllipseInstance != 0);
 
-		double dStartX = extrusion.getValue(_group_codes::x);
-		double dStartY = extrusion.getValue(_group_codes::y);
-		double dStartZ = extrusion.getValue(_group_codes::z);
+		double dOriginX = extrusion.getValue(_group_codes::x);
+		double dOriginY = extrusion.getValue(_group_codes::y);
+		double dOriginZ = extrusion.getValue(_group_codes::z);
 
-		double dEndX = dStartX + extrusion.getValue(endpoint_x);
-		double dEndY = dStartY + extrusion.getValue(endpoint_y);
-		double dEndZ = dStartZ + extrusion.getValue(endpoint_z);
+		double dEndX = extrusion.getValue(endpoint_x);
+		double dEndY = extrusion.getValue(endpoint_y);
+		double dEndZ = extrusion.getValue(endpoint_z);
 
-		double dMajorAxis = sqrt(
-			pow(dEndX - dStartX, 2.) +
-			pow(dEndY - dStartY, 2.) +
-			pow(dEndZ - dStartZ, 2.));
-
-		double dMinorAxisRatio = atof(getValue(ratio).c_str());
-		double dMinorAxis = dMajorAxis * dMinorAxisRatio;
+		assert(dEndZ == 0.);
+		double	dMajorAxis = sqrt(dEndX * dEndX + dEndY * dEndY),
+				dMinorAxisRatio = atof(getValue(ratio).c_str()),
+				dMinorAxis = dMajorAxis * dMinorAxisRatio;
 		
-		double dStartAngle = atof(m_mapCode2Value[start].c_str());
-		double dEndAngle = m_mapCode2Value[end] == "2pi" ? 2 * PI : atof(m_mapCode2Value[end].c_str());
+		double	dStartAngle = atof(m_mapCode2Value[start].c_str()),
+				dEndAngle = m_mapCode2Value[end] == "2pi" ? 2. * PI : atof(m_mapCode2Value[end].c_str());
 
-		if (dStartAngle > dEndAngle)
-		{
-			dStartAngle = dStartAngle - (2 * PI);
+		if (dStartAngle > dEndAngle) {
+			dStartAngle = dStartAngle - (2. * PI);
 		}
 
-		double dSize = dEndAngle - dStartAngle;
-		double angle = atan2(dEndY, dEndX);
 
-		dStartAngle += angle + PI;
+		double angle = atan2(dEndY, dEndX);
+		double dSize = dEndAngle - dStartAngle;
+
+		dStartAngle += angle - PI;
 		dSize = -dSize;
 		dStartAngle = -dStartAngle;
-		
+
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusI"), &dMajorAxis, 1);
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusII"), &dMinorAxis, 1);
 		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
@@ -1118,8 +1112,8 @@ namespace _dxf
 		// POLYLINE, page 123
 		map<string, string> mapCode2Value =
 		{
-			{_group_codes::x, "0"}, // DXF: always 0; APP: a dummy point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
-			{_group_codes::y, "0"}, // DXF: always 0; APP: a dummy point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::x, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
+			{_group_codes::y, "0"}, // DXF: always 0; APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation(in OCS when 2D, WCS when 3D)
 			{_group_codes::z, "0"}, // DXF: polyline's elevation (in OCS when 2D; WCS when 3D)
 			{flag, "1"}, // Polyline flag (bit-coded; default = 0):
 			/*
