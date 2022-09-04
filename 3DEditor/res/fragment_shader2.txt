@@ -1,0 +1,8 @@
+precision highp float;
+
+uniform vec3 uMaterialAmbientColor;
+uniform float uTransparency;
+
+void main(void) {
+    gl_FragColor = vec4(uMaterialAmbientColor, uTransparency);
+}
