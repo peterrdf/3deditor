@@ -714,13 +714,13 @@ namespace _dxf
 		int64_t iEllipseInstance = CreateInstance(iEllipseClass, type().c_str());
 		assert(iEllipseInstance != 0);
 
-		double dOriginX = extrusion.getValue(_group_codes::x);
-		double dOriginY = extrusion.getValue(_group_codes::y);
-		double dOriginZ = extrusion.getValue(_group_codes::z);
+		//double dOriginX = extrusion.getValue(_group_codes::x);
+		//double dOriginY = extrusion.getValue(_group_codes::y);
+		//double dOriginZ = extrusion.getValue(_group_codes::z);
 
 		double dEndX = extrusion.getValue(endpoint_x);
 		double dEndY = extrusion.getValue(endpoint_y);
-		double dEndZ = extrusion.getValue(endpoint_z);
+		//double dEndZ = extrusion.getValue(endpoint_z);
 
 		assert(dEndZ == 0.);
 		double	dMajorAxis = sqrt(dEndX * dEndX + dEndY * dEndY),
