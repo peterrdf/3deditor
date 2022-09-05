@@ -1,10 +1,24 @@
+uniform float uUseBinnPhongModel;
+
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
+uniform mat4 uNMatrix;
 
 attribute vec3 aVertexPosition;
+attribute vec3 aVertexNormal;
+varying float vUseBinnPhongModel;
+varying vec4 vPosition;
+varying vec3 vTransformedNormal;
 
 void main(void) {
     vec4 vertex = uMVMatrix * vec4(aVertexPosition, 1.0);
+    vPosition = vertex;
 
     gl_Position = uPMatrix * vertex;
+
+    if (uUseBinnPhongModel == 1.0) {
+        vTransformedNormal = vec3(uNMatrix * vec4(aVertexNormal, 1.0));
+    }
+
+    vUseBinnPhongModel = uUseBinnPhongModel;
 }
