@@ -3382,10 +3382,6 @@ void COpenGLRDFView::DrawFacesPolygons()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
 #else
 	glDisable(GL_LIGHTING);
 
