@@ -1075,17 +1075,12 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Non-transparent faces
 	*/
-	//TODO#DrawFaces(false);
+	DrawFaces(false);
 
 	/*
 	Transparent faces
 	*/
-	//TODO#DrawFaces(true);
-
-	/*
-	Pointed instance
-	*/
-	//DrawPointedInstance();
+	DrawFaces(true);
 
 	/*
 	Pointed face
@@ -2741,6 +2736,193 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+#ifdef _USE_SHADERS
+	if (bTransparent)
+	{
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	else
+	{
+		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(m_strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
+		}
+	}
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		1.f);
+
+	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	{
+		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		{
+			continue;
+		}
+
+		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
+
+		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
+		for (; itGroups != mapGroups.end(); itGroups++)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+			glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+
+			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			{
+				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+
+				if (!pRDFInstance->getEnable())
+				{
+					continue;
+				}
+
+				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				{
+					continue;
+				}
+
+				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+				{
+					continue;
+				}
+
+				/*
+				* Conceptual faces
+				*/
+				for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pRDFInstance->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
+				{
+					CRDFGeometryWithMaterial* pGeometryWithMaterial = pRDFInstance->conceptualFacesMaterials()[iGeometryWithMaterial];
+
+					const CRDFMaterial* pMaterial =
+						pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+						pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						pGeometryWithMaterial->getMaterial();
+
+					if (bTransparent)
+					{
+						if (pMaterial->A() == 1.0)
+						{
+							continue;
+						}
+					}
+					else
+					{
+						if (pMaterial->A() < 1.0)
+						{
+							continue;
+						}
+					}
+
+					/*
+					* Material - Texture
+					*/
+					if (pMaterial->hasTexture())
+					{
+						//TODO#
+						/*glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+						glColor4f(
+							1.f,
+							1.f,
+							1.f,
+							1.f);
+
+						glEnable(GL_TEXTURE_2D);
+						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
+
+						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+						glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 6));*/
+					} // if (pMaterial->hasTexture())
+					else
+					{
+						/*
+						* Material - Ambient color
+						*/
+						glProgramUniform3f(m_pProgram->GetID(),
+							m_pProgram->getMaterialAmbientColor(),
+							pMaterial->getAmbientColor().R(),
+							pMaterial->getAmbientColor().G(),
+							pMaterial->getAmbientColor().B());
+
+						/*
+						* Material - Transparency
+						*/
+						glProgramUniform1f(
+							m_pProgram->GetID(),
+							m_pProgram->getTransparency(),
+							pMaterial->A());
+
+						/*
+						* Material - Diffuse color
+						*/
+						glProgramUniform3f(m_pProgram->GetID(),
+							m_pProgram->getMaterialDiffuseColor(),
+							pMaterial->getDiffuseColor().R() / 2.f,
+							pMaterial->getDiffuseColor().G() / 2.f,
+							pMaterial->getDiffuseColor().B() / 2.f);
+
+						/*
+						* Material - Specular color
+						*/
+						glProgramUniform3f(m_pProgram->GetID(),
+							m_pProgram->getMaterialSpecularColor(),
+							pMaterial->getSpecularColor().R() / 2.f,
+							pMaterial->getSpecularColor().G() / 2.f,
+							pMaterial->getSpecularColor().B() / 2.f);
+
+						/*
+						* Material - Emissive color
+						*/
+						glProgramUniform3f(m_pProgram->GetID(),
+							m_pProgram->getMaterialEmissiveColor(),
+							pMaterial->getEmissiveColor().R() / 3.f,
+							pMaterial->getEmissiveColor().G() / 3.f,
+							pMaterial->getEmissiveColor().B() / 3.f);
+					} // else if (pMaterial->hasTexture())					
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
+					glDrawElementsBaseVertex(GL_TRIANGLES,
+						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
+						pRDFInstance->VBOOffset());
+
+					if (pMaterial->hasTexture())
+					{
+						glDisable(GL_TEXTURE_2D);
+						glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+					}
+				} // for (size_t iMaterial = ...
+			} // for (size_t iObject = ...
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		} // for (; itGroups != ...
+	} // for (size_t iDrawMetaData = ...
+
+	if (bTransparent)
+	{
+		glDisable(GL_BLEND);
+	}
+	else
+	{
+		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
+		{
+			glDisable(GL_CULL_FACE);
+		}
+	}
+
+	glDisableVertexAttribArray(m_pProgram->getVertexNormal());
+#else 
 	if (bTransparent)
 	{
 		glEnable(GL_BLEND);
@@ -2801,7 +2983,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				{
 					CRDFGeometryWithMaterial* pGeometryWithMaterial = pRDFInstance->conceptualFacesMaterials()[iGeometryWithMaterial];
 
-					const CRDFMaterial* pMaterial = 
+					const CRDFMaterial* pMaterial =
 						pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
 						pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 						pGeometryWithMaterial->getMaterial();
@@ -2824,7 +3006,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					/*
 					* Material - Texture
 					*/
-					if (pMaterial->hasTexture())					
+					if (pMaterial->hasTexture())
 					{
 						glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 						glColor4f(
@@ -2837,7 +3019,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
-						
+
 						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 						glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 6));
 					} // if (pMaterial->hasTexture())
@@ -2908,7 +3090,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 	} // for (size_t iDrawMetaData = ...
 
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);	
+	glDisableClientState(GL_NORMAL_ARRAY);
 
 	if (bTransparent)
 	{
@@ -2919,375 +3101,14 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
 		{
 			glDisable(GL_CULL_FACE);
-		}		
+		}
 	}
+#endif // _USE_SHADERS	
 
 	COpenGL::Check4Errors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-	/*if (bTransparent)
-	{
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-	else
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-	}*/
-
-	//const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
-
-	//if (m_pSelectedInstance == NULL)
-	//{
-	//	map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	//	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	//	{
-	//		CRDFInstance * pRDFInstance = itRDFInstances->second;
-	//		if (!pRDFInstance->getEnable())
-	//		{
-	//			continue;
-	//		}
-
-	//		if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-	//		{
-	//			continue;
-	//		}
-
-	//		if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-	//		{
-	//			continue;
-	//		}
-
-	//		const vector<pair<int64_t, int64_t> > & vecTriangles = pRDFInstance->getTriangles();
-	//		if (vecTriangles.empty())
-	//		{
-	//			continue;
-	//		}
-
-	//		const vector<CRDFMaterial *> & vecConceptualFacesMaterials = pRDFInstance->getConceptualFacesMaterials();
-	//		ASSERT(vecTriangles.size() == vecConceptualFacesMaterials.size());			
-
-	//		for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	//		{
-	//			CRDFMaterial * pRDFMaterial = vecConceptualFacesMaterials[iTriangle];
-
-	//			if (bTransparent)
-	//			{
-	//				if (pRDFMaterial->A() == 1.0)
-	//				{
-	//					continue;
-	//				}
-	//			}
-	//			else
-	//			{
-	//				if (pRDFMaterial->A() < 1.0)
-	//				{
-	//					continue;
-	//				}
-	//			}
-
-	//			if (pRDFMaterial->hasTexture())
-	//			{
-	//				glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	//				glColor4f(
-	//					1.f,
-	//					1.f,
-	//					1.f,
-	//					1.f);
-
-	//				glEnable(GL_TEXTURE_2D);
-	//				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	//				if (pModel->GetDefaultTexture()->TexName() != 0)
-	//				{
-	//					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
-	//				}
-	//			} // if (pRDFMaterial->hasTexture())
-	//			else
-	//			{
-	//				// Ambient color
-	//				glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	//				glColor4f(
-	//					pRDFMaterial->getAmbientColor().R(),
-	//					pRDFMaterial->getAmbientColor().G(),
-	//					pRDFMaterial->getAmbientColor().B(),
-	//					pRDFMaterial->A());
-
-	//				// Diffuse color
-	//				glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	//				glColor4f(
-	//					pRDFMaterial->getDiffuseColor().R(),
-	//					pRDFMaterial->getDiffuseColor().G(),
-	//					pRDFMaterial->getDiffuseColor().B(),
-	//					pRDFMaterial->A());
-
-	//				// Specular color
-	//				glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-	//				glColor4f(
-	//					pRDFMaterial->getSpecularColor().R(),
-	//					pRDFMaterial->getSpecularColor().G(),
-	//					pRDFMaterial->getSpecularColor().B(),
-	//					pRDFMaterial->A());
-
-	//				// Emissive color
-	//				glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-	//				glColor4f(
-	//					pRDFMaterial->getEmissiveColor().R(),
-	//					pRDFMaterial->getEmissiveColor().G(),
-	//					pRDFMaterial->getEmissiveColor().B(),
-	//					pRDFMaterial->A());
-	//			} // else if (pRDFMaterial->hasTexture())
-
-	//			glBegin(GL_TRIANGLES);
-
-	//			for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-	//			{
-	//				glNormal3f(
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-	//				if (pRDFMaterial->hasTexture())
-	//				{
-	//					glTexCoord2f(
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 6],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 7]);
-	//				}
-
-	//				glVertex3f(
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//					pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//			} // for (size_t iIndex = ...
-
-	//			glEnd();
-
-	//			if (pRDFMaterial->hasTexture())
-	//			{
-	//				glDisable(GL_TEXTURE_2D);
-	//			}				
-	//		} // for (size_t iTriangle = ...			
-	//	} // for (; itRDFInstances != ...
-	//} // if (m_pSelectedInstance == NULL)
-	//else
-	//{
-	//	if (bTransparent)
-	//	{
-	//		// Ambient color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	//		glColor4f(
-	//			.3f,
-	//			.3f,
-	//			.3f,
-	//			.2f);
-
-	//		// Diffuse color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	//		glColor4f(
-	//			.3f,
-	//			.3f,
-	//			.3f,
-	//			.2f);
-
-	//		// Specular color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-	//		glColor4f(
-	//			.3f,
-	//			.3f,
-	//			.3f,
-	//			.2f);
-
-	//		// Emissive color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-	//		glColor4f(
-	//			.3f,
-	//			.3f,
-	//			.3f,
-	//			.2f);
-
-	//		map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	//		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	//		{
-	//			CRDFInstance * pRDFInstance = itRDFInstances->second;
-	//			if (!pRDFInstance->getEnable())
-	//			{
-	//				continue;
-	//			}
-
-	//			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-	//			{
-	//				continue;
-	//			}
-
-	//			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-	//			{
-	//				continue;
-	//			}
-
-	//			if (m_pSelectedInstance == pRDFInstance)
-	//			{
-	//				continue;
-	//			}
-
-	//			const vector<pair<int64_t, int64_t> > & vecTriangles = pRDFInstance->getTriangles();
-	//			if (vecTriangles.empty())
-	//			{
-	//				continue;
-	//			}
-
-	//			glBegin(GL_TRIANGLES);
-
-	//			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	//			{
-	//				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-	//				{
-	//					glNormal3f(
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-	//					glVertex3f(
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//				} // for (size_t iIndex = ...
-	//			} // for (size_t iTriangle = ...
-
-	//			glEnd();
-	//		} // for (; itRDFInstances != ...
-	//	} // if (bTransparent)
-	//	else
-	//	{
-	//		// Ambient color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	//		glColor4f(
-	//			1.f,
-	//			0.f,
-	//			0.f,
-	//			1.f);
-
-	//		// Diffuse color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	//		glColor4f(
-	//			1.f,
-	//			0.f,
-	//			0.f,
-	//			1.f);
-
-	//		// Specular color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-	//		glColor4f(
-	//			1.f,
-	//			0.f,
-	//			0.f,
-	//			1.f);
-
-	//		// Emissive color
-	//		glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-	//		glColor4f(
-	//			1.f,
-	//			0.f,
-	//			0.f,
-	//			1.f);
-
-	//		const vector<pair<int64_t, int64_t> > & vecTriangles = m_pSelectedInstance->getTriangles();
-
-	//		glBegin(GL_TRIANGLES);
-
-	//		for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	//		{
-	//			if ((int64_t)iTriangle == m_iPointedFace)
-	//			{
-	//				continue;
-	//			}
-
-	//			for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-	//			{
-
-	//				glNormal3f(
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-	//				glVertex3f(
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//			} // for (size_t iIndex = ...
-	//		} // for (size_t iTriangle = ...
-
-	//		glEnd();
-
-	//		if (m_iPointedFace != -1)
-	//		{
-	//			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-	//			// Ambient color
-	//			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	//			glColor4f(
-	//				0.f,
-	//				1.f,
-	//				0.f,
-	//				1.f);
-
-	//			// Diffuse color
-	//			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	//			glColor4f(
-	//				0.f,
-	//				1.f,
-	//				0.f,
-	//				1.f);
-
-	//			// Specular color
-	//			glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-	//			glColor4f(
-	//				0.f,
-	//				1.f,
-	//				0.f,
-	//				1.f);
-
-	//			// Emissive color
-	//			glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-	//			glColor4f(
-	//				0.f,
-	//				1.f,
-	//				0.f,
-	//				1.f);
-
-	//			glBegin(GL_TRIANGLES);
-
-	//			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-	//			{
-	//				glNormal3f(
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-	//				glVertex3f(
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//			} // for (size_t iIndex = ...
-
-	//			glEnd();
-	//		} // if (m_iPointedFace != -1)
-	//	} // else if (bTransparent)
-	//} // else if (m_pSelectedInstance == NULL)
-
-	//if (bTransparent)
-	//{
-	//	glDisable(GL_BLEND);
-	//}
-	//else
-	//{
-	//	glDisable(GL_CULL_FACE);
-	//}
-
-	//COpenGL::Check4Errors();
+	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
 // ------------------------------------------------------------------------------------------------
