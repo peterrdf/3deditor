@@ -1095,7 +1095,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Faces polygons
 	*/
-	//TODO#DrawFacesPolygons();
+	DrawFacesPolygons();
 
 	/*
 	Conceptual faces polygons
@@ -3309,6 +3309,84 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform3f(
+		m_pProgram->GetID(),
+		m_pProgram->getMaterialAmbientColor(),
+		0.f,
+		0.f,
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);
+
+	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	{
+		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		{
+			continue;
+		}
+
+		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
+
+		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
+		for (; itGroups != mapGroups.end(); itGroups++)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+
+			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			{
+				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+
+				if (!pRDFInstance->getEnable())
+				{
+					continue;
+				}
+
+				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				{
+					continue;
+				}
+
+				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+				{
+					continue;
+				}
+
+				/*
+				* Wireframes
+				*/
+				for (size_t iWireframesCohort = 0; iWireframesCohort < pRDFInstance->facesCohorts().size(); iWireframesCohort++)
+				{
+					CWireframesCohort* pWireframesCohort = pRDFInstance->facesCohorts()[iWireframesCohort];
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
+					glDrawElementsBaseVertex(GL_LINES,
+						(GLsizei)pWireframesCohort->getIndicesCount(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
+						pRDFInstance->VBOOffset());
+				} // for (size_t iWireframesCohort = ...
+			} // for (size_t iObject = ...
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		} // for (; itGroups != ...
+	} // for (size_t iDrawMetaData = ...
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glEnable(GL_LIGHTING);
+#else
 	glDisable(GL_LIGHTING);
 
 	glLineWidth(1.0);
@@ -3377,101 +3455,12 @@ void COpenGLRDFView::DrawFacesPolygons()
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glEnable(GL_LIGHTING);
+#endif // #ifdef _USE_SHADERS
 
 	COpenGL::Check4Errors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-	//glDisable(GL_LIGHTING);
-
-	//glLineWidth(m_fLineWidth);
-	//glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	//glBegin(GL_LINES);
-
-	//const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
-
-	//map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	//for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	//{
-	//	CRDFInstance * pRDFInstance = itRDFInstances->second;
-	//	if (!pRDFInstance->getEnable())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-	//	{
-	//		continue;
-	//	}
-
-	//	const vector<pair<int64_t, int64_t> > & vecFacesPolygons = pRDFInstance->getFacesPolygons();
-	//	if (vecFacesPolygons.empty())
-	//	{
-	//		continue;
-	//	}
-
-	//	for (size_t iPolygon = 0; iPolygon < vecFacesPolygons.size(); iPolygon++)
-	//	{
-	//		int64_t iFirstIndex = -1;
-	//		int64_t iPreviousIndex = -1;
-	//		for (int64_t iIndex = vecFacesPolygons[iPolygon].first; iIndex < vecFacesPolygons[iPolygon].first + vecFacesPolygons[iPolygon].second; iIndex++)
-	//		{
-	//			if (pRDFInstance->getIndices()[iIndex] < 0)
-	//			{
-	//				if ((iFirstIndex != -1) && (iPreviousIndex != -1))
-	//				{
-	//					glVertex3f(
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH)],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH) + 1],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH) + 2]);
-
-	//					glVertex3f(
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iFirstIndex] * VERTEX_LENGTH)],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iFirstIndex] * VERTEX_LENGTH) + 1],
-	//						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iFirstIndex] * VERTEX_LENGTH) + 2]);
-	//				}
-
-	//				iFirstIndex = -1;
-	//				iPreviousIndex = -1;
-
-	//				continue;
-	//			} // if (pRDFInstance->getIndices()[iIndex] < 0)
-
-	//			if (iFirstIndex == -1)
-	//			{
-	//				iFirstIndex = iIndex;
-	//				iPreviousIndex = iIndex;
-
-	//				continue;
-	//			}
-
-	//			glVertex3f(
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH)],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH) + 1],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iPreviousIndex] * VERTEX_LENGTH) + 2]);
-
-	//			glVertex3f(
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-	//			iPreviousIndex = iIndex;
-	//		} // for (size_t iIndex = ...
-	//	} // for (size_t iPolygon = ...
-	//} // for (; itRDFInstances != ...
-
-	//glEnd();
-
-	//glEnable(GL_LIGHTING);
-
-	//COpenGL::Check4Errors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3559,8 +3548,6 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 						GL_UNSIGNED_INT,
 						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
 						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 				} // for (size_t iWireframesCohort = ...
 			} // for (size_t iObject = ...
 
