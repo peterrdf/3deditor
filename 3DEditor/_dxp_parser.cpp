@@ -722,7 +722,7 @@ namespace _dxf
 		double dEndY = extrusion.getValue(endpoint_y);
 		//double dEndZ = extrusion.getValue(endpoint_z);
 
-		assert(dEndZ == 0.);
+		//assert(dEndZ == 0.);
 		double	dMajorAxis = sqrt(dEndX * dEndX + dEndY * dEndY),
 				dMinorAxisRatio = atof(getValue(ratio).c_str()),
 				dMinorAxis = dMajorAxis * dMinorAxisRatio;
