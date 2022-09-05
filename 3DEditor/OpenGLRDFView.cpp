@@ -6,6 +6,8 @@
 
 #include <chrono>
 
+#include "Resource.h"
+
 #ifdef _LINUX
 #include <cfloat>
 #include <GL/gl.h>
@@ -277,6 +279,34 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.33f, .33f, .33f,  //specular
 		1,                 // transparency	
 		NULL);	           // texture
+
+#ifdef _USE_SHADERS
+	m_pOGLContext->MakeCurrent();
+
+	m_pProgram = new CBinnPhongGLProgram();
+	m_pVertSh = new CGLShader(GL_VERTEX_SHADER);
+	m_pFragSh = new CGLShader(GL_FRAGMENT_SHADER);
+
+	if (!m_pVertSh->Load(IDR_TEXTFILE_VERTEX_SHADER2))
+		AfxMessageBox(_T("Vertex shader loading error!"));
+
+	if (!m_pFragSh->Load(IDR_TEXTFILE_FRAGMENT_SHADER2))
+		AfxMessageBox(_T("Fragment shader loading error!"));
+
+	if (!m_pVertSh->Compile())
+		AfxMessageBox(_T("Vertex shader compiling error!"));
+
+	if (!m_pFragSh->Compile())
+		AfxMessageBox(_T("Fragment shader compiling error!"));
+
+	m_pProgram->AttachShader(m_pVertSh);
+	m_pProgram->AttachShader(m_pFragSh);
+
+	if (!m_pProgram->Link())
+		AfxMessageBox(_T("Program linking error!"));
+
+	m_modelViewMatrix = glm::identity<glm::mat4>();
+#endif // _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -336,10 +366,29 @@ COpenGLRDFView::~COpenGLRDFView()
 	{
 		glDeleteBuffers(1, &(m_vecIBOs[iIBO]));
 	}
-	m_vecIBOs.clear();
+	m_vecIBOs.clear();	
 
-	delete m_pOGLContext;
-	m_pOGLContext = NULL;
+
+#ifdef _USE_SHADERS
+	m_pOGLContext->MakeCurrent();
+
+	m_pProgram->DetachShader(m_pVertSh);
+	m_pProgram->DetachShader(m_pFragSh);
+
+	delete m_pProgram;
+	m_pProgram = NULL;
+
+	delete m_pVertSh;
+	m_pVertSh = NULL;
+	delete m_pFragSh;
+	m_pFragSh = NULL;
+#endif // _USE_SHADERS
+
+	if (m_pOGLContext != NULL)
+	{
+		delete m_pOGLContext;
+		m_pOGLContext = NULL;
+	}
 
 	ReleaseBuffers();
 
@@ -908,11 +957,196 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	if ((iWidth == 0) || (iHeight == 0))
+	if ((iWidth < 20) || (iHeight < 20))
 	{
 		return;
 	}
 
+#ifdef _USE_SHADERS
+	m_pProgram->Use();
+
+	glViewport(0, 0, iWidth, iHeight);
+
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);	
+
+	glShadeModel(TEST_MODE ? GL_FLAT : GL_SMOOTH);
+
+	/*
+	* Light
+	*/
+	glProgramUniform3f(
+		m_pProgram->GetID(),
+		m_pProgram->getPointLightingLocation(),
+		0.f,
+		0.f,
+		10000.f);
+
+	/*
+	* Shininess
+	*/
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getMaterialShininess(),
+		30.f);
+
+	/*
+	* Projection Matrix
+	*/
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = 45.0;
+	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+	GLdouble zNear = 0.001;
+	GLdouble zFar = 1000000.0;
+
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
+
+	glm::mat4 projectionMatrix = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+
+	glProgramUniformMatrix4fv(
+		m_pProgram->GetID(),
+		m_pProgram->getPMatrix(),
+		1,
+		false,
+		value_ptr(projectionMatrix));
+
+	/*
+	* Model-View Matrix
+	*/
+	m_modelViewMatrix = glm::identity<glm::mat4>();
+	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	float fXTranslation = fXmin;
+	fXTranslation += (fXmax - fXmin) / 2.f;
+	fXTranslation = -fXTranslation;
+
+	float fYTranslation = fYmin;
+	fYTranslation += (fYmax - fYmin) / 2.f;
+	fYTranslation = -fYTranslation;
+
+	float fZTranslation = fZmin;
+	fZTranslation += (fZmax - fZmin) / 2.f;
+	fZTranslation = -fZTranslation;
+
+	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+
+	glProgramUniformMatrix4fv(
+		m_pProgram->GetID(),
+		m_pProgram->getMVMatrix(),
+		1,
+		false,
+		glm::value_ptr(m_modelViewMatrix));
+
+	/*
+	* Normal Matrix
+	*/
+	glm::mat4 normalMatrix = m_modelViewMatrix;
+	normalMatrix = glm::inverse(normalMatrix);
+	normalMatrix = glm::transpose(normalMatrix);
+
+	glProgramUniformMatrix4fv(
+		m_pProgram->GetID(),
+		m_pProgram->getNMatrix(),
+		1,
+		false,
+		value_ptr(normalMatrix));
+
+	/*
+	Non-transparent faces
+	*/
+	//TODO#DrawFaces(false);
+
+	/*
+	Transparent faces
+	*/
+	//TODO#DrawFaces(true);
+
+	/*
+	Pointed instance
+	*/
+	//DrawPointedInstance();
+
+	/*
+	Pointed face
+	*/
+	//TODO#DrawPointedFace();
+
+	/*
+	Faces polygons
+	*/
+	//TODO#DrawFacesPolygons();
+
+	/*
+	Conceptual faces polygons
+	*/
+	//TODO#DrawConceptualFacesPolygons();
+
+	/*
+	Lines
+	*/
+	//TODO#DrawLines();
+
+	/*
+	Points
+	*/
+	//TODO#DrawPoints();
+
+	/*
+	Bounding boxes
+	*/
+	//TODO#DrawBoundingBoxes();
+
+	/*
+	Normal vectors
+	*/
+	//TODO#DrawNormalVectors();
+
+	/*
+	Tangent vectors
+	*/
+	//TODO#DrawTangentVectors();
+
+	/*
+	Bi-Normal vectors
+	*/
+	//TODO#DrawBiNormalVectors();	
+
+	/*
+	End
+	*/
+#ifdef _LINUX
+	m_pWnd->SwapBuffers();
+#else
+	SwapBuffers(*pDC);
+#endif // _LINUX
+
+	/*
+	Selection support
+	*/
+	//TODO#DrawInstancesFrameBuffer();
+	//TODO#DrawFacesFrameBuffer();
+#else
 	glViewport(0, 0, iWidth, iHeight);
 
 	/*
@@ -1131,9 +1365,9 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	End
 	*/
 #ifdef _LINUX
-    m_pWnd->SwapBuffers();
+	m_pWnd->SwapBuffers();
 #else
-    SwapBuffers(*pDC);
+	SwapBuffers(*pDC);
 #endif // _LINUX
 
 	/*
@@ -1141,6 +1375,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	*/
 	DrawInstancesFrameBuffer();
 	DrawFacesFrameBuffer();
+#endif // #ifdef _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------

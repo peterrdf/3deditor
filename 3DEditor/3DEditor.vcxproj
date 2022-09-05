@@ -113,7 +113,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -170,7 +170,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
