@@ -1139,7 +1139,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Selection support
 	*/
-	//TODO#DrawInstancesFrameBuffer();
+	DrawInstancesFrameBuffer();
 	//TODO#DrawFacesFrameBuffer();
 #else
 	glViewport(0, 0, iWidth, iHeight);
@@ -4711,6 +4711,9 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
+	BOOL bResult = m_pOGLContext->MakeCurrent();
+	VERIFY(bResult);
+
 	if (m_iInstanceSelectionFrameBuffer == 0)
 	{
 		ASSERT(m_iInstanceSelectionTextureBuffer == 0);
@@ -4837,6 +4840,89 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);	
+
+	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	{
+		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		{
+			continue;
+		}
+
+		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
+
+		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
+		for (; itGroups != mapGroups.end(); itGroups++)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+
+			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			{
+				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+
+				if (!pRDFInstance->getEnable())
+				{
+					continue;
+				}
+
+				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				{
+					continue;
+				}
+
+				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+				{
+					continue;
+				}
+
+				/*
+				* Ambient color
+				*/
+				map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pRDFInstance->getInstance());
+				ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
+
+				/*
+				* Material - Ambient color
+				*/
+				glProgramUniform3f(
+					m_pProgram->GetID(),
+					m_pProgram->getMaterialAmbientColor(),
+					itSelectionColor->second.R(),
+					itSelectionColor->second.G(),
+					itSelectionColor->second.B());
+
+				/*
+				* Conceptual faces
+				*/
+				for (size_t iMaterial = 0; iMaterial < pRDFInstance->conceptualFacesMaterials().size(); iMaterial++)
+				{
+					CRDFGeometryWithMaterial* pGeometryWithMaterial = pRDFInstance->conceptualFacesMaterials()[iMaterial];					
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
+					glDrawElementsBaseVertex(GL_TRIANGLES,
+						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
+						pRDFInstance->VBOOffset());
+				} // for (size_t iMaterial = ...
+			} // for (size_t iObject = ...
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		} // for (; itGroups != ...
+	} // for (size_t iDrawMetaData = ...
+#else
 	glEnable(GL_COLOR_MATERIAL);
 
 	glShadeModel(GL_FLAT);
@@ -4943,7 +5029,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 					*/
 					map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pRDFInstance->getInstance());
 					ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
-					
+
 					glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
 					glColor4f(
 						itSelectionColor->second.R(),
@@ -4970,76 +5056,12 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHTING);	
+#endif // _USE_SHADERS	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	COpenGL::Check4Errors();
-
-	//const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
-
-	//map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	//for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	//{
-	//	CRDFInstance * pRDFInstance = itRDFInstances->second;
-	//	if (!pRDFInstance->getEnable())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-	//	{
-	//		continue;
-	//	}
-
-	//	const vector<pair<int64_t, int64_t> > & vecTriangles = pRDFInstance->getTriangles();
-	//	if (vecTriangles.empty())
-	//	{
-	//		continue;
-	//	}
-
-	//	map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pRDFInstance->getInstance());
-	//	ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
-
-	//	// Ambient color
-	//	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	//	glColor4f(
-	//		itSelectionColor->second.R(),
-	//		itSelectionColor->second.G(),
-	//		itSelectionColor->second.B(),
-	//		1.f);
-
-	//	glBegin(GL_TRIANGLES);
-
-	//	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	//	{
-	//		for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-	//		{
-	//			glNormal3f(
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-	//			glVertex3f(
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//		} // for (size_t iIndex = ...
-	//	} // for (size_t iTriangle = ...
-
-	//	glEnd();
-	//} // for (; itRDFInstances != ...
-
-	//glEnable(GL_LIGHTING);
-
-	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-	//COpenGL::Check4Errors();
 }
 
 // ------------------------------------------------------------------------------------------------
