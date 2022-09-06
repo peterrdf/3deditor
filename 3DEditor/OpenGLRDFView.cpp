@@ -1105,7 +1105,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Points
 	*/
-	//TODO#DrawPoints();
+	DrawPoints();
 
 	/*
 	Bounding boxes
@@ -3541,10 +3541,6 @@ void COpenGLRDFView::DrawLines()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
 #else
 	glDisable(GL_LIGHTING);
 
@@ -3641,6 +3637,80 @@ void COpenGLRDFView::DrawPoints()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform3f(
+		m_pProgram->GetID(),
+		m_pProgram->getMaterialAmbientColor(),
+		0.f,
+		0.f,
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);
+
+	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	{
+		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		{
+			continue;
+		}
+
+		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
+
+		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
+		for (; itGroups != mapGroups.end(); itGroups++)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+
+			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			{
+				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+
+				if (!pRDFInstance->getEnable())
+				{
+					continue;
+				}
+
+				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				{
+					continue;
+				}
+
+				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+				{
+					continue;
+				}
+
+				/*
+				* Points
+				*/
+				for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
+				{
+					CPointsCohort* pPointsCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pPointsCohort->IBO());
+					glDrawElementsBaseVertex(GL_POINTS,
+						(GLsizei)pPointsCohort->getIndicesCount(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pPointsCohort->IBOOffset()),
+						pRDFInstance->VBOOffset());
+				} // for (size_t iPointsCohort = ...
+			} // for (size_t iObject = ...
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		} // for (; itGroups != ...
+	} // for (size_t iDrawMetaData = ...
+#else
 	glDisable(GL_LIGHTING);
 
 	glPointSize(m_fPointSize);
@@ -3709,63 +3779,12 @@ void COpenGLRDFView::DrawPoints()
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glEnable(GL_LIGHTING);
+#endif // _USE_SHADERS
 
 	COpenGL::Check4Errors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
-
-	//glDisable(GL_LIGHTING);
-
-	//glPointSize(m_fPointSize);
-	//glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	//glBegin(GL_POINTS);
-
-	//const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
-
-	//map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	//for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	//{
-	//	CRDFInstance * pRDFInstance = itRDFInstances->second;
-	//	if (!pRDFInstance->getEnable())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-	//	{
-	//		continue;
-	//	}
-
-	//	const vector<pair<int64_t, int64_t> > & vecPoints = pRDFInstance->getPoints();
-	//	if (vecPoints.empty())
-	//	{
-	//		continue;
-	//	}
-
-	//	for (size_t iPoint = 0; iPoint < vecPoints.size(); iPoint++)
-	//	{
-	//		for (int64_t iIndex = vecPoints[iPoint].first; iIndex < vecPoints[iPoint].first + vecPoints[iPoint].second; iIndex++)
-	//		{
-	//			glVertex3f(
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-	//				pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	//		} // for (size_t iIndex = ...
-	//	} // for (size_t iPoint = ...
-	//} // for (; itRDFInstances != ...
-
-	//glEnd();
-
-	//glEnable(GL_LIGHTING);
-
-	//COpenGL::Check4Errors();
+	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
 // ------------------------------------------------------------------------------------------------
