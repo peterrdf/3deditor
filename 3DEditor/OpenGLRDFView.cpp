@@ -5573,7 +5573,11 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
 		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
 
-		Rotate(fXAngle, fYAngle);
+		const float ROTATE_SPEED = 0.075f;
+
+		Rotate(fXAngle* ROTATE_SPEED, fYAngle* ROTATE_SPEED);
+
+		m_ptPrevMousePosition = point;
 
 		m_ptPrevMousePosition = point;
 
