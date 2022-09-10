@@ -1927,172 +1927,178 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Lights
-	*/
-	{
-		CMFCPropertyGridProperty * pLights = new CMFCPropertyGridProperty(_T("Lights"));
-		pViewGroup->AddSubItem(pLights);
+	// ********************************************************************************************
+	// DSIABLED
 
-		/*
-		* Light model
-		*/
-		{
-			CMFCPropertyGridProperty * pLightModel = new CMFCPropertyGridProperty(_T("Light model"));
-			pLights->AddSubItem(pLightModel);
+	///*
+	//* Lights
+	//*/
+	//{
+	//	CMFCPropertyGridProperty * pLights = new CMFCPropertyGridProperty(_T("Lights"));
+	//	pViewGroup->AddSubItem(pLights);
 
-			/*
-			* Ambient
-			*/
-			CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), 
-				RGB((BYTE)(pOpenGLView->GetLightModelAmbient()[0] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[1] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[2] * 255.)),
-				NULL, _T("Light model - ambient"),
-				(DWORD_PTR)new CApplicationPropertyData(ptLightModelAmbient));
-			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
+	//	/*
+	//	* Light model
+	//	*/
+	//	{
+	//		CMFCPropertyGridProperty * pLightModel = new CMFCPropertyGridProperty(_T("Light model"));
+	//		pLights->AddSubItem(pLightModel);
 
-			pLightModel->AddSubItem(pProperty);
+	//		/*
+	//		* Ambient
+	//		*/
+	//		CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), 
+	//			RGB((BYTE)(pOpenGLView->GetLightModelAmbient()[0] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[1] * 255.), (BYTE)(pOpenGLView->GetLightModelAmbient()[2] * 255.)),
+	//			NULL, _T("Light model - ambient"),
+	//			(DWORD_PTR)new CApplicationPropertyData(ptLightModelAmbient));
+	//		pProperty->EnableOtherButton(_T("Other..."));
+	//		pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
 
-			/*
-			* Local viewer
-			*/
-			{
-				CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Local viewer"), pOpenGLView->GetLightModelLocalViewer() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-					_T("Light model - local viewer"), (DWORD_PTR)new CApplicationPropertyData(ptLightModelLocalViewer));
-				pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
-				pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
-				pApplicationProperty->AllowEdit(FALSE);
+	//		pLightModel->AddSubItem(pProperty);
 
-				pLightModel->AddSubItem(pApplicationProperty);
-			}
+	//		/*
+	//		* Local viewer
+	//		*/
+	//		{
+	//			CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Local viewer"), pOpenGLView->GetLightModelLocalViewer() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+	//				_T("Light model - local viewer"), (DWORD_PTR)new CApplicationPropertyData(ptLightModelLocalViewer));
+	//			pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
+	//			pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
+	//			pApplicationProperty->AllowEdit(FALSE);
 
-			/*
-			* Two-sided lighting
-			*/
-			{
-				CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Two-sided lighting"), pOpenGLView->GetLightModel2Sided() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Light model - two-sided lighting"),
-					(DWORD_PTR)new CApplicationPropertyData(ptLightModel2Sided));
-				pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
-				pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
-				pApplicationProperty->AllowEdit(FALSE);
+	//			pLightModel->AddSubItem(pApplicationProperty);
+	//		}
 
-				pLightModel->AddSubItem(pApplicationProperty);
-			}			
-		}
+	//		/*
+	//		* Two-sided lighting
+	//		*/
+	//		{
+	//			CApplicationProperty * pApplicationProperty = new CApplicationProperty(_T("Two-sided lighting"), pOpenGLView->GetLightModel2Sided() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Light model - two-sided lighting"),
+	//				(DWORD_PTR)new CApplicationPropertyData(ptLightModel2Sided));
+	//			pApplicationProperty->AddOption(TRUE_VALUE_PROPERTY);
+	//			pApplicationProperty->AddOption(FALSE_VALUE_PROPERTY);
+	//			pApplicationProperty->AllowEdit(FALSE);
 
-		/*
-		* Lights
-		*/
-		const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
-		for (size_t iLight = 0; iLight < vecOGLLights.size(); iLight++)
-		{
-			/*
-			* Light 0-7
-			*/
-			{
-				wchar_t szLightName[100];
-				swprintf(szLightName, 100, L"Light %d", (int)iLight);
+	//			pLightModel->AddSubItem(pApplicationProperty);
+	//		}			
+	//	}
 
-				CMFCPropertyGridProperty * pLight = new CMFCPropertyGridProperty(szLightName);
-				pLights->AddSubItem(pLight);
+	//	/*
+	//	* Lights
+	//	*/
+	//	const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
+	//	for (size_t iLight = 0; iLight < vecOGLLights.size(); iLight++)
+	//	{
+	//		/*
+	//		* Light 0-7
+	//		*/
+	//		{
+	//			wchar_t szLightName[100];
+	//			swprintf(szLightName, 100, L"Light %d", (int)iLight);
 
-				/*
-				* Enabled
-				*/
-				{
-					CApplicationProperty * pProperty = new CApplicationProperty(_T("Enabled"), vecOGLLights[iLight].isEnabled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-						_T("Enabled"), (DWORD_PTR)new CLightPropertyData(ptLightIsEnabled, (int)iLight));
-					pProperty->AddOption(TRUE_VALUE_PROPERTY);
-					pProperty->AddOption(FALSE_VALUE_PROPERTY);
-					pProperty->AllowEdit(FALSE);
+	//			CMFCPropertyGridProperty * pLight = new CMFCPropertyGridProperty(szLightName);
+	//			pLights->AddSubItem(pLight);
 
-					pLight->AddSubItem(pProperty);
-				}
+	//			/*
+	//			* Enabled
+	//			*/
+	//			{
+	//				CApplicationProperty * pProperty = new CApplicationProperty(_T("Enabled"), vecOGLLights[iLight].isEnabled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+	//					_T("Enabled"), (DWORD_PTR)new CLightPropertyData(ptLightIsEnabled, (int)iLight));
+	//				pProperty->AddOption(TRUE_VALUE_PROPERTY);
+	//				pProperty->AddOption(FALSE_VALUE_PROPERTY);
+	//				pProperty->AllowEdit(FALSE);
 
-				/*
-				* Ambient
-				*/
-				{
-					CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), RGB((BYTE)(vecOGLLights[iLight].getAmbient()[0] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[1] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[2] * 255.)), NULL, _T("Ambient"),
-						(DWORD_PTR)new CLightPropertyData(ptAmbientLight, (int)iLight));
-					pProperty->EnableOtherButton(_T("Other..."));
-					pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
+	//				pLight->AddSubItem(pProperty);
+	//			}
 
-					pLight->AddSubItem(pProperty);
-				}
+	//			/*
+	//			* Ambient
+	//			*/
+	//			{
+	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Ambient"), RGB((BYTE)(vecOGLLights[iLight].getAmbient()[0] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[1] * 255.), (BYTE)(vecOGLLights[iLight].getAmbient()[2] * 255.)), NULL, _T("Ambient"),
+	//					(DWORD_PTR)new CLightPropertyData(ptAmbientLight, (int)iLight));
+	//				pProperty->EnableOtherButton(_T("Other..."));
+	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
 
-				/*
-				* Diffuse
-				*/
-				{
-					CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Diffuse"), RGB((BYTE)(vecOGLLights[iLight].getDiffuse()[0] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[1] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[2] * 255.)), NULL, _T("Diffuse"),
-						(DWORD_PTR)new CLightPropertyData(ptDiffuseLight, (int)iLight));
-					pProperty->EnableOtherButton(_T("Other..."));
-					pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
+	//				pLight->AddSubItem(pProperty);
+	//			}
 
-					pLight->AddSubItem(pProperty);
-				}
+	//			/*
+	//			* Diffuse
+	//			*/
+	//			{
+	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Diffuse"), RGB((BYTE)(vecOGLLights[iLight].getDiffuse()[0] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[1] * 255.), (BYTE)(vecOGLLights[iLight].getDiffuse()[2] * 255.)), NULL, _T("Diffuse"),
+	//					(DWORD_PTR)new CLightPropertyData(ptDiffuseLight, (int)iLight));
+	//				pProperty->EnableOtherButton(_T("Other..."));
+	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
 
-				/*
-				* Specular
-				*/
-				{
-					CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Specular"), RGB((BYTE)(vecOGLLights[iLight].getSpecular()[0] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[1] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[2] * 255.)), NULL, _T("Specular"),
-						(DWORD_PTR)new CLightPropertyData(ptSpecularLight, (int)iLight));
-					pProperty->EnableOtherButton(_T("Other..."));
-					pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
+	//				pLight->AddSubItem(pProperty);
+	//			}
 
-					pLight->AddSubItem(pProperty);
-				}
+	//			/*
+	//			* Specular
+	//			*/
+	//			{
+	//				CColorApplicationProperty * pProperty = new CColorApplicationProperty(_T("Specular"), RGB((BYTE)(vecOGLLights[iLight].getSpecular()[0] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[1] * 255.), (BYTE)(vecOGLLights[iLight].getSpecular()[2] * 255.)), NULL, _T("Specular"),
+	//					(DWORD_PTR)new CLightPropertyData(ptSpecularLight, (int)iLight));
+	//				pProperty->EnableOtherButton(_T("Other..."));
+	//				pProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
 
-				/*
-				* Position
-				*/
-				{
-					CApplicationProperty * pPosition = new CApplicationProperty(_T("Position"), (DWORD_PTR)new CLightPropertyData(ptLightPosition, (int)iLight), TRUE);
-					pPosition->AllowEdit(FALSE);
+	//				pLight->AddSubItem(pProperty);
+	//			}
 
-					/*
-					* X
-					*/
-					{
-						CApplicationProperty * pProperty = new CApplicationProperty(_T("X"), (_variant_t)vecOGLLights[iLight].getPosition()[0],
-							_T("X"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-						pPosition->AddSubItem(pProperty);
-					}				
+	//			/*
+	//			* Position
+	//			*/
+	//			{
+	//				CApplicationProperty * pPosition = new CApplicationProperty(_T("Position"), (DWORD_PTR)new CLightPropertyData(ptLightPosition, (int)iLight), TRUE);
+	//				pPosition->AllowEdit(FALSE);
 
-					/*
-					* Y
-					*/
-					{
-						CApplicationProperty * pProperty = new CApplicationProperty(_T("Y"), (_variant_t)vecOGLLights[iLight].getPosition()[1],
-							_T("Y"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-						pPosition->AddSubItem(pProperty);
-					}
+	//				/*
+	//				* X
+	//				*/
+	//				{
+	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("X"), (_variant_t)vecOGLLights[iLight].getPosition()[0],
+	//						_T("X"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
+	//					pPosition->AddSubItem(pProperty);
+	//				}				
 
-					/*
-					* Z
-					*/
-					{
-						CApplicationProperty * pProperty = new CApplicationProperty(_T("Z"), (_variant_t)vecOGLLights[iLight].getPosition()[2],
-							_T("Z"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-						pPosition->AddSubItem(pProperty);
-					}
+	//				/*
+	//				* Y
+	//				*/
+	//				{
+	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("Y"), (_variant_t)vecOGLLights[iLight].getPosition()[1],
+	//						_T("Y"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
+	//					pPosition->AddSubItem(pProperty);
+	//				}
 
-					/*
-					* W
-					*/
-					{
-						CApplicationProperty * pProperty = new CApplicationProperty(_T("W"), (_variant_t)vecOGLLights[iLight].getPosition()[3],
-							_T("W"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
-						pPosition->AddSubItem(pProperty);
-					}
+	//				/*
+	//				* Z
+	//				*/
+	//				{
+	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("Z"), (_variant_t)vecOGLLights[iLight].getPosition()[2],
+	//						_T("Z"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
+	//					pPosition->AddSubItem(pProperty);
+	//				}
 
-					pLight->AddSubItem(pPosition);
-				}
-			}
-		} // for (size_t iLight = ...
-	}
+	//				/*
+	//				* W
+	//				*/
+	//				{
+	//					CApplicationProperty * pProperty = new CApplicationProperty(_T("W"), (_variant_t)vecOGLLights[iLight].getPosition()[3],
+	//						_T("W"), (DWORD_PTR)new CLightPropertyData(ptLightPositionItem, (int)iLight));
+	//					pPosition->AddSubItem(pProperty);
+	//				}
+
+	//				pLight->AddSubItem(pPosition);
+	//			}
+	//		}
+	//	} // for (size_t iLight = ...
+	//}
+
+	// DISABLED
+	// ********************************************************************************************
 
 	/*
 	* UI
