@@ -6,6 +6,7 @@ CBinnPhongGLProgram::CBinnPhongGLProgram(void)
 	: CGLProgram()
 	, m_iUseBinnPhongModel(-1)
 	, m_iUseTexture(-1)
+	, m_iSampler(-1)
 	, m_iMVMatrix(-1)
 	, m_iPMatrix(-1)
 	, m_iNMatrix(-1)
@@ -37,6 +38,9 @@ CBinnPhongGLProgram::~CBinnPhongGLProgram(void)
 
 		m_iUseTexture = glGetUniformLocation(m_ID, "uUseTexture");
 		ASSERT(m_iUseTexture >= 0);
+
+		m_iSampler = glGetUniformLocation(m_ID, "uSampler");
+		ASSERT(m_iSampler >= 0);
 
 		m_iMVMatrix = glGetUniformLocation(m_ID, "uMVMatrix");
 		ASSERT(m_iMVMatrix >= 0);
@@ -93,6 +97,12 @@ GLint CBinnPhongGLProgram::geUseBinnPhongModel() const
 GLint CBinnPhongGLProgram::geUseTexture() const
 {
 	return m_iUseTexture;
+}
+
+// ------------------------------------------------------------------------------------------------
+GLint CBinnPhongGLProgram::getSampler() const
+{
+	return m_iSampler;
 }
 
 // ------------------------------------------------------------------------------------------------

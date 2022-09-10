@@ -2826,21 +2826,23 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					*/
 					if (pMaterial->hasTexture())
 					{
-						//TODO#
-						/*glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-						glColor4f(
-							1.f,
-							1.f,
-							1.f,
-							1.f);
+						glProgramUniform1f(
+							m_pProgram->GetID(),
+							m_pProgram->geUseTexture(),
+							1.f);				
+
+						glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+						glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
 						glEnable(GL_TEXTURE_2D);
 						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
-						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-						glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 6));*/
+						glProgramUniform1i(
+							m_pProgram->GetID(),
+							m_pProgram->getSampler(),
+							0);
 					} // if (pMaterial->hasTexture())
 					else
 					{
@@ -2898,8 +2900,14 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 					if (pMaterial->hasTexture())
 					{
+						glProgramUniform1f(
+							m_pProgram->GetID(),
+							m_pProgram->geUseTexture(),
+							0.f);
+
+						glDisableVertexAttribArray(m_pProgram->getTextureCoord());
+
 						glDisable(GL_TEXTURE_2D);
-						glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 					}
 				} // for (size_t iMaterial = ...
 			} // for (size_t iObject = ...
