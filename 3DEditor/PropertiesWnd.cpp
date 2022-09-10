@@ -1826,15 +1826,21 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Line width
-	*/
-	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Line thickness"), (_variant_t)(int)pOpenGLView->GetLineWidth(), _T("Line thickness"), (DWORD_PTR)new CApplicationPropertyData(ptLineWidth));
-		pProperty->EnableSpinControl(TRUE, 1, 1000);
+	// ********************************************************************************************
+	// DSIABLED
 
-		pViewGroup->AddSubItem(pProperty);
-	}
+	///*
+	//* Line width
+	//*/
+	//{
+	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Line thickness"), (_variant_t)(int)pOpenGLView->GetLineWidth(), _T("Line thickness"), (DWORD_PTR)new CApplicationPropertyData(ptLineWidth));
+	//	pProperty->EnableSpinControl(TRUE, 1, 1000);
+
+	//	pViewGroup->AddSubItem(pProperty);
+	//}
+
+	// DSIABLED
+	// ********************************************************************************************	
 
 	/*
 	* Points
@@ -1848,15 +1854,21 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Point size
-	*/
-	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Point thickness"), (_variant_t)(int)pOpenGLView->GetPointSize(), _T("Point thickness"), (DWORD_PTR)new CApplicationPropertyData(ptPointSize));
-		pProperty->EnableSpinControl(TRUE, 1, 1000);
+	// ********************************************************************************************
+	// DSIABLED
 
-		pViewGroup->AddSubItem(pProperty);
-	}
+	///*
+	//* Point size
+	//*/
+	//{
+	//	CApplicationProperty * pProperty = new CApplicationProperty(_T("Point thickness"), (_variant_t)(int)pOpenGLView->GetPointSize(), _T("Point thickness"), (DWORD_PTR)new CApplicationPropertyData(ptPointSize));
+	//	pProperty->EnableSpinControl(TRUE, 1, 1000);
+
+	//	pViewGroup->AddSubItem(pProperty);
+	//}
+
+	// DSIABLED
+	// ********************************************************************************************	
 
 	/*
 	* Vectors
