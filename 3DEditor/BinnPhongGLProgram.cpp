@@ -4,6 +4,21 @@
 // ------------------------------------------------------------------------------------------------
 CBinnPhongGLProgram::CBinnPhongGLProgram(void)
 	: CGLProgram()
+	, m_iUseBinnPhongModel(-1)
+	, m_iUseTexture(-1)
+	, m_iMVMatrix(-1)
+	, m_iPMatrix(-1)
+	, m_iNMatrix(-1)
+	, m_iPointLightingLocation(-1)
+	, m_iMaterialShininess(-1)
+	, m_iMaterialAmbientColor(-1)
+	, m_iTransparency(-1)
+	, m_iMaterialDiffuseColor(-1)
+	, m_iMaterialSpecularColor(-1)
+	, m_iMaterialEmissiveColor(-1)
+	, m_iVertexPosition(-1)
+	, m_iVertexNormal(-1)
+	, m_iTextureCoord(-1)
 {
 }
 
@@ -19,6 +34,9 @@ CBinnPhongGLProgram::~CBinnPhongGLProgram(void)
 	{
 		m_iUseBinnPhongModel = glGetUniformLocation(m_ID, "uUseBinnPhongModel");
 		ASSERT(m_iUseBinnPhongModel >= 0);
+
+		m_iUseTexture = glGetUniformLocation(m_ID, "uUseTexture");
+		ASSERT(m_iUseTexture >= 0);
 
 		m_iMVMatrix = glGetUniformLocation(m_ID, "uMVMatrix");
 		ASSERT(m_iMVMatrix >= 0);
@@ -56,6 +74,9 @@ CBinnPhongGLProgram::~CBinnPhongGLProgram(void)
 		m_iVertexNormal = glGetAttribLocation(m_ID, "aVertexNormal");
 		ASSERT(m_iVertexNormal >= 0);
 
+		m_iTextureCoord = glGetAttribLocation(m_ID, "aTextureCoord");
+		ASSERT(m_iTextureCoord >= 0);
+
 		return true;
 	}
 	
@@ -67,6 +88,13 @@ GLint CBinnPhongGLProgram::geUseBinnPhongModel() const
 {
 	return m_iUseBinnPhongModel;
 }
+
+// ------------------------------------------------------------------------------------------------
+GLint CBinnPhongGLProgram::geUseTexture() const
+{
+	return m_iUseTexture;
+}
+
 // ------------------------------------------------------------------------------------------------
 GLint CBinnPhongGLProgram::getMVMatrix() const
 {
@@ -137,4 +165,10 @@ GLint CBinnPhongGLProgram::getVertexPosition() const
 GLint CBinnPhongGLProgram::getVertexNormal() const
 {
 	return m_iVertexNormal;
+}
+
+// ------------------------------------------------------------------------------------------------
+GLint CBinnPhongGLProgram::getTextureCoord() const
+{
+	return m_iTextureCoord;
 }
