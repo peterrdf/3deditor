@@ -1,4 +1,5 @@
 uniform float uUseBinnPhongModel;
+uniform float uUseTexture;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
@@ -6,9 +7,14 @@ uniform mat4 uNMatrix;
 
 attribute vec3 aVertexPosition;
 attribute vec3 aVertexNormal;
+attribute vec2 aTextureCoord;
+
 varying float vUseBinnPhongModel;
 varying vec4 vPosition;
 varying vec3 vTransformedNormal;
+
+varying float vUseTexture;
+varying vec2 vTextureCoord;
 
 void main(void) {
     vec4 vertex = uMVMatrix * vec4(aVertexPosition, 1.0);
@@ -16,9 +22,15 @@ void main(void) {
 
     gl_Position = uPMatrix * vertex;
 
-    if (uUseBinnPhongModel == 1.0) {
-        vTransformedNormal = vec3(uNMatrix * vec4(aVertexNormal, 1.0));
+    if (uUseTexture != 0.0) {
+        vTextureCoord = aTextureCoord;
+    }
+    else {
+        if (uUseBinnPhongModel != 0.0) {
+            vTransformedNormal = vec3(uNMatrix * vec4(aVertexNormal, 1.0));
+        }
     }
 
     vUseBinnPhongModel = uUseBinnPhongModel;
+    vUseTexture = uUseTexture;
 }
