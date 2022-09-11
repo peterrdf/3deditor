@@ -417,6 +417,11 @@ private: // Members
 	// Pointed instances
 	CRDFMaterial* m_pPointedInstanceMaterial;
 
+	// --------------------------------------------------------------------------------------------
+	// Bounding boxes
+	GLuint m_iBoundingBoxesVBO;
+	GLuint m_iBoundingBoxesIBO;
+
 #pragma endregion // Members
 
 public: // Methods

@@ -215,6 +215,8 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_vecIBOs()
 	, m_pSelectedInstanceMaterial(NULL)
 	, m_pPointedInstanceMaterial(NULL)
+	, m_iBoundingBoxesVBO(0)
+	, m_iBoundingBoxesIBO(0)
 {
 	ASSERT(m_pWnd != NULL);
 
@@ -397,6 +399,19 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pPointedInstanceMaterial;
 	m_pPointedInstanceMaterial = NULL;
+
+	// Bounding boxes
+	if (m_iBoundingBoxesVBO != 0)
+	{
+		glDeleteRenderbuffers(1, &m_iBoundingBoxesVBO);
+		m_iBoundingBoxesVBO = 0;
+	}
+
+	if (m_iBoundingBoxesIBO != 0)
+	{
+		glDeleteRenderbuffers(1, &m_iBoundingBoxesIBO);
+		m_iBoundingBoxesIBO = 0;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1110,7 +1125,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Bounding boxes
 	*/
-	//TODO#DrawBoundingBoxes();
+	DrawBoundingBoxes();
 
 	/*
 	Normal vectors
@@ -3817,6 +3832,177 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform3f(
+		m_pProgram->GetID(),
+		m_pProgram->getMaterialAmbientColor(),
+		0.f,
+		0.f,
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);
+
+	if (m_iBoundingBoxesVBO == 0)
+	{
+		glGenBuffers(1, &m_iBoundingBoxesVBO);
+		ASSERT(m_iBoundingBoxesVBO != 0);
+	}
+
+	if (m_iBoundingBoxesIBO == 0)
+	{
+		glGenBuffers(1, &m_iBoundingBoxesIBO);
+		ASSERT(m_iBoundingBoxesIBO != 0);
+	}
+
+	GLint iMatrixMode = 0;
+	glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
+
+	glMatrixMode(GL_MODELVIEW);
+
+	const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
+
+	map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
+	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+	{
+		CRDFInstance* pRDFInstance = itRDFInstances->second;
+		if (!pRDFInstance->getEnable())
+		{
+			continue;
+		}
+
+		if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+		{
+			continue;
+		}
+
+		if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+		{
+			continue;
+		}
+
+		if ((pRDFInstance->getBoundingBoxTransformation() == NULL) || (pRDFInstance->getBoundingBoxMin() == NULL) || (pRDFInstance->getBoundingBoxMax() == NULL))
+		{
+			continue;
+		}
+
+		OGLMATRIX transformation;
+		OGLMatrixIdentity(&transformation);
+
+		transformation._11 = pRDFInstance->getBoundingBoxTransformation()->_11;
+		transformation._12 = pRDFInstance->getBoundingBoxTransformation()->_12;
+		transformation._13 = pRDFInstance->getBoundingBoxTransformation()->_13;
+		transformation._21 = pRDFInstance->getBoundingBoxTransformation()->_21;
+		transformation._22 = pRDFInstance->getBoundingBoxTransformation()->_22;
+		transformation._23 = pRDFInstance->getBoundingBoxTransformation()->_23;
+		transformation._31 = pRDFInstance->getBoundingBoxTransformation()->_31;
+		transformation._32 = pRDFInstance->getBoundingBoxTransformation()->_32;
+		transformation._33 = pRDFInstance->getBoundingBoxTransformation()->_33;
+		transformation._41 = pRDFInstance->getBoundingBoxTransformation()->_41;
+		transformation._42 = pRDFInstance->getBoundingBoxTransformation()->_42;
+		transformation._43 = pRDFInstance->getBoundingBoxTransformation()->_43;
+
+		glPushMatrix();
+		glTranslatef(fXTranslation, fYTranslation, fZTranslation);
+		glMultMatrixd((GLdouble*)&transformation);
+		glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
+
+		VECTOR3 vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
+		VECTOR3 vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
+
+		// Bottom face
+		/*
+		Min1						Min2
+		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		|								|
+		|								|
+		|								|
+		|								|
+		|								|
+		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		Min4						Min3
+		*/
+
+		VECTOR3 vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		VECTOR3 vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		VECTOR3 vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		VECTOR3 vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+
+		// Top face
+		/*
+		Max3						Max4
+		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		|								|
+		|								|
+		|								|
+		|								|
+		|								|
+		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		Max2						Max1
+		*/
+
+		VECTOR3 vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		VECTOR3 vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		VECTOR3 vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		VECTOR3 vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };		
+
+		vector<float> vecVertices = 
+		{
+			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z,
+			(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z,
+			(GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z,
+			(GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z,
+			(GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z,
+			(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z,
+			(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z,
+			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z,
+		};
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_STATIC_DRAW);
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * 3, 0);
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+
+		vector<unsigned int> vecIndices =
+		{
+			0, 1,
+			1, 2,
+			2, 3,
+			3, 0,
+			4, 5,
+			5, 6,
+			6, 7,
+			7, 4,
+			0, 6,
+			3, 5,
+			1, 7,
+			2, 4,
+		};
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iBoundingBoxesIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)vecIndices.size(),
+			GL_UNSIGNED_INT,
+			(void*)0,
+			0);
+
+		glPopMatrix();
+	} // for (; itRDFInstances != ...
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glMatrixMode(iMatrixMode);
+#else
 	glDisable(GL_LIGHTING);
 
 	glLineWidth(m_fLineWidth);
@@ -3832,12 +4018,12 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 	OGLMATRIX transformation;
 
-	const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
+	const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
 
-	map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
+	map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
 	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 	{
-		CRDFInstance * pRDFInstance = itRDFInstances->second;
+		CRDFInstance* pRDFInstance = itRDFInstances->second;
 		if (!pRDFInstance->getEnable())
 		{
 			continue;
@@ -3876,7 +4062,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glTranslatef(fXTranslation, fYTranslation, fZTranslation);
 		glMultMatrixd((GLdouble*)&transformation);
 		glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-		
+
 
 		VECTOR3 vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
 		VECTOR3 vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
@@ -3893,7 +4079,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		Min4						Min3
 		*/
-		
+
 		VECTOR3 vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
 
 		VECTOR3 vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
@@ -3957,6 +4143,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	glMatrixMode(iMatrixMode);
 
 	glEnable(GL_LIGHTING);
+#endif // _USE_SHADERS	
 
 	COpenGL::Check4Errors();
 }
