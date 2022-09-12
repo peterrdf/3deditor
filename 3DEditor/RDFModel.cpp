@@ -86,7 +86,7 @@ void CRDFModel::CreateDefaultModel()
 	LoadRDFModel();
 
 	// Cube 1todo#
-	{
+	/*{
 		auto pAmbient = GEOM::ColorComponent::Create(pModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(1.);
@@ -108,7 +108,7 @@ void CRDFModel::CreateDefaultModel()
 		auto pCube = GEOM::Cube::Create(pModel, "Cube 1");
 		pCube.set_material(pMaterial);
 		pCube.set_length(7.);
-	}
+	}*/
 
 	// Cone 1
 	{
