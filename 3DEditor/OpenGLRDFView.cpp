@@ -1087,6 +1087,16 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		false,
 		value_ptr(normalMatrix));
 
+	glProgramUniform1i(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		1);
+
+	glProgramUniform1i(
+		m_pProgram->GetID(),
+		m_pProgram->geUseTexture(),
+		0);
+
 	/*
 	Non-transparent faces
 	*/
@@ -2786,9 +2796,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
 			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-			glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-			glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -2849,9 +2857,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 						glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 						glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
-						glEnable(GL_TEXTURE_2D);
-						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
+						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
 						glProgramUniform1i(
@@ -2861,6 +2867,9 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					} // if (pMaterial->hasTexture())
 					else
 					{
+						glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+						glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+
 						/*
 						* Material - Ambient color
 						*/
@@ -2921,8 +2930,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 							0);
 
 						glDisableVertexAttribArray(m_pProgram->getTextureCoord());
-
-						glDisable(GL_TEXTURE_2D);
+					}
+					else
+					{
+						glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 					}
 				} // for (size_t iMaterial = ...
 			} // for (size_t iObject = ...
