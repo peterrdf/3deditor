@@ -3157,7 +3157,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 	glProgramUniform1i(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		1);
+		0);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -3326,7 +3326,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 	glProgramUniform1i(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		1);
+		0);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
