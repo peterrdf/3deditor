@@ -2860,10 +2860,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
-						glProgramUniform1f(
+						glProgramUniform1i(
 							m_pProgram->GetID(),
 							m_pProgram->getSampler(),
-							0.f);
+							0);
 					} // if (pMaterial->hasTexture())
 					else
 					{
