@@ -1,6 +1,4 @@
  
-#version 330
-
 uniform vec3 uPointLightingLocation;
 uniform float uMaterialShininess;
 uniform vec3 uMaterialAmbientColor;
@@ -11,19 +9,19 @@ uniform vec3 uMaterialEmissiveColor;
 
 uniform sampler2D uSampler;
 
-flat varying int vUseBinnPhongModel;
+varying float vUseBinnPhongModel;
 varying vec4 vPosition;
 varying vec3 vTransformedNormal;
 
-flat varying int vUseTexture;
+varying float vUseTexture;
 varying vec2 vTextureCoord;
 
 void main(void) {
-    if (vUseTexture != 0) {
+    if (vUseTexture > 0.5) {
         gl_FragColor = texture2D(uSampler, vTextureCoord);
     }
     else {
-        if (vUseBinnPhongModel != 0) {      
+        if (vUseBinnPhongModel > 0.5) {      
             vec3 ambientLightWeighting = vec3(0.001, 0.001, 0.001);
 
             vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
@@ -56,7 +54,7 @@ void main(void) {
             newColor.b = (pow(color.b,gamma) - 0.5) * contrast + brightness + 0.5;
 
             gl_FragColor = newColor;
-        } // if (vUseBinnPhongModel != ...
+        } // if (vUseBinnPhongModel > ...
         else {
             gl_FragColor = vec4(uMaterialAmbientColor, uTransparency);
         }

@@ -1087,15 +1087,15 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		false,
 		value_ptr(normalMatrix));
 
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		1);
+		1.f);
 
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseTexture(),
-		0);
+		0.f);
 
 	/*
 	Non-transparent faces
@@ -2777,10 +2777,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		}
 	}
 
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		1);
+		1.f);
 
 	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
 	{
@@ -2849,10 +2849,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					*/
 					if (pMaterial->hasTexture())
 					{
-						glProgramUniform1i(
+						glProgramUniform1f(
 							m_pProgram->GetID(),
 							m_pProgram->geUseTexture(),
-							1);
+							1.f);
 
 						glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 						glEnableVertexAttribArray(m_pProgram->getTextureCoord());
@@ -2860,10 +2860,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
-						glProgramUniform1i(
+						glProgramUniform1f(
 							m_pProgram->GetID(),
 							m_pProgram->getSampler(),
-							0);
+							0.f);
 					} // if (pMaterial->hasTexture())
 					else
 					{
@@ -2924,10 +2924,10 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 					if (pMaterial->hasTexture())
 					{
-						glProgramUniform1i(
+						glProgramUniform1f(
 							m_pProgram->GetID(),
 							m_pProgram->geUseTexture(),
-							0);
+							0.f);
 
 						glDisableVertexAttribArray(m_pProgram->getTextureCoord());
 					}
@@ -3165,10 +3165,10 @@ void COpenGLRDFView::DrawFacesPolygons()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -3334,10 +3334,10 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -3503,10 +3503,10 @@ void COpenGLRDFView::DrawLines()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -3672,10 +3672,10 @@ void COpenGLRDFView::DrawPoints()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -3844,10 +3844,10 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform3f(
 		m_pProgram->GetID(),
@@ -5047,10 +5047,10 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glDepthFunc(GL_LEQUAL);
 
 #ifdef _USE_SHADERS
-	glProgramUniform1i(
+	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
-		0);
+		0.f);
 
 	glProgramUniform1f(
 		m_pProgram->GetID(),
