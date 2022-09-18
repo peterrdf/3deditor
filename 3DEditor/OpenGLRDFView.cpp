@@ -404,6 +404,12 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_pPointedInstanceMaterial = NULL;
 
 	// Bounding boxes
+	if (m_iBoundingBoxesVAO != 0)
+	{
+		glDeleteVertexArrays(1, &m_iBoundingBoxesVAO);
+		m_iBoundingBoxesVAO = 0;
+	}
+
 	if (m_iBoundingBoxesVBO != 0)
 	{
 		glDeleteRenderbuffers(1, &m_iBoundingBoxesVBO);
@@ -3882,20 +3888,26 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 	COpenGL::Check4Errors();
 
-	/*if (m_iBoundingBoxesVBO == 0)
+	if (m_iBoundingBoxesVAO == 0)
 	{
 		glGenVertexArrays(1, &m_iBoundingBoxesVAO);
-		glBindVertexArray(m_iBoundingBoxesVAO);
+		ASSERT(m_iBoundingBoxesVAO != 0);
+
+		COpenGL::Check4Errors();
+
+		ASSERT(m_iBoundingBoxesVBO == 0);
 
 		glGenBuffers(1, &m_iBoundingBoxesVBO);
-		COpenGL::Check4Errors();
 		ASSERT(m_iBoundingBoxesVBO != 0);
-	}*/
+
+		COpenGL::Check4Errors();
+	}
 
 	if (m_iBoundingBoxesIBO == 0)
 	{
 		glGenBuffers(1, &m_iBoundingBoxesIBO);
 		ASSERT(m_iBoundingBoxesIBO != 0);
+
 		COpenGL::Check4Errors();
 	}
 
@@ -4000,34 +4012,17 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z,
 			(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z,
 			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z,
-		};
-
-		if (m_iBoundingBoxesVAO == 0)
-		{
-			glGenVertexArrays(1, &m_iBoundingBoxesVAO);
-			COpenGL::Check4Errors();
-		}
+		};		
 		
 		glBindVertexArray(m_iBoundingBoxesVAO);
-		COpenGL::Check4Errors();
-
-		if (m_iBoundingBoxesVBO == 0)
-		{
-			glGenBuffers(1, &m_iBoundingBoxesVBO);
-			ASSERT(m_iBoundingBoxesVBO != 0);
-			COpenGL::Check4Errors();
-		}		
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
-		COpenGL::Check4Errors();
-
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_STATIC_DRAW);
-		COpenGL::Check4Errors();
 
 		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * 3, 0);
-		COpenGL::Check4Errors();
 
 		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+
 		COpenGL::Check4Errors();
 
 		vector<unsigned int> vecIndices =
@@ -4056,10 +4051,9 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			0);
 
 		glPopMatrix();
-	} // for (; itRDFInstances != ...
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	} // for (; itRDFInstances != ...
 
 	glMatrixMode(iMatrixMode);
 #else
