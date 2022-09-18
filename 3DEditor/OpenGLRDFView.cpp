@@ -1103,12 +1103,12 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Non-transparent faces
 	*/
-	//DrawFaces(false);//#todo
+	DrawFaces(false);
 
 	/*
 	Transparent faces
 	*/
-	//DrawFaces(true);//#todo
+	DrawFaces(true);
 
 	/*
 	Pointed face
@@ -1474,7 +1474,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnModelChanged()
 {
-	return;//#todo
 #ifdef _LINUX
     m_pOGLContext->SetCurrent(*m_pWnd);
 #else
@@ -1623,13 +1622,35 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			ASSERT(iCohortVerticesCount == iVerticesCount);
 
+			GLuint iVAO = 0;
+			glGenVertexArrays(1, &iVAO);
+			glBindVertexArray(iVAO);
+
+			COpenGL::Check4Errors();
+
 			GLuint iVBO = 0;
 			glGenBuffers(1, &iVBO);
 
 			ASSERT(iVBO != 0);
 
+			COpenGL::Check4Errors();
+
 			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
+
+			COpenGL::Check4Errors();
+
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+			glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+			glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+
+			COpenGL::Check4Errors();
+
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+			glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+
+			COpenGL::Check4Errors();
 
 			TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
 
@@ -1647,12 +1668,14 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			delete[] pVertices;
 
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			glBindVertexArray(0);
 
 			COpenGL::Check4Errors();
 
 			CDrawMetaData* pDrawMetaData = new CDrawMetaData(mdtGeometry);
-			pDrawMetaData->AddGroup(iVBO, vecRDFInstancesGroup);
+			pDrawMetaData->AddGroup(iVAO, iVBO, vecRDFInstancesGroup);
 
 			m_vecDrawMetaData.push_back(pDrawMetaData);
 
@@ -1966,6 +1989,12 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		ASSERT(iCohortVerticesCount == iVerticesCount);
 
+		GLuint iVAO = 0;
+		glGenVertexArrays(1, &iVAO);
+		glBindVertexArray(iVAO);
+
+		COpenGL::Check4Errors();
+
 		GLuint iVBO = 0;
 		glGenBuffers(1, &iVBO);
 
@@ -1973,6 +2002,20 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
+
+		COpenGL::Check4Errors();
+
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, 0);
+		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+
+		COpenGL::Check4Errors();
+
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+
+		COpenGL::Check4Errors();
 
 		TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
 
@@ -1990,12 +2033,14 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		delete[] pVertices;
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
 
 		CDrawMetaData* pDrawMetaData = new CDrawMetaData(mdtGeometry);
-		pDrawMetaData->AddGroup(iVBO, vecRDFInstancesGroup);
+		pDrawMetaData->AddGroup(iVAO, iVBO, vecRDFInstancesGroup);
 
 		m_vecDrawMetaData.push_back(pDrawMetaData);
 
@@ -2798,9 +2843,8 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
+			glBindVertexArray(itGroups->first);
+			//glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -2858,8 +2902,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 							m_pProgram->geUseTexture(),
 							1.f);
 
-						glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-						glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+						//glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
 						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
@@ -2871,8 +2914,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					} // if (pMaterial->hasTexture())
 					else
 					{
-						glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-						glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+						//glEnableVertexAttribArray(m_pProgram->getVertexNormal());
 
 						/*
 						* Material - Ambient color
@@ -2933,17 +2975,16 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 							m_pProgram->geUseTexture(),
 							0.f);
 
-						glDisableVertexAttribArray(m_pProgram->getTextureCoord());
+						//glDisableVertexAttribArray(m_pProgram->getTextureCoord());
 					}
 					else
 					{
-						glDisableVertexAttribArray(m_pProgram->getVertexNormal());
+						//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 					}
 				} // for (size_t iMaterial = ...
 			} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
 
@@ -2959,7 +3000,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		}
 	}
 
-	glDisableVertexAttribArray(m_pProgram->getVertexNormal());
+	//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 #else 
 	if (bTransparent)
 	{

@@ -188,9 +188,9 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Adds a group of RDFInstance-s that share VBO
-	void AddGroup(GLuint iVBO, const vector<CRDFInstance*>& vecRDFInstances)
+	void AddGroup(GLuint iVAO, GLuint iVBO, const vector<CRDFInstance*>& vecRDFInstances)
 	{
-		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVBO);
+		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVAO);
 		ASSERT(itVBO2RDFInstances == m_mapVBO2RDFInstances.end());
 
 		m_mapVBO2RDFInstances[iVBO] = vecRDFInstances;

@@ -225,6 +225,7 @@ void COpenGLContext::Create()
 			WGL_CONTEXT_MINOR_VERSION_ARB, 1,
 #ifdef _ENABLE_OPENGL_DEBUG
 			WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 #endif
 			0, 0,
 		};
@@ -255,9 +256,11 @@ void COpenGLContext::Create()
 // ------------------------------------------------------------------------
 void COpenGLContext::EnableDebug()
 {
-	glDebugMessageCallbackARB(&COpenGLContext::DebugCallback, NULL);
-
+	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+
+	glDebugMessageCallbackARB(&COpenGLContext::DebugCallback, NULL);	
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
 
 // ------------------------------------------------------------------------
