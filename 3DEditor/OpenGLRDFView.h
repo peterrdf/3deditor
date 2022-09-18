@@ -420,6 +420,7 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Bounding boxes
 	GLuint m_iBoundingBoxesVBO;
+	GLuint m_iBoundingBoxesVAO;
 	GLuint m_iBoundingBoxesIBO;
 
 #pragma endregion // Members

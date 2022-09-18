@@ -1,3 +1,9 @@
+#version 330
+
+in vec3 aVertexPosition;
+in vec3 aVertexNormal;
+in vec2 aTextureCoord;
+
 uniform float uUseBinnPhongModel;
 uniform float uUseTexture;
 
@@ -5,16 +11,12 @@ uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 uniform mat4 uNMatrix;
 
-attribute vec3 aVertexPosition;
-attribute vec3 aVertexNormal;
-attribute vec2 aTextureCoord;
+out float vUseBinnPhongModel;
+out vec4 vPosition;
+out vec3 vTransformedNormal;
 
-varying float vUseBinnPhongModel;
-varying vec4 vPosition;
-varying vec3 vTransformedNormal;
-
-varying float vUseTexture;
-varying vec2 vTextureCoord;
+out float vUseTexture;
+out vec2 vTextureCoord;
 
 void main(void) {
     vec4 vertex = uMVMatrix * vec4(aVertexPosition, 1.0);

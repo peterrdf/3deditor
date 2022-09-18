@@ -181,7 +181,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #else
 	, m_fPointSize(1.f)
 #endif //	_DEBUG_OCTREE
-	, m_bShowBoundingBoxes(FALSE)
+	, m_bShowBoundingBoxes(TRUE) //#todo
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
@@ -216,6 +216,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pSelectedInstanceMaterial(NULL)
 	, m_pPointedInstanceMaterial(NULL)
 	, m_iBoundingBoxesVBO(0)
+	, m_iBoundingBoxesVAO(0)
 	, m_iBoundingBoxesIBO(0)
 {
 	ASSERT(m_pWnd != NULL);
@@ -303,6 +304,8 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 
 	m_pProgram->AttachShader(m_pVertSh);
 	m_pProgram->AttachShader(m_pFragSh);
+
+	glBindFragDataLocation(m_pProgram->GetID(), 0, "FragColor");
 
 	if (!m_pProgram->Link())
 		AfxMessageBox(_T("Program linking error!"));
@@ -1100,37 +1103,37 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Non-transparent faces
 	*/
-	DrawFaces(false);
+	//DrawFaces(false);//#todo
 
 	/*
 	Transparent faces
 	*/
-	DrawFaces(true);
+	//DrawFaces(true);//#todo
 
 	/*
 	Pointed face
 	*/
-	//TODO#DrawPointedFace();
+	//#todoDrawPointedFace();
 
 	/*
 	Faces polygons
 	*/
-	DrawFacesPolygons();
+	//DrawFacesPolygons();//#todo
 
 	/*
 	Conceptual faces polygons
 	*/
-	DrawConceptualFacesPolygons();
+	//DrawConceptualFacesPolygons();//#todo
 
 	/*
 	Lines
 	*/
-	DrawLines();
+	//DrawLines();//#todo
 
 	/*
 	Points
 	*/
-	DrawPoints();
+	//DrawPoints();//#todo
 
 	/*
 	Bounding boxes
@@ -1140,17 +1143,17 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Normal vectors
 	*/
-	//TODO#DrawNormalVectors();
+	//#todoDrawNormalVectors();
 
 	/*
 	Tangent vectors
 	*/
-	//TODO#DrawTangentVectors();
+	//#todoDrawTangentVectors();
 
 	/*
 	Bi-Normal vectors
 	*/
-	//TODO#DrawBiNormalVectors();	
+	//#todoDrawBiNormalVectors();	
 
 	/*
 	End
@@ -1164,8 +1167,8 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Selection support
 	*/
-	DrawInstancesFrameBuffer();
-	//TODO#DrawFacesFrameBuffer();
+	//DrawInstancesFrameBuffer();
+	//#todoDrawFacesFrameBuffer();
 #else
 	glViewport(0, 0, iWidth, iHeight);
 
@@ -1471,6 +1474,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnModelChanged()
 {
+	return;//#todo
 #ifdef _LINUX
     m_pOGLContext->SetCurrent(*m_pWnd);
 #else
@@ -3861,16 +3865,23 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	if (m_iBoundingBoxesVBO == 0)
+	COpenGL::Check4Errors();
+
+	/*if (m_iBoundingBoxesVBO == 0)
 	{
+		glGenVertexArrays(1, &m_iBoundingBoxesVAO);
+		glBindVertexArray(m_iBoundingBoxesVAO);
+
 		glGenBuffers(1, &m_iBoundingBoxesVBO);
+		COpenGL::Check4Errors();
 		ASSERT(m_iBoundingBoxesVBO != 0);
-	}
+	}*/
 
 	if (m_iBoundingBoxesIBO == 0)
 	{
 		glGenBuffers(1, &m_iBoundingBoxesIBO);
 		ASSERT(m_iBoundingBoxesIBO != 0);
+		COpenGL::Check4Errors();
 	}
 
 	GLint iMatrixMode = 0;
@@ -3976,10 +3987,33 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z,
 		};
 
+		if (m_iBoundingBoxesVAO == 0)
+		{
+			glGenVertexArrays(1, &m_iBoundingBoxesVAO);
+			COpenGL::Check4Errors();
+		}
+		
+		glBindVertexArray(m_iBoundingBoxesVAO);
+		COpenGL::Check4Errors();
+
+		if (m_iBoundingBoxesVBO == 0)
+		{
+			glGenBuffers(1, &m_iBoundingBoxesVBO);
+			ASSERT(m_iBoundingBoxesVBO != 0);
+			COpenGL::Check4Errors();
+		}		
+
 		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
+		COpenGL::Check4Errors();
+
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_STATIC_DRAW);
+		COpenGL::Check4Errors();
+
 		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * 3, 0);
+		COpenGL::Check4Errors();
+
 		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+		COpenGL::Check4Errors();
 
 		vector<unsigned int> vecIndices =
 		{

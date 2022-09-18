@@ -1,6 +1,16 @@
- 
+#version 330
+
+in float vUseBinnPhongModel;
+in vec4 vPosition;
+in vec3 vTransformedNormal;
+
+in float vUseTexture;
+in vec2 vTextureCoord;
+
 uniform vec3 uPointLightingLocation;
+
 uniform float uMaterialShininess;
+
 uniform vec3 uMaterialAmbientColor;
 uniform float uTransparency;
 uniform vec3 uMaterialDiffuseColor;
@@ -9,16 +19,11 @@ uniform vec3 uMaterialEmissiveColor;
 
 uniform sampler2D uSampler;
 
-varying float vUseBinnPhongModel;
-varying vec4 vPosition;
-varying vec3 vTransformedNormal;
-
-varying float vUseTexture;
-varying vec2 vTextureCoord;
+layout(location = 0) out vec4 FragColor;
 
 void main(void) {
     if (vUseTexture > 0.5) {
-        gl_FragColor = texture2D(uSampler, vTextureCoord);
+        FragColor = texture(uSampler, vTextureCoord);
     }
     else {
         if (vUseBinnPhongModel > 0.5) {      
@@ -53,10 +58,10 @@ void main(void) {
             newColor.g = (pow(color.g,gamma) - 0.5) * contrast + brightness + 0.5;
             newColor.b = (pow(color.b,gamma) - 0.5) * contrast + brightness + 0.5;
 
-            gl_FragColor = newColor;
+            FragColor = newColor;
         } // if (vUseBinnPhongModel > ...
         else {
-            gl_FragColor = vec4(uMaterialAmbientColor, uTransparency);
+            FragColor = vec4(uMaterialAmbientColor, uTransparency);
         }
     }
 }
