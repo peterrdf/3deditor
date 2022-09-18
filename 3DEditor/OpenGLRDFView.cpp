@@ -1118,17 +1118,17 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Faces polygons
 	*/
-	//DrawFacesPolygons();//#todo
+	DrawFacesPolygons();
 
 	/*
 	Conceptual faces polygons
 	*/
-	//DrawConceptualFacesPolygons();//#todo
+	DrawConceptualFacesPolygons();
 
 	/*
 	Lines
 	*/
-	//DrawLines();//#todo
+	DrawLines();
 
 	/*
 	Points
@@ -3222,9 +3222,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glBindVertexArray(itGroups->first);
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -3261,8 +3259,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 				} // for (size_t iWireframesCohort = ...
 			} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
 #else
@@ -3391,9 +3388,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glBindVertexArray(itGroups->first);
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -3430,8 +3425,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 				} // for (size_t iWireframesCohort = ...
 			} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
 #else
@@ -3560,9 +3554,7 @@ void COpenGLRDFView::DrawLines()
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glBindVertexArray(itGroups->first);
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -3599,8 +3591,7 @@ void COpenGLRDFView::DrawLines()
 				} // for (size_t iLinesCohort = ...
 			} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
 #else
