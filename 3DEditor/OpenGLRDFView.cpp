@@ -1668,8 +1668,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			delete[] pVertices;
 
-			//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 			glBindVertexArray(0);
 
 			COpenGL::Check4Errors();
@@ -2032,8 +2030,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		} // for (size_t iRDFInstance = ...
 
 		delete[] pVertices;
-
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glBindVertexArray(0);
 
@@ -2843,8 +2839,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindVertexArray(itGroups->first);
-			//glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
+			glBindVertexArray(itGroups->first);		
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -2902,8 +2897,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 							m_pProgram->geUseTexture(),
 							1.f);
 
-						//glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
 						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
@@ -2914,8 +2907,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					} // if (pMaterial->hasTexture())
 					else
 					{
-						//glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-
 						/*
 						* Material - Ambient color
 						*/
@@ -2974,12 +2965,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 							m_pProgram->GetID(),
 							m_pProgram->geUseTexture(),
 							0.f);
-
-						//glDisableVertexAttribArray(m_pProgram->getTextureCoord());
-					}
-					else
-					{
-						//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 					}
 				} // for (size_t iMaterial = ...
 			} // for (size_t iObject = ...
@@ -2999,8 +2984,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 			glDisable(GL_CULL_FACE);
 		}
 	}
-
-	//glDisableVertexAttribArray(m_pProgram->getVertexNormal());
 #else 
 	if (bTransparent)
 	{
