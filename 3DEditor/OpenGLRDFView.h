@@ -158,6 +158,10 @@ private: // Members
 	// VBO : CRDFInstance-s
 	VBOGROUPS m_mapVBO2RDFInstances;
 
+	// --------------------------------------------------------------------------------------------
+	// VBO-s
+	vector<GLuint> m_vecVBOs;
+
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
@@ -165,6 +169,7 @@ public: // Methods
 	CDrawMetaData(enumDrawMetaDataType enDrawMetaDataType)
 		: m_enDrawMetaDataType(enDrawMetaDataType)
 		, m_mapVBO2RDFInstances()
+		, m_vecVBOs()
 	{
 	}
 
@@ -175,7 +180,12 @@ public: // Methods
 		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.begin();
 		for (; itVBO2RDFInstances != m_mapVBO2RDFInstances.end(); itVBO2RDFInstances++)
 		{
-			glDeleteBuffers(1, &(itVBO2RDFInstances->first));
+			glDeleteVertexArrays(1, &(itVBO2RDFInstances->first));
+		}
+
+		for (auto itVBO : m_vecVBOs)
+		{
+			glDeleteBuffers(1, &itVBO);
 		}
 	}
 
@@ -193,7 +203,9 @@ public: // Methods
 		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVAO);
 		ASSERT(itVBO2RDFInstances == m_mapVBO2RDFInstances.end());
 
-		m_mapVBO2RDFInstances[iVBO] = vecRDFInstances;
+		m_mapVBO2RDFInstances[iVAO] = vecRDFInstances;
+
+		m_vecVBOs.push_back(iVBO);
 	}
 
 	// --------------------------------------------------------------------------------------------

@@ -181,7 +181,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #else
 	, m_fPointSize(1.f)
 #endif //	_DEBUG_OCTREE
-	, m_bShowBoundingBoxes(TRUE) //#todo
+	, m_bShowBoundingBoxes(FALSE)
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
