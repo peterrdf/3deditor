@@ -3893,12 +3893,29 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glGenVertexArrays(1, &m_iBoundingBoxesVAO);
 		ASSERT(m_iBoundingBoxesVAO != 0);
 
+		glBindVertexArray(m_iBoundingBoxesVAO);
+
 		COpenGL::Check4Errors();
 
 		ASSERT(m_iBoundingBoxesVBO == 0);
 
 		glGenBuffers(1, &m_iBoundingBoxesVBO);
 		ASSERT(m_iBoundingBoxesVBO != 0);
+
+		vector<float> vecVertices(64, 0.f);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));		
+
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+
+		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
 	}
@@ -4004,24 +4021,20 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		vector<float> vecVertices = 
 		{
-			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z,
-			(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z,
-			(GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z,
-			(GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z,
-			(GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z,
-			(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z,
-			(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z,
-			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z,
-		};		
-		
-		glBindVertexArray(m_iBoundingBoxesVAO);
+			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+		};
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * 3, 0);
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+		glBindVertexArray(m_iBoundingBoxesVAO);
 
 		COpenGL::Check4Errors();
 
@@ -4042,7 +4055,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		};
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iBoundingBoxesIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
 
 		glDrawElementsBaseVertex(GL_LINES,
 			(GLsizei)vecIndices.size(),
