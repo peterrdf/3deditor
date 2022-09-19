@@ -1173,7 +1173,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Selection support
 	*/
-	//DrawInstancesFrameBuffer();
+	DrawInstancesFrameBuffer();
 	//#todoDrawFacesFrameBuffer();
 #else
 	glViewport(0, 0, iWidth, iHeight);
@@ -5112,9 +5112,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
 		for (; itGroups != mapGroups.end(); itGroups++)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+			glBindVertexArray(itGroups->first);
 
 			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
 			{
@@ -5167,8 +5165,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				} // for (size_t iMaterial = ...
 			} // for (size_t iObject = ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
 #else
