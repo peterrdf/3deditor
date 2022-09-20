@@ -439,7 +439,6 @@ private: // Members
 	// Normals
 	GLuint m_iNormalVectorsVAO;
 	GLuint m_iNormalVectorsVBO;
-	GLuint m_iNormalVectorsIBO;
 
 #pragma endregion // Members
 

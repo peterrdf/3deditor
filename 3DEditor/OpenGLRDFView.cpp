@@ -219,8 +219,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_iBoundingBoxesVBO(0)	
 	, m_iBoundingBoxesIBO(0)
 	, m_iNormalVectorsVAO(0)
-	, m_iNormalVectorsVBO(0)	
-	, m_iNormalVectorsIBO(0)
+	, m_iNormalVectorsVBO(0)
 {
 	ASSERT(m_pWnd != NULL);
 
@@ -436,12 +435,6 @@ COpenGLRDFView::~COpenGLRDFView()
 	{
 		glDeleteRenderbuffers(1, &m_iNormalVectorsVBO);
 		m_iNormalVectorsVBO = 0;
-	}
-
-	if (m_iNormalVectorsIBO != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iNormalVectorsIBO);
-		m_iNormalVectorsIBO = 0;
 	}
 }
 
@@ -4310,37 +4303,12 @@ void COpenGLRDFView::DrawNormalVectors()
 
 		COpenGL::Check4Errors();
 
-		ASSERT(m_iNormalVectorsIBO == 0);
-
-		glGenBuffers(1, &m_iNormalVectorsIBO);
-		ASSERT(m_iNormalVectorsIBO != 0);
-
-		vector<unsigned int> vecIndices =
-		{
-			0, 1,
-			1, 2,
-			2, 3,
-			3, 0,
-			4, 5,
-			5, 6,
-			6, 7,
-			7, 4,
-			0, 6,
-			3, 5,
-			1, 7,
-			2, 4,
-		};
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iNormalVectorsIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-
 		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
 	} // if (m_iNormalVectorsVAO == 0)
 
 	vector<float> vecVertices;
-	vector<unsigned int> vecIndices;
 
 	if (m_pSelectedInstance == NULL)
 	{
