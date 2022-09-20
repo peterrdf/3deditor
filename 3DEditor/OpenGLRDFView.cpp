@@ -3913,17 +3913,35 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-
-		glBindVertexArray(0);
+		glEnableVertexAttribArray(m_pProgram->getVertexNormal());		
 
 		COpenGL::Check4Errors();
-	}
 
-	if (m_iBoundingBoxesIBO == 0)
-	{
+		ASSERT(m_iBoundingBoxesIBO == 0);
+
 		glGenBuffers(1, &m_iBoundingBoxesIBO);
 		ASSERT(m_iBoundingBoxesIBO != 0);
+
+		vector<unsigned int> vecIndices =
+		{
+			0, 1,
+			1, 2,
+			2, 3,
+			3, 0,
+			4, 5,
+			5, 6,
+			6, 7,
+			7, 4,
+			0, 6,
+			3, 5,
+			1, 7,
+			2, 4,
+		};
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iBoundingBoxesIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+
+		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
 	}
@@ -4036,29 +4054,8 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		glBindVertexArray(m_iBoundingBoxesVAO);
 
-		COpenGL::Check4Errors();
-
-		vector<unsigned int> vecIndices =
-		{
-			0, 1,
-			1, 2,
-			2, 3,
-			3, 0,
-			4, 5,
-			5, 6,
-			6, 7,
-			7, 4,
-			0, 6,
-			3, 5,
-			1, 7,
-			2, 4,
-		};
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iBoundingBoxesIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-
 		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)vecIndices.size(),
+			(GLsizei)24,
 			GL_UNSIGNED_INT,
 			(void*)0,
 			0);
