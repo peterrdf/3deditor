@@ -431,9 +431,15 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding boxes
-	GLuint m_iBoundingBoxesVBO;
 	GLuint m_iBoundingBoxesVAO;
+	GLuint m_iBoundingBoxesVBO;	
 	GLuint m_iBoundingBoxesIBO;
+
+	// --------------------------------------------------------------------------------------------
+	// Normals
+	GLuint m_iNormalVectorsVAO;
+	GLuint m_iNormalVectorsVBO;
+	GLuint m_iNormalVectorsIBO;
 
 #pragma endregion // Members
 
