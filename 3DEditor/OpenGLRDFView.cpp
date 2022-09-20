@@ -4052,6 +4052,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		VECTOR3 vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
 		VECTOR3 vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };		
 
+		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 		vector<float> vecVertices = 
 		{
 			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
@@ -4300,14 +4301,13 @@ void COpenGLRDFView::DrawNormalVectors()
 		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-
-		COpenGL::Check4Errors();
-
+		
 		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
 	} // if (m_iNormalVectorsVAO == 0)
 
+	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
 	if (m_pSelectedInstance == NULL)
