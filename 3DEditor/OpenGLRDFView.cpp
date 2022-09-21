@@ -1661,15 +1661,15 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			COpenGL::Check4Errors();
 
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);			
 			glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+			glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 
 			COpenGL::Check4Errors();
 
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-			glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+			glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
 			glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+			glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
 			COpenGL::Check4Errors();
 
@@ -2024,15 +2024,15 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		COpenGL::Check4Errors();
 
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, 0);
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, 0);		
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 
 		COpenGL::Check4Errors();
 
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
 		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
 		COpenGL::Check4Errors();
 
@@ -3922,13 +3922,13 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glBindBuffer(GL_ARRAY_BUFFER, m_iBoundingBoxesVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);		
+		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
 		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));		
 
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
+		glEnableVertexAttribArray(m_pProgram->getVertexNormal());	
 		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());		
 
 		COpenGL::Check4Errors();
 
@@ -4294,13 +4294,13 @@ void COpenGLRDFView::DrawNormalVectors()
 		glBindBuffer(GL_ARRAY_BUFFER, m_iNormalVectorsVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);		
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
+		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
 		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
+		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 		
 		glBindVertexArray(0);
 

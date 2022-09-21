@@ -2,9 +2,13 @@
 #include "OpenGLContext.h"
 
 // ------------------------------------------------------------------------------------------------
+const int MIN_GL_MAJOR_VERSION = 3;
+const int MIN_GL_MINOR_VERSION = 0;
+
+// ------------------------------------------------------------------------------------------------
 extern BOOL TEST_MODE;
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 COpenGLContext::COpenGLContext(HDC hDC)
 	: m_hDC(hDC)
 	, m_hGLContext(NULL)
@@ -14,7 +18,7 @@ COpenGLContext::COpenGLContext(HDC hDC)
 	Create();
 }
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 COpenGLContext::~COpenGLContext()
 {
 	// PATCH: AMD 6700 XT - Access violation
@@ -33,7 +37,7 @@ COpenGLContext::~COpenGLContext()
 	}
 }
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 BOOL COpenGLContext::MakeCurrent()
 {
 	ASSERT(m_hDC != NULL);
@@ -42,6 +46,7 @@ BOOL COpenGLContext::MakeCurrent()
 	return wglMakeCurrent(m_hDC, m_hGLContext);
 }
 
+// ------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uiMsg)
@@ -57,7 +62,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void COpenGLContext::Create()
 {
 	// https://www.opengl.org/wiki/Creating_an_OpenGL_Context_(WGL)
@@ -148,12 +153,6 @@ void COpenGLContext::Create()
 	glewExperimental = GL_TRUE;
 	if (glewInit() == GLEW_OK)
 	{
-		/*
-		* OpenGL version
-		*/
-		const int MIN_GL_MAJOR_VERSION = 2;
-		const int MIN_GL_MINOR_VERSION = 1;
-
 		GLint glMajorVersion = 0;
 		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
 
@@ -221,8 +220,8 @@ void COpenGLContext::Create()
 		ASSERT(bResult);
 
 		int arContextAttributes[] = {
-			WGL_CONTEXT_MAJOR_VERSION_ARB, 2,
-			WGL_CONTEXT_MINOR_VERSION_ARB, 1,
+			WGL_CONTEXT_MAJOR_VERSION_ARB, MIN_GL_MAJOR_VERSION,
+			WGL_CONTEXT_MINOR_VERSION_ARB, MIN_GL_MINOR_VERSION,
 #ifdef _ENABLE_OPENGL_DEBUG
 			WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
 			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
@@ -253,7 +252,7 @@ void COpenGLContext::Create()
 #endif
 }
 
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void COpenGLContext::EnableDebug()
 {
 	glEnable(GL_DEBUG_OUTPUT);
@@ -263,13 +262,13 @@ void COpenGLContext::EnableDebug()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
 
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void COpenGLContext::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei /*length*/, const GLchar* message, const void* /*userParam*/)
 {
 	DebugOutputToFile(source, type, id, severity, message);
 }
 
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void COpenGLContext::DebugOutputToFile(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, const char* message)
 {
 	FILE* f = fopen("3DEditor_OpenGL_Debug.txt", "a");
