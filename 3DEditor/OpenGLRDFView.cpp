@@ -4444,7 +4444,7 @@ void COpenGLRDFView::DrawNormalVectors()
 
 		glBindVertexArray(m_iNormalVectorsVAO);
 
-		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size());
+		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
 
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
