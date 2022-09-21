@@ -445,6 +445,11 @@ private: // Members
 	GLuint m_iTangentVectorsVAO;
 	GLuint m_iTangentVectorsVBO;
 
+	// --------------------------------------------------------------------------------------------
+	// BiNormals
+	GLuint m_iBiNormalVectorsVAO;
+	GLuint m_iBiNormalVectorsVBO;
+
 #pragma endregion // Members
 
 public: // Methods
