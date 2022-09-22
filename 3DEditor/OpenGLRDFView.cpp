@@ -287,7 +287,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.33f, .33f, .33f,  // diffuse
 		.33f, .33f, .33f,  // emissive
 		.33f, .33f, .33f,  //specular
-		1,                 // transparency	
+		.66f,              // transparency	
 		NULL);	           // texture
 
 #ifdef _USE_SHADERS
