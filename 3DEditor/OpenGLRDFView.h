@@ -29,6 +29,7 @@
 #include "mat4x4.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
+#include "glew.h"
 #endif // _USE_SHADERS
 
 // ------------------------------------------------------------------------------------------------
@@ -406,6 +407,10 @@ private: // Members
 	GLuint m_iFaceSelectionDepthRenderBuffer;
 
 	// --------------------------------------------------------------------------------------------
+	// Selection support
+	GLuint m_iFaceSelectionIBO;
+
+	// --------------------------------------------------------------------------------------------
 	// Selection support - (Face index : Color) for m_pSelectedInstance
 	map<int64_t, CRDFColor> m_mapFacesSelectionColors;
 
@@ -448,7 +453,7 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// BiNormals
 	GLuint m_iBiNormalVectorsVAO;
-	GLuint m_iBiNormalVectorsVBO;
+	GLuint m_iBiNormalVectorsVBO;	
 
 #pragma endregion // Members
 
@@ -697,6 +702,10 @@ protected: // Methods
 	virtual void OnControllerChanged();
 
 private: // Methods
+
+	// --------------------------------------------------------------------------------------------
+	// Helper
+	GLuint FindVAO(CRDFInstance* pRDFInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Helper

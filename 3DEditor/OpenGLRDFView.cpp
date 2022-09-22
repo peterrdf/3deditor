@@ -205,6 +205,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_iFaceSelectionFrameBuffer(0)
 	, m_iFaceSelectionTextureBuffer(0)
 	, m_iFaceSelectionDepthRenderBuffer(0)
+	, m_iFaceSelectionIBO(0)
 	, m_mapInstancesSelectionColors()
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
@@ -360,6 +361,12 @@ COpenGLRDFView::~COpenGLRDFView()
 		glDeleteRenderbuffers(1, &m_iFaceSelectionDepthRenderBuffer);
 		m_iFaceSelectionDepthRenderBuffer = 0;
 	}	
+
+	if (m_iFaceSelectionIBO != 0)
+	{
+		glDeleteBuffers(1, &m_iFaceSelectionIBO);
+		m_iFaceSelectionIBO = 0;
+	}
 
 	/*
 	* VBO
@@ -1219,7 +1226,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	Selection support
 	*/
 	DrawInstancesFrameBuffer();
-	//#todoDrawFacesFrameBuffer();
+	DrawFacesFrameBuffer();
 #else
 	glViewport(0, 0, iWidth, iHeight);
 
@@ -2613,6 +2620,68 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	ASSERT(GetController() != NULL);
 
 	GetController()->RegisterView(this);
+}
+
+// ------------------------------------------------------------------------------------------------
+GLuint COpenGLRDFView::FindVAO(CRDFInstance* pTargetRDFInstance)
+{
+	CRDFController* pController = GetController();
+	if (pController == 0)
+	{
+		ASSERT(FALSE);
+
+		return 0;
+	}
+
+	CRDFModel* pModel = pController->GetModel();
+	if (pModel == 0)
+	{
+		ASSERT(FALSE);
+
+		return 0;
+	}
+
+	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	{
+		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		{
+			continue;
+		}
+
+		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
+
+		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
+		for (; itGroups != mapGroups.end(); itGroups++)
+		{
+			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			{
+				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+
+				if (!pRDFInstance->getEnable())
+				{
+					continue;
+				}
+
+				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				{
+					continue;
+				}
+
+				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+				{
+					continue;
+				}
+
+				if (pRDFInstance == pTargetRDFInstance)
+				{
+					return itGroups->first;
+				}
+			} // for (size_t iObject = ...
+		} // for (; itGroups != ...
+	} // for (size_t iDrawMetaData = ...
+
+	// Not found
+	return 0;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -5648,6 +5717,9 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
+	BOOL bResult = m_pOGLContext->MakeCurrent();
+	VERIFY(bResult);
+
 	if (m_iFaceSelectionFrameBuffer == 0)
 	{
 		ASSERT(m_iFaceSelectionTextureBuffer == 0);
@@ -5752,6 +5824,81 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);
+
+	COpenGL::Check4Errors();
+
+	if (m_iFaceSelectionIBO == 0)
+	{
+		glGenBuffers(1, &m_iFaceSelectionIBO);
+		ASSERT(m_iFaceSelectionIBO != 0);
+
+		vector<unsigned int> vecIndices(64, 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		COpenGL::Check4Errors();
+	} // if (m_iFaceSelectionIBO == 0)
+
+	GLuint iVAO = FindVAO(m_pSelectedInstance);
+	if (iVAO == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	glBindVertexArray(iVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+
+	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+	ASSERT(!vecTriangles.empty());
+
+	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+	{
+		vector<unsigned int> vecIndices;
+		for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+		{
+			vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
+		}
+
+		if (!vecIndices.empty())
+		{
+			map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapFacesSelectionColors.find(iTriangle);
+			ASSERT(itSelectionColor != m_mapFacesSelectionColors.end());
+
+			// Ambient color
+			glProgramUniform3f(m_pProgram->GetID(),
+				m_pProgram->getMaterialAmbientColor(),
+				itSelectionColor->second.R(),
+				itSelectionColor->second.G(),
+				itSelectionColor->second.B());
+			
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)* vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);			
+
+			glDrawElementsBaseVertex(GL_TRIANGLES,
+				(GLsizei)vecIndices.size(),
+				GL_UNSIGNED_INT,
+				(void*)(sizeof(GLuint) * 0),
+				m_pSelectedInstance->VBOOffset());
+		} // if (!vecIndices.empty())
+	} // for (size_t iTriangle = ...
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);	
+#else
 	glEnable(GL_COLOR_MATERIAL);
 
 	glShadeModel(GL_FLAT);
@@ -5807,7 +5954,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
 
-	const vector<pair<int64_t, int64_t> > & vecTriangles = m_pSelectedInstance->getTriangles();
+	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
 	ASSERT(!vecTriangles.empty());
 
 	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
@@ -5842,6 +5989,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	} // for (size_t iTriangle = ...
 
 	glEnable(GL_LIGHTING);
+#endif // _USE_SHADERS
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
