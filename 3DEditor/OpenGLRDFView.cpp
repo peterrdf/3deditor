@@ -1171,7 +1171,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Pointed face
 	*/
-	//#todoDrawPointedFace();
+	DrawPointedFace();
 
 	/*
 	Faces polygons
@@ -6084,9 +6084,76 @@ void COpenGLRDFView::DrawPointedFace()
 	* Triangles
 	*/
 	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+
 	ASSERT(!vecTriangles.empty());
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
+#ifdef _USE_SHADERS
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->geUseBinnPhongModel(),
+		0.f);
+
+	glProgramUniform1f(
+		m_pProgram->GetID(),
+		m_pProgram->getTransparency(),
+		1.f);
+
+	COpenGL::Check4Errors();
+
+	if (m_iFaceSelectionIBO == 0)
+	{
+		glGenBuffers(1, &m_iFaceSelectionIBO);
+		ASSERT(m_iFaceSelectionIBO != 0);
+
+		vector<unsigned int> vecIndices(64, 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		COpenGL::Check4Errors();
+	} // if (m_iFaceSelectionIBO == 0)
+
+	GLuint iVAO = FindVAO(m_pSelectedInstance);
+	if (iVAO == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	glBindVertexArray(iVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+
+	// Ambient color
+	glProgramUniform3f(m_pProgram->GetID(),
+		m_pProgram->getMaterialAmbientColor(),
+		0.f,
+		1.f,
+		0.f);
+
+	vector<unsigned int> vecIndices;
+	for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
+	{
+		vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
+	}
+
+	if (!vecIndices.empty())
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)vecIndices.size(),
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 0),
+			m_pSelectedInstance->VBOOffset());
+	} // if (!vecIndices.empty())
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+#else
 	// Ambient color
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
 	glColor4f(
@@ -6160,6 +6227,7 @@ void COpenGLRDFView::DrawPointedFace()
 
 		glEnable(GL_LIGHTING);
 	} // if (GetKeyState(VK_CONTROL) & 0x8000)
+#endif //_USE_SHADERS	
 
 	COpenGL::Check4Errors();
 }
