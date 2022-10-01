@@ -1807,6 +1807,13 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
+	ASSERT(GetController() != NULL);
+
+	CRDFModel* pModel = GetController()->GetModel();
+	ASSERT(pModel != NULL);
+
+	const map<int64_t, CRDFInstance*>& mapRFDInstances = pModel->GetRDFInstances();
+
 	/*
 	* Instances with a geometry
 	*/
@@ -1827,89 +1834,216 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		if (uiCommand == 0)
 		{
 			return;
-		}
-
-		ASSERT(GetController() != NULL);
-
-		CRDFModel * pModel = GetController()->GetModel();
-		ASSERT(pModel != NULL);
-
-		const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+		}		
 
 		switch (uiCommand)
 		{
-		case ID_INSTANCES_ZOOM_TO:
-		{
-			GetController()->ZoomToInstance(pRDFInstanceItem->getInstance()->getInstance());
-		}
-		break;
-
-		case ID_INSTANCES_META_INFORMATION:
-		{
-			GetController()->ShowMetaInformation(pRDFInstanceItem->getInstance());
-		}
-		break;
-
-		case ID_INSTANCES_SAVE:
-		{
-			TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-
-			CFileDialog dlgFile(FALSE, _T("bin"), pRDFInstanceItem->getInstance()->getUniqueName(),
-				OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-			if (dlgFile.DoModal() != IDOK)
+			case ID_INSTANCES_ZOOM_TO:
 			{
-				return;
+				GetController()->ZoomToInstance(pRDFInstanceItem->getInstance()->getInstance());
 			}
+			break;
 
-			SaveInstanceTreeW(pRDFInstanceItem->getInstance()->getInstance(), dlgFile.GetPathName());
-		}
-		break;
-
-		case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
-		{
-			map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
-			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+			case ID_INSTANCES_META_INFORMATION:
 			{
-				if (pRDFInstanceItem->getInstance()->GetModel() != itRFDInstances->second->GetModel())
+				GetController()->ShowMetaInformation(pRDFInstanceItem->getInstance());
+			}
+			break;
+
+			case ID_INSTANCES_SAVE:
+			{
+				TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+
+				CFileDialog dlgFile(FALSE, _T("bin"), pRDFInstanceItem->getInstance()->getUniqueName(),
+					OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+				if (dlgFile.DoModal() != IDOK)
 				{
-					continue;
+					return;
 				}
 
-				if (itRFDInstances->second == pRDFInstanceItem->getInstance())
-				{
-					itRFDInstances->second->setEnable(true);
+				SaveInstanceTreeW(pRDFInstanceItem->getInstance()->getInstance(), dlgFile.GetPathName());
+			}
+			break;
 
-					continue;
+			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
+			{
+				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				{
+					if (pRDFInstanceItem->getInstance()->GetModel() != itRFDInstances->second->GetModel())
+					{
+						continue;
+					}
+
+					if (itRFDInstances->second == pRDFInstanceItem->getInstance())
+					{
+						itRFDInstances->second->setEnable(true);
+
+						continue;
+					}
+
+					itRFDInstances->second->setEnable(false);
 				}
 
-				itRFDInstances->second->setEnable(false);
+				GetController()->OnInstancesEnabledStateChanged();
 			}
+			break;
 
-			GetController()->OnInstancesEnabledStateChanged();
-		}
-		break;
+			case ID_INSTANCES_ENABLE_ALL:
+			{
+				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				{
+					itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel());
+				}
 
+				GetController()->OnInstancesEnabledStateChanged();
+			}
+			break;
+			 
+			case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
+			{
+				map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				{
+					itRFDInstances->second->setEnable(
+						(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
+						!pRDFInstanceItem->getInstance()->isReferenced());
+				}
+
+				GetController()->OnInstancesEnabledStateChanged();
+			}
+			break;
+
+			case ID_INSTANCES_ENABLE_ALL_REFERENCED:
+			{
+				map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				{
+					itRFDInstances->second->setEnable(
+						(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
+						pRDFInstanceItem->getInstance()->isReferenced());
+				}
+
+				GetController()->OnInstancesEnabledStateChanged();
+			}
+			break;
+
+			case ID_INSTANCES_ENABLE:
+			{
+				pRDFInstanceItem->getInstance()->setEnable(!pRDFInstanceItem->getInstance()->getEnable());
+
+				GetController()->OnInstancesEnabledStateChanged();
+			}
+			break;
+
+			case ID_INSTANCES_REMOVE:
+			{
+				if (pRDFInstanceItem->getInstance()->isReferenced())
+				{
+					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+
+					return;
+				}
+
+				GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
+			}
+			break;
+
+			case ID_INSTANCES_REMOVE_TREE:
+			{
+				if (pRDFInstanceItem->getInstance()->isReferenced())
+				{
+					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+
+					return;
+				}
+
+				GetController()->DeleteInstanceTree(this, pRDFInstanceItem->getInstance());
+			}
+			break;
+
+			case ID_INSTANCES_ADD_MEASUREMENTS:
+			{
+				GetController()->AddMeasurements(this, pRDFInstanceItem->getInstance());
+			}
+			break;
+
+			case ID_INSTANCES_SEARCH:
+			{
+				if (!m_pSearchDialog->IsWindowVisible())
+				{
+					m_pSearchDialog->ShowWindow(SW_SHOW);
+				}
+				else
+				{
+					m_pSearchDialog->ShowWindow(SW_HIDE);
+				}
+			}
+			break;
+
+			default:
+			{
+				ASSERT(false);
+			}
+			break;
+		} // switch (uiCommand)	
+
+		return;
+	} // if (pRDFInstanceItem->getInstance()->hasGeometry())	
+
+	/*
+	* Instances without a geometry
+	*/
+	CMenu menu;
+	VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
+
+	CMenu * pPopup = menu.GetSubMenu(0);
+
+	UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
+	if (uiCommand == 0)
+	{
+		return;
+	}
+
+	switch (uiCommand)
+	{
 		case ID_INSTANCES_ENABLE_ALL:
 		{
-			map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				if (pRDFInstanceItem->getInstance()->GetModel() != itRFDInstances->second->GetModel())
-				{
-					continue;
-				}
-
-				itRFDInstances->second->setEnable(true);
+				itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel());
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
 		}
 		break;
 
-		case ID_INSTANCES_ENABLE:
+		case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
 		{
-			pRDFInstanceItem->getInstance()->setEnable(!pRDFInstanceItem->getInstance()->getEnable());
+			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+			{
+				itRFDInstances->second->setEnable(
+					(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
+					!pRDFInstanceItem->getInstance()->isReferenced());
+			}
+
+			GetController()->OnInstancesEnabledStateChanged();
+		}
+		break;
+
+		case ID_INSTANCES_ENABLE_ALL_REFERENCED:
+		{
+			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+			{
+				itRFDInstances->second->setEnable(
+					(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
+					pRDFInstanceItem->getInstance()->isReferenced());
+			}
 
 			GetController()->OnInstancesEnabledStateChanged();
 		}
@@ -1937,13 +2071,8 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			GetController()->DeleteInstanceTree(this, pRDFInstanceItem->getInstance());
-		}
-		break;
-
-		case ID_INSTANCES_ADD_MEASUREMENTS:
-		{
-			GetController()->AddMeasurements(this, pRDFInstanceItem->getInstance());
+			MessageBox(L"Not an option yet I.", L"Error", MB_ICONERROR | MB_OK);
+			GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
 		}
 		break;
 
@@ -1965,74 +2094,6 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			ASSERT(false);
 		}
 		break;
-		} // switch (uiCommand)	
-
-		return;
-	} // if (pRDFInstanceItem->getInstance()->hasGeometry())	
-
-	/*
-	* Instances without a geometry
-	*/
-	CMenu menu;
-	VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
-
-	CMenu * pPopup = menu.GetSubMenu(0);
-
-	UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
-	if (uiCommand == 0)
-	{
-		return;
-	}
-
-	ASSERT(GetController() != NULL);
-
-	switch (uiCommand)
-	{
-	case ID_INSTANCES_REMOVE:
-	{
-		if (pRDFInstanceItem->getInstance()->isReferenced())
-		{
-			MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
-
-			return;
-		}
-
-		GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
-	}
-	break;
-
-	case ID_INSTANCES_REMOVE_TREE:
-	{
-		if (pRDFInstanceItem->getInstance()->isReferenced())
-		{
-			MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
-
-			return;
-		}
-
-		MessageBox(L"Not an option yet I.", L"Error", MB_ICONERROR | MB_OK);
-		GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
-	}
-	break;
-
-	case ID_INSTANCES_SEARCH:
-	{
-		if (!m_pSearchDialog->IsWindowVisible())
-		{
-			m_pSearchDialog->ShowWindow(SW_SHOW);
-		}
-		else
-		{
-			m_pSearchDialog->ShowWindow(SW_HIDE);
-		}
-	}
-	break;
-
-	default:
-	{
-		ASSERT(false);
-	}
-	break;
 	} // switch (uiCommand)	
 
 	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);	

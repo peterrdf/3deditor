@@ -5684,7 +5684,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawFacesFrameBuffer()
 {
-	if (m_pSelectedInstance == NULL)
+	if ((m_pSelectedInstance == NULL) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}
