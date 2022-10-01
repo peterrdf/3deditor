@@ -12,6 +12,7 @@ static char THIS_FILE[] = __FILE__;
 // CViewTree
 
 CViewTree::CViewTree()
+	: m_pItemStateProvider(nullptr)
 {
 }
 
@@ -20,6 +21,7 @@ CViewTree::~CViewTree()
 }
 
 BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
+    ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CViewTree::OnNMCustomdraw)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,4 +40,46 @@ BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	}
 
 	return bRes;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CViewTree::SetItemStateProvider(CItemStateProvider* pItemStateProvider)
+{
+    m_pItemStateProvider = pItemStateProvider;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CViewTree::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
+{
+    NMTVCUSTOMDRAW* pNMCD = reinterpret_cast<NMTVCUSTOMDRAW*>(pNMHDR);
+
+    switch (pNMCD->nmcd.dwDrawStage)
+    {
+        case CDDS_PREPAINT:
+        {
+            *pResult = CDRF_NOTIFYITEMDRAW;            
+        }
+        break;            
+
+        case CDDS_ITEMPREPAINT:
+        {
+            if (m_pItemStateProvider != NULL)
+            {
+                HTREEITEM hItem = (HTREEITEM)pNMCD->nmcd.dwItemSpec;
+                if (m_pItemStateProvider->IsSelected(hItem))
+                {
+                    pNMCD->clrTextBk = RGB(255, 0, 0);
+                }
+            }
+
+            *pResult = CDRF_DODEFAULT;
+        }
+        break;
+
+        default:
+            {
+                *pResult = 0;
+            }            
+            break;
+    } // switch (pNMCD->nmcd.dwDrawStage)
 }

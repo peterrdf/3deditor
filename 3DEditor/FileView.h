@@ -25,6 +25,7 @@ class CFileViewToolBar : public CMFCToolBar
 class CFileView
 	: public CDockablePane
 	, public CRDFView
+	, CItemStateProvider
 {
 
 private: // Members
@@ -78,6 +79,10 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
 	virtual void OnVisibleValuesCountLimitChanged();
+
+	// --------------------------------------------------------------------------------------------
+	// CItemStateProvider
+	virtual bool IsSelected(HTREEITEM hItem);
 
 private: // Methods
 

@@ -701,6 +701,19 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ bool CFileView::IsSelected(HTREEITEM hItem)
+{
+	CRDFItem* pRDFItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
+	if ((pRDFItem != NULL) && (pRDFItem->getType() == rdftInstance) &&
+		(GetController()->GetSelectedInstance() == pRDFItem->getInstance()))
+	{
+		return pRDFItem->getInstance()->getEnable();
+	}
+
+	return false;
+}
+
+// ------------------------------------------------------------------------------------------------
 void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFProperty *> > & vecPath)
 {
 	if (hItem == NULL)
@@ -1716,6 +1729,9 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create file view\n");
 		return -1;      // fail to create
 	}
+
+	// State provider
+	m_wndFileView.SetItemStateProvider(this);
 
 	// Load view images:
 	m_FileViewImages.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
