@@ -192,6 +192,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="res\fragment_shader2.txt" />
+    <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3DEditor\BinnPhongGLProgram.h" />

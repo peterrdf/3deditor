@@ -377,6 +377,15 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// 312
+//
+
+IDR_TEXTFILE_VERTEX_SHADER2 312                     "res\\vertex_shader2.txt"
+
+IDR_TEXTFILE_FRAGMENT_SHADER2 312                     "res\\fragment_shader2.txt"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
