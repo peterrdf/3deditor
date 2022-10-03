@@ -208,6 +208,7 @@
     <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
     <ClInclude Include="InstancesDialog.h" />
+    <ClInclude Include="InstancesList.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="RDFViewer.h" />
     <ClInclude Include="RDFViewerDoc.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
     <ClCompile Include="..\include\Text2RDF.cpp" />
     <ClCompile Include="InstancesDialog.cpp" />
+    <ClCompile Include="InstancesList.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="RDFViewer.cpp" />
     <ClCompile Include="RDFViewerDoc.cpp" />

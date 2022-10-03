@@ -22,6 +22,8 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	ASSERT(GetController() != NULL);
 
 	GetController()->RegisterView(this);
+
+	m_lcInstances.SetController(GetController());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -223,7 +225,7 @@ void CInstancesDialog::OnSize(UINT nType, int cx, int cy)
 	m_lcInstances.SetWindowPos(NULL, rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
+void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	if (point == CPoint(-1, -1))
 	{

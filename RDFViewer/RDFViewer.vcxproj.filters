@@ -77,6 +77,9 @@
     <ClInclude Include="..\3DEditor\OGLPipeline.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="InstancesList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -179,6 +182,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\OGLPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancesList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
