@@ -5391,8 +5391,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	*/
 	if (m_mapInstancesSelectionColors.empty())
 	{
-		//const float STEP = 1.0f / 255.0f;
-
 		const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
 
 		map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
@@ -5420,28 +5418,10 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			/*float fR = floor((float)pRDFInstance->getID() / (255.0f * 255.0f));
-			if (fR >= 1.0f)
-			{
-				fR *= STEP;
-			}
+			float fR, fG, fB;
+			CIn64RGBCoder::Encode(pRDFInstance->getID(), fR, fG, fB);
 
-			float fG = floor((float)pRDFInstance->getID() / 255.0f);
-			if (fG >= 1.0f)
-			{
-				fG *= STEP;
-			}
-
-			float fB = (float)(pRDFInstance->getID() % 255);
-			fB *= STEP;*/
-
-			// https://math.stackexchange.com/questions/1635999/algorithm-to-convert-integer-to-3-variables-rgb
-			unsigned int C = (unsigned int)pRDFInstance->getID();
-			unsigned int B = C % 256;
-			unsigned int G = ((C - B) / 256) % 256;
-			unsigned int R = ((C - B) / (256 * 256)) - (G / 256);
-
-			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = CRDFColor(R / 256.f, G / 256.f, B / 256.f);
+			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = CRDFColor(fR, fG, fB);
 		} // for (; itRDFInstances != ...
 	} // if (m_mapInstancesSelectionColors.empty())
 
@@ -5777,35 +5757,15 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	*/
 	if (m_mapFacesSelectionColors.empty())
 	{
-		//const float STEP = 1.0f / 255.0f;
-
 		const vector<pair<int64_t, int64_t> > & vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
 
-		for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
 		{
-			/*float fR = floor((float)iTriangle / (255.0f * 255.0f));
-			if (fR >= 1.0f)
-			{
-				fR *= STEP;
-			}
+			float fR, fG, fB;
+			CIn64RGBCoder::Encode(iTriangle, fR, fG, fB);
 
-			float fG = floor((float)iTriangle / 255.0f);
-			if (fG >= 1.0f)
-			{
-				fG *= STEP;
-			}
-
-			float fB = (float)(iTriangle % 255);
-			fB *= STEP;*/
-
-			// https://math.stackexchange.com/questions/1635999/algorithm-to-convert-integer-to-3-variables-rgb
-			unsigned int C = (unsigned int)iTriangle;
-			unsigned int B = C % 256;
-			unsigned int G = ((C - B) / 256) % 256;
-			unsigned int R = ((C - B) / (256 * 256)) - (G / 256);
-
-			m_mapFacesSelectionColors[iTriangle] = CRDFColor(R / 256.f, G / 256.f, B / 256.f);
+			m_mapFacesSelectionColors[iTriangle] = CRDFColor(fR, fG, fB);
 		} // for (size_t iTriangle = ...
 	} // if (m_mapFacesSelectionColors.empty())
 
@@ -6297,12 +6257,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			if (arPixels[3] != 0)
 			{
-				// https://math.stackexchange.com/questions/1635999/algorithm-to-convert-integer-to-3-variables-rgb
-				int64_t iObjectID =
-					(arPixels[0/*R*/] * (256 * 256)) +
-					(arPixels[1/*G*/] * 256) +
-					 arPixels[2/*B*/];
-
+				int64_t iObjectID = CIn64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetRDFInstanceByID(iObjectID);
 				ASSERT(pPointedInstance != NULL);
 			} // if (arPixels[3] != 0)
@@ -6367,13 +6322,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			if (arPixels[3] != 0)
 			{
-				// https://math.stackexchange.com/questions/1635999/algorithm-to-convert-integer-to-3-variables-rgb
-				int64_t iObjectID =
-					(arPixels[0/*R*/] * (256 * 256)) +
-					(arPixels[1/*G*/] * 256) +
-					 arPixels[2/*B*/];
-
-				iPointedFace = iObjectID;
+				iPointedFace = CIn64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
 				ASSERT(m_mapFacesSelectionColors.find(iPointedFace) != m_mapFacesSelectionColors.end());
 			} // if (arPixels[3] != 0)
 
