@@ -23,7 +23,7 @@ void CCityGMLParser::Import(const wchar_t* szGMLFile)
 	citygml::ParserParams params;
 	shared_ptr<const citygml::CityModel> city = citygml::load(file, params);
 	
-	auto pModelCollection = GEOM::Collection::Create(m_pModel, szGMLFile);
+	auto pModelCollection = GEOM::Collection::CreateW(m_pModel, szGMLFile);
 
 	vector<GEOM::GeometricItem> vecRootObjects;
 	for (unsigned int iRootObject = 0; iRootObject < city->getNumRootCityObjects(); iRootObject++)
@@ -63,10 +63,10 @@ void CCityGMLParser::ImportObject(const citygml::CityObject& object, vector<GEOM
 		ImportObject(childObject, vecChildObjects);
 	}
 
-	auto pObjectGeometryCollection = GEOM::Collection::Create(m_pModel, L"Geometry");
+	auto pObjectGeometryCollection = GEOM::Collection::Create(m_pModel, "Geometry");
 	pObjectGeometryCollection.set_objects(&vecTriangleSets[0], vecTriangleSets.size());
 
-	auto pObjectChildsCollection = GEOM::Collection::Create(m_pModel, L"Objects");
+	auto pObjectChildsCollection = GEOM::Collection::Create(m_pModel, "Objects");
 	pObjectChildsCollection.set_objects(&vecChildObjects[0], vecChildObjects.size());
 
 	GEOM::GeometricItem coll[2] = { pObjectGeometryCollection, pObjectChildsCollection };

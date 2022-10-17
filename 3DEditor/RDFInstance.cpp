@@ -725,7 +725,7 @@ void CRDFInstance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iConceptualFacePolygonsIndicesCount = 0;
 
-		GetConceptualFaceEx(m_iInstance, iConceptualFace,
+		GetConceptualFace(m_iInstance, iConceptualFace,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iLinesIndicesCount,
 			&iStartIndexPoints, &iPointsIndicesCount,

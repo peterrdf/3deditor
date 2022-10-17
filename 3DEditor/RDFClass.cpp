@@ -32,7 +32,7 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	/*
 	* Parents
 	*/
-	int64_t iParentClassInstance = GetParentsByIterator(m_iInstance, 0);
+	int64_t iParentClassInstance = GetClassParentsByIterator(m_iInstance, 0);
 	while (iParentClassInstance != 0)
 	{
 		m_vecParentClasses.push_back(iParentClassInstance);
@@ -47,7 +47,7 @@ CRDFClass::CRDFClass(int64_t iInstance)
 //		LOG_DEBUG("*** PARENT CLASS " << szParentClassName);
 #endif // _LINUX
 
-		iParentClassInstance = GetParentsByIterator(m_iInstance, iParentClassInstance);
+		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
 	}
 }
 
@@ -110,13 +110,13 @@ const vector<CRDFPropertyRestriction *> & CRDFClass::getPropertyRestrictions()
 // ------------------------------------------------------------------------------------------------
 void CRDFClass::GetAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestorClasses)
 {
-	int64_t iParentClassInstance = GetParentsByIterator(iClassInstance, 0);
+	int64_t iParentClassInstance = GetClassParentsByIterator(iClassInstance, 0);
 	while (iParentClassInstance != 0)
 	{
 		vecAncestorClasses.push_back(iParentClassInstance);
 
 		GetAncestors(iParentClassInstance, vecAncestorClasses);
 
-		iParentClassInstance = GetParentsByIterator(iClassInstance, iParentClassInstance);
+		iParentClassInstance = GetClassParentsByIterator(iClassInstance, iParentClassInstance);
 	}
 }

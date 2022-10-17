@@ -689,7 +689,7 @@ void COctree::buildMesh()
 	int64_t iPointsCount = 0;
 	for (size_t iOctant = 0; iOctant < m_vecOctants.size(); iOctant++)
 	{
-		auto pOctantCollection = GEOM::Collection::Create(pModel, (L"Octant " + to_wstring(iOctant)).c_str());
+		auto pOctantCollection = GEOM::Collection::CreateW(pModel, (L"Octant " + to_wstring(iOctant)).c_str());
 
 		auto pPoint3DSet = GEOM::Point3DSet::Create(pModel, "Points");		
 
