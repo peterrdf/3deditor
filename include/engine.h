@@ -3338,7 +3338,35 @@ bool		DECL STDC	IsInstance(
 
 //
 //
+static	inline	bool	IsKindOfClass(
+									int64_t				myOwlClass,
+									int64_t				owlClass
+								)
+{
+	if (myOwlClass == owlClass)
+		return	true;
+	int64_t	parentOwlClass = GetClassParentsByIterator(myOwlClass, 0);
+	while (parentOwlClass) {
+		if (IsKindOfClass(parentOwlClass, owlClass))
+			return	true;
+		parentOwlClass = GetClassParentsByIterator(myOwlClass, parentOwlClass);
+	}
+	return	false;
+}
+
+//
+//
 static	inline	bool	IsInstanceOfClass(
+									int64_t				owlInstance,
+									const char			* name
+								)
+{
+	return	IsKindOfClass(GetInstanceClass(owlInstance), GetClassByName(GetModel(owlInstance), name));
+}
+
+//
+//
+static	inline	bool	IsInstanceOfClassExact(
 									int64_t				owlInstance,
 									const char			* name
 								)
@@ -3389,12 +3417,11 @@ static	inline	int64_t	CalculateInstance(
 									int64_t				* indexBufferSize
 								)
 {
-	int64_t	* transformationBufferSize = nullptr;
 	return	CalculateInstance(
 					owlInstance,
 					vertexBufferSize,
 					indexBufferSize,
-					transformationBufferSize
+					nullptr			//		transformationBufferSize
 				);
 }
 
@@ -5170,6 +5197,320 @@ static	inline	uint32_t	GetVertexColorSpecular(
 		);
 	return	specular;
 }
+
+//
+//  Deprecated API Calls
+//
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceEx                         (http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				index								IN
+//				int64_t				* startIndexTriangles				IN / OUT
+//				int64_t				* noIndicesTriangles				IN / OUT
+//				int64_t				* startIndexLines					IN / OUT
+//				int64_t				* noIndicesLines					IN / OUT
+//				int64_t				* startIndexPoints					IN / OUT
+//				int64_t				* noIndicesPoints					IN / OUT
+//				int64_t				* startIndexFacePolygons			IN / OUT
+//				int64_t				* noIndicesFacePolygons				IN / OUT
+//				int64_t				* startIndexConceptualFacePolygons	IN / OUT
+//				int64_t				* noIndicesConceptualFacePolygons	IN / OUT
+//
+//				int64_t				returns								OUT
+//
+//	Please rename GetConceptualFaceEx into GetConceptualFace.
+//
+int64_t		DECL STDC	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index,
+									int64_t				* startIndexTriangles,
+									int64_t				* noIndicesTriangles,
+									int64_t				* startIndexLines,
+									int64_t				* noIndicesLines,
+									int64_t				* startIndexPoints,
+									int64_t				* noIndicesPoints,
+									int64_t				* startIndexFacePolygons,
+									int64_t				* noIndicesFacePolygons,
+									int64_t				* startIndexConceptualFacePolygons,
+									int64_t				* noIndicesConceptualFacePolygons
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index,
+									int64_t				* startIndexTriangles,
+									int64_t				* noIndicesTriangles,
+									int64_t				* startIndexLines,
+									int64_t				* noIndicesLines,
+									int64_t				* startIndexPoints,
+									int64_t				* noIndicesPoints
+								)
+{
+	return	GetConceptualFaceEx(
+					owlInstance,
+					index,
+					startIndexTriangles,
+					noIndicesTriangles,
+					startIndexLines,
+					noIndicesLines,
+					startIndexPoints,
+					noIndicesPoints,
+					nullptr,		//	startIndexFacePolygons
+					nullptr,		//	noIndicesFacePolygons
+					nullptr,		//	startIndexConceptualFacePolygons
+					nullptr			//	noIndicesConceptualFacePolygons
+				);
+}
+
+//
+//
+static	inline	int64_t	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index
+								)
+{
+	return	GetConceptualFaceEx(
+					owlInstance,
+					index,
+					nullptr,		//	startIndexTriangles
+					nullptr,		//	noIndicesTriangles
+					nullptr,		//	startIndexLines
+					nullptr,		//	noIndicesLines
+					nullptr,		//	startIndexPoints
+					nullptr			//	noIndicesPoints
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		GetTriangles                                (http://rdf.bg/gkdoc/CP64/GetTriangles___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				* startIndex						IN / OUT
+//				int64_t				* noTriangles						IN / OUT
+//				int64_t				* startVertex						IN / OUT
+//				int64_t				* firstNotUsedVertex				IN / OUT
+//
+//				void				returns
+//
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant triangles when
+//	SetFormat() is setting bit 8 and unsetting with bit 9, 10, 12 and 13 
+//
+void		DECL STDC	GetTriangles(
+									int64_t				owlInstance,
+									int64_t				* startIndex,
+									int64_t				* noTriangles,
+									int64_t				* startVertex,
+									int64_t				* firstNotUsedVertex
+								);
+
+//
+//		GetLines                                    (http://rdf.bg/gkdoc/CP64/GetLines___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				* startIndex						IN / OUT
+//				int64_t				* noLines							IN / OUT
+//				int64_t				* startVertex						IN / OUT
+//				int64_t				* firstNotUsedVertex				IN / OUT
+//
+//				void				returns
+//
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant lines when
+//	SetFormat() is setting bit 9 and unsetting with bit 8, 10, 12 and 13 
+//
+void		DECL STDC	GetLines(
+									int64_t				owlInstance,
+									int64_t				* startIndex,
+									int64_t				* noLines,
+									int64_t				* startVertex,
+									int64_t				* firstNotUsedVertex
+								);
+
+//
+//		GetPoints                                   (http://rdf.bg/gkdoc/CP64/GetPoints___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				* startIndex						IN / OUT
+//				int64_t				* noPoints							IN / OUT
+//				int64_t				* startVertex						IN / OUT
+//				int64_t				* firstNotUsedVertex				IN / OUT
+//
+//				void				returns
+//
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant points when
+//	SetFormat() is setting bit 10 and unsetting with bit 8, 9, 12 and 13 
+//
+void		DECL STDC	GetPoints(
+									int64_t				owlInstance,
+									int64_t				* startIndex,
+									int64_t				* noPoints,
+									int64_t				* startVertex,
+									int64_t				* firstNotUsedVertex
+								);
+
+//
+//		GetPropertyRestrictions                     (http://rdf.bg/gkdoc/CP64/GetPropertyRestrictions___.html)
+//				int64_t				owlClass							IN
+//				int64_t				rdfProperty							IN
+//				int64_t				* minCard							IN / OUT
+//				int64_t				* maxCard							IN / OUT
+//
+//				void				returns
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetClassPropertyCardinalityRestriction instead,
+//
+void		DECL STDC	GetPropertyRestrictions(
+									int64_t				owlClass,
+									int64_t				rdfProperty,
+									int64_t				* minCard,
+									int64_t				* maxCard
+								);
+
+//
+//		IsGeometryType                              (http://rdf.bg/gkdoc/CP64/IsGeometryType___.html)
+//				int64_t				owlClass							IN
+//
+//				bool				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetGeometryClass instead, rename the function name
+//	and interpret non-zero as true and zero as false.
+//
+bool		DECL STDC	IsGeometryType(
+									int64_t				owlClass
+								);
+
+//
+//		SetObjectTypeProperty                       (http://rdf.bg/gkdoc/CP64/SetObjectTypeProperty___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				rdfProperty							IN
+//				const int64_t		* values							IN
+//				int64_t				card								IN
+//
+//				int64_t				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call SetObjectProperty instead, just rename the function name.
+//
+int64_t		DECL STDC	SetObjectTypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									const int64_t		* values,
+									int64_t				card
+								);
+
+//
+//		GetObjectTypeProperty                       (http://rdf.bg/gkdoc/CP64/GetObjectTypeProperty___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				rdfProperty							IN
+//				int64_t				** values							IN / OUT
+//				int64_t				* card								IN / OUT
+//
+//				int64_t				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetObjectProperty instead, just rename the function name.
+//
+int64_t		DECL STDC	GetObjectTypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									int64_t				** values,
+									int64_t				* card
+								);
+
+//
+//		SetDataTypeProperty                         (http://rdf.bg/gkdoc/CP64/SetDataTypeProperty___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				rdfProperty							IN
+//				const void			* values							IN
+//				int64_t				card								IN
+//
+//				int64_t				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call SetDatatypeProperty instead, just rename the function name.
+//
+int64_t		DECL STDC	SetDataTypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									const void			* values,
+									int64_t				card
+								);
+
+//
+//		GetDataTypeProperty                         (http://rdf.bg/gkdoc/CP64/GetDataTypeProperty___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				rdfProperty							IN
+//				void				** values							IN / OUT
+//				int64_t				* card								IN / OUT
+//
+//				int64_t				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetDatatypeProperty instead, just rename the function name.
+//
+int64_t		DECL STDC	GetDataTypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									void				** values,
+									int64_t				* card
+								);
+
+//
+//		InstanceCopyCreated                         (http://rdf.bg/gkdoc/CP64/InstanceCopyCreated___.html)
+//				int64_t				owlInstance							IN
+//
+//				void				returns
+//
+//	This call is deprecated as the Copy concept is also deprecated and will be removed by end of 2022.
+//
+void		DECL STDC	InstanceCopyCreated(
+									int64_t				owlInstance
+								);
+
+//
+//		GetPropertyByNameAndType                    (http://rdf.bg/gkdoc/CP64/GetPropertyByNameAndType___.html)
+//				int64_t				model								IN
+//				const char			* name								IN
+//				int64_t				rdfPropertyType						IN
+//
+//				int64_t				returns								OUT
+//
+//	This call is deprecated and will be removed by end of 2022.
+//	Please use the call GetPropertyByName(Ex) / GetPropertyByNameW(Ex) + GetPropertyType(Ex) instead, just rename the function name.
+//
+int64_t		DECL STDC	GetPropertyByNameAndType(
+									int64_t				model,
+									const char			* name,
+									int64_t				rdfPropertyType
+								);
+
+//
+//		GetParentsByIterator                        (http://rdf.bg/gkdoc/CP64/GetParentsByIterator___.html)
+//				int64_t				owlClassOrRdfProperty				IN
+//				int64_t				parentOwlClassOrRdfProperty			IN
+//
+//				int64_t				returns								OUT
+//
+//	Returns the next parent of the class or property.
+//	If input parent is zero, the handle will point to the first relevant parent.
+//	If all parent are past (or no relevant parent are found), the function will return 0.
+//
+int64_t		DECL STDC	GetParentsByIterator(
+									int64_t				owlClassOrRdfProperty,
+									int64_t				parentOwlClassOrRdfProperty
+								);
+
+
+#ifdef __cplusplus
+	}
+#endif
 
 
 #undef DECL
