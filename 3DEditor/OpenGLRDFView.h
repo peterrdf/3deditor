@@ -14,6 +14,24 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#ifdef _LINUX
+#define MK_LBUTTON 1
+#define MK_MBUTTON 2
+#define MK_RBUTTON 4
+#endif
+
+#ifdef _USE_SHADERS
+#include "BinnPhongGLProgram.h"
+#include "GLShader.h"
+
+#include "vec3.hpp"
+#include "vec4.hpp"
+#include "mat4x4.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
+#include "glew.h"
+#endif // _USE_SHADERS
+
 // ------------------------------------------------------------------------------------------------
 // Mouse support
 enum enumMouseEvent
@@ -26,12 +44,6 @@ enum enumMouseEvent
 	meRBtnDown = 5,
 	meRBtnUp = 6,
 };
-
-#ifdef _LINUX
-#define MK_LBUTTON 1
-#define MK_MBUTTON 2
-#define MK_RBUTTON 4
-#endif
 
 // ------------------------------------------------------------------------------------------------
 class COpenGLLight
@@ -147,6 +159,10 @@ private: // Members
 	// VBO : CRDFInstance-s
 	VBOGROUPS m_mapVBO2RDFInstances;
 
+	// --------------------------------------------------------------------------------------------
+	// VBO-s
+	vector<GLuint> m_vecVBOs;
+
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
@@ -154,6 +170,7 @@ public: // Methods
 	CDrawMetaData(enumDrawMetaDataType enDrawMetaDataType)
 		: m_enDrawMetaDataType(enDrawMetaDataType)
 		, m_mapVBO2RDFInstances()
+		, m_vecVBOs()
 	{
 	}
 
@@ -164,7 +181,12 @@ public: // Methods
 		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.begin();
 		for (; itVBO2RDFInstances != m_mapVBO2RDFInstances.end(); itVBO2RDFInstances++)
 		{
-			glDeleteBuffers(1, &(itVBO2RDFInstances->first));
+			glDeleteVertexArrays(1, &(itVBO2RDFInstances->first));
+		}
+
+		for (auto itVBO : m_vecVBOs)
+		{
+			glDeleteBuffers(1, &itVBO);
 		}
 	}
 
@@ -177,12 +199,14 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Adds a group of RDFInstance-s that share VBO
-	void AddGroup(GLuint iVBO, const vector<CRDFInstance*>& vecRDFInstances)
+	void AddGroup(GLuint iVAO, GLuint iVBO, const vector<CRDFInstance*>& vecRDFInstances)
 	{
-		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVBO);
+		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVAO);
 		ASSERT(itVBO2RDFInstances == m_mapVBO2RDFInstances.end());
 
-		m_mapVBO2RDFInstances[iVBO] = vecRDFInstances;
+		m_mapVBO2RDFInstances[iVAO] = vecRDFInstances;
+
+		m_vecVBOs.push_back(iVBO);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -214,6 +238,13 @@ private: // Members
 #else
 	CWnd * m_pWnd;
 #endif // _LINUX
+
+#ifdef _USE_SHADERS
+	CBinnPhongGLProgram* m_pProgram;
+	CGLShader* m_pVertSh;
+	CGLShader* m_pFragSh;
+	glm::mat4 m_modelViewMatrix;
+#endif // _USE_SHADERS
 
 	// --------------------------------------------------------------------------------------------
 	// Instances
@@ -376,6 +407,10 @@ private: // Members
 	GLuint m_iFaceSelectionDepthRenderBuffer;
 
 	// --------------------------------------------------------------------------------------------
+	// Selection support
+	GLuint m_iFaceSelectionIBO;
+
+	// --------------------------------------------------------------------------------------------
 	// Selection support - (Face index : Color) for m_pSelectedInstance
 	map<int64_t, CRDFColor> m_mapFacesSelectionColors;
 
@@ -398,6 +433,27 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Pointed instances
 	CRDFMaterial* m_pPointedInstanceMaterial;
+
+	// --------------------------------------------------------------------------------------------
+	// Bounding boxes
+	GLuint m_iBoundingBoxesVAO;
+	GLuint m_iBoundingBoxesVBO;	
+	GLuint m_iBoundingBoxesIBO;
+
+	// --------------------------------------------------------------------------------------------
+	// Normals
+	GLuint m_iNormalVectorsVAO;
+	GLuint m_iNormalVectorsVBO;
+
+	// --------------------------------------------------------------------------------------------
+	// Normals
+	GLuint m_iTangentVectorsVAO;
+	GLuint m_iTangentVectorsVBO;
+
+	// --------------------------------------------------------------------------------------------
+	// BiNormals
+	GLuint m_iBiNormalVectorsVAO;
+	GLuint m_iBiNormalVectorsVBO;	
 
 #pragma endregion // Members
 
@@ -646,6 +702,10 @@ protected: // Methods
 	virtual void OnControllerChanged();
 
 private: // Methods
+
+	// --------------------------------------------------------------------------------------------
+	// Helper
+	GLuint FindVAO(CRDFInstance* pRDFInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Helper

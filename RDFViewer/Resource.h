@@ -42,12 +42,15 @@
 #define ID_INSTANCES_ENABLE_ALL         32783
 #define ID_INSTANCES_ENABLE             32784
 #define ID_INSTANCES_REMOVE             32786
+#define TEXTFILE                        312
+#define IDR_TEXTFILE_VERTEX_SHADER2     320
+#define IDR_TEXTFILE_FRAGMENT_SHADER2   321
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        311
+#define _APS_NEXT_RESOURCE_VALUE        322
 #define _APS_NEXT_COMMAND_VALUE         32773
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           311

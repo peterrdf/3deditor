@@ -110,9 +110,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./../include;./../glew-1.13.0/include/GL;./../3DEditor;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../include;./../glew-1.13.0/include/GL;./../3DEditor;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalOptions>/Zm140 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -166,9 +166,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./../include;./../glew-1.13.0/include/GL;./../3DEditor;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../include;./../glew-1.13.0/include/GL;./../3DEditor;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>-Zm140 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -192,15 +192,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="res\fragment_shader2.txt" />
+    <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3DEditor\BinnPhongGLProgram.h" />
+    <ClInclude Include="..\3DEditor\BinnPhongOGLPipeline.h" />
     <ClInclude Include="..\3DEditor\CityGMLParser.h" />
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
+    <ClInclude Include="..\3DEditor\GLProgram.h" />
+    <ClInclude Include="..\3DEditor\GLShader.h" />
+    <ClInclude Include="..\3DEditor\OGLPipeline.h" />
     <ClInclude Include="..\3DEditor\OT.h" />
     <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h" />
     <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
     <ClInclude Include="InstancesDialog.h" />
+    <ClInclude Include="InstancesList.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="RDFViewer.h" />
     <ClInclude Include="RDFViewerDoc.h" />
@@ -210,13 +218,18 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3DEditor\BinnPhongGLProgram.cpp" />
+    <ClCompile Include="..\3DEditor\BinnPhongOGLPipeline.cpp" />
     <ClCompile Include="..\3DEditor\BoolRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\CityGMLParser.cpp" />
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
     <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp" />
     <ClCompile Include="..\3DEditor\DoubleRDFProperty.cpp" />
+    <ClCompile Include="..\3DEditor\GLProgram.cpp" />
+    <ClCompile Include="..\3DEditor\GLShader.cpp" />
     <ClCompile Include="..\3DEditor\IntRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\ObjectRDFProperty.cpp" />
+    <ClCompile Include="..\3DEditor\OGLPipeline.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLContext.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
     <ClCompile Include="..\3DEditor\OT.cpp" />
@@ -234,6 +247,7 @@
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
     <ClCompile Include="..\include\Text2RDF.cpp" />
     <ClCompile Include="InstancesDialog.cpp" />
+    <ClCompile Include="InstancesList.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="RDFViewer.cpp" />
     <ClCompile Include="RDFViewerDoc.cpp" />

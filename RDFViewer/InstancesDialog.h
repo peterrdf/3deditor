@@ -2,6 +2,7 @@
 
 #include "Generic.h"
 #include "RDFView.h"
+#include "InstancesList.h"
 
 #include <set>
 
@@ -18,7 +19,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Instances
-	CListCtrl m_lcInstances;	
+	CInstancesList m_lcInstances;
 
 	// --------------------------------------------------------------------------------------------
 	// Don't send notifications while updating the view

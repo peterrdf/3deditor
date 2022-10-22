@@ -111,9 +111,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_USE_SHADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -168,9 +168,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_USE_SHADERS;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./../include;./../glew-2.2.0/include/GL;./../libE57Format/include/E57Format;./../libCityGML/include;./../glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -194,6 +194,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="res\fragment_shader2.txt" />
+    <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
@@ -201,6 +203,8 @@
     <ClInclude Include="3DEditor.h" />
     <ClInclude Include="3DEditorDoc.h" />
     <ClInclude Include="3DEditorView.h" />
+    <ClInclude Include="BinnPhongGLProgram.h" />
+    <ClInclude Include="BinnPhongOGLPipeline.h" />
     <ClInclude Include="BoolRDFProperty.h" />
     <ClInclude Include="CityGMLParser.h" />
     <ClInclude Include="ClassView.h" />
@@ -212,11 +216,14 @@
     <ClInclude Include="FileView.h" />
     <ClInclude Include="FileViewConsts.h" />
     <ClInclude Include="Generic.h" />
+    <ClInclude Include="GLProgram.h" />
+    <ClInclude Include="GLShader.h" />
     <ClInclude Include="IntRDFProperty.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="NewInstanceDialog.h" />
     <ClInclude Include="ObjectRDFProperty.h" />
     <ClInclude Include="Octree.h" />
+    <ClInclude Include="OGLPipeline.h" />
     <ClInclude Include="OpenGLContext.h" />
     <ClInclude Include="OpenGLRDFView.h" />
     <ClInclude Include="OT.h" />
@@ -235,6 +242,7 @@
     <ClInclude Include="SearchClassesDialog.h" />
     <ClInclude Include="SearchInstancesDialog.h" />
     <ClInclude Include="SelectInstanceDialog.h" />
+    <ClInclude Include="SimpleOGLPipeline.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringRDFProperty.h" />
     <ClInclude Include="targetver.h" />
@@ -254,6 +262,8 @@
     <ClCompile Include="3DEditor.cpp" />
     <ClCompile Include="3DEditorDoc.cpp" />
     <ClCompile Include="3DEditorView.cpp" />
+    <ClCompile Include="BinnPhongGLProgram.cpp" />
+    <ClCompile Include="BinnPhongOGLPipeline.cpp" />
     <ClCompile Include="BoolRDFProperty.cpp" />
     <ClCompile Include="CityGMLParser.cpp" />
     <ClCompile Include="ClassView.cpp" />
@@ -262,10 +272,13 @@
     <ClCompile Include="DoubleRDFProperty.cpp" />
     <ClCompile Include="EditObjectPropertyDialog.cpp" />
     <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="GLProgram.cpp" />
+    <ClCompile Include="GLShader.cpp" />
     <ClCompile Include="IntRDFProperty.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="NewInstanceDialog.cpp" />
     <ClCompile Include="ObjectRDFProperty.cpp" />
+    <ClCompile Include="OGLPipeline.cpp" />
     <ClCompile Include="OpenGLContext.cpp" />
     <ClCompile Include="OpenGLRDFView.cpp" />
     <ClCompile Include="OT.cpp" />
@@ -283,6 +296,7 @@
     <ClCompile Include="SearchClassesDialog.cpp" />
     <ClCompile Include="SearchInstancesDialog.cpp" />
     <ClCompile Include="SelectInstanceDialog.cpp" />
+    <ClCompile Include="SimpleOGLPipeline.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

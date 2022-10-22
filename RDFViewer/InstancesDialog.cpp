@@ -22,6 +22,8 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	ASSERT(GetController() != NULL);
 
 	GetController()->RegisterView(this);
+
+	m_lcInstances.SetController(GetController());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -223,17 +225,8 @@ void CInstancesDialog::OnSize(UINT nType, int cx, int cy)
 	m_lcInstances.SetWindowPos(NULL, rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
+void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	CTreeCtrl* pWndTree = (CTreeCtrl*)&m_lcInstances;
-	ASSERT_VALID(pWndTree);
-
-	if (pWnd != pWndTree)
-	{
-		CDialogEx::OnContextMenu(pWnd, point);
-		return;
-	}
-
 	if (point == CPoint(-1, -1))
 	{
 		return;
@@ -282,7 +275,7 @@ void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			CMenu * pPopup = menu.GetSubMenu(0);
 
-			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
+			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 			if (uiCommand == 0)
 			{
 				return;
@@ -351,7 +344,7 @@ void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			CMenu * pPopup = menu.GetSubMenu(0);
 
-			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
+			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 			if (uiCommand == 0)
 			{
 				return;
@@ -411,7 +404,7 @@ void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
 				pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 			}
 
-			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
+			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 			if (uiCommand == 0)
 			{
 				return;
@@ -515,7 +508,7 @@ void CInstancesDialog::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		CMenu * pPopup = menu.GetSubMenu(0);
 
-		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
+		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 		if (uiCommand == 0)
 		{
 			return;
