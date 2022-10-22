@@ -14,6 +14,8 @@
 
 #include	"engdef.h"
 
+#include	"assert.h"
+
 #if !defined _WINDOWS
 #include	<stdint.h>
 #endif
@@ -36,11 +38,6 @@
 #endif
 
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-
 #define		OBJECTPROPERTY_TYPE					1
 #define		OBJECTTYPEPROPERTY_TYPE				1
 #define		DATATYPEPROPERTY_TYPE_BOOLEAN 		2
@@ -53,7 +50,7 @@
 // Flags can be used in bitwise combination for settings and masks to SetFormat, GetFormat and other functions working with settings
 //
 
-#define		FLAGBIT(n)									((int64_t) (((int64_t) 1L)<<(n)))
+#define		FLAGBIT(n)									((int64_t) (((int64_t) 1L) << (n)))
 
 //control precision / data size
 #define		FORMAT_SIZE_VERTEX_DOUBLE					FLAGBIT(2)		//	Vertex items returned as double (8 byte/64 bit) else - as float (4 byte/32 bit)
@@ -97,27 +94,27 @@
 
 //get color from its components in range 0..255
 #define		COLOR_RGBW255(r,g,b,w)						(											\
-															((int32_t)(unsigned char)(r)	<<24)	\
-														|	((int32_t)(unsigned char)(g)	<<16)	\
-														|	((int32_t)(unsigned char)(b)	<<8	)	\
-														|	((int32_t)(unsigned char)(w)		)	\
+															((uint32_t) (unsigned char)(r) << 24)	\
+														|	((uint32_t) (unsigned char)(g) << 16)	\
+														|	((uint32_t) (unsigned char)(b) << 8 )	\
+														|	((uint32_t) (unsigned char)(w)      )	\
 														)
 //get color from its components in range 0..1 
 #define		COLOR_RGBW(r,g,b,w)							COLOR_RGBW255(r*255,g*255,b*255,w*255)
 
-#define		COLOR_GET_R255(clr)							((unsigned char)(((int32_t)(clr)>>24)&0xFF))	//	get color red component in range 0..255
-#define		COLOR_GET_G255(clr)							((unsigned char)(((int32_t)(clr)>>16)&0xFF))	//	get color green component in range 0..255
-#define		COLOR_GET_B255(clr)							((unsigned char)(((int32_t)(clr)>>8 )&0xFF))	//	get color blue component in range 0..255
-#define		COLOR_GET_W255(clr)							((unsigned char)(((int32_t)(clr)	)&0xFF))	//	get color transparency in range 0..255
+#define		COLOR_GET_R255(clr)							((unsigned char) (((uint32_t) (clr) >> 24) &0xFF))	//	get color red component in range 0..255
+#define		COLOR_GET_G255(clr)							((unsigned char) (((uint32_t) (clr) >> 16) &0xFF))	//	get color green component in range 0..255
+#define		COLOR_GET_B255(clr)							((unsigned char) (((uint32_t) (clr) >> 8 ) &0xFF))	//	get color blue component in range 0..255
+#define		COLOR_GET_W255(clr)							((unsigned char) (((uint32_t) (clr)  	 ) &0xFF))	//	get color transparency in range 0..255
 
-#define		COLOR_GET_R(clr)							(COLOR_GET_R255(clr)/255.0)						//	get color red component in range 0..1
-#define		COLOR_GET_G(clr)							(COLOR_GET_G255(clr)/255.0)						//	get color green component in range 0..1
-#define		COLOR_GET_B(clr)							(COLOR_GET_B255(clr)/255.0)						//	get color blue component in range 0..1
-#define		COLOR_GET_W(clr)							(COLOR_GET_W255(clr)/255.0)						//	get color trancparency in range 0..1
+#define		COLOR_GET_R(clr)							(COLOR_GET_R255(clr)/255.0)							//	get color red component in range 0..1
+#define		COLOR_GET_G(clr)							(COLOR_GET_G255(clr)/255.0)							//	get color green component in range 0..1
+#define		COLOR_GET_B(clr)							(COLOR_GET_B255(clr)/255.0)							//	get color blue component in range 0..1
+#define		COLOR_GET_W(clr)							(COLOR_GET_W255(clr)/255.0)							//	get color trancparency in range 0..1
 
 
-#define		COLOR_ARR_RGBW255(r)						COLOR_RGBW255(r[0],r[1],r[2],r[3])				//	get color from array of 4 components in range 0..255
-#define		COLOR_ARR_RGBW(r)							COLOR_RGBW(r[0],r[1],r[2],r[3])					//	get color from array of 4 components in range 0..1
+#define		COLOR_ARR_RGBW255(r)						COLOR_RGBW255(r[0],r[1],r[2],r[3])					//	get color from array of 4 components in range 0..255
+#define		COLOR_ARR_RGBW(r)							COLOR_RGBW(r[0],r[1],r[2],r[3])						//	get color from array of 4 components in range 0..1
 
 //get color comonents in range 0..255 to arry of 4 elements
 #define		COLOR_GET_COMPONENTS255(r,clr)				{r[0]=COLOR_GET_R255(clr); r[1]=COLOR_GET_G255(clr); r[2]=COLOR_GET_B255(clr); r[3]=COLOR_GET_W255(clr);}
@@ -128,6 +125,10 @@
 //
 //  Meta information API Calls
 //
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetRevision                                 (http://rdf.bg/gkdoc/CP64/GetRevision.html)
@@ -142,6 +143,25 @@ int64_t		DECL STDC	GetRevision(
 									char				** timeStamp
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	GetRevision(
+								)
+{
+	char	** timeStamp = nullptr;
+	return	GetRevision(
+					timeStamp
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetRevisionW                                (http://rdf.bg/gkdoc/CP64/GetRevisionW.html)
 //				wchar_t				** timeStamp						IN / OUT
@@ -154,6 +174,25 @@ int64_t		DECL STDC	GetRevision(
 int64_t		DECL STDC	GetRevisionW(
 									wchar_t				** timeStamp
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	GetRevisionW(
+								)
+{
+	wchar_t	** timeStamp = nullptr;
+	return	GetRevisionW(
+					timeStamp
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetProtection                               (http://rdf.bg/gkdoc/CP64/GetProtection.html)
@@ -250,6 +289,26 @@ void		DECL STDC	GetAssertionFile(
 									char				** fileName
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetAssertionFile(
+								)
+{
+	char	* fileName = nullptr;
+	GetAssertionFile(
+			&fileName
+		);
+	return	fileName;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetAssertionFileW                           (http://rdf.bg/gkdoc/CP64/GetAssertionFileW.html)
 //				wchar_t				** fileName							IN / OUT
@@ -262,6 +321,26 @@ void		DECL STDC	GetAssertionFile(
 void		DECL STDC	GetAssertionFileW(
 									wchar_t				** fileName
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetAssertionFileW(
+								)
+{
+	wchar_t	* fileName = nullptr;
+	GetAssertionFileW(
+			&fileName
+		);
+	return	fileName;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetCharacterSerialization                   (http://rdf.bg/gkdoc/CP64/SetCharacterSerialization.html)
@@ -1419,6 +1498,28 @@ void		DECL STDC	GetNameOfClass(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfClass(
+									int64_t				owlClass
+								)
+{
+	char	* name = nullptr;
+	GetNameOfClass(
+			owlClass,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfClassW                             (http://rdf.bg/gkdoc/CP64/GetNameOfClassW.html)
 //				int64_t				owlClass							IN
@@ -1432,6 +1533,28 @@ void		DECL STDC	GetNameOfClassW(
 									int64_t				owlClass,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfClassW(
+									int64_t				owlClass
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfClassW(
+			owlClass,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetNameOfClassEx                            (http://rdf.bg/gkdoc/CP64/GetNameOfClassEx.html)
@@ -1452,6 +1575,30 @@ void		DECL STDC	GetNameOfClassEx(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfClassEx(
+									int64_t				model,
+									int64_t				owlClass
+								)
+{
+	char	* name = nullptr;
+	GetNameOfClassEx(
+			model,
+			owlClass,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfClassWEx                           (http://rdf.bg/gkdoc/CP64/GetNameOfClassWEx.html)
 //				int64_t				model								IN
@@ -1470,6 +1617,30 @@ void		DECL STDC	GetNameOfClassWEx(
 									int64_t				owlClass,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfClassWEx(
+									int64_t				model,
+									int64_t				owlClass
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfClassWEx(
+			model,
+			owlClass,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetClassPropertyCardinalityRestriction      (http://rdf.bg/gkdoc/CP64/SetClassPropertyCardinalityRestriction.html)
@@ -1884,6 +2055,28 @@ void		DECL STDC	GetNameOfProperty(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfProperty(
+									int64_t				rdfProperty
+								)
+{
+	char	* name = nullptr;
+	GetNameOfProperty(
+			rdfProperty,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfPropertyW                          (http://rdf.bg/gkdoc/CP64/GetNameOfPropertyW.html)
 //				int64_t				rdfProperty							IN
@@ -1897,6 +2090,28 @@ void		DECL STDC	GetNameOfPropertyW(
 									int64_t				rdfProperty,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfPropertyW(
+									int64_t				rdfProperty
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfPropertyW(
+			rdfProperty,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetNameOfPropertyEx                         (http://rdf.bg/gkdoc/CP64/GetNameOfPropertyEx.html)
@@ -1914,6 +2129,30 @@ void		DECL STDC	GetNameOfPropertyEx(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfPropertyEx(
+									int64_t				model,
+									int64_t				rdfProperty
+								)
+{
+	char	* name = nullptr;
+	GetNameOfPropertyEx(
+			model,
+			rdfProperty,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfPropertyWEx                        (http://rdf.bg/gkdoc/CP64/GetNameOfPropertyWEx.html)
 //				int64_t				model								IN
@@ -1929,6 +2168,30 @@ void		DECL STDC	GetNameOfPropertyWEx(
 									int64_t				rdfProperty,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfPropertyWEx(
+									int64_t				model,
+									int64_t				rdfProperty
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfPropertyWEx(
+			model,
+			rdfProperty,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetPropertyType                             (http://rdf.bg/gkdoc/CP64/SetPropertyType.html)
@@ -2125,6 +2388,27 @@ int64_t		DECL STDC	CreateInstance(
 									const char			* name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	CreateInstance(
+									int64_t				owlClass
+								)
+{
+	const char	* name = nullptr;
+	return	CreateInstance(
+					owlClass,
+					name
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		CreateInstanceW                             (http://rdf.bg/gkdoc/CP64/CreateInstanceW.html)
 //				int64_t				owlClass							IN
@@ -2139,6 +2423,27 @@ int64_t		DECL STDC	CreateInstanceW(
 									int64_t				owlClass,
 									const wchar_t		* name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	CreateInstanceW(
+									int64_t				owlClass
+								)
+{
+	const wchar_t	* name = nullptr;
+	return	CreateInstanceW(
+					owlClass,
+					name
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		CreateInstanceEx                            (http://rdf.bg/gkdoc/CP64/CreateInstanceEx.html)
@@ -2157,6 +2462,29 @@ int64_t		DECL STDC	CreateInstanceEx(
 									const char			* name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	CreateInstanceEx(
+									int64_t				model,
+									int64_t				owlClass
+								)
+{
+	const char	* name = nullptr;
+	return	CreateInstanceEx(
+					model,
+					owlClass,
+					name
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		CreateInstanceWEx                           (http://rdf.bg/gkdoc/CP64/CreateInstanceWEx.html)
 //				int64_t				model								IN
@@ -2173,6 +2501,29 @@ int64_t		DECL STDC	CreateInstanceWEx(
 									int64_t				owlClass,
 									const wchar_t		* name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	CreateInstanceWEx(
+									int64_t				model,
+									int64_t				owlClass
+								)
+{
+	const wchar_t	* name = nullptr;
+	return	CreateInstanceWEx(
+					model,
+					owlClass,
+					name
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetInstancesByIterator                      (http://rdf.bg/gkdoc/CP64/GetInstancesByIterator.html)
@@ -2359,6 +2710,28 @@ void		DECL STDC	GetNameOfInstance(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfInstance(
+									int64_t				owlInstance
+								)
+{
+	char	* name = nullptr;
+	GetNameOfInstance(
+			owlInstance,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfInstanceW                          (http://rdf.bg/gkdoc/CP64/GetNameOfInstanceW.html)
 //				int64_t				owlInstance							IN
@@ -2372,6 +2745,28 @@ void		DECL STDC	GetNameOfInstanceW(
 									int64_t				owlInstance,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfInstanceW(
+									int64_t				owlInstance
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfInstanceW(
+			owlInstance,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetNameOfInstanceEx                         (http://rdf.bg/gkdoc/CP64/GetNameOfInstanceEx.html)
@@ -2389,6 +2784,30 @@ void		DECL STDC	GetNameOfInstanceEx(
 									char				** name
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	char	* GetNameOfInstanceEx(
+									int64_t				model,
+									int64_t				owlInstance
+								)
+{
+	char	* name = nullptr;
+	GetNameOfInstanceEx(
+			model,
+			owlInstance,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetNameOfInstanceWEx                        (http://rdf.bg/gkdoc/CP64/GetNameOfInstanceWEx.html)
 //				int64_t				model								IN
@@ -2404,6 +2823,30 @@ void		DECL STDC	GetNameOfInstanceWEx(
 									int64_t				owlInstance,
 									wchar_t				** name
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	wchar_t	* GetNameOfInstanceWEx(
+									int64_t				model,
+									int64_t				owlInstance
+								)
+{
+	wchar_t	* name = nullptr;
+	GetNameOfInstanceWEx(
+			model,
+			owlInstance,
+			&name
+		);
+	return	name;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetDatatypeProperty                         (http://rdf.bg/gkdoc/CP64/SetDatatypeProperty.html)
@@ -2431,6 +2874,122 @@ int64_t		DECL STDC	SetDatatypeProperty(
 									const void			* values,
 									int64_t				card
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									bool				value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_BOOLEAN);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									const char			* value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_CHAR);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									const wchar_t		* value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_CHAR);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									int64_t				value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_INTEGER);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									double				value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_DOUBLE);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+//
+//
+static	inline	int64_t	SetDatatypeProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									unsigned char		value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == DATATYPEPROPERTY_TYPE_BYTE);
+	const int64_t	card = 1;
+	return	SetDatatypeProperty(
+					owlInstance,
+					rdfProperty,
+					(const void*) &value,
+					card
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetDatatypePropertyEx                       (http://rdf.bg/gkdoc/CP64/SetDatatypePropertyEx.html)
@@ -2542,6 +3101,32 @@ int64_t		DECL STDC	SetObjectProperty(
 									const int64_t		* values,
 									int64_t				card
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	SetObjectProperty(
+									int64_t				owlInstance,
+									int64_t				rdfProperty,
+									int64_t				value
+								)
+{
+	assert(GetPropertyType(rdfProperty) == OBJECTPROPERTY_TYPE);
+	const int64_t	card = 1;
+	return	SetObjectProperty(
+					owlInstance,
+					rdfProperty,
+					&value,
+					card
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetObjectPropertyEx                         (http://rdf.bg/gkdoc/CP64/SetObjectPropertyEx.html)
@@ -2747,9 +3332,55 @@ bool		DECL STDC	IsInstance(
 									int64_t				owlInstance
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	bool	IsKindOfClass(
+									int64_t				myOwlClass,
+									int64_t				owlClass
+								)
+{
+	if (myOwlClass == owlClass)
+		return	true;
+	int64_t	parentOwlClass = GetClassParentsByIterator(myOwlClass, 0);
+	while (parentOwlClass) {
+		if (IsKindOfClass(parentOwlClass, owlClass))
+			return	true;
+		parentOwlClass = GetClassParentsByIterator(myOwlClass, parentOwlClass);
+	}
+	return	false;
+}
+
+//
+//
+static	inline	bool	IsInstanceOfClass(
+									int64_t				owlInstance,
+									const char			* name
+								)
+{
+	return	IsKindOfClass(GetInstanceClass(owlInstance), GetClassByName(GetModel(owlInstance), name));
+}
+
+//
+//
+static	inline	bool	IsInstanceOfClassExact(
+									int64_t				owlInstance,
+									const char			* name
+								)
+{
+	return	GetInstanceClass(owlInstance) == GetClassByName(GetModel(owlInstance), name);
+}
+
 //
 //  Retrieve Geometry API Calls
 //
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		CalculateInstance                           (http://rdf.bg/gkdoc/CP64/CalculateInstance.html)
@@ -2773,6 +3404,30 @@ int64_t		DECL STDC	CalculateInstance(
 									int64_t				* indexBufferSize,
 									int64_t				* transformationBufferSize
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	CalculateInstance(
+									int64_t				owlInstance,
+									int64_t				* vertexBufferSize,
+									int64_t				* indexBufferSize
+								)
+{
+	return	CalculateInstance(
+					owlInstance,
+					vertexBufferSize,
+					indexBufferSize,
+					nullptr			//		transformationBufferSize
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		UpdateInstance                              (http://rdf.bg/gkdoc/CP64/UpdateInstance.html)
@@ -2956,28 +3611,6 @@ int64_t		DECL STDC	GetConceptualFaceCnt(
 //				int64_t				owlInstance							IN
 //				int64_t				index								IN
 //				int64_t				* startIndexTriangles				IN / OUT
-//				int64_t				* noTriangles						IN / OUT
-//
-//				int64_t				returns								OUT
-//
-//	This function returns a handle to the conceptual face. Be aware that different
-//	instances can return the same handles (however with possible different startIndices and noTriangles).
-//	Argument index should be at least zero and smaller then return value of GetConceptualFaceCnt().
-//	Argument startIndex shows the first index used.
-//	Argument noTriangles returns the number of triangles, each triangle is existing of 3 unique indices.
-//
-int64_t		DECL STDC	GetConceptualFace(
-									int64_t				owlInstance,
-									int64_t				index,
-									int64_t				* startIndexTriangles,
-									int64_t				* noTriangles
-								);
-
-//
-//		GetConceptualFaceEx                         (http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx.html)
-//				int64_t				owlInstance							IN
-//				int64_t				index								IN
-//				int64_t				* startIndexTriangles				IN / OUT
 //				int64_t				* noIndicesTriangles				IN / OUT
 //				int64_t				* startIndexLines					IN / OUT
 //				int64_t				* noIndicesLines					IN / OUT
@@ -2991,10 +3624,10 @@ int64_t		DECL STDC	GetConceptualFace(
 //				int64_t				returns								OUT
 //
 //	This function returns a handle to the conceptual face. Be aware that different
-//	instances can return the same handles (however with possible different startIndices and noTriangles).
+//	instances can return the same handles (however with possible different startIndices and noIndicesTriangles).
 //	Argument index should be at least zero and smaller then return value of GetConceptualFaceCnt().
 //
-int64_t		DECL STDC	GetConceptualFaceEx(
+int64_t		DECL STDC	GetConceptualFace(
 									int64_t				owlInstance,
 									int64_t				index,
 									int64_t				* startIndexTriangles,
@@ -3008,6 +3641,62 @@ int64_t		DECL STDC	GetConceptualFaceEx(
 									int64_t				* startIndexConceptualFacePolygons,
 									int64_t				* noIndicesConceptualFacePolygons
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	GetConceptualFace(
+									int64_t				owlInstance,
+									int64_t				index,
+									int64_t				* startIndexTriangles,
+									int64_t				* noIndicesTriangles,
+									int64_t				* startIndexLines,
+									int64_t				* noIndicesLines,
+									int64_t				* startIndexPoints,
+									int64_t				* noIndicesPoints
+								)
+{
+	return	GetConceptualFace(
+					owlInstance,
+					index,
+					startIndexTriangles,
+					noIndicesTriangles,
+					startIndexLines,
+					noIndicesLines,
+					startIndexPoints,
+					noIndicesPoints,
+					nullptr,		//	startIndexFacePolygons
+					nullptr,		//	noIndicesFacePolygons
+					nullptr,		//	startIndexConceptualFacePolygons
+					nullptr			//	noIndicesConceptualFacePolygons
+				);
+}
+
+//
+//
+static	inline	int64_t	GetConceptualFace(
+									int64_t				owlInstance,
+									int64_t				index
+								)
+{
+	return	GetConceptualFace(
+					owlInstance,
+					index,
+					nullptr,		//	startIndexTriangles
+					nullptr,		//	noIndicesTriangles
+					nullptr,		//	startIndexLines
+					nullptr,		//	noIndicesLines
+					nullptr,		//	startIndexPoints
+					nullptr			//	noIndicesPoints
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetConceptualFaceMaterial                   (http://rdf.bg/gkdoc/CP64/GetConceptualFaceMaterial.html)
@@ -3471,10 +4160,10 @@ void		DECL STDC	GetVertexBufferOffset(
 //
 //		SetDefaultColor                             (http://rdf.bg/gkdoc/CP64/SetDefaultColor.html)
 //				int64_t				model								IN
-//				int32_t				ambient								IN
-//				int32_t				diffuse								IN
-//				int32_t				emissive							IN
-//				int32_t				specular							IN
+//				uint32_t			ambient								IN
+//				uint32_t			diffuse								IN
+//				uint32_t			emissive							IN
+//				uint32_t			specular							IN
 //
 //				void				returns
 //
@@ -3482,19 +4171,19 @@ void		DECL STDC	GetVertexBufferOffset(
 //
 void		DECL STDC	SetDefaultColor(
 									int64_t				model,
-									int32_t				ambient,
-									int32_t				diffuse,
-									int32_t				emissive,
-									int32_t				specular
+									uint32_t			ambient,
+									uint32_t			diffuse,
+									uint32_t			emissive,
+									uint32_t			specular
 								);
 
 //
 //		GetDefaultColor                             (http://rdf.bg/gkdoc/CP64/GetDefaultColor.html)
 //				int64_t				model								IN
-//				int32_t				* ambient							IN / OUT
-//				int32_t				* diffuse							IN / OUT
-//				int32_t				* emissive							IN / OUT
-//				int32_t				* specular							IN / OUT
+//				uint32_t			* ambient							IN / OUT
+//				uint32_t			* diffuse							IN / OUT
+//				uint32_t			* emissive							IN / OUT
+//				uint32_t			* specular							IN / OUT
 //
 //				void				returns
 //
@@ -3502,10 +4191,10 @@ void		DECL STDC	SetDefaultColor(
 //
 void		DECL STDC	GetDefaultColor(
 									int64_t				model,
-									int32_t				* ambient,
-									int32_t				* diffuse,
-									int32_t				* emissive,
-									int32_t				* specular
+									uint32_t			* ambient,
+									uint32_t			* diffuse,
+									uint32_t			* emissive,
+									uint32_t			* specular
 								);
 
 //
@@ -3670,6 +4359,29 @@ double		DECL STDC	GetArea(
 									const void			* indexBuffer
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	double	GetArea(
+									int64_t				owlInstance
+								)
+{
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
+	return	GetArea(
+					owlInstance,
+					vertexBuffer,
+					indexBuffer
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetVolume                                   (http://rdf.bg/gkdoc/CP64/GetVolume.html)
 //				int64_t				owlInstance							IN
@@ -3702,6 +4414,29 @@ double		DECL STDC	GetVolume(
 									const void			* vertexBuffer,
 									const void			* indexBuffer
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	double	GetVolume(
+									int64_t				owlInstance
+								)
+{
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
+	return	GetVolume(
+					owlInstance,
+					vertexBuffer,
+					indexBuffer
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetCenter                                   (http://rdf.bg/gkdoc/CP64/GetCenter.html)
@@ -3738,6 +4473,31 @@ double		DECL * STDC	GetCenter(
 									double				* center
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	double	* GetCenter(
+									int64_t				owlInstance,
+									double				* center
+								)
+{
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
+	return	GetCenter(
+					owlInstance,
+					vertexBuffer,
+					indexBuffer,
+					center
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 //
 //		GetCentroid                                 (http://rdf.bg/gkdoc/CP64/GetCentroid.html)
 //				int64_t				owlInstance							IN
@@ -3754,6 +4514,31 @@ double		DECL STDC	GetCentroid(
 									const void			* indexBuffer,
 									double				* centroid
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	double	GetCentroid(
+									int64_t				owlInstance,
+									double				* centroid
+								)
+{
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
+	return	GetCentroid(
+					owlInstance,
+					vertexBuffer,
+					indexBuffer,
+					centroid
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetConceptualFacePerimeter                  (http://rdf.bg/gkdoc/CP64/GetConceptualFacePerimeter.html)
@@ -3783,6 +4568,29 @@ double		DECL STDC	GetConceptualFaceArea(
 									const void			* vertexBuffer,
 									const void			* indexBuffer
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	double	GetConceptualFaceArea(
+									int64_t				conceptualFace
+								)
+{
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
+	return	GetConceptualFaceArea(
+					conceptualFace,
+					vertexBuffer,
+					indexBuffer
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		SetBoundingBoxReference                     (http://rdf.bg/gkdoc/CP64/SetBoundingBoxReference.html)
@@ -3867,16 +4675,415 @@ double		DECL STDC	GetDistance(
 									double				* pointSecondInstance
 								);
 
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int32_t	GetColorOfComponent(
+									int64_t				owlInstanceColorComponent
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceColorComponent, "ColorComponent"));
+
+	int64_t	model = GetModel(owlInstanceColorComponent);
+
+	const char	* rgbwNames[4] = { "R", "G", "B", "W" };
+	double		rgbwValues[4] = { 0., 0., 0., 0. };
+
+	for (size_t i = 0; i < 4; i++) {
+		double	* values = nullptr;
+		int64_t	card = 0;
+		GetDatatypeProperty(
+				owlInstanceColorComponent,
+				GetPropertyByName(
+						model,
+						rgbwNames[i]
+					),
+				(void**) &values,
+				&card
+			);
+		assert(card == 1);
+		rgbwValues[i] = (card == 1) ? values[0] : 0.;
+	}
+
+	return	COLOR_ARR_RGBW(rgbwValues);
+}
+
+//
+//
+static	inline	void	SetColorOfComponent(
+									int64_t				owlInstanceColorComponent,
+									int32_t				color
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceColorComponent, "ColorComponent"));
+
+	int64_t	model = GetModel(owlInstanceColorComponent);
+
+	const char	* rgbwNames[4] = { "R", "G", "B", "W" };
+	double		rgbwValues[4];
+
+	COLOR_GET_COMPONENTS(rgbwValues, color);
+
+	for (size_t i = 0; i < 4; i++) {
+		SetDatatypeProperty(
+				owlInstanceColorComponent,
+				GetPropertyByName(
+						model,
+						rgbwNames[i]
+					),
+				&rgbwValues[i],
+				1
+			);
+	}
+}
+
+//
+//
+static	inline	void	GetColor(
+									int64_t				owlInstanceColor,
+									uint32_t			* ambient,
+									uint32_t			* diffuse,
+									uint32_t			* emissive,
+									uint32_t			* specular
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceColor, "Color"));
+
+	int64_t	model = GetModel(owlInstanceColor);
+
+	GetDefaultColor(
+			model,
+			ambient,
+			diffuse,
+			emissive,
+			specular
+		);
+
+	const char	* componentNames[4] = { "ambient", "diffuse", "emissive", "specular" };
+	uint32_t	* componentColors[4] = { ambient, diffuse, emissive, specular };
+
+	for (size_t i = 0; i < 4; i++) {
+		if (componentColors[i]) {
+			int64_t	* values = nullptr, card = 0;
+			GetObjectProperty(
+					owlInstanceColor,
+					GetPropertyByName(
+							model,
+							componentNames[i]
+						),
+					&values,
+					&card
+				);
+
+			int64_t owlInstanceColorComponent = (card == 1) ? values[0] : 0;
+			if (owlInstanceColorComponent) {
+				(*componentColors[i]) = GetColorOfComponent(owlInstanceColorComponent);
+			}
+		}
+	}
+}
+
+//
+//
+static	inline	void	SetColor(
+									int64_t				owlInstanceColor,
+									uint32_t			ambient,
+									uint32_t			diffuse,
+									uint32_t			emissive,
+									uint32_t			specular
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceColor, "Color"));
+
+	{
+		int64_t	* values = nullptr, card = 0;
+		GetObjectProperty(
+				owlInstanceColor,
+				GetPropertyByName(
+						GetModel(owlInstanceColor),
+						(char*) "ambient"
+					),
+				&values,
+				&card
+			);
+
+		SetColorOfComponent(
+				(card == 1) ?
+					values[0] :
+					CreateInstance(
+							GetClassByName(
+									GetModel(owlInstanceColor),
+									"ambient"
+								)
+						),
+				ambient
+			);
+	}
+
+	{
+		int64_t * values = nullptr, card = 0;
+		GetObjectProperty(
+				owlInstanceColor,
+				GetPropertyByName(
+						GetModel(owlInstanceColor),
+						(char*) "diffuse"
+					),
+				&values,
+				&card
+			);
+
+		SetColorOfComponent(
+				(card == 1) ?
+					values[0] :
+					CreateInstance(
+							GetClassByName(
+									GetModel(owlInstanceColor),
+									"diffuse"
+								)
+						),
+				diffuse
+			);
+	}
+
+	{
+		int64_t * values = nullptr, card = 0;
+		GetObjectProperty(
+				owlInstanceColor,
+				GetPropertyByName(
+						GetModel(owlInstanceColor),
+						(char*) "emissive"
+					),
+				&values,
+				&card
+			);
+
+		SetColorOfComponent(
+				(card == 1) ?
+					values[0] :
+					CreateInstance(
+							GetClassByName(
+									GetModel(owlInstanceColor),
+									"emissive"
+								)
+						),
+				emissive
+			);
+	}
+
+	{
+		int64_t * values = nullptr, card = 0;
+		GetObjectProperty(
+				owlInstanceColor,
+				GetPropertyByName(
+						GetModel(owlInstanceColor),
+						(char*) "specular"
+					),
+				&values,
+				&card
+			);
+
+		SetColorOfComponent(
+				(card == 1) ?
+					values[0] :
+					CreateInstance(
+							GetClassByName(
+									GetModel(owlInstanceColor),
+									"specular"
+								)
+						),
+				specular
+			);
+	}
+}
+
+
+//
+//
+static	inline	void	GetMaterialColor(
+									int64_t				owlInstanceMaterial,
+									uint32_t			* ambient,
+									uint32_t			* diffuse,
+									uint32_t			* emissive,
+									uint32_t			* specular
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
+
+	int64_t	* values = nullptr, card = 0;
+	GetObjectProperty(
+			owlInstanceMaterial,
+			GetPropertyByName(
+					GetModel(owlInstanceMaterial),
+					(char*) "color"
+				),
+			&values,
+			&card
+		);
+
+	int64_t	owlInstanceColor = (card == 1) ? values[0] : 0;
+	if (owlInstanceColor) {
+		GetColor(
+				owlInstanceColor,
+				ambient,
+				diffuse,
+				emissive,
+				specular
+			);
+	}
+	else {
+		GetDefaultColor(
+				GetModel(owlInstanceMaterial),
+				ambient,
+				diffuse,
+				emissive,
+				specular
+			);
+	}
+}
+
+
+//
+//
+static	inline	void	SetMaterialColor(
+									int64_t				owlInstanceMaterial,
+									uint32_t			ambient,
+									uint32_t			diffuse,
+									uint32_t			emissive,
+									uint32_t			specular
+								)
+{
+	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
+
+	int64_t	* values = nullptr, card = 0;
+	GetObjectProperty(
+			owlInstanceMaterial,
+			GetPropertyByName(
+					GetModel(owlInstanceMaterial),
+					(char*) "color"
+				),
+			&values,
+			&card
+		);
+
+	SetColor(
+			(card == 1) ?
+				values[0] :
+				CreateInstance(
+						GetClassByName(
+								GetModel(owlInstanceMaterial),
+								"color"
+							)
+					),
+			ambient,
+			diffuse,
+			emissive,
+			specular
+		);
+}
+
+//
+//
+static	inline	uint32_t	GetMaterialColorAmbient(
+									int64_t				owlInstanceMaterial
+								)
+{
+	uint32_t	ambient = 0;
+	GetMaterialColor(
+			owlInstanceMaterial,
+			&ambient,
+			nullptr,		//	diffuse
+			nullptr,		//	emissive
+			nullptr			//	specular
+		);
+	return	ambient;
+}
+
+//
+//
+static	inline	uint32_t	GetMaterialColorDiffuse(
+									int64_t				owlInstanceMaterial
+								)
+{
+	uint32_t	diffuse = 0;
+	GetMaterialColor(
+			owlInstanceMaterial,
+			nullptr,		//	ambient
+			&diffuse,
+			nullptr,		//	emissive
+			nullptr			//	specular
+		);
+	return	diffuse;
+}
+
+//
+//
+static	inline	uint32_t	GetMaterialColorEmissive(
+									int64_t				owlInstanceMaterial
+								)
+{
+	uint32_t	emissive = 0;
+	GetMaterialColor(
+			owlInstanceMaterial,
+			nullptr,		//	ambient
+			nullptr,		//	diffuse
+			&emissive,
+			nullptr			//	specular
+		);
+	return	emissive;
+}
+
+//
+//
+static	inline	uint32_t	GetMaterialColorSpecular(
+									int64_t				owlInstanceMaterial
+								)
+{
+	uint32_t	specular = 0;
+	GetMaterialColor(
+			owlInstanceMaterial,
+			nullptr,		//	ambient
+			nullptr,		//	diffuse
+			nullptr,		//	emissive
+			&specular
+		);
+	return	specular;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		GetPropertyRestrictionsConsolidated         (http://rdf.bg/gkdoc/CP64/GetPropertyRestrictionsConsolidated.html)
+//				int64_t				owlClass							IN
+//				int64_t				rdfProperty							IN
+//				int64_t				* minCard							IN / OUT
+//				int64_t				* maxCard							IN / OUT
+//
+//				void				returns
+//
+//	...
+//
+void		DECL STDC	GetPropertyRestrictionsConsolidated(
+									int64_t				owlClass,
+									int64_t				rdfProperty,
+									int64_t				* minCard,
+									int64_t				* maxCard
+								);
+
 //
 //		GetVertexColor                              (http://rdf.bg/gkdoc/CP64/GetVertexColor.html)
 //				int64_t				model								IN
 //				const void			* vertexBuffer						IN
 //				int64_t				vertexIndex							IN
 //				int64_t				setting								IN
-//				int32_t				* ambient							IN / OUT
-//				int32_t				* diffuse							IN / OUT
-//				int32_t				* emissive							IN / OUT
-//				int32_t				* specular							IN / OUT
+//				uint32_t			* ambient							IN / OUT
+//				uint32_t			* diffuse							IN / OUT
+//				uint32_t			* emissive							IN / OUT
+//				uint32_t			* specular							IN / OUT
 //
 //				void				returns
 //
@@ -3889,15 +5096,205 @@ void		DECL STDC	GetVertexColor(
 									const void			* vertexBuffer,
 									int64_t				vertexIndex,
 									int64_t				setting,
-									int32_t				* ambient,
-									int32_t				* diffuse,
-									int32_t				* emissive,
-									int32_t				* specular
+									uint32_t			* ambient,
+									uint32_t			* diffuse,
+									uint32_t			* emissive,
+									uint32_t			* specular
 								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	uint32_t	GetVertexColorAmbient(
+									int64_t				model,
+									const void			* vertexBuffer,
+									int64_t				vertexIndex,
+									int64_t				setting
+								)
+{
+	uint32_t	ambient = 0;
+	GetVertexColor(
+			model,
+			vertexBuffer,
+			vertexIndex,
+			setting,
+			&ambient,
+			nullptr,		//	diffuse
+			nullptr,		//	emissive
+			nullptr			//	specular
+		);
+	return	ambient;
+}
+
+//
+//
+static	inline	uint32_t	GetVertexColorDiffuse(
+									int64_t				model,
+									const void			* vertexBuffer,
+									int64_t				vertexIndex,
+									int64_t				setting
+								)
+{
+	uint32_t	diffuse = 0;
+	GetVertexColor(
+			model,
+			vertexBuffer,
+			vertexIndex,
+			setting,
+			nullptr,		//	ambient
+			&diffuse,
+			nullptr,		//	emissive
+			nullptr			//	specular
+		);
+	return	diffuse;
+}
+
+//
+//
+static	inline	uint32_t	GetVertexColorEmissive(
+									int64_t				model,
+									const void			* vertexBuffer,
+									int64_t				vertexIndex,
+									int64_t				setting
+								)
+{
+	uint32_t	emissive = 0;
+	GetVertexColor(
+			model,
+			vertexBuffer,
+			vertexIndex,
+			setting,
+			nullptr,		//	ambient
+			nullptr,		//	diffuse
+			&emissive,
+			nullptr			//	specular
+		);
+	return	emissive;
+}
+
+//
+//
+static	inline	uint32_t	GetVertexColorSpecular(
+									int64_t				model,
+									const void			* vertexBuffer,
+									int64_t				vertexIndex,
+									int64_t				setting
+								)
+{
+	uint32_t	specular = 0;
+	GetVertexColor(
+			model,
+			vertexBuffer,
+			vertexIndex,
+			setting,
+			nullptr,		//	ambient
+			nullptr,		//	diffuse
+			nullptr,		//	emissive
+			&specular
+		);
+	return	specular;
+}
 
 //
 //  Deprecated API Calls
 //
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceEx                         (http://rdf.bg/gkdoc/CP64/GetConceptualFaceEx___.html)
+//				int64_t				owlInstance							IN
+//				int64_t				index								IN
+//				int64_t				* startIndexTriangles				IN / OUT
+//				int64_t				* noIndicesTriangles				IN / OUT
+//				int64_t				* startIndexLines					IN / OUT
+//				int64_t				* noIndicesLines					IN / OUT
+//				int64_t				* startIndexPoints					IN / OUT
+//				int64_t				* noIndicesPoints					IN / OUT
+//				int64_t				* startIndexFacePolygons			IN / OUT
+//				int64_t				* noIndicesFacePolygons				IN / OUT
+//				int64_t				* startIndexConceptualFacePolygons	IN / OUT
+//				int64_t				* noIndicesConceptualFacePolygons	IN / OUT
+//
+//				int64_t				returns								OUT
+//
+//	Please rename GetConceptualFaceEx into GetConceptualFace.
+//
+int64_t		DECL STDC	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index,
+									int64_t				* startIndexTriangles,
+									int64_t				* noIndicesTriangles,
+									int64_t				* startIndexLines,
+									int64_t				* noIndicesLines,
+									int64_t				* startIndexPoints,
+									int64_t				* noIndicesPoints,
+									int64_t				* startIndexFacePolygons,
+									int64_t				* noIndicesFacePolygons,
+									int64_t				* startIndexConceptualFacePolygons,
+									int64_t				* noIndicesConceptualFacePolygons
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index,
+									int64_t				* startIndexTriangles,
+									int64_t				* noIndicesTriangles,
+									int64_t				* startIndexLines,
+									int64_t				* noIndicesLines,
+									int64_t				* startIndexPoints,
+									int64_t				* noIndicesPoints
+								)
+{
+	return	GetConceptualFaceEx(
+					owlInstance,
+					index,
+					startIndexTriangles,
+					noIndicesTriangles,
+					startIndexLines,
+					noIndicesLines,
+					startIndexPoints,
+					noIndicesPoints,
+					nullptr,		//	startIndexFacePolygons
+					nullptr,		//	noIndicesFacePolygons
+					nullptr,		//	startIndexConceptualFacePolygons
+					nullptr			//	noIndicesConceptualFacePolygons
+				);
+}
+
+//
+//
+static	inline	int64_t	GetConceptualFaceEx(
+									int64_t				owlInstance,
+									int64_t				index
+								)
+{
+	return	GetConceptualFaceEx(
+					owlInstance,
+					index,
+					nullptr,		//	startIndexTriangles
+					nullptr,		//	noIndicesTriangles
+					nullptr,		//	startIndexLines
+					nullptr,		//	noIndicesLines
+					nullptr,		//	startIndexPoints
+					nullptr			//	noIndicesPoints
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 //
 //		GetTriangles                                (http://rdf.bg/gkdoc/CP64/GetTriangles___.html)
@@ -3909,7 +5306,7 @@ void		DECL STDC	GetVertexColor(
 //
 //				void				returns
 //
-//	This call is deprecated as it became trivial and will be removed by end of 2020. The result from CalculateInstance exclusively exists of the relevant triangles when
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant triangles when
 //	SetFormat() is setting bit 8 and unsetting with bit 9, 10, 12 and 13 
 //
 void		DECL STDC	GetTriangles(
@@ -3930,7 +5327,7 @@ void		DECL STDC	GetTriangles(
 //
 //				void				returns
 //
-//	This call is deprecated as it became trivial and will be removed by end of 2020. The result from CalculateInstance exclusively exists of the relevant lines when
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant lines when
 //	SetFormat() is setting bit 9 and unsetting with bit 8, 10, 12 and 13 
 //
 void		DECL STDC	GetLines(
@@ -3951,7 +5348,7 @@ void		DECL STDC	GetLines(
 //
 //				void				returns
 //
-//	This call is deprecated as it became trivial and will be removed by end of 2020. The result from CalculateInstance exclusively exists of the relevant points when
+//	This call is deprecated as it became trivial and will be removed by end of 2022. The result from CalculateInstance exclusively exists of the relevant points when
 //	SetFormat() is setting bit 10 and unsetting with bit 8, 9, 12 and 13 
 //
 void		DECL STDC	GetPoints(
@@ -3971,28 +5368,9 @@ void		DECL STDC	GetPoints(
 //
 //				void				returns
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call GetClassPropertyCardinalityRestriction instead,
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetClassPropertyCardinalityRestriction instead,
 //
 void		DECL STDC	GetPropertyRestrictions(
-									int64_t				owlClass,
-									int64_t				rdfProperty,
-									int64_t				* minCard,
-									int64_t				* maxCard
-								);
-
-//
-//		GetPropertyRestrictionsConsolidated         (http://rdf.bg/gkdoc/CP64/GetPropertyRestrictionsConsolidated___.html)
-//				int64_t				owlClass							IN
-//				int64_t				rdfProperty							IN
-//				int64_t				* minCard							IN / OUT
-//				int64_t				* maxCard							IN / OUT
-//
-//				void				returns
-//
-//	This call is deprecated and will be removed by end of 2020. Please use the call GetClassPropertyCardinalityRestriction instead,
-//	just rename the function name.
-//
-void		DECL STDC	GetPropertyRestrictionsConsolidated(
 									int64_t				owlClass,
 									int64_t				rdfProperty,
 									int64_t				* minCard,
@@ -4005,7 +5383,7 @@ void		DECL STDC	GetPropertyRestrictionsConsolidated(
 //
 //				bool				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call GetGeometryClass instead, rename the function name
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetGeometryClass instead, rename the function name
 //	and interpret non-zero as true and zero as false.
 //
 bool		DECL STDC	IsGeometryType(
@@ -4021,7 +5399,7 @@ bool		DECL STDC	IsGeometryType(
 //
 //				int64_t				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call SetObjectProperty instead, just rename the function name.
+//	This call is deprecated and will be removed by end of 2022. Please use the call SetObjectProperty instead, just rename the function name.
 //
 int64_t		DECL STDC	SetObjectTypeProperty(
 									int64_t				owlInstance,
@@ -4039,7 +5417,7 @@ int64_t		DECL STDC	SetObjectTypeProperty(
 //
 //				int64_t				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call GetObjectProperty instead, just rename the function name.
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetObjectProperty instead, just rename the function name.
 //
 int64_t		DECL STDC	GetObjectTypeProperty(
 									int64_t				owlInstance,
@@ -4057,7 +5435,7 @@ int64_t		DECL STDC	GetObjectTypeProperty(
 //
 //				int64_t				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call SetDatatypeProperty instead, just rename the function name.
+//	This call is deprecated and will be removed by end of 2022. Please use the call SetDatatypeProperty instead, just rename the function name.
 //
 int64_t		DECL STDC	SetDataTypeProperty(
 									int64_t				owlInstance,
@@ -4075,7 +5453,7 @@ int64_t		DECL STDC	SetDataTypeProperty(
 //
 //				int64_t				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020. Please use the call GetDatatypeProperty instead, just rename the function name.
+//	This call is deprecated and will be removed by end of 2022. Please use the call GetDatatypeProperty instead, just rename the function name.
 //
 int64_t		DECL STDC	GetDataTypeProperty(
 									int64_t				owlInstance,
@@ -4090,7 +5468,7 @@ int64_t		DECL STDC	GetDataTypeProperty(
 //
 //				void				returns
 //
-//	This call is deprecated as the Copy concept is also deprecated and will be removed by end of 2020.
+//	This call is deprecated as the Copy concept is also deprecated and will be removed by end of 2022.
 //
 void		DECL STDC	InstanceCopyCreated(
 									int64_t				owlInstance
@@ -4104,7 +5482,7 @@ void		DECL STDC	InstanceCopyCreated(
 //
 //				int64_t				returns								OUT
 //
-//	This call is deprecated and will be removed by end of 2020.
+//	This call is deprecated and will be removed by end of 2022.
 //	Please use the call GetPropertyByName(Ex) / GetPropertyByNameW(Ex) + GetPropertyType(Ex) instead, just rename the function name.
 //
 int64_t		DECL STDC	GetPropertyByNameAndType(

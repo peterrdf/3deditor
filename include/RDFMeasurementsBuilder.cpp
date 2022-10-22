@@ -158,9 +158,10 @@ void CRDFMeasurementsBuilder::BuildMeasure(int64_t iInstance, int64_t iProperty,
 			int64_t	* setNoTriangles = new int64_t[cnt];
 
 			for (int64_t index = 0; index < cnt; index++) {
-				int64_t	startIndex = 0, noTriangles = 0;
-				GetConceptualFace(iInstance, index, &startIndex, &noTriangles);
+				int64_t	startIndex = 0, noTrianglesIndices = 0;
+				GetConceptualFace(iInstance, index, &startIndex, &noTrianglesIndices, nullptr, nullptr, nullptr, nullptr);
 
+				int64_t	noTriangles = noTrianglesIndices / 3;
 				setStartIndex[index] = startIndex;
 				setNoTriangles[index] = noTriangles;
 				if (noTriangles) {

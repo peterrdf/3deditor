@@ -1843,10 +1843,10 @@ void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, 
 		(*pMaxCard) = maxCard;
 	}
 
-	int64_t	iRDFClassParent = GetParentsByIterator(iRDFClass, 0);
+	int64_t	iRDFClassParent = GetClassParentsByIterator(iRDFClass, 0);
 	while (iRDFClassParent) {
 		GetClassPropertyCardinalityRestrictionNested(iRDFClassParent, iRDFProperty, pMinCard, pMaxCard);
-		iRDFClassParent = GetParentsByIterator(iRDFClass, iRDFClassParent);
+		iRDFClassParent = GetClassParentsByIterator(iRDFClass, iRDFClassParent);
 	}
 }
 

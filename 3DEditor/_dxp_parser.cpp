@@ -532,7 +532,7 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+		SetDatatypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
 		
 		if (m_pParent == nullptr)
 		{
@@ -596,7 +596,7 @@ namespace _dxf
 		assert(iArc3DInstance != 0);
 
 		double dRadius = atof(m_mapCode2Value[_group_codes::radius].c_str());
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
+		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "radius"), &dRadius, 1);
 
 		double dStartAngle = atof(m_mapCode2Value[start_angle].c_str());
 		double dEndAngle = atof(m_mapCode2Value[end_angle].c_str());
@@ -610,8 +610,8 @@ namespace _dxf
 		dEndAngle *= PI / 180.;
 		double dSize = dEndAngle - dStartAngle;
 
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
-		SetDataTypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
+		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
+		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
 				
 		int64_t iValue = 36;
 		SetDatatypeProperty(iArc3DInstance, GetPropertyByName(pParser->getModel(), "segmentationParts"), &iValue, 1);
@@ -624,13 +624,13 @@ namespace _dxf
 		assert(iMatrixInstance != 0);
 
 		double dValue = extrusion.getValue(_group_codes::x);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::y);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::z);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
@@ -742,10 +742,10 @@ namespace _dxf
 		dSize = -dSize;
 		dStartAngle = -dStartAngle;
 
-		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusI"), &dMajorAxis, 1);
-		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusII"), &dMinorAxis, 1);
-		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
-		SetDataTypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
+		SetDatatypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusI"), &dMajorAxis, 1);
+		SetDatatypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "radiusII"), &dMinorAxis, 1);
+		SetDatatypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "start"), &dStartAngle, 1);
+		SetDatatypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "size"), &dSize, 1);
 
 		int64_t iValue = 36;
 		SetDatatypeProperty(iEllipseInstance, GetPropertyByName(pParser->getModel(), "segmentationParts"), &iValue, 1);		
@@ -755,13 +755,13 @@ namespace _dxf
 		assert(iMatrixInstance != 0);
 
 		double dValue = atof(m_mapCode2Value[_group_codes::x].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::y].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = atof(m_mapCode2Value[_group_codes::z].c_str());
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
@@ -930,7 +930,7 @@ namespace _dxf
 		int64_t iInstance = CreateInstance(iClass, type().c_str());
 		assert(iInstance != 0);
 
-		SetDataTypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
+		SetDatatypeProperty(iInstance, GetPropertyByName(pParser->getModel(), "points"), vecPoints.data(), vecPoints.size());
 
 		if (m_pParent == nullptr)
 		{
@@ -1042,7 +1042,7 @@ namespace _dxf
 		assert(iCircleInstance != 0);		
 
 		double dValue = atof(m_mapCode2Value[_group_codes::radius].c_str());
-		SetDataTypeProperty(iCircleInstance, GetPropertyByName(pParser->getModel(), "a"), &dValue, 1);
+		SetDatatypeProperty(iCircleInstance, GetPropertyByName(pParser->getModel(), "a"), &dValue, 1);
 
 		// Extrusion
 		_extrusion extrusion(this);		
@@ -1052,13 +1052,13 @@ namespace _dxf
 		assert(iMatrixInstance != 0);
 
 		dValue = extrusion.getValue(_group_codes::x);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::y);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::z);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
@@ -1231,7 +1231,7 @@ namespace _dxf
 				int64_t iPolyLine3DInstance = CreateInstance(iPolyLine3DClass, type().c_str());
 				assert(iPolyLine3DInstance != 0);
 
-				SetDataTypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecPolyLine3DPoints.data(), vecPolyLine3DPoints.size());
+				SetDatatypeProperty(iPolyLine3DInstance, GetPropertyByName(pParser->getModel(), "points"), vecPolyLine3DPoints.data(), vecPolyLine3DPoints.size());
 
 				if (m_pParent == nullptr)
 				{
@@ -1281,8 +1281,8 @@ namespace _dxf
 				int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, type().c_str());
 				assert(iTriangleSetInstance != 0);
 
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecTriangleSetVertices.data(), vecTriangleSetVertices.size());
-				SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
+				SetDatatypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "vertices"), vecTriangleSetVertices.data(), vecTriangleSetVertices.size());
+				SetDatatypeProperty(iTriangleSetInstance, GetPropertyByName(pParser->getModel(), "indices"), vecIndices.data(), vecIndices.size());
 
 				if (m_pParent == nullptr)
 				{
@@ -1519,13 +1519,13 @@ namespace _dxf
 		assert(iMatrixInstance != 0);
 
 		double dValue = extrusion.getValue(_group_codes::x);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::y);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
 
 		dValue = extrusion.getValue(_group_codes::z);
-		SetDataTypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());

@@ -27,7 +27,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 	/*
 	* Parents
 	*/
-	int64_t iParentClassInstance = GetParentsByIterator(m_iInstance, 0);
+	int64_t iParentClassInstance = GetClassParentsByIterator(m_iInstance, 0);
 	while (iParentClassInstance != 0)
 	{
 		char * szParentClassName = NULL;
@@ -35,7 +35,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 
 //		LOG_DEBUG("*** PARENT CLASS " << szParentClassName);
 
-		iParentClassInstance = GetParentsByIterator(m_iInstance, iParentClassInstance);
+		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
 	}
 #endif // _LINUX
 }
@@ -246,10 +246,10 @@ void CRDFProperty::GetClassPropertyCardinalityRestrictionNested_(int64_t iRDFCla
 		(*pMaxCard) = maxCard;
 	}
 
-	int64_t	iRDFClassParent = GetParentsByIterator(iRDFClass, 0);
+	int64_t	iRDFClassParent = GetClassParentsByIterator(iRDFClass, 0);
 	while (iRDFClassParent) {
 		GetClassPropertyCardinalityRestrictionNested_(iRDFClassParent, iRDFProperty, pMinCard, pMaxCard);
-		iRDFClassParent = GetParentsByIterator(iRDFClass, iRDFClassParent);
+		iRDFClassParent = GetClassParentsByIterator(iRDFClass, iRDFClassParent);
 	}
 }
 

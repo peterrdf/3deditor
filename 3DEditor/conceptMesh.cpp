@@ -759,7 +759,7 @@ void _octree::buildMesh()
 			vecPoints.push_back((*itPoint)->getZ());
 		}
 
-		SetDataTypeProperty(iPoint3DSetInstance, GetPropertyByName(m_iModel, "coordinates"), vecPoints.data(), vecPoints.size());
+		SetDatatypeProperty(iPoint3DSetInstance, GetPropertyByName(m_iModel, "coordinates"), vecPoints.data(), vecPoints.size());
 
 		vector<int64_t> vecPoint3DSets { iPoint3DSetInstance };
 		SetObjectProperty(iCollectionInstance, GetPropertyByName(m_iModel, "objects"), vecPoint3DSets.data(), vecPoint3DSets.size());
@@ -805,8 +805,8 @@ void _octree::buildMesh()
 	}
 
 	int64_t iTriangleSetInstance = CreateInstance(iTriangleSetClass, "Triangles");
-	SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "vertices"), vecVertices.data(), vecVertices.size());
-	SetDataTypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "indices"), vecIndices.data(), vecIndices.size());
+	SetDatatypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "vertices"), vecVertices.data(), vecVertices.size());
+	SetDatatypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "indices"), vecIndices.data(), vecIndices.size());
 }
 
 // ------------------------------------------------------------------------------------------------
