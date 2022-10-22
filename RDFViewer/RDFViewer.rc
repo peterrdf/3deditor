@@ -76,7 +76,7 @@ CAPTION "About RDFViewer"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "RDFViewer, Version 3.3",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "RDFViewer, Version 2.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2022",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
@@ -367,12 +367,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "RDFViewer"
-            VALUE "FileVersion", "1.0.0.1"
+            VALUE "FileVersion", "2.0.0.1"
             VALUE "InternalName", "RDFViewer.exe"
             VALUE "LegalCopyright", "TODO: (c) RDF LTD.  All rights reserved."
             VALUE "OriginalFilename", "RDFViewer.exe"
             VALUE "ProductName", "RDFViewer"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "ProductVersion", "2.0.0.1"
         END
     END
     BLOCK "VarFileInfo"
