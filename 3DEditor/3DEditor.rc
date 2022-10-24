@@ -104,7 +104,7 @@ CAPTION "About 3DEditor"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "3DEditor, Version 2.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "3DEditor, Version 3.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2022",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
@@ -607,12 +607,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "3DEditor"
-            VALUE "FileVersion", "2.0.0.1"
+            VALUE "FileVersion", "3.0.0.1"
             VALUE "InternalName", "3DEditor.exe"
             VALUE "LegalCopyright", "(c) RDF LTD.  All rights reserved."
             VALUE "OriginalFilename", "3DEditor.exe"
             VALUE "ProductName", "3DEditor"
-            VALUE "ProductVersion", "2.0.0.1"
+            VALUE "ProductVersion", "3.0.0.1"
         END
     END
     BLOCK "VarFileInfo"
