@@ -1,6 +1,7 @@
 #ifndef _OPEN_GL_IFC_VIEW_H_
 #define _OPEN_GL_IFC_VIEW_H_
 
+// ------------------------------------------------------------------------------------------------
 #include "Generic.h"
 #include "RDFView.h"
 #ifdef _LINUX
@@ -11,16 +12,18 @@
 #endif // _LINUX
 #include "RDFInstance.h"
 
+// ------------------------------------------------------------------------------------------------
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+// ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 #define MK_LBUTTON 1
 #define MK_MBUTTON 2
 #define MK_RBUTTON 4
 #endif
 
-#ifdef _USE_SHADERS
+// ------------------------------------------------------------------------------------------------
 #include "BinnPhongGLProgram.h"
 #include "GLShader.h"
 
@@ -30,7 +33,6 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 #include "glew.h"
-#endif // _USE_SHADERS
 
 // ------------------------------------------------------------------------------------------------
 // Mouse support
@@ -239,12 +241,11 @@ private: // Members
 	CWnd * m_pWnd;
 #endif // _LINUX
 
-#ifdef _USE_SHADERS
+	// --------------------------------------------------------------------------------------------
 	CBinnPhongGLProgram* m_pProgram;
 	CGLShader* m_pVertSh;
 	CGLShader* m_pFragSh;
 	glm::mat4 m_modelViewMatrix;
-#endif // _USE_SHADERS
 
 	// --------------------------------------------------------------------------------------------
 	// Instances

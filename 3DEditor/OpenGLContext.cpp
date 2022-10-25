@@ -265,9 +265,7 @@ void COpenGLContext::EnableDebug()
 	glDebugMessageCallbackARB(&COpenGLContext::DebugCallback, NULL);	
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
-#endif // #ifdef _ENABLE_OPENGL_DEBUG
 
-#ifdef _ENABLE_OPENGL_DEBUG
 // ------------------------------------------------------------------------------------------------
 void COpenGLContext::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei /*length*/, const GLchar* message, const void* /*userParam*/)
 {

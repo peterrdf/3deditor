@@ -191,10 +191,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bScaleVectors(FALSE)
 	, m_pOGLContext(NULL)
 	, m_vecOGLLights()
-	//, m_vecFacesVBOs()
-	//, m_vecFacesIBOs()
-	//, m_vecWireframesVBOs()
-	//, m_vecWireframesIBOs()
 	, m_fXAngle(30.0f)
 	, m_fYAngle(30.0f)
 	, m_fXTranslation(0.0f)
@@ -293,7 +289,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.66f,              // transparency	
 		NULL);	           // texture
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 
 	m_pProgram = new CBinnPhongGLProgram();
@@ -321,7 +316,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		AfxMessageBox(_T("Program linking error!"));
 
 	m_modelViewMatrix = glm::identity<glm::mat4>();
-#endif // _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -390,7 +384,6 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_vecIBOs.clear();	
 
 
-#ifdef _USE_SHADERS
 	m_pOGLContext->MakeCurrent();
 
 	m_pProgram->DetachShader(m_pVertSh);
@@ -403,7 +396,6 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_pVertSh = NULL;
 	delete m_pFragSh;
 	m_pFragSh = NULL;
-#endif // _USE_SHADERS
 
 	if (m_pOGLContext != NULL)
 	{
@@ -1041,7 +1033,6 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		return;
 	}
 
-#ifdef _USE_SHADERS
 	m_pProgram->Use();
 
 	glViewport(0, 0, iWidth, iHeight);
@@ -1230,236 +1221,6 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	*/
 	DrawInstancesFrameBuffer();
 	DrawFacesFrameBuffer();
-#else
-	glViewport(0, 0, iWidth, iHeight);
-
-	/*
-	* Convert the selected point in Open GL coordinates
-	*/
-	//if (m_ptSelectedPoint != CPoint(-1, -1))
-	//{
-	//	GetOGLPos(m_ptSelectedPoint.x, m_ptSelectedPoint.y, -FLT_MAX, m_arSelectedPoint[0], m_arSelectedPoint[1], m_arSelectedPoint[2]);
-
-	//	/*
-	//	* Project/unproject the camera
-	//	*/
-	//	GLdouble dOutX, dOutY, dOutZ;
-	//	OGLProject(m_fXTranslation, m_fYTranslation, m_fZTranslation, dOutX, dOutY, dOutZ);
-
-	//	GetOGLPos((int)dOutX, (int)dOutY, (float)dOutZ, m_arCamera[0], m_arCamera[1], m_arCamera[2]);
-
-	//	m_ptSelectedPoint = CPoint(-1, -1);
-	//}
-
-	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_COLOR_MATERIAL);
-
-	glEnable(GL_FRAMEBUFFER_SRGB);
-
-	glShadeModel(TEST_MODE ? GL_FLAT : GL_SMOOTH);
-
-	glEnable(GL_LIGHTING);
-
-	/*
-	* Light model, http://www.glprogramming.com/red/chapter05.html
-	*/
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, m_arLightModelAmbient);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, m_bLightModelLocalViewer ? GL_TRUE : GL_FALSE);
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, m_bLightModel2Sided ? GL_TRUE : GL_FALSE);
-
-	/*
-	* Lights
-	*/
-	for (size_t iLight = 0; iLight < m_vecOGLLights.size(); iLight++)
-	{
-		if (!m_vecOGLLights[iLight].isEnabled())
-		{
-			glDisable(m_vecOGLLights[iLight].getLight());
-
-			continue;
-		}
-
-		glEnable(m_vecOGLLights[iLight].getLight());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_AMBIENT, m_vecOGLLights[iLight].getAmbient());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_DIFFUSE, m_vecOGLLights[iLight].getDiffuse());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_SPECULAR, m_vecOGLLights[iLight].getSpecular());
-		glLightfv(m_vecOGLLights[iLight].getLight(), GL_POSITION, m_vecOGLLights[iLight].getPosition());
-	}
-
-	// Shininess between 0 and 128
-	float fShininess = 64.f;
-	glMaterialfv(GL_FRONT, GL_SHININESS, &fShininess);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.0001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef(m_fXTranslation, m_fYTranslation, m_fZTranslation);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-	glRotatef(m_fXAngle, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_fYAngle, 0.0f, 1.0f, 0.0f);
-
-	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-
-	/*
-	Non-transparent faces
-	*/
-	DrawFaces(false);
-
-	/*
-	Transparent faces
-	*/
-	DrawFaces(true);
-
-	/*
-	Pointed instance
-	*/
-	//DrawPointedInstance();
-
-	/*
-	Pointed face
-	*/
-	DrawPointedFace();
-
-	/*
-	Faces polygons
-	*/
-	DrawFacesPolygons();
-
-	/*
-	Conceptual faces polygons
-	*/
-	DrawConceptualFacesPolygons();
-
-	/*
-	Lines
-	*/
-	DrawLines();
-
-	/*
-	Points
-	*/
-	DrawPoints();
-
-	/*
-	Bounding boxes
-	*/
-	DrawBoundingBoxes();
-
-	/*
-	Normal vectors
-	*/
-	DrawNormalVectors();
-
-	/*
-	Tangent vectors
-	*/
-	DrawTangentVectors();
-
-	/*
-	Bi-Normal vectors
-	*/
-	DrawBiNormalVectors();
-
-	/*
-	* Selected point plane/view plane
-	*/
-	/*if ((m_arSelectedPoint[0] != -FLT_MAX) && (m_arSelectedPoint[1] != -FLT_MAX) && (m_arSelectedPoint[2] != -FLT_MAX) &&
-		(m_arCamera[0] != -FLT_MAX) && (m_arCamera[1] != -FLT_MAX) && (m_arCamera[2] != -FLT_MAX))
-	{
-		glDisable(GL_LIGHTING);
-
-		glLineWidth(m_fLineWidth);
-		glColor3f(.0f, .0f, .0f);
-
-		glBegin(GL_LINES);
-
-		const float fStep = (fXmax - fXmin) / 10.f;
-
-		for (int i = 0; i < 5; i++)
-		{
-			glVertex3f(m_arSelectedPoint[0] + (i * fStep), m_arSelectedPoint[1], m_arSelectedPoint[2]);
-			glVertex3f(m_arCamera[0] + (i * fStep), m_arCamera[1], -m_arCamera[2]);
-		}
-
-		for (int i = 0; i < 5; i++)
-		{
-			glVertex3f(m_arSelectedPoint[0] - (i * fStep), m_arSelectedPoint[1], m_arSelectedPoint[2]);
-			glVertex3f(m_arCamera[0] - (i * fStep), m_arCamera[1], -m_arCamera[2]);
-		}
-
-		glEnd();
-
-		glEnable(GL_LIGHTING);
-
-		COpenGLUtils::Check4Errors();
-	}*/
-
-	/*
-	Clip space
-	*/
-	// DISABLED
-	//DrawClipSpace();
-
-	/*
-	End
-	*/
-#ifdef _LINUX
-	m_pWnd->SwapBuffers();
-#else
-	SwapBuffers(*pDC);
-#endif // _LINUX
-
-	/*
-	Selection support
-	*/
-	DrawInstancesFrameBuffer();
-	DrawFacesFrameBuffer();
-#endif // #ifdef _USE_SHADERS
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2929,7 +2690,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef _USE_SHADERS
 	if (bTransparent)
 	{
 		glEnable(GL_BLEND);
@@ -3107,188 +2867,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 			glDisable(GL_CULL_FACE);
 		}
 	}
-#else 
-	if (bTransparent)
-	{
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-	else
-	{
-		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
-		{
-			glEnable(GL_CULL_FACE);
-			glCullFace(m_strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
-		}
-	}
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-			glNormalPointer(GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 3));
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iGeometryWithMaterial = 0; iGeometryWithMaterial < pRDFInstance->conceptualFacesMaterials().size(); iGeometryWithMaterial++)
-				{
-					CRDFGeometryWithMaterial* pGeometryWithMaterial = pRDFInstance->conceptualFacesMaterials()[iGeometryWithMaterial];
-
-					const CRDFMaterial* pMaterial =
-						pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-						pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-						pGeometryWithMaterial->getMaterial();
-
-					if (bTransparent)
-					{
-						if (pMaterial->A() == 1.0)
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (pMaterial->A() < 1.0)
-						{
-							continue;
-						}
-					}
-
-					/*
-					* Material - Texture
-					*/
-					if (pMaterial->hasTexture())
-					{
-						glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-						glColor4f(
-							1.f,
-							1.f,
-							1.f,
-							1.f);
-
-						glEnable(GL_TEXTURE_2D);
-						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
-
-						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-						glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (float*)(sizeof(GLfloat) * 6));
-					} // if (pMaterial->hasTexture())
-					else
-					{
-						/*
-						* Material - Ambient color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-						glColor4f(
-							pMaterial->getAmbientColor().R(),
-							pMaterial->getAmbientColor().G(),
-							pMaterial->getAmbientColor().B(),
-							pMaterial->A());
-
-						/*
-						* Material - Diffuse color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-						glColor4f(
-							pMaterial->getDiffuseColor().R(),
-							pMaterial->getDiffuseColor().G(),
-							pMaterial->getDiffuseColor().B(),
-							pMaterial->A());
-
-						/*
-						* Material - Specular color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-						glColor4f(
-							pMaterial->getSpecularColor().R(),
-							pMaterial->getSpecularColor().G(),
-							pMaterial->getSpecularColor().B(),
-							pMaterial->A());
-
-						/*
-						* Material - Emissive color
-						*/
-						glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-						glColor4f(
-							pMaterial->getEmissiveColor().R(),
-							pMaterial->getEmissiveColor().G(),
-							pMaterial->getEmissiveColor().B(),
-							pMaterial->A());
-					} // else if (pMaterial->hasTexture())					
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-					if (pMaterial->hasTexture())
-					{
-						glDisable(GL_TEXTURE_2D);
-						glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-					}
-				} // for (size_t iMaterial = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-
-	if (bTransparent)
-	{
-		glDisable(GL_BLEND);
-	}
-	else
-	{
-		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
-		{
-			glDisable(GL_CULL_FACE);
-		}
-	}
-#endif // _USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 
@@ -3315,7 +2893,6 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3385,76 +2962,6 @@ void COpenGLRDFView::DrawFacesPolygons()
 			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Wireframes
-				*/
-				for (size_t iWireframesCohort = 0; iWireframesCohort < pRDFInstance->facesCohorts().size(); iWireframesCohort++)
-				{
-					CWireframesCohort* pWireframesCohort = pRDFInstance->facesCohorts()[iWireframesCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pWireframesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iWireframesCohort = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // #ifdef _USE_SHADERS
 
 	COpenGLUtils::Check4Errors();
 
@@ -3481,7 +2988,6 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3551,76 +3057,6 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(1.0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Wireframes
-				*/
-				for (size_t iWireframesCohort = 0; iWireframesCohort < pRDFInstance->conceptualFacesCohorts().size(); iWireframesCohort++)
-				{
-					CWireframesCohort* pWireframesCohort = pRDFInstance->conceptualFacesCohorts()[iWireframesCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pWireframesCohort->IBO());
-
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pWireframesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pWireframesCohort->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iWireframesCohort = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGLUtils::Check4Errors();
 
@@ -3647,7 +3083,6 @@ void COpenGLRDFView::DrawLines()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3717,76 +3152,6 @@ void COpenGLRDFView::DrawLines()
 			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Lines
-				*/
-				for (size_t iLinesCohort = 0; iLinesCohort < pRDFInstance->linesCohorts().size(); iLinesCohort++)
-				{
-					CLinesCohort* pLinesCohort = pRDFInstance->linesCohorts()[iLinesCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pLinesCohort->IBO());
-
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pLinesCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pLinesCohort->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iLinesCohort = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 
@@ -3813,7 +3178,6 @@ void COpenGLRDFView::DrawPoints()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -3886,76 +3250,6 @@ void COpenGLRDFView::DrawPoints()
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glDisable(GL_LIGHTING);
-
-	glPointSize(m_fPointSize);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Points
-				*/
-				for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
-				{
-					CPointsCohort* pPointsCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pPointsCohort->IBO());
-
-					glDrawElementsBaseVertex(GL_POINTS,
-						(GLsizei)pPointsCohort->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pPointsCohort->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iPointsCohort = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGLUtils::Check4Errors();
 
@@ -3985,7 +3279,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -4184,148 +3477,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // for (; itRDFInstances != ...
 
 	glMatrixMode(iMatrixMode);
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-	/*
-	* Transformations
-	*/
-	GLint iMatrixMode = 0;
-	glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-	glMatrixMode(GL_MODELVIEW);
-
-	OGLMATRIX transformation;
-
-	const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
-
-	map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-	{
-		CRDFInstance* pRDFInstance = itRDFInstances->second;
-		if (!pRDFInstance->getEnable())
-		{
-			continue;
-		}
-
-		if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-		{
-			continue;
-		}
-
-		if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-		{
-			continue;
-		}
-
-		if ((pRDFInstance->getBoundingBoxTransformation() == NULL) || (pRDFInstance->getBoundingBoxMin() == NULL) || (pRDFInstance->getBoundingBoxMax() == NULL))
-		{
-			continue;
-		}
-
-		OGLMatrixIdentity(&transformation);
-		transformation._11 = pRDFInstance->getBoundingBoxTransformation()->_11;
-		transformation._12 = pRDFInstance->getBoundingBoxTransformation()->_12;
-		transformation._13 = pRDFInstance->getBoundingBoxTransformation()->_13;
-		transformation._21 = pRDFInstance->getBoundingBoxTransformation()->_21;
-		transformation._22 = pRDFInstance->getBoundingBoxTransformation()->_22;
-		transformation._23 = pRDFInstance->getBoundingBoxTransformation()->_23;
-		transformation._31 = pRDFInstance->getBoundingBoxTransformation()->_31;
-		transformation._32 = pRDFInstance->getBoundingBoxTransformation()->_32;
-		transformation._33 = pRDFInstance->getBoundingBoxTransformation()->_33;
-		transformation._41 = pRDFInstance->getBoundingBoxTransformation()->_41;
-		transformation._42 = pRDFInstance->getBoundingBoxTransformation()->_42;
-		transformation._43 = pRDFInstance->getBoundingBoxTransformation()->_43;
-
-		glPushMatrix();
-		glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-		glMultMatrixd((GLdouble*)&transformation);
-		glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-
-		VECTOR3 vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
-		VECTOR3 vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
-
-		// Bottom face
-		/*
-		Min1						Min2
-		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-		|								|
-		|								|
-		|								|
-		|								|
-		|								|
-		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		Min4						Min3
-		*/
-
-		VECTOR3 vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-
-		VECTOR3 vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-
-		VECTOR3 vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-
-		VECTOR3 vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-
-		// Top face
-		/*
-		Max3						Max4
-		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-		|								|
-		|								|
-		|								|
-		|								|
-		|								|
-		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		Max2						Max1
-		*/
-
-		VECTOR3 vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-
-		VECTOR3 vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-
-		VECTOR3 vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-
-		VECTOR3 vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-
-		glBegin(GL_LINE_LOOP);
-		glVertex3f((GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z);
-		glVertex3f((GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z);
-		glVertex3f((GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z);
-		glVertex3f((GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z);
-		glEnd();
-
-		glBegin(GL_LINE_LOOP);
-		glVertex3f((GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z);
-		glVertex3f((GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z);
-		glVertex3f((GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z);
-		glVertex3f((GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z);
-		glEnd();
-
-		glBegin(GL_LINE_LOOP);
-		glVertex3f((GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z);
-		glVertex3f((GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z);
-		glVertex3f((GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z);
-		glVertex3f((GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z);
-		glEnd();
-
-		glBegin(GL_LINE_LOOP);
-		glVertex3f((GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z);
-		glVertex3f((GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z);
-		glVertex3f((GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z);
-		glVertex3f((GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z);
-		glEnd();
-
-		glPopMatrix();
-	} // for (; itRDFInstances != ...
-
-	glMatrixMode(iMatrixMode);
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 }
@@ -4357,7 +3508,6 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -4550,106 +3700,6 @@ void COpenGLRDFView::DrawNormalVectors()
 
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-	glBegin(GL_LINES);
-
-	if (m_pSelectedInstance == NULL)
-	{
-		const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
-
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
-			if (vecTriangles.empty())
-			{
-				continue;
-			}
-
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
-	} // if (m_pSelectedInstance == NULL)
-	else
-	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-			{
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
-
-	glEnd();
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 }
@@ -4681,7 +3731,6 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -4874,106 +3923,6 @@ void COpenGLRDFView::DrawTangentVectors()
 
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-	glBegin(GL_LINES);
-
-	if (m_pSelectedInstance == NULL)
-	{
-		const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
-
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
-			if (vecTriangles.empty())
-			{
-				continue;
-			}
-
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
-	} // if (m_pSelectedInstance == NULL)
-	else
-	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-			{
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
-
-	glEnd();
-
-	glEnable(GL_LIGHTING);
-#endif _USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 }
@@ -5005,7 +3954,6 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -5198,106 +4146,6 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
-#else
-	glDisable(GL_LIGHTING);
-
-	glLineWidth(m_fLineWidth);
-	glColor3f(0.0f, 0.0f, 0.0f);
-
-	glBegin(GL_LINES);
-
-	if (m_pSelectedInstance == NULL)
-	{
-		const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
-
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
-		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
-			if (vecTriangles.empty())
-			{
-				continue;
-			}
-
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR,
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
-	} // if (m_pSelectedInstance == NULL)
-	else
-	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-				{
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-					glVertex3f(
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR,
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
-				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-			{
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				glVertex3f(
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR,
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] + m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
-
-	glEnd();
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
 
 	COpenGLUtils::Check4Errors();
 }
@@ -5443,7 +4291,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -5522,142 +4369,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			glBindVertexArray(0);
 		} // for (; itGroups != ...
 	} // for (size_t iDrawMetaData = ...
-#else
-	glEnable(GL_COLOR_MATERIAL);
-
-	glShadeModel(GL_FLAT);
-
-	glDisable(GL_LIGHTING);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.0001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef(m_fXTranslation, m_fYTranslation, m_fZTranslation);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-	glRotatef(m_fXAngle, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_fYAngle, 0.0f, 1.0f, 0.0f);
-
-	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-
-	/*
-	* Draw
-	*/
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
-			glVertexPointer(3, GL_FLOAT, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, NULL);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				/*
-				* Conceptual faces
-				*/
-				for (size_t iMaterial = 0; iMaterial < pRDFInstance->conceptualFacesMaterials().size(); iMaterial++)
-				{
-					CRDFGeometryWithMaterial* pGeometryWithMaterial = pRDFInstance->conceptualFacesMaterials()[iMaterial];
-
-					/*
-					* Ambient color
-					*/
-					map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapInstancesSelectionColors.find(pRDFInstance->getInstance());
-					ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
-
-					glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-					glColor4f(
-						itSelectionColor->second.R(),
-						itSelectionColor->second.G(),
-						itSelectionColor->second.B(),
-						1.f);
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pGeometryWithMaterial->IBO());
-
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pGeometryWithMaterial->getIndicesCount(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pGeometryWithMaterial->IBOOffset()),
-						pRDFInstance->VBOOffset());
-
-					//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				} // for (size_t iMaterial = ...
-			} // for (size_t iObject = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);	
-#endif // _USE_SHADERS	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -5787,7 +4498,6 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -5860,99 +4570,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	} // for (size_t iTriangle = ...
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);	
-#else
-	glEnable(GL_COLOR_MATERIAL);
-
-	glShadeModel(GL_FLAT);
-
-	glDisable(GL_LIGHTING);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.0001;
-	GLdouble zFar = 1000000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef(m_fXTranslation, m_fYTranslation, m_fZTranslation);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
-
-	glRotatef(m_fXAngle, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_fYAngle, 0.0f, 1.0f, 0.0f);
-
-	glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-
-	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
-	ASSERT(!vecTriangles.empty());
-
-	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	{
-		map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapFacesSelectionColors.find(iTriangle);
-		ASSERT(itSelectionColor != m_mapFacesSelectionColors.end());
-
-		// Ambient color
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-		glColor4f(
-			itSelectionColor->second.R(),
-			itSelectionColor->second.G(),
-			itSelectionColor->second.B(),
-			1.f);
-
-		glBegin(GL_TRIANGLES);
-
-		for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-		{
-			glNormal3f(
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-			glVertex3f(
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-		} // for (size_t iIndex = ...
-
-		glEnd();
-	} // for (size_t iTriangle = ...
-
-	glEnable(GL_LIGHTING);
-#endif // _USE_SHADERS
+	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -6051,7 +4669,6 @@ void COpenGLRDFView::DrawPointedFace()
 	ASSERT(!vecTriangles.empty());
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-#ifdef _USE_SHADERS
 	glProgramUniform1f(
 		m_pProgram->GetID(),
 		m_pProgram->geUseBinnPhongModel(),
@@ -6116,81 +4733,6 @@ void COpenGLRDFView::DrawPointedFace()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-#else
-	// Ambient color
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-	glColor4f(
-		0.f,
-		1.f,
-		0.f,
-		1.f);
-
-	// Diffuse color
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	glColor4f(
-		0.f,
-		1.f,
-		0.f,
-		1.f);
-
-	// Specular color
-	glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-	glColor4f(
-		0.f,
-		1.f,
-		0.f,
-		1.f);
-
-	// Emissive color
-	glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-	glColor4f(
-		0.f,
-		1.f,
-		0.f,
-		1.f);
-
-	glBegin(GL_TRIANGLES);
-
-	for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-	{
-		glNormal3f(
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-
-		glVertex3f(
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-			m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-	} // for (size_t iIndex = ...
-
-	glEnd();
-
-	/*
-	* Lines
-	*/
-	if (GetKeyState(VK_CONTROL) & 0x8000)
-	{
-		glDisable(GL_LIGHTING);
-
-		glLineWidth(1.0);
-		glColor4f(0.0f, 0.0f, 0.0f, 1.0);
-
-		glBegin(GL_LINES);
-
-		for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
-		{
-			glVertex3f(
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-				m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-		} // for (size_t iIndex = ...
-
-		glEnd();
-
-		glEnable(GL_LIGHTING);
-	} // if (GetKeyState(VK_CONTROL) & 0x8000)
-#endif //_USE_SHADERS	
 
 	COpenGLUtils::Check4Errors();
 }
