@@ -226,6 +226,8 @@
     <ClInclude Include="OGLPipeline.h" />
     <ClInclude Include="OpenGLContext.h" />
     <ClInclude Include="OpenGLRDFView.h" />
+    <ClInclude Include="OpenGLRenderer.h" />
+    <ClInclude Include="OpenGLUtils.h" />
     <ClInclude Include="OT.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RDFClass.h" />
@@ -281,6 +283,7 @@
     <ClCompile Include="OGLPipeline.cpp" />
     <ClCompile Include="OpenGLContext.cpp" />
     <ClCompile Include="OpenGLRDFView.cpp" />
+    <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="OT.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="RDFClass.cpp" />

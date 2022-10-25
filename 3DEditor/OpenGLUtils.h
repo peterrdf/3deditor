@@ -1,0 +1,73 @@
+#pragma once
+
+// ------------------------------------------------------------------------------------------------
+#include "..\glew-2.2.0\include\GL\glew.h"
+#include "..\glew-2.2.0\include\GL\wglew.h"
+
+// ------------------------------------------------------------------------------------------------
+#include <limits>
+#undef max
+
+// ------------------------------------------------------------------------------------------------
+using namespace std;
+
+// ------------------------------------------------------------------------------------------------
+class COpenGLUtils
+{
+public: // Methods
+
+	// --------------------------------------------------------------------------------------------
+	// glBufferData, size argument
+	static GLsizei GetVerticesCountLimit(GLint iVertexLengthBytes)
+	{
+#ifdef WIN64
+		return numeric_limits<GLint>::max() / iVertexLengthBytes;
+#else
+		return 6500000;
+#endif
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// glBufferData, size argument
+	static GLsizei GetIndicesCountLimit()
+	{
+		return 64800;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// Wrapper for glGetError()/gluErrorStringWIN()
+	static void Check4Errors()
+	{
+		GLenum errLast = GL_NO_ERROR;
+
+		for (;;)
+		{
+			GLenum err = glGetError();
+			if (err == GL_NO_ERROR)
+				return;
+
+			// normally the error is reset by the call to glGetError() but if
+			// glGetError() itself returns an error, we risk looping forever here
+			// so check that we get a different error than the last time
+			if (err == errLast)
+			{
+#ifdef _LINUX
+				wxLogError(wxT("OpenGL error state couldn't be reset."));
+#else
+				MessageBox(NULL, L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+#endif // _LINUX
+
+				return;
+			}
+
+			errLast = err;
+
+#ifdef _LINUX
+			wxLogError(wxT("OpenGL error %d"), err);
+#else
+			MessageBox(NULL, (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
+#endif // _LINUX
+		}
+	}
+};
+

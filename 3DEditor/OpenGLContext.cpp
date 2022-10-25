@@ -9,6 +9,9 @@ const int MIN_GL_MINOR_VERSION = 3;
 extern BOOL TEST_MODE;
 
 // ------------------------------------------------------------------------------------------------
+extern wchar_t OPENGL_RENDERER_WINDOW[];
+
+// ------------------------------------------------------------------------------------------------
 COpenGLContext::COpenGLContext(HDC hDC)
 	: m_hDC(hDC)
 	, m_hGLContext(NULL)
@@ -51,12 +54,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uiMsg)
 	{
-	case WM_CLOSE:
-		PostQuitMessage(0);
-		break;
+		case WM_CLOSE:
+			PostQuitMessage(0);
+			break;
 
-	default:
-		return DefWindowProc(hWnd, uiMsg, wParam, lParam);
+		default:
+			return DefWindowProc(hWnd, uiMsg, wParam, lParam);
 	}
 
 	return 0;
@@ -99,7 +102,7 @@ void COpenGLContext::Create()
 	WndClassEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	WndClassEx.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	WndClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
-	WndClassEx.lpszClassName = L"3DEditorOpenGLWindow";
+	WndClassEx.lpszClassName = OPENGL_RENDERER_WINDOW;
 
 	if (!GetClassInfoEx(AfxGetInstanceHandle(), WndClassEx.lpszClassName, &WndClassEx))
 	{
@@ -111,7 +114,7 @@ void COpenGLContext::Create()
 		}
 	}
 
-	HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"InitWIndow", Style, 0, 0, 600, 600, NULL, NULL, AfxGetInstanceHandle(), NULL);
+	HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", Style, 0, 0, 600, 600, NULL, NULL, AfxGetInstanceHandle(), NULL);
 
 	HDC hDCTemp = ::GetDC(hWndTemp);
 
@@ -129,7 +132,7 @@ void COpenGLContext::Create()
 	bResult = wglMakeCurrent(hDCTemp, hTempGLContext);
 	ASSERT(bResult);
 
-	COpenGL::Check4Errors();
+	COpenGLUtils::Check4Errors();
 
 	/*
 	* MSAA support
@@ -248,11 +251,12 @@ void COpenGLContext::Create()
 	::DestroyWindow(hWndTemp);
 
 #ifdef _ENABLE_OPENGL_DEBUG
-	remove("3DEditor_OpenGL_Debug.txt");
+	remove("_OpenGL_Debug_.txt");
 #endif
 }
 
 // ------------------------------------------------------------------------------------------------
+#ifdef _ENABLE_OPENGL_DEBUG
 void COpenGLContext::EnableDebug()
 {
 	glEnable(GL_DEBUG_OUTPUT);
@@ -261,7 +265,9 @@ void COpenGLContext::EnableDebug()
 	glDebugMessageCallbackARB(&COpenGLContext::DebugCallback, NULL);	
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
+#endif // #ifdef _ENABLE_OPENGL_DEBUG
 
+#ifdef _ENABLE_OPENGL_DEBUG
 // ------------------------------------------------------------------------------------------------
 void COpenGLContext::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei /*length*/, const GLchar* message, const void* /*userParam*/)
 {
@@ -271,7 +277,7 @@ void COpenGLContext::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum
 // ------------------------------------------------------------------------------------------------
 void COpenGLContext::DebugOutputToFile(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, const char* message)
 {
-	FILE* f = fopen("3DEditor_OpenGL_Debug.txt", "a");
+	FILE* f = fopen("_OpenGL_Debug_.txt", "a");
 	if (f)
 	{
 		char debSource[50], debType[50], debSev[50];
@@ -317,3 +323,4 @@ void COpenGLContext::DebugOutputToFile(unsigned int source, unsigned int type, u
 		fclose(f);
 	} // if (f)
 }
+#endif
