@@ -21,145 +21,6 @@ extern BOOL TEST_MODE;
 wchar_t OPENGL_RENDERER_WINDOW[] = L"_3DEditor_OpenGL_Renderer_Window_";
 
 // ------------------------------------------------------------------------------------------------
-COpenGLLight::COpenGLLight(GLenum enLight)
-{
-	m_bIsEnabled = false;
-
-	m_enLight = enLight;
-
-	m_arAmbient[0] = 0.f;
-	m_arAmbient[1] = 0.f;
-	m_arAmbient[2] = 0.f;
-	m_arAmbient[3] = 1.f;
-
-	m_arDiffuse[0] = 1.f;
-	m_arDiffuse[1] = 1.f;
-	m_arDiffuse[2] = 1.f;
-	m_arDiffuse[3] = 1.f;
-
-	m_arSpecular[0] = 1.f;
-	m_arSpecular[1] = 1.f;
-	m_arSpecular[2] = 1.f;
-	m_arSpecular[3] = 1.f;
-
-	m_arPosition[0] = 1.f;
-	m_arPosition[1] = 1.f;
-	m_arPosition[2] = 1.f;
-	m_arPosition[3] = 0.f; // directional light
-}
-
-// ------------------------------------------------------------------------------------------------
-COpenGLLight::COpenGLLight(const COpenGLLight & light)
-{
-	m_bIsEnabled = light.m_bIsEnabled;
-
-	m_enLight = light.m_enLight;
-
-	m_arAmbient[0] = light.m_arAmbient[0];
-	m_arAmbient[1] = light.m_arAmbient[1];
-	m_arAmbient[2] = light.m_arAmbient[2];
-	m_arAmbient[3] = light.m_arAmbient[3];
-
-	m_arDiffuse[0] = light.m_arDiffuse[0];
-	m_arDiffuse[1] = light.m_arDiffuse[1];
-	m_arDiffuse[2] = light.m_arDiffuse[2];
-	m_arDiffuse[3] = light.m_arDiffuse[3];
-
-	m_arSpecular[0] = light.m_arSpecular[0];
-	m_arSpecular[1] = light.m_arSpecular[1];
-	m_arSpecular[2] = light.m_arSpecular[2];
-	m_arSpecular[3] = light.m_arSpecular[3];
-
-	m_arPosition[0] = light.m_arPosition[0];
-	m_arPosition[1] = light.m_arPosition[1];
-	m_arPosition[2] = light.m_arPosition[2];
-	m_arPosition[3] = light.m_arPosition[3];
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ COpenGLLight::~COpenGLLight()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-bool COpenGLLight::isEnabled() const
-{
-	return m_bIsEnabled;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLLight::enable(bool bEnable)
-{
-	m_bIsEnabled = bEnable;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLenum COpenGLLight::getLight() const
-{
-	return m_enLight;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat * COpenGLLight::getAmbient() const
-{
-	return (GLfloat *)m_arAmbient;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLLight::setAmbient(GLfloat fR, GLfloat fG, GLfloat fB, GLfloat fW/* = 1.f*/)
-{
-	m_arAmbient[0] = fR;
-	m_arAmbient[1] = fG;
-	m_arAmbient[2] = fB;
-	m_arAmbient[3] = fW;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat * COpenGLLight::getDiffuse() const
-{
-	return (GLfloat *)m_arDiffuse;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLLight::setDiffuse(GLfloat fR, GLfloat fG, GLfloat fB, GLfloat fW/* = 1.f*/)
-{
-	m_arDiffuse[0] = fR;
-	m_arDiffuse[1] = fG;
-	m_arDiffuse[2] = fB;
-	m_arDiffuse[3] = fW;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat * COpenGLLight::getSpecular() const
-{
-	return (GLfloat *)m_arSpecular;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLLight::setSpecular(GLfloat fR, GLfloat fG, GLfloat fB, GLfloat fW/* = 1.f*/)
-{
-	m_arSpecular[0] = fR;
-	m_arSpecular[1] = fG;
-	m_arSpecular[2] = fB;
-	m_arSpecular[3] = fW;
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat * COpenGLLight::getPosition() const
-{
-	return (GLfloat *)m_arPosition;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLLight::setPosition(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fW)
-{
-	m_arPosition[0] = fX;
-	m_arPosition[1] = fY;
-	m_arPosition[2] = fZ;
-	m_arPosition[3] = fW;
-}
-
-// ------------------------------------------------------------------------------------------------
 #define SELECTION_BUFFER_SIZE 512
 
 // ------------------------------------------------------------------------------------------------
@@ -189,8 +50,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
 	, m_bScaleVectors(FALSE)
-	, m_pOGLContext(NULL)
-	, m_vecOGLLights()
+	, m_pOGLContext(NULL)	
 	, m_fXAngle(30.0f)
 	, m_fYAngle(30.0f)
 	, m_fXTranslation(0.0f)
@@ -231,31 +91,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
     m_pOGLContext = new wxGLContext(m_pWnd);
 #else
     m_pOGLContext = new COpenGLContext(*(m_pWnd->GetDC()));
-#endif // _LINUX
-
-	/*
-	* Light model
-	*/
-	// http://www.glprogramming.com/red/chapter05.html#name4
-	m_arLightModelAmbient[0] = .2f;
-	m_arLightModelAmbient[1] = .2f;
-	m_arLightModelAmbient[2] = .2f;
-	m_arLightModelAmbient[3] = 1.f;
-	m_bLightModelLocalViewer = true;
-	m_bLightModel2Sided = false;
-
-	/*
-	* Lights: GL_LIGHT0 - GL_LIGHT7
-	*/
-	for (int iLight = 0; iLight < 8; iLight++)
-	{
-		m_vecOGLLights.push_back(COpenGLLight(GL_LIGHT0 + iLight));
-	}
-
-	/*
-	* Enable GL_LIGHT0
-	*/
-	m_vecOGLLights[0].enable(true);
+#endif // _LINUX	
 
 	m_arSelectedPoint[0] = -FLT_MAX;
 	m_arSelectedPoint[1] = -FLT_MAX;
@@ -292,23 +128,23 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	m_pOGLContext->MakeCurrent();
 
 	m_pProgram = new CBinnPhongGLProgram();
-	m_pVertSh = new CGLShader(GL_VERTEX_SHADER);
-	m_pFragSh = new CGLShader(GL_FRAGMENT_SHADER);
+	m_pVertexShader = new CGLShader(GL_VERTEX_SHADER);
+	m_pFragmentShader = new CGLShader(GL_FRAGMENT_SHADER);
 
-	if (!m_pVertSh->Load(IDR_TEXTFILE_VERTEX_SHADER2))
+	if (!m_pVertexShader->Load(IDR_TEXTFILE_VERTEX_SHADER2))
 		AfxMessageBox(_T("Vertex shader loading error!"));
 
-	if (!m_pFragSh->Load(IDR_TEXTFILE_FRAGMENT_SHADER2))
+	if (!m_pFragmentShader->Load(IDR_TEXTFILE_FRAGMENT_SHADER2))
 		AfxMessageBox(_T("Fragment shader loading error!"));
 
-	if (!m_pVertSh->Compile())
+	if (!m_pVertexShader->Compile())
 		AfxMessageBox(_T("Vertex shader compiling error!"));
 
-	if (!m_pFragSh->Compile())
+	if (!m_pFragmentShader->Compile())
 		AfxMessageBox(_T("Fragment shader compiling error!"));
 
-	m_pProgram->AttachShader(m_pVertSh);
-	m_pProgram->AttachShader(m_pFragSh);
+	m_pProgram->AttachShader(m_pVertexShader);
+	m_pProgram->AttachShader(m_pFragmentShader);
 
 	glBindFragDataLocation(m_pProgram->GetID(), 0, "FragColor");
 
@@ -386,16 +222,16 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	m_pOGLContext->MakeCurrent();
 
-	m_pProgram->DetachShader(m_pVertSh);
-	m_pProgram->DetachShader(m_pFragSh);
+	m_pProgram->DetachShader(m_pVertexShader);
+	m_pProgram->DetachShader(m_pFragmentShader);
 
 	delete m_pProgram;
 	m_pProgram = NULL;
 
-	delete m_pVertSh;
-	m_pVertSh = NULL;
-	delete m_pFragSh;
-	m_pFragSh = NULL;
+	delete m_pVertexShader;
+	m_pVertexShader = NULL;
+	delete m_pFragmentShader;
+	m_pFragmentShader = NULL;
 
 	if (m_pOGLContext != NULL)
 	{
@@ -781,82 +617,6 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 }
 
 // ------------------------------------------------------------------------------------------------
-GLfloat * COpenGLRDFView::GetLightModelAmbient() const
-{
-	return (GLfloat *)m_arLightModelAmbient;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetLightModelAmbient(GLfloat fR, GLfloat fG, GLfloat fB, GLfloat fW/* = 1.f*/)
-{
-	m_arLightModelAmbient[0] = fR;
-	m_arLightModelAmbient[1] = fG;
-	m_arLightModelAmbient[2] = fB;
-	m_arLightModelAmbient[3] = fW;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-bool COpenGLRDFView::GetLightModelLocalViewer() const
-{
-	return m_bLightModelLocalViewer;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetLightModelLocalViewer(bool bLocalViewer)
-{
-	m_bLightModelLocalViewer = bLocalViewer;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-bool COpenGLRDFView::GetLightModel2Sided() const
-{
-	return m_bLightModel2Sided;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetLightModel2Sided(bool b2Sided)
-{
-	m_bLightModel2Sided = b2Sided;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-const vector<COpenGLLight> & COpenGLRDFView::GetOGLLights() const
-{
-	return m_vecOGLLights;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetOGLLight(int iLight, const COpenGLLight & light)
-{
-	ASSERT((iLight >= 0)& (iLight < (int)m_vecOGLLights.size()));
-
-	m_vecOGLLights[iLight] = light;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
 bool gluInvertMatrix(const double m[16], double invOut[16])
 {
 	double inv[16], det;
@@ -4576,77 +4336,6 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	COpenGLUtils::Check4Errors();
 }
-
-// ------------------------------------------------------------------------------------------------
-//void COpenGLRDFView::DrawPointedInstance()
-//{
-//	if (m_pPointedInstance == NULL)
-//	{
-//		return;
-//	}
-//
-//	if (m_pSelectedInstance != NULL)
-//	{
-//		return;
-//	}
-//
-//	const vector<pair<int64_t, int64_t> > & vecTriangles = m_pPointedInstance->getTriangles();
-//	ASSERT(!vecTriangles.empty());
-//
-//	// Ambient color
-//	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-//	glColor4f(
-//		.33f,
-//		.33f,
-//		.33f,
-//		1.f);
-//
-//	// Diffuse color
-//	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-//	glColor4f(
-//		.33f,
-//		.33f,
-//		.33f,
-//		1.f);
-//
-//	// Specular color
-//	glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-//	glColor4f(
-//		.33f,
-//		.33f,
-//		.33f,
-//		1.f);
-//
-//	// Emissive color
-//	glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-//	glColor4f(
-//		.33f,
-//		.33f,
-//		.33f,
-//		1.f);
-//
-//	glBegin(GL_TRIANGLES);
-//
-//	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-//	{
-//		for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
-//		{
-//			glNormal3f(
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3],
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4],
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5]);
-//
-//			glVertex3f(
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH)],
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1],
-//				m_pPointedInstance->getVertices()[(m_pPointedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-//		} // for (size_t iIndex = ...
-//	} // for (size_t iTriangle = ...
-//
-//	glEnd();
-//
-//	COpenGLUtils::Check4Errors();
-//}
 
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawPointedFace()

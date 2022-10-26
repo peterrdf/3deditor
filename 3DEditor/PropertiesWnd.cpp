@@ -999,45 +999,47 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			if ((pData->GetType() == ptLightPosition) || ((pData->GetType() == ptLightPositionItem)))
 			{
-				CMFCPropertyGridProperty * pPositionProperty = pData->GetType() == ptLightPosition ? pApplicationProperty : pApplicationProperty->GetParent();
-				ASSERT(pPositionProperty->GetSubItemsCount() == 4);
+				ASSERT(FALSE); // DISABLED
 
-				CLightPropertyData * pLightData = (CLightPropertyData *)pApplicationProperty->GetData();
-				ASSERT(pLightData != NULL);
+				//CMFCPropertyGridProperty * pPositionProperty = pData->GetType() == ptLightPosition ? pApplicationProperty : pApplicationProperty->GetParent();
+				//ASSERT(pPositionProperty->GetSubItemsCount() == 4);
 
-				/*
-				* X
-				*/
-				CMFCPropertyGridProperty * pX = pPositionProperty->GetSubItem(0);
+				//CLightPropertyData * pLightData = (CLightPropertyData *)pApplicationProperty->GetData();
+				//ASSERT(pLightData != NULL);
 
-				/*
-				* Y
-				*/
-				CMFCPropertyGridProperty * pY = pPositionProperty->GetSubItem(1);
+				///*
+				//* X
+				//*/
+				//CMFCPropertyGridProperty * pX = pPositionProperty->GetSubItem(0);
 
-				/*
-				* Z
-				*/
-				CMFCPropertyGridProperty * pZ = pPositionProperty->GetSubItem(2);
+				///*
+				//* Y
+				//*/
+				//CMFCPropertyGridProperty * pY = pPositionProperty->GetSubItem(1);
 
-				/*
-				* W
-				*/
-				CMFCPropertyGridProperty * pW = pPositionProperty->GetSubItem(3);
+				///*
+				//* Z
+				//*/
+				//CMFCPropertyGridProperty * pZ = pPositionProperty->GetSubItem(2);
 
-				/*
-				* Update the light
-				*/
-				const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
+				///*
+				//* W
+				//*/
+				//CMFCPropertyGridProperty * pW = pPositionProperty->GetSubItem(3);
 
-				COpenGLLight newLight(vecOGLLights[pLightData->GetLightIndex()]);
-				newLight.setPosition(
-					(float)_wtof((LPCTSTR)(CString)pX->GetValue()), 
-					(float)_wtof((LPCTSTR)(CString)pY->GetValue()), 
-					(float)_wtof((LPCTSTR)(CString)pZ->GetValue()), 
-					(float)_wtof((LPCTSTR)(CString)pW->GetValue()));
+				///*
+				//* Update the light
+				//*/
+				//const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
 
-				pOpenGLView->SetOGLLight(pLightData->GetLightIndex(), newLight);
+				//COpenGLLight newLight(vecOGLLights[pLightData->GetLightIndex()]);
+				//newLight.setPosition(
+				//	(float)_wtof((LPCTSTR)(CString)pX->GetValue()), 
+				//	(float)_wtof((LPCTSTR)(CString)pY->GetValue()), 
+				//	(float)_wtof((LPCTSTR)(CString)pZ->GetValue()), 
+				//	(float)_wtof((LPCTSTR)(CString)pW->GetValue()));
+
+				//pOpenGLView->SetOGLLight(pLightData->GetLightIndex(), newLight);
 			} // if ((pData->GetType() == ptLightPosition) || ...
 			else
 			{
@@ -1127,29 +1129,35 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case ptLightModelLocalViewer:
 				{
-					pOpenGLView->SetLightModelLocalViewer(strValue == TRUE_VALUE_PROPERTY ? true : false);
+					ASSERT(FALSE); // DISABLED
+
+					//pOpenGLView->SetLightModelLocalViewer(strValue == TRUE_VALUE_PROPERTY ? true : false);
 				}
 				break;
 
 				case ptLightModel2Sided:
 				{
-					pOpenGLView->SetLightModel2Sided(strValue == TRUE_VALUE_PROPERTY ? true : false);
+					ASSERT(FALSE); // DISABLED
+
+					//pOpenGLView->SetLightModel2Sided(strValue == TRUE_VALUE_PROPERTY ? true : false);
 				}
 				break;
 
 				case ptLightIsEnabled:
 				{
-					CLightPropertyData * pLightData = (CLightPropertyData *)pApplicationProperty->GetData();
+					ASSERT(FALSE); // DISABLED
 
-					/*
-					* Update the light
-					*/
-					const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
+					//CLightPropertyData * pLightData = (CLightPropertyData *)pApplicationProperty->GetData();
 
-					COpenGLLight newLight(vecOGLLights[pLightData->GetLightIndex()]);
-					newLight.enable(strValue == TRUE_VALUE_PROPERTY ? true : false);
+					///*
+					//* Update the light
+					//*/
+					//const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
 
-					pOpenGLView->SetOGLLight(pLightData->GetLightIndex(), newLight);
+					//COpenGLLight newLight(vecOGLLights[pLightData->GetLightIndex()]);
+					//newLight.enable(strValue == TRUE_VALUE_PROPERTY ? true : false);
+
+					//pOpenGLView->SetOGLLight(pLightData->GetLightIndex(), newLight);
 				}
 				break;
 
@@ -1179,56 +1187,58 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		CColorApplicationProperty * pColorApplicationProperty = dynamic_cast<CColorApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
 		if (pColorApplicationProperty != NULL)
 		{
-			float fR = GetRValue(pColorApplicationProperty->GetColor()) / 255.f;
-			float fG = GetGValue(pColorApplicationProperty->GetColor()) / 255.f;
-			float fB = GetBValue(pColorApplicationProperty->GetColor()) / 255.f;			
+			ASSERT(FALSE); // DISABLED
 
-			CLightPropertyData * pData = (CLightPropertyData *)pColorApplicationProperty->GetData();
-			ASSERT(pData != NULL);
+			//float fR = GetRValue(pColorApplicationProperty->GetColor()) / 255.f;
+			//float fG = GetGValue(pColorApplicationProperty->GetColor()) / 255.f;
+			//float fB = GetBValue(pColorApplicationProperty->GetColor()) / 255.f;			
 
-			const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
+			//CLightPropertyData * pData = (CLightPropertyData *)pColorApplicationProperty->GetData();
+			//ASSERT(pData != NULL);
 
-			switch (pData->GetType())
-			{
-			case ptLightModelAmbient:
-			{
-				pOpenGLView->SetLightModelAmbient(fR, fG, fB);
-			}
-			break;
+			//const vector<COpenGLLight> & vecOGLLights = pOpenGLView->GetOGLLights();
 
-			case ptAmbientLight:
-			{
-				COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
-				newLight.setAmbient(fR, fG, fB);
+			//switch (pData->GetType())
+			//{
+			//case ptLightModelAmbient:
+			//{
+			//	pOpenGLView->SetLightModelAmbient(fR, fG, fB);
+			//}
+			//break;
 
-				pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
-			}
-			break;
+			//case ptAmbientLight:
+			//{
+			//	COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
+			//	newLight.setAmbient(fR, fG, fB);
 
-			case ptDiffuseLight:
-			{
-				COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
-				newLight.setDiffuse(fR, fG, fB);
+			//	pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
+			//}
+			//break;
 
-				pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
-			}
-			break;
+			//case ptDiffuseLight:
+			//{
+			//	COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
+			//	newLight.setDiffuse(fR, fG, fB);
 
-			case ptSpecularLight:
-			{
-				COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
-				newLight.setSpecular(fR, fG, fB);
+			//	pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
+			//}
+			//break;
 
-				pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
-			}
-			break;
+			//case ptSpecularLight:
+			//{
+			//	COpenGLLight newLight(vecOGLLights[pData->GetLightIndex()]);
+			//	newLight.setSpecular(fR, fG, fB);
 
-			default:
-			{
-				ASSERT(false); // unexpected!
-			}
-			break;
-			} // switch (pData->GetType())
+			//	pOpenGLView->SetOGLLight(pData->GetLightIndex(), newLight);
+			//}
+			//break;
+
+			//default:
+			//{
+			//	ASSERT(false); // unexpected!
+			//}
+			//break;
+			//} // switch (pData->GetType())
 
 			return 0;
 		} // if (pColorApplicationProperty != NULL)
