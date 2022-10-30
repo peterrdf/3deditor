@@ -197,6 +197,15 @@
     <ClInclude Include="OpenGLUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="_oglFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

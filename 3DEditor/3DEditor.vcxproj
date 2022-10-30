@@ -225,6 +225,7 @@
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OGLPipeline.h" />
     <ClInclude Include="OpenGLContext.h" />
+    <ClInclude Include="_oglFramebuffer.h" />
     <ClInclude Include="OpenGLRDFView.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="OpenGLUtils.h" />
@@ -257,6 +258,8 @@
     <ClInclude Include="Vector.h" />
     <ClInclude Include="ViewTree.h" />
     <ClInclude Include="_dxp_parser.h" />
+    <ClInclude Include="_geometry.h" />
+    <ClInclude Include="_material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
