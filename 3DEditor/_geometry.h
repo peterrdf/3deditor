@@ -33,12 +33,7 @@ public: // Methods
 	}
 };
 
-typedef _primitives _triangles;
-typedef _primitives _polygons;
-typedef _primitives _lines;
-typedef _primitives _points;
-
-class _face : public _triangles
+class _face : public _primitives
 {
 
 private: // Members
@@ -48,7 +43,7 @@ private: // Members
 public: // Methods
 
 	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
-		: _triangles(iStartIndex, iIndicesCount)
+		: _primitives(iStartIndex, iIndicesCount)
 		, m_iIndex(iIndex)
 	{
 	}

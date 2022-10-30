@@ -1,5 +1,7 @@
 #pragma once
 
+#include "_geometry.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -1182,15 +1184,10 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Points
-	vector<pair<int64_t, int64_t> > m_vecPoints;
+	vector<pair<int64_t, int64_t> > m_vecPoints;	
 
-	// --------------------------------------------------------------------------------------------
-	// Faces polygons
-	vector<pair<int64_t, int64_t> > m_vecFacesPolygons;
-
-	// --------------------------------------------------------------------------------------------
-	// Conceptual faces polygons
-	vector<pair<int64_t, int64_t> > m_vecConceptualFacesPolygons;
+	vector<_primitives> m_vecFacesPolygons;
+	vector<_primitives> m_vecConceptualFacesPolygons;
 
 	// --------------------------------------------------------------------------------------------
 	// Materials
@@ -1336,11 +1333,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const vector<pair<int64_t, int64_t> > & getFacesPolygons() const;
+	const vector<_primitives> & getFacesPolygons() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const vector<pair<int64_t, int64_t> > & getConceptualFacesPolygons() const;
+	const vector<_primitives> & getConceptualFacesPolygons() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor

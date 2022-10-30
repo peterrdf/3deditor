@@ -210,7 +210,7 @@ public: // Methods
 
 		m_fA = fTransparency;
 
-		m_strTexture = (szTexture != nullptr ? szTexture : L"";
+		m_strTexture = (szTexture != nullptr ? szTexture : L"");
 	}
 
 	const _color& getAmbientColor() const

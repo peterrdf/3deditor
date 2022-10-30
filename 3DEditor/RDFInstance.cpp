@@ -216,13 +216,13 @@ const vector<pair<int64_t, int64_t> > & CRDFInstance::getPoints() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> > & CRDFInstance::getFacesPolygons() const
+const vector<_primitives> & CRDFInstance::getFacesPolygons() const
 {
 	return m_vecFacesPolygons;
 }
 
 // ------------------------------------------------------------------------------------------------
-const vector<pair<int64_t, int64_t> > & CRDFInstance::getConceptualFacesPolygons() const
+const vector<_primitives> & CRDFInstance::getConceptualFacesPolygons() const
 {
 	return m_vecConceptualFacesPolygons;
 }
@@ -346,7 +346,9 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecFacesPolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecFacesPolygons[iPolygon].first; iIndex < m_vecFacesPolygons[iPolygon].first + m_vecFacesPolygons[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecFacesPolygons[iPolygon].getStartIndex(); 
+				iIndex < m_vecFacesPolygons[iPolygon].getStartIndex() + m_vecFacesPolygons[iPolygon].getIndicesCount();
+				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
 				{
@@ -370,7 +372,9 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecConceptualFacesPolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecConceptualFacesPolygons[iPolygon].first; iIndex < m_vecConceptualFacesPolygons[iPolygon].first + m_vecConceptualFacesPolygons[iPolygon].second; iIndex++)
+			for (int64_t iIndex = m_vecConceptualFacesPolygons[iPolygon].getStartIndex(); 
+				iIndex < m_vecConceptualFacesPolygons[iPolygon].getStartIndex() + m_vecConceptualFacesPolygons[iPolygon].getIndicesCount(); 
+				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
 				{
@@ -819,12 +823,12 @@ void CRDFInstance::Calculate()
 
 		if (iIndicesCountPolygonFaces > 0)
 		{
-			m_vecFacesPolygons.push_back(pair<int64_t, int64_t>(iStartIndexFacesPolygons, iIndicesCountPolygonFaces));
+			m_vecFacesPolygons.push_back(_primitives(iStartIndexFacesPolygons, iIndicesCountPolygonFaces));
 		}
 
 		if (iConceptualFacePolygonsIndicesCount > 0)
 		{
-			m_vecConceptualFacesPolygons.push_back(pair<int64_t, int64_t>(iStartIndexConceptualFacePolygons, iConceptualFacePolygonsIndicesCount));
+			m_vecConceptualFacesPolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iConceptualFacePolygonsIndicesCount));
 		}
 	} // for (int64_t iConceptualFace = ...
 
@@ -953,8 +957,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecConceptualFacesPolygons.size(); iFace++)
 		{
-			int_t iStartIndexFacesPolygons = m_vecConceptualFacesPolygons[iFace].first;
-			int_t iIndicesFacesPolygonsCount = m_vecConceptualFacesPolygons[iFace].second;
+			int_t iStartIndexFacesPolygons = m_vecConceptualFacesPolygons[iFace].getStartIndex();
+			int_t iIndicesFacesPolygonsCount = m_vecConceptualFacesPolygons[iFace].getIndicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1075,8 +1079,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecFacesPolygons.size(); iFace++)
 		{
-			int_t iStartIndexFacesPolygons = m_vecFacesPolygons[iFace].first;
-			int_t iIndicesFacesPolygonsCount = m_vecFacesPolygons[iFace].second;
+			int_t iStartIndexFacesPolygons = m_vecFacesPolygons[iFace].getStartIndex();
+			int_t iIndicesFacesPolygonsCount = m_vecFacesPolygons[iFace].getIndicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
