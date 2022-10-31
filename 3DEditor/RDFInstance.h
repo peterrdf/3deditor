@@ -1203,11 +1203,11 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Wireframes
-	vector<CWireframesCohort*> m_vecConceptualFacesCohorts;
+	vector<_cohort*> m_vecConceptualFacesCohorts;
 
 	// --------------------------------------------------------------------------------------------
 	// Wireframes
-	vector<CWireframesCohort*> m_vecFacesCohorts;
+	vector<_cohort*> m_vecFacesCohorts;
 
 	// --------------------------------------------------------------------------------------------
 	// Vectors
@@ -1349,15 +1349,10 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor
-	vector<CPointsCohort*>& pointsCohorts();	
+	vector<CPointsCohort*>& pointsCohorts();
 
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<CWireframesCohort*>& conceptualFacesCohorts();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<CWireframesCohort*>& facesCohorts();
+	vector<_cohort*>& conceptualFacesCohorts();
+	vector<_cohort*>& facesCohorts();
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor

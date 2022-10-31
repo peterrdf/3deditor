@@ -2,6 +2,9 @@
 
 #include "_material.h"
 
+#include <vector>
+using namespace std;
+
 class _primitives
 {
 
@@ -58,3 +61,41 @@ public: // Methods
 	}
 };
 
+class _cohort
+{
+
+private: // Members
+
+	vector<GLuint> m_vecIndices;
+
+	GLuint m_iIBO;
+	GLsizei m_iIBOOffset;
+
+public: // Methods
+
+	_cohort()
+		: m_vecIndices()
+		, m_iIBO(0)
+		, m_iIBOOffset(0)
+	{
+	}
+
+	virtual ~_cohort()
+	{
+	}
+
+	vector<GLuint>& indices()
+	{
+		return m_vecIndices;
+	}
+
+	GLuint& ibo()
+	{
+		return m_iIBO;
+	}
+
+	GLsizei& iboOffset()
+	{
+		return m_iIBOOffset;
+	}
+};

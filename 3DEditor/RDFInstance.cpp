@@ -246,13 +246,13 @@ vector<CPointsCohort*>& CRDFInstance::pointsCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CWireframesCohort*>& CRDFInstance::conceptualFacesCohorts()
+vector<_cohort*>& CRDFInstance::conceptualFacesCohorts()
 {
 	return m_vecConceptualFacesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CWireframesCohort*>& CRDFInstance::facesCohorts()
+vector<_cohort*>& CRDFInstance::facesCohorts()
 {
 	return m_vecFacesCohorts;
 }
@@ -944,14 +944,14 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		CWireframesCohort* pWireframesCohort = conceptualFacesCohorts().empty() ? NULL : conceptualFacesCohorts()[conceptualFacesCohorts().size() - 1];
+		_cohort* pWireframesCohort = conceptualFacesCohorts().empty() ? NULL : conceptualFacesCohorts()[conceptualFacesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
 		if (pWireframesCohort == NULL)
 		{
-			pWireframesCohort = new CWireframesCohort();
+			pWireframesCohort = new _cohort();
 			conceptualFacesCohorts().push_back(pWireframesCohort);
 		}
 
@@ -967,7 +967,7 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
 				{
-					pWireframesCohort = new CWireframesCohort();
+					pWireframesCohort = new _cohort();
 					conceptualFacesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
@@ -982,8 +982,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -995,7 +995,7 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
-					pWireframesCohort = new CWireframesCohort();
+					pWireframesCohort = new _cohort();
 					conceptualFacesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
@@ -1010,8 +1010,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1024,9 +1024,9 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->getIndicesCount() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
+			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
 			{
-				pWireframesCohort = new CWireframesCohort();
+				pWireframesCohort = new _cohort();
 				conceptualFacesCohorts().push_back(pWireframesCohort);
 			}
 
@@ -1042,8 +1042,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1053,7 +1053,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < conceptualFacesCohorts().size(); iCohort++)
 		{
-			ASSERT(conceptualFacesCohorts()[iCohort]->getIndicesCount() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(conceptualFacesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConceptualFacesPolygons.empty())
@@ -1066,14 +1066,14 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		CWireframesCohort* pWireframesCohort = facesCohorts().empty() ? NULL : facesCohorts()[facesCohorts().size() - 1];
+		_cohort* pWireframesCohort = facesCohorts().empty() ? NULL : facesCohorts()[facesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
 		if (pWireframesCohort == NULL)
 		{
-			pWireframesCohort = new CWireframesCohort();
+			pWireframesCohort = new _cohort();
 			facesCohorts().push_back(pWireframesCohort);
 		}
 
@@ -1089,7 +1089,7 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
 				{
-					pWireframesCohort = new CWireframesCohort();
+					pWireframesCohort = new _cohort();
 					facesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
@@ -1104,8 +1104,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1117,7 +1117,7 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
-					pWireframesCohort = new CWireframesCohort();
+					pWireframesCohort = new _cohort();
 					facesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
@@ -1132,8 +1132,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1146,9 +1146,9 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->getIndicesCount() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
+			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
 			{
-				pWireframesCohort = new CWireframesCohort();
+				pWireframesCohort = new _cohort();
 				facesCohorts().push_back(pWireframesCohort);
 			}
 
@@ -1164,8 +1164,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pWireframesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1175,7 +1175,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < facesCohorts().size(); iCohort++)
 		{
-			ASSERT(facesCohorts()[iCohort]->getIndicesCount() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(facesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecFacesPolygons.empty())
