@@ -98,4 +98,31 @@ public: // Methods
 	{
 		return m_iIBOOffset;
 	}
+
+	static unsigned int* getCohortsIndices(const vector<_cohort*>& vecCohorts, int_t& iIndicesCount)
+	{
+		iIndicesCount = 0;
+		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
+		{
+			iIndicesCount += vecCohorts[iCohort]->indices().size();
+		}
+
+		unsigned int* pIndices = new unsigned int[iIndicesCount];
+
+		int_t iOffset = 0;
+		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
+		{
+			if (vecCohorts[iCohort]->indices().size() == 0)
+			{
+				continue;
+			}
+
+			memcpy((unsigned int*)pIndices + iOffset, vecCohorts[iCohort]->indices().data(),
+				vecCohorts[iCohort]->indices().size() * sizeof(unsigned int));
+
+			iOffset += vecCohorts[iCohort]->indices().size();
+		}
+
+		return pIndices;
+	}
 };

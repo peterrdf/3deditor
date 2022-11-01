@@ -234,7 +234,7 @@ vector<CRDFGeometryWithMaterial*>& CRDFInstance::conceptualFacesMaterials()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort*>& CRDFInstance::linesCohorts()
+vector<_cohort*>& CRDFInstance::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
@@ -258,19 +258,19 @@ vector<_cohort*>& CRDFInstance::facesCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort*>& CRDFInstance::normalVectorsCohorts()
+vector<_cohort*>& CRDFInstance::normalVectorsCohorts()
 {
 	return m_vecNormalVectorsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort*>& CRDFInstance::biNormalVectorsCohorts()
+vector<_cohort*>& CRDFInstance::biNormalVectorsCohorts()
 {
 	return m_vecBiNormalVectorsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CLinesCohort*>& CRDFInstance::tangentVectorsCohorts()
+vector<_cohort*>& CRDFInstance::tangentVectorsCohorts()
 {
 	return m_vecTangentVectorsCohorts;
 }
@@ -1188,15 +1188,15 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		CLinesCohort* pLinesCohort = linesCohorts().empty() ? NULL : linesCohorts()[linesCohorts().size() - 1];
+		auto* pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pLinesCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pLinesCohort = new CLinesCohort();
-			linesCohorts().push_back(pLinesCohort);
+			pCohort = new _cohort();
+			linesCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
@@ -1207,10 +1207,10 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pLinesCohort->getIndicesCount() + iIndicesLinesCount > COpenGLUtils::GetIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesLinesCount > COpenGLUtils::GetIndicesCountLimit())
 			{
-				pLinesCohort = new CLinesCohort();
-				linesCohorts().push_back(pLinesCohort);
+				pCohort = new _cohort();
+				linesCohorts().push_back(pCohort);
 			}
 
 			for (int_t iIndex = iStartIndexLines; iIndex < iStartIndexLines + iIndicesLinesCount; iIndex++)
@@ -1220,14 +1220,14 @@ void CRDFInstance::Calculate()
 					continue;
 				}
 
-				pLinesCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
 		{
-			ASSERT(linesCohorts()[iCohort]->getIndicesCount() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(linesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
