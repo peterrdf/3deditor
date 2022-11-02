@@ -240,7 +240,7 @@ vector<_cohort*>& CRDFInstance::linesCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CPointsCohort*>& CRDFInstance::pointsCohorts()
+vector<_cohort*>& CRDFInstance::pointsCohorts()
 {
 	return m_vecPointsCohorts;
 }
@@ -1240,15 +1240,15 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		CPointsCohort* pPointsCohort = pointsCohorts().empty() ? NULL : pointsCohorts()[pointsCohorts().size() - 1];
+		auto pCohort = pointsCohorts().empty() ? NULL : pointsCohorts()[pointsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pPointsCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pPointsCohort = new CPointsCohort();
-			pointsCohorts().push_back(pPointsCohort);
+			pCohort = new _cohort();
+			pointsCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecPoints.size(); iFace++)
@@ -1259,22 +1259,22 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pPointsCohort->getIndicesCount() + iIndicesPointsCount > COpenGLUtils::GetIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesPointsCount > COpenGLUtils::GetIndicesCountLimit())
 			{
-				pPointsCohort = new CPointsCohort();
-				pointsCohorts().push_back(pPointsCohort);
+				pCohort = new _cohort();
+				pointsCohorts().push_back(pCohort);
 			}
 
 			for (int_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesPointsCount; iIndex++)
 			{
-				pPointsCohort->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 			}
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < pointsCohorts().size(); iCohort++)
 		{
-			ASSERT(pointsCohorts()[iCohort]->getIndicesCount() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(pointsCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecPoints.empty())			

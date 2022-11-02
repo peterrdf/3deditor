@@ -921,77 +921,6 @@ public:
 typedef map<CRDFGeometryWithMaterial, vector<CConceptualFace>, CRDFGeometryWithMaterialComparator> MATERIALS;
 
 // ------------------------------------------------------------------------------------------------
-class CPointsCohort
-{
-
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Indices
-	vector<GLuint> m_vecIndices;
-
-	// --------------------------------------------------------------------------------------------
-	// IBO
-	GLuint m_iIBO;
-
-	// --------------------------------------------------------------------------------------------
-	// IBO - Offset
-	GLsizei m_iIBOOffset;
-
-public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CPointsCohort()
-		: m_vecIndices()
-		, m_iIBO(0)
-		, m_iIBOOffset(0)
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	~CPointsCohort()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
-	void addIndex(GLuint index)
-	{
-		m_vecIndices.push_back(index);
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	GLuint* getIndices()
-	{
-		return &(m_vecIndices[0]);
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	int_t getIndicesCount()
-	{
-		return m_vecIndices.size();
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	GLuint& IBO()
-	{
-		return m_iIBO;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	GLsizei& IBOOffset()
-	{
-		return m_iIBOOffset;
-	}
-};
-
-// ------------------------------------------------------------------------------------------------
 class CRDFInstance
 {
 
@@ -1054,7 +983,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Points
-	vector<CPointsCohort*> m_vecPointsCohorts;	
+	vector<_cohort*> m_vecPointsCohorts;
 
 	// --------------------------------------------------------------------------------------------
 	// Wireframes
@@ -1194,16 +1123,11 @@ public: // Methods
 	// Getter
 	const vector<_primitives> & getConceptualFacesPolygons() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Accessor
+	
 	vector<CRDFGeometryWithMaterial*>& conceptualFacesMaterials();
 
-	vector<_cohort*>& linesCohorts();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<CPointsCohort*>& pointsCohorts();
-
+	vector<_cohort*>& linesCohorts();	
+	vector<_cohort*>& pointsCohorts();
 	vector<_cohort*>& conceptualFacesCohorts();
 	vector<_cohort*>& facesCohorts();
 

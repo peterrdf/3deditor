@@ -239,8 +239,6 @@ COpenGLRDFView::~COpenGLRDFView()
 		m_pOGLContext = NULL;
 	}
 
-	ReleaseBuffers();
-
 	delete m_pSelectedInstanceMaterial;
 	m_pSelectedInstanceMaterial = NULL;
 
@@ -1063,8 +1061,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	VERIFY(bResult);
 #endif // _LINUX
 
-	ReleaseBuffers();
-
 	m_mapInstancesSelectionColors.clear();
 	m_pPointedInstance = NULL;
 	m_pSelectedInstance = NULL;
@@ -1151,7 +1147,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	// IBO - Points
 	GLuint iPointsIndicesCount = 0;
-	vector<CPointsCohort*> vecPointsCohorts;
+	vector<_cohort*> vecPointsCohorts;
 
 	// IBO - Conceptual Faces
 	GLuint iConceptualFacesIndicesCount = 0;
@@ -1368,7 +1364,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		*/
 		for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pRDFInstance->pointsCohorts()[iPointsCohort]->getIndicesCount()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				ASSERT(!vecPointsCohorts.empty());
 
@@ -1380,7 +1376,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				m_vecIBOs.push_back(iIBO);
 
 				int_t iCohortIndicesCount = 0;
-				unsigned int* pIndices = GetPointsCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
+				unsigned int* pIndices = _cohort::getCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
 				if ((iCohortIndicesCount == 0) || (pIndices == NULL))
 				{
 					ASSERT(0);
@@ -1401,10 +1397,10 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				GLsizei iIBOOffset = 0;
 				for (size_t iPointsCohort2 = 0; iPointsCohort2 < vecPointsCohorts.size(); iPointsCohort2++)
 				{
-					vecPointsCohorts[iPointsCohort2]->IBO() = iIBO;
-					vecPointsCohorts[iPointsCohort2]->IBOOffset() = iIBOOffset;
+					vecPointsCohorts[iPointsCohort2]->ibo() = iIBO;
+					vecPointsCohorts[iPointsCohort2]->iboOffset() = iIBOOffset;
 
-					iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->getIndicesCount();
+					iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->indices().size();
 				} // for (size_t iPointsCohort2 = ...				
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -1415,7 +1411,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				vecPointsCohorts.clear();
 			} // if ((int_t)(iPointsIndicesCount + ...	
 
-			iPointsIndicesCount += (GLsizei)pRDFInstance->pointsCohorts()[iPointsCohort]->getIndicesCount();
+			iPointsIndicesCount += (GLsizei)pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size();
 			vecPointsCohorts.push_back(pRDFInstance->pointsCohorts()[iPointsCohort]);
 		} // for (size_t iPointsCohort = ...	
 
@@ -1726,7 +1722,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		m_vecIBOs.push_back(iIBO);
 
 		int_t iCohortIndicesCount = 0;
-		unsigned int* pIndices = GetPointsCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
+		unsigned int* pIndices = _cohort::getCohortsIndices(vecPointsCohorts, iCohortIndicesCount);
 		if ((iCohortIndicesCount == 0) || (pIndices == NULL))
 		{
 			ASSERT(0);
@@ -1747,10 +1743,10 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		GLsizei iIBOOffset = 0;
 		for (size_t iPointsCohort2 = 0; iPointsCohort2 < vecPointsCohorts.size(); iPointsCohort2++)
 		{
-			vecPointsCohorts[iPointsCohort2]->IBO() = iIBO;
-			vecPointsCohorts[iPointsCohort2]->IBOOffset() = iIBOOffset;
+			vecPointsCohorts[iPointsCohort2]->ibo() = iIBO;
+			vecPointsCohorts[iPointsCohort2]->iboOffset() = iIBOOffset;
 
-			iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->getIndicesCount();
+			iIBOOffset += (GLsizei)vecPointsCohorts[iPointsCohort2]->indices().size();
 		} // for (size_t iPointsCohort2 = ...				
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -2244,57 +2240,6 @@ unsigned int* COpenGLRDFView::GetMaterialsIndices(const vector<CRDFGeometryWithM
 	}
 
 	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
-unsigned int* COpenGLRDFView::GetPointsCohortsIndices(const vector<CPointsCohort*>& vecPointsCohorts, int_t& iIndicesCount)
-{
-	iIndicesCount = 0;
-	for (size_t iCohort = 0; iCohort < vecPointsCohorts.size(); iCohort++)
-	{
-		iIndicesCount += vecPointsCohorts[iCohort]->getIndicesCount();
-	}
-
-	unsigned int* pIndices = new unsigned int[iIndicesCount];
-
-	int_t iOffset = 0;
-	for (size_t iCohort = 0; iCohort < vecPointsCohorts.size(); iCohort++)
-	{
-		memcpy((unsigned int*)pIndices + iOffset, vecPointsCohorts[iCohort]->getIndices(),
-			vecPointsCohorts[iCohort]->getIndicesCount() * sizeof(unsigned int));
-
-		iOffset += vecPointsCohorts[iCohort]->getIndicesCount();
-	}
-
-	return pIndices;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ReleaseBuffers()
-{
-	/*for (size_t iBuffers = 0; iBuffers < m_vecFacesVBOs.size(); iBuffers++)
-	{
-		glDeleteBuffers(1, &m_vecFacesVBOs[iBuffers]);
-	}
-	m_vecFacesVBOs.clear();
-
-	for (size_t iBuffers = 0; iBuffers < m_vecFacesIBOs.size(); iBuffers++)
-	{
-		delete m_vecFacesIBOs[iBuffers];
-	}
-	m_vecFacesIBOs.clear();
-
-	for (size_t iBuffers = 0; iBuffers < m_vecWireframesVBOs.size(); iBuffers++)
-	{
-		glDeleteBuffers(1, &m_vecWireframesVBOs[iBuffers]);
-	}
-	m_vecWireframesVBOs.clear();
-
-	for (size_t iBuffers = 0; iBuffers < m_vecWireframesIBOs.size(); iBuffers++)
-	{
-		delete m_vecWireframesIBOs[iBuffers];
-	}
-	m_vecWireframesIBOs.clear();*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2932,13 +2877,13 @@ void COpenGLRDFView::DrawPoints()
 				*/
 				for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
 				{
-					CPointsCohort* pPointsCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+					_cohort* pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pPointsCohort->IBO());
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 					glDrawElementsBaseVertex(GL_POINTS,
-						(GLsizei)pPointsCohort->getIndicesCount(),
+						(GLsizei)pCohort->indices().size(),
 						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pPointsCohort->IBOOffset()),
+						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
 						pRDFInstance->VBOOffset());
 				} // for (size_t iPointsCohort = ...
 			} // for (size_t iObject = ...

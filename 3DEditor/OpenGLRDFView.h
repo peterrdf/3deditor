@@ -586,14 +586,6 @@ private: // Methods
 	unsigned int* GetMaterialsIndices(const vector<CRDFGeometryWithMaterial*>& vecIFCMaterials, int_t& iIndicesCount);
 
 	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetPointsCohortsIndices(const vector<CPointsCohort*>& vecPointsCohorts, int_t& iIndicesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	void ReleaseBuffers();
-
-	// --------------------------------------------------------------------------------------------
 	// Clip space
 	void DrawClipSpace();
 
