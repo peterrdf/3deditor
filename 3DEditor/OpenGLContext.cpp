@@ -132,7 +132,7 @@ void COpenGLContext::Create()
 	bResult = wglMakeCurrent(hDCTemp, hTempGLContext);
 	ASSERT(bResult);
 
-	COpenGLUtils::Check4Errors();
+	_openGLUtils::Check4Errors();
 
 	/*
 	* MSAA support

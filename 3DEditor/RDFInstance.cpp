@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "RDFInstance.h"
 #include "Generic.h"
-#include "OpenGLUtils.h"
+#include "_openGLUtils.h"
 
 #include <memory>
 
@@ -810,13 +810,13 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesCountTriangles > COpenGLUtils::GetIndicesCountLimit())
+			if (iIndicesCountTriangles > _openGLUtils::GetIndicesCountLimit())
 			{
-				while (iIndicesCountTriangles > COpenGLUtils::GetIndicesCountLimit())
+				while (iIndicesCountTriangles > _openGLUtils::GetIndicesCountLimit())
 				{
 					// INDICES
 					CRDFGeometryWithMaterial* pNewMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + COpenGLUtils::GetIndicesCountLimit(); iIndex++)
+					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + _openGLUtils::GetIndicesCountLimit(); iIndex++)
 					{
 						pNewMaterial->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
 					}
@@ -831,8 +831,8 @@ void CRDFInstance::Calculate()
 					// Conceptual faces
 					pNewMaterial->conceptualFaces().push_back(conceptualFace);
 
-					iIndicesCountTriangles -= COpenGLUtils::GetIndicesCountLimit();
-					iStartIndexTriangles += COpenGLUtils::GetIndicesCountLimit();
+					iIndicesCountTriangles -= _openGLUtils::GetIndicesCountLimit();
+					iStartIndexTriangles += _openGLUtils::GetIndicesCountLimit();
 				}
 
 				if (iIndicesCountTriangles > 0)
@@ -856,7 +856,7 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesCountTriangles > COpenGLUtils::GetIndicesCountLimit())	
+			} // if (iIndicesCountTriangles > _openGLUtils::GetIndicesCountLimit())	
 
 			/*
 			* Create material
@@ -871,7 +871,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pGeometryWithMaterial->getIndicesCount() + iIndicesCountTriangles > COpenGLUtils::GetIndicesCountLimit())
+			if (pGeometryWithMaterial->getIndicesCount() + iIndicesCountTriangles > _openGLUtils::GetIndicesCountLimit())
 			{
 				pGeometryWithMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
 
@@ -923,15 +923,15 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+			if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 			{
-				while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+				while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 				{
 					pWireframesCohort = new _cohort();
 					conceptualFacesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + COpenGLUtils::GetIndicesCountLimit() / 2; iIndex++)
+					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::GetIndicesCountLimit() / 2; iIndex++)
 					{
 						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
 						{
@@ -949,9 +949,9 @@ void CRDFInstance::Calculate()
 						iPreviousIndex = iIndex;
 					} // for (int_t iIndex = ...
 
-					iIndicesFacesPolygonsCount -= COpenGLUtils::GetIndicesCountLimit() / 2;
-					iStartIndexFacesPolygons += COpenGLUtils::GetIndicesCountLimit() / 2;
-				} // while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+					iIndicesFacesPolygonsCount -= _openGLUtils::GetIndicesCountLimit() / 2;
+					iStartIndexFacesPolygons += _openGLUtils::GetIndicesCountLimit() / 2;
+				} // while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
@@ -979,12 +979,12 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+			} // if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
+			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::GetIndicesCountLimit())
 			{
 				pWireframesCohort = new _cohort();
 				conceptualFacesCohorts().push_back(pWireframesCohort);
@@ -1013,7 +1013,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < conceptualFacesCohorts().size(); iCohort++)
 		{
-			ASSERT(conceptualFacesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(conceptualFacesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConceptualFacesPolygons.empty())
@@ -1045,15 +1045,15 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+			if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 			{
-				while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+				while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 				{
 					pWireframesCohort = new _cohort();
 					facesCohorts().push_back(pWireframesCohort);
 
 					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + COpenGLUtils::GetIndicesCountLimit() / 2; iIndex++)
+					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::GetIndicesCountLimit() / 2; iIndex++)
 					{
 						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
 						{
@@ -1071,9 +1071,9 @@ void CRDFInstance::Calculate()
 						iPreviousIndex = iIndex;
 					} // for (int_t iIndex = ...
 
-					iIndicesFacesPolygonsCount -= COpenGLUtils::GetIndicesCountLimit() / 2;
-					iStartIndexFacesPolygons += COpenGLUtils::GetIndicesCountLimit() / 2;
-				} // while (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+					iIndicesFacesPolygonsCount -= _openGLUtils::GetIndicesCountLimit() / 2;
+					iStartIndexFacesPolygons += _openGLUtils::GetIndicesCountLimit() / 2;
+				} // while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
@@ -1101,12 +1101,12 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesFacesPolygonsCount > COpenGLUtils::GetIndicesCountLimit() / 2)
+			} // if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
 
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > COpenGLUtils::GetIndicesCountLimit())
+			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::GetIndicesCountLimit())
 			{
 				pWireframesCohort = new _cohort();
 				facesCohorts().push_back(pWireframesCohort);
@@ -1135,7 +1135,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < facesCohorts().size(); iCohort++)
 		{
-			ASSERT(facesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(facesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecFacesPolygons.empty())
@@ -1167,7 +1167,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pCohort->indices().size() + iIndicesLinesCount > COpenGLUtils::GetIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesLinesCount > _openGLUtils::GetIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				linesCohorts().push_back(pCohort);
@@ -1187,7 +1187,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
 		{
-			ASSERT(linesCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(linesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -1219,7 +1219,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pCohort->indices().size() + iIndicesPointsCount > COpenGLUtils::GetIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesPointsCount > _openGLUtils::GetIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				pointsCohorts().push_back(pCohort);
@@ -1234,7 +1234,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < pointsCohorts().size(); iCohort++)
 		{
-			ASSERT(pointsCohorts()[iCohort]->indices().size() <= COpenGLUtils::GetIndicesCountLimit());
+			ASSERT(pointsCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecPoints.empty())			

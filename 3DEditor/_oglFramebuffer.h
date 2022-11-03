@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGLUtils.h"
+#include "_openGLUtils.h"
 
 #include <assert.h>
 

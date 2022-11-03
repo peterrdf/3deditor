@@ -12,7 +12,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-class COpenGLUtils
+class _openGLUtils
 {
 public: // Methods
 
