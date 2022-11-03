@@ -44,7 +44,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_fPointSize(10.f)
 #else
 	, m_fPointSize(1.f)
-#endif //	_DEBUG_OCTREE
+#endif // _DEBUG_OCTREE
 	, m_bShowBoundingBoxes(FALSE)
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
