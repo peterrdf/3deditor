@@ -2898,7 +2898,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		int64_t iTrianglesCount = 0;
 		for (size_t iTriangle = 0; iTriangle < pRDFInstance->getTriangles().size(); iTriangle++)
 		{
-			iTrianglesCount += pRDFInstance->getTriangles()[iTriangle].second / 3;
+			iTrianglesCount += pRDFInstance->getTriangles()[iTriangle].getIndicesCount() / 3;
 		}
 
 		wchar_t szBuffer[100];
@@ -2917,7 +2917,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		int64_t iLinesCount = 0;
 		for (size_t iLine = 0; iLine < pRDFInstance->getLines().size(); iLine++)
 		{
-			iLinesCount += pRDFInstance->getLines()[iLine].second / 2;
+			iLinesCount += pRDFInstance->getLines()[iLine].getIndicesCount() / 2;
 		}
 
 		wchar_t szBuffer[100];

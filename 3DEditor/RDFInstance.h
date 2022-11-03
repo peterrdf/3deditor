@@ -959,17 +959,10 @@ private: // Members
 	int64_t m_iConceptualFacesCount;
 
 	// --------------------------------------------------------------------------------------------
-	// Triangles
-	vector<pair<int64_t, int64_t> > m_vecTriangles;
-
-	// --------------------------------------------------------------------------------------------
-	// Lines
-	vector<pair<int64_t, int64_t> > m_vecLines;
-
-	// --------------------------------------------------------------------------------------------
-	// Points
-	vector<pair<int64_t, int64_t> > m_vecPoints;	
-
+	// Primitives
+	vector<_primitives> m_vecTriangles;
+	vector<_primitives> m_vecLines;	
+	vector<_primitives> m_vecPoints;
 	vector<_primitives> m_vecFacesPolygons;
 	vector<_primitives> m_vecConceptualFacesPolygons;
 
@@ -1105,31 +1098,18 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const vector<pair<int64_t, int64_t> > & getTriangles() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<pair<int64_t, int64_t> > & getLines() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<pair<int64_t, int64_t> > & getPoints() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	const vector<_primitives> & getTriangles() const;
+	const vector<_primitives> & getLines() const;	
+	const vector<_primitives> & getPoints() const;
 	const vector<_primitives> & getFacesPolygons() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<_primitives> & getConceptualFacesPolygons() const;
-
-	
-	vector<CRDFGeometryWithMaterial*>& conceptualFacesMaterials();
+	const vector<_primitives> & getConceptualFacesPolygons() const;	
 
 	vector<_cohort*>& linesCohorts();	
 	vector<_cohort*>& pointsCohorts();
 	vector<_cohort*>& conceptualFacesCohorts();
 	vector<_cohort*>& facesCohorts();
+
+	vector<CRDFGeometryWithMaterial*>& conceptualFacesMaterials();
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor

@@ -3227,7 +3227,7 @@ void COpenGLRDFView::DrawNormalVectors()
 				continue;
 			}
 
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
+			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -3235,7 +3235,9 @@ void COpenGLRDFView::DrawNormalVectors()
 
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex(); 
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3265,14 +3267,16 @@ void COpenGLRDFView::DrawNormalVectors()
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+		auto vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
 
 		if (m_iPointedFace == -1)
 		{
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex(); 
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3303,7 +3307,9 @@ void COpenGLRDFView::DrawNormalVectors()
 		{
 			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
+			for (int64_t iIndex = vecTriangles[m_iPointedFace].getStartIndex(); 
+				iIndex < vecTriangles[m_iPointedFace].getStartIndex() + vecTriangles[m_iPointedFace].getIndicesCount();
+				iIndex++)
 			{
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3450,7 +3456,7 @@ void COpenGLRDFView::DrawTangentVectors()
 				continue;
 			}
 
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
+			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -3458,7 +3464,9 @@ void COpenGLRDFView::DrawTangentVectors()
 
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex(); 
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3488,14 +3496,16 @@ void COpenGLRDFView::DrawTangentVectors()
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+		auto vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
 
 		if (m_iPointedFace == -1)
 		{
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex(); 
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3526,7 +3536,9 @@ void COpenGLRDFView::DrawTangentVectors()
 		{
 			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
+			for (int64_t iIndex = vecTriangles[m_iPointedFace].getStartIndex();
+				iIndex < vecTriangles[m_iPointedFace].getStartIndex() + vecTriangles[m_iPointedFace].getIndicesCount();
+				iIndex++)
 			{
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3673,7 +3685,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				continue;
 			}
 
-			const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
+			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -3681,7 +3693,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex(); 
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3711,14 +3725,16 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
-		const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+		auto vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
 
 		if (m_iPointedFace == -1)
 		{
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 			{
-				for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+				for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex();
+					iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+					iIndex++)
 				{
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3749,7 +3765,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		{
 			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-			for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
+			for (int64_t iIndex = vecTriangles[m_iPointedFace].getStartIndex();
+				iIndex < vecTriangles[m_iPointedFace].getStartIndex() + vecTriangles[m_iPointedFace].getIndicesCount();
+				iIndex++)
 			{
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
@@ -3905,7 +3923,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			const vector<pair<int64_t, int64_t> > & vecTriangles = pRDFInstance->getTriangles();
+			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -4113,7 +4131,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	*/
 	if (m_mapFacesSelectionColors.empty())
 	{
-		const vector<pair<int64_t, int64_t> > & vecTriangles = m_pSelectedInstance->getTriangles();
+		auto vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
 
 		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
@@ -4178,13 +4196,15 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glBindVertexArray(iVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
 
-	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+	auto vecTriangles = m_pSelectedInstance->getTriangles();
 	ASSERT(!vecTriangles.empty());
 
 	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 	{
 		vector<unsigned int> vecIndices;
-		for (int64_t iIndex = vecTriangles[iTriangle].first; iIndex < vecTriangles[iTriangle].first + vecTriangles[iTriangle].second; iIndex++)
+		for (int64_t iIndex = vecTriangles[iTriangle].getStartIndex();
+			iIndex < vecTriangles[iTriangle].getStartIndex() + vecTriangles[iTriangle].getIndicesCount();
+			iIndex++)
 		{
 			vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
 		}
@@ -4235,7 +4255,7 @@ void COpenGLRDFView::DrawPointedFace()
 	/*
 	* Triangles
 	*/
-	const vector<pair<int64_t, int64_t> >& vecTriangles = m_pSelectedInstance->getTriangles();
+	auto vecTriangles = m_pSelectedInstance->getTriangles();
 
 	ASSERT(!vecTriangles.empty());
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
@@ -4286,7 +4306,9 @@ void COpenGLRDFView::DrawPointedFace()
 		0.f);
 
 	vector<unsigned int> vecIndices;
-	for (int64_t iIndex = vecTriangles[m_iPointedFace].first; iIndex < vecTriangles[m_iPointedFace].first + vecTriangles[m_iPointedFace].second; iIndex++)
+	for (int64_t iIndex = vecTriangles[m_iPointedFace].getStartIndex();
+		iIndex < vecTriangles[m_iPointedFace].getStartIndex() + vecTriangles[m_iPointedFace].getIndicesCount();
+		iIndex++)
 	{
 		vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
 	}
