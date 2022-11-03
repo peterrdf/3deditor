@@ -1276,45 +1276,11 @@ void CRDFInstance::Clean()
 	}
 	m_vecMaterials.clear();
 
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecLinesCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecLinesCohorts[iLinesCohort];
-	}
-	m_vecLinesCohorts.clear();
-
-	for (size_t iPointsCohort = 0; iPointsCohort < m_vecPointsCohorts.size(); iPointsCohort++)
-	{
-		delete m_vecPointsCohorts[iPointsCohort];
-	}
-	m_vecPointsCohorts.clear();	
-
-	for (size_t iWireframesCohort = 0; iWireframesCohort < m_vecConcFacesCohorts.size(); iWireframesCohort++)
-	{
-		delete m_vecConcFacesCohorts[iWireframesCohort];
-	}
-	m_vecConcFacesCohorts.clear();
-
-	for (size_t iWireframesCohort = 0; iWireframesCohort < m_vecFacesCohorts.size(); iWireframesCohort++)
-	{
-		delete m_vecFacesCohorts[iWireframesCohort];
-	}
-	m_vecFacesCohorts.clear();
-
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecNormalVecsCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecNormalVecsCohorts[iLinesCohort];
-	}
-	m_vecNormalVecsCohorts.clear();
-
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecBiNormalVecsCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecBiNormalVecsCohorts[iLinesCohort];
-	}
-	m_vecBiNormalVecsCohorts.clear();
-
-	for (size_t iLinesCohort = 0; iLinesCohort < m_vecTangentVecsCohorts.size(); iLinesCohort++)
-	{
-		delete m_vecTangentVecsCohorts[iLinesCohort];
-	}
-	m_vecTangentVecsCohorts.clear();
+	_cohort::clear(m_vecLinesCohorts);
+	_cohort::clear(m_vecPointsCohorts);
+	_cohort::clear(m_vecConcFacesCohorts);
+	_cohort::clear(m_vecFacesCohorts);
+	_cohort::clear(m_vecNormalVecsCohorts);
+	_cohort::clear(m_vecBiNormalVecsCohorts);
+	_cohort::clear(m_vecTangentVecsCohorts);
 }

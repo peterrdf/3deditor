@@ -36,31 +36,6 @@ public: // Methods
 	}
 };
 
-class _face : public _primitives
-{
-
-private: // Members
-
-	int64_t m_iIndex;
-
-public: // Methods
-
-	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
-		: _primitives(iStartIndex, iIndicesCount)
-		, m_iIndex(iIndex)
-	{
-	}
-
-	virtual ~_face()
-	{
-	}
-
-	int64_t getIndex() const
-	{
-		return m_iIndex;
-	}
-};
-
 class _cohort
 {
 
@@ -99,7 +74,7 @@ public: // Methods
 		return m_iIBOOffset;
 	}
 
-	static unsigned int* getCohortsIndices(const vector<_cohort*>& vecCohorts, int_t& iIndicesCount)
+	static unsigned int* merge(const vector<_cohort*>& vecCohorts, int64_t& iIndicesCount)
 	{
 		iIndicesCount = 0;
 		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
@@ -109,7 +84,7 @@ public: // Methods
 
 		unsigned int* pIndices = new unsigned int[iIndicesCount];
 
-		int_t iOffset = 0;
+		int64_t iOffset = 0;
 		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
 		{
 			if (vecCohorts[iCohort]->indices().size() == 0)
@@ -125,4 +100,40 @@ public: // Methods
 
 		return pIndices;
 	}
+
+	static void clear(vector<_cohort*>& vecCohorts)
+	{
+		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
+		{
+			delete vecCohorts[iCohort];
+		}
+
+		vecCohorts.clear();
+	}
 };
+
+////?????????????????????????
+//class _face : public _primitives
+//{
+//
+//private: // Members
+//
+//	int64_t m_iIndex;
+//
+//public: // Methods
+//
+//	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
+//		: _primitives(iStartIndex, iIndicesCount)
+//		, m_iIndex(iIndex)
+//	{
+//	}
+//
+//	virtual ~_face()
+//	{
+//	}
+//
+//	int64_t getIndex() const
+//	{
+//		return m_iIndex;
+//	}
+//};
