@@ -920,272 +920,126 @@ public:
 // ------------------------------------------------------------------------------------------------
 typedef map<CRDFGeometryWithMaterial, vector<CConceptualFace>, CRDFGeometryWithMaterialComparator> MATERIALS;
 
-// ------------------------------------------------------------------------------------------------
 class CRDFInstance
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// ID (1-based index)
-	int64_t m_iID;
+	int64_t m_iID; // ID (1-based index)	
+	int64_t m_iInstance; // RDF Instance
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
-	int64_t m_iInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Name
 	wstring m_strName;
-
-	// --------------------------------------------------------------------------------------------
-	// Name
 	wstring m_strUniqueName;
 
-	// --------------------------------------------------------------------------------------------
-	// Scaled & Centered Vertices - [-1, 1]
-	float * m_pVertices;	
-
-	// --------------------------------------------------------------------------------------------
-	// Vertices
-	VertexBuffer* m_pOriginalVertexBuffer;
+	// Geometry
+	VertexBuffer* m_pOriginalVertexBuffer;	
+	float * m_pVertices; // Scaled & Centered Vertices - [-1, 1]
+	IndexBuffer* m_pIndexBuffer; // Indices	
+	int64_t m_iConceptualFacesCount; // Conceptual faces
 	
-	// --------------------------------------------------------------------------------------------
-	// Indices
-	IndexBuffer* m_pIndexBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Conceptual faces count
-	int64_t m_iConceptualFacesCount;
-
-	// --------------------------------------------------------------------------------------------
 	// Primitives
 	vector<_primitives> m_vecTriangles;
+	vector<_primitives> m_vecFacePolygons;
+	vector<_primitives> m_vecConcFacePolygons;
 	vector<_primitives> m_vecLines;	
 	vector<_primitives> m_vecPoints;
-	vector<_primitives> m_vecFacesPolygons;
-	vector<_primitives> m_vecConceptualFacesPolygons;
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Materials
 	vector<CRDFGeometryWithMaterial*> m_vecMaterials;
-
-	// --------------------------------------------------------------------------------------------
-	// Lines
-	vector<_cohort*> m_vecLinesCohorts;
-
-	// --------------------------------------------------------------------------------------------
-	// Points
-	vector<_cohort*> m_vecPointsCohorts;
-
-	// --------------------------------------------------------------------------------------------
-	// Wireframes
-	vector<_cohort*> m_vecConceptualFacesCohorts;
-
-	// --------------------------------------------------------------------------------------------
-	// Wireframes
+	
+	// Cohorts
+	vector<_cohort*> m_vecConcFacesCohorts;
 	vector<_cohort*> m_vecFacesCohorts;
+	vector<_cohort*> m_vecLinesCohorts;
+	vector<_cohort*> m_vecPointsCohorts;	
 
-	// --------------------------------------------------------------------------------------------
-	// Vectors
-	vector<_cohort*> m_vecNormalVectorsCohorts;
+	vector<_cohort*> m_vecNormalVecsCohorts;
+	vector<_cohort*> m_vecBiNormalVecsCohorts;
+	vector<_cohort*> m_vecTangentVecsCohorts;
 
-	// --------------------------------------------------------------------------------------------
-	// Vectors
-	vector<_cohort*> m_vecBiNormalVectorsCohorts;
-
-	// --------------------------------------------------------------------------------------------
-	// Vectors
-	vector<_cohort*> m_vecTangentVectorsCohorts;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box - X/Y/Z min
+	// Bounding box
 	VECTOR3 * m_vecBoundingBoxMin;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box - X/Y/Z max
 	VECTOR3 * m_vecBoundingBoxMax;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box - Transformation matrix
 	MATRIX * m_mtxBoundingBoxTransformation;
+	
+	bool m_bEnable; // UI
 
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable
-	bool m_bEnable;
+	bool m_bNeedsRefresh; // The data (geometry) is out of date
 
-	// --------------------------------------------------------------------------------------------
-	// The data is out of date
-	bool m_bNeedsRefresh;
-
-	// --------------------------------------------------------------------------------------------
-	// VBO
+	// VBO (OpenGL)
 	GLuint m_iVBO;
-
-	// --------------------------------------------------------------------------------------------
-	// VBO - Offset
 	GLsizei m_iVBOOffset;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFInstance(int64_t iID, int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CRDFInstance();
 
-	// --------------------------------------------------------------------------------------------
-	// Reloads the data
 	void Recalculate();
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t getID() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t GetModel() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t getInstance() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t getClassInstance() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	const wchar_t * getName() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	const wchar_t * getUniqueName() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	bool isReferenced() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	bool hasGeometry() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	
 	int32_t * getIndices() const;
+	int64_t getIndicesCount() const;	
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	int64_t getIndicesCount() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	float * getVertices() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	float* getOriginalVertices() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
+	float* getOriginalVertices() const;	
 	int64_t getVerticesCount() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t getConceptualFacesCount() const;
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<_primitives> & getTriangles() const;
-	const vector<_primitives> & getLines() const;	
-	const vector<_primitives> & getPoints() const;
-	const vector<_primitives> & getFacesPolygons() const;
-	const vector<_primitives> & getConceptualFacesPolygons() const;	
+	const vector<_primitives>& getTriangles() const;
+	const vector<_primitives>& getLines() const;	
+	const vector<_primitives>& getPoints() const;
+	const vector<_primitives>& getFacePolygons() const;
+	const vector<_primitives>& getConcFacePolygons() const;	
 
 	vector<_cohort*>& linesCohorts();	
 	vector<_cohort*>& pointsCohorts();
-	vector<_cohort*>& conceptualFacesCohorts();
+	vector<_cohort*>& concFacesCohorts();
 	vector<_cohort*>& facesCohorts();
 
 	vector<CRDFGeometryWithMaterial*>& conceptualFacesMaterials();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<_cohort*>& normalVectorsCohorts();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<_cohort*>& biNormalVectorsCohorts();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<_cohort*>& tangentVectorsCohorts();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	VECTOR3 * getBoundingBoxMin() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	VECTOR3 * getBoundingBoxMax() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	MATRIX * getBoundingBoxTransformation() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
+	
+	vector<_cohort*>& normalVecsCohorts();	
+	vector<_cohort*>& biNormalVecsCohorts();
+	vector<_cohort*>& tangentVecsCohorts();
+	
+	VECTOR3* getBoundingBoxMin() const;
+	VECTOR3* getBoundingBoxMax() const;
+	MATRIX* getBoundingBoxTransformation() const;
+	
 	void setEnable(bool bEnable);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	bool getEnable() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	//void Center(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	//void Scale(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
-
-	// --------------------------------------------------------------------------------------------
-	// [-1, 1]
+	
+	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);	
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
-
-	// --------------------------------------------------------------------------------------------
+	
 	float* BuildFacesVertices();
-
-	// --------------------------------------------------------------------------------------------
-	// Sets up vertices/indices
+	
 	void UpdateVertices(float * pVertices, int64_t iVerticesCount, int32_t * pIndices);
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
+	
 	GLuint& VBO();
-
-	// --------------------------------------------------------------------------------------------
-	// Accessor
 	GLsizei& VBOOffset();	
 
 private: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Load indices and vertices
 	void Calculate();
 
-	// --------------------------------------------------------------------------------------------
-	// Release the memory
 	void Clean();
 };
 
-// ------------------------------------------------------------------------------------------------
 struct SORT_RDFINSTANCES
 {
 	bool operator()(const CRDFInstance * a, const CRDFInstance * b) const
