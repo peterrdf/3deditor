@@ -1,24 +1,18 @@
 #pragma once
 
-// ------------------------------------------------------------------------------------------------
 #include "glew.h"
 #include "wglew.h"
 
-// ------------------------------------------------------------------------------------------------
 #include <limits>
 #undef max
-
-// ------------------------------------------------------------------------------------------------
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
 class _openGLUtils
 {
-public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// glBufferData, size argument
-	static GLsizei GetVerticesCountLimit(GLint iVertexLengthBytes)
+public: // Methods
+	
+	static GLsizei getVerticesCountLimit(GLint iVertexLengthBytes)
 	{
 #ifdef WIN64
 		return numeric_limits<GLint>::max() / iVertexLengthBytes;
@@ -27,16 +21,12 @@ public: // Methods
 #endif
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// glBufferData, size argument
-	static GLsizei GetIndicesCountLimit()
+	static GLsizei getIndicesCountLimit()
 	{
 		return 64800;
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Wrapper for glGetError()/gluErrorStringWIN()
-	static void Check4Errors()
+	static void checkForErrors()
 	{
 		GLenum errLast = GL_NO_ERROR;
 
