@@ -2,6 +2,7 @@
 
 #include "_material.h"
 
+#include <map>
 #include <vector>
 using namespace std;
 
@@ -25,12 +26,12 @@ public: // Methods
 	{
 	}
 
-	int64_t getStartIndex() const
+	int64_t& startIndex()
 	{
 		return m_iStartIndex;
 	}
 
-	int64_t getIndicesCount() const
+	int64_t& indicesCount()
 	{
 		return m_iIndicesCount;
 	}
@@ -112,28 +113,61 @@ public: // Methods
 	}
 };
 
-////?????????????????????????
-//class _face : public _primitives
-//{
-//
-//private: // Members
-//
-//	int64_t m_iIndex;
-//
-//public: // Methods
-//
-//	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
-//		: _primitives(iStartIndex, iIndicesCount)
-//		, m_iIndex(iIndex)
-//	{
-//	}
-//
-//	virtual ~_face()
-//	{
-//	}
-//
-//	int64_t getIndex() const
-//	{
-//		return m_iIndex;
-//	}
-//};
+class _face : public _primitives
+{
+
+private: // Members
+
+	int64_t m_iIndex;
+
+public: // Methods
+
+	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
+		: _primitives(iStartIndex, iIndicesCount)
+		, m_iIndex(iIndex)
+	{
+	}
+
+	virtual ~_face()
+	{
+	}
+
+	int64_t getIndex() const
+	{
+		return m_iIndex;
+	}
+};
+
+class _facesCohort : public _cohort
+{
+
+private: // Members
+
+	vector<_face> m_vecFaces;
+	_material m_material;
+
+public: // Methods
+
+	_facesCohort(const _material& material)
+		: _cohort()
+		, m_vecFaces()
+		, m_material(material)
+	{
+	}
+
+	virtual ~_facesCohort()
+	{
+	}
+
+	vector<_face>& faces()
+	{
+		return m_vecFaces;
+	}
+
+	const _material* getMaterial() const
+	{
+		return &m_material;
+	}
+};
+
+typedef map<_material, vector<_face>, _materialsComparator> MATERIALS;

@@ -327,14 +327,9 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Shared IBOs
 	vector<GLuint> m_vecIBOs;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected instances
-	CRDFMaterial* m_pSelectedInstanceMaterial;
-
-	// --------------------------------------------------------------------------------------------
-	// Pointed instances
-	CRDFMaterial* m_pPointedInstanceMaterial;
+	
+	_material* m_pSelectedInstanceMaterial;
+	_material* m_pPointedInstanceMaterial;
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding boxes
@@ -580,10 +575,6 @@ private: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Helper
 	float* GetVertices(const vector<CRDFInstance*>& vecRDFInstances, int_t& iVerticesCount);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	unsigned int* GetMaterialsIndices(const vector<CRDFGeometryWithMaterial*>& vecIFCMaterials, int_t& iIndicesCount);
 
 	// --------------------------------------------------------------------------------------------
 	// Clip space

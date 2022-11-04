@@ -159,9 +159,10 @@ public: // Methods
 		unsigned int iDiffuseColor, 
 		unsigned int iEmissiveColor, 
 		unsigned int iSpecularColor, 
-		float fTransparency)
+		float fTransparency,
+		const wchar_t* szTexture)
 	{
-		init(iAmbientColor, iDiffuseColor, iEmissiveColor, iSpecularColor, fTransparency, nullptr);
+		init(iAmbientColor, iDiffuseColor, iEmissiveColor, iSpecularColor, fTransparency, szTexture);
 	}
 
 	void init(
@@ -245,7 +246,78 @@ public: // Methods
 
 	bool hasTexture() const
 	{
-		return m_strTexture.empty();
+		return !m_strTexture.empty();
 	}
 };
 
+class _materialsComparator
+{
+
+public:
+
+	// --------------------------------------------------------------------------------------------
+	bool operator()(const _material& left, const _material& right) const
+	{
+		if (left.getAmbientColor() < right.getAmbientColor())
+		{
+			return true;
+		}
+
+		if (left.getAmbientColor() > right.getAmbientColor())
+		{
+			return false;
+		}
+
+		if (left.getDiffuseColor() < right.getDiffuseColor())
+		{
+			return true;
+		}
+
+		if (left.getDiffuseColor() > right.getDiffuseColor())
+		{
+			return false;
+		}
+
+		if (left.getEmissiveColor() < right.getEmissiveColor())
+		{
+			return true;
+		}
+
+		if (left.getEmissiveColor() > right.getEmissiveColor())
+		{
+			return false;
+		}
+
+		if (left.getSpecularColor() < right.getSpecularColor())
+		{
+			return true;
+		}
+
+		if (left.getSpecularColor() > right.getSpecularColor())
+		{
+			return false;
+		}
+
+		if (left.getA() < right.getA())
+		{
+			return true;
+		}
+
+		if (left.getA() > right.getA())
+		{
+			return false;
+		}
+
+		if (left.texture() < right.texture())
+		{
+			return true;
+		}
+
+		if (left.texture() > right.texture())
+		{
+			return false;
+		}
+
+		return false;
+	}
+};

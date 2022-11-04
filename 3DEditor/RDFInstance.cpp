@@ -20,9 +20,9 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_vecConcFacePolygons()
 	, m_vecLines()
 	, m_vecPoints()	
-	, m_vecMaterials()
 	, m_vecConcFacesCohorts()
-	, m_vecFacesCohorts()
+	, m_vecFacePolygonsCohorts()
+	, m_vecConcFacePolygonsCohorts()
 	, m_vecLinesCohorts()
 	, m_vecPointsCohorts()
 	, m_vecNormalVecsCohorts()
@@ -179,25 +179,21 @@ float * CRDFInstance::getVertices() const
 	return m_pVertices;
 }
 
-// ------------------------------------------------------------------------------------------------
 float* CRDFInstance::getOriginalVertices() const
 {
 	return m_pOriginalVertexBuffer != NULL ? m_pOriginalVertexBuffer->getVertices() : NULL;
 }
 
-// ------------------------------------------------------------------------------------------------
 int64_t CRDFInstance::getVerticesCount() const
 {
 	return m_pOriginalVertexBuffer->getVerticesCount();
 }
 
-// ------------------------------------------------------------------------------------------------
 int64_t CRDFInstance::getConceptualFacesCount() const
 {
 	return m_iConceptualFacesCount;
 }
 
-// ------------------------------------------------------------------------------------------------
 const vector<_primitives> & CRDFInstance::getTriangles() const
 {
 	return m_vecTriangles;
@@ -224,9 +220,21 @@ const vector<_primitives> & CRDFInstance::getConcFacePolygons() const
 }
 
 // ------------------------------------------------------------------------------------------------
-vector<CRDFGeometryWithMaterial*>& CRDFInstance::conceptualFacesMaterials()
+vector<_facesCohort*>& CRDFInstance::concFacesCohorts()
 {
-	return m_vecMaterials;
+	return m_vecConcFacesCohorts;
+}
+
+// ------------------------------------------------------------------------------------------------
+vector<_cohort*>& CRDFInstance::facePolygonsCohorts()
+{
+	return m_vecFacePolygonsCohorts;
+}
+
+// ------------------------------------------------------------------------------------------------
+vector<_cohort*>& CRDFInstance::concFacePolygonsCohorts()
+{
+	return m_vecConcFacePolygonsCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -239,18 +247,6 @@ vector<_cohort*>& CRDFInstance::linesCohorts()
 vector<_cohort*>& CRDFInstance::pointsCohorts()
 {
 	return m_vecPointsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CRDFInstance::concFacesCohorts()
-{
-	return m_vecConcFacesCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CRDFInstance::facesCohorts()
-{
-	return m_vecFacesCohorts;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -323,8 +319,8 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
 		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].getStartIndex(); 
-				iIndex < m_vecTriangles[iTriangle].getStartIndex() + m_vecTriangles[iTriangle].getIndicesCount();
+			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex(); 
+				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
 				iIndex++)
 			{
 				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
@@ -344,8 +340,8 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecFacePolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecFacePolygons[iPolygon].getStartIndex(); 
-				iIndex < m_vecFacePolygons[iPolygon].getStartIndex() + m_vecFacePolygons[iPolygon].getIndicesCount();
+			for (int64_t iIndex = m_vecFacePolygons[iPolygon].startIndex(); 
+				iIndex < m_vecFacePolygons[iPolygon].startIndex() + m_vecFacePolygons[iPolygon].indicesCount();
 				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
@@ -370,8 +366,8 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].getStartIndex(); 
-				iIndex < m_vecConcFacePolygons[iPolygon].getStartIndex() + m_vecConcFacePolygons[iPolygon].getIndicesCount(); 
+			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex(); 
+				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount(); 
 				iIndex++)
 			{
 				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
@@ -396,8 +392,8 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecLines[iPolygon].getStartIndex();
-				iIndex < m_vecLines[iPolygon].getStartIndex() + m_vecLines[iPolygon].getIndicesCount();
+			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
+				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
 				iIndex++)
 			{
 				if (getIndices()[iIndex] == -1)
@@ -422,8 +418,8 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 	{
 		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
 		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].getStartIndex(); 
-				iIndex < m_vecPoints[iPolygon].getStartIndex() + m_vecPoints[iPolygon].getIndicesCount();
+			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex(); 
+				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
 				iIndex++)
 			{
 				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
@@ -735,50 +731,28 @@ void CRDFInstance::Calculate()
 			/*
 			* Material
 			*/
-			CRDFGeometryWithMaterial* pGeometryWithMaterial = new CRDFGeometryWithMaterial(
-				iAmbientColor, iDiffuseColor, iEmissiveColor, iSpecularColor, fTransparency,
-				bHasTexture ? L"default" : NULL);
+			_material material(
+				iAmbientColor, 
+				iDiffuseColor, 
+				iEmissiveColor, 
+				iSpecularColor, 
+				fTransparency,
+				bHasTexture ? L"default" : nullptr);
 
-			MATERIALS::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.find(*pGeometryWithMaterial);
+			MATERIALS::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.find(material);
 			if (itMaterial2ConceptualFaces == mapMaterial2ConceptualFaces.end())
 			{
-				vector<CConceptualFace> vecConceptualFaces;
-
-				CConceptualFace conceptualFace;
-				conceptualFace.index() = iConceptualFace;
-				conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-				conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-				vecConceptualFaces.push_back(conceptualFace);
-
-				mapMaterial2ConceptualFaces[*pGeometryWithMaterial] = vecConceptualFaces;
+				mapMaterial2ConceptualFaces[material] = vector<_face> { _face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles) };
 			}
 			else
 			{
-				CConceptualFace conceptualFace;
-				conceptualFace.index() = iConceptualFace;
-				conceptualFace.trianglesStartIndex() = iStartIndexTriangles;
-				conceptualFace.trianglesIndicesCount() = iIndicesCountTriangles;
-
-				itMaterial2ConceptualFaces->second.push_back(conceptualFace);
+				itMaterial2ConceptualFaces->second.push_back(_face(iConceptualFace, iStartIndexTriangles, iIndicesCountTriangles));
 			}
-
-			delete pGeometryWithMaterial;
 		}
 
 		if (iIndicesCountTriangles > 0)
 		{
 			m_vecTriangles.push_back(_primitives(iStartIndexTriangles, iIndicesCountTriangles));
-		}
-
-		if (iLinesIndicesCount > 0)
-		{
-			m_vecLines.push_back(_primitives(iStartIndexLines, iLinesIndicesCount));
-		}
-
-		if (iPointsIndicesCount > 0)
-		{
-			m_vecPoints.push_back(_primitives(iStartIndexPoints, iPointsIndicesCount));
 		}
 
 		if (iIndicesCountPolygonFaces > 0)
@@ -790,22 +764,32 @@ void CRDFInstance::Calculate()
 		{
 			m_vecConcFacePolygons.push_back(_primitives(iStartIndexConceptualFacePolygons, iConceptualFacePolygonsIndicesCount));
 		}
+
+		if (iLinesIndicesCount > 0)
+		{
+			m_vecLines.push_back(_primitives(iStartIndexLines, iLinesIndicesCount));
+		}
+
+		if (iPointsIndicesCount > 0)
+		{
+			m_vecPoints.push_back(_primitives(iStartIndexPoints, iPointsIndicesCount));
+		}		
 	} // for (int64_t iConceptualFace = ...
 
 	/*
-	* Group the triangles
+	* Group the faces
 	*/
-	MATERIALS::iterator itMaterial2ConceptualFaces = mapMaterial2ConceptualFaces.begin();
-	for (; itMaterial2ConceptualFaces != mapMaterial2ConceptualFaces.end(); itMaterial2ConceptualFaces++)
+	MATERIALS::iterator itMaterial2ConcFaces = mapMaterial2ConceptualFaces.begin();
+	for (; itMaterial2ConcFaces != mapMaterial2ConceptualFaces.end(); itMaterial2ConcFaces++)
 	{
-		CRDFGeometryWithMaterial* pGeometryWithMaterial = NULL;
+		_facesCohort* pCohort = nullptr;
 
-		for (size_t iConceptualFace = 0; iConceptualFace < itMaterial2ConceptualFaces->second.size(); iConceptualFace++)
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
 		{
-			CConceptualFace& conceptualFace = itMaterial2ConceptualFaces->second[iConceptualFace];
+			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
 
-			int_t iStartIndexTriangles = conceptualFace.trianglesStartIndex();
-			int_t iIndicesCountTriangles = conceptualFace.trianglesIndicesCount();
+			int_t iStartIndexTriangles = concFace.startIndex();
+			int_t iIndicesCountTriangles = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -814,22 +798,23 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
 				{
-					// INDICES
-					CRDFGeometryWithMaterial* pNewMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + _openGLUtils::getIndicesCountLimit(); iIndex++)
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndexTriangles; 
+						iIndex < iStartIndexTriangles + _openGLUtils::getIndicesCountLimit(); 
+						iIndex++)
 					{
-						pNewMaterial->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 					}
 
-					conceptualFacesMaterials().push_back(pNewMaterial);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
 					*/
-					conceptualFace.trianglesStartIndex() = 0;
+					concFace.startIndex() = 0;
 
 					// Conceptual faces
-					pNewMaterial->conceptualFaces().push_back(conceptualFace);
+					pNewCohort->faces().push_back(concFace);
 
 					iIndicesCountTriangles -= _openGLUtils::getIndicesCountLimit();
 					iStartIndexTriangles += _openGLUtils::getIndicesCountLimit();
@@ -837,22 +822,23 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesCountTriangles > 0)
 				{
-					// INDICES
-					CRDFGeometryWithMaterial* pNewMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
-					for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					for (int_t iIndex = iStartIndexTriangles; 
+						iIndex < iStartIndexTriangles + iIndicesCountTriangles; 
+						iIndex++)
 					{
-						pNewMaterial->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 					}
 
-					conceptualFacesMaterials().push_back(pNewMaterial);
+					concFacesCohorts().push_back(pNewCohort);
 
 					/*
 					* Update Conceptual face start index
 					*/
-					conceptualFace.trianglesStartIndex() = 0;
+					concFace.startIndex() = 0;
 
 					// Conceptual faces
-					pNewMaterial->conceptualFaces().push_back(conceptualFace);
+					pNewCohort->faces().push_back(concFace);
 				}
 
 				continue;
@@ -861,39 +847,39 @@ void CRDFInstance::Calculate()
 			/*
 			* Create material
 			*/
-			if (pGeometryWithMaterial == NULL)
+			if (pCohort == nullptr)
 			{
-				pGeometryWithMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				conceptualFacesMaterials().push_back(pGeometryWithMaterial);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
 			* Check the limit
 			*/
-			if (pGeometryWithMaterial->getIndicesCount() + iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
 			{
-				pGeometryWithMaterial = new CRDFGeometryWithMaterial(itMaterial2ConceptualFaces->first);
+				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
-				conceptualFacesMaterials().push_back(pGeometryWithMaterial);
+				concFacesCohorts().push_back(pCohort);
 			}
 
 			/*
 			* Update Conceptual face start index
 			*/
-			conceptualFace.trianglesStartIndex() = pGeometryWithMaterial->getIndicesCount();
+			concFace.startIndex() = pCohort->indices().size();
 
 			/*
 			* Add the indices
 			*/
 			for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
 			{
-				pGeometryWithMaterial->addIndex(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 			}
 
 			// Conceptual faces
-			pGeometryWithMaterial->conceptualFaces().push_back(conceptualFace);
-		} // for (size_t iConceptualFace = ...				
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
 
 	/*
@@ -904,21 +890,21 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pWireframesCohort = concFacesCohorts().empty() ? NULL : concFacesCohorts()[concFacesCohorts().size() - 1];
+		_cohort* pCohort = concFacePolygonsCohorts().empty() ? NULL : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pWireframesCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pWireframesCohort = new _cohort();
-			concFacesCohorts().push_back(pWireframesCohort);
+			pCohort = new _cohort();
+			concFacePolygonsCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndexFacesPolygons = m_vecConcFacePolygons[iFace].getStartIndex();
-			int_t iIndicesFacesPolygonsCount = m_vecConcFacePolygons[iFace].getIndicesCount();
+			int_t iStartIndexFacesPolygons = m_vecConcFacePolygons[iFace].startIndex();
+			int_t iIndicesFacesPolygonsCount = m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -927,8 +913,8 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
 				{
-					pWireframesCohort = new _cohort();
-					concFacesCohorts().push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
@@ -942,8 +928,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -955,8 +941,8 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
-					pWireframesCohort = new _cohort();
-					concFacesCohorts().push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
@@ -970,8 +956,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -984,10 +970,10 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
+			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
 			{
-				pWireframesCohort = new _cohort();
-				concFacesCohorts().push_back(pWireframesCohort);
+				pCohort = new _cohort();
+				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
 			int_t iPreviousIndex = -1;
@@ -1002,8 +988,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1011,9 +997,9 @@ void CRDFInstance::Calculate()
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < conceptualFacesCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < concFacesCohorts().size(); iCohort++)
 		{
-			ASSERT(conceptualFacesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
+			ASSERT(concFacesCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConcFacePolygons.empty())
@@ -1026,21 +1012,21 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pWireframesCohort = facesCohorts().empty() ? NULL : facesCohorts()[facesCohorts().size() - 1];
+		_cohort* pCohort = facePolygonsCohorts().empty() ? NULL : facePolygonsCohorts()[facePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pWireframesCohort == NULL)
+		if (pCohort == NULL)
 		{
-			pWireframesCohort = new _cohort();
-			facesCohorts().push_back(pWireframesCohort);
+			pCohort = new _cohort();
+			facePolygonsCohorts().push_back(pCohort);
 		}
 
 		for (size_t iFace = 0; iFace < m_vecFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndexFacesPolygons = m_vecFacePolygons[iFace].getStartIndex();
-			int_t iIndicesFacesPolygonsCount = m_vecFacePolygons[iFace].getIndicesCount();
+			int_t iStartIndexFacesPolygons = m_vecFacePolygons[iFace].startIndex();
+			int_t iIndicesFacesPolygonsCount = m_vecFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1049,8 +1035,8 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
 				{
-					pWireframesCohort = new _cohort();
-					facesCohorts().push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
@@ -1064,8 +1050,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1077,8 +1063,8 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
-					pWireframesCohort = new _cohort();
-					facesCohorts().push_back(pWireframesCohort);
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
@@ -1092,8 +1078,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1106,10 +1092,10 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if ((pWireframesCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
+			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
 			{
-				pWireframesCohort = new _cohort();
-				facesCohorts().push_back(pWireframesCohort);
+				pCohort = new _cohort();
+				facePolygonsCohorts().push_back(pCohort);
 			}
 
 			int_t iPreviousIndex = -1;
@@ -1124,8 +1110,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pWireframesCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1133,9 +1119,9 @@ void CRDFInstance::Calculate()
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < facesCohorts().size(); iCohort++)
+		for (size_t iCohort = 0; iCohort < facePolygonsCohorts().size(); iCohort++)
 		{
-			ASSERT(facesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
+			ASSERT(facePolygonsCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecFacePolygons.empty())
@@ -1148,7 +1134,7 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		auto* pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
+		auto pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
 
 		/*
 		* Create the cohort
@@ -1161,8 +1147,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
 		{
-			int_t iStartIndexLines = m_vecLines[iFace].getStartIndex();
-			int_t iIndicesLinesCount = m_vecLines[iFace].getIndicesCount();
+			int_t iStartIndexLines = m_vecLines[iFace].startIndex();
+			int_t iIndicesLinesCount = m_vecLines[iFace].indicesCount();
 
 			/*
 			* Check the limit
@@ -1187,7 +1173,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
 		{
-			ASSERT(linesCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
+			ASSERT(linesCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -1213,8 +1199,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecPoints.size(); iFace++)
 		{
-			int_t iStartIndexPoints = m_vecPoints[iFace].getStartIndex();
-			int_t iIndicesPointsCount = m_vecPoints[iFace].getIndicesCount();
+			int_t iStartIndexPoints = m_vecPoints[iFace].startIndex();
+			int_t iIndicesPointsCount = m_vecPoints[iFace].indicesCount();
 
 			/*
 			* Check the limit
@@ -1234,7 +1220,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < pointsCohorts().size(); iCohort++)
 		{
-			ASSERT(pointsCohorts()[iCohort]->indices().size() <= _openGLUtils::GetIndicesCountLimit());
+			ASSERT(pointsCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecPoints.empty())			
@@ -1270,16 +1256,16 @@ void CRDFInstance::Clean()
 	m_vecFacePolygons.clear();
 	m_vecConcFacePolygons.clear();	
 
-	for (size_t iMaterial = 0; iMaterial < m_vecMaterials.size(); iMaterial++)
+	for (size_t iMaterial = 0; iMaterial < m_vecConcFacesCohorts.size(); iMaterial++)
 	{
-		delete m_vecMaterials[iMaterial];
+		delete m_vecConcFacesCohorts[iMaterial];
 	}
-	m_vecMaterials.clear();
+	m_vecConcFacesCohorts.clear();
 
+	_cohort::clear(m_vecFacePolygonsCohorts);
+	_cohort::clear(m_vecConcFacePolygonsCohorts);
 	_cohort::clear(m_vecLinesCohorts);
-	_cohort::clear(m_vecPointsCohorts);
-	_cohort::clear(m_vecConcFacesCohorts);
-	_cohort::clear(m_vecFacesCohorts);
+	_cohort::clear(m_vecPointsCohorts);		
 	_cohort::clear(m_vecNormalVecsCohorts);
 	_cohort::clear(m_vecBiNormalVecsCohorts);
 	_cohort::clear(m_vecTangentVecsCohorts);
