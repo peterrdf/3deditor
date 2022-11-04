@@ -274,7 +274,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support - (Instance : Color)
-	map<int64_t, CRDFColor> m_mapInstancesSelectionColors;
+	map<int64_t, _color> m_mapInstancesSelectionColors;
 
 	// --------------------------------------------------------------------------------------------
 	// Pointed instance (mouse move)
@@ -314,7 +314,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support - (Face index : Color) for m_pSelectedInstance
-	map<int64_t, CRDFColor> m_mapFacesSelectionColors;
+	map<int64_t, _color> m_mapFacesSelectionColors;
 
 	// --------------------------------------------------------------------------------------------
 	// Pointed face (mouse move) for m_pSelectedInstance

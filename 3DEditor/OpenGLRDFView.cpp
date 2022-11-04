@@ -3910,7 +3910,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			float fR, fG, fB;
 			CIn64RGBCoder::Encode(pRDFInstance->getID(), fR, fG, fB);
 
-			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = CRDFColor(fR, fG, fB);
+			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = _color(fR, fG, fB);
 		} // for (; itRDFInstances != ...
 	} // if (m_mapInstancesSelectionColors.empty())
 
@@ -3976,9 +3976,9 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				glProgramUniform3f(
 					m_pProgram->GetID(),
 					m_pProgram->getMaterialAmbientColor(),
-					itSelectionColor->second.R(),
-					itSelectionColor->second.G(),
-					itSelectionColor->second.B());
+					itSelectionColor->second.r(),
+					itSelectionColor->second.g(),
+					itSelectionColor->second.b());
 				
 				for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
 				{
@@ -4106,7 +4106,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 			float fR, fG, fB;
 			CIn64RGBCoder::Encode(iTriangle, fR, fG, fB);
 
-			m_mapFacesSelectionColors[iTriangle] = CRDFColor(fR, fG, fB);
+			m_mapFacesSelectionColors[iTriangle] = _color(fR, fG, fB);
 		} // for (size_t iTriangle = ...
 	} // if (m_mapFacesSelectionColors.empty())
 
@@ -4178,15 +4178,15 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 		if (!vecIndices.empty())
 		{
-			map<int64_t, CRDFColor>::iterator itSelectionColor = m_mapFacesSelectionColors.find(iTriangle);
+			auto itSelectionColor = m_mapFacesSelectionColors.find(iTriangle);
 			ASSERT(itSelectionColor != m_mapFacesSelectionColors.end());
 
 			// Ambient color
 			glProgramUniform3f(m_pProgram->GetID(),
 				m_pProgram->getMaterialAmbientColor(),
-				itSelectionColor->second.R(),
-				itSelectionColor->second.G(),
-				itSelectionColor->second.B());
+				itSelectionColor->second.r(),
+				itSelectionColor->second.g(),
+				itSelectionColor->second.b());
 			
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)* vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);			
 
