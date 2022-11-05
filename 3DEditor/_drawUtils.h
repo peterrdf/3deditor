@@ -89,3 +89,56 @@ public: // Methods
 
 typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
+
+// (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
+class _i64RGBCoder
+{
+
+public: // Methods
+
+	static void Encode(int64_t i, float& fR, float& fG, float& fB)
+	{
+		static const float STEP = 1.f / 255.f;
+
+		fR = 0.f;
+		fG = 0.f;
+		fB = 0.f;
+
+		// R
+		if (i >= (255 * 255))
+		{
+			int64_t iR = i / (255 * 255);
+			fR = iR * STEP;
+
+			i -= iR * (255 * 255);
+		}
+
+		// G
+		if (i >= 255)
+		{
+			int64_t iG = i / 255;
+			fG = iG * STEP;
+
+			i -= iG * 255;
+		}
+
+		// B		
+		fB = i * STEP;
+	}
+
+	static int64_t Decode(unsigned char R, unsigned char G, unsigned char B)
+	{
+		int64_t i = 0;
+
+		// R
+		i += R * (255 * 255);
+
+		// G
+		i += G * 255;
+
+		// B
+		i += B;
+
+		return i;
+	}
+};

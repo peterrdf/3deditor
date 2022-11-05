@@ -3908,7 +3908,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			}
 
 			float fR, fG, fB;
-			CIn64RGBCoder::Encode(pRDFInstance->getID(), fR, fG, fB);
+			_i64RGBCoder::Encode(pRDFInstance->getID(), fR, fG, fB);
 
 			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = _color(fR, fG, fB);
 		} // for (; itRDFInstances != ...
@@ -4104,7 +4104,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
 		{
 			float fR, fG, fB;
-			CIn64RGBCoder::Encode(iTriangle, fR, fG, fB);
+			_i64RGBCoder::Encode(iTriangle, fR, fG, fB);
 
 			m_mapFacesSelectionColors[iTriangle] = _color(fR, fG, fB);
 		} // for (size_t iTriangle = ...
@@ -4362,7 +4362,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			if (arPixels[3] != 0)
 			{
-				int64_t iObjectID = CIn64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
+				int64_t iObjectID = _i64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetRDFInstanceByID(iObjectID);
 				ASSERT(pPointedInstance != NULL);
 			} // if (arPixels[3] != 0)
@@ -4427,7 +4427,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			if (arPixels[3] != 0)
 			{
-				iPointedFace = CIn64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
+				iPointedFace = _i64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
 				ASSERT(m_mapFacesSelectionColors.find(iPointedFace) != m_mapFacesSelectionColors.end());
 			} // if (arPixels[3] != 0)
 
