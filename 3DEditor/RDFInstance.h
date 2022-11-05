@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_geometry.h"
+#include "_drawUtils.h"
 
 #include <string>
 #include <vector>
@@ -59,79 +59,6 @@ static void	Transform(const VECTOR3 * pV, const MATRIX *pM, VECTOR3 * pOut)
 /**
 * C++ Wrapper
 */
-template<class V>
-class _VertexBuffer
-{
-	/**
-	* Thing will populate the buffer
-	*/
-	friend class Thing;
-
-public: // Members
-
-	/**
-	* Vertices
-	*/
-	V* m_pVertices;
-
-	/**
-	* Count
-	*/
-	int64_t m_iVerticesCount;
-
-	/**
-	* Length
-	*/
-	int64_t m_iVertexLength;
-
-public: // Methods
-
-	/**
-	* ctor
-	*/
-	_VertexBuffer()
-		: m_pVertices(nullptr)
-		, m_iVerticesCount(0)
-		, m_iVertexLength(0)
-	{
-		static_assert(
-			is_same<V, float>::value ||
-			is_same<V, double>::value,
-			"V must be float or double type.");
-	}
-
-	/**
-	* dtor
-	*/
-	virtual ~_VertexBuffer()
-	{
-		delete[] m_pVertices;
-	}
-
-	/**
-	* Getter
-	*/
-	V* getVertices() const
-	{
-		return m_pVertices;
-	}
-
-	/**
-	* Getter
-	*/
-	int64_t getVerticesCount() const
-	{
-		return m_iVerticesCount;
-	}
-
-	/**
-	* Getter
-	*/
-	int64_t getVertexLength() const
-	{
-		return m_iVertexLength;
-	}
-};
 
 /**
 * C++ Wrapper
@@ -206,16 +133,6 @@ typedef _IndexBuffer<int32_t> IndexBuffer;
 */
 typedef _IndexBuffer<int64_t> DoubleIndexBuffer;
 
-/**
-* Float
-*/
-typedef _VertexBuffer<float> VertexBuffer;
-
-/**
-* Double
-*/
-typedef _VertexBuffer<double> DoubleVertexBuffer;
-
 // ------------------------------------------------------------------------------------------------
 // (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
 class CIn64RGBCoder
@@ -284,7 +201,7 @@ private: // Members
 	wstring m_strUniqueName;
 
 	// Geometry
-	VertexBuffer* m_pOriginalVertexBuffer;	
+	_vertices_f* m_pOriginalVertexBuffer;
 	float * m_pVertices; // Scaled & Centered Vertices - [-1, 1]
 	IndexBuffer* m_pIndexBuffer; // Indices	
 	int64_t m_iConceptualFacesCount; // Conceptual faces
@@ -379,8 +296,6 @@ public: // Methods
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
 	
 	float* BuildFacesVertices();
-	
-	void UpdateVertices(float * pVertices, int64_t iVerticesCount, int32_t * pIndices);
 	
 	GLuint& VBO();
 	GLsizei& VBOOffset();	

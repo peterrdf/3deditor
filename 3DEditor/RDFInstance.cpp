@@ -11,7 +11,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_iInstance(iInstance)
 	, m_strName(L"NA")
 	, m_strUniqueName(L"")
-	, m_pOriginalVertexBuffer(new VertexBuffer())
+	, m_pOriginalVertexBuffer(new _vertices_f())
 	, m_pVertices(NULL)	
 	, m_pIndexBuffer(new IndexBuffer())
 	, m_iConceptualFacesCount(0)
@@ -159,7 +159,7 @@ bool CRDFInstance::isReferenced() const
 // ------------------------------------------------------------------------------------------------
 bool CRDFInstance::hasGeometry() const
 {
-	return (m_pOriginalVertexBuffer->getVerticesCount() > 0) && (m_pIndexBuffer->getIndicesCount() > 0);
+	return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->getIndicesCount() > 0);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -181,12 +181,12 @@ float * CRDFInstance::getVertices() const
 
 float* CRDFInstance::getOriginalVertices() const
 {
-	return m_pOriginalVertexBuffer != NULL ? m_pOriginalVertexBuffer->getVertices() : NULL;
+	return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr;
 }
 
 int64_t CRDFInstance::getVerticesCount() const
 {
-	return m_pOriginalVertexBuffer->getVerticesCount();
+	return m_pOriginalVertexBuffer->size();
 }
 
 int64_t CRDFInstance::getConceptualFacesCount() const
@@ -307,7 +307,7 @@ bool CRDFInstance::getEnable() const
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
 {
-	if (m_pOriginalVertexBuffer->getVerticesCount() == 0)
+	if (m_pOriginalVertexBuffer->size() == 0)
 	{
 		return;
 	}
@@ -436,19 +436,19 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
 {
-	if (m_pOriginalVertexBuffer->getVerticesCount() == 0)
+	if (m_pOriginalVertexBuffer->size() == 0)
 	{
 		return;
 	}
 
 	delete[] m_pVertices;
-	m_pVertices = new float[m_pOriginalVertexBuffer->getVerticesCount() * VERTEX_LENGTH];
-	memcpy(m_pVertices, m_pOriginalVertexBuffer->getVertices(), m_pOriginalVertexBuffer->getVerticesCount() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
+	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
 	/**
 	* Vertices
 	*/
-	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->getVerticesCount(); iVertex++)
+	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - fXmin;
@@ -517,15 +517,15 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 // --------------------------------------------------------------------------------------------
 float* CRDFInstance::BuildFacesVertices()
 {
-	ASSERT(m_pOriginalVertexBuffer->getVerticesCount() > 0);
+	ASSERT(m_pOriginalVertexBuffer->size() > 0);
 
 	/*
 	* Faces Vertex Buffer
 	*/
-	float* pFacesVertices = new float[m_pOriginalVertexBuffer->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH];
-	memset(pFacesVertices, 0, m_pOriginalVertexBuffer->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
+	float* pFacesVertices = new float[m_pOriginalVertexBuffer->size() * GEOMETRY_VBO_VERTEX_LENGTH];
+	memset(pFacesVertices, 0, m_pOriginalVertexBuffer->size() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 
-	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->getVerticesCount(); iVertex++)
+	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertices[(iVertex * VERTEX_LENGTH) + 0];
 		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1];
@@ -540,77 +540,6 @@ float* CRDFInstance::BuildFacesVertices()
 	} // for (size_t iIndex = ...		
 
 	return pFacesVertices;
-}
-
-//float* CRDFInstance::BuildGeometryVertices(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
-//{
-//	ASSERT(m_iVerticesCount > 0);
-//
-//	/*
-//	* Vertex Buffer
-//	*/
-//	float* pVertices = new float[m_iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-//	memset(pVertices, 0, m_iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-//
-//	for (int64_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
-//	{
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 0];
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 1];
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 2];
-//
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 3];
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 4];
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 5];
-//
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 6] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 6];
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 7] = m_pOriginalVertices[(iVertex * VERTEX_LENGTH) + 7];
-//	} // for (size_t iIndex = ...		
-//
-//	for (int_t iVertex = 0; iVertex < m_iVerticesCount; iVertex++)
-//	{
-//		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - fXmin;
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - fYmin;
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - fZmin;
-//
-//		// center
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
-//
-//		// [-1.0 -> 1.0]
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-//		pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = pVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
-//	}
-//
-//	return pVertices;
-//}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFInstance::UpdateVertices(float * /*pVertices*/, int64_t /*iVerticesCount*/, int32_t * /*pIndices*/)
-{
-	ASSERT(FALSE); // TODO
-	/*ASSERT(pVertices != nullptr);
-	ASSERT(iVerticesCount > 0);
-	ASSERT(pIndices != nullptr);
-
-	delete[] m_pVertices;
-	m_pVertices = pVertices;
-
-	m_iVerticesCount = iVerticesCount;
-
-	delete[] m_pOriginalVertices;
-	m_pOriginalVertices = NULL;
-
-	if (m_iVerticesCount > 0)
-	{
-		m_pOriginalVertices = new float[m_iVerticesCount * VERTEX_LENGTH];
-		memcpy(m_pOriginalVertices, m_pVertices, m_iVerticesCount * VERTEX_LENGTH * sizeof(float));
-	}	
-
-	delete[] m_pIndices;
-	m_pIndices = pIndices;*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -629,7 +558,7 @@ GLsizei& CRDFInstance::VBOOffset()
 void CRDFInstance::Calculate()
 {
 	delete m_pOriginalVertexBuffer;
-	m_pOriginalVertexBuffer = new VertexBuffer();
+	m_pOriginalVertexBuffer = new _vertices_f();
 
 	delete[] m_pVertices;
 	m_pVertices = NULL;
@@ -640,22 +569,22 @@ void CRDFInstance::Calculate()
 	/**
 	* Calculate
 	*/
-	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->m_iVerticesCount, &m_pIndexBuffer->m_iIndicesCount, NULL);
+	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->size(), &m_pIndexBuffer->m_iIndicesCount, NULL);
 
 	/**
 	* Retrieve the buffers
 	*/
-	if ((m_pOriginalVertexBuffer->m_iVerticesCount > 0) && (m_pIndexBuffer->m_iIndicesCount))
+	if ((m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->m_iIndicesCount))
 	{
 		/**
 		* Retrieves the vertices
 		*/
-		m_pOriginalVertexBuffer->m_iVertexLength = SetFormat(GetModel(), 0, 0) / sizeof(float);
+		m_pOriginalVertexBuffer->vertexLength() = SetFormat(GetModel(), 0, 0) / sizeof(float);
 
-		m_pOriginalVertexBuffer->m_pVertices = new float[m_pOriginalVertexBuffer->m_iVerticesCount * m_pOriginalVertexBuffer->m_iVertexLength];
-		memset(m_pOriginalVertexBuffer->m_pVertices, 0, m_pOriginalVertexBuffer->m_iVerticesCount * m_pOriginalVertexBuffer->m_iVertexLength * sizeof(float));
+		m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
+		memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
-		UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->m_pVertices);
+		UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->data());
 
 		/**
 		* Retrieves the indices
@@ -666,8 +595,8 @@ void CRDFInstance::Calculate()
 		UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->m_pIndices);
 	} // if ((m_pOriginalVertexBuffer->m_iVerticesCount > 0) && ...	
 
-	m_pVertices = new float[m_pOriginalVertexBuffer->getVerticesCount() * VERTEX_LENGTH];
-	memcpy(m_pVertices, m_pOriginalVertexBuffer->getVertices(), m_pOriginalVertexBuffer->getVerticesCount() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
+	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 	
 	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConceptualFaces;
