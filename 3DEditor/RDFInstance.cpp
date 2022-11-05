@@ -13,7 +13,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_strUniqueName(L"")
 	, m_pOriginalVertexBuffer(new _vertices_f())
 	, m_pVertices(NULL)	
-	, m_pIndexBuffer(new IndexBuffer())
+	, m_pIndexBuffer(new _indices_i32())
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
 	, m_vecFacePolygons()
@@ -159,18 +159,18 @@ bool CRDFInstance::isReferenced() const
 // ------------------------------------------------------------------------------------------------
 bool CRDFInstance::hasGeometry() const
 {
-	return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->getIndicesCount() > 0);
+	return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0);
 }
 
 // ------------------------------------------------------------------------------------------------
 int32_t * CRDFInstance::getIndices() const
 {
-	return m_pIndexBuffer->getIndices();
+	return m_pIndexBuffer->data();
 }
 
 int64_t CRDFInstance::getIndicesCount() const
 {
-	return m_pIndexBuffer->getIndicesCount();
+	return m_pIndexBuffer->size();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -564,17 +564,17 @@ void CRDFInstance::Calculate()
 	m_pVertices = NULL;
 
 	delete m_pIndexBuffer;
-	m_pIndexBuffer = new IndexBuffer();
+	m_pIndexBuffer = new _indices_i32();
 
 	/**
 	* Calculate
 	*/
-	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->size(), &m_pIndexBuffer->m_iIndicesCount, NULL);
+	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->size(), &m_pIndexBuffer->size(), NULL);
 
 	/**
 	* Retrieve the buffers
 	*/
-	if ((m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->m_iIndicesCount))
+	if ((m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size()))
 	{
 		/**
 		* Retrieves the vertices
@@ -589,10 +589,10 @@ void CRDFInstance::Calculate()
 		/**
 		* Retrieves the indices
 		*/
-		m_pIndexBuffer->m_pIndices = new int32_t[m_pIndexBuffer->m_iIndicesCount];
-		memset(m_pIndexBuffer->m_pIndices, 0, m_pIndexBuffer->m_iIndicesCount * sizeof(int32_t));
+		m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
+		memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
 
-		UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->m_pIndices);
+		UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 	} // if ((m_pOriginalVertexBuffer->m_iVerticesCount > 0) && ...	
 
 	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
@@ -628,7 +628,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Material
 			*/
-			int32_t iIndexValue = *(m_pIndexBuffer->getIndices() + iStartIndexTriangles);
+			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
 			float fColor = *(m_pVertices + iIndexValue + 8);
@@ -732,7 +732,7 @@ void CRDFInstance::Calculate()
 						iIndex < iStartIndexTriangles + _openGLUtils::getIndicesCountLimit(); 
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
 					concFacesCohorts().push_back(pNewCohort);
@@ -756,7 +756,7 @@ void CRDFInstance::Calculate()
 						iIndex < iStartIndexTriangles + iIndicesCountTriangles; 
 						iIndex++)
 					{
-						pNewCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 					}
 
 					concFacesCohorts().push_back(pNewCohort);
@@ -803,7 +803,7 @@ void CRDFInstance::Calculate()
 			*/
 			for (int_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
 			{
-				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			}
 
 			// Conceptual faces
@@ -848,7 +848,7 @@ void CRDFInstance::Calculate()
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
 					{
-						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -857,8 +857,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -876,7 +876,7 @@ void CRDFInstance::Calculate()
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 					{
-						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -885,8 +885,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -908,7 +908,7 @@ void CRDFInstance::Calculate()
 			int_t iPreviousIndex = -1;
 			for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 			{
-				if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+				if (m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					iPreviousIndex = -1;
 
@@ -917,8 +917,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -970,7 +970,7 @@ void CRDFInstance::Calculate()
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
 					{
-						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -979,8 +979,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -998,7 +998,7 @@ void CRDFInstance::Calculate()
 					int_t iPreviousIndex = -1;
 					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 					{
-						if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
 							iPreviousIndex = -1;
 
@@ -1007,8 +1007,8 @@ void CRDFInstance::Calculate()
 
 						if (iPreviousIndex != -1)
 						{
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 						} // if (iPreviousIndex != -1)
 
 						iPreviousIndex = iIndex;
@@ -1030,7 +1030,7 @@ void CRDFInstance::Calculate()
 			int_t iPreviousIndex = -1;
 			for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + iIndicesFacesPolygonsCount; iIndex++)
 			{
-				if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+				if (m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					iPreviousIndex = -1;
 
@@ -1039,8 +1039,8 @@ void CRDFInstance::Calculate()
 
 				if (iPreviousIndex != -1)
 				{
-					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iPreviousIndex]);
-					pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
+					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 				} // if (iPreviousIndex != -1)
 
 				iPreviousIndex = iIndex;
@@ -1090,12 +1090,12 @@ void CRDFInstance::Calculate()
 
 			for (int_t iIndex = iStartIndexLines; iIndex < iStartIndexLines + iIndicesLinesCount; iIndex++)
 			{
-				if (m_pIndexBuffer->getIndices()[iIndex] < 0)
+				if (m_pIndexBuffer->data()[iIndex] < 0)
 				{
 					continue;
 				}
 
-				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			} // for (int_t iIndex = ...
 		} // for (size_t iFace = ...
 
@@ -1142,7 +1142,7 @@ void CRDFInstance::Calculate()
 
 			for (int_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesPointsCount; iIndex++)
 			{
-				pCohort->indices().push_back(m_pIndexBuffer->getIndices()[iIndex]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
 			}
 		} // for (size_t iFace = ...
 
@@ -1183,14 +1183,9 @@ void CRDFInstance::Clean()
 	m_vecLines.clear();
 	m_vecPoints.clear();
 	m_vecFacePolygons.clear();
-	m_vecConcFacePolygons.clear();	
+	m_vecConcFacePolygons.clear();
 
-	for (size_t iMaterial = 0; iMaterial < m_vecConcFacesCohorts.size(); iMaterial++)
-	{
-		delete m_vecConcFacesCohorts[iMaterial];
-	}
-	m_vecConcFacesCohorts.clear();
-
+	_cohort::clear(m_vecConcFacesCohorts);
 	_cohort::clear(m_vecFacePolygonsCohorts);
 	_cohort::clear(m_vecConcFacePolygonsCohorts);
 	_cohort::clear(m_vecLinesCohorts);

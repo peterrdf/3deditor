@@ -56,83 +56,6 @@ static void	Transform(const VECTOR3 * pV, const MATRIX *pM, VECTOR3 * pOut)
 	pOut->z = pTmp.z;
 }
 
-/**
-* C++ Wrapper
-*/
-
-/**
-* C++ Wrapper
-*/
-template<class I>
-class _IndexBuffer
-{
-	/**
-	* Thing will populate the buffer
-	*/
-	friend class Thing;
-
-public: // Members
-
-	/**
-	* Indices
-	*/
-	I* m_pIndices;
-
-	/**
-	* Count
-	*/
-	int64_t m_iIndicesCount;
-
-public: // Methods
-
-	/**
-	* ctor
-	*/
-	_IndexBuffer()
-		: m_pIndices(nullptr)
-		, m_iIndicesCount(0)
-	{
-		static_assert(
-			is_same<I, int32_t>::value ||
-			is_same<I, int64_t>::value,
-			"I must be int32_t or int64_t type.");
-	}
-
-	/**
-	* dtor
-	*/
-	virtual ~_IndexBuffer()
-	{
-		delete[] m_pIndices;
-	}
-
-	/**
-	* Getter
-	*/
-	I* getIndices() const
-	{
-		return m_pIndices;
-	}
-
-	/**
-	* Getter
-	*/
-	int64_t getIndicesCount() const
-	{
-		return m_iIndicesCount;
-	}
-};
-
-/**
-* int32_t
-*/
-typedef _IndexBuffer<int32_t> IndexBuffer;
-
-/**
-* Double
-*/
-typedef _IndexBuffer<int64_t> DoubleIndexBuffer;
-
 // ------------------------------------------------------------------------------------------------
 // (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
 class CIn64RGBCoder
@@ -203,7 +126,7 @@ private: // Members
 	// Geometry
 	_vertices_f* m_pOriginalVertexBuffer;
 	float * m_pVertices; // Scaled & Centered Vertices - [-1, 1]
-	IndexBuffer* m_pIndexBuffer; // Indices	
+	_indices_i32* m_pIndexBuffer; // Indices	
 	int64_t m_iConceptualFacesCount; // Conceptual faces
 	
 	// Primitives

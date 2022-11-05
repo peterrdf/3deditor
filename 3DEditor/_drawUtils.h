@@ -66,3 +66,26 @@ public: // Methods
 
 typedef _vertexBuffer<float> _vertices_f;
 typedef _vertexBuffer<double> _vertices_d;
+
+template<class I>
+class _indexBuffer : public _buffer<I>
+{
+
+public: // Methods
+
+	_indexBuffer()
+	{
+		static_assert(
+			is_same<I, int32_t>::value ||
+			is_same<I, int64_t>::value,
+			"I must be int32_t or int64_t type.");
+	}
+
+	virtual ~_indexBuffer()
+	{
+	}
+};
+
+
+typedef _indexBuffer<int32_t> _indices_i32;
+typedef _indexBuffer<int64_t> _indices_i64;

@@ -102,7 +102,8 @@ public: // Methods
 		return pIndices;
 	}
 
-	static void clear(vector<_cohort*>& vecCohorts)
+	template<class T>
+	static void clear(vector<T*>& vecCohorts)
 	{
 		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
 		{
