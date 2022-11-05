@@ -174,6 +174,10 @@ private: // Members
 	float m_fYTranslation;
 	float m_fZTranslation;
 
+	// Draw
+	vector<CDrawMetaData*> m_vecDrawMetaData;
+	vector<GLuint> m_vecIBOs;
+
 	// Mouse
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
@@ -181,39 +185,19 @@ private: // Members
 	// Selection
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;	
 	CRDFInstance* m_pPointedInstance;
-	CRDFInstance* m_pSelectedInstance;	
+	CRDFInstance* m_pSelectedInstance;
+
 	CPoint m_ptSelectedPoint;
 	GLfloat m_arSelectedPoint[3];
-	
-	// Selection
-	GLuint m_iFaceSelectionFrameBuffer;
 
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iFaceSelectionTextureBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iFaceSelectionDepthRenderBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iFaceSelectionIBO;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support - (Face index : Color) for m_pSelectedInstance
-	map<int64_t, _color> m_mapFacesSelectionColors;
-
+	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
+	GLuint m_iFaceSelectionIBO;
 	int64_t m_iPointedFace;
 
 	// --------------------------------------------------------------------------------------------
 	// VBOs
-	vector<CDrawMetaData*> m_vecDrawMetaData;
-
-	// --------------------------------------------------------------------------------------------
-	// Shared IBOs
-	vector<GLuint> m_vecIBOs;
+	
 	
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;

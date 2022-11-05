@@ -58,19 +58,15 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_fZTranslation(-5.0f)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
+	, m_vecDrawMetaData()
+	, m_vecIBOs()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
-	, m_iFaceSelectionFrameBuffer(0)
-	, m_iFaceSelectionTextureBuffer(0)
-	, m_iFaceSelectionDepthRenderBuffer(0)
-	, m_iFaceSelectionIBO(0)
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
 	, m_ptSelectedPoint(-1, -1)
-	, m_mapFacesSelectionColors()
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_iPointedFace(-1)
-	, m_vecDrawMetaData()
-	, m_vecIBOs()
+	, m_iFaceSelectionIBO(0)
+	, m_iPointedFace(-1)	
 	, m_pSelectedInstanceMaterial(NULL)
 	, m_pPointedInstanceMaterial(NULL)
 	, m_iBoundingBoxesVAO(0)
@@ -155,24 +151,6 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;
-
-	if (m_iFaceSelectionFrameBuffer != 0)
-	{
-		glDeleteFramebuffers(1, &m_iFaceSelectionFrameBuffer);
-		m_iFaceSelectionFrameBuffer = 0;
-	}
-
-	if (m_iFaceSelectionTextureBuffer != 0)
-	{
-		glDeleteTextures(1, &m_iFaceSelectionTextureBuffer);
-		m_iFaceSelectionTextureBuffer = 0;
-	}
-
-	if (m_iFaceSelectionDepthRenderBuffer != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iFaceSelectionDepthRenderBuffer);
-		m_iFaceSelectionDepthRenderBuffer = 0;
-	}	
 
 	if (m_iFaceSelectionIBO != 0)
 	{
@@ -981,7 +959,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				m_arSelectedPoint[1] = -FLT_MAX;
 				m_arSelectedPoint[2] = -FLT_MAX;
 
-				m_mapFacesSelectionColors.clear();
+				m_pFaceSelectionFrameBuffer->encoding().clear();
 
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
@@ -1043,10 +1021,12 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = NULL;
 	m_pSelectedInstance = NULL;
+
 	m_arSelectedPoint[0] = -FLT_MAX;
 	m_arSelectedPoint[1] = -FLT_MAX;
 	m_arSelectedPoint[2] = -FLT_MAX;
-	m_mapFacesSelectionColors.clear();
+
+	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 
 	CRDFController * pController = GetController();
@@ -2052,7 +2032,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		m_arSelectedPoint[1] = -FLT_MAX;
 		m_arSelectedPoint[2] = -FLT_MAX;
 
-		m_mapFacesSelectionColors.clear();
+		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 #ifdef _LINUX
         m_pWnd->Refresh(false);
@@ -2086,7 +2066,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		m_arSelectedPoint[1] = -FLT_MAX;
 		m_arSelectedPoint[2] = -FLT_MAX;
 
-		m_mapFacesSelectionColors.clear();
+		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 #ifdef _LINUX
         m_pWnd->Refresh(false);
@@ -3983,62 +3963,12 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	BOOL bResult = m_pOGLContext->MakeCurrent();
 	VERIFY(bResult);
 
-	if (m_iFaceSelectionFrameBuffer == 0)
-	{
-		ASSERT(m_iFaceSelectionTextureBuffer == 0);
-		ASSERT(m_iFaceSelectionDepthRenderBuffer == 0);
-
-		/*
-		* Frame buffer
-		*/
-		glGenFramebuffers(1, &m_iFaceSelectionFrameBuffer);
-		ASSERT(m_iFaceSelectionFrameBuffer != 0);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, m_iFaceSelectionFrameBuffer);
-
-		/*
-		* Texture buffer
-		*/
-		glGenTextures(1, &m_iFaceSelectionTextureBuffer);
-		ASSERT(m_iFaceSelectionTextureBuffer != 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_iFaceSelectionTextureBuffer);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iFaceSelectionTextureBuffer, 0);
-
-		/*
-		* Depth buffer
-		*/
-		glGenRenderbuffers(1, &m_iFaceSelectionDepthRenderBuffer);
-		ASSERT(m_iFaceSelectionDepthRenderBuffer != 0);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, m_iFaceSelectionDepthRenderBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iFaceSelectionDepthRenderBuffer);
-
-		GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, arDrawBuffers);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		_openGLUtils::checkForErrors();
-	} // if (m_iFaceSelectionFrameBuffer == 0)
+	m_pFaceSelectionFrameBuffer->create();
 
 	/*
 	* Selection colors
 	*/
-	if (m_mapFacesSelectionColors.empty())
+	if (m_pFaceSelectionFrameBuffer->encoding().empty())
 	{
 		auto vecTriangles = m_pSelectedInstance->getTriangles();
 		ASSERT(!vecTriangles.empty());
@@ -4048,15 +3978,15 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 			float fR, fG, fB;
 			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
 
-			m_mapFacesSelectionColors[iTriangle] = _color(fR, fG, fB);
-		} // for (size_t iTriangle = ...
-	} // if (m_mapFacesSelectionColors.empty())
+			m_pFaceSelectionFrameBuffer->encoding()[iTriangle] = _color(fR, fG, fB);
+		}
+	} // if (m_pFaceSelectionFrameBuffer->encoding().empty())
 
 	/*
 	* Draw
 	*/
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_iFaceSelectionFrameBuffer);
+	m_pFaceSelectionFrameBuffer->bind();
 
 	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
 
@@ -4120,8 +4050,8 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 		if (!vecIndices.empty())
 		{
-			auto itSelectionColor = m_mapFacesSelectionColors.find(iTriangle);
-			ASSERT(itSelectionColor != m_mapFacesSelectionColors.end());
+			auto itSelectionColor = m_pFaceSelectionFrameBuffer->encoding().find(iTriangle);
+			ASSERT(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
 
 			// Ambient color
 			glProgramUniform3f(m_pProgram->GetID(),
@@ -4143,7 +4073,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_pFaceSelectionFrameBuffer->unbind();
 
 	_openGLUtils::checkForErrors();
 }
@@ -4323,7 +4253,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		/*
 		* Select a face
 		*/
-		if ((m_iFaceSelectionFrameBuffer != 0) && (m_pSelectedInstance != NULL))
+		if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && (m_pSelectedInstance != NULL))
 		{
 			int iWidth = 0;
 			int iHeight = 0;
@@ -4352,7 +4282,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
 			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, m_iFaceSelectionFrameBuffer);
+			m_pFaceSelectionFrameBuffer->bind();
 
 			glReadPixels(
 				(GLint)dX,
@@ -4362,13 +4292,13 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			m_pFaceSelectionFrameBuffer->unbind();
 
 			int64_t iPointedFace = -1;
 			if (arPixels[3] != 0)
 			{
 				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				ASSERT(m_mapFacesSelectionColors.find(iPointedFace) != m_mapFacesSelectionColors.end());
+				ASSERT(m_pFaceSelectionFrameBuffer->encoding().find(iPointedFace) != m_pFaceSelectionFrameBuffer->encoding().end());
 			}
 
 			if (m_iPointedFace != iPointedFace)
@@ -4381,7 +4311,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
                 m_pWnd->RedrawWindow();
 #endif // _LINUX
 			}
-		} // if ((m_iFaceSelectionFrameBuffer != 0) && ...
+		} // if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && ...
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
 	if (m_ptPrevMousePosition.x == -1)
