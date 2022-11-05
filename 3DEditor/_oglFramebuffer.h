@@ -1,13 +1,12 @@
 #pragma once
 
 #include "_openGLUtils.h"
+#include "_material.h"
 
 #include <assert.h>
 
 #include <map>
 using namespace std;
-
-#include "_material.h"
 
 #define BUFFER_SIZE 512
 
@@ -47,7 +46,7 @@ public: // Methods
 		}
 	}
 
-	void Create(GLsizei iWidth = BUFFER_SIZE, GLsizei iHeight = BUFFER_SIZE)
+	void create(GLsizei iWidth = BUFFER_SIZE, GLsizei iHeight = BUFFER_SIZE)
 	{
 		if (m_iFrameBuffer == 0)
 		{
@@ -98,23 +97,23 @@ public: // Methods
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			COpenGLUtils::Check4Errors();
+			_openGLUtils::checkForErrors();
 		} // if (m_iFrameBuffer == 0)
 	}
 
-	virtual bool IsInitialized() const
+	virtual bool isInitialized() const
 	{
 		return m_iFrameBuffer != 0;
 	}
 
-	void Bind()
+	void bind()
 	{
 		assert(m_iFrameBuffer != 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_iFrameBuffer);
 	}
 
-	void Unbind()
+	void unbind()
 	{
 		assert(m_iFrameBuffer != 0);
 
@@ -127,13 +126,13 @@ class _oglSelectionFramebuffer : public _oglFramebuffer
 
 private: // Members
 
-	map<int64_t, _material> m_mapSelectionColors;
+	map<int64_t, _color> m_mapEncoding; // ID : Color
 
 public: // Methods
 
 	_oglSelectionFramebuffer()
 		: _oglFramebuffer()
-		, m_mapSelectionColors()
+		, m_mapEncoding()
 	{
 	}
 
@@ -141,13 +140,8 @@ public: // Methods
 	{
 	}
 
-	void Initialize()
+	map<int64_t, _color>& encoding()
 	{
-
-	}
-	
-	virtual bool IsInitialized() const override
-	{
-		return _oglFramebuffer::IsInitialized() && !m_mapSelectionColors.empty();
+		return m_mapEncoding;
 	}
 };

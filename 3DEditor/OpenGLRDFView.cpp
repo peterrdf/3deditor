@@ -58,18 +58,16 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_fZTranslation(-5.0f)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_iInstanceSelectionFrameBuffer(0)
-	, m_iInstanceSelectionTextureBuffer(0)
-	, m_iInstanceSelectionDepthRenderBuffer(0)
+	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_iFaceSelectionFrameBuffer(0)
 	, m_iFaceSelectionTextureBuffer(0)
 	, m_iFaceSelectionDepthRenderBuffer(0)
 	, m_iFaceSelectionIBO(0)
-	, m_mapInstancesSelectionColors()
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
 	, m_ptSelectedPoint(-1, -1)
 	, m_mapFacesSelectionColors()
+	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_vecDrawMetaData()
 	, m_vecIBOs()
@@ -96,10 +94,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	m_arSelectedPoint[0] = -FLT_MAX;
 	m_arSelectedPoint[1] = -FLT_MAX;
 	m_arSelectedPoint[2] = -FLT_MAX;
-
-	m_arCamera[0] = -FLT_MAX;
-	m_arCamera[1] = -FLT_MAX;
-	m_arCamera[2] = -FLT_MAX;
 
 	/*
 	* Default
@@ -159,23 +153,8 @@ COpenGLRDFView::~COpenGLRDFView()
 {
 	GetController()->UnRegisterView(this);
 
-	if (m_iInstanceSelectionFrameBuffer != 0)
-	{
-		glDeleteFramebuffers(1, &m_iInstanceSelectionFrameBuffer);
-		m_iInstanceSelectionFrameBuffer = 0;
-	}
-
-	if (m_iInstanceSelectionTextureBuffer != 0)
-	{
-		glDeleteTextures(1, &m_iInstanceSelectionTextureBuffer);
-		m_iInstanceSelectionTextureBuffer = 0;
-	}
-
-	if (m_iInstanceSelectionDepthRenderBuffer != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iInstanceSelectionDepthRenderBuffer);
-		m_iInstanceSelectionDepthRenderBuffer = 0;
-	}
+	delete m_pInstanceSelectionFrameBuffer;
+	delete m_pFaceSelectionFrameBuffer;
 
 	if (m_iFaceSelectionFrameBuffer != 0)
 	{
@@ -1061,7 +1040,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	VERIFY(bResult);
 #endif // _LINUX
 
-	m_mapInstancesSelectionColors.clear();
+	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = NULL;
 	m_pSelectedInstance = NULL;
 	m_arSelectedPoint[0] = -FLT_MAX;
@@ -3838,67 +3817,15 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	BOOL bResult = m_pOGLContext->MakeCurrent();
 	VERIFY(bResult);
 
-	if (m_iInstanceSelectionFrameBuffer == 0)
-	{
-		ASSERT(m_iInstanceSelectionTextureBuffer == 0);
-		ASSERT(m_iInstanceSelectionDepthRenderBuffer == 0);
-
-		/*
-		* Frame buffer
-		*/
-		glGenFramebuffers(1, &m_iInstanceSelectionFrameBuffer);
-		ASSERT(m_iInstanceSelectionFrameBuffer != 0);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
-
-		/*
-		* Texture buffer
-		*/
-		glGenTextures(1, &m_iInstanceSelectionTextureBuffer);
-		ASSERT(m_iInstanceSelectionTextureBuffer != 0);
-
-		glBindTexture(GL_TEXTURE_2D, m_iInstanceSelectionTextureBuffer);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iInstanceSelectionTextureBuffer, 0);
-
-		/*
-		* Depth buffer
-		*/
-		glGenRenderbuffers(1, &m_iInstanceSelectionDepthRenderBuffer);
-		ASSERT(m_iInstanceSelectionDepthRenderBuffer != 0);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, m_iInstanceSelectionDepthRenderBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iInstanceSelectionDepthRenderBuffer);
-
-		GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, arDrawBuffers);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		_openGLUtils::checkForErrors();
-	} // if (m_iInstanceSelectionFrameBuffer == 0)
+	m_pInstanceSelectionFrameBuffer->create();
 
 	/*
 	* Selection colors
 	*/
-	if (m_mapInstancesSelectionColors.empty())
+	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
 		const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
-
-		map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+		for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 		{
 			CRDFInstance * pRDFInstance = itRDFInstances->second;
 			if (!pRDFInstance->getEnable())
@@ -3923,17 +3850,17 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			}
 
 			float fR, fG, fB;
-			_i64RGBCoder::Encode(pRDFInstance->getID(), fR, fG, fB);
+			_i64RGBCoder::encode(pRDFInstance->getID(), fR, fG, fB);
 
-			m_mapInstancesSelectionColors[pRDFInstance->getInstance()] = _color(fR, fG, fB);
-		} // for (; itRDFInstances != ...
-	} // if (m_mapInstancesSelectionColors.empty())
+			m_pInstanceSelectionFrameBuffer->encoding()[pRDFInstance->getInstance()] = _color(fR, fG, fB);
+		}
+	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
 	/*
 	* Draw
 	*/
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
+	m_pInstanceSelectionFrameBuffer->bind();
 
 	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
 
@@ -3985,8 +3912,8 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 					continue;
 				}
 				
-				auto itSelectionColor = m_mapInstancesSelectionColors.find(pRDFInstance->getInstance());
-				ASSERT(itSelectionColor != m_mapInstancesSelectionColors.end());
+				auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pRDFInstance->getInstance());
+				ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 				
 				glProgramUniform3f(
 					m_pProgram->GetID(),
@@ -4005,14 +3932,14 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 						GL_UNSIGNED_INT,
 						(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
 						pRDFInstance->VBOOffset());
-				} // for (size_t iMaterial = ...
+				}
 			} // for (size_t iObject = ...
 
 			glBindVertexArray(0);
 		} // for (auto itGroups = ...
 	} // for (size_t iDrawMetaData = ...
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_pInstanceSelectionFrameBuffer->unbind();
 
 	_openGLUtils::checkForErrors();
 }
@@ -4119,7 +4046,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
 		{
 			float fR, fG, fB;
-			_i64RGBCoder::Encode(iTriangle, fR, fG, fB);
+			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
 
 			m_mapFacesSelectionColors[iTriangle] = _color(fR, fG, fB);
 		} // for (size_t iTriangle = ...
@@ -4332,7 +4259,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		/*
 		* Select an instance
 		*/
-		if (m_iInstanceSelectionFrameBuffer != 0)
+		if (m_pInstanceSelectionFrameBuffer->isInitialized())
 		{
 			int iWidth = 0;
 			int iHeight = 0;
@@ -4361,7 +4288,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
 			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, m_iInstanceSelectionFrameBuffer);
+			m_pInstanceSelectionFrameBuffer->bind();
 
 			glReadPixels(
 				(GLint)dX,
@@ -4371,16 +4298,15 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			m_pInstanceSelectionFrameBuffer->unbind();
 
 			CRDFInstance * pPointedInstance = NULL;
-
 			if (arPixels[3] != 0)
 			{
-				int64_t iObjectID = _i64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
+				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetRDFInstanceByID(iObjectID);
 				ASSERT(pPointedInstance != NULL);
-			} // if (arPixels[3] != 0)
+			}
 
 			if (m_pPointedInstance != pPointedInstance)
 			{
@@ -4392,7 +4318,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
                 m_pWnd->RedrawWindow();
 #endif // _LINUX
 			}
-		} // if (m_iInstanceSelectionFrameBuffer != 0)
+		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 
 		/*
 		* Select a face
@@ -4439,12 +4365,11 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			int64_t iPointedFace = -1;
-
 			if (arPixels[3] != 0)
 			{
-				iPointedFace = _i64RGBCoder::Decode(arPixels[0], arPixels[1], arPixels[2]);
+				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				ASSERT(m_mapFacesSelectionColors.find(iPointedFace) != m_mapFacesSelectionColors.end());
-			} // if (arPixels[3] != 0)
+			}
 
 			if (m_iPointedFace != iPointedFace)
 			{

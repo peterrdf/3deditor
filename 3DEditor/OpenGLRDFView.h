@@ -1,7 +1,6 @@
 #ifndef _OPEN_GL_IFC_VIEW_H_
 #define _OPEN_GL_IFC_VIEW_H_
 
-// ------------------------------------------------------------------------------------------------
 #include "Generic.h"
 #include "RDFView.h"
 #ifdef _LINUX
@@ -11,19 +10,17 @@
 #include "OpenGLContext.h"
 #endif // _LINUX
 #include "RDFInstance.h"
+#include "_oglFramebuffer.h"
 
-// ------------------------------------------------------------------------------------------------
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-// ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 #define MK_LBUTTON 1
 #define MK_MBUTTON 2
 #define MK_RBUTTON 4
 #endif
 
-// ------------------------------------------------------------------------------------------------
 #include "BinnPhongGLProgram.h"
 #include "GLShader.h"
 
@@ -34,8 +31,6 @@
 #include "gtc/type_ptr.hpp"
 #include "glew.h"
 
-// ------------------------------------------------------------------------------------------------
-// Mouse support
 enum enumMouseEvent
 {
 	meMove = 0,
@@ -47,18 +42,14 @@ enum enumMouseEvent
 	meRBtnUp = 6,
 };
 
-// ------------------------------------------------------------------------------------------------
 enum enumDrawMetaDataType
 {
 	mdtGeometry = 0,
 	mdtVectors = 1,
 };
 
-// ------------------------------------------------------------------------------------------------
 typedef map<GLuint, vector<CRDFInstance*>> VBOGROUPS;
 
-// ------------------------------------------------------------------------------------------------
-// VBOs
 class CDrawMetaData
 {
 
@@ -130,13 +121,10 @@ public: // Methods
 	}
 };
 
-// ------------------------------------------------------------------------------------------------
 #define CULL_FACES_NONE L"<none>"
 #define CULL_FACES_FRONT L"Front"
 #define CULL_FACES_BACK L"Back"
 
-// ------------------------------------------------------------------------------------------------
-// Open GL View
 class COpenGLRDFView : public CRDFView
 {
 
@@ -144,160 +132,60 @@ class COpenGLRDFView : public CRDFView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Window
 #ifdef _LINUX
     wxGLCanvas * m_pWnd;
 #else
 	CWnd * m_pWnd;
 #endif // _LINUX
 
-	// --------------------------------------------------------------------------------------------
+	// OpenGL
 	CBinnPhongGLProgram* m_pProgram;
-
-	// --------------------------------------------------------------------------------------------
 	CGLShader* m_pVertexShader;
-
-	// --------------------------------------------------------------------------------------------
 	CGLShader* m_pFragmentShader;
-
-	// --------------------------------------------------------------------------------------------
 	glm::mat4 m_modelViewMatrix;
 
-	// --------------------------------------------------------------------------------------------
-	// Instances
+	// UI
 	BOOL m_bShowReferencedInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// Coordinate System
 	BOOL m_bShowCoordinateSystem;
-
-	// --------------------------------------------------------------------------------------------
-	// Faces
 	BOOL m_bShowFaces;
-
-	// --------------------------------------------------------------------------------------------
-	// Cull Faces
 	CString m_strCullFaces;
-
-	// --------------------------------------------------------------------------------------------
-	// Faces polygons
 	BOOL m_bShowFacesPolygons;
-
-	// --------------------------------------------------------------------------------------------
-	// Conceptual faces polygons
 	BOOL m_bShowConceptualFacesPolygons;
-
-	// --------------------------------------------------------------------------------------------
-	// Lines
 	BOOL m_bShowLines;
-
-	// --------------------------------------------------------------------------------------------
-	// Line width
 	GLfloat m_fLineWidth;
-
-	// --------------------------------------------------------------------------------------------
-	// Points
 	BOOL m_bShowPoints;
-
-	// --------------------------------------------------------------------------------------------
-	// Point size
 	GLfloat m_fPointSize;
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding boxes
 	BOOL m_bShowBoundingBoxes;
-
-	// --------------------------------------------------------------------------------------------
-	// Normal vectors
 	BOOL m_bShowNormalVectors;
-
-	// --------------------------------------------------------------------------------------------
-	// Tangent vectors
 	BOOL m_bShowTangenVectors;
-
-	// --------------------------------------------------------------------------------------------
-	// Bi-normal vectors
 	BOOL m_bShowBiNormalVectors;
-
-	// --------------------------------------------------------------------------------------------
-	// Scale all vectors
 	BOOL m_bScaleVectors;
-
-	// --------------------------------------------------------------------------------------------
-	// OpenGL context
+	
 #ifdef _LINUX
     wxGLContext * m_pOGLContext;
 #else
 	COpenGLContext * m_pOGLContext;
 #endif // _LINUX
 
-	// --------------------------------------------------------------------------------------------
-	// Rotation - X
+	// Transformations
 	float m_fXAngle;
-
-	// --------------------------------------------------------------------------------------------
-	// Rotation - Y
 	float m_fYAngle;
-
-	// --------------------------------------------------------------------------------------------
-	// Translation - X
 	float m_fXTranslation;
-
-	// --------------------------------------------------------------------------------------------
-	// Translation - Y
 	float m_fYTranslation;
-
-	// --------------------------------------------------------------------------------------------
-	// Translation - Z
 	float m_fZTranslation;
 
-	// --------------------------------------------------------------------------------------------
-	// Mouse position
+	// Mouse
 	CPoint m_ptStartMousePosition;
-
-	// --------------------------------------------------------------------------------------------
-	// Mouse position
 	CPoint m_ptPrevMousePosition;
 
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iInstanceSelectionFrameBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iInstanceSelectionTextureBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	GLuint m_iInstanceSelectionDepthRenderBuffer;
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support - (Instance : Color)
-	map<int64_t, _color> m_mapInstancesSelectionColors;
-
-	// --------------------------------------------------------------------------------------------
-	// Pointed instance (mouse move)
-	CRDFInstance * m_pPointedInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected instance (mouse click)
-	CRDFInstance * m_pSelectedInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected point (mouse click) in window coordinates
+	// Selection
+	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;	
+	CRDFInstance* m_pPointedInstance;
+	CRDFInstance* m_pSelectedInstance;	
 	CPoint m_ptSelectedPoint;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected point (mouse click) in OpenGL coordinates
 	GLfloat m_arSelectedPoint[3];
-
-	// --------------------------------------------------------------------------------------------
-	// Camera/eye
-	GLfloat m_arCamera[3];
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
+	
+	// Selection
 	GLuint m_iFaceSelectionFrameBuffer;
 
 	// --------------------------------------------------------------------------------------------
@@ -316,8 +204,7 @@ private: // Members
 	// Selection support - (Face index : Color) for m_pSelectedInstance
 	map<int64_t, _color> m_mapFacesSelectionColors;
 
-	// --------------------------------------------------------------------------------------------
-	// Pointed face (mouse move) for m_pSelectedInstance
+	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
 	int64_t m_iPointedFace;
 
 	// --------------------------------------------------------------------------------------------

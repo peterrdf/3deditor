@@ -97,7 +97,7 @@ class _i64RGBCoder
 
 public: // Methods
 
-	static void Encode(int64_t i, float& fR, float& fG, float& fB)
+	static void encode(int64_t i, float& fR, float& fG, float& fB)
 	{
 		static const float STEP = 1.f / 255.f;
 
@@ -127,7 +127,7 @@ public: // Methods
 		fB = i * STEP;
 	}
 
-	static int64_t Decode(unsigned char R, unsigned char G, unsigned char B)
+	static int64_t decode(unsigned char R, unsigned char G, unsigned char B)
 	{
 		int64_t i = 0;
 
