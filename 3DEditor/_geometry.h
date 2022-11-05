@@ -172,3 +172,18 @@ public: // Methods
 };
 
 typedef map<_material, vector<_face>, _materialsComparator> MATERIALS;
+
+struct _vector3d
+{
+	double x;
+	double y;
+	double z;
+};
+
+struct _matrix
+{
+	double _11, _12, _13;
+	double _21, _22, _23;
+	double _31, _32, _33;
+	double _41, _42, _43;
+};
