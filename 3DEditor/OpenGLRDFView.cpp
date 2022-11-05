@@ -3007,8 +3007,8 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			continue;
 		}
 
-		OGLMATRIX transformation;
-		OGLMatrixIdentity(&transformation);
+		_oglMatrix transformation;
+		_openGLUtils::oglMatrixIdentity(&transformation);
 
 		transformation._11 = pRDFInstance->getBoundingBoxTransformation()->_11;
 		transformation._12 = pRDFInstance->getBoundingBoxTransformation()->_12;
@@ -3028,8 +3028,8 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glMultMatrixd((GLdouble*)&transformation);
 		glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
 
-		VECTOR3 vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
-		VECTOR3 vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
+		_vector3d vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
+		_vector3d vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
 
 		// Bottom face
 		/*
@@ -3044,10 +3044,10 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		Min4						Min3
 		*/
 
-		VECTOR3 vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-		VECTOR3 vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-		VECTOR3 vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-		VECTOR3 vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
 
 		// Top face
 		/*
@@ -3062,10 +3062,10 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		Max2						Max1
 		*/
 
-		VECTOR3 vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-		VECTOR3 vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-		VECTOR3 vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-		VECTOR3 vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };		
+		_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
 
 		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 		vector<float> vecVertices = 

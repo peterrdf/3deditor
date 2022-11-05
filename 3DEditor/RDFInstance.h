@@ -6,55 +6,7 @@
 #include <vector>
 #include <map>
 #include "engine.h"
-
 using namespace std;
-
-// ------------------------------------------------------------------------------------------------
-struct VECTOR3
-{
-	double x;
-	double y;
-	double z;
-};
-
-// ------------------------------------------------------------------------------------------------
-struct MATRIX
-{
-	double _11, _12, _13;
-	double _21, _22, _23;
-	double _31, _32, _33;
-	double _41, _42, _43;
-};
-
-// ------------------------------------------------------------------------------------------------
-struct OGLMATRIX
-{
-	double _11, _12, _13, _14;
-	double _21, _22, _23, _24;
-	double _31, _32, _33, _34;
-	double _41, _42, _43, _44;
-};
-
-// ------------------------------------------------------------------------------------------------
-static void OGLMatrixIdentity(OGLMATRIX* pOut)
-{
-	memset(pOut, 0, sizeof(OGLMATRIX));
-
-	pOut->_11 = pOut->_22 = pOut->_33 = pOut->_44 = 1.;
-}
-
-// ------------------------------------------------------------------------------------------------
-static void	Transform(const VECTOR3 * pV, const MATRIX *pM, VECTOR3 * pOut)
-{
-	VECTOR3	pTmp;
-	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
-	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
-	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
-
-	pOut->x = pTmp.x;
-	pOut->y = pTmp.y;
-	pOut->z = pTmp.z;
-}
 
 class CRDFInstance
 {
@@ -94,9 +46,9 @@ private: // Members
 	vector<_cohort*> m_vecTangentVecsCohorts;
 
 	// Bounding box
-	VECTOR3 * m_vecBoundingBoxMin;
-	VECTOR3 * m_vecBoundingBoxMax;
-	MATRIX * m_mtxBoundingBoxTransformation;
+	_vector3d* m_vecBoundingBoxMin;
+	_vector3d* m_vecBoundingBoxMax;
+	_matrix* m_mtxBoundingBoxTransformation;
 	
 	bool m_bEnable; // UI
 
@@ -152,9 +104,9 @@ public: // Methods
 	vector<_cohort*>& biNormalVecsCohorts();
 	vector<_cohort*>& tangentVecsCohorts();
 	
-	VECTOR3* getBoundingBoxMin() const;
-	VECTOR3* getBoundingBoxMax() const;
-	MATRIX* getBoundingBoxTransformation() const;
+	_vector3d* getBoundingBoxMin() const;
+	_vector3d* getBoundingBoxMax() const;
+	_matrix* getBoundingBoxTransformation() const;
 	
 	void setEnable(bool bEnable);
 	bool getEnable() const;

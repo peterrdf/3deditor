@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_geometry.h"
+#include "_openGLUtils.h"
 
 template<class T>
 class _buffer

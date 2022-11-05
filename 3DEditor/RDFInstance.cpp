@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "RDFInstance.h"
 #include "Generic.h"
-#include "_openGLUtils.h"
 
 #include <memory>
 
@@ -268,19 +267,19 @@ vector<_cohort*>& CRDFInstance::tangentVecsCohorts()
 }
 
 // ------------------------------------------------------------------------------------------------
-VECTOR3 * CRDFInstance::getBoundingBoxMin() const
+_vector3d * CRDFInstance::getBoundingBoxMin() const
 {
 	return m_vecBoundingBoxMin;
 }
 
 // ------------------------------------------------------------------------------------------------
-VECTOR3 * CRDFInstance::getBoundingBoxMax() const
+_vector3d* CRDFInstance::getBoundingBoxMax() const
 {
 	return m_vecBoundingBoxMax;
 }
 
 // ------------------------------------------------------------------------------------------------
-MATRIX * CRDFInstance::getBoundingBoxTransformation() const
+_matrix * CRDFInstance::getBoundingBoxTransformation() const
 {
 	return m_mtxBoundingBoxTransformation;
 }
@@ -1159,9 +1158,9 @@ void CRDFInstance::Calculate()
 	*/
 	if (m_mtxBoundingBoxTransformation == NULL)
 	{
-		m_mtxBoundingBoxTransformation = new MATRIX();
-		m_vecBoundingBoxMin = new VECTOR3();
-		m_vecBoundingBoxMax = new VECTOR3();
+		m_mtxBoundingBoxTransformation = new _matrix();
+		m_vecBoundingBoxMin = new _vector3d();
+		m_vecBoundingBoxMax = new _vector3d();
 
 		SetBoundingBoxReference(m_iInstance, (double*)m_mtxBoundingBoxTransformation, (double*)m_vecBoundingBoxMin, (double*)m_vecBoundingBoxMax);
 	}

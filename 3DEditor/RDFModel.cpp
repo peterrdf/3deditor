@@ -1904,8 +1904,8 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		dZmax = pOctreePoint->getZmax();
 	}
 
-	VECTOR3 vecBoundingBoxMin = { dXmin, dYmin, dZmin };
-	VECTOR3 vecBoundingBoxMax = { dXmax, dYmax, dZmax };
+	_vector3d vecBoundingBoxMin = { dXmin, dYmin, dZmin };
+	_vector3d vecBoundingBoxMax = { dXmax, dYmax, dZmax };
 
 	vector<GEOM::GeometricItem> vecObjects;
 
@@ -1922,10 +1922,10 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 	Min4						Min3
 	*/
 
-	VECTOR3 vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-	VECTOR3 vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-	VECTOR3 vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-	VECTOR3 vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+	_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+	_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+	_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+	_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
 
 	{
 		vector<double> vecCoordinates;
@@ -1968,10 +1968,10 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 	Max2						Max1
 	*/	
 
-	VECTOR3 vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	VECTOR3 vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	VECTOR3 vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-	VECTOR3 vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+	_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+	_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+	_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+	_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
 
 	{
 		vector<double> vecCoordinates;
