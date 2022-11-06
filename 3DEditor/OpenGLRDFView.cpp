@@ -3977,6 +3977,9 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		return;
 	}
 
+	// Save Model-View Matrix
+	glm::mat4 modelViewMatrix = m_modelViewMatrix;
+
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
 	float fZTranslation = 0.f;
@@ -4058,12 +4061,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glBindVertexArray(0);
 
 		COpenGL::Check4Errors();
-	} // if (m_iBoundingBoxesVAO == 0)
-
-	GLint iMatrixMode = 0;
-	glGetIntegerv(GL_MATRIX_MODE, &iMatrixMode);
-
-	glMatrixMode(GL_MODELVIEW);
+	} // if (m_iBoundingBoxesVAO == 0)	
 
 	const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
 
@@ -4091,26 +4089,39 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			continue;
 		}
 
-		OGLMATRIX transformation;
-		OGLMatrixIdentity(&transformation);
+		float arBBTransformation[] =
+		{
+			(float)pRDFInstance->getBoundingBoxTransformation()->_11,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_12,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_13,
+			0.f,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_21,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_22,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_23,
+			0.f,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_31,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_32,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_33,
+			0.f,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_41,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_42,
+			(float)pRDFInstance->getBoundingBoxTransformation()->_43,
+			1.f,
+		};
 
-		transformation._11 = pRDFInstance->getBoundingBoxTransformation()->_11;
-		transformation._12 = pRDFInstance->getBoundingBoxTransformation()->_12;
-		transformation._13 = pRDFInstance->getBoundingBoxTransformation()->_13;
-		transformation._21 = pRDFInstance->getBoundingBoxTransformation()->_21;
-		transformation._22 = pRDFInstance->getBoundingBoxTransformation()->_22;
-		transformation._23 = pRDFInstance->getBoundingBoxTransformation()->_23;
-		transformation._31 = pRDFInstance->getBoundingBoxTransformation()->_31;
-		transformation._32 = pRDFInstance->getBoundingBoxTransformation()->_32;
-		transformation._33 = pRDFInstance->getBoundingBoxTransformation()->_33;
-		transformation._41 = pRDFInstance->getBoundingBoxTransformation()->_41;
-		transformation._42 = pRDFInstance->getBoundingBoxTransformation()->_42;
-		transformation._43 = pRDFInstance->getBoundingBoxTransformation()->_43;
+		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
 
-		glPushMatrix();
-		glTranslatef(fXTranslation, fYTranslation, fZTranslation);
-		glMultMatrixd((GLdouble*)&transformation);
-		glTranslatef(-fXTranslation, -fYTranslation, -fZTranslation);
+		modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+		modelViewMatrix = modelViewMatrix * matBBTransformation;
+		modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+
+		glProgramUniformMatrix4fv(
+			m_pProgram->GetID(),
+			m_pProgram->getMVMatrix(),
+			1,
+			false,
+			glm::value_ptr(modelViewMatrix));
 
 		VECTOR3 vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
 		VECTOR3 vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
@@ -4176,11 +4187,16 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			0);
 
 		glBindVertexArray(0);
-
-		glPopMatrix();
 	} // for (; itRDFInstances != ...
 
-	glMatrixMode(iMatrixMode);
+	// Restore Model-View Matrix
+	m_modelViewMatrix = modelViewMatrix;
+	glProgramUniformMatrix4fv(
+		m_pProgram->GetID(),
+		m_pProgram->getMVMatrix(),
+		1,
+		false,
+		glm::value_ptr(m_modelViewMatrix));
 #else
 	glDisable(GL_LIGHTING);
 
