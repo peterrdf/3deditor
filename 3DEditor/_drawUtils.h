@@ -87,7 +87,6 @@ public: // Methods
 	}
 };
 
-
 typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
 
@@ -142,4 +141,109 @@ public: // Methods
 
 		return i;
 	}
+};
+
+template <class Instance>
+class _openGLBuffers
+{
+
+private: // Members
+
+	map<GLuint, vector<Instance*>> m_mapVAOs; // VAO : vector<Instance*>;
+	map<string, GLuint> m_mapNamedBuffers;
+	vector<GLuint> m_vecBuffers;
+
+public: // Methods
+
+	_openGLBuffers()
+		: m_mapVAOs()
+		, m_mapNamedBuffers()
+		, m_vecBuffers()
+	{
+	}
+
+	virtual ~_openGLBuffers()
+	{
+	}
+
+	map<GLuint, vector<Instance*>>& VAOs()
+	{
+		return m_mapVAOs;
+	}
+
+	GLuint findVAO(Instance* pInstance)
+	{
+		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
+		{
+			for (size_t i = 0; i < itVAO->second.size(); i++)
+			{
+				if (pInstance == itVAO->second[i])
+				{
+					return itVAO->first;
+				}
+			}
+		}
+
+		// Not found
+		return 0;
+	}
+
+	map<string, GLuint>& namedBuffers()
+	{
+		return m_mapNamedBuffers;
+	}
+
+	vector<GLuint>& buffers()
+	{
+		return m_vecBuffers;
+	}
+
+	void clear()
+	{
+		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
+		{
+			glDeleteVertexArrays(1, &(itVAO->first));
+		}
+		m_mapVAOs.clear();
+
+		for (auto itBuffer = m_mapNamedBuffers.begin(); itBuffer != m_mapNamedBuffers.end(); itBuffer++)
+		{
+			glDeleteVertexArrays(1, &(itBuffer->second));
+		}
+		m_mapNamedBuffers.clear();
+
+		for (auto itBuffer : m_vecBuffers)
+		{
+			glDeleteBuffers(1, &itBuffer);
+		}
+		m_vecBuffers.clear();
+	}
+
+	// ------------------------------------------------------------------------------------------------
+	static float* mergeVertices(const vector<Instance*>& vecInstances, int_t iVertexLength, int_t& iVerticesCount)
+	{
+		iVerticesCount = 0;
+		for (size_t i = 0; i < vecInstances.size(); i++)
+		{
+			iVerticesCount += vecInstances[i]->getVerticesCount();
+		}
+
+		float* pVertices = new float[iVerticesCount * iVertexLength];
+
+		int_t iOffset = 0;
+		for (size_t i = 0; i < vecInstances.size(); i++)
+		{
+			float* pFacesVertices = vecInstances[i]->BuildFacesVertices();
+
+			memcpy((float*)pVertices + iOffset, pFacesVertices,
+				vecInstances[i]->getVerticesCount() * iVertexLength * sizeof(float));
+
+			delete[] pFacesVertices;
+
+			iOffset += vecInstances[i]->getVerticesCount() * iVertexLength;
+		}
+
+		return pVertices;
+	}
+
 };
