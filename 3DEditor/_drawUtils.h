@@ -217,6 +217,8 @@ public: // Methods
 			glDeleteBuffers(1, &itBuffer);
 		}
 		m_vecBuffers.clear();
+
+		_openGLUtils::checkForErrors();
 	}
 
 	// ------------------------------------------------------------------------------------------------

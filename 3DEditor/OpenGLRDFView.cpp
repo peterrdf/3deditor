@@ -58,7 +58,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_fZTranslation(-5.0f)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_vecDrawMetaData()
+	, m_openGLBuffers()
 	, m_vecIBOs()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_pPointedInstance(NULL)
@@ -144,6 +144,9 @@ COpenGLRDFView::~COpenGLRDFView()
 {
 	GetController()->UnRegisterView(this);
 
+	// OpenGL buffers
+	m_openGLBuffers.clear();
+
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;
 
@@ -152,15 +155,6 @@ COpenGLRDFView::~COpenGLRDFView()
 		glDeleteBuffers(1, &m_iFaceSelectionIBO);
 		m_iFaceSelectionIBO = 0;
 	}
-
-	/*
-	* VBO
-	*/
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		delete m_vecDrawMetaData[iDrawMetaData];
-	}
-	m_vecDrawMetaData.clear();
 
 	/*
 	* IBO
@@ -1048,15 +1042,9 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_fZTranslation = -m_fZTranslation;
 
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	/*
-	* VBOs
-	*/
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		delete m_vecDrawMetaData[iDrawMetaData];
-	}
-	m_vecDrawMetaData.clear();
+	
+	// OpenGL buffers
+	m_openGLBuffers.clear();
 
 	/*
 	* IBO
@@ -1178,10 +1166,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			_openGLUtils::checkForErrors();
 
-			CDrawMetaData* pDrawMetaData = new CDrawMetaData(mdtGeometry);
-			pDrawMetaData->AddGroup(iVAO, iVBO, vecRDFInstancesGroup);
-
-			m_vecDrawMetaData.push_back(pDrawMetaData);
+			m_openGLBuffers.VAOs()[iVAO] = vecRDFInstancesGroup;
+			m_openGLBuffers.buffers().push_back(iVBO);
 
 			iVerticesCount = 0;
 			vecRDFInstancesGroup.clear();
@@ -1546,10 +1532,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		_openGLUtils::checkForErrors();
 
-		CDrawMetaData* pDrawMetaData = new CDrawMetaData(mdtGeometry);
-		pDrawMetaData->AddGroup(iVAO, iVBO, vecRDFInstancesGroup);
-
-		m_vecDrawMetaData.push_back(pDrawMetaData);
+		m_openGLBuffers.VAOs()[iVAO] = vecRDFInstancesGroup;
+		m_openGLBuffers.buffers().push_back(iVBO);
 
 		iVerticesCount = 0;
 		vecRDFInstancesGroup.clear();
@@ -2076,68 +2060,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-GLuint COpenGLRDFView::FindVAO(CRDFInstance* pTargetRDFInstance)
-{
-	CRDFController* pController = GetController();
-	if (pController == 0)
-	{
-		ASSERT(FALSE);
-
-		return 0;
-	}
-
-	CRDFModel* pModel = pController->GetModel();
-	if (pModel == 0)
-	{
-		ASSERT(FALSE);
-
-		return 0;
-	}
-
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
-	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
-
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
-			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
-
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-
-				if (pRDFInstance == pTargetRDFInstance)
-				{
-					return itGroups->first;
-				}
-			} // for (size_t iObject = ...
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
-
-	// Not found
-	return 0;
-}
-
-// ------------------------------------------------------------------------------------------------
 float* COpenGLRDFView::GetVertices(const vector<CRDFInstance*>& vecRDFInstances, int_t& iVerticesCount)
 {
 	iVerticesCount = 0;
@@ -2274,151 +2196,140 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		m_pProgram->geUseBinnPhongModel(),
 		1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		glBindVertexArray(itVAO.first);
+
+		for (auto itInstance : itVAO.second)
 		{
-			continue;
-		}
+			CRDFInstance* pRDFInstance = itInstance;
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindVertexArray(itGroups->first);		
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			if (!pRDFInstance->getEnable())
 			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
+
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
+
+			/*
+			* Conceptual faces
+			*/
+			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
+			{
+				auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
+
+				const _material* pMaterial =
+					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pConcFacesCohort->getMaterial();
+
+				if (bTransparent)
 				{
-					continue;
+					if (pMaterial->getA() == 1.0)
+					{
+						continue;
+					}
 				}
-
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+				else
 				{
-					continue;
-				}
-
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
+					if (pMaterial->getA() < 1.0)
+					{
+						continue;
+					}
 				}
 
 				/*
-				* Conceptual faces
+				* Material - Texture
 				*/
-				for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
+				if (pMaterial->hasTexture())
 				{
-					auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
+					glProgramUniform1f(
+						m_pProgram->GetID(),
+						m_pProgram->geUseTexture(),
+						1.f);
 
-					const _material* pMaterial =
-						pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-						pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-						pConcFacesCohort->getMaterial();
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
-					if (bTransparent)
-					{
-						if (pMaterial->getA() == 1.0)
-						{
-							continue;
-						}
-					}
-					else
-					{
-						if (pMaterial->getA() < 1.0)
-						{
-							continue;
-						}
-					}
+					glProgramUniform1i(
+						m_pProgram->GetID(),
+						m_pProgram->getSampler(),
+						0);
+				} // if (pMaterial->hasTexture())
+				else
+				{
+					/*
+					* Material - Ambient color
+					*/
+					glProgramUniform3f(m_pProgram->GetID(),
+						m_pProgram->getMaterialAmbientColor(),
+						pMaterial->getAmbientColor().r(),
+						pMaterial->getAmbientColor().g(),
+						pMaterial->getAmbientColor().b());
 
 					/*
-					* Material - Texture
+					* Material - Transparency
 					*/
-					if (pMaterial->hasTexture())
-					{
-						glProgramUniform1f(
-							m_pProgram->GetID(),
-							m_pProgram->geUseTexture(),
-							1.f);
+					glProgramUniform1f(
+						m_pProgram->GetID(),
+						m_pProgram->getTransparency(),
+						pMaterial->getA());
 
-						glActiveTexture(GL_TEXTURE0);
-						glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
+					/*
+					* Material - Diffuse color
+					*/
+					glProgramUniform3f(m_pProgram->GetID(),
+						m_pProgram->getMaterialDiffuseColor(),
+						pMaterial->getDiffuseColor().r() / 2.f,
+						pMaterial->getDiffuseColor().g() / 2.f,
+						pMaterial->getDiffuseColor().b() / 2.f);
 
-						glProgramUniform1i(
-							m_pProgram->GetID(),
-							m_pProgram->getSampler(),
-							0);
-					} // if (pMaterial->hasTexture())
-					else
-					{
-						/*
-						* Material - Ambient color
-						*/
-						glProgramUniform3f(m_pProgram->GetID(),
-							m_pProgram->getMaterialAmbientColor(),
-							pMaterial->getAmbientColor().r(),
-							pMaterial->getAmbientColor().g(),
-							pMaterial->getAmbientColor().b());
+					/*
+					* Material - Specular color
+					*/
+					glProgramUniform3f(m_pProgram->GetID(),
+						m_pProgram->getMaterialSpecularColor(),
+						pMaterial->getSpecularColor().r() / 2.f,
+						pMaterial->getSpecularColor().g() / 2.f,
+						pMaterial->getSpecularColor().b() / 2.f);
 
-						/*
-						* Material - Transparency
-						*/
-						glProgramUniform1f(
-							m_pProgram->GetID(),
-							m_pProgram->getTransparency(),
-							pMaterial->getA());
+					/*
+					* Material - Emissive color
+					*/
+					glProgramUniform3f(m_pProgram->GetID(),
+						m_pProgram->getMaterialEmissiveColor(),
+						pMaterial->getEmissiveColor().r() / 3.f,
+						pMaterial->getEmissiveColor().g() / 3.f,
+						pMaterial->getEmissiveColor().b() / 3.f);
+				} // else if (pMaterial->hasTexture())					
 
-						/*
-						* Material - Diffuse color
-						*/
-						glProgramUniform3f(m_pProgram->GetID(),
-							m_pProgram->getMaterialDiffuseColor(),
-							pMaterial->getDiffuseColor().r() / 2.f,
-							pMaterial->getDiffuseColor().g() / 2.f,
-							pMaterial->getDiffuseColor().b() / 2.f);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glDrawElementsBaseVertex(GL_TRIANGLES,
+					(GLsizei)pConcFacesCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
 
-						/*
-						* Material - Specular color
-						*/
-						glProgramUniform3f(m_pProgram->GetID(),
-							m_pProgram->getMaterialSpecularColor(),
-							pMaterial->getSpecularColor().r() / 2.f,
-							pMaterial->getSpecularColor().g() / 2.f,
-							pMaterial->getSpecularColor().b() / 2.f);
+				if (pMaterial->hasTexture())
+				{
+					glProgramUniform1f(
+						m_pProgram->GetID(),
+						m_pProgram->geUseTexture(),
+						0.f);
+				}
+			} // for (size_t iMaterial = ...
+		} // for (auto itInstance ...
 
-						/*
-						* Material - Emissive color
-						*/
-						glProgramUniform3f(m_pProgram->GetID(),
-							m_pProgram->getMaterialEmissiveColor(),
-							pMaterial->getEmissiveColor().r() / 3.f,
-							pMaterial->getEmissiveColor().g() / 3.f,
-							pMaterial->getEmissiveColor().b() / 3.f);
-					} // else if (pMaterial->hasTexture())					
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pConcFacesCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-
-					if (pMaterial->hasTexture())
-					{
-						glProgramUniform1f(
-							m_pProgram->GetID(),
-							m_pProgram->geUseTexture(),
-							0.f);
-					}
-				} // for (size_t iMaterial = ...
-			} // for (size_t iObject = ...
-
-			glBindVertexArray(0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto itVAO ...
 
 	if (bTransparent)
 	{
@@ -2474,55 +2385,44 @@ void COpenGLRDFView::DrawFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		glBindVertexArray(itVAO.first);
+
+		for (auto itInstance : itVAO.second)
 		{
-			continue;
-		}
+			CRDFInstance* pRDFInstance = itInstance;
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindVertexArray(itGroups->first);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			if (!pRDFInstance->getEnable())
 			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
 
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
 
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
+			for (size_t iCohort = 0; iCohort < pRDFInstance->facePolygonsCohorts().size(); iCohort++)
+			{
+				_cohort* pCohort = pRDFInstance->facePolygonsCohorts()[iCohort];
 
-				for (size_t iCohort = 0; iCohort < pRDFInstance->facePolygonsCohorts().size(); iCohort++)
-				{
-					_cohort* pCohort = pRDFInstance->facePolygonsCohorts()[iCohort];
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
+			}
+		} // for (auto itInstance ...
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-				}
-			} // for (size_t iObject = ...
-
-			glBindVertexArray(0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto itVAO ...
 
 	_openGLUtils::checkForErrors();
 
@@ -2566,53 +2466,44 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
+		glBindVertexArray(itVAO.first);
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-		for (auto itGroups = mapGroups.begin(); itGroups != mapGroups.end(); itGroups++)
+		for (auto itInstance : itVAO.second)
 		{
-			glBindVertexArray(itGroups->first);
+			CRDFInstance* pRDFInstance = itInstance;
 
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			if (!pRDFInstance->getEnable())
 			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
 
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
 
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-				
-				for (size_t iCohort = 0; iCohort < pRDFInstance->concFacePolygonsCohorts().size(); iCohort++)
-				{
-					_cohort* pCohort = pRDFInstance->concFacePolygonsCohorts()[iCohort];
+			for (size_t iCohort = 0; iCohort < pRDFInstance->concFacePolygonsCohorts().size(); iCohort++)
+			{
+				_cohort* pCohort = pRDFInstance->concFacePolygonsCohorts()[iCohort];
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-				}
-			} // for (size_t iObject = ...
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
+			}
+		} // for (auto itInstance ...
 
-			glBindVertexArray(0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto itVAO ...
 
 	_openGLUtils::checkForErrors();
 
@@ -2656,58 +2547,44 @@ void COpenGLRDFView::DrawLines()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
+		glBindVertexArray(itVAO.first);
+
+		for (auto itInstance : itVAO.second)
 		{
-			continue;
-		}
+			CRDFInstance* pRDFInstance = itInstance;
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindVertexArray(itGroups->first);
-
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			if (!pRDFInstance->getEnable())
 			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
 
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
 
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
+			for (size_t iCohort = 0; iCohort < pRDFInstance->linesCohorts().size(); iCohort++)
+			{
+				auto pCohort = pRDFInstance->linesCohorts()[iCohort];
 
-				/*
-				* Lines
-				*/
-				for (size_t iCohort = 0; iCohort < pRDFInstance->linesCohorts().size(); iCohort++)
-				{
-					auto pCohort = pRDFInstance->linesCohorts()[iCohort];
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_LINES,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
+			}
+		} // for (auto itInstance ...
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
-					glDrawElementsBaseVertex(GL_LINES,
-						(GLsizei)pCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-				}
-			} // for (size_t iObject = ...
-
-			glBindVertexArray(0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+		glBindVertexArray(0);
+	} // for (auto itVAO ...
 
 	_openGLUtils::checkForErrors();
 
@@ -2751,61 +2628,52 @@ void COpenGLRDFView::DrawPoints()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
+		glBindBuffer(GL_ARRAY_BUFFER, itVAO.first);
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-
-		map<GLuint, vector<CRDFInstance*>>::const_iterator itGroups = mapGroups.begin();
-		for (; itGroups != mapGroups.end(); itGroups++)
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, itGroups->first);
+		for (auto itInstance : itVAO.second)
+		{			
 			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
 			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			CRDFInstance* pRDFInstance = itInstance;
+
+			if (!pRDFInstance->getEnable())
 			{
-				CRDFInstance* pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
 
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
 
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
+			/*
+			* Points
+			*/
+			for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
+			{
+				_cohort* pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
 
-				/*
-				* Points
-				*/
-				for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
-				{
-					_cohort* pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glDrawElementsBaseVertex(GL_POINTS,
+					(GLsizei)pCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
+			} // for (size_t iPointsCohort = ...
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
-					glDrawElementsBaseVertex(GL_POINTS,
-						(GLsizei)pCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-				} // for (size_t iPointsCohort = ...
-			} // for (size_t iObject = ...
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);			
+		} // for (auto itInstance ...
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		} // for (; itGroups != ...
-	} // for (size_t iDrawMetaData = ...
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	} // for (auto itVAO ...
 
 	_openGLUtils::checkForErrors();
 
@@ -3838,63 +3706,54 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		m_pProgram->getTransparency(),
 		1.f);	
 
-	for (size_t iDrawMetaData = 0; iDrawMetaData < m_vecDrawMetaData.size(); iDrawMetaData++)
+	for (auto itVAO : m_openGLBuffers.VAOs())
 	{
-		if (m_vecDrawMetaData[iDrawMetaData]->GetType() != mdtGeometry)
-		{
-			continue;
-		}
+		glBindVertexArray(itVAO.first);
 
-		const map<GLuint, vector<CRDFInstance*>>& mapGroups = m_vecDrawMetaData[iDrawMetaData]->getVBOGroups();
-		for (auto itGroups = mapGroups.begin(); itGroups != mapGroups.end(); itGroups++)
+		for (auto itInstance : itVAO.second)
 		{
-			glBindVertexArray(itGroups->first);
+			auto pRDFInstance = itInstance;
 
-			for (size_t iObject = 0; iObject < itGroups->second.size(); iObject++)
+			if (!pRDFInstance->getEnable())
 			{
-				auto pRDFInstance = itGroups->second[iObject];
+				continue;
+			}
 
-				if (!pRDFInstance->getEnable())
-				{
-					continue;
-				}
+			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
+			{
+				continue;
+			}
 
-				if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-				{
-					continue;
-				}
+			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
+			{
+				continue;
+			}
 
-				if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-				{
-					continue;
-				}
-				
-				auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pRDFInstance->getInstance());
-				ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
-				
-				glProgramUniform3f(
-					m_pProgram->GetID(),
-					m_pProgram->getMaterialAmbientColor(),
-					itSelectionColor->second.r(),
-					itSelectionColor->second.g(),
-					itSelectionColor->second.b());
-				
-				for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
-				{
-					auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pRDFInstance->getInstance());
+			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
-					glDrawElementsBaseVertex(GL_TRIANGLES,
-						(GLsizei)pConcFacesCohort->indices().size(),
-						GL_UNSIGNED_INT,
-						(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
-						pRDFInstance->VBOOffset());
-				}
-			} // for (size_t iObject = ...
+			glProgramUniform3f(
+				m_pProgram->GetID(),
+				m_pProgram->getMaterialAmbientColor(),
+				itSelectionColor->second.r(),
+				itSelectionColor->second.g(),
+				itSelectionColor->second.b());
 
-			glBindVertexArray(0);
-		} // for (auto itGroups = ...
-	} // for (size_t iDrawMetaData = ...
+			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
+			{
+				auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glDrawElementsBaseVertex(GL_TRIANGLES,
+					(GLsizei)pConcFacesCohort->indices().size(),
+					GL_UNSIGNED_INT,
+					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					pRDFInstance->VBOOffset());
+			}
+		} // for (auto itInstance ...
+
+		glBindVertexArray(0);
+	} // for (auto itVAO ...
 
 	m_pInstanceSelectionFrameBuffer->unbind();
 
@@ -4001,7 +3860,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		_openGLUtils::checkForErrors();
 	} // if (m_iFaceSelectionIBO == 0)
 
-	GLuint iVAO = FindVAO(m_pSelectedInstance);
+	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
 		ASSERT(FALSE);
@@ -4103,7 +3962,7 @@ void COpenGLRDFView::DrawPointedFace()
 		_openGLUtils::checkForErrors();
 	} // if (m_iFaceSelectionIBO == 0)
 
-	GLuint iVAO = FindVAO(m_pSelectedInstance);
+	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
 		ASSERT(FALSE);

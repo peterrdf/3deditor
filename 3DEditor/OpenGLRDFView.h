@@ -42,85 +42,6 @@ enum enumMouseEvent
 	meRBtnUp = 6,
 };
 
-enum enumDrawMetaDataType
-{
-	mdtGeometry = 0,
-	mdtVectors = 1,
-};
-
-typedef map<GLuint, vector<CRDFInstance*>> VBOGROUPS;
-
-class CDrawMetaData
-{
-
-private: // Members	
-
-	// --------------------------------------------------------------------------------------------
-	// Type
-	enumDrawMetaDataType m_enDrawMetaDataType;
-
-	// --------------------------------------------------------------------------------------------
-	// VBO : CRDFInstance-s
-	VBOGROUPS m_mapVBO2RDFInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// VBO-s
-	vector<GLuint> m_vecVBOs;
-
-public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CDrawMetaData(enumDrawMetaDataType enDrawMetaDataType)
-		: m_enDrawMetaDataType(enDrawMetaDataType)
-		, m_mapVBO2RDFInstances()
-		, m_vecVBOs()
-	{
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
-	~CDrawMetaData()
-	{
-		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.begin();
-		for (; itVBO2RDFInstances != m_mapVBO2RDFInstances.end(); itVBO2RDFInstances++)
-		{
-			glDeleteVertexArrays(1, &(itVBO2RDFInstances->first));
-		}
-
-		for (auto itVBO : m_vecVBOs)
-		{
-			glDeleteBuffers(1, &itVBO);
-		}
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	enumDrawMetaDataType GetType() const
-	{
-		return m_enDrawMetaDataType;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Adds a group of RDFInstance-s that share VBO
-	void AddGroup(GLuint iVAO, GLuint iVBO, const vector<CRDFInstance*>& vecRDFInstances)
-	{
-		VBOGROUPS::iterator itVBO2RDFInstances = m_mapVBO2RDFInstances.find(iVAO);
-		ASSERT(itVBO2RDFInstances == m_mapVBO2RDFInstances.end());
-
-		m_mapVBO2RDFInstances[iVAO] = vecRDFInstances;
-
-		m_vecVBOs.push_back(iVBO);
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const VBOGROUPS& getVBOGroups() const
-	{
-		return m_mapVBO2RDFInstances;
-	}
-};
-
 #define CULL_FACES_NONE L"<none>"
 #define CULL_FACES_FRONT L"Front"
 #define CULL_FACES_BACK L"Back"
@@ -175,7 +96,7 @@ private: // Members
 	float m_fZTranslation;
 
 	// Draw
-	vector<CDrawMetaData*> m_vecDrawMetaData;
+	_openGLBuffers<CRDFInstance> m_openGLBuffers;
 	vector<GLuint> m_vecIBOs;
 
 	// Mouse
@@ -421,10 +342,6 @@ protected: // Methods
 	virtual void OnControllerChanged();
 
 private: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	GLuint FindVAO(CRDFInstance* pRDFInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Helper
