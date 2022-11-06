@@ -1001,6 +1001,9 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	VERIFY(bResult);
 #endif // _LINUX
 
+	// OpenGL buffers
+	m_openGLBuffers.clear();
+
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = NULL;
 	m_pSelectedInstance = NULL;
@@ -1042,9 +1045,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_fZTranslation = -m_fZTranslation;
 
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-	
-	// OpenGL buffers
-	m_openGLBuffers.clear();
 
 	/*
 	* IBO
@@ -1180,55 +1180,21 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iConcFacesIndicesCount + pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				ASSERT(!vecConcFacesCohorts.empty());
-
-				GLuint iIBO = 0;
-				glGenBuffers(1, &iIBO);
-
-				ASSERT(iIBO != 0);
-
-				m_vecIBOs.push_back(iIBO);
-
-				int_t iIndicesCount = 0;
-				unsigned int* pIndices = _cohort::merge(vecConcFacesCohorts, iIndicesCount);
-
-				if ((pIndices == nullptr) || (iIndicesCount == 0))
+				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacesCohorts);
+				if (iConcFacesIndicesCount != iIndicesCount)
 				{
-					ASSERT(0);
+					assert(false);
 
 					return;
 				}
 
-				ASSERT(iConcFacesIndicesCount == iIndicesCount);
-
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iConcFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-				delete[] pIndices;
-
-				/*
-				* Store IBO/offset
-				*/
-				GLsizei iIBOOffset = 0;
-				for (size_t iCohort = 0; iCohort < vecConcFacesCohorts.size(); iCohort++)
-				{
-					vecConcFacesCohorts[iCohort]->ibo() = iIBO;
-					vecConcFacesCohorts[iCohort]->iboOffset() = iIBOOffset;
-
-					iIBOOffset += (GLsizei)vecConcFacesCohorts[iCohort]->indices().size();
-				}
-
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-				_openGLUtils::checkForErrors();
-
 				iConcFacesIndicesCount = 0;
 				vecConcFacesCohorts.clear();
-			} // if ((int_t)(iConcFacesIndicesCount + ...	
+			}
 
 			iConcFacesIndicesCount += (GLsizei)pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size();
 			vecConcFacesCohorts.push_back(pRDFInstance->concFacesCohorts()[iFacesCohort]);
-		} //for (size_t iFacesCohort = ...
+		}
 
 		/*
 		* IBO - Conceptual face polygons
@@ -1544,51 +1510,17 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iConcFacesIndicesCount > 0)
 	{
-		ASSERT(!vecConcFacesCohorts.empty());
-
-		GLuint iIBO = 0;
-		glGenBuffers(1, &iIBO);
-
-		ASSERT(iIBO != 0);
-
-		m_vecIBOs.push_back(iIBO);
-
-		int_t iIndicesCount = 0;
-		unsigned int* pIndices = _cohort::merge(vecConcFacesCohorts, iIndicesCount);
-
-		if ((pIndices == nullptr) || (iIndicesCount == 0))
+		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacesCohorts);
+		if (iConcFacesIndicesCount != iIndicesCount)
 		{
-			ASSERT(0);
+			assert(false);
 
 			return;
 		}
 
-		ASSERT(iConcFacesIndicesCount == iIndicesCount);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iConcFacesIndicesCount, pIndices, GL_STATIC_DRAW);
-
-		delete[] pIndices;
-
-		/*
-		* Store IBO/offset
-		*/
-		GLsizei iIBOOffset = 0;
-		for (size_t iCohort = 0; iCohort < vecConcFacesCohorts.size(); iCohort++)
-		{
-			vecConcFacesCohorts[iCohort]->ibo() = iIBO;
-			vecConcFacesCohorts[iCohort]->iboOffset() = iIBOOffset;
-
-			iIBOOffset += (GLsizei)vecConcFacesCohorts[iCohort]->indices().size();
-		}
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		_openGLUtils::checkForErrors();
-
 		iConcFacesIndicesCount = 0;
 		vecConcFacesCohorts.clear();
-	} // if (iConcFacesIndicesCount > 0)	
+	}
 
 	/*
 	* IBO - Conceptual face polygons

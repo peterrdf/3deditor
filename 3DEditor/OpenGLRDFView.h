@@ -113,6 +113,7 @@ private: // Members
 	GLuint m_iFaceSelectionIBO;
 	int64_t m_iPointedFace;	
 	
+	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 

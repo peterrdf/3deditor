@@ -198,6 +198,57 @@ public: // Methods
 		return m_vecBuffers;
 	}
 
+	int64_t createIBO(const vector<_cohort*>& vecCohorts)
+	{
+		if (vecCohorts.empty())
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		GLuint iIBO = 0;
+		glGenBuffers(1, &iIBO);
+
+		if (iIBO == 0)
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		m_vecBuffers.push_back(iIBO);
+
+		int_t iIndicesCount = 0;
+		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
+
+		if ((pIndices == nullptr) || (iIndicesCount == 0))
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iIndicesCount, pIndices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		delete[] pIndices;
+
+		GLsizei iIBOOffset = 0;
+		for (auto pCohort : vecCohorts)
+		{
+			pCohort->ibo() = iIBO;
+			pCohort->iboOffset() = iIBOOffset;
+
+			iIBOOffset += (GLsizei)pCohort->indices().size();
+		}
+
+		_openGLUtils::checkForErrors();
+
+		return iIndicesCount;
+	}
+
 	void clear()
 	{
 		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
@@ -220,32 +271,4 @@ public: // Methods
 
 		_openGLUtils::checkForErrors();
 	}
-
-	// ------------------------------------------------------------------------------------------------
-	static float* mergeVertices(const vector<Instance*>& vecInstances, int_t iVertexLength, int_t& iVerticesCount)
-	{
-		iVerticesCount = 0;
-		for (size_t i = 0; i < vecInstances.size(); i++)
-		{
-			iVerticesCount += vecInstances[i]->getVerticesCount();
-		}
-
-		float* pVertices = new float[iVerticesCount * iVertexLength];
-
-		int_t iOffset = 0;
-		for (size_t i = 0; i < vecInstances.size(); i++)
-		{
-			float* pFacesVertices = vecInstances[i]->BuildFacesVertices();
-
-			memcpy((float*)pVertices + iOffset, pFacesVertices,
-				vecInstances[i]->getVerticesCount() * iVertexLength * sizeof(float));
-
-			delete[] pFacesVertices;
-
-			iOffset += vecInstances[i]->getVerticesCount() * iVertexLength;
-		}
-
-		return pVertices;
-	}
-
 };
