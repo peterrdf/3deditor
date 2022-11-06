@@ -142,7 +142,7 @@ private: // Members
 	CBinnPhongGLProgram* m_pProgram;
 	CGLShader* m_pVertexShader;
 	CGLShader* m_pFragmentShader;
-	glm::mat4 m_modelViewMatrix;
+	glm::mat4 m_matModelView;
 
 	// UI
 	BOOL m_bShowReferencedInstances;
@@ -186,9 +186,6 @@ private: // Members
 	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;	
 	CRDFInstance* m_pPointedInstance;
 	CRDFInstance* m_pSelectedInstance;
-
-	CPoint m_ptSelectedPoint;
-	GLfloat m_arSelectedPoint[3];
 
 	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;

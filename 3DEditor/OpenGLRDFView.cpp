@@ -63,7 +63,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
-	, m_ptSelectedPoint(-1, -1)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iFaceSelectionIBO(0)
 	, m_iPointedFace(-1)	
@@ -85,11 +84,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
     m_pOGLContext = new wxGLContext(m_pWnd);
 #else
     m_pOGLContext = new COpenGLContext(*(m_pWnd->GetDC()));
-#endif // _LINUX	
-
-	m_arSelectedPoint[0] = -FLT_MAX;
-	m_arSelectedPoint[1] = -FLT_MAX;
-	m_arSelectedPoint[2] = -FLT_MAX;
+#endif // _LINUX
 
 	/*
 	* Default
@@ -141,7 +136,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	if (!m_pProgram->Link())
 		AfxMessageBox(_T("Program linking error!"));
 
-	m_modelViewMatrix = glm::identity<glm::mat4>();
+	m_matModelView = glm::identity<glm::mat4>();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -794,20 +789,20 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
 
-	glm::mat4 projectionMatrix = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
 
 	glProgramUniformMatrix4fv(
 		m_pProgram->GetID(),
 		m_pProgram->getPMatrix(),
 		1,
 		false,
-		value_ptr(projectionMatrix));
+		value_ptr(matProjection));
 
 	/*
 	* Model-View Matrix
 	*/
-	m_modelViewMatrix = glm::identity<glm::mat4>();
-	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	m_matModelView = glm::identity<glm::mat4>();
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -829,33 +824,33 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	fZTranslation += (fZmax - fZmin) / 2.f;
 	fZTranslation = -fZTranslation;
 
-	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-	m_modelViewMatrix = glm::rotate(m_modelViewMatrix, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	m_modelViewMatrix = glm::translate(m_modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 
 	glProgramUniformMatrix4fv(
 		m_pProgram->GetID(),
 		m_pProgram->getMVMatrix(),
 		1,
 		false,
-		glm::value_ptr(m_modelViewMatrix));
+		glm::value_ptr(m_matModelView));
 
 	/*
 	* Normal Matrix
 	*/
-	glm::mat4 normalMatrix = m_modelViewMatrix;
-	normalMatrix = glm::inverse(normalMatrix);
-	normalMatrix = glm::transpose(normalMatrix);
+	glm::mat4 matNormal = m_matModelView;
+	matNormal = glm::inverse(matNormal);
+	matNormal = glm::transpose(matNormal);
 
 	glProgramUniformMatrix4fv(
 		m_pProgram->GetID(),
 		m_pProgram->getNMatrix(),
 		1,
 		false,
-		value_ptr(normalMatrix));
+		value_ptr(matNormal));
 
 	glProgramUniform1f(
 		m_pProgram->GetID(),
@@ -953,12 +948,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				m_pSelectedInstance = m_pPointedInstance;
 				m_iPointedFace = -1;
 
-				m_ptSelectedPoint = m_pSelectedInstance != NULL ? point : CPoint(-1, -1);
-
-				m_arSelectedPoint[0] = -FLT_MAX;
-				m_arSelectedPoint[1] = -FLT_MAX;
-				m_arSelectedPoint[2] = -FLT_MAX;
-
 				m_pFaceSelectionFrameBuffer->encoding().clear();
 
 #ifdef _LINUX
@@ -1021,10 +1010,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = NULL;
 	m_pSelectedInstance = NULL;
-
-	m_arSelectedPoint[0] = -FLT_MAX;
-	m_arSelectedPoint[1] = -FLT_MAX;
-	m_arSelectedPoint[2] = -FLT_MAX;
 
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
@@ -2028,10 +2013,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		m_pSelectedInstance = pSelectedInstance;
 
-		m_arSelectedPoint[0] = -FLT_MAX;
-		m_arSelectedPoint[1] = -FLT_MAX;
-		m_arSelectedPoint[2] = -FLT_MAX;
-
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 #ifdef _LINUX
@@ -2061,10 +2042,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		m_iPointedFace = -1;
 
 		m_pSelectedInstance = pSelectedInstance;
-
-		m_arSelectedPoint[0] = -FLT_MAX;
-		m_arSelectedPoint[1] = -FLT_MAX;
-		m_arSelectedPoint[2] = -FLT_MAX;
 
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
@@ -2854,7 +2831,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	}
 
 	// Save Model-View Matrix
-	glm::mat4 modelViewMatrix = m_modelViewMatrix;
+	glm::mat4 matModelView = m_matModelView;
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -2986,16 +2963,16 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
 
-		modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-		modelViewMatrix = modelViewMatrix * matBBTransformation;
-		modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+		matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+		matModelView = matModelView * matBBTransformation;
+		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 		glProgramUniformMatrix4fv(
 			m_pProgram->GetID(),
 			m_pProgram->getMVMatrix(),
 			1,
 			false,
-			glm::value_ptr(modelViewMatrix));
+			glm::value_ptr(matModelView));
 
 		_vector3d vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
 		_vector3d vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
@@ -3064,13 +3041,13 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // for (; itRDFInstances != ...
 
 	// Restore Model-View Matrix
-	m_modelViewMatrix = modelViewMatrix;
+	m_matModelView = matModelView;
 	glProgramUniformMatrix4fv(
 		m_pProgram->GetID(),
 		m_pProgram->getMVMatrix(),
 		1,
 		false,
-		glm::value_ptr(m_modelViewMatrix));
+		glm::value_ptr(m_matModelView));
 
 	_openGLUtils::checkForErrors();
 }
