@@ -190,32 +190,24 @@ private: // Members
 	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
 	GLuint m_iFaceSelectionIBO;
-	int64_t m_iPointedFace;
-
-	// --------------------------------------------------------------------------------------------
-	// VBOs
-	
+	int64_t m_iPointedFace;	
 	
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 
-	// --------------------------------------------------------------------------------------------
 	// Bounding boxes
 	GLuint m_iBoundingBoxesVAO;
 	GLuint m_iBoundingBoxesVBO;	
 	GLuint m_iBoundingBoxesIBO;
 
-	// --------------------------------------------------------------------------------------------
 	// Normals
 	GLuint m_iNormalVectorsVAO;
 	GLuint m_iNormalVectorsVBO;
 
-	// --------------------------------------------------------------------------------------------
 	// Normals
 	GLuint m_iTangentVectorsVAO;
 	GLuint m_iTangentVectorsVBO;
 
-	// --------------------------------------------------------------------------------------------
 	// BiNormals
 	GLuint m_iBiNormalVectorsVAO;
 	GLuint m_iBiNormalVectorsVBO;	
@@ -223,21 +215,15 @@ private: // Members
 #pragma endregion // Members
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
+	
 #ifdef _LINUX
     COpenGLRDFView(wxGLCanvas * pWnd);
 #else
 	COpenGLRDFView(CWnd * pWnd);
 #endif //_LINUX
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
+	
 	virtual ~COpenGLRDFView();
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
+	
 	void SetRotation(float fX, float fY, BOOL bRedraw);
 
 	// --------------------------------------------------------------------------------------------
