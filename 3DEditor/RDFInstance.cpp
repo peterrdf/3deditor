@@ -172,7 +172,6 @@ int64_t CRDFInstance::getIndicesCount() const
 	return m_pIndexBuffer->size();
 }
 
-// ------------------------------------------------------------------------------------------------
 float * CRDFInstance::getVertices() const
 {
 	return m_pVertices;
@@ -188,61 +187,61 @@ int64_t CRDFInstance::getVerticesCount() const
 	return m_pOriginalVertexBuffer->size();
 }
 
+int64_t CRDFInstance::getVertexLength() const 
+{ 
+	return VERTEX_LENGTH; 
+}
+
 int64_t CRDFInstance::getConceptualFacesCount() const
 {
 	return m_iConceptualFacesCount;
 }
 
-const vector<_primitives> & CRDFInstance::getTriangles() const
+const vector<_primitives>& CRDFInstance::getTriangles() const
 {
 	return m_vecTriangles;
 }
 
-const vector<_primitives> & CRDFInstance::getLines() const
+const vector<_primitives>& CRDFInstance::getLines() const
 {
 	return m_vecLines;
 }
 
-const vector<_primitives> & CRDFInstance::getPoints() const
+const vector<_primitives>& CRDFInstance::getPoints() const
 {
 	return m_vecPoints;
 }
 
-const vector<_primitives> & CRDFInstance::getFacePolygons() const
+const vector<_primitives>& CRDFInstance::getFacePolygons() const
 {
 	return m_vecFacePolygons;
 }
 
-const vector<_primitives> & CRDFInstance::getConcFacePolygons() const
+const vector<_primitives>& CRDFInstance::getConcFacePolygons() const
 {
 	return m_vecConcFacePolygons;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<_facesCohort*>& CRDFInstance::concFacesCohorts()
 {
 	return m_vecConcFacesCohorts;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<_cohort*>& CRDFInstance::facePolygonsCohorts()
 {
 	return m_vecFacePolygonsCohorts;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<_cohort*>& CRDFInstance::concFacePolygonsCohorts()
 {
 	return m_vecConcFacePolygonsCohorts;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<_cohort*>& CRDFInstance::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
 
-// ------------------------------------------------------------------------------------------------
 vector<_cohort*>& CRDFInstance::pointsCohorts()
 {
 	return m_vecPointsCohorts;

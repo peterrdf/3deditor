@@ -84,6 +84,7 @@ public: // Methods
 	float * getVertices() const;
 	float* getOriginalVertices() const;	
 	int64_t getVerticesCount() const;
+	int64_t getVertexLength() const;
 
 	int64_t getConceptualFacesCount() const;
 

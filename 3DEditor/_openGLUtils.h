@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BinnPhongGLProgram.h"
+
 #include "glew.h"
 #include "wglew.h"
 

@@ -345,10 +345,6 @@ protected: // Methods
 private: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	// Helper
-	float* GetVertices(const vector<CRDFInstance*>& vecRDFInstances, int_t& iVerticesCount);
-
-	// --------------------------------------------------------------------------------------------
 	// Clip space
 	void DrawClipSpace();
 

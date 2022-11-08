@@ -1085,8 +1085,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	GLuint iPointsIndicesCount = 0;
 	vector<_cohort*> vecPointsCohorts;
 
-	map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+	for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 	{
 		CRDFInstance* pRDFInstance = itRDFInstances->second;
 		if (pRDFInstance->getVerticesCount() == 0)
@@ -1103,75 +1102,16 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		*/
 		if (((int_t)iVerticesCount + pRDFInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			ASSERT(!vecRDFInstancesGroup.empty());
-
-			int_t iCohortVerticesCount = 0;
-			float* pVertices = GetVertices(vecRDFInstancesGroup, iCohortVerticesCount);
-			if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
+			if (m_openGLBuffers.createVAO(vecRDFInstancesGroup, true, m_pProgram) != iVerticesCount)
 			{
-				ASSERT(0);
+				assert(false);
 
 				return;
 			}
 
-			ASSERT(iCohortVerticesCount == iVerticesCount);
-
-			GLuint iVAO = 0;
-			glGenVertexArrays(1, &iVAO);
-			glBindVertexArray(iVAO);
-
-			_openGLUtils::checkForErrors();
-
-			GLuint iVBO = 0;
-			glGenBuffers(1, &iVBO);
-
-			ASSERT(iVBO != 0);
-
-			_openGLUtils::checkForErrors();
-
-			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-			_openGLUtils::checkForErrors();
-
-			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);			
-			glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-			glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-			_openGLUtils::checkForErrors();
-
-			glEnableVertexAttribArray(m_pProgram->getVertexPosition());			
-			glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-			glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
-			_openGLUtils::checkForErrors();
-
-			TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
-
-			/*
-			* Store VBO/offset
-			*/
-			GLsizei iVBOOffset = 0;
-			for (size_t iRDFInstance = 0; iRDFInstance < vecRDFInstancesGroup.size(); iRDFInstance++)
-			{
-				vecRDFInstancesGroup[iRDFInstance]->VBO() = iVBO;
-				vecRDFInstancesGroup[iRDFInstance]->VBOOffset() = iVBOOffset;				
-
-				iVBOOffset += (GLsizei)vecRDFInstancesGroup[iRDFInstance]->getVerticesCount();
-			} // for (size_t iRDFInstance = ...
-
-			delete[] pVertices;
-
-			glBindVertexArray(0);
-
-			_openGLUtils::checkForErrors();
-
-			m_openGLBuffers.VAOs()[iVAO] = vecRDFInstancesGroup;
-			m_openGLBuffers.buffers().push_back(iVBO);
-
 			iVerticesCount = 0;
 			vecRDFInstancesGroup.clear();
-		} // if (((int_t)iVerticesCount + pRDFInstance->getVerticesCount()) > ...		
+		}
 
 		/*
 		* IBO - Conceptual faces
@@ -1180,8 +1120,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iConcFacesIndicesCount + pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacesCohorts);
-				if (iConcFacesIndicesCount != iIndicesCount)
+				if (m_openGLBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
 					assert(false);
 
@@ -1203,8 +1142,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iConcFacePolygonsIndicesCount + pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts);
-				if (iConcFacePolygonsIndicesCount != iIndicesCount)
+				if (m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
 					assert(false);
 
@@ -1213,11 +1151,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				iConcFacePolygonsIndicesCount = 0;
 				vecConcFacePolygonsCohorts.clear();
-			} // if ((int_t)(iConcFacePolygonsIndicesCount + ...	
+			}
 
 			iConcFacePolygonsIndicesCount += (GLsizei)pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
 			vecConcFacePolygonsCohorts.push_back(pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
-		} // for (size_t iConcFacePolygonsCohort = ...	
+		}
 
 		/*
 		* IBO - Face polygons
@@ -1226,8 +1164,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iFacePolygonsIndicesCount + pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecFacePolygonsCohorts);
-				if (iFacePolygonsIndicesCount != iIndicesCount)
+				if (m_openGLBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 				{
 					assert(false);
 
@@ -1236,11 +1173,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				iFacePolygonsIndicesCount = 0;
 				vecFacePolygonsCohorts.clear();
-			} // if ((int_t)(iFacePolygonsIndicesCount + ...	
+			}
 
 			iFacePolygonsIndicesCount += (GLsizei)pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size();
 			vecFacePolygonsCohorts.push_back(pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]);
-		} // for (size_t iFacePolygonsCohort = ...	
+		}
 
 		/*
 		* IBO - Lines
@@ -1249,8 +1186,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iLinesIndicesCount + pRDFInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecLinesCohorts);
-				if (iLinesIndicesCount != iIndicesCount)
+				if (m_openGLBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
 					assert(false);
 
@@ -1259,11 +1195,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				iLinesIndicesCount = 0;
 				vecLinesCohorts.clear();
-			} // if ((int_t)(iLinesIndicesCount + ...	
+			}
 
 			iLinesIndicesCount += (GLsizei)pRDFInstance->linesCohorts()[iLinesCohort]->indices().size();
 			vecLinesCohorts.push_back(pRDFInstance->linesCohorts()[iLinesCohort]);
-		} // for (size_t iLinesCohort = ...	
+		}
 
 		/*
 		* IBO - Points
@@ -1272,8 +1208,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iPointsIndicesCount + pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				int64_t iIndicesCount = m_openGLBuffers.createIBO(vecPointsCohorts);
-				if (iPointsIndicesCount != iIndicesCount)
+				if (m_openGLBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
 					assert(false);
 
@@ -1282,11 +1217,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				iPointsIndicesCount = 0;
 				vecPointsCohorts.clear();
-			} // if ((int_t)(iPointsIndicesCount + ...	
+			}
 
 			iPointsIndicesCount += (GLsizei)pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size();
 			vecPointsCohorts.push_back(pRDFInstance->pointsCohorts()[iPointsCohort]);
-		} // for (size_t iPointsCohort = ...	
+		}
 
 		iVerticesCount += (GLsizei)pRDFInstance->getVerticesCount();
 		vecRDFInstancesGroup.push_back(pRDFInstance);
@@ -1301,81 +1236,23 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iVerticesCount > 0)
 	{
-		ASSERT(!vecRDFInstancesGroup.empty());
-
-		int_t iCohortVerticesCount = 0;
-		float* pVertices = GetVertices(vecRDFInstancesGroup, iCohortVerticesCount);
-		if ((iCohortVerticesCount == 0) || (pVertices == nullptr))
+		if (m_openGLBuffers.createVAO(vecRDFInstancesGroup, true, m_pProgram) != iVerticesCount)
 		{
-			ASSERT(0);
+			assert(false);
 
 			return;
 		}
 
-		ASSERT(iCohortVerticesCount == iVerticesCount);
-
-		GLuint iVAO = 0;
-		glGenVertexArrays(1, &iVAO);
-		glBindVertexArray(iVAO);
-
-		_openGLUtils::checkForErrors();
-
-		GLuint iVBO = 0;
-		glGenBuffers(1, &iVBO);
-
-		ASSERT(iVBO != 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
-
-		_openGLUtils::checkForErrors();
-
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, 0);		
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat)* GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-		_openGLUtils::checkForErrors();
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
-		_openGLUtils::checkForErrors();
-
-		TRACE(L"\nVBO VERTICES: %d", iVerticesCount);
-
-		/*
-		* Store VBO/offset
-		*/
-		GLsizei iVBOOffset = 0;
-		for (size_t iRDFInstance = 0; iRDFInstance < vecRDFInstancesGroup.size(); iRDFInstance++)
-		{
-			vecRDFInstancesGroup[iRDFInstance]->VBO() = iVBO;
-			vecRDFInstancesGroup[iRDFInstance]->VBOOffset() = iVBOOffset;
-
-			iVBOOffset += (GLsizei)vecRDFInstancesGroup[iRDFInstance]->getVerticesCount();
-		} // for (size_t iRDFInstance = ...
-
-		delete[] pVertices;
-
-		glBindVertexArray(0);
-
-		_openGLUtils::checkForErrors();
-
-		m_openGLBuffers.VAOs()[iVAO] = vecRDFInstancesGroup;
-		m_openGLBuffers.buffers().push_back(iVBO);
-
 		iVerticesCount = 0;
 		vecRDFInstancesGroup.clear();
-	} // if (iVerticesCount > 0)	
+	}
 
 	/*
 	* IBO - Conceptual faces
 	*/
 	if (iConcFacesIndicesCount > 0)
 	{
-		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacesCohorts);
-		if (iConcFacesIndicesCount != iIndicesCount)
+		if (m_openGLBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 		{
 			assert(false);
 
@@ -1391,8 +1268,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iConcFacePolygonsIndicesCount > 0)
 	{
-		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts);
-		if (iConcFacePolygonsIndicesCount != iIndicesCount)
+		if (m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 		{
 			assert(false);
 
@@ -1401,15 +1277,14 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		iConcFacePolygonsIndicesCount = 0;
 		vecConcFacePolygonsCohorts.clear();
-	} // if (iConcFacePolygonsIndicesCount > 0)
+	}
 
 	/*
 	* IBO - Face polygons
 	*/
 	if (iFacePolygonsIndicesCount > 0)
 	{
-		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecFacePolygonsCohorts);
-		if (iFacePolygonsIndicesCount != iIndicesCount)
+		if (m_openGLBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 		{
 			assert(false);
 
@@ -1418,15 +1293,14 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		iFacePolygonsIndicesCount = 0;
 		vecFacePolygonsCohorts.clear();
-	} // if (iFacePolygonsIndicesCount > 0)
+	}
 
 	/*
 	* IBO - Lines
 	*/
 	if (iLinesIndicesCount > 0)
 	{
-		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecLinesCohorts);
-		if (iLinesIndicesCount != iIndicesCount)
+		if (m_openGLBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 		{
 			assert(false);
 
@@ -1435,15 +1309,14 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		iLinesIndicesCount = 0;
 		vecLinesCohorts.clear();
-	} // if (iLinesIndicesCount > 0)		
+	}
 
 	/*
 	* IBO - Points
 	*/
 	if (iPointsIndicesCount > 0)
 	{
-		int64_t iIndicesCount = m_openGLBuffers.createIBO(vecPointsCohorts);
-		if (iPointsIndicesCount != iIndicesCount)
+		if (m_openGLBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 		{
 			assert(false);
 
@@ -1452,7 +1325,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 		iPointsIndicesCount = 0;
 		vecPointsCohorts.clear();
-	} // if (iPointsIndicesCount > 0)
+	}
 	
 #ifdef _LINUX
     m_pWnd->Refresh(false);
@@ -1717,33 +1590,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	ASSERT(GetController() != NULL);
 
 	GetController()->RegisterView(this);
-}
-
-// ------------------------------------------------------------------------------------------------
-float* COpenGLRDFView::GetVertices(const vector<CRDFInstance*>& vecRDFInstances, int_t& iVerticesCount)
-{
-	iVerticesCount = 0;
-	for (size_t iRDFInstance = 0; iRDFInstance < vecRDFInstances.size(); iRDFInstance++)
-	{
-		iVerticesCount += vecRDFInstances[iRDFInstance]->getVerticesCount();
-	}
-
-	float* pVertices = new float[iVerticesCount * GEOMETRY_VBO_VERTEX_LENGTH];
-
-	int_t iOffset = 0;
-	for (size_t iRDFInstance = 0; iRDFInstance < vecRDFInstances.size(); iRDFInstance++)
-	{
-		float* pFacesVertices = vecRDFInstances[iRDFInstance]->BuildFacesVertices();
-
-		memcpy((float*)pVertices + iOffset, pFacesVertices,
-			vecRDFInstances[iRDFInstance]->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-
-		delete[] pFacesVertices;
-
-		iOffset += vecRDFInstances[iRDFInstance]->getVerticesCount() * GEOMETRY_VBO_VERTEX_LENGTH;
-	}
-
-	return pVertices;
 }
 
 // ------------------------------------------------------------------------------------------------
