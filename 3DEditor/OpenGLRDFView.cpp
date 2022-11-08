@@ -59,7 +59,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_openGLBuffers()
-	, m_vecIBOs()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
@@ -155,16 +154,6 @@ COpenGLRDFView::~COpenGLRDFView()
 		glDeleteBuffers(1, &m_iFaceSelectionIBO);
 		m_iFaceSelectionIBO = 0;
 	}
-
-	/*
-	* IBO
-	*/
-	for (size_t iIBO = 0; iIBO < m_vecIBOs.size(); iIBO++)
-	{
-		glDeleteBuffers(1, &(m_vecIBOs[iIBO]));
-	}
-	m_vecIBOs.clear();	
-
 
 	m_pOGLContext->MakeCurrent();
 
@@ -1045,15 +1034,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_fZTranslation = -m_fZTranslation;
 
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	/*
-	* IBO
-	*/
-	for (size_t iIBO = 0; iIBO < m_vecIBOs.size(); iIBO++)
-	{
-		glDeleteBuffers(1, &(m_vecIBOs[iIBO]));
-	}
-	m_vecIBOs.clear();
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _openGLUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));

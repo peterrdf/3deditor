@@ -97,7 +97,6 @@ private: // Members
 
 	// Draw
 	_openGLBuffers<CRDFInstance> m_openGLBuffers;
-	vector<GLuint> m_vecIBOs;
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
