@@ -19,6 +19,7 @@ extern BOOL TEST_MODE;
 
 // ------------------------------------------------------------------------------------------------
 wchar_t OPENGL_RENDERER_WINDOW[] = L"_3DEditor_OpenGL_Renderer_Window_";
+wchar_t FACE_SELECTION_IBO[] = L"FACE_SELECTION_IBO";
 
 // ------------------------------------------------------------------------------------------------
 #define SELECTION_BUFFER_SIZE 512
@@ -63,7 +64,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_iFaceSelectionIBO(0)
 	, m_iPointedFace(-1)	
 	, m_pSelectedInstanceMaterial(NULL)
 	, m_pPointedInstanceMaterial(NULL)
@@ -141,19 +141,12 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 // ------------------------------------------------------------------------------------------------
 COpenGLRDFView::~COpenGLRDFView()
 {
-	GetController()->UnRegisterView(this);
+	GetController()->UnRegisterView(this);	
 
-	// OpenGL buffers
 	m_openGLBuffers.clear();
 
 	delete m_pInstanceSelectionFrameBuffer;
-	delete m_pFaceSelectionFrameBuffer;
-
-	if (m_iFaceSelectionIBO != 0)
-	{
-		glDeleteBuffers(1, &m_iFaceSelectionIBO);
-		m_iFaceSelectionIBO = 0;
-	}
+	delete m_pFaceSelectionFrameBuffer;	
 
 	m_pOGLContext->MakeCurrent();
 
@@ -1682,11 +1675,11 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		m_pProgram->geUseBinnPhongModel(),
 		1.f);
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindVertexArray(itVAO.first);
+		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{
 			CRDFInstance* pRDFInstance = itInstance;
 
@@ -1815,7 +1808,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	if (bTransparent)
 	{
@@ -1871,11 +1864,11 @@ void COpenGLRDFView::DrawFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindVertexArray(itVAO.first);
+		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{
 			CRDFInstance* pRDFInstance = itInstance;
 
@@ -1908,7 +1901,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	_openGLUtils::checkForErrors();
 
@@ -1952,11 +1945,11 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindVertexArray(itVAO.first);
+		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{
 			CRDFInstance* pRDFInstance = itInstance;
 
@@ -1989,7 +1982,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	_openGLUtils::checkForErrors();
 
@@ -2033,11 +2026,11 @@ void COpenGLRDFView::DrawLines()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindVertexArray(itVAO.first);
+		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{
 			CRDFInstance* pRDFInstance = itInstance;
 
@@ -2070,7 +2063,7 @@ void COpenGLRDFView::DrawLines()
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	_openGLUtils::checkForErrors();
 
@@ -2114,11 +2107,11 @@ void COpenGLRDFView::DrawPoints()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, itVAO.first);
+		glBindBuffer(GL_ARRAY_BUFFER, itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{			
 			glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
 			glEnableVertexAttribArray(m_pProgram->getVertexPosition());
@@ -2159,7 +2152,7 @@ void COpenGLRDFView::DrawPoints()
 		} // for (auto itInstance ...
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	_openGLUtils::checkForErrors();
 
@@ -3192,11 +3185,11 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		m_pProgram->getTransparency(),
 		1.f);	
 
-	for (auto itVAO : m_openGLBuffers.VAOs())
+	for (auto itCohort : m_openGLBuffers.instancesCohorts())
 	{
-		glBindVertexArray(itVAO.first);
+		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itVAO.second)
+		for (auto itInstance : itCohort.second)
 		{
 			auto pRDFInstance = itInstance;
 
@@ -3239,7 +3232,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itVAO ...
+	} // for (auto itCohort ...
 
 	m_pInstanceSelectionFrameBuffer->unbind();
 
@@ -3302,7 +3295,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 			m_pFaceSelectionFrameBuffer->encoding()[iTriangle] = _color(fR, fG, fB);
 		}
-	} // if (m_pFaceSelectionFrameBuffer->encoding().empty())
+	}
 
 	/*
 	* Draw
@@ -3329,22 +3322,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
-
-	if (m_iFaceSelectionIBO == 0)
-	{
-		glGenBuffers(1, &m_iFaceSelectionIBO);
-		ASSERT(m_iFaceSelectionIBO != 0);
-
-		vector<unsigned int> vecIndices(64, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		_openGLUtils::checkForErrors();
-	} // if (m_iFaceSelectionIBO == 0)
+	_openGLUtils::checkForErrors();	
 
 	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
@@ -3354,8 +3332,16 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		return;
 	}
 
+	GLuint iIBO = m_openGLBuffers.createIBO(FACE_SELECTION_IBO);
+	if (iIBO == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	glBindVertexArray(iVAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	auto vecTriangles = m_pSelectedInstance->getTriangles();
 	ASSERT(!vecTriangles.empty());
@@ -3431,22 +3417,7 @@ void COpenGLRDFView::DrawPointedFace()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
-
-	if (m_iFaceSelectionIBO == 0)
-	{
-		glGenBuffers(1, &m_iFaceSelectionIBO);
-		ASSERT(m_iFaceSelectionIBO != 0);
-
-		vector<unsigned int> vecIndices(64, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		_openGLUtils::checkForErrors();
-	} // if (m_iFaceSelectionIBO == 0)
+	_openGLUtils::checkForErrors();	
 
 	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
@@ -3456,8 +3427,16 @@ void COpenGLRDFView::DrawPointedFace()
 		return;
 	}
 
+	GLuint iIBO = m_openGLBuffers.createIBO(FACE_SELECTION_IBO);
+	if (iIBO == 0)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	glBindVertexArray(iVAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iFaceSelectionIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	// Ambient color
 	glProgramUniform3f(m_pProgram->GetID(),

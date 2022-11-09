@@ -149,16 +149,14 @@ class _openGLBuffers
 
 private: // Members
 
-	map<GLuint, vector<Instance*>> m_mapVAOs; // VAO : vector<Instance*>;
-	map<string, GLuint> m_mapNamedBuffers;
-	vector<GLuint> m_vecBuffers;
+	map<GLuint, vector<Instance*>> m_mapInstancesCohorts;
+	map<wstring, GLuint> m_mapBuffers;
 
 public: // Methods
 
 	_openGLBuffers()
-		: m_mapVAOs()
-		, m_mapNamedBuffers()
-		, m_vecBuffers()
+		: m_mapInstancesCohorts()
+		, m_mapBuffers()
 	{
 	}
 
@@ -166,20 +164,20 @@ public: // Methods
 	{
 	}
 
-	map<GLuint, vector<Instance*>>& VAOs()
+	map<GLuint, vector<Instance*>>& instancesCohorts()
 	{
-		return m_mapVAOs;
+		return m_mapInstancesCohorts;
 	}
 
 	GLuint findVAO(Instance* pInstance)
 	{
-		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
+		for (auto itCohort : m_mapInstancesCohorts)
 		{
-			for (size_t i = 0; i < itVAO->second.size(); i++)
+			for (auto itInstance : itCohort.second)
 			{
-				if (pInstance == itVAO->second[i])
+				if (pInstance == itInstance)
 				{
-					return itVAO->first;
+					return itCohort.first;
 				}
 			}
 		}
@@ -188,14 +186,40 @@ public: // Methods
 		return 0;
 	}
 
-	map<string, GLuint>& namedBuffers()
+	map<wstring, GLuint>& buffers()
 	{
-		return m_mapNamedBuffers;
+		return m_mapBuffers;
 	}
 
-	vector<GLuint>& buffers()
+	GLuint createIBO(const wstring& strName)
 	{
-		return m_vecBuffers;
+		GLuint iIBO = 0;
+
+		auto itBuffer = m_mapBuffers.find(strName);
+		if (itBuffer == m_mapBuffers.end())
+		{
+			glGenBuffers(1, &iIBO);
+			if (iIBO == 0)
+			{
+				assert(false);
+
+				return 0;
+			}
+
+			vector<unsigned int> vecIndices(64, 0);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+			_openGLUtils::checkForErrors();
+		}
+		else
+		{
+			iIBO = itBuffer->second;
+		}
+
+		return iIBO;
 	}
 
 	int64_t createIBO(const vector<_cohort*>& vecCohorts)
@@ -217,7 +241,7 @@ public: // Methods
 			return 0;
 		}
 
-		m_vecBuffers.push_back(iIBO);
+		m_mapBuffers[to_wstring(iIBO)] = iIBO;
 
 		int_t iIndicesCount = 0;
 		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
@@ -323,8 +347,8 @@ public: // Methods
 
 		_openGLUtils::checkForErrors();
 
-		VAOs()[iVAO] = vecInstances;
-		buffers().push_back(iVBO);
+		m_mapInstancesCohorts[iVAO] = vecInstances;
+		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
 		return iVerticesCount;
 	}
@@ -392,24 +416,16 @@ public: // Methods
 
 	void clear()
 	{
-		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
+		for (auto itCohort = m_mapInstancesCohorts.begin(); itCohort != m_mapInstancesCohorts.end(); itCohort++)
 		{
-			glDeleteVertexArrays(1, &(itVAO->first));
+			glDeleteVertexArrays(1, &(itCohort->first));
 		}
-		m_mapVAOs.clear();
+		m_mapInstancesCohorts.clear();
 
-		for (auto itBuffer = m_mapNamedBuffers.begin(); itBuffer != m_mapNamedBuffers.end(); itBuffer++)
+		for (auto itBuffer = m_mapBuffers.begin(); itBuffer != m_mapBuffers.end(); itBuffer++)
 		{
 			glDeleteBuffers(1, &(itBuffer->second));
 		}
-		m_mapNamedBuffers.clear();
-
-		for (auto itBuffer : m_vecBuffers)
-		{
-			glDeleteBuffers(1, &itBuffer);
-		}
-		m_vecBuffers.clear();
-
-		_openGLUtils::checkForErrors();
+		m_mapBuffers.clear();
 	}
 };
