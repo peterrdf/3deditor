@@ -113,19 +113,7 @@ private: // Members
 	
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;	
-
-	// Normals
-	GLuint m_iNormalVectorsVAO;
-	GLuint m_iNormalVectorsVBO;
-
-	// Normals
-	GLuint m_iTangentVectorsVAO;
-	GLuint m_iTangentVectorsVBO;
-
-	// BiNormals
-	GLuint m_iBiNormalVectorsVAO;
-	GLuint m_iBiNormalVectorsVBO;	
+	_material* m_pPointedInstanceMaterial;
 
 #pragma endregion // Members
 

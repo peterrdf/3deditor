@@ -26,6 +26,13 @@ wchar_t BOUNDING_BOX_VAO[] = L"BOUNDING_BOX_VAO";
 wchar_t BOUNDING_BOX_VBO[] = L"BOUNDING_BOX_VBO";
 wchar_t BOUNDING_BOX_IBO[] = L"BOUNDING_BOX_IBO";
 
+wchar_t NORMAL_VECS_VAO[] = L"NORMAL_VECS_VAO";
+wchar_t NORMAL_VECS_VBO[] = L"NORMAL_VECS_VBO";
+wchar_t TANGENT_VECS_VAO[] = L"TANGENT_VECS_VAO";
+wchar_t TANGENT_VECS_VBO[] = L"TANGENT_VECS_VBO";
+wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
+wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
+
 // ------------------------------------------------------------------------------------------------
 #define SELECTION_BUFFER_SIZE 512
 
@@ -72,12 +79,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_iPointedFace(-1)	
 	, m_pSelectedInstanceMaterial(NULL)
 	, m_pPointedInstanceMaterial(NULL)
-	, m_iNormalVectorsVAO(0)
-	, m_iNormalVectorsVBO(0)
-	, m_iTangentVectorsVAO(0)
-	, m_iTangentVectorsVBO(0)
-	, m_iBiNormalVectorsVAO(0)
-	, m_iBiNormalVectorsVBO(0)
 {
 	ASSERT(m_pWnd != NULL);
 
@@ -174,45 +175,6 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pPointedInstanceMaterial;
 	m_pPointedInstanceMaterial = NULL;
-
-	// Normal vectors
-	if (m_iNormalVectorsVAO != 0)
-	{
-		glDeleteVertexArrays(1, &m_iNormalVectorsVAO);
-		m_iNormalVectorsVAO = 0;
-	}
-
-	if (m_iNormalVectorsVBO != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iNormalVectorsVBO);
-		m_iNormalVectorsVBO = 0;
-	}
-
-	// Tangent vectors
-	if (m_iTangentVectorsVAO != 0)
-	{
-		glDeleteVertexArrays(1, &m_iTangentVectorsVAO);
-		m_iTangentVectorsVAO = 0;
-	}
-
-	if (m_iTangentVectorsVBO != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iTangentVectorsVBO);
-		m_iTangentVectorsVBO = 0;
-	}
-
-	// Bi-Normal vectors
-	if (m_iBiNormalVectorsVAO != 0)
-	{
-		glDeleteVertexArrays(1, &m_iBiNormalVectorsVAO);
-		m_iBiNormalVectorsVAO = 0;
-	}
-
-	if (m_iBiNormalVectorsVBO != 0)
-	{
-		glDeleteRenderbuffers(1, &m_iBiNormalVectorsVBO);
-		m_iBiNormalVectorsVBO = 0;
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -711,9 +673,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 
 	// Set up the parameters
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);	
-
-	glShadeModel(TEST_MODE ? GL_FLAT : GL_SMOOTH);
+	glDepthFunc(GL_LEQUAL);
 
 	/*
 	* Light
@@ -2203,7 +2163,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_openGLBuffers.getVBOcreateNew(BOUNDING_BOX_VBO, bIsNew);
+		iVBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2212,12 +2172,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-
-		// TEST
-		/*vector<float> vecVertices(64, 0.f);
-
-		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);*/
 
 		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);		
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
@@ -2229,7 +2183,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		_openGLUtils::checkForErrors();
 
-		GLuint iIBO = m_openGLBuffers.getIBOcreateNew(BOUNDING_BOX_IBO, bIsNew);
+		GLuint iIBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2262,7 +2216,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // if (bIsNew)
 	else
 	{
-		iVBO = m_openGLBuffers.getVBO(BOUNDING_BOX_VBO);
+		iVBO = m_openGLBuffers.getBuffer(BOUNDING_BOX_VBO);
 		if (iVBO == 0)
 		{
 			ASSERT(FALSE);
@@ -2454,37 +2408,54 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	_openGLUtils::checkForErrors();
 
-	if (m_iNormalVectorsVAO == 0)
+	bool bIsNew = false;
+	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(NORMAL_VECS_VAO, bIsNew);
+
+	if (iVAO == 0)
 	{
-		glGenVertexArrays(1, &m_iNormalVectorsVAO);
-		ASSERT(m_iNormalVectorsVAO != 0);
+		ASSERT(FALSE);
 
-		glBindVertexArray(m_iNormalVectorsVAO);
+		return;
+	}
 
-		_openGLUtils::checkForErrors();
+	GLuint iVBO = 0;
 
-		ASSERT(m_iNormalVectorsVBO == 0);
+	if (bIsNew)
+	{
+		glBindVertexArray(iVAO);
 
-		glGenBuffers(1, &m_iNormalVectorsVBO);
-		ASSERT(m_iNormalVectorsVBO != 0);
+		iVBO = m_openGLBuffers.getBufferCreateNew(NORMAL_VECS_VBO, bIsNew);
+		if ((iVBO == 0) || !bIsNew)
+		{
+			ASSERT(FALSE);
 
-		vector<float> vecVertices(64, 0.f);
+			return;
+		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_iNormalVectorsVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);		
+		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
 		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
 
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
+		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
 		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
 		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-		
+
 		glBindVertexArray(0);
 
 		_openGLUtils::checkForErrors();
-	} // if (m_iNormalVectorsVAO == 0)
+	} // if (bIsNew)
+	else
+	{
+		iVBO = m_openGLBuffers.getBuffer(NORMAL_VECS_VBO);
+		if (iVBO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+	}
 
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
@@ -2624,10 +2595,10 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	if (!vecVertices.empty())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_iNormalVectorsVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glBindVertexArray(m_iNormalVectorsVAO);
+		glBindVertexArray(iVAO);
 
 		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
 
@@ -2683,24 +2654,31 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	_openGLUtils::checkForErrors();
 
-	if (m_iTangentVectorsVAO == 0)
+	bool bIsNew = false;
+	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(TANGENT_VECS_VAO, bIsNew);
+
+	if (iVAO == 0)
 	{
-		glGenVertexArrays(1, &m_iTangentVectorsVAO);
-		ASSERT(m_iTangentVectorsVAO != 0);
+		ASSERT(FALSE);
 
-		glBindVertexArray(m_iTangentVectorsVAO);
+		return;
+	}
 
-		_openGLUtils::checkForErrors();
+	GLuint iVBO = 0;
 
-		ASSERT(m_iTangentVectorsVBO == 0);
+	if (bIsNew)
+	{
+		glBindVertexArray(iVAO);
 
-		glGenBuffers(1, &m_iTangentVectorsVBO);
-		ASSERT(m_iTangentVectorsVBO != 0);
+		iVBO = m_openGLBuffers.getBufferCreateNew(TANGENT_VECS_VBO, bIsNew);
+		if ((iVBO == 0) || !bIsNew)
+		{
+			ASSERT(FALSE);
 
-		vector<float> vecVertices(64, 0.f);
+			return;
+		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_iTangentVectorsVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 
 		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
@@ -2713,7 +2691,17 @@ void COpenGLRDFView::DrawTangentVectors()
 		glBindVertexArray(0);
 
 		_openGLUtils::checkForErrors();
-	} // if (m_iTangentVectorsVAO == 0)
+	} // if (bIsNew)
+	else
+	{
+		iVBO = m_openGLBuffers.getBuffer(TANGENT_VECS_VBO);
+		if (iVBO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+	}
 
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
@@ -2853,10 +2841,10 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	if (!vecVertices.empty())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_iTangentVectorsVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glBindVertexArray(m_iTangentVectorsVAO);
+		glBindVertexArray(iVAO);
 
 		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
 
@@ -2912,24 +2900,31 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	_openGLUtils::checkForErrors();
 
-	if (m_iBiNormalVectorsVAO == 0)
+	bool bIsNew = false;
+	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(BINORMAL_VECS_VAO, bIsNew);
+
+	if (iVAO == 0)
 	{
-		glGenVertexArrays(1, &m_iBiNormalVectorsVAO);
-		ASSERT(m_iBiNormalVectorsVAO != 0);
+		ASSERT(FALSE);
 
-		glBindVertexArray(m_iBiNormalVectorsVAO);
+		return;
+	}
 
-		_openGLUtils::checkForErrors();
+	GLuint iVBO = 0;
 
-		ASSERT(m_iBiNormalVectorsVBO == 0);
+	if (bIsNew)
+	{
+		glBindVertexArray(iVAO);
 
-		glGenBuffers(1, &m_iBiNormalVectorsVBO);
-		ASSERT(m_iBiNormalVectorsVBO != 0);
+		iVBO = m_openGLBuffers.getBufferCreateNew(BINORMAL_VECS_VBO, bIsNew);
+		if ((iVBO == 0) || !bIsNew)
+		{
+			ASSERT(FALSE);
 
-		vector<float> vecVertices(64, 0.f);
+			return;
+		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_iBiNormalVectorsVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 
 		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
 		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
@@ -2942,7 +2937,17 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		glBindVertexArray(0);
 
 		_openGLUtils::checkForErrors();
-	} // if (m_iBiNormalVectorsVAO == 0)
+	} // if (bIsNew)
+	else
+	{
+		iVBO = m_openGLBuffers.getBuffer(BINORMAL_VECS_VBO);
+		if (iVBO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+	}
 
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
@@ -3082,10 +3087,10 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	if (!vecVertices.empty())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_iBiNormalVectorsVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-		glBindVertexArray(m_iBiNormalVectorsVAO);
+		glBindVertexArray(iVAO);
 
 		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
 
@@ -3341,7 +3346,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		return;
 	}
 	bool bIsNew = false;
-	GLuint iIBO = m_openGLBuffers.getIBOcreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_openGLBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{
@@ -3448,7 +3453,7 @@ void COpenGLRDFView::DrawPointedFace()
 	}
 
 	bool bIsNew = false;
-	GLuint iIBO = m_openGLBuffers.getIBOcreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_openGLBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{

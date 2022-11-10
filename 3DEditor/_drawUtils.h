@@ -232,7 +232,7 @@ public: // Methods
 		return iVAO;
 	}
 
-	GLuint getVBO(const wstring& strName)
+	GLuint getBuffer(const wstring& strName)
 	{
 		auto itBuffer = m_mapBuffers.find(strName);
 		if (itBuffer != m_mapBuffers.end())
@@ -243,15 +243,15 @@ public: // Methods
 		return 0;
 	}
 
-	GLuint getVBOcreateNew(const wstring& strName, bool& bIsNew)
+	GLuint getBufferCreateNew(const wstring& strName, bool& bIsNew)
 	{
 		bIsNew = false;		
 
-		GLuint iVBO = getVBO(strName);
-		if (iVBO == 0)
+		GLuint iBuffer = getBuffer(strName);
+		if (iBuffer == 0)
 		{
-			glGenBuffers(1, &iVBO);
-			if (iVBO == 0)
+			glGenBuffers(1, &iBuffer);
+			if (iBuffer == 0)
 			{
 				assert(false);
 
@@ -261,46 +261,11 @@ public: // Methods
 			_openGLUtils::checkForErrors();
 
 			bIsNew = true;
-			m_mapBuffers[strName] = iVBO;
+			m_mapBuffers[strName] = iBuffer;
 		}
 
-		return iVBO;
-	}
-
-	GLuint getIBO(const wstring& strName)
-	{
-		auto itBuffer = m_mapBuffers.find(strName);
-		if (itBuffer != m_mapBuffers.end())		
-		{
-			return itBuffer->second;
-		}
-
-		return 0;
-	}
-
-	GLuint getIBOcreateNew(const wstring& strName, bool& bIsNew)
-	{
-		bIsNew = false;
-
-		GLuint iIBO = getIBO(strName);
-		if (iIBO == 0)
-		{
-			glGenBuffers(1, &iIBO);
-			if (iIBO == 0)
-			{
-				assert(false);
-
-				return 0;
-			}
-
-			_openGLUtils::checkForErrors();
-
-			bIsNew = true;
-			m_mapBuffers[strName] = iIBO;
-		}
-
-		return iIBO;
-	}
+		return iBuffer;
+	}	
 
 	int64_t createIBO(const vector<_cohort*>& vecCohorts)
 	{
