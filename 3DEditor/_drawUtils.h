@@ -150,12 +150,14 @@ class _openGLBuffers
 private: // Members
 
 	map<GLuint, vector<Instance*>> m_mapInstancesCohorts;
+	map<wstring, GLuint> m_mapVAOs;
 	map<wstring, GLuint> m_mapBuffers;
 
 public: // Methods
 
 	_openGLBuffers()
 		: m_mapInstancesCohorts()
+		, m_mapVAOs()
 		, m_mapBuffers()
 	{
 	}
@@ -167,6 +169,16 @@ public: // Methods
 	map<GLuint, vector<Instance*>>& instancesCohorts()
 	{
 		return m_mapInstancesCohorts;
+	}
+
+	map<wstring, GLuint>& VAOs()
+	{
+		return m_mapVAOs;
+	}
+
+	map<wstring, GLuint>& buffers()
+	{
+		return m_mapBuffers;
 	}
 
 	GLuint findVAO(Instance* pInstance)
@@ -182,21 +194,96 @@ public: // Methods
 			}
 		}
 
-		// Not found
+		return 0;
+	}	
+
+	GLuint getVAO(const wstring& strName)
+	{
+		auto itVAO = m_mapVAOs.find(strName);
+		if (itVAO != m_mapVAOs.end())
+		{
+			return itVAO->second;
+		}
+
 		return 0;
 	}
 
-	map<wstring, GLuint>& buffers()
+	GLuint getVAOcreateNew(const wstring& strName, bool& bIsNew)
 	{
-		return m_mapBuffers;
+		bIsNew = false;		
+
+		GLuint iVAO = getVAO(strName);
+		if (iVAO == 0)
+		{
+			glGenVertexArrays(1, &iVAO);
+			if (iVAO == 0)
+			{
+				assert(false);
+
+				return 0;
+			}
+
+			_openGLUtils::checkForErrors();
+
+			bIsNew = true;
+			m_mapVAOs[strName] = iVAO;
+		}
+
+		return iVAO;
 	}
 
-	GLuint createIBO(const wstring& strName)
+	GLuint getVBO(const wstring& strName)
 	{
-		GLuint iIBO = 0;
-
 		auto itBuffer = m_mapBuffers.find(strName);
-		if (itBuffer == m_mapBuffers.end())
+		if (itBuffer != m_mapBuffers.end())
+		{
+			return itBuffer->second;
+		}
+
+		return 0;
+	}
+
+	GLuint getVBOcreateNew(const wstring& strName, bool& bIsNew)
+	{
+		bIsNew = false;		
+
+		GLuint iVBO = getVBO(strName);
+		if (iVBO == 0)
+		{
+			glGenBuffers(1, &iVBO);
+			if (iVBO == 0)
+			{
+				assert(false);
+
+				return 0;
+			}
+
+			_openGLUtils::checkForErrors();
+
+			bIsNew = true;
+			m_mapBuffers[strName] = iVBO;
+		}
+
+		return iVBO;
+	}
+
+	GLuint getIBO(const wstring& strName)
+	{
+		auto itBuffer = m_mapBuffers.find(strName);
+		if (itBuffer != m_mapBuffers.end())		
+		{
+			return itBuffer->second;
+		}
+
+		return 0;
+	}
+
+	GLuint getIBOcreateNew(const wstring& strName, bool& bIsNew)
+	{
+		bIsNew = false;
+
+		GLuint iIBO = getIBO(strName);
+		if (iIBO == 0)
 		{
 			glGenBuffers(1, &iIBO);
 			if (iIBO == 0)
@@ -206,17 +293,10 @@ public: // Methods
 				return 0;
 			}
 
-			vector<unsigned int> vecIndices(64, 0);
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 			_openGLUtils::checkForErrors();
-		}
-		else
-		{
-			iIBO = itBuffer->second;
+
+			bIsNew = true;
+			m_mapBuffers[strName] = iIBO;
 		}
 
 		return iIBO;
@@ -259,6 +339,8 @@ public: // Methods
 
 		delete[] pIndices;
 
+		_openGLUtils::checkForErrors();
+
 		GLsizei iIBOOffset = 0;
 		for (auto pCohort : vecCohorts)
 		{
@@ -268,12 +350,10 @@ public: // Methods
 			iIBOOffset += (GLsizei)pCohort->indices().size();
 		}
 
-		_openGLUtils::checkForErrors();
-
 		return iIndicesCount;
 	}	
 
-	int64_t createVAO(const vector<Instance*>& vecInstances, bool bTexture, CBinnPhongGLProgram* pProgram)
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, bool bTexture, CBinnPhongGLProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -302,6 +382,8 @@ public: // Methods
 			return 0;
 		}
 
+		m_mapVAOs[to_wstring(iVAO)] = iVAO;
+
 		glBindVertexArray(iVAO);
 
 		GLuint iVBO = 0;
@@ -313,6 +395,8 @@ public: // Methods
 
 			return 0;
 		}
+
+		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
 		const int64_t _VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
 
@@ -347,8 +431,7 @@ public: // Methods
 
 		_openGLUtils::checkForErrors();
 
-		m_mapInstancesCohorts[iVAO] = vecInstances;
-		m_mapBuffers[to_wstring(iVBO)] = iVBO;
+		m_mapInstancesCohorts[iVAO] = vecInstances;	
 
 		return iVerticesCount;
 	}
@@ -416,16 +499,18 @@ public: // Methods
 
 	void clear()
 	{
-		for (auto itCohort = m_mapInstancesCohorts.begin(); itCohort != m_mapInstancesCohorts.end(); itCohort++)
+		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
 		{
-			glDeleteVertexArrays(1, &(itCohort->first));
+			glDeleteVertexArrays(1, &(itVAO->second));
 		}
-		m_mapInstancesCohorts.clear();
+		m_mapVAOs.clear();
 
 		for (auto itBuffer = m_mapBuffers.begin(); itBuffer != m_mapBuffers.end(); itBuffer++)
 		{
 			glDeleteBuffers(1, &(itBuffer->second));
 		}
 		m_mapBuffers.clear();
+		
+		_openGLUtils::checkForErrors();
 	}
 };

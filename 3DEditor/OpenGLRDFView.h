@@ -113,12 +113,7 @@ private: // Members
 	
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
-
-	// Bounding boxes
-	GLuint m_iBoundingBoxesVAO;
-	GLuint m_iBoundingBoxesVBO;	
-	GLuint m_iBoundingBoxesIBO;
+	_material* m_pPointedInstanceMaterial;	
 
 	// Normals
 	GLuint m_iNormalVectorsVAO;
