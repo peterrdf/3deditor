@@ -114,7 +114,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 
 	m_pOGLContext->MakeCurrent();
 
-	m_pProgram = new CBinnPhongGLProgram();
+	m_pProgram = new CBinnPhongGLProgram(true);
 	m_pVertexShader = new CGLShader(GL_VERTEX_SHADER);
 	m_pFragmentShader = new CGLShader(GL_FRAGMENT_SHADER);
 
@@ -1018,7 +1018,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		*/
 		if (((int_t)iVerticesCount + pRDFInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, true, m_pProgram) != iVerticesCount)
+			if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
 			{
 				assert(false);
 
@@ -1152,7 +1152,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iVerticesCount > 0)
 	{
-		if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, true, m_pProgram) != iVerticesCount)
+		if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
 		{
 			assert(false);
 
@@ -2172,16 +2172,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);		
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());		
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());	
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
-		_oglUtils::checkForErrors();
+		m_openGLBuffers.setVBOAttributes(m_pProgram);
 
 		GLuint iIBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
@@ -2433,15 +2424,7 @@ void COpenGLRDFView::DrawNormalVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
+		m_openGLBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
@@ -2679,15 +2662,7 @@ void COpenGLRDFView::DrawTangentVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
+		m_openGLBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
@@ -2925,15 +2900,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-
-		glVertexAttribPointer(m_pProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-		glVertexAttribPointer(m_pProgram->getVertexNormal(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 3));
-		glVertexAttribPointer(m_pProgram->getTextureCoord(), 2, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, (void*)(sizeof(GLfloat) * 6));
-
-		glEnableVertexAttribArray(m_pProgram->getVertexPosition());
-		glEnableVertexAttribArray(m_pProgram->getVertexNormal());
-		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
-
+		m_openGLBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();

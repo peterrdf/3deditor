@@ -318,7 +318,7 @@ public: // Methods
 		return iIndicesCount;
 	}	
 
-	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, bool bTexture, CBinnPhongGLProgram* pProgram)
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, CBinnPhongGLProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -363,25 +363,13 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
-		const int64_t _VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * _VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
 		delete[] pVertices;
 
-		glVertexAttribPointer(pProgram->getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
-		glVertexAttribPointer(pProgram->getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
-		if (bTexture)
-		{
-			glVertexAttribPointer(pProgram->getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
-		}		
-
-		glEnableVertexAttribArray(pProgram->getVertexPosition());
-		glEnableVertexAttribArray(pProgram->getVertexNormal());
-		if (bTexture)
-		{
-			glEnableVertexAttribArray(pProgram->getTextureCoord());
-		}		
+		setVBOAttributes(pProgram);
 		
 		GLsizei iVBOOffset = 0;
 		for (auto pInstance : vecInstances)
@@ -399,6 +387,27 @@ public: // Methods
 		m_mapInstancesCohorts[iVAO] = vecInstances;	
 
 		return iVerticesCount;
+	}
+
+	void setVBOAttributes(CBinnPhongGLProgram* pProgram) const
+	{
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
+
+		glVertexAttribPointer(pProgram->getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
+		glVertexAttribPointer(pProgram->getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
+		if (pProgram->getTextureSupport())
+		{
+			glVertexAttribPointer(pProgram->getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
+		}
+
+		glEnableVertexAttribArray(pProgram->getVertexPosition());
+		glEnableVertexAttribArray(pProgram->getVertexNormal());
+		if (pProgram->getTextureSupport())
+		{
+			glEnableVertexAttribArray(pProgram->getTextureCoord());
+		}
+
+		_oglUtils::checkForErrors();
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
