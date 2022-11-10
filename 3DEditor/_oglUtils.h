@@ -9,7 +9,7 @@
 #undef max
 using namespace std;
 
-class _openGLUtils
+class _oglUtils
 {
 
 public: // Methods

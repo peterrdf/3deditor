@@ -972,8 +972,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
 
 	// Limits
-	GLsizei VERTICES_MAX_COUNT = _openGLUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _openGLUtils::getIndicesCountLimit();
+	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
+	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
 	const map<int64_t, CRDFInstance*>& mapRDFInstances = pModel->GetRDFInstances();
 
@@ -1576,7 +1576,7 @@ void COpenGLRDFView::DrawClipSpace()
 
 	glEnable(GL_LIGHTING);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1765,7 +1765,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		}
 	}
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
@@ -1846,7 +1846,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
@@ -1927,7 +1927,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
@@ -2008,7 +2008,7 @@ void COpenGLRDFView::DrawLines()
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
@@ -2097,7 +2097,7 @@ void COpenGLRDFView::DrawPoints()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	} // for (auto itCohort ...
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
@@ -2145,7 +2145,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
 	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(BOUNDING_BOX_VAO, bIsNew);
@@ -2181,7 +2181,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glEnableVertexAttribArray(m_pProgram->getVertexNormal());	
 		glEnableVertexAttribArray(m_pProgram->getTextureCoord());
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 
 		GLuint iIBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
@@ -2212,7 +2212,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		glBindVertexArray(0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
@@ -2359,7 +2359,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		false,
 		glm::value_ptr(m_matModelView));
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2406,7 +2406,7 @@ void COpenGLRDFView::DrawNormalVectors()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
 	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(NORMAL_VECS_VAO, bIsNew);
@@ -2444,7 +2444,7 @@ void COpenGLRDFView::DrawNormalVectors()
 
 		glBindVertexArray(0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
@@ -2605,7 +2605,7 @@ void COpenGLRDFView::DrawNormalVectors()
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2652,7 +2652,7 @@ void COpenGLRDFView::DrawTangentVectors()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
 	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(TANGENT_VECS_VAO, bIsNew);
@@ -2690,7 +2690,7 @@ void COpenGLRDFView::DrawTangentVectors()
 
 		glBindVertexArray(0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
@@ -2851,7 +2851,7 @@ void COpenGLRDFView::DrawTangentVectors()
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2898,7 +2898,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
 	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(BINORMAL_VECS_VAO, bIsNew);
@@ -2936,7 +2936,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 		glBindVertexArray(0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
@@ -3097,7 +3097,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		glBindVertexArray(0);
 	} // if (!vecVertices.empty())
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3250,7 +3250,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 	m_pInstanceSelectionFrameBuffer->unbind();
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3336,7 +3336,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();	
+	_oglUtils::checkForErrors();	
 
 	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
@@ -3363,7 +3363,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	}
 
 	glBindVertexArray(iVAO);
@@ -3408,7 +3408,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	m_pFaceSelectionFrameBuffer->unbind();
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3442,7 +3442,7 @@ void COpenGLRDFView::DrawPointedFace()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	_openGLUtils::checkForErrors();	
+	_oglUtils::checkForErrors();	
 
 	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
@@ -3494,7 +3494,7 @@ void COpenGLRDFView::DrawPointedFace()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	_openGLUtils::checkForErrors();
+	_oglUtils::checkForErrors();
 }
 
 // ------------------------------------------------------------------------------------------------

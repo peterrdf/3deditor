@@ -204,7 +204,6 @@
     <ClInclude Include="3DEditorDoc.h" />
     <ClInclude Include="3DEditorView.h" />
     <ClInclude Include="BinnPhongGLProgram.h" />
-    <ClInclude Include="BinnPhongOGLPipeline.h" />
     <ClInclude Include="BoolRDFProperty.h" />
     <ClInclude Include="CityGMLParser.h" />
     <ClInclude Include="ClassView.h" />
@@ -261,7 +260,7 @@
     <ClInclude Include="_dxp_parser.h" />
     <ClInclude Include="_geometry.h" />
     <ClInclude Include="_material.h" />
-    <ClInclude Include="_openGLUtils.h" />
+    <ClInclude Include="_oglUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
@@ -270,7 +269,6 @@
     <ClCompile Include="3DEditorDoc.cpp" />
     <ClCompile Include="3DEditorView.cpp" />
     <ClCompile Include="BinnPhongGLProgram.cpp" />
-    <ClCompile Include="BinnPhongOGLPipeline.cpp" />
     <ClCompile Include="BoolRDFProperty.cpp" />
     <ClCompile Include="CityGMLParser.cpp" />
     <ClCompile Include="ClassView.cpp" />

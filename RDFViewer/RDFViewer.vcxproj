@@ -197,7 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3DEditor\BinnPhongGLProgram.h" />
-    <ClInclude Include="..\3DEditor\BinnPhongOGLPipeline.h" />
     <ClInclude Include="..\3DEditor\CityGMLParser.h" />
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
     <ClInclude Include="..\3DEditor\GLProgram.h" />
@@ -219,7 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3DEditor\BinnPhongGLProgram.cpp" />
-    <ClCompile Include="..\3DEditor\BinnPhongOGLPipeline.cpp" />
     <ClCompile Include="..\3DEditor\BoolRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\CityGMLParser.cpp" />
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />

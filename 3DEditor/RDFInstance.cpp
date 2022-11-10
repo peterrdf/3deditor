@@ -721,13 +721,13 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
+			if (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 			{
-				while (iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
+				while (iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
 					for (int_t iIndex = iStartIndexTriangles; 
-						iIndex < iStartIndexTriangles + _openGLUtils::getIndicesCountLimit(); 
+						iIndex < iStartIndexTriangles + _oglUtils::getIndicesCountLimit(); 
 						iIndex++)
 					{
 						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
@@ -743,8 +743,8 @@ void CRDFInstance::Calculate()
 					// Conceptual faces
 					pNewCohort->faces().push_back(concFace);
 
-					iIndicesCountTriangles -= _openGLUtils::getIndicesCountLimit();
-					iStartIndexTriangles += _openGLUtils::getIndicesCountLimit();
+					iIndicesCountTriangles -= _oglUtils::getIndicesCountLimit();
+					iStartIndexTriangles += _oglUtils::getIndicesCountLimit();
 				}
 
 				if (iIndicesCountTriangles > 0)
@@ -769,7 +769,7 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesCountTriangles > _openGLUtils::GetIndicesCountLimit())	
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
 
 			/*
 			* Create material
@@ -784,7 +784,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pCohort->indices().size() + iIndicesCountTriangles > _openGLUtils::getIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesCountTriangles > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
 
@@ -836,15 +836,15 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
+			if (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 			{
-				while (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
+				while (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
+					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _oglUtils::getIndicesCountLimit() / 2; iIndex++)
 					{
 						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
@@ -862,9 +862,9 @@ void CRDFInstance::Calculate()
 						iPreviousIndex = iIndex;
 					} // for (int_t iIndex = ...
 
-					iIndicesFacesPolygonsCount -= _openGLUtils::getIndicesCountLimit() / 2;
-					iStartIndexFacesPolygons += _openGLUtils::getIndicesCountLimit() / 2;
-				} // while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
+					iIndicesFacesPolygonsCount -= _oglUtils::getIndicesCountLimit() / 2;
+					iStartIndexFacesPolygons += _oglUtils::getIndicesCountLimit() / 2;
+				} // while (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
@@ -892,12 +892,12 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
+			} // if (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 			/*
 			* Check the limit
 			*/
-			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
+			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				concFacePolygonsCohorts().push_back(pCohort);
@@ -926,7 +926,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < concFacesCohorts().size(); iCohort++)
 		{
-			ASSERT(concFacesCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
+			ASSERT(concFacesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecConcFacePolygons.empty())
@@ -958,15 +958,15 @@ void CRDFInstance::Calculate()
 			/*
 			* Split the conceptual face - isolated case
 			*/
-			if (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
+			if (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 			{
-				while (iIndicesFacesPolygonsCount > _openGLUtils::getIndicesCountLimit() / 2)
+				while (iIndicesFacesPolygonsCount > _oglUtils::getIndicesCountLimit() / 2)
 				{
 					pCohort = new _cohort();
 					facePolygonsCohorts().push_back(pCohort);
 
 					int_t iPreviousIndex = -1;
-					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _openGLUtils::getIndicesCountLimit() / 2; iIndex++)
+					for (int_t iIndex = iStartIndexFacesPolygons; iIndex < iStartIndexFacesPolygons + _oglUtils::getIndicesCountLimit() / 2; iIndex++)
 					{
 						if (m_pIndexBuffer->data()[iIndex] < 0)
 						{
@@ -984,9 +984,9 @@ void CRDFInstance::Calculate()
 						iPreviousIndex = iIndex;
 					} // for (int_t iIndex = ...
 
-					iIndicesFacesPolygonsCount -= _openGLUtils::getIndicesCountLimit() / 2;
-					iStartIndexFacesPolygons += _openGLUtils::getIndicesCountLimit() / 2;
-				} // while (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
+					iIndicesFacesPolygonsCount -= _oglUtils::getIndicesCountLimit() / 2;
+					iStartIndexFacesPolygons += _oglUtils::getIndicesCountLimit() / 2;
+				} // while (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 				if (iIndicesFacesPolygonsCount > 0)
 				{
@@ -1014,12 +1014,12 @@ void CRDFInstance::Calculate()
 				}
 
 				continue;
-			} // if (iIndicesFacesPolygonsCount > _openGLUtils::GetIndicesCountLimit() / 2)
+			} // if (iIndicesFacesPolygonsCount > _oglUtils::GetIndicesCountLimit() / 2)
 
 			/*
 			* Check the limit
 			*/
-			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _openGLUtils::getIndicesCountLimit())
+			if ((pCohort->indices().size() + (iIndicesFacesPolygonsCount * 2)) > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				facePolygonsCohorts().push_back(pCohort);
@@ -1048,7 +1048,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < facePolygonsCohorts().size(); iCohort++)
 		{
-			ASSERT(facePolygonsCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
+			ASSERT(facePolygonsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecFacePolygons.empty())
@@ -1080,7 +1080,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pCohort->indices().size() + iIndicesLinesCount > _openGLUtils::getIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesLinesCount > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				linesCohorts().push_back(pCohort);
@@ -1100,7 +1100,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
 		{
-			ASSERT(linesCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
+			ASSERT(linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecLines.empty())		
@@ -1132,7 +1132,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Check the limit
 			*/
-			if (pCohort->indices().size() + iIndicesPointsCount > _openGLUtils::getIndicesCountLimit())
+			if (pCohort->indices().size() + iIndicesPointsCount > _oglUtils::getIndicesCountLimit())
 			{
 				pCohort = new _cohort();
 				pointsCohorts().push_back(pCohort);
@@ -1147,7 +1147,7 @@ void CRDFInstance::Calculate()
 #ifdef _DEBUG
 		for (size_t iCohort = 0; iCohort < pointsCohorts().size(); iCohort++)
 		{
-			ASSERT(pointsCohorts()[iCohort]->indices().size() <= _openGLUtils::getIndicesCountLimit());
+			ASSERT(pointsCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
 		}
 #endif
 	} // if (!m_vecPoints.empty())			

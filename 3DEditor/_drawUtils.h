@@ -1,7 +1,7 @@
 #pragma once
 
 #include "_geometry.h"
-#include "_openGLUtils.h"
+#include "_oglUtils.h"
 
 template<class T>
 class _buffer
@@ -223,7 +223,7 @@ public: // Methods
 				return 0;
 			}
 
-			_openGLUtils::checkForErrors();
+			_oglUtils::checkForErrors();
 
 			bIsNew = true;
 			m_mapVAOs[strName] = iVAO;
@@ -258,7 +258,7 @@ public: // Methods
 				return 0;
 			}
 
-			_openGLUtils::checkForErrors();
+			_oglUtils::checkForErrors();
 
 			bIsNew = true;
 			m_mapBuffers[strName] = iBuffer;
@@ -304,7 +304,7 @@ public: // Methods
 
 		delete[] pIndices;
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 
 		GLsizei iIBOOffset = 0;
 		for (auto pCohort : vecCohorts)
@@ -394,7 +394,7 @@ public: // Methods
 
 		glBindVertexArray(0);
 
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 
 		m_mapInstancesCohorts[iVAO] = vecInstances;	
 
@@ -476,6 +476,6 @@ public: // Methods
 		}
 		m_mapBuffers.clear();
 		
-		_openGLUtils::checkForErrors();
+		_oglUtils::checkForErrors();
 	}
 };

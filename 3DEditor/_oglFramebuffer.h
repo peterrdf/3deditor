@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_openGLUtils.h"
+#include "_oglUtils.h"
 #include "_material.h"
 
 #include <assert.h>
@@ -97,7 +97,7 @@ public: // Methods
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			_openGLUtils::checkForErrors();
+			_oglUtils::checkForErrors();
 		} // if (m_iFrameBuffer == 0)
 	}
 

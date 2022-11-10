@@ -65,9 +65,6 @@
     <ClInclude Include="..\3DEditor\BinnPhongGLProgram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\3DEditor\BinnPhongOGLPipeline.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3DEditor\GLProgram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -170,9 +167,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\BinnPhongGLProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\BinnPhongOGLPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\GLProgram.cpp">

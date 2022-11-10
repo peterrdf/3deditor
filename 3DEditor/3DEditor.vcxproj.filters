@@ -179,9 +179,6 @@
     <ClInclude Include="BinnPhongGLProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BinnPhongOGLPipeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OGLPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -206,7 +203,7 @@
     <ClInclude Include="_geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_openGLUtils.h">
+    <ClInclude Include="_oglUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="_drawUtils.h">
@@ -350,9 +347,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BinnPhongGLProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BinnPhongOGLPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OGLPipeline.cpp">
