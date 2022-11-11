@@ -114,28 +114,28 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 
 	m_pOGLContext->MakeCurrent();
 
-	m_pProgram = new CBinnPhongGLProgram(true);
-	m_pVertexShader = new CGLShader(GL_VERTEX_SHADER);
-	m_pFragmentShader = new CGLShader(GL_FRAGMENT_SHADER);
+	m_pProgram = new _oglBinnPhongProgram(true);
+	m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
+	m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
 
-	if (!m_pVertexShader->Load(IDR_TEXTFILE_VERTEX_SHADER2))
+	if (!m_pVertexShader->load(IDR_TEXTFILE_VERTEX_SHADER2, TEXTFILE))
 		AfxMessageBox(_T("Vertex shader loading error!"));
 
-	if (!m_pFragmentShader->Load(IDR_TEXTFILE_FRAGMENT_SHADER2))
+	if (!m_pFragmentShader->load(IDR_TEXTFILE_FRAGMENT_SHADER2, TEXTFILE))
 		AfxMessageBox(_T("Fragment shader loading error!"));
 
-	if (!m_pVertexShader->Compile())
+	if (!m_pVertexShader->compile())
 		AfxMessageBox(_T("Vertex shader compiling error!"));
 
-	if (!m_pFragmentShader->Compile())
+	if (!m_pFragmentShader->compile())
 		AfxMessageBox(_T("Fragment shader compiling error!"));
 
-	m_pProgram->AttachShader(m_pVertexShader);
-	m_pProgram->AttachShader(m_pFragmentShader);
+	m_pProgram->attachShader(m_pVertexShader);
+	m_pProgram->attachShader(m_pFragmentShader);
 
-	glBindFragDataLocation(m_pProgram->GetID(), 0, "FragColor");
+	glBindFragDataLocation(m_pProgram->getID(), 0, "FragColor");
 
-	if (!m_pProgram->Link())
+	if (!m_pProgram->link())
 		AfxMessageBox(_T("Program linking error!"));
 
 	m_matModelView = glm::identity<glm::mat4>();
@@ -153,8 +153,8 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	m_pOGLContext->MakeCurrent();
 
-	m_pProgram->DetachShader(m_pVertexShader);
-	m_pProgram->DetachShader(m_pFragmentShader);
+	m_pProgram->detachShader(m_pVertexShader);
+	m_pProgram->detachShader(m_pFragmentShader);
 
 	delete m_pProgram;
 	m_pProgram = NULL;
@@ -664,7 +664,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		return;
 	}
 
-	m_pProgram->Use();
+	m_pProgram->use();
 
 	glViewport(0, 0, iWidth, iHeight);
 
@@ -679,7 +679,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	* Light
 	*/
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getPointLightingLocation(),
 		0.f,
 		0.f,
@@ -689,7 +689,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	* Shininess
 	*/
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialShininess(),
 		30.f);
 
@@ -711,7 +711,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
 
 	glProgramUniformMatrix4fv(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getPMatrix(),
 		1,
 		false,
@@ -751,7 +751,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 
 	glProgramUniformMatrix4fv(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMVMatrix(),
 		1,
 		false,
@@ -765,19 +765,19 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	matNormal = glm::transpose(matNormal);
 
 	glProgramUniformMatrix4fv(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getNMatrix(),
 		1,
 		false,
 		value_ptr(matNormal));
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		1.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseTexture(),
 		0.f);
 
@@ -1614,7 +1614,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 	}
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		1.f);
 
@@ -1674,7 +1674,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				if (pMaterial->hasTexture())
 				{
 					glProgramUniform1f(
-						m_pProgram->GetID(),
+						m_pProgram->getID(),
 						m_pProgram->geUseTexture(),
 						1.f);
 
@@ -1682,7 +1682,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
 					glProgramUniform1i(
-						m_pProgram->GetID(),
+						m_pProgram->getID(),
 						m_pProgram->getSampler(),
 						0);
 				} // if (pMaterial->hasTexture())
@@ -1691,7 +1691,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					/*
 					* Material - Ambient color
 					*/
-					glProgramUniform3f(m_pProgram->GetID(),
+					glProgramUniform3f(m_pProgram->getID(),
 						m_pProgram->getMaterialAmbientColor(),
 						pMaterial->getAmbientColor().r(),
 						pMaterial->getAmbientColor().g(),
@@ -1701,14 +1701,14 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					* Material - Transparency
 					*/
 					glProgramUniform1f(
-						m_pProgram->GetID(),
+						m_pProgram->getID(),
 						m_pProgram->getTransparency(),
 						pMaterial->getA());
 
 					/*
 					* Material - Diffuse color
 					*/
-					glProgramUniform3f(m_pProgram->GetID(),
+					glProgramUniform3f(m_pProgram->getID(),
 						m_pProgram->getMaterialDiffuseColor(),
 						pMaterial->getDiffuseColor().r() / 2.f,
 						pMaterial->getDiffuseColor().g() / 2.f,
@@ -1717,7 +1717,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					/*
 					* Material - Specular color
 					*/
-					glProgramUniform3f(m_pProgram->GetID(),
+					glProgramUniform3f(m_pProgram->getID(),
 						m_pProgram->getMaterialSpecularColor(),
 						pMaterial->getSpecularColor().r() / 2.f,
 						pMaterial->getSpecularColor().g() / 2.f,
@@ -1726,7 +1726,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					/*
 					* Material - Emissive color
 					*/
-					glProgramUniform3f(m_pProgram->GetID(),
+					glProgramUniform3f(m_pProgram->getID(),
 						m_pProgram->getMaterialEmissiveColor(),
 						pMaterial->getEmissiveColor().r() / 3.f,
 						pMaterial->getEmissiveColor().g() / 3.f,
@@ -1743,7 +1743,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				if (pMaterial->hasTexture())
 				{
 					glProgramUniform1f(
-						m_pProgram->GetID(),
+						m_pProgram->getID(),
 						m_pProgram->geUseTexture(),
 						0.f);
 				}
@@ -1791,19 +1791,19 @@ void COpenGLRDFView::DrawFacesPolygons()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -1872,19 +1872,19 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -1953,19 +1953,19 @@ void COpenGLRDFView::DrawLines()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -2034,19 +2034,19 @@ void COpenGLRDFView::DrawPoints()
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -2129,19 +2129,19 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -2269,7 +2269,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 		glProgramUniformMatrix4fv(
-			m_pProgram->GetID(),
+			m_pProgram->getID(),
 			m_pProgram->getMVMatrix(),
 			1,
 			false,
@@ -2344,7 +2344,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	// Restore Model-View Matrix
 	m_matModelView = matModelView;
 	glProgramUniformMatrix4fv(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMVMatrix(),
 		1,
 		false,
@@ -2381,19 +2381,19 @@ void COpenGLRDFView::DrawNormalVectors()
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -2619,19 +2619,19 @@ void COpenGLRDFView::DrawTangentVectors()
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -2857,19 +2857,19 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		0.f,
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -3157,12 +3157,12 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glDepthFunc(GL_LEQUAL);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);	
 
@@ -3193,7 +3193,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			glProgramUniform3f(
-				m_pProgram->GetID(),
+				m_pProgram->getID(),
 				m_pProgram->getMaterialAmbientColor(),
 				itSelectionColor->second.r(),
 				itSelectionColor->second.g(),
@@ -3294,12 +3294,12 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glDepthFunc(GL_LEQUAL);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -3354,7 +3354,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 			auto itSelectionColor = m_pFaceSelectionFrameBuffer->encoding().find(iTriangle);
 			ASSERT(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
 
-			glProgramUniform3f(m_pProgram->GetID(),
+			glProgramUniform3f(m_pProgram->getID(),
 				m_pProgram->getMaterialAmbientColor(),
 				itSelectionColor->second.r(),
 				itSelectionColor->second.g(),
@@ -3400,12 +3400,12 @@ void COpenGLRDFView::DrawPointedFace()
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->geUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(
-		m_pProgram->GetID(),
+		m_pProgram->getID(),
 		m_pProgram->getTransparency(),
 		1.f);
 
@@ -3433,7 +3433,7 @@ void COpenGLRDFView::DrawPointedFace()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	// Ambient color
-	glProgramUniform3f(m_pProgram->GetID(),
+	glProgramUniform3f(m_pProgram->getID(),
 		m_pProgram->getMaterialAmbientColor(),
 		0.f,
 		1.f,

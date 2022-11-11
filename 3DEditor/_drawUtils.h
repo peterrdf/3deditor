@@ -318,7 +318,7 @@ public: // Methods
 		return iIndicesCount;
 	}	
 
-	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, CBinnPhongGLProgram* pProgram)
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBinnPhongProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -389,7 +389,7 @@ public: // Methods
 		return iVerticesCount;
 	}
 
-	void setVBOAttributes(CBinnPhongGLProgram* pProgram) const
+	void setVBOAttributes(_oglBinnPhongProgram* pProgram) const
 	{
 		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
 

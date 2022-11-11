@@ -21,9 +21,6 @@
 #define MK_RBUTTON 4
 #endif
 
-#include "BinnPhongGLProgram.h"
-#include "GLShader.h"
-
 #include "vec3.hpp"
 #include "vec4.hpp"
 #include "mat4x4.hpp"
@@ -60,9 +57,9 @@ private: // Members
 #endif // _LINUX
 
 	// OpenGL
-	CBinnPhongGLProgram* m_pProgram;
-	CGLShader* m_pVertexShader;
-	CGLShader* m_pFragmentShader;
+	_oglBinnPhongProgram* m_pProgram;
+	_oglShader* m_pVertexShader;
+	_oglShader* m_pFragmentShader;
 	glm::mat4 m_matModelView;
 
 	// UI

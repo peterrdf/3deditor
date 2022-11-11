@@ -1,7 +1,5 @@
 #pragma once
 
-#include "BinnPhongGLProgram.h"
-
 #include "glew.h"
 #include "wglew.h"
 
@@ -76,9 +74,10 @@ public: // Methods
 
 	_oglShader(GLenum iShaderType)
 		: m_iType(iShaderType)
-		, m_iID(0)
 		, m_szCode(nullptr)
 	{
+		m_iID = glCreateShader(m_iType);
+		assert(m_iID != 0);
 	}
 
 	virtual ~_oglShader(void)
@@ -185,6 +184,7 @@ public: // Methods
 	_oglProgram(void)
 	{
 		m_iID = glCreateProgram();
+		assert(m_iID != 0);
 	}
 
 	virtual ~_oglProgram()
