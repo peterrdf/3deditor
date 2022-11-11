@@ -473,3 +473,211 @@ public: // Methods
 		AfxMessageBox(stInfoLog);
 	}
 };
+
+class _oglBinnPhongProgram : public _oglProgram
+{
+
+private: // Members
+
+	bool m_bTextureSupport;
+	GLint m_iUseBinnPhongModel;
+	GLint m_iUseTexture;
+	GLint m_iSampler;
+	GLint m_iMVMatrix;
+	GLint m_iPMatrix;
+	GLint m_iNMatrix;
+	GLint m_iPointLightingLocation;
+	GLint m_iMaterialShininess;
+	GLint m_iMaterialAmbientColor;
+	GLint m_iTransparency;
+	GLint m_iMaterialDiffuseColor;
+	GLint m_iMaterialSpecularColor;
+	GLint m_iMaterialEmissiveColor;
+	GLint m_iVertexPosition;
+	GLint m_iVertexNormal;
+	GLint m_iTextureCoord;
+
+public: // Methods
+
+	_oglBinnPhongProgram(bool bTextureSupport)
+		: _oglProgram()
+		, m_bTextureSupport(bTextureSupport)
+		, m_iUseBinnPhongModel(-1)
+		, m_iUseTexture(-1)
+		, m_iSampler(-1)
+		, m_iMVMatrix(-1)
+		, m_iPMatrix(-1)
+		, m_iNMatrix(-1)
+		, m_iPointLightingLocation(-1)
+		, m_iMaterialShininess(-1)
+		, m_iMaterialAmbientColor(-1)
+		, m_iTransparency(-1)
+		, m_iMaterialDiffuseColor(-1)
+		, m_iMaterialSpecularColor(-1)
+		, m_iMaterialEmissiveColor(-1)
+		, m_iVertexPosition(-1)
+		, m_iVertexNormal(-1)
+		, m_iTextureCoord(-1)
+	{
+	}
+
+	virtual ~_oglBinnPhongProgram(void)
+	{
+	}
+
+	virtual bool link()
+	{
+		if (_oglProgram::link())
+		{
+			m_iUseBinnPhongModel = glGetUniformLocation(m_iID, "uUseBinnPhongModel");
+			ASSERT(m_iUseBinnPhongModel >= 0);
+
+			if (m_bTextureSupport)
+			{
+				m_iUseTexture = glGetUniformLocation(m_iID, "uUseTexture");
+				ASSERT(m_iUseTexture >= 0);
+
+				m_iSampler = glGetUniformLocation(m_iID, "uSampler");
+				ASSERT(m_iSampler >= 0);
+			}
+
+			m_iMVMatrix = glGetUniformLocation(m_iID, "uMVMatrix");
+			ASSERT(m_iMVMatrix >= 0);
+
+			m_iPMatrix = glGetUniformLocation(m_iID, "uPMatrix");
+			ASSERT(m_iPMatrix >= 0);
+
+			m_iNMatrix = glGetUniformLocation(m_iID, "uNMatrix");
+			ASSERT(m_iNMatrix >= 0);
+
+			m_iPointLightingLocation = glGetUniformLocation(m_iID, "uPointLightingLocation");
+			ASSERT(m_iPointLightingLocation >= 0);
+
+			m_iMaterialShininess = glGetUniformLocation(m_iID, "uMaterialShininess");
+			ASSERT(m_iMaterialShininess >= 0);
+
+			m_iMaterialAmbientColor = glGetUniformLocation(m_iID, "uMaterialAmbientColor");
+			ASSERT(m_iMaterialAmbientColor >= 0);
+
+			m_iTransparency = glGetUniformLocation(m_iID, "uTransparency");
+			ASSERT(m_iTransparency >= 0);
+
+			m_iMaterialDiffuseColor = glGetUniformLocation(m_iID, "uMaterialDiffuseColor");
+			ASSERT(m_iMaterialDiffuseColor >= 0);
+
+			m_iMaterialSpecularColor = glGetUniformLocation(m_iID, "uMaterialSpecularColor");
+			ASSERT(m_iMaterialSpecularColor >= 0);
+
+			m_iMaterialEmissiveColor = glGetUniformLocation(m_iID, "uMaterialEmissiveColor");
+			ASSERT(m_iMaterialEmissiveColor >= 0);
+
+			m_iVertexPosition = glGetAttribLocation(m_iID, "aVertexPosition");
+			ASSERT(m_iVertexPosition >= 0);
+
+			m_iVertexNormal = glGetAttribLocation(m_iID, "aVertexNormal");
+			ASSERT(m_iVertexNormal >= 0);
+
+			if (m_bTextureSupport)
+			{
+				m_iTextureCoord = glGetAttribLocation(m_iID, "aTextureCoord");
+				ASSERT(m_iTextureCoord >= 0);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool getTextureSupport() const
+	{
+		return m_bTextureSupport;
+	}
+
+	GLint geUseBinnPhongModel() const
+	{
+		return m_iUseBinnPhongModel;
+	}
+
+	GLint geUseTexture() const
+	{
+		ASSERT(m_bTextureSupport);
+
+		return m_iUseTexture;
+	}
+
+	GLint getSampler() const
+	{
+		ASSERT(m_bTextureSupport);
+
+		return m_iSampler;
+	}
+
+	GLint getMVMatrix() const
+	{
+		return m_iMVMatrix;
+	}
+
+	GLint getPMatrix() const
+	{
+		return m_iPMatrix;
+	}
+
+	GLint getNMatrix() const
+	{
+		return m_iNMatrix;
+	}
+
+	GLint getPointLightingLocation() const
+	{
+		return m_iPointLightingLocation;
+	}
+
+	GLint getMaterialShininess() const
+	{
+		return m_iMaterialShininess;
+	}
+
+	GLint getMaterialAmbientColor() const
+	{
+		return m_iMaterialAmbientColor;
+	}
+
+	GLint getTransparency() const
+	{
+		return m_iTransparency;
+	}
+
+
+	GLint getMaterialDiffuseColor() const
+	{
+		return m_iMaterialDiffuseColor;
+	}
+
+	GLint getMaterialSpecularColor() const
+	{
+		return m_iMaterialSpecularColor;
+	}
+
+	GLint getMaterialEmissiveColor() const
+	{
+		return m_iMaterialEmissiveColor;
+	}
+
+	GLint getVertexPosition() const
+	{
+		return m_iVertexPosition;
+	}
+
+	GLint getVertexNormal() const
+	{
+		return m_iVertexNormal;
+	}
+
+	GLint getTextureCoord() const
+	{
+		ASSERT(m_bTextureSupport);
+
+		return m_iTextureCoord;
+	}
+};
