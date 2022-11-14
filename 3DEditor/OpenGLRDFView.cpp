@@ -774,12 +774,12 @@ void COpenGLRDFView::Draw(CDC * pDC)
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		1.f);
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseTexture(),
+		m_pProgram->getUseTexture(),
 		0.f);
 
 	/*
@@ -1616,7 +1616,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -1676,7 +1676,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				{
 					glProgramUniform1f(
 						m_pProgram->getID(),
-						m_pProgram->geUseTexture(),
+						m_pProgram->getUseTexture(),
 						1.f);
 
 					glActiveTexture(GL_TEXTURE0);
@@ -1745,7 +1745,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				{
 					glProgramUniform1f(
 						m_pProgram->getID(),
-						m_pProgram->geUseTexture(),
+						m_pProgram->getUseTexture(),
 						0.f);
 				}
 			} // for (size_t iMaterial = ...
@@ -1793,7 +1793,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -1874,7 +1874,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -1955,7 +1955,7 @@ void COpenGLRDFView::DrawLines()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -2036,7 +2036,7 @@ void COpenGLRDFView::DrawPoints()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -2131,7 +2131,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -2383,7 +2383,7 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -2621,7 +2621,7 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -2859,7 +2859,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform3f(
@@ -3159,7 +3159,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(
@@ -3296,7 +3296,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(
@@ -3402,7 +3402,7 @@ void COpenGLRDFView::DrawPointedFace()
 
 	glProgramUniform1f(
 		m_pProgram->getID(),
-		m_pProgram->geUseBinnPhongModel(),
+		m_pProgram->getUseBinnPhongModel(),
 		0.f);
 
 	glProgramUniform1f(

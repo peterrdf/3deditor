@@ -594,12 +594,12 @@ public: // Methods
 		return m_bTextureSupport;
 	}
 
-	GLint geUseBinnPhongModel() const
+	GLint getUseBinnPhongModel() const
 	{
 		return m_iUseBinnPhongModel;
 	}
 
-	GLint geUseTexture() const
+	GLint getUseTexture() const
 	{
 		ASSERT(m_bTextureSupport);
 
