@@ -220,7 +220,6 @@
     <ClCompile Include="..\3DEditor\DoubleRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\IntRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\ObjectRDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\OpenGLContext.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
     <ClCompile Include="..\3DEditor\OT.cpp" />
     <ClCompile Include="..\3DEditor\RDFClass.cpp" />

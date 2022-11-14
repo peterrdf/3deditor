@@ -7,7 +7,7 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 #else
-#include "OpenGLContext.h"
+#include "_oglUtils.h"
 #endif // _LINUX
 #include "RDFInstance.h"
 #include "_oglFramebuffer.h"
@@ -82,7 +82,7 @@ private: // Members
 #ifdef _LINUX
     wxGLContext * m_pOGLContext;
 #else
-	COpenGLContext * m_pOGLContext;
+	_oglContext* m_pOGLContext;
 #endif // _LINUX
 
 	// Transformations

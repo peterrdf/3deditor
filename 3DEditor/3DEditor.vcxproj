@@ -219,12 +219,9 @@
     <ClInclude Include="NewInstanceDialog.h" />
     <ClInclude Include="ObjectRDFProperty.h" />
     <ClInclude Include="Octree.h" />
-    <ClInclude Include="OpenGLContext.h" />
     <ClInclude Include="_drawUtils.h" />
     <ClInclude Include="_oglFramebuffer.h" />
     <ClInclude Include="OpenGLRDFView.h" />
-    <ClInclude Include="OpenGLRenderer.h" />
-    <ClInclude Include="OpenGLUtils.h" />
     <ClInclude Include="OT.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RDFClass.h" />
@@ -275,9 +272,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="NewInstanceDialog.cpp" />
     <ClCompile Include="ObjectRDFProperty.cpp" />
-    <ClCompile Include="OpenGLContext.cpp" />
     <ClCompile Include="OpenGLRDFView.cpp" />
-    <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="OT.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="RDFClass.cpp" />

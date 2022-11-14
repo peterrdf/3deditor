@@ -18,9 +18,6 @@
 extern BOOL TEST_MODE;
 
 // ------------------------------------------------------------------------------------------------
-wchar_t OPENGL_RENDERER_WINDOW[] = L"_3DEditor_OpenGL_Renderer_Window_";
-
-// ------------------------------------------------------------------------------------------------
 wchar_t FACE_SELECTION_IBO[] = L"FACE_SELECTION_IBO";
 wchar_t BOUNDING_BOX_VAO[] = L"BOUNDING_BOX_VAO";
 wchar_t BOUNDING_BOX_VBO[] = L"BOUNDING_BOX_VBO";
@@ -85,7 +82,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #ifdef _LINUX
     m_pOGLContext = new wxGLContext(m_pWnd);
 #else
-    m_pOGLContext = new COpenGLContext(*(m_pWnd->GetDC()));
+    m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()));
 #endif // _LINUX
 
 	/*
@@ -112,7 +109,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.66f,
 		nullptr);
 
-	m_pOGLContext->MakeCurrent();
+	m_pOGLContext->makeCurrent();
 
 	m_pProgram = new _oglBinnPhongProgram(true);
 	m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
@@ -151,7 +148,7 @@ COpenGLRDFView::~COpenGLRDFView()
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;	
 
-	m_pOGLContext->MakeCurrent();
+	m_pOGLContext->makeCurrent();
 
 	m_pProgram->detachShader(m_pVertexShader);
 	m_pProgram->detachShader(m_pFragmentShader);
@@ -164,10 +161,14 @@ COpenGLRDFView::~COpenGLRDFView()
 	delete m_pFragmentShader;
 	m_pFragmentShader = NULL;
 
-	if (m_pOGLContext != NULL)
+	// PATCH: AMD 6700 XT - Access violation
+	if (!TEST_MODE)
 	{
-		delete m_pOGLContext;
-		m_pOGLContext = NULL;
+		if (m_pOGLContext != NULL)
+		{
+			delete m_pOGLContext;
+			m_pOGLContext = NULL;
+		}
 	}
 
 	delete m_pSelectedInstanceMaterial;
@@ -645,11 +646,11 @@ void COpenGLRDFView::Draw(CDC * pDC)
     iWidth = szClient.GetWidth();
     iHeight = szClient.GetHeight();
 #else
-    BOOL bResult = m_pOGLContext->MakeCurrent();
+    BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
 #ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->EnableDebug();
+	m_pOGLContext->enableDebug();
 #endif
 
 	CRect rcClient;
@@ -922,7 +923,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #ifdef _LINUX
     m_pOGLContext->SetCurrent(*m_pWnd);
 #else
-    BOOL bResult = m_pOGLContext->MakeCurrent();
+    BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 #endif // _LINUX
 
@@ -3099,7 +3100,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	BOOL bResult = m_pOGLContext->MakeCurrent();
+	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
 	m_pInstanceSelectionFrameBuffer->create();
@@ -3256,7 +3257,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	BOOL bResult = m_pOGLContext->MakeCurrent();
+	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
 	m_pFaceSelectionFrameBuffer->create();
@@ -3497,7 +3498,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			iWidth = szClient.GetWidth();
 			iHeight = szClient.GetHeight();
 #else
-			BOOL bResult = m_pOGLContext->MakeCurrent();
+			BOOL bResult = m_pOGLContext->makeCurrent();
 			VERIFY(bResult);
 
 			CRect rcClient;
@@ -3561,7 +3562,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			iWidth = szClient.GetWidth();
 			iHeight = szClient.GetHeight();
 #else
-			BOOL bResult = m_pOGLContext->MakeCurrent();
+			BOOL bResult = m_pOGLContext->makeCurrent();
 			VERIFY(bResult);
 
 			CRect rcClient;

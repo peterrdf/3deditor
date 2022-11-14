@@ -124,9 +124,6 @@
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\OpenGLContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InstancesDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

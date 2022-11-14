@@ -89,9 +89,6 @@
     <ClInclude Include="Generic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -173,12 +170,6 @@
     <ClInclude Include="_dxp_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="_oglFramebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -256,9 +247,6 @@
     <ClCompile Include="RDFView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RDFInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -326,9 +314,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="_dxp_parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGLRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
