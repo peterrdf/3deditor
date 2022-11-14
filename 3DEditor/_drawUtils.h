@@ -144,7 +144,7 @@ public: // Methods
 };
 
 template <class Instance>
-class _openGLBuffers
+class _oglBuffers
 {
 
 private: // Members
@@ -155,14 +155,14 @@ private: // Members
 
 public: // Methods
 
-	_openGLBuffers()
+	_oglBuffers()
 		: m_mapInstancesCohorts()
 		, m_mapVAOs()
 		, m_mapBuffers()
 	{
 	}
 
-	virtual ~_openGLBuffers()
+	virtual ~_oglBuffers()
 	{
 	}
 

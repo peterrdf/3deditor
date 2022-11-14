@@ -93,7 +93,7 @@ private: // Members
 	float m_fZTranslation;
 
 	// Draw
-	_openGLBuffers<CRDFInstance> m_openGLBuffers;
+	_oglBuffers<CRDFInstance> m_oglBuffers;
 
 	// Mouse
 	CPoint m_ptStartMousePosition;

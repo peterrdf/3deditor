@@ -71,7 +71,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_fZTranslation(-5.0f)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_openGLBuffers()
+	, m_oglBuffers()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
@@ -146,7 +146,7 @@ COpenGLRDFView::~COpenGLRDFView()
 {
 	GetController()->UnRegisterView(this);	
 
-	m_openGLBuffers.clear();
+	m_oglBuffers.clear();
 
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;	
@@ -927,7 +927,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #endif // _LINUX
 
 	// OpenGL buffers
-	m_openGLBuffers.clear();
+	m_oglBuffers.clear();
 
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
 	m_pPointedInstance = NULL;
@@ -1018,7 +1018,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		*/
 		if (((int_t)iVerticesCount + pRDFInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
-			if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
+			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
 			{
 				assert(false);
 
@@ -1036,7 +1036,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iConcFacesIndicesCount + pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				if (m_openGLBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
 					assert(false);
 
@@ -1058,7 +1058,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iConcFacePolygonsIndicesCount + pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				if (m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
 					assert(false);
 
@@ -1080,7 +1080,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iFacePolygonsIndicesCount + pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				if (m_openGLBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
+				if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 				{
 					assert(false);
 
@@ -1102,7 +1102,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iLinesIndicesCount + pRDFInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				if (m_openGLBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
 					assert(false);
 
@@ -1124,7 +1124,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		{
 			if ((int_t)(iPointsIndicesCount + pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
-				if (m_openGLBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
 					assert(false);
 
@@ -1152,7 +1152,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iVerticesCount > 0)
 	{
-		if (m_openGLBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
+		if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pProgram) != iVerticesCount)
 		{
 			assert(false);
 
@@ -1168,7 +1168,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iConcFacesIndicesCount > 0)
 	{
-		if (m_openGLBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
+		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 		{
 			assert(false);
 
@@ -1184,7 +1184,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iConcFacePolygonsIndicesCount > 0)
 	{
-		if (m_openGLBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
+		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 		{
 			assert(false);
 
@@ -1200,7 +1200,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iFacePolygonsIndicesCount > 0)
 	{
-		if (m_openGLBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
+		if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 		{
 			assert(false);
 
@@ -1216,7 +1216,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iLinesIndicesCount > 0)
 	{
-		if (m_openGLBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
+		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 		{
 			assert(false);
 
@@ -1232,7 +1232,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	*/
 	if (iPointsIndicesCount > 0)
 	{
-		if (m_openGLBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
+		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 		{
 			assert(false);
 
@@ -1618,7 +1618,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		m_pProgram->geUseBinnPhongModel(),
 		1.f);
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1807,7 +1807,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1888,7 +1888,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1969,7 +1969,7 @@ void COpenGLRDFView::DrawLines()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -2050,7 +2050,7 @@ void COpenGLRDFView::DrawPoints()
 		m_pProgram->getTransparency(),
 		1.f);
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, itCohort.first);
 
@@ -2148,7 +2148,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(BOUNDING_BOX_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNew(BOUNDING_BOX_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -2163,7 +2163,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNew(BOUNDING_BOX_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2172,9 +2172,9 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_openGLBuffers.setVBOAttributes(m_pProgram);
+		m_oglBuffers.setVBOAttributes(m_pProgram);
 
-		GLuint iIBO = m_openGLBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
+		GLuint iIBO = m_oglBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2207,7 +2207,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // if (bIsNew)
 	else
 	{
-		iVBO = m_openGLBuffers.getBuffer(BOUNDING_BOX_VBO);
+		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
 		if (iVBO == 0)
 		{
 			ASSERT(FALSE);
@@ -2400,7 +2400,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(NORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNew(NORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -2415,7 +2415,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_openGLBuffers.getBufferCreateNew(NORMAL_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNew(NORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2424,14 +2424,14 @@ void COpenGLRDFView::DrawNormalVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_openGLBuffers.setVBOAttributes(m_pProgram);
+		m_oglBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
-		iVBO = m_openGLBuffers.getBuffer(NORMAL_VECS_VBO);
+		iVBO = m_oglBuffers.getBuffer(NORMAL_VECS_VBO);
 		if (iVBO == 0)
 		{
 			ASSERT(FALSE);
@@ -2638,7 +2638,7 @@ void COpenGLRDFView::DrawTangentVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(TANGENT_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNew(TANGENT_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -2653,7 +2653,7 @@ void COpenGLRDFView::DrawTangentVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_openGLBuffers.getBufferCreateNew(TANGENT_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNew(TANGENT_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2662,14 +2662,14 @@ void COpenGLRDFView::DrawTangentVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_openGLBuffers.setVBOAttributes(m_pProgram);
+		m_oglBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
-		iVBO = m_openGLBuffers.getBuffer(TANGENT_VECS_VBO);
+		iVBO = m_oglBuffers.getBuffer(TANGENT_VECS_VBO);
 		if (iVBO == 0)
 		{
 			ASSERT(FALSE);
@@ -2876,7 +2876,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_openGLBuffers.getVAOcreateNew(BINORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNew(BINORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -2891,7 +2891,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_openGLBuffers.getBufferCreateNew(BINORMAL_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNew(BINORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2900,14 +2900,14 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_openGLBuffers.setVBOAttributes(m_pProgram);
+		m_oglBuffers.setVBOAttributes(m_pProgram);
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else
 	{
-		iVBO = m_openGLBuffers.getBuffer(BINORMAL_VECS_VBO);
+		iVBO = m_oglBuffers.getBuffer(BINORMAL_VECS_VBO);
 		if (iVBO == 0)
 		{
 			ASSERT(FALSE);
@@ -3166,7 +3166,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		m_pProgram->getTransparency(),
 		1.f);	
 
-	for (auto itCohort : m_openGLBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -3305,7 +3305,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	_oglUtils::checkForErrors();	
 
-	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
+	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
 		ASSERT(FALSE);
@@ -3313,7 +3313,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		return;
 	}
 	bool bIsNew = false;
-	GLuint iIBO = m_openGLBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_oglBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{
@@ -3411,7 +3411,7 @@ void COpenGLRDFView::DrawPointedFace()
 
 	_oglUtils::checkForErrors();	
 
-	GLuint iVAO = m_openGLBuffers.findVAO(m_pSelectedInstance);
+	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
 		ASSERT(FALSE);
@@ -3420,7 +3420,7 @@ void COpenGLRDFView::DrawPointedFace()
 	}
 
 	bool bIsNew = false;
-	GLuint iIBO = m_openGLBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_oglBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{
