@@ -57,7 +57,7 @@ private: // Members
 #endif // _LINUX
 
 	// OpenGL
-	_oglBinnPhongProgram* m_pProgram;
+	_oglBinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
 	_oglShader* m_pFragmentShader;
 	glm::mat4 m_matModelView;

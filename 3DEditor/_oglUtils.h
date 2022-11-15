@@ -597,14 +597,14 @@ public: // Methods
 	GLint getUseBinnPhongModel() const
 	{
 		return m_iUseBinnPhongModel;
-	}
+	}	
 
 	GLint getUseTexture() const
 	{
 		ASSERT(m_bTextureSupport);
 
 		return m_iUseTexture;
-	}
+	}	
 
 	GLint getSampler() const
 	{
@@ -680,6 +680,101 @@ public: // Methods
 
 		return m_iTextureCoord;
 	}
+
+	void enableBinnPhongModel(bool bEnable)
+	{
+		glProgramUniform1f(
+			getID(),
+			getUseBinnPhongModel(),
+			bEnable ? 1.f : 0.f);
+	}
+
+	void enableTexture(bool bEnable)
+	{
+		glProgramUniform1f(
+			getID(),
+			getUseTexture(),
+			bEnable ? 1.f : 0.f);
+	}	
+
+	void setSampler(int iSampler)
+	{
+		glProgramUniform1i(
+			getID(),
+			getSampler(),
+			iSampler);
+	}
+
+	void setAmbientColor(float fR, float fG, float fB)
+	{
+		glProgramUniform3f(getID(),
+			getMaterialAmbientColor(),
+			fR,
+			fG,
+			fB);
+	}
+
+	void setAmbientColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		setAmbientColor(
+			pMaterial->getAmbientColor().r(),
+			pMaterial->getAmbientColor().g(),
+			pMaterial->getAmbientColor().b());
+	}
+
+	void setTransparency(float fA)
+	{
+		glProgramUniform1f(
+			getID(),
+			getTransparency(),
+			fA);
+	}
+
+	void setDiffuseColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(getID(),
+			getMaterialDiffuseColor(),
+			pMaterial->getDiffuseColor().r() / 2.f,
+			pMaterial->getDiffuseColor().g() / 2.f,
+			pMaterial->getDiffuseColor().b() / 2.f);
+	}
+
+	void setSpecularColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(getID(),
+			getMaterialSpecularColor(),
+			pMaterial->getSpecularColor().r() / 2.f,
+			pMaterial->getSpecularColor().g() / 2.f,
+			pMaterial->getSpecularColor().b() / 2.f);
+	}
+
+	void setEmissiveColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		glProgramUniform3f(getID(),
+			getMaterialEmissiveColor(),
+			pMaterial->getEmissiveColor().r() / 3.f,
+			pMaterial->getEmissiveColor().g() / 3.f,
+			pMaterial->getEmissiveColor().b() / 3.f);
+	}
+
+	void setMaterial(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		setAmbientColor(pMaterial);
+		setTransparency(pMaterial->getA());
+		setDiffuseColor(pMaterial);
+		setSpecularColor(pMaterial);
+		setEmissiveColor(pMaterial);
+	}
 };
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
@@ -714,7 +809,7 @@ private: // Members
 
 public: // Methods
 
-	_oglContext(HDC hDC, int iSamples = 16)
+	_oglContext(HDC hDC, int iSamples)
 		: m_hDC(hDC)
 		, m_hGLContext(NULL)
 		, m_iSamples(iSamples)
