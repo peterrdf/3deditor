@@ -170,9 +170,6 @@
     <ClInclude Include="_dxp_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_oglFramebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="_material.h">
       <Filter>Header Files</Filter>
     </ClInclude>

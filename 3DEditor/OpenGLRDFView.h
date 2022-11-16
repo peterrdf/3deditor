@@ -10,23 +10,12 @@
 #include "_oglUtils.h"
 #endif // _LINUX
 #include "RDFInstance.h"
-#include "_oglFramebuffer.h"
-
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #ifdef _LINUX
 #define MK_LBUTTON 1
 #define MK_MBUTTON 2
 #define MK_RBUTTON 4
 #endif
-
-#include "vec3.hpp"
-#include "vec4.hpp"
-#include "mat4x4.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
-#include "glew.h"
 
 enum enumMouseEvent
 {
