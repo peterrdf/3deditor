@@ -31,9 +31,6 @@ wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
 wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
 // ------------------------------------------------------------------------------------------------
-#define SELECTION_BUFFER_SIZE 512
-
-// ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
 #else
@@ -1174,11 +1171,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::Reset()
 {
-	m_fXAngle = 30.0f;
-	m_fYAngle = 30.0f;
-	m_fXTranslation = 0.0f;
-	m_fYTranslation = 0.0f;
-	m_fZTranslation = -5.0f;
+	_reset();
 
 	m_bShowFaces = TRUE;
 	m_strCullFaces = CULL_FACES_NONE;
@@ -2748,7 +2741,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 	m_pInstanceSelectionFrameBuffer->bind();
 
-	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
+	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2876,7 +2869,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 
 	m_pFaceSelectionFrameBuffer->bind();
 
-	glViewport(0, 0, SELECTION_BUFFER_SIZE, SELECTION_BUFFER_SIZE);
+	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -3081,8 +3074,8 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
+			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 
 			m_pInstanceSelectionFrameBuffer->bind();
 
@@ -3145,8 +3138,8 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			double dX = (double)point.x * ((double)SELECTION_BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)SELECTION_BUFFER_SIZE / (double)iHeight);
+			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 
 			m_pFaceSelectionFrameBuffer->bind();
 

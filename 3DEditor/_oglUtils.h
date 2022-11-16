@@ -1775,6 +1775,15 @@ public: // Methods
 		m_matModelView = glm::identity<glm::mat4>();
 	}
 
+	void _reset()
+	{
+		m_fXAngle = 30.0f;
+		m_fYAngle = 30.0f;
+		m_fXTranslation = 0.0f;
+		m_fYTranslation = 0.0f;
+		m_fZTranslation = -5.0f;
+	}
+
 	void _clear()
 	{
 		m_oglBuffers.clear();
