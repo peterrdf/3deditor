@@ -39,7 +39,8 @@ COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
 #else
 COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #endif // _LINUX
-	: CRDFView()
+	: _oglRenderer()
+	, CRDFView()
 	, m_pWnd(pWnd)
 	, m_bShowReferencedInstances(TRUE)
 	, m_bShowCoordinateSystem(TRUE)
@@ -59,16 +60,9 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
-	, m_bScaleVectors(FALSE)
-	, m_pOGLContext(NULL)	
-	, m_fXAngle(30.0f)
-	, m_fYAngle(30.0f)
-	, m_fXTranslation(0.0f)
-	, m_fYTranslation(0.0f)
-	, m_fZTranslation(-5.0f)
+	, m_bScaleVectors(FALSE)	
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_oglBuffers()
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
 	, m_pPointedInstance(NULL)
 	, m_pSelectedInstance(NULL)
@@ -79,11 +73,12 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 {
 	ASSERT(m_pWnd != NULL);
 
-#ifdef _LINUX
-    m_pOGLContext = new wxGLContext(m_pWnd);
-#else
-    m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), TEST_MODE ? 1 : 16);
-#endif // _LINUX
+	_initialize(
+		*(m_pWnd->GetDC()), 
+		TEST_MODE ? 1 : 16,
+		IDR_TEXTFILE_VERTEX_SHADER2, 
+		IDR_TEXTFILE_FRAGMENT_SHADER2, 
+		TEXTFILE);
 	
 	m_pSelectedInstanceMaterial = new _material();
 	m_pSelectedInstanceMaterial->init(
@@ -102,44 +97,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.33f, .33f, .33f,
 		.66f,
 		nullptr);
-
-	m_pOGLContext->makeCurrent();
-
-	m_pOGLProgram = new _oglBinnPhongProgram(true);
-	m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
-	m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
-
-	if (!m_pVertexShader->load(IDR_TEXTFILE_VERTEX_SHADER2, TEXTFILE))
-	{
-		AfxMessageBox(_T("Vertex shader loading error!"));
-	}
-
-	if (!m_pFragmentShader->load(IDR_TEXTFILE_FRAGMENT_SHADER2, TEXTFILE))
-	{
-		AfxMessageBox(_T("Fragment shader loading error!"));
-	}
-
-	if (!m_pVertexShader->compile())
-	{
-		AfxMessageBox(_T("Vertex shader compiling error!"));
-	}
-
-	if (!m_pFragmentShader->compile())
-	{
-		AfxMessageBox(_T("Fragment shader compiling error!"));
-	}
-
-	m_pOGLProgram->attachShader(m_pVertexShader);
-	m_pOGLProgram->attachShader(m_pFragmentShader);
-
-	glBindFragDataLocation(m_pOGLProgram->getID(), 0, "FragColor");
-
-	if (!m_pOGLProgram->link())
-	{
-		AfxMessageBox(_T("Program linking error!"));
-	}
-
-	m_matModelView = glm::identity<glm::mat4>();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -147,24 +104,11 @@ COpenGLRDFView::~COpenGLRDFView()
 {
 	GetController()->UnRegisterView(this);	
 
-	m_oglBuffers.clear();
-
 	delete m_pInstanceSelectionFrameBuffer;
-	delete m_pFaceSelectionFrameBuffer;	
+	delete m_pFaceSelectionFrameBuffer;
 
-	m_pOGLContext->makeCurrent();
-
-	m_pOGLProgram->detachShader(m_pVertexShader);
-	m_pOGLProgram->detachShader(m_pFragmentShader);
-
-	delete m_pOGLProgram;
-	m_pOGLProgram = NULL;
-
-	delete m_pVertexShader;
-	m_pVertexShader = NULL;
-	delete m_pFragmentShader;
-	m_pFragmentShader = NULL;
-
+	_clear();
+	
 	// PATCH: AMD 6700 XT - Access violation
 	if (!TEST_MODE)
 	{
@@ -493,137 +437,6 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 }
 
 // ------------------------------------------------------------------------------------------------
-bool gluInvertMatrix(const double m[16], double invOut[16])
-{
-	double inv[16], det;
-	int i;
-
-	inv[0] = m[5] * m[10] * m[15] -
-		m[5] * m[11] * m[14] -
-		m[9] * m[6] * m[15] +
-		m[9] * m[7] * m[14] +
-		m[13] * m[6] * m[11] -
-		m[13] * m[7] * m[10];
-
-	inv[4] = -m[4] * m[10] * m[15] +
-		m[4] * m[11] * m[14] +
-		m[8] * m[6] * m[15] -
-		m[8] * m[7] * m[14] -
-		m[12] * m[6] * m[11] +
-		m[12] * m[7] * m[10];
-
-	inv[8] = m[4] * m[9] * m[15] -
-		m[4] * m[11] * m[13] -
-		m[8] * m[5] * m[15] +
-		m[8] * m[7] * m[13] +
-		m[12] * m[5] * m[11] -
-		m[12] * m[7] * m[9];
-
-	inv[12] = -m[4] * m[9] * m[14] +
-		m[4] * m[10] * m[13] +
-		m[8] * m[5] * m[14] -
-		m[8] * m[6] * m[13] -
-		m[12] * m[5] * m[10] +
-		m[12] * m[6] * m[9];
-
-	inv[1] = -m[1] * m[10] * m[15] +
-		m[1] * m[11] * m[14] +
-		m[9] * m[2] * m[15] -
-		m[9] * m[3] * m[14] -
-		m[13] * m[2] * m[11] +
-		m[13] * m[3] * m[10];
-
-	inv[5] = m[0] * m[10] * m[15] -
-		m[0] * m[11] * m[14] -
-		m[8] * m[2] * m[15] +
-		m[8] * m[3] * m[14] +
-		m[12] * m[2] * m[11] -
-		m[12] * m[3] * m[10];
-
-	inv[9] = -m[0] * m[9] * m[15] +
-		m[0] * m[11] * m[13] +
-		m[8] * m[1] * m[15] -
-		m[8] * m[3] * m[13] -
-		m[12] * m[1] * m[11] +
-		m[12] * m[3] * m[9];
-
-	inv[13] = m[0] * m[9] * m[14] -
-		m[0] * m[10] * m[13] -
-		m[8] * m[1] * m[14] +
-		m[8] * m[2] * m[13] +
-		m[12] * m[1] * m[10] -
-		m[12] * m[2] * m[9];
-
-	inv[2] = m[1] * m[6] * m[15] -
-		m[1] * m[7] * m[14] -
-		m[5] * m[2] * m[15] +
-		m[5] * m[3] * m[14] +
-		m[13] * m[2] * m[7] -
-		m[13] * m[3] * m[6];
-
-	inv[6] = -m[0] * m[6] * m[15] +
-		m[0] * m[7] * m[14] +
-		m[4] * m[2] * m[15] -
-		m[4] * m[3] * m[14] -
-		m[12] * m[2] * m[7] +
-		m[12] * m[3] * m[6];
-
-	inv[10] = m[0] * m[5] * m[15] -
-		m[0] * m[7] * m[13] -
-		m[4] * m[1] * m[15] +
-		m[4] * m[3] * m[13] +
-		m[12] * m[1] * m[7] -
-		m[12] * m[3] * m[5];
-
-	inv[14] = -m[0] * m[5] * m[14] +
-		m[0] * m[6] * m[13] +
-		m[4] * m[1] * m[14] -
-		m[4] * m[2] * m[13] -
-		m[12] * m[1] * m[6] +
-		m[12] * m[2] * m[5];
-
-	inv[3] = -m[1] * m[6] * m[11] +
-		m[1] * m[7] * m[10] +
-		m[5] * m[2] * m[11] -
-		m[5] * m[3] * m[10] -
-		m[9] * m[2] * m[7] +
-		m[9] * m[3] * m[6];
-
-	inv[7] = m[0] * m[6] * m[11] -
-		m[0] * m[7] * m[10] -
-		m[4] * m[2] * m[11] +
-		m[4] * m[3] * m[10] +
-		m[8] * m[2] * m[7] -
-		m[8] * m[3] * m[6];
-
-	inv[11] = -m[0] * m[5] * m[11] +
-		m[0] * m[7] * m[9] +
-		m[4] * m[1] * m[11] -
-		m[4] * m[3] * m[9] -
-		m[8] * m[1] * m[7] +
-		m[8] * m[3] * m[5];
-
-	inv[15] = m[0] * m[5] * m[10] -
-		m[0] * m[6] * m[9] -
-		m[4] * m[1] * m[10] +
-		m[4] * m[2] * m[9] +
-		m[8] * m[1] * m[6] -
-		m[8] * m[2] * m[5];
-
-	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
-
-	if (det == 0)
-		return false;
-
-	det = 1.0 / det;
-
-	for (i = 0; i < 16; i++)
-		invOut[i] = inv[i] * det;
-
-	return true;
-}
-
-// ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 void COpenGLRDFView::Draw(wxPaintDC * pDC)
 #else
@@ -680,23 +493,8 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	/*
-	* Light
-	*/
-	glProgramUniform3f(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getPointLightingLocation(),
-		0.f,
-		0.f,
-		10000.f);
-
-	/*
-	* Shininess
-	*/
-	glProgramUniform1f(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getMaterialShininess(),
-		30.f);
+	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
+	m_pOGLProgram->setMaterialShininess(30.f);	
 
 	/*
 	* Projection Matrix
@@ -714,13 +512,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	GLdouble fW = fH * aspect;
 
 	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-
-	glProgramUniformMatrix4fv(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getPMatrix(),
-		1,
-		false,
-		value_ptr(matProjection));
+	m_pOGLProgram->setProjectionMatrix(matProjection);
 
 	/*
 	* Model-View Matrix
@@ -749,18 +541,10 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	fZTranslation = -fZTranslation;
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
 	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
 	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-
-	glProgramUniformMatrix4fv(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getMVMatrix(),
-		1,
-		false,
-		glm::value_ptr(m_matModelView));
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
 
 	/*
 	* Normal Matrix
@@ -768,14 +552,8 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	glm::mat4 matNormal = m_matModelView;
 	matNormal = glm::inverse(matNormal);
 	matNormal = glm::transpose(matNormal);
-
-	glProgramUniformMatrix4fv(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getNMatrix(),
-		1,
-		false,
-		value_ptr(matNormal));
-
+	m_pOGLProgram->setNormalMatrix(matNormal);
+	
 	m_pOGLProgram->enableBinnPhongModel(true);
 	m_pOGLProgram->enableTexture(false);
 
@@ -2136,17 +1914,11 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			};
 
 		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
-
 		matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 		matModelView = matModelView * matBBTransformation;
 		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-		glProgramUniformMatrix4fv(
-			m_pOGLProgram->getID(),
-			m_pOGLProgram->getMVMatrix(),
-			1,
-			false,
-			glm::value_ptr(matModelView));
+		m_pOGLProgram->setModelViewMatrix(matModelView);
 
 		_vector3d vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
 		_vector3d vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
@@ -2216,12 +1988,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 	// Restore Model-View Matrix
 	m_matModelView = matModelView;
-	glProgramUniformMatrix4fv(
-		m_pOGLProgram->getID(),
-		m_pOGLProgram->getMVMatrix(),
-		1,
-		false,
-		glm::value_ptr(m_matModelView));
+	m_pOGLProgram->setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 }
@@ -3217,6 +2984,7 @@ void COpenGLRDFView::DrawPointedFace()
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->setAmbientColor(0.f, 1.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
 	_oglUtils::checkForErrors();	
@@ -3240,10 +3008,7 @@ void COpenGLRDFView::DrawPointedFace()
 	}
 
 	glBindVertexArray(iVAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-
-	// Ambient color
-	m_pOGLProgram->setAmbientColor(0.f, 1.f, 0.f);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);	
 
 	vector<unsigned int> vecIndices;
 	for (int64_t iIndex = vecTriangles[m_iPointedFace].startIndex();

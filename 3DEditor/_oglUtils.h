@@ -694,6 +694,36 @@ public: // Methods
 		return m_iTextureCoord;
 	}
 
+	void setProjectionMatrix(glm::mat4& matProjection)
+	{
+		glProgramUniformMatrix4fv(
+			getID(),
+			getPMatrix(),
+			1,
+			false,
+			value_ptr(matProjection));
+	}
+
+	void setModelViewMatrix(glm::mat4& matModelView)
+	{
+		glProgramUniformMatrix4fv(
+			getID(),
+			getMVMatrix(),
+			1,
+			false,
+			value_ptr(matModelView));
+	}
+
+	void setNormalMatrix(glm::mat4& matNormal)
+	{
+		glProgramUniformMatrix4fv(
+			getID(),
+			getNMatrix(),
+			1,
+			false,
+			value_ptr(matNormal));
+	}
+
 	void enableBinnPhongModel(bool bEnable)
 	{
 		glProgramUniform1f(
@@ -717,6 +747,16 @@ public: // Methods
 			getSampler(),
 			iSampler);
 	}
+
+	void setPointLightLocation(float fX, float fY, float fZ)
+	{
+		glProgramUniform3f(
+			getID(),
+			getPointLightingLocation(),
+			fX,
+			fY,
+			fZ);
+	}	
 
 	void setAmbientColor(float fR, float fG, float fB)
 	{
@@ -787,6 +827,14 @@ public: // Methods
 		setDiffuseColor(pMaterial);
 		setSpecularColor(pMaterial);
 		setEmissiveColor(pMaterial);
+	}
+
+	void setMaterialShininess(float fValue)
+	{
+		glProgramUniform1f(
+			getID(),
+			getMaterialShininess(),
+			fValue);
 	}
 };
 
@@ -1242,5 +1290,507 @@ public: // Methods
 	map<int64_t, _color>& encoding()
 	{
 		return m_mapEncoding;
+	}
+};
+
+// (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
+class _i64RGBCoder
+{
+
+public: // Methods
+
+	static void encode(int64_t i, float& fR, float& fG, float& fB)
+	{
+		static const float STEP = 1.f / 255.f;
+
+		fR = 0.f;
+		fG = 0.f;
+		fB = 0.f;
+
+		// R
+		if (i >= (255 * 255))
+		{
+			int64_t iR = i / (255 * 255);
+			fR = iR * STEP;
+
+			i -= iR * (255 * 255);
+		}
+
+		// G
+		if (i >= 255)
+		{
+			int64_t iG = i / 255;
+			fG = iG * STEP;
+
+			i -= iG * 255;
+		}
+
+		// B		
+		fB = i * STEP;
+	}
+
+	static int64_t decode(unsigned char R, unsigned char G, unsigned char B)
+	{
+		int64_t i = 0;
+
+		// R
+		i += R * (255 * 255);
+
+		// G
+		i += G * 255;
+
+		// B
+		i += B;
+
+		return i;
+	}
+};
+
+template <class Instance>
+class _oglBuffers
+{
+
+private: // Members
+
+	map<GLuint, vector<Instance*>> m_mapInstancesCohorts;
+	map<wstring, GLuint> m_mapVAOs;
+	map<wstring, GLuint> m_mapBuffers;
+
+public: // Methods
+
+	_oglBuffers()
+		: m_mapInstancesCohorts()
+		, m_mapVAOs()
+		, m_mapBuffers()
+	{
+	}
+
+	virtual ~_oglBuffers()
+	{
+	}
+
+	map<GLuint, vector<Instance*>>& instancesCohorts()
+	{
+		return m_mapInstancesCohorts;
+	}
+
+	map<wstring, GLuint>& VAOs()
+	{
+		return m_mapVAOs;
+	}
+
+	map<wstring, GLuint>& buffers()
+	{
+		return m_mapBuffers;
+	}
+
+	GLuint findVAO(Instance* pInstance)
+	{
+		for (auto itCohort : m_mapInstancesCohorts)
+		{
+			for (auto itInstance : itCohort.second)
+			{
+				if (pInstance == itInstance)
+				{
+					return itCohort.first;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	GLuint getVAO(const wstring& strName)
+	{
+		auto itVAO = m_mapVAOs.find(strName);
+		if (itVAO != m_mapVAOs.end())
+		{
+			return itVAO->second;
+		}
+
+		return 0;
+	}
+
+	GLuint getVAOcreateNew(const wstring& strName, bool& bIsNew)
+	{
+		bIsNew = false;
+
+		GLuint iVAO = getVAO(strName);
+		if (iVAO == 0)
+		{
+			glGenVertexArrays(1, &iVAO);
+			if (iVAO == 0)
+			{
+				assert(false);
+
+				return 0;
+			}
+
+			_oglUtils::checkForErrors();
+
+			bIsNew = true;
+			m_mapVAOs[strName] = iVAO;
+		}
+
+		return iVAO;
+	}
+
+	GLuint getBuffer(const wstring& strName)
+	{
+		auto itBuffer = m_mapBuffers.find(strName);
+		if (itBuffer != m_mapBuffers.end())
+		{
+			return itBuffer->second;
+		}
+
+		return 0;
+	}
+
+	GLuint getBufferCreateNew(const wstring& strName, bool& bIsNew)
+	{
+		bIsNew = false;
+
+		GLuint iBuffer = getBuffer(strName);
+		if (iBuffer == 0)
+		{
+			glGenBuffers(1, &iBuffer);
+			if (iBuffer == 0)
+			{
+				assert(false);
+
+				return 0;
+			}
+
+			_oglUtils::checkForErrors();
+
+			bIsNew = true;
+			m_mapBuffers[strName] = iBuffer;
+		}
+
+		return iBuffer;
+	}
+
+	int64_t createIBO(const vector<_cohort*>& vecCohorts)
+	{
+		if (vecCohorts.empty())
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		GLuint iIBO = 0;
+		glGenBuffers(1, &iIBO);
+
+		if (iIBO == 0)
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		m_mapBuffers[to_wstring(iIBO)] = iIBO;
+
+		int_t iIndicesCount = 0;
+		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
+
+		if ((pIndices == nullptr) || (iIndicesCount == 0))
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * iIndicesCount, pIndices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		delete[] pIndices;
+
+		_oglUtils::checkForErrors();
+
+		GLsizei iIBOOffset = 0;
+		for (auto pCohort : vecCohorts)
+		{
+			pCohort->ibo() = iIBO;
+			pCohort->iboOffset() = iIBOOffset;
+
+			iIBOOffset += (GLsizei)pCohort->indices().size();
+		}
+
+		return iIndicesCount;
+	}
+
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBinnPhongProgram* pProgram)
+	{
+		if (vecInstances.empty() || (pProgram == nullptr))
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		int_t iVerticesCount = 0;
+		float* pVertices = getVertices(vecInstances, true, iVerticesCount);
+
+		if ((pVertices == nullptr) || (iVerticesCount == 0))
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		GLuint iVAO = 0;
+		glGenVertexArrays(1, &iVAO);
+
+		if (iVAO == 0)
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		m_mapVAOs[to_wstring(iVAO)] = iVAO;
+
+		glBindVertexArray(iVAO);
+
+		GLuint iVBO = 0;
+		glGenBuffers(1, &iVBO);
+
+		if (iVBO == 0)
+		{
+			assert(false);
+
+			return 0;
+		}
+
+		m_mapBuffers[to_wstring(iVBO)] = iVBO;
+
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * _VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
+		delete[] pVertices;
+
+		setVBOAttributes(pProgram);
+
+		GLsizei iVBOOffset = 0;
+		for (auto pInstance : vecInstances)
+		{
+			pInstance->VBO() = iVBO;
+			pInstance->VBOOffset() = iVBOOffset;
+
+			iVBOOffset += (GLsizei)pInstance->getVerticesCount();
+		}
+
+		glBindVertexArray(0);
+
+		_oglUtils::checkForErrors();
+
+		m_mapInstancesCohorts[iVAO] = vecInstances;
+
+		return iVerticesCount;
+	}
+
+	void setVBOAttributes(_oglBinnPhongProgram* pProgram) const
+	{
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
+
+		glVertexAttribPointer(pProgram->getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
+		glVertexAttribPointer(pProgram->getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
+		if (pProgram->getTextureSupport())
+		{
+			glVertexAttribPointer(pProgram->getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
+		}
+
+		glEnableVertexAttribArray(pProgram->getVertexPosition());
+		glEnableVertexAttribArray(pProgram->getVertexNormal());
+		if (pProgram->getTextureSupport())
+		{
+			glEnableVertexAttribArray(pProgram->getTextureCoord());
+		}
+
+		_oglUtils::checkForErrors();
+	}
+
+	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
+	static float* getVertices(const vector<Instance*>& vecInstances, bool bTexture, int_t& iVerticesCount)
+	{
+		const int64_t _VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
+
+		iVerticesCount = 0;
+		for (size_t i = 0; i < vecInstances.size(); i++)
+		{
+			iVerticesCount += vecInstances[i]->getVerticesCount();
+		}
+
+		float* pVertices = new float[iVerticesCount * _VERTEX_LENGTH];
+
+		int_t iOffset = 0;
+		for (size_t i = 0; i < vecInstances.size(); i++)
+		{
+			float* pSrcVertices = getVertices(vecInstances[i], bTexture);
+
+			memcpy((float*)pVertices + iOffset, pSrcVertices,
+				vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH * sizeof(float));
+
+			delete[] pSrcVertices;
+
+			iOffset += vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH;
+		}
+
+		return pVertices;
+	}
+
+	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
+	static float* getVertices(Instance* pInstance, bool bTexture)
+	{
+		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
+		const int64_t _DEST_VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
+
+		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+
+		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
+		{
+			// X, Y, Z
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
+
+			// Nx, Ny, Nz
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
+
+			// Tx, Ty
+			if (bTexture)
+			{
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+			}
+		}
+
+		return pVertices;
+	}
+
+	void clear()
+	{
+		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
+		{
+			glDeleteVertexArrays(1, &(itVAO->second));
+		}
+		m_mapVAOs.clear();
+
+		for (auto itBuffer = m_mapBuffers.begin(); itBuffer != m_mapBuffers.end(); itBuffer++)
+		{
+			glDeleteBuffers(1, &(itBuffer->second));
+		}
+		m_mapBuffers.clear();
+
+		_oglUtils::checkForErrors();
+	}
+};
+
+template <class Instance>
+class _oglRenderer
+{
+
+protected: // Members
+
+	_oglContext* m_pOGLContext;
+	_oglBinnPhongProgram* m_pOGLProgram;
+	_oglShader* m_pVertexShader;
+	_oglShader* m_pFragmentShader;	
+	glm::mat4 m_matModelView;	
+
+	_oglBuffers<Instance> m_oglBuffers;
+
+	float m_fXAngle;
+	float m_fYAngle;
+	float m_fXTranslation;
+	float m_fYTranslation;
+	float m_fZTranslation;
+
+public: // Methods
+
+	_oglRenderer()
+		: m_pOGLContext(nullptr)
+		, m_pOGLProgram(nullptr)
+		, m_pVertexShader(nullptr)
+		, m_pFragmentShader(nullptr)
+		, m_matModelView()
+		, m_oglBuffers()
+		, m_fXAngle(30.0f)
+		, m_fYAngle(30.0f)
+		, m_fXTranslation(0.0f)
+		, m_fYTranslation(0.0f)
+		, m_fZTranslation(-5.0f)
+	{
+	}
+
+	void _initialize(HDC hDC, 
+		int iSamples, 
+		int iVertexShader, 
+		int iFragmentShader, 
+		int iResourceType)
+	{
+		m_pOGLContext = new _oglContext(hDC, iSamples);
+		m_pOGLContext->makeCurrent();
+
+		m_pOGLProgram = new _oglBinnPhongProgram(true);
+		m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
+		m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
+
+		if (!m_pVertexShader->load(iVertexShader, iResourceType))
+		{
+			AfxMessageBox(_T("Vertex shader loading error!"));
+		}
+
+		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
+		{
+			AfxMessageBox(_T("Fragment shader loading error!"));
+		}
+
+		if (!m_pVertexShader->compile())
+		{
+			AfxMessageBox(_T("Vertex shader compiling error!"));
+		}
+
+		if (!m_pFragmentShader->compile())
+		{
+			AfxMessageBox(_T("Fragment shader compiling error!"));
+		}
+
+		m_pOGLProgram->attachShader(m_pVertexShader);
+		m_pOGLProgram->attachShader(m_pFragmentShader);
+
+		glBindFragDataLocation(m_pOGLProgram->getID(), 0, "FragColor");
+
+		if (!m_pOGLProgram->link())
+		{
+			AfxMessageBox(_T("Program linking error!"));
+		}
+
+		m_matModelView = glm::identity<glm::mat4>();
+	}
+
+	void _clear()
+	{
+		m_oglBuffers.clear();
+
+		m_pOGLContext->makeCurrent();
+
+		m_pOGLProgram->detachShader(m_pVertexShader);
+		m_pOGLProgram->detachShader(m_pFragmentShader);
+
+		delete m_pOGLProgram;
+		m_pOGLProgram = nullptr;
+
+		delete m_pVertexShader;
+		m_pVertexShader = nullptr;
+
+		delete m_pFragmentShader;
+		m_pFragmentShader = nullptr;
 	}
 };

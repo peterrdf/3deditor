@@ -32,7 +32,9 @@ enum enumMouseEvent
 #define CULL_FACES_FRONT L"Front"
 #define CULL_FACES_BACK L"Back"
 
-class COpenGLRDFView : public CRDFView
+class COpenGLRDFView 
+	: public _oglRenderer<CRDFInstance>
+	, public CRDFView
 {
 
 #pragma region Members
@@ -43,13 +45,7 @@ private: // Members
     wxGLCanvas * m_pWnd;
 #else
 	CWnd * m_pWnd;
-#endif // _LINUX
-
-	// OpenGL
-	_oglBinnPhongProgram* m_pOGLProgram;
-	_oglShader* m_pVertexShader;
-	_oglShader* m_pFragmentShader;
-	glm::mat4 m_matModelView;
+#endif // _LINUX	
 
 	// UI
 	BOOL m_bShowReferencedInstances;
@@ -67,22 +63,6 @@ private: // Members
 	BOOL m_bShowTangenVectors;
 	BOOL m_bShowBiNormalVectors;
 	BOOL m_bScaleVectors;
-	
-#ifdef _LINUX
-    wxGLContext * m_pOGLContext;
-#else
-	_oglContext* m_pOGLContext;
-#endif // _LINUX
-
-	// Transformations
-	float m_fXAngle;
-	float m_fYAngle;
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
-
-	// Draw
-	_oglBuffers<CRDFInstance> m_oglBuffers;
 
 	// Mouse
 	CPoint m_ptStartMousePosition;

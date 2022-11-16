@@ -219,7 +219,6 @@
     <ClInclude Include="NewInstanceDialog.h" />
     <ClInclude Include="ObjectRDFProperty.h" />
     <ClInclude Include="Octree.h" />
-    <ClInclude Include="_drawUtils.h" />
     <ClInclude Include="OpenGLRDFView.h" />
     <ClInclude Include="OT.h" />
     <ClInclude Include="PropertiesWnd.h" />
