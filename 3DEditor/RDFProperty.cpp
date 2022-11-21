@@ -27,7 +27,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 	/*
 	* Parents
 	*/
-	int64_t iParentClassInstance = GetClassParentsByIterator(m_iInstance, 0);
+	int64_t iParentClassInstance = GetClassParentsByIterator(GetInstanceClass(m_iInstance), 0);
 	while (iParentClassInstance != 0)
 	{
 		char * szParentClassName = NULL;
@@ -35,7 +35,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 
 //		LOG_DEBUG("*** PARENT CLASS " << szParentClassName);
 
-		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
+		iParentClassInstance = GetClassParentsByIterator(GetInstanceClass(m_iInstance), iParentClassInstance);
 	}
 #endif // _LINUX
 }
