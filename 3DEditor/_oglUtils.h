@@ -1676,6 +1676,8 @@ public: // Methods
 
 	void clear()
 	{
+		m_mapInstancesCohorts.clear();
+
 		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
 		{
 			glDeleteVertexArrays(1, &(itVAO->second));

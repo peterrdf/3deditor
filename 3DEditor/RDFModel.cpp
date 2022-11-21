@@ -54,8 +54,11 @@ CRDFModel::~CRDFModel()
 {
 	Clean();
 	
-	CloseModel(m_pCoordinateSystemModel);
-//	delete m_pCoordinateSystemModel;
+	if (m_pCoordinateSystemModel != 0)
+	{
+		CloseModel(m_pCoordinateSystemModel);
+		m_pCoordinateSystemModel = 0;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -68,7 +71,6 @@ int64_t CRDFModel::GetModel() const
 int64_t CRDFModel::GetCoordinateSystemModel() const
 {
 	return m_pCoordinateSystemModel;
-//	return m_pCoordinateSystemModel->getInstance();
 }
 
 // ------------------------------------------------------------------------------------------------
