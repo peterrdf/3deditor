@@ -58,6 +58,8 @@ public: // Methods
 				wxLogError(wxT("OpenGL error state couldn't be reset."));
 #else
 				MessageBox(NULL, L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+
+				PostQuitMessage(0);
 #endif // _LINUX
 
 				return;
@@ -69,6 +71,8 @@ public: // Methods
 			wxLogError(wxT("OpenGL error %d"), err);
 #else
 			MessageBox(NULL, (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
+
+			PostQuitMessage(0);
 #endif // _LINUX
 		}
 	}
@@ -944,7 +948,7 @@ public: // Methods
 			{
 				MessageBox(NULL, L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
 
-				PostQuitMessage(WM_QUIT);
+				PostQuitMessage(0);
 			}
 		}
 
@@ -1016,7 +1020,7 @@ public: // Methods
 
 				MessageBox(NULL, strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
 
-				PostQuitMessage(WM_QUIT);
+				PostQuitMessage(0);
 			}
 
 			/*
@@ -1042,7 +1046,7 @@ public: // Methods
 		{
 			MessageBox(NULL, L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
 
-			PostQuitMessage(WM_QUIT);
+			PostQuitMessage(0);
 		}
 
 		bResult = wglMakeCurrent(NULL, NULL);
@@ -1747,21 +1751,29 @@ public: // Methods
 		if (!m_pVertexShader->load(iVertexShader, iResourceType))
 		{
 			AfxMessageBox(_T("Vertex shader loading error!"));
+
+			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
 		{
 			AfxMessageBox(_T("Fragment shader loading error!"));
+
+			PostQuitMessage(0);
 		}
 
 		if (!m_pVertexShader->compile())
 		{
 			AfxMessageBox(_T("Vertex shader compiling error!"));
+
+			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->compile())
 		{
 			AfxMessageBox(_T("Fragment shader compiling error!"));
+
+			PostQuitMessage(0);
 		}
 
 		m_pOGLProgram->attachShader(m_pVertexShader);
@@ -1775,6 +1787,34 @@ public: // Methods
 		}
 
 		m_matModelView = glm::identity<glm::mat4>();
+	}	
+
+	void _destroy()
+	{
+		m_oglBuffers.clear();
+
+		if (m_pOGLContext != nullptr)
+		{
+			m_pOGLContext->makeCurrent();
+		}		
+
+		if (m_pOGLProgram != nullptr)
+		{
+			m_pOGLProgram->detachShader(m_pVertexShader);
+			m_pOGLProgram->detachShader(m_pFragmentShader);
+
+			delete m_pOGLProgram;
+			m_pOGLProgram = nullptr;
+		}		
+
+		delete m_pVertexShader;
+		m_pVertexShader = nullptr;
+
+		delete m_pFragmentShader;
+		m_pFragmentShader = nullptr;
+
+		delete m_pOGLContext;
+		m_pOGLContext = nullptr;
 	}
 
 	void _reset()
@@ -1784,24 +1824,5 @@ public: // Methods
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
 		m_fZTranslation = -5.0f;
-	}
-
-	void _clear()
-	{
-		m_oglBuffers.clear();
-
-		m_pOGLContext->makeCurrent();
-
-		m_pOGLProgram->detachShader(m_pVertexShader);
-		m_pOGLProgram->detachShader(m_pFragmentShader);
-
-		delete m_pOGLProgram;
-		m_pOGLProgram = nullptr;
-
-		delete m_pVertexShader;
-		m_pVertexShader = nullptr;
-
-		delete m_pFragmentShader;
-		m_pFragmentShader = nullptr;
 	}
 };

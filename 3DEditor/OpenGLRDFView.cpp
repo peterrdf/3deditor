@@ -102,18 +102,12 @@ COpenGLRDFView::~COpenGLRDFView()
 	GetController()->UnRegisterView(this);	
 
 	delete m_pInstanceSelectionFrameBuffer;
-	delete m_pFaceSelectionFrameBuffer;
-
-	_clear();
+	delete m_pFaceSelectionFrameBuffer;	
 	
 	// PATCH: AMD 6700 XT - Access violation
 	if (!TEST_MODE)
 	{
-		if (m_pOGLContext != NULL)
-		{
-			delete m_pOGLContext;
-			m_pOGLContext = NULL;
-		}
+		_destroy();
 	}
 
 	delete m_pSelectedInstanceMaterial;
