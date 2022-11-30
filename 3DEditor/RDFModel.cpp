@@ -8,7 +8,7 @@ using namespace e57;
 
 #include "CityGMLParser.h"
 
-#include "_dxp_parser.h"
+#include "_dxf_parser.h"
 
 #include <bitset>
 #include <algorithm>

@@ -232,7 +232,7 @@
     <ClCompile Include="..\3DEditor\StringRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\Texture.cpp" />
     <ClCompile Include="..\3DEditor\UndefinedRDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\_dxp_parser.cpp" />
+    <ClCompile Include="..\3DEditor\_dxf_parser.cpp" />
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
     <ClCompile Include="..\include\Text2RDF.cpp" />
     <ClCompile Include="InstancesDialog.cpp" />

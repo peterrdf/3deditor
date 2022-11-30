@@ -247,7 +247,7 @@
     <ClInclude Include="UniqueVerticesCheckE0.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="ViewTree.h" />
-    <ClInclude Include="_dxp_parser.h" />
+    <ClInclude Include="_dxf_parser.h" />
     <ClInclude Include="_geometry.h" />
     <ClInclude Include="_material.h" />
     <ClInclude Include="_oglUtils.h" />
@@ -300,7 +300,7 @@
     <ClCompile Include="UndefinedRDFProperty.cpp" />
     <ClCompile Include="UniqueVerticesCheckE0.cpp" />
     <ClCompile Include="ViewTree.cpp" />
-    <ClCompile Include="_dxp_parser.cpp" />
+    <ClCompile Include="_dxf_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DEditor.rc" />

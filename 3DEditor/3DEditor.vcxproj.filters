@@ -167,7 +167,7 @@
     <ClInclude Include="conceptMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_dxp_parser.h">
+    <ClInclude Include="_dxf_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="_material.h">
@@ -307,7 +307,7 @@
     <ClCompile Include="conceptMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="_dxp_parser.cpp">
+    <ClCompile Include="_dxf_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
