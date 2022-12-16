@@ -2770,6 +2770,12 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
+			auto vecTriangles = pRDFInstance->getTriangles();
+			if (vecTriangles.empty())
+			{
+				continue;
+			}
+
 			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pRDFInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
