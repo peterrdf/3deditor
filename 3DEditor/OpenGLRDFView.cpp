@@ -4190,7 +4190,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // for (; itRDFInstances != ...
 
 	// Restore Model-View Matrix
-	m_modelViewMatrix = modelViewMatrix;
 	glProgramUniformMatrix4fv(
 		m_pProgram->GetID(),
 		m_pProgram->getMVMatrix(),
