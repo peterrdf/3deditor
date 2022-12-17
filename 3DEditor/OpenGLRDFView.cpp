@@ -5500,6 +5500,12 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 					continue;
 				}
 
+				const vector<pair<int64_t, int64_t> >& vecTriangles = pRDFInstance->getTriangles();
+				if (vecTriangles.empty())
+				{
+					continue;
+				}
+
 				/*
 				* Ambient color
 				*/
