@@ -1974,7 +1974,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // for (; itRDFInstances != ...
 
 	// Restore Model-View Matrix
-	m_matModelView = matModelView;
 	m_pOGLProgram->setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
