@@ -1635,19 +1635,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	// IBO - Faces
 	GLuint iFacesIndicesCount = 0;
-	vector<CWireframesCohort*> vecFacesCohorts;
-
-	// IBO - Normal Vectors
-	//GLuint iNormalVectorsIndicesCount = 0;
-	//vector<CLinesCohort*> vecNormalVectorsCohorts;
-
-	// IBO - Tangent Vectors
-	//GLuint iTangentVectorsIndicesCount = 0;
-	//vector<CLinesCohort*> vecTangentVectorsCohorts;
-
-	// IBO - Bi-Normal Vectors
-	//GLuint iBiNormalVectorsIndicesCount = 0;
-	//vector<CLinesCohort*> vecBiNormalVectorsCohorts;
+	vector<CWireframesCohort*> vecFacesCohorts;	
 
 	map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
 	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
@@ -6298,7 +6286,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		/*
 		* Select a face
 		*/
-		if ((m_iFaceSelectionFrameBuffer != 0) && (m_pSelectedInstance != NULL))
+		if ((m_iFaceSelectionFrameBuffer != 0) && (m_pSelectedInstance != NULL) && m_pSelectedInstance->getEnable())
 		{
 			int iWidth = 0;
 			int iHeight = 0;
