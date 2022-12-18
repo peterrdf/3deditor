@@ -3111,7 +3111,9 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		/*
 		* Select a face
 		*/
-		if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && (m_pSelectedInstance != NULL))
+		if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && 
+			(m_pSelectedInstance != nullptr) && 
+			m_pSelectedInstance->getEnable())
 		{
 			int iWidth = 0;
 			int iHeight = 0;
