@@ -28,7 +28,6 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
 	: m_iModel(0)
-	, m_pCoordinateSystemModel(CreateModel())
 	, m_mapRDFClasses()
 	, m_mapRDFProperties()
 	, m_mapRDFInstances()
@@ -53,24 +52,12 @@ CRDFModel::CRDFModel()
 CRDFModel::~CRDFModel()
 {
 	Clean();
-	
-	if (m_pCoordinateSystemModel != 0)
-	{
-		CloseModel(m_pCoordinateSystemModel);
-		m_pCoordinateSystemModel = 0;
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
 int64_t CRDFModel::GetModel() const
 {
 	return m_iModel;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFModel::GetCoordinateSystemModel() const
-{
-	return m_pCoordinateSystemModel;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1095,358 +1082,11 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 	int64_t iMask = bitMask.to_ulong();
 
 	SetFormat(iModel, (int64_t)iSettings, (int64_t)iMask);
-
-/*	pModel->format->indexArrayContainsTriangles = true;
-	pModel->format->indexArrayContainsConceptualFacePolygons = true;
-	pModel->format->indexArrayContainsFacePolygons = true;
-	pModel->format->indexArrayContainsLines = true;
-	pModel->format->indexArrayContainsPoints = true;
-
-	pModel->format->vertexArrayContainsUVTextureI = true;
-
-	pModel->format->vertexArrayContainsNormals = true;
-	pModel->format->vertexArrayContainsTangentTextureI = true;
-	pModel->format->vertexArrayContainsBinormalTextureI = true;
-	
-	pModel->format->vertexArrayContainsAmbientColor = true;
-	pModel->format->vertexArrayContainsDiffuseColor = true;
-	pModel->format->vertexArrayContainsEmissiveColor = true;
-	pModel->format->vertexArrayContainsSpecularColor = true;	//	*/
-
-	// X, Y, Z, Nx, Ny, Nz, Tx, Ty, Ambient, Diffuse, Emissive, Specular, Tnx, Tny, Tnz, Bnx, Bny, Bnz
-	// (Tx, Ty - bit 6; Normal vectors - bit 5, Diffuse, Emissive, Specular - bit 25, 26 & 27, Tangent vectors - bit 28, Binormal vectors - bit 29)
-	/*string strSettings = "111111000000001011000001110001";
-
-	bitset<64> bitSettings(strSettings);
-	int64_t iSettings = bitSettings.to_ulong();
-
-	string strMask = "11111111111111111011011101110111";
-	bitset <64> bitMask(strMask);
-	int64_t iMask = bitMask.to_ulong();
-
-	int64_t iVertexLength = SetFormat(iModel, (int64_t)iSettings, (int64_t)iMask);
-
-#ifndef _USE_BOOST
-	TRACE("SetFormat(): Settings = %s, Mask = %s, Vertex length: %d", strSettings.c_str(), strMask.c_str(), iVertexLength);
-#endif
-
-#ifndef _LINUX
-    LOG_DEBUG("SetFormat(): Settings = " << strSettings << ", Mask = " << strMask << ", Vertex length: " << iVertexLength);
-#endif // _LINUX
-	*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::CreateCoordinateSystem()
-{
-//	m_pCoordinateSystemModel->open(nullptr);
-//	ASSERT(m_pCoordinateSystemModel->getInstance() != 0);
-
-	int64_t	pModel = m_pCoordinateSystemModel;
-	SetFormatSettings(m_pCoordinateSystemModel);
-
-	auto instance_arrow_X = GEOM::Transformation::Create(pModel);
-	auto instance_arrow_X_matrix = GEOM::Matrix::Create(pModel);
-	auto instance_arrow_X_collection = GEOM::Collection::Create(pModel);
-	auto instanceI = GEOM::Transformation::Create(pModel);
-	auto instanceI_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceII = GEOM::Collection::Create(pModel);
-	auto instanceIII = GEOM::ExtrudedPolygon::Create(pModel);
-	auto instanceIV = GEOM::ExtrudedPolygon::Create(pModel);
-	auto instanceV = GEOM::Transformation::Create(pModel);
-	auto instanceV_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceXScaleCenter = GEOM::Transformation::Create(pModel);
-	auto instanceXScaleCenter_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceYScaleCenter = GEOM::Transformation::Create(pModel);
-	auto instanceYScaleCenter_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceZScaleCenter = GEOM::Transformation::Create(pModel);
-	auto instanceZScaleCenter_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceVI = GEOM::Cone::Create(pModel);
-	auto instanceVII = GEOM::Cylinder::Create(pModel);
-	
-	auto instance_arrow_Y = GEOM::Transformation::Create(pModel);
-	auto instance_arrow_Y_matrix = GEOM::Matrix::Create(pModel);
-	auto instance_arrow_Y_collection = GEOM::Collection::Create(pModel);
-	auto instanceVIII = GEOM::Transformation::Create(pModel);
-	auto instanceVIII_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceIX = GEOM::Collection::Create(pModel);
-	auto instanceX = GEOM::ExtrudedPolygon::Create(pModel);
-	
-	auto instance_arrow_Z_collection = GEOM::Collection::Create(pModel);
-	auto instanceXI = GEOM::Transformation::Create(pModel);
-	auto instanceXI_matrix = GEOM::Matrix::Create(pModel);
-	auto instanceXII = GEOM::ExtrudedPolygon::Create(pModel);
-	
-	auto instance_arrows = GEOM::Collection::Create(pModel);
-	auto instance_lines = GEOM::Collection::Create(pModel);
-
-	vector<GEOM::GeometricItem> instanceLines;
-
-	double	xMin = m_fXmin - (m_fXmax - m_fXmin) * .1,
-			xMax = m_fXmax + (m_fXmax - m_fXmin) * .1,
-			yMin = m_fYmin - (m_fYmax - m_fYmin) * .1,
-			yMax = m_fYmax + (m_fYmax - m_fYmin) * .1;
-
-	for (int_t i = 0; i < 9; i++) {
-		auto instanceLine = GEOM::Line3D::Create(pModel);
-		vector<double> points = {
-										xMin - (m_fXmax - m_fXmin) * .1,
-										yMin + ((yMax - yMin) / 8.f) * i,
-										m_fZmin + (m_fZmax - m_fZmin) / 2.,
-										xMax + (m_fXmax - m_fXmin) * .1,
-										yMin + ((yMax - yMin) / 8.) * i,
-										m_fZmin + (m_fZmax - m_fZmin) / 2.
-									};
-		instanceLine.set_points(&points[0], points.size());
-		 
-		instanceLines.push_back(instanceLine);
-	}
-
-	for (int_t i = 0; i < 9; i++) {
-		auto instanceLine = GEOM::Line3D::Create(pModel);
-		vector<double> points = {
-										xMin + ((xMax - xMin) / 8.) * i,
-										yMin - (m_fYmax - m_fYmin) * .1,
-										m_fZmin + (m_fZmax - m_fZmin) / 2.,
-										xMin + ((xMax - xMin) / 8.) * i,
-										yMax + (m_fYmax - m_fYmin) * .1,
-										m_fZmin + (m_fZmax - m_fZmin) / 2.
-									};
-		instanceLine.set_points(&points[0], points.size());
-
-		instanceLines.push_back(instanceLine);
-	}
-
-	//
-	//	Line Collection
-	//
-	instance_lines.set_objects(&instanceLines[0], instanceLines.size());
-
-	//
-	//	Arrow Collection
-	//
-	{
-		vector<GEOM::GeometricItem> objects = { instanceXScaleCenter, instanceYScaleCenter, instanceZScaleCenter };
-		instance_arrows.set_objects(&objects[0], objects.size());
-	}
-
-	//
-	//	X complete
-	//
-	instance_arrow_X.set_object(instance_arrow_X_collection);
-	instance_arrow_X.set_matrix(instance_arrow_X_matrix);
-	instance_arrow_X_matrix.set__11(0.);
-	instance_arrow_X_matrix.set__12(1.);
-	instance_arrow_X_matrix.set__22(0.);
-	instance_arrow_X_matrix.set__23(1.);
-	instance_arrow_X_matrix.set__31(1.);
-	instance_arrow_X_matrix.set__33(0.);
-
-	//
-	//	Scale and center
-	//
-	instanceXScaleCenter.set_object(instance_arrow_X);
-	instanceXScaleCenter.set_matrix(instanceXScaleCenter_matrix);
-	instanceXScaleCenter_matrix.set__11(m_fBoundingSphereDiameter / 4.);
-	instanceXScaleCenter_matrix.set__22(m_fBoundingSphereDiameter / 4.);
-	instanceXScaleCenter_matrix.set__33(m_fBoundingSphereDiameter / 4.);
-	instanceXScaleCenter_matrix.set__41(m_fXmin + (m_fXmax - m_fXmin) / 2.);
-	instanceXScaleCenter_matrix.set__42(m_fYmin + (m_fYmax - m_fYmin) / 2.);
-	instanceXScaleCenter_matrix.set__43(m_fZmin + (m_fZmax - m_fZmin) / 2.);
-
-	//
-	//	X Collection
-	//
-	{
-		vector<GEOM::GeometricItem> objects = { instanceI, instanceV, instanceVII };
-		instance_arrow_X_collection.set_objects(&objects[0], objects.size());
-	}
-
-	//
-	//	Transformation letter
-	//
-	instanceI.set_object(instanceII);
-	instanceI.set_matrix(instanceI_matrix);
-	instanceI_matrix.set__11(0);
-	instanceI_matrix.set__13(.6);
-	instanceI_matrix.set__21(.6);
-	instanceI_matrix.set__22(0);
-	instanceI_matrix.set__32(1);
-	instanceI_matrix.set__33(0);
-	instanceI_matrix.set__41(-1.);
-	instanceI_matrix.set__42(0);
-	instanceI_matrix.set__43(4.3);
-
-	//
-	//	Inside Collection
-	//
-	{
-		vector<GEOM::GeometricItem> objects = { instanceIII, instanceIV };
-		instanceII.set_objects(&objects[0], objects.size());
-	}
-
-	//	//
-	//	//	First Extruded Polygon
-	//	//
-	instanceIII.set_extrusionLength(0.02);
-	{
-		vector<double> points = { 0., 0., 0.15, 0., 1., 1.2, .85, 1.2 };
-		instanceIII.set_points(&points[0], points.size());
-	}
-
-	//	//
-	//	//	Second Extruded Polygon
-	//	//
-	instanceIV.set_extrusionLength(0.02);
-	{
-		vector<double> points = { 0., 1.2, .15, 1.2, 1., 0., .85, 0. };
-		instanceIV.set_points(&points[0], points.size());
-	}
-
-	//
-	//	Transformation arrow end
-	//
-	instanceV.set_object(instanceVI);
-	instanceV.set_matrix(instanceV_matrix);
-	instanceV_matrix.set__43(3.2);
-
-	//
-	//	Arrow end
-	//
-	instanceVI.set_radius(.3);
-	instanceVI.set_height(.8);
-	instanceVI.set_segmentationParts(36);
-
-	//
-	//	Arrow line
-	//
-	instanceVII.set_length(3.);
-	instanceVII.set_radius(.06);
-	instanceVII.set_segmentationParts(24);
-
-	//
-	//	Y complete
-	//
-	instance_arrow_Y.set_object(instance_arrow_Y_collection);
-	instance_arrow_Y.set_matrix(instance_arrow_Y_matrix);
-	instance_arrow_Y_matrix.set__11(-1);
-	instance_arrow_Y_matrix.set__22(0);
-	instance_arrow_Y_matrix.set__23(1);
-	instance_arrow_Y_matrix.set__32(1);
-	instance_arrow_Y_matrix.set__33(0);
-
-	//
-	//	Scale and center
-	//
-	instanceYScaleCenter.set_object(instance_arrow_Y);
-	instanceYScaleCenter.set_matrix(instanceYScaleCenter_matrix);
-	instanceYScaleCenter_matrix.set__11(m_fBoundingSphereDiameter / 4.);
-	instanceYScaleCenter_matrix.set__22(m_fBoundingSphereDiameter / 4.);
-	instanceYScaleCenter_matrix.set__33(m_fBoundingSphereDiameter / 4.);
-	instanceYScaleCenter_matrix.set__41(m_fXmin + (m_fXmax - m_fXmin) / 2.);
-	instanceYScaleCenter_matrix.set__42(m_fYmin + (m_fYmax - m_fYmin) / 2.);
-	instanceYScaleCenter_matrix.set__43(m_fZmin + (m_fZmax - m_fZmin) / 2.);
-
-	//
-	//	Y Collection
-	//
-	{
-		vector<GEOM::GeometricItem> objects = { instanceVIII, instanceV, instanceVII };
-		instance_arrow_Y_collection.set_objects(&objects[0], objects.size());
-	}
-
-	//
-	//	Transformation letter
-	//
-	
-	instanceVIII.set_object(instanceIX);
-	instanceVIII.set_matrix(instanceVIII_matrix);
-	instanceVIII_matrix.set__11(0.);
-	instanceVIII_matrix.set__13(.6);
-	instanceVIII_matrix.set__21(.6);
-	instanceVIII_matrix.set__22(0.);
-	instanceVIII_matrix.set__32(1.);
-	instanceVIII_matrix.set__33(0.);
-	instanceVIII_matrix.set__41(-1.);
-	instanceVIII_matrix.set__42(0.);
-	instanceVIII_matrix.set__43(4.3);
-
-	//
-	//	Inside Collection
-	//
-	{
-		vector<GEOM::GeometricItem> objects = { instanceX, instanceIII };
-		instanceIX.set_objects(&objects[0], objects.size());
-	}
-
-	//
-	//	First Extruded Polygon for Y
-	//
-	instanceX.set_extrusionLength(0.02);
-	{
-		vector<double> points = { 0., 1.2, 0.15, 1.2, .575, .6, .425, .6 };
-		instanceX.set_points(&points[0], points.size());
-	}
-
-	//
-	//	Z Collection
-	//
-
-	//
-	//	Scale and center
-	//
-	instanceZScaleCenter.set_object(instance_arrow_Z_collection);
-	instanceZScaleCenter.set_matrix(instanceZScaleCenter_matrix);
-	instanceZScaleCenter_matrix.set__11(m_fBoundingSphereDiameter / 4.);
-	instanceZScaleCenter_matrix.set__22(m_fBoundingSphereDiameter / 4.);
-	instanceZScaleCenter_matrix.set__33(m_fBoundingSphereDiameter / 4.);
-	instanceZScaleCenter_matrix.set__41(m_fXmin + (m_fXmax - m_fXmin) / 2.);
-	instanceZScaleCenter_matrix.set__42(m_fYmin + (m_fYmax - m_fYmin) / 2.);
-	instanceZScaleCenter_matrix.set__43(m_fZmin + (m_fZmax - m_fZmin) / 2.);
-
-	{
-		vector<GEOM::GeometricItem> objects = { instanceXI, instanceV, instanceVII };
-		instance_arrow_Z_collection.set_objects(&objects[0], objects.size());
-	}
-
-	//
-	//	Transformation letter
-	//
-	instanceXI.set_object(instanceXII);
-	instanceXI.set_matrix(instanceXI_matrix);
-	instanceXI_matrix.set__11(.6);
-	instanceXI_matrix.set__22(0.);
-	instanceXI_matrix.set__23(.6);
-	instanceXI_matrix.set__32(1.);
-	instanceXI_matrix.set__33(0.);
-	instanceXI_matrix.set__41(.4);
-	instanceXI_matrix.set__42(0.);
-	instanceXI_matrix.set__43(4.3);
-
-	//
-	//	Z Extruded Polygon
-	//
-	instanceXII.set_extrusionLength(0.02);
-	{
-		vector<double> points = {
-									0., 0., 1., 0.,
-									1., .15, .18, .15,
-									1., 1.05, 1., 1.2,
-									0., 1.2, 0., 1.05,
-									.82, 1.05, 0., .15
-								};
-		instanceXII.set_points(&points[0], points.size());
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFModel()
 {
-    #ifndef _LINUX
-//    LOG_DEBUG("CRDFModel::LoadRDFModel() BEGIN");
-//	LOG_DEBUG("*** CLASSES ***");
-    #endif // _LINUX
-
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
 	{
@@ -1454,12 +1094,7 @@ void CRDFModel::LoadRDFModel()
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
-
-	#ifndef _LINUX
-//	LOG_DEBUG("*** END CLASSES ***");
-//	LOG_DEBUG("*** PROPERTIES ***");
-	#endif // _LINUX
-
+	
 	int64_t iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
 	while (iPropertyInstance != 0)
 	{
@@ -1579,83 +1214,7 @@ void CRDFModel::LoadRDFInstances()
 
 			iInstance = GetInstancesByIterator(m_iModel, iInstance);
 		} // while (iInstance != 0)
-	}		
-
-	/*
-	* Coordinate System - Instances
-	*/
-	{
-		/*m_pCoordinateSystemModel->loadThings();
-
-		const THINGS& mapThings = m_pCoordinateSystemModel->getThings();
-
-		THINGS::const_iterator itThing = mapThings.begin();
-		for (; itThing != mapThings.end(); itThing++)
-		{
-			CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, dynamic_cast<Thing*>(itThing->second));
-			if (pRDFInstance->isReferenced())
-			{
-				pRDFInstance->setEnable(false);
-			}
-
-			pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
-			m_mapRDFInstances[itThing->first] = pRDFInstance;
-		}*/
-	}	
-
-	/*
-	* Coordinate System - Properties
-	*/
-	int64_t iPropertyInstance = GetPropertiesByIterator(m_pCoordinateSystemModel, 0);
-	while (iPropertyInstance != 0)
-	{
-		int64_t iPropertyType = GetPropertyType(iPropertyInstance);
-		switch (iPropertyType)
-		{
-		case TYPE_OBJECTTYPE:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_BOOL_DATATYPE:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_CHAR_DATATYPE:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_INT_DATATYPE:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		case TYPE_DOUBLE_DATATYPE:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		case 0:
-		{
-			m_mapRDFProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
-		}
-		break;
-
-		default:
-			ASSERT(false);
-			break;
-		} // switch (iPropertyType)
-
-		iPropertyInstance = GetPropertiesByIterator(m_pCoordinateSystemModel, iPropertyInstance);
-	} // while (iPropertyInstance != 0)
+	}
 
 	/**
 	* Scale and Center
@@ -1749,12 +1308,6 @@ void CRDFModel::Clean()
 		CloseModel(m_iModel);
 		m_iModel = 0;
 	}
-
-	/*
-	* Model
-	*/
-//	m_pCoordinateSystemModel->close();
-	m_pCoordinateSystemModel = 0;
 
 	/*
 	* RDF Classes

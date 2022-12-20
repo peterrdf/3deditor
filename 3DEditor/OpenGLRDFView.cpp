@@ -39,7 +39,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	: _oglRenderer()
 	, CRDFView()
 	, m_pWnd(pWnd)
-	, m_bShowCoordinateSystem(TRUE)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
 	, m_bShowFacesPolygons(FALSE)
@@ -154,24 +153,6 @@ void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
 	fX = m_fXTranslation;
 	fY = m_fYTranslation;
 	fZ = m_fZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowCoordinateSystem(BOOL bShow)
-{
-	m_bShowCoordinateSystem = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::IsCoordinateSystemShown() const
-{
-	return m_bShowCoordinateSystem;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1371,11 +1352,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 			{
 				continue;
 			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
 			
 			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
 			{
@@ -1486,11 +1462,6 @@ void COpenGLRDFView::DrawFacesPolygons()
 				continue;
 			}
 
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
 			for (size_t iCohort = 0; iCohort < pRDFInstance->facePolygonsCohorts().size(); iCohort++)
 			{
 				_cohort* pCohort = pRDFInstance->facePolygonsCohorts()[iCohort];
@@ -1545,11 +1516,6 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 			CRDFInstance* pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
 			}
@@ -1612,11 +1578,6 @@ void COpenGLRDFView::DrawLines()
 				continue;
 			}
 
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
 			for (size_t iCohort = 0; iCohort < pRDFInstance->linesCohorts().size(); iCohort++)
 			{
 				auto pCohort = pRDFInstance->linesCohorts()[iCohort];
@@ -1674,11 +1635,6 @@ void COpenGLRDFView::DrawPoints()
 			CRDFInstance* pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
 			}
@@ -1817,11 +1773,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	{
 		CRDFInstance* pRDFInstance = itRDFInstances->second;
 		if (!pRDFInstance->getEnable())
-		{
-			continue;
-		}
-
-		if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 		{
 			continue;
 		}
@@ -2016,11 +1967,6 @@ void COpenGLRDFView::DrawNormalVectors()
 		{
 			CRDFInstance* pRDFInstance = itRDFInstances->second;
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
 			}
@@ -2240,11 +2186,6 @@ void COpenGLRDFView::DrawTangentVectors()
 				continue;
 			}
 
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
 			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
@@ -2460,11 +2401,6 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				continue;
 			}
 
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
 			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
@@ -2641,11 +2577,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
-			{
-				continue;
-			}
-
 			auto vecTriangles = pRDFInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
@@ -2686,11 +2617,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			auto pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
 			}

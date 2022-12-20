@@ -233,13 +233,7 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 	map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
 	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 	{
-		CRDFInstance * pRDFInstance = itRDFInstances->second;		
-
-		if (pRDFInstance->GetModel() == m_pModel->GetCoordinateSystemModel())
-		{
-			continue;
-		}
-
+		CRDFInstance * pRDFInstance = itRDFInstances->second;
 		if (!pRDFInstance->hasGeometry())
 		{
 			continue;

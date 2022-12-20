@@ -48,7 +48,6 @@ private: // Members
 #endif // _LINUX	
 
 	// UI
-	BOOL m_bShowCoordinateSystem;
 	BOOL m_bShowFaces;
 	CString m_strCullFaces;
 	BOOL m_bShowFacesPolygons;
@@ -105,14 +104,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	void GetTranslation(float& fX, float& fY, float& fZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
-	void ShowCoordinateSystem(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	BOOL IsCoordinateSystemShown() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Setter

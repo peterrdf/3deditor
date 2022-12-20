@@ -30,10 +30,6 @@ private: // Members
 	int64_t m_iModel;
 
 	// --------------------------------------------------------------------------------------------
-	// Coordinate system and XY grid
-	int64_t m_pCoordinateSystemModel;
-
-	// --------------------------------------------------------------------------------------------
 	// Instance : Class
 	map<int64_t, CRDFClass *> m_mapRDFClasses;
 
@@ -93,10 +89,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	int64_t GetModel() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	int64_t GetCoordinateSystemModel() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Default model
@@ -199,21 +191,12 @@ private: // Methods
 	void SetFormatSettings(int64_t iModel);
 
 	// --------------------------------------------------------------------------------------------
-	// Coordinate system & grid
-	void CreateCoordinateSystem();
-
-	// --------------------------------------------------------------------------------------------
 	// Loads RDF hierarchy
 	void LoadRDFModel();
 
 	// --------------------------------------------------------------------------------------------
 	// Loads RDF instances
 	void LoadRDFInstances();
-
-	// --------------------------------------------------------------------------------------------
-	// Support for textures; https://github.com/mortennobel/OpenGL_3_2_Utils/blob/master/src/TextureLoader.cpp
-	// UNUSED
-	//unsigned char * LoadBMP(const char * imagepath, unsigned int& outWidth, unsigned int& outHeight, bool flipY);	
 
 	// --------------------------------------------------------------------------------------------
 	// Clean up

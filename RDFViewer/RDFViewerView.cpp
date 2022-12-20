@@ -144,7 +144,6 @@ int CRDFViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_pOpenGLView = new COpenGLRDFView(this);
-	m_pOpenGLView->ShowCoordinateSystem(FALSE);
 	m_pOpenGLView->SetController(pDoc);
 
 	m_pInstancesDialog = new CInstancesDialog();

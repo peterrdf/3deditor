@@ -185,11 +185,6 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		ASSERT(hModel != NULL);
 
 		UpdateRootItemsUnreferencedItemsView(pModel->GetModel(), hModel);
-
-		HTREEITEM hCoordinateSystem = m_wndFileView.GetNextItem(hModel, TVGN_NEXT);
-		ASSERT(hCoordinateSystem != NULL);
-
-		UpdateRootItemsUnreferencedItemsView(pModel->GetCoordinateSystemModel(), hCoordinateSystem);
 	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
 
 	map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.find(pInstance->getInstance());
@@ -974,14 +969,7 @@ void CFileView::InstancesAlphabeticalView()
 		}
 		else
 		{
-			if (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel())
-			{
-				vecCoordinateSystem.push_back(pRDFInstance);
-			}
-			else
-			{
-				ASSERT(false);
-			}
+			ASSERT(FALSE);
 		}
 	} // for (; itRFDInstances != ...
 
@@ -1076,25 +1064,7 @@ void CFileView::InstancesGroupByClassView()
 		}
 		else
 		{
-			if (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel())
-			{
-				map<wstring, vector<CRDFInstance *> >::iterator itCoordinateSystem = mapCoordinateSystem.find(strName);
-				if (itCoordinateSystem == mapCoordinateSystem.end())
-				{
-					vector<CRDFInstance *> vecInstances;
-					vecInstances.push_back(pRDFInstance);
-
-					mapCoordinateSystem[strName] = vecInstances;
-				}
-				else
-				{
-					itCoordinateSystem->second.push_back(pRDFInstance);
-				}
-			}
-			else
-			{
-				ASSERT(false);
-			}
+			ASSERT(false);
 		}
 	} // for (; itRFDInstances != ...
 
@@ -1192,14 +1162,7 @@ void CFileView::InstancesUnreferencedItemsView()
 		}
 		else
 		{
-			if (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel())
-			{
-				vecCoordinateSystem.push_back(pRDFInstance);
-			}
-			else
-			{
-				ASSERT(false);
-			}
+			ASSERT(FALSE);
 		}
 	} // for (; itRFDInstances != ...
 
