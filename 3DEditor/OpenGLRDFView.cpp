@@ -1618,6 +1618,8 @@ void COpenGLRDFView::DrawPoints()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
 	m_pOGLProgram->enableBinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
@@ -1649,6 +1651,8 @@ void COpenGLRDFView::DrawPoints()
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
+
+	glDisable(GL_PROGRAM_POINT_SIZE);
 
 	_oglUtils::checkForErrors();
 

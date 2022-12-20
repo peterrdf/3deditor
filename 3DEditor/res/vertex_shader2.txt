@@ -35,4 +35,6 @@ void main(void) {
 
     vUseBinnPhongModel = uUseBinnPhongModel;
     vUseTexture = uUseTexture;
+
+    gl_PointSize = 2;
 }
