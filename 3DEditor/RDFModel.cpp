@@ -484,11 +484,6 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (!itRDFInstances->second->getEnable())
-		{
-			continue;
-		}
-
 		itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
