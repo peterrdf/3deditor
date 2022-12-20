@@ -524,7 +524,6 @@ BEGIN
         MENUITEM "Enable All Unreferenced",     ID_INSTANCES_ENABLE_ALL_UNREFERENCED
         MENUITEM "Enable All Referenced",       ID_INSTANCES_ENABLE_ALL_REFERENCED
         MENUITEM SEPARATOR
-        MENUITEM "Add measurements",            ID_INSTANCES_ADD_MEASUREMENTS
         MENUITEM SEPARATOR
         MENUITEM "Remove",                      ID_INSTANCES_REMOVE
         MENUITEM "Remove Tree",                 ID_INSTANCES_REMOVE_TREE
