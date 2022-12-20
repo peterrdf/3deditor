@@ -46,6 +46,9 @@ private: // Members
 	vector<_cohort*> m_vecTangentVecsCohorts;
 
 	// Bounding box
+	_vector3d* m_vecOriginalBoundingBoxMin;
+	_vector3d* m_vecOriginalBoundingBoxMax;
+	_matrix* m_mtxOriginalBoundingBoxTransformation;
 	_vector3d* m_vecBoundingBoxMin;
 	_vector3d* m_vecBoundingBoxMax;
 	_matrix* m_mtxBoundingBoxTransformation;
