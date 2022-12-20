@@ -48,7 +48,6 @@ private: // Members
 #endif // _LINUX	
 
 	// UI
-	BOOL m_bShowReferencedInstances;
 	BOOL m_bShowCoordinateSystem;
 	BOOL m_bShowFaces;
 	CString m_strCullFaces;
@@ -106,14 +105,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	void GetTranslation(float& fX, float& fY, float& fZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
-	void ShowReferencedInstances(BOOL bShow);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	BOOL AreReferencedInstancesShown() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Setter

@@ -39,7 +39,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	: _oglRenderer()
 	, CRDFView()
 	, m_pWnd(pWnd)
-	, m_bShowReferencedInstances(TRUE)
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
@@ -155,24 +154,6 @@ void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
 	fX = m_fXTranslation;
 	fY = m_fYTranslation;
 	fZ = m_fZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowReferencedInstances(BOOL bShow)
-{
-	m_bShowReferencedInstances = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreReferencedInstancesShown() const
-{
-	return m_bShowReferencedInstances;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1391,11 +1372,6 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -1510,11 +1486,6 @@ void COpenGLRDFView::DrawFacesPolygons()
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -1574,11 +1545,6 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 			CRDFInstance* pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
 			{
 				continue;
 			}
@@ -1646,11 +1612,6 @@ void COpenGLRDFView::DrawLines()
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -1713,11 +1674,6 @@ void COpenGLRDFView::DrawPoints()
 			CRDFInstance* pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
 			{
 				continue;
 			}
@@ -1861,11 +1817,6 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	{
 		CRDFInstance* pRDFInstance = itRDFInstances->second;
 		if (!pRDFInstance->getEnable())
-		{
-			continue;
-		}
-
-		if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
 		{
 			continue;
 		}
@@ -2065,11 +2016,6 @@ void COpenGLRDFView::DrawNormalVectors()
 		{
 			CRDFInstance* pRDFInstance = itRDFInstances->second;
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
 			{
 				continue;
 			}
@@ -2294,11 +2240,6 @@ void COpenGLRDFView::DrawTangentVectors()
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -2519,11 +2460,6 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -2705,11 +2641,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				continue;
 			}
 
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
-			{
-				continue;
-			}
-
 			if (!m_bShowCoordinateSystem && (pRDFInstance->GetModel() == pModel->GetCoordinateSystemModel()))
 			{
 				continue;
@@ -2755,11 +2686,6 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			auto pRDFInstance = itInstance;
 
 			if (!pRDFInstance->getEnable())
-			{
-				continue;
-			}
-
-			if (!m_bShowReferencedInstances && pRDFInstance->isReferenced())
 			{
 				continue;
 			}
