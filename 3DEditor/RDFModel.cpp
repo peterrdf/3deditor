@@ -282,56 +282,58 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::AddMeasurements(CRDFInstance * pInstance)
+void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
 {	
-	CRDFMeasurementsBuilder * pMeasurementsBuilder = GetMeasurementsBuilder();
-	ASSERT(pMeasurementsBuilder != NULL);
+	ASSERT(FALSE); // TODO: PENDING REFACTORING!
 
-	/*
-	* Create
-	*/
-	double	scaleOfInstance = pMeasurementsBuilder->DefineScaling(pInstance->getInstance());
-	int64_t	rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), 0);
-	while (rdfProperty) {
-		if (GetPropertyType(rdfProperty) == 5) {
-			double	* values = nullptr;
-			int64_t	card = 0;
-			GetDatatypeProperty(pInstance->getInstance(), rdfProperty, (void**)&values, &card);
-			if (card == 1) {
-				CString	txt = L"";
-				char	* propertyName = nullptr;
-				GetNameOfProperty(rdfProperty, &propertyName);
-				txt += propertyName;
-				txt += L" = ";
-				txt += std::to_wstring(values[0]).c_str();
-				pMeasurementsBuilder->BuildMeasure(pInstance->getInstance(), rdfProperty, txt, scaleOfInstance);
-			}
-		}
-		rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), rdfProperty);
-	}
+	//CRDFMeasurementsBuilder * pMeasurementsBuilder = GetMeasurementsBuilder();
+	//ASSERT(pMeasurementsBuilder != NULL);
 
-	/*
-	* Load the new instances
-	*/
-	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0)
-	{
-		map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.find(iInstance);
-		if (itRDFInstances == m_mapRDFInstances.end())
-		{
-			CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-			if (pRDFInstance->isReferenced())
-			{
-				pRDFInstance->setEnable(false);
-			}
+	///*
+	//* Create
+	//*/
+	//double	scaleOfInstance = pMeasurementsBuilder->DefineScaling(pInstance->getInstance());
+	//int64_t	rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), 0);
+	//while (rdfProperty) {
+	//	if (GetPropertyType(rdfProperty) == 5) {
+	//		double	* values = nullptr;
+	//		int64_t	card = 0;
+	//		GetDatatypeProperty(pInstance->getInstance(), rdfProperty, (void**)&values, &card);
+	//		if (card == 1) {
+	//			CString	txt = L"";
+	//			char	* propertyName = nullptr;
+	//			GetNameOfProperty(rdfProperty, &propertyName);
+	//			txt += propertyName;
+	//			txt += L" = ";
+	//			txt += std::to_wstring(values[0]).c_str();
+	//			pMeasurementsBuilder->BuildMeasure(pInstance->getInstance(), rdfProperty, txt, scaleOfInstance);
+	//		}
+	//	}
+	//	rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), rdfProperty);
+	//}
 
-			pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	///*
+	//* Load the new instances
+	//*/
+	//int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
+	//while (iInstance != 0)
+	//{
+	//	map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.find(iInstance);
+	//	if (itRDFInstances == m_mapRDFInstances.end())
+	//	{
+	//		CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, iInstance);
+	//		if (pRDFInstance->isReferenced())
+	//		{
+	//			pRDFInstance->setEnable(false);
+	//		}
 
-			m_mapRDFInstances[iInstance] = pRDFInstance;
-		}		
+	//		pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	} // while (iInstance != 0)
+	//		m_mapRDFInstances[iInstance] = pRDFInstance;
+	//	}		
+
+	//	iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	//} // while (iInstance != 0)
 }
 
 // ------------------------------------------------------------------------------------------------
