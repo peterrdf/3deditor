@@ -543,7 +543,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	/*
 	Points
 	*/
-	//DrawPoints();//#todo
+	DrawPoints();
 
 	/*
 	Bounding boxes
@@ -1571,8 +1571,7 @@ void COpenGLRDFView::DrawLines()
 
 		for (auto itInstance : itCohort.second)
 		{
-			CRDFInstance* pRDFInstance = itInstance;
-
+			auto pRDFInstance = itInstance;
 			if (!pRDFInstance->getEnable())
 			{
 				continue;
@@ -1625,26 +1624,19 @@ void COpenGLRDFView::DrawPoints()
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, itCohort.first);
+		glBindVertexArray(itCohort.first);
 
 		for (auto itInstance : itCohort.second)
-		{			
-			glVertexAttribPointer(m_pOGLProgram->getVertexPosition(), 3, GL_FLOAT, false, sizeof(GLfloat) * GEOMETRY_VBO_VERTEX_LENGTH, 0);
-			glEnableVertexAttribArray(m_pOGLProgram->getVertexPosition());
-
-			CRDFInstance* pRDFInstance = itInstance;
-
+		{
+			auto pRDFInstance = itInstance;
 			if (!pRDFInstance->getEnable())
 			{
 				continue;
 			}
 
-			/*
-			* Points
-			*/
 			for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
 			{
-				_cohort* pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
+				auto pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_POINTS,
@@ -1652,12 +1644,10 @@ void COpenGLRDFView::DrawPoints()
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
 					pRDFInstance->VBOOffset());
-			} // for (size_t iPointsCohort = ...
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);			
+			} // for (size_t iPointsCohort = ...		
 		} // for (auto itInstance ...
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
 	_oglUtils::checkForErrors();
