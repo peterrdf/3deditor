@@ -512,34 +512,6 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 	m_mtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
 }
 
-// --------------------------------------------------------------------------------------------
-float* CRDFInstance::BuildFacesVertices()
-{
-	ASSERT(m_pOriginalVertexBuffer->size() > 0);
-
-	/*
-	* Faces Vertex Buffer
-	*/
-	float* pFacesVertices = new float[m_pOriginalVertexBuffer->size() * GEOMETRY_VBO_VERTEX_LENGTH];
-	memset(pFacesVertices, 0, m_pOriginalVertexBuffer->size() * GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-
-	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
-	{
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 0] = m_pVertices[(iVertex * VERTEX_LENGTH) + 0];
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1];
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2];
-
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 3] = m_pVertices[(iVertex * VERTEX_LENGTH) + 3];
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 4] = m_pVertices[(iVertex * VERTEX_LENGTH) + 4];
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 5] = m_pVertices[(iVertex * VERTEX_LENGTH) + 5];
-
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 6] = m_pVertices[(iVertex * VERTEX_LENGTH) + 6];
-		pFacesVertices[(iVertex * GEOMETRY_VBO_VERTEX_LENGTH) + 7] = m_pVertices[(iVertex * VERTEX_LENGTH) + 7];
-	} // for (size_t iIndex = ...		
-
-	return pFacesVertices;
-}
-
 // ------------------------------------------------------------------------------------------------
 GLuint& CRDFInstance::VBO()
 {

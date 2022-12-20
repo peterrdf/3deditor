@@ -241,8 +241,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 	int64_t iInstance = CreateInstance(iClassInstance, NULL);
 	ASSERT(iInstance != 0);
 
-	CRDFInstance * pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-
+	auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
 	pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapRDFInstances[iInstance] = pRDFInstance;
@@ -253,10 +252,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 // ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 {
-//	ASSERT(pThing != nullptr);
-
-	CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, pThing);
-
+	auto pRDFInstance = new CRDFInstance(m_iID++, pThing);
 	pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapRDFInstances[pThing] = pRDFInstance;
@@ -350,10 +346,10 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
 	{
-		map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.find(iInstance);
+		auto itRDFInstances = m_mapRDFInstances.find(iInstance);
 		if (itRDFInstances == m_mapRDFInstances.end())
 		{
-			CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, iInstance);
+			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
 			if (pRDFInstance->isReferenced())
 			{
 				pRDFInstance->setEnable(false);
@@ -470,7 +466,7 @@ void CRDFModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.begin();
+	auto itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
 		if (!itRDFInstances->second->getEnable())
@@ -484,12 +480,6 @@ void CRDFModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-#ifndef _LINUX
-//	LOG_DEBUG("X/Y/Z min: " << m_fXmin << ", " << m_fYmin << ", " << m_fZmin);
-//	LOG_DEBUG("X/Y/Z max: " << m_fXmax << ", " << m_fYmax << ", " << m_fZmax);
-//	LOG_DEBUG("World's bounding sphere diameter: " << m_fBoundingSphereDiameter);
-#endif // _LINUX
 
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
@@ -575,12 +565,6 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-#ifndef _LINUX
-//	LOG_DEBUG("X/Y/Z min: " << m_fXmin << ", " << m_fYmin << ", " << m_fZmin);
-//	LOG_DEBUG("X/Y/Z max: " << m_fXmax << ", " << m_fYmax << ", " << m_fZmax);
-//	LOG_DEBUG("World's bounding sphere diameter: " << m_fBoundingSphereDiameter);
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1588,7 +1572,7 @@ void CRDFModel::LoadRDFInstances()
 		int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 		while (iInstance != 0)
 		{
-			CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, iInstance);
+			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
 			if (pRDFInstance->isReferenced())
 			{
 				pRDFInstance->setEnable(false);
@@ -1682,10 +1666,6 @@ void CRDFModel::LoadRDFInstances()
 	* Scale and Center
 	*/
 	ScaleAndCenter();
-
-#ifndef _LINUX
-//	LOG_DEBUG("CRDFModel::LoadRDFInstances() END");
-#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------

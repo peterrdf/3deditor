@@ -115,8 +115,6 @@ public: // Methods
 	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);	
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
 	
-	float* BuildFacesVertices();
-	
 	GLuint& VBO();
 	GLsizei& VBOOffset();	
 
