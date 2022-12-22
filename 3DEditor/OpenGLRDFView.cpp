@@ -439,7 +439,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 
 	glViewport(0, 0, iWidth, iHeight);
 
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the parameters
@@ -1620,8 +1620,7 @@ void COpenGLRDFView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->enableBinnPhongModel(false);	
 	m_pOGLProgram->setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -1640,12 +1639,44 @@ void COpenGLRDFView::DrawPoints()
 			{
 				auto pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
 
+				const _material* pMaterial =
+					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pCohort->getMaterial();
+
+				if (pMaterial->hasTexture())
+				{
+					ASSERT(FALSE); // TODO!?!?
+					/*m_pOGLProgram->enableTexture(true);
+
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
+
+					m_pOGLProgram->setSampler(0);*/
+				}
+				/*else
+				{
+					ASSERT(FALSE); // TODO - Enable Binn-Phong!?!?
+					m_pOGLProgram->setMaterial(pMaterial);
+				}*/
+				
+				m_pOGLProgram->setAmbientColor(
+					pMaterial->getDiffuseColor().r(),
+					pMaterial->getDiffuseColor().g(),
+					pMaterial->getDiffuseColor().b());
+
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_POINTS,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
 					pRDFInstance->VBOOffset());
+
+				/*if (pMaterial->hasTexture())
+				{
+					ASSERT(FALSE); // TODO!?!?
+					m_pOGLProgram->enableTexture(false);
+				}*/
 			} // for (size_t iPointsCohort = ...		
 		} // for (auto itInstance ...
 
