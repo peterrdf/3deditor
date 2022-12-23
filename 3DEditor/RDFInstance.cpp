@@ -1288,10 +1288,10 @@ void CRDFInstance::Clean()
 	m_pIndexBuffer = NULL;	
 
 	m_vecTriangles.clear();
-	m_vecLines.clear();
-	m_vecPoints.clear();
 	m_vecFacePolygons.clear();
 	m_vecConcFacePolygons.clear();
+	m_vecLines.clear();
+	m_vecPoints.clear();	
 
 	_cohort::clear(m_vecConcFacesCohorts);
 	_cohort::clear(m_vecFacePolygonsCohorts);

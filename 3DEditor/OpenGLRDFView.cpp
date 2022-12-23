@@ -73,7 +73,8 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		TEST_MODE ? 1 : 16,
 		IDR_TEXTFILE_VERTEX_SHADER2, 
 		IDR_TEXTFILE_FRAGMENT_SHADER2, 
-		TEXTFILE);
+		TEXTFILE,
+		true);
 	
 	m_pSelectedInstanceMaterial = new _material();
 	m_pSelectedInstanceMaterial->init(

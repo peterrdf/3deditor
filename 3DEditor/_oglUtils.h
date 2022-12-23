@@ -496,7 +496,7 @@ class _oglBinnPhongProgram : public _oglProgram
 
 private: // Members
 
-	bool m_bTextureSupport;
+	bool m_bSupportsTexture;
 	GLint m_iUseBinnPhongModel;
 	GLint m_iUseTexture;
 	GLint m_iSampler;
@@ -516,9 +516,9 @@ private: // Members
 
 public: // Methods
 
-	_oglBinnPhongProgram(bool bTextureSupport)
+	_oglBinnPhongProgram(bool bSupportsTexture)
 		: _oglProgram()
-		, m_bTextureSupport(bTextureSupport)
+		, m_bSupportsTexture(bSupportsTexture)
 		, m_iUseBinnPhongModel(-1)
 		, m_iUseTexture(-1)
 		, m_iSampler(-1)
@@ -549,7 +549,7 @@ public: // Methods
 			m_iUseBinnPhongModel = glGetUniformLocation(m_iID, "uUseBinnPhongModel");
 			ASSERT(m_iUseBinnPhongModel >= 0);
 
-			if (m_bTextureSupport)
+			if (m_bSupportsTexture)
 			{
 				m_iUseTexture = glGetUniformLocation(m_iID, "uUseTexture");
 				ASSERT(m_iUseTexture >= 0);
@@ -594,7 +594,7 @@ public: // Methods
 			m_iVertexNormal = glGetAttribLocation(m_iID, "aVertexNormal");
 			ASSERT(m_iVertexNormal >= 0);
 
-			if (m_bTextureSupport)
+			if (m_bSupportsTexture)
 			{
 				m_iTextureCoord = glGetAttribLocation(m_iID, "aTextureCoord");
 				ASSERT(m_iTextureCoord >= 0);
@@ -606,9 +606,9 @@ public: // Methods
 		return false;
 	}
 
-	bool getTextureSupport() const
+	bool getSupportsTexture() const
 	{
-		return m_bTextureSupport;
+		return m_bSupportsTexture;
 	}
 
 	GLint getUseBinnPhongModel() const
@@ -618,14 +618,14 @@ public: // Methods
 
 	GLint getUseTexture() const
 	{
-		ASSERT(m_bTextureSupport);
+		ASSERT(m_bSupportsTexture);
 
 		return m_iUseTexture;
 	}	
 
 	GLint getSampler() const
 	{
-		ASSERT(m_bTextureSupport);
+		ASSERT(m_bSupportsTexture);
 
 		return m_iSampler;
 	}
@@ -693,7 +693,7 @@ public: // Methods
 
 	GLint getTextureCoord() const
 	{
-		ASSERT(m_bTextureSupport);
+		ASSERT(m_bSupportsTexture);
 
 		return m_iTextureCoord;
 	}
@@ -1570,7 +1570,7 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * _VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
@@ -1598,18 +1598,18 @@ public: // Methods
 
 	void setVBOAttributes(_oglBinnPhongProgram* pProgram) const
 	{
-		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getTextureSupport() ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
 
 		glVertexAttribPointer(pProgram->getVertexPosition(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), 0);
 		glVertexAttribPointer(pProgram->getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
-		if (pProgram->getTextureSupport())
+		if (pProgram->getSupportsTexture())
 		{
 			glVertexAttribPointer(pProgram->getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * _VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
 		}
 
 		glEnableVertexAttribArray(pProgram->getVertexPosition());
 		glEnableVertexAttribArray(pProgram->getVertexNormal());
-		if (pProgram->getTextureSupport())
+		if (pProgram->getSupportsTexture())
 		{
 			glEnableVertexAttribArray(pProgram->getTextureCoord());
 		}
@@ -1739,12 +1739,13 @@ public: // Methods
 		int iSamples, 
 		int iVertexShader, 
 		int iFragmentShader, 
-		int iResourceType)
+		int iResourceType,
+		bool bSupportsTexture)
 	{
 		m_pOGLContext = new _oglContext(hDC, iSamples);
 		m_pOGLContext->makeCurrent();
 
-		m_pOGLProgram = new _oglBinnPhongProgram(true);
+		m_pOGLProgram = new _oglBinnPhongProgram(bSupportsTexture);
 		m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
 		m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
 
