@@ -1535,7 +1535,7 @@ public: // Methods
 		}
 
 		int_t iVerticesCount = 0;
-		float* pVertices = getVertices(vecInstances, true, iVerticesCount);
+		float* pVertices = getVertices(vecInstances, pProgram->getSupportsTexture(), iVerticesCount);
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
 		{
@@ -1618,9 +1618,9 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(const vector<Instance*>& vecInstances, bool bTexture, int_t& iVerticesCount)
+	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int_t& iVerticesCount)
 	{
-		const int64_t _VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
+		const int64_t _VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
 		iVerticesCount = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
@@ -1633,7 +1633,7 @@ public: // Methods
 		int_t iOffset = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
-			float* pSrcVertices = getVertices(vecInstances[i], bTexture);
+			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
 				vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH * sizeof(float));
@@ -1647,10 +1647,10 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(Instance* pInstance, bool bTexture)
+	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
 	{
 		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
-		const int64_t _DEST_VERTEX_LENGTH = 6 + (bTexture ? 2 : 0);
+		const int64_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
 		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
 		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
@@ -1668,7 +1668,7 @@ public: // Methods
 			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
 
 			// Tx, Ty
-			if (bTexture)
+			if (bSupportsTexture)
 			{
 				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
 				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
