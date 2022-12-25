@@ -2584,6 +2584,11 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
+	if ((iWidth < 20) || (iHeight < 20))
+	{
+		return;
+	}
+
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
@@ -2594,7 +2599,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		const map<int64_t, CRDFInstance *> & mapRDFInstances = pModel->GetRDFInstances();
+		auto mapRDFInstances = pModel->GetRDFInstances();
 		for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 		{
 			CRDFInstance * pRDFInstance = itRDFInstances->second;
@@ -2717,6 +2722,11 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	iWidth = rcClient.Width();
 	iHeight = rcClient.Height();
 #endif // _LINUX
+
+	if ((iWidth < 20) || (iHeight < 20))
+	{
+		return;
+	}
 
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
