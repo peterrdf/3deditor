@@ -561,26 +561,28 @@ void CRDFInstance::Calculate()
 	/**
 	* Retrieve the buffers
 	*/
-	if ((m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size()))
+	if ((m_pOriginalVertexBuffer->size() == 0) || (m_pIndexBuffer->size() == 0))
 	{
-		/**
-		* Retrieves the vertices
-		*/
-		m_pOriginalVertexBuffer->vertexLength() = SetFormat(GetModel(), 0, 0) / sizeof(float);
+		return;
+	}
 
-		m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
-		memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	/**
+	* Retrieves the vertices
+	*/
+	m_pOriginalVertexBuffer->vertexLength() = SetFormat(GetModel(), 0, 0) / sizeof(float);
 
-		UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->data());
+	m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
+	memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
-		/**
-		* Retrieves the indices
-		*/
-		m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
-		memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
+	UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->data());
 
-		UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
-	} // if ((m_pOriginalVertexBuffer->m_iVerticesCount > 0) && ...	
+	/**
+	* Retrieves the indices
+	*/
+	m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
+	memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
+
+	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());	
 
 	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
 	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));	

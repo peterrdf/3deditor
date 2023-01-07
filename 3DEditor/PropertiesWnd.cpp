@@ -2097,9 +2097,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGro
 
 		wstring strRange;
 
-		const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
-		ASSERT(!vecRestrictions.empty());
-
+		auto vecRestrictions = pObjectRDFProperty->getRestrictions();
 		for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 		{
 			char * szClassName = NULL;

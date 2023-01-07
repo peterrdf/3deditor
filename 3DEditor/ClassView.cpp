@@ -293,17 +293,14 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 				CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pRDFProperty);
 				ASSERT(pObjectRDFProperty != NULL);
 
-				const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
-				ASSERT(!vecRestrictions.empty());
-
+				auto vecRestrictions = pObjectRDFProperty->getRestrictions();
 				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 				{
-					map<int64_t, CRDFClass *>::const_iterator itRestrictionRDFClass = mapRDFClasses.find(vecRestrictions[iRestriction]);
+					auto itRestrictionRDFClass = mapRDFClasses.find(vecRestrictions[iRestriction]);
 					ASSERT(itRestrictionRDFClass != mapRDFClasses.end());
+					ASSERT(itRestrictionRDFClass->second != NULL);
 
-					CRDFClass * pRestrictionRDFClass = itRestrictionRDFClass->second;
-
-					m_wndClassView.InsertItem(pRestrictionRDFClass->getName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
+					m_wndClassView.InsertItem(itRestrictionRDFClass->second->getName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
 				}
 			}
 			break;
