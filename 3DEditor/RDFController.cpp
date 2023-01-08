@@ -372,7 +372,9 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 {
 	m_pModel->ImportModel(szPath);
 
-	set<CRDFView*>::iterator itView = m_setViews.begin();
+	m_pModel->ScaleAndCenter();
+
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnModelChanged();
@@ -382,7 +384,9 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancesEnabledStateChanged()
 {
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	m_pModel->ScaleAndCenter();
+
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstancesEnabledStateChanged();

@@ -956,9 +956,8 @@ void CFileView::InstancesAlphabeticalView()
 	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecModel;
-	vector<CRDFInstance *> vecCoordinateSystem;
 
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 	{
 		CRDFInstance * pRDFInstance = itRFDInstances->second;
@@ -987,19 +986,6 @@ void CFileView::InstancesAlphabeticalView()
 	}
 
 	m_wndFileView.Expand(hModel, TVE_EXPAND);
-
-	/*
-	* Coordinate System
-	*/
-	sort(vecCoordinateSystem.begin(), vecCoordinateSystem.end(), SORT_RDFINSTANCES());
-
-	HTREEITEM hCoordinateSystem = m_wndFileView.InsertItem(_T("Coordinate System"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hCoordinateSystem, TVIS_BOLD, TVIS_BOLD);
-
-	for (size_t iInstance = 0; iInstance < vecCoordinateSystem.size(); iInstance++)
-	{
-		AddInstance(hCoordinateSystem, vecCoordinateSystem[iInstance]);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1032,27 +1018,26 @@ void CFileView::InstancesGroupByClassView()
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto mapRFDInstances = pModel->GetRDFInstances();
 
 	map<wstring, vector<CRDFInstance *> > mapModel;
-	map<wstring, vector<CRDFInstance *> > mapCoordinateSystem;
 
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 	{
 		CRDFInstance * pRDFInstance = itRFDInstances->second;
 
-		char * szName = NULL;
+		char* szName = NULL;
 		GetNameOfClass(pRDFInstance->getClassInstance(), &szName);
 
 		wstring strName = CA2W(szName);
 
 		if (pRDFInstance->GetModel() == pModel->GetModel())
 		{
-			map<wstring, vector<CRDFInstance *> >::iterator itModel = mapModel.find(strName);
+			auto itModel = mapModel.find(strName);
 			if (itModel == mapModel.end())
 			{
-				vector<CRDFInstance *> vecInstances;
+				vector<CRDFInstance*> vecInstances;
 				vecInstances.push_back(pRDFInstance);
 
 				mapModel[strName] = vecInstances;
@@ -1089,26 +1074,6 @@ void CFileView::InstancesGroupByClassView()
 	} // for (; itModel != ...
 
 	m_wndFileView.Expand(hModel, TVE_EXPAND);
-
-	/*
-	* Coordinate System
-	*/
-	HTREEITEM hCoordinateSystem = m_wndFileView.InsertItem(_T("Coordinate System"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hCoordinateSystem, TVIS_BOLD, TVIS_BOLD);
-
-	map<wstring, vector<CRDFInstance *> >::iterator itCoordinateSystem = mapCoordinateSystem.begin();
-	for (; itCoordinateSystem != mapCoordinateSystem.end(); itCoordinateSystem++)
-	{
-		HTREEITEM hClass = m_wndFileView.InsertItem(itCoordinateSystem->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hCoordinateSystem);
-
-		vector<CRDFInstance *> vecInstances = itCoordinateSystem->second;
-		sort(vecInstances.begin(), vecInstances.end(), SORT_RDFINSTANCES());
-
-		for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
-		{
-			AddInstance(hClass, vecInstances[iInstance]);
-		}
-	} // for (; itCoordinateSystem != ...
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1141,10 +1106,9 @@ void CFileView::InstancesUnreferencedItemsView()
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecModel;
-	vector<CRDFInstance *> vecCoordinateSystem;
 
 	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
@@ -1180,19 +1144,6 @@ void CFileView::InstancesUnreferencedItemsView()
 	}
 
 	m_wndFileView.Expand(hModel, TVE_EXPAND);
-
-	/*
-	* Coordinate System
-	*/
-	sort(vecCoordinateSystem.begin(), vecCoordinateSystem.end(), SORT_RDFINSTANCES());
-
-	HTREEITEM hCoordinateSystem = m_wndFileView.InsertItem(_T("Coordinate System"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hCoordinateSystem, TVIS_BOLD, TVIS_BOLD);
-
-	for (size_t iInstance = 0; iInstance < vecCoordinateSystem.size(); iInstance++)
-	{
-		AddInstance(hCoordinateSystem, vecCoordinateSystem[iInstance]);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1830,7 +1781,6 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			case ID_INSTANCES_SAVE:
 			{
 				TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-
 				CFileDialog dlgFile(FALSE, _T("bin"), pRDFInstanceItem->getInstance()->getUniqueName(),
 					OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
@@ -1845,7 +1795,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
 					if (pRDFInstanceItem->getInstance()->GetModel() != itRFDInstances->second->GetModel())
@@ -1869,10 +1819,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel());
+					itRFDInstances->second->setEnable(true);
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
@@ -1881,12 +1831,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			 
 			case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
 			{
-				map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					itRFDInstances->second->setEnable(
-						(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
-						!pRDFInstanceItem->getInstance()->isReferenced());
+					itRFDInstances->second->setEnable(!pRDFInstanceItem->getInstance()->isReferenced());
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
@@ -1895,12 +1843,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_ENABLE_ALL_REFERENCED:
 			{
-				map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					itRFDInstances->second->setEnable(
-						(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
-						pRDFInstanceItem->getInstance()->isReferenced());
+					itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->isReferenced());
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
@@ -1988,10 +1934,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	{
 		case ID_INSTANCES_ENABLE_ALL:
 		{
-			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			auto itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel());
+				itRFDInstances->second->setEnable(true);
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
@@ -2000,12 +1946,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
 		{
-			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			auto itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				itRFDInstances->second->setEnable(
-					(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
-					!pRDFInstanceItem->getInstance()->isReferenced());
+				itRFDInstances->second->setEnable(!pRDFInstanceItem->getInstance()->isReferenced());
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
@@ -2014,12 +1958,10 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		case ID_INSTANCES_ENABLE_ALL_REFERENCED:
 		{
-			map<int64_t, CRDFInstance*>::const_iterator itRFDInstances = mapRFDInstances.begin();
+			auto itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				itRFDInstances->second->setEnable(
-					(pRDFInstanceItem->getInstance()->GetModel() == itRFDInstances->second->GetModel()) &&
-					pRDFInstanceItem->getInstance()->isReferenced());
+				itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->isReferenced());
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
