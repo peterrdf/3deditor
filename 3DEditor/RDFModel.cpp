@@ -1204,6 +1204,34 @@ void CRDFModel::LoadRDFModel()
 	#endif // _LINUX
 }
 
+void	EnableInstancesRecursively(CRDFModel * iModel, CRDFInstance * iRDFInstance)
+{
+	iRDFInstance->setEnable(true);
+
+	const map<int64_t, CRDFInstance*>& mapRFDInstances = iModel->GetRDFInstances();
+
+	//
+	//	Walk over all relations (object properties)
+	//
+	RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), 0);
+	while (myProperty) {
+		if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
+			OwlInstance	* values = nullptr;
+			int64_t		card = 0;
+			GetObjectProperty(iRDFInstance->getInstance(), myProperty, &values, &card);
+			for (int64_t i = 0; i < card; i++) {
+				if (values[i]) {
+					auto itRFDInstance = mapRFDInstances.find(values[i]);
+
+					if (!itRFDInstance->second->getEnable())
+						EnableInstancesRecursively(iModel, itRFDInstance->second);
+				}
+			}
+		}
+		myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), myProperty);
+	}
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFInstances()
 {
@@ -1243,12 +1271,29 @@ void CRDFModel::LoadRDFInstances()
 				pRDFInstance->setEnable(false);
 			}
 
+
 			pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 			m_mapRDFInstances[iInstance] = pRDFInstance;
 
 			iInstance = GetInstancesByIterator(m_iModel, iInstance);
 		} // while (iInstance != 0)
+
+		{
+			{
+				const map<int64_t, CRDFInstance*>& mapRFDInstances = GetRDFInstances();
+
+				auto itRFDInstances = mapRFDInstances.begin();
+				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				{
+					if (itRFDInstances->second->getEnable() &&
+						!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
+						itRFDInstances->second->setEnable(false);
+						EnableInstancesRecursively(this, itRFDInstances->second);
+					}
+				}
+			}
+		}
 	}
 
 	/**
