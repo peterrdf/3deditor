@@ -195,6 +195,14 @@ private: // Methods
 	void LoadRDFModel();
 
 	// --------------------------------------------------------------------------------------------
+	// Default state
+	void EnableInstancesRecursively(CRDFInstance* iRDFInstance);
+
+	// --------------------------------------------------------------------------------------------
+	// Default state
+	void SetDefaultEnabledInstances();
+
+	// --------------------------------------------------------------------------------------------
 	// Loads RDF instances
 	void LoadRDFInstances();
 

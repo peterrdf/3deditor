@@ -261,55 +261,6 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
 {	
 	ASSERT(FALSE); // TODO: PENDING REFACTORING!
-
-	//CRDFMeasurementsBuilder * pMeasurementsBuilder = GetMeasurementsBuilder();
-	//ASSERT(pMeasurementsBuilder != NULL);
-
-	///*
-	//* Create
-	//*/
-	//double	scaleOfInstance = pMeasurementsBuilder->DefineScaling(pInstance->getInstance());
-	//int64_t	rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), 0);
-	//while (rdfProperty) {
-	//	if (GetPropertyType(rdfProperty) == 5) {
-	//		double	* values = nullptr;
-	//		int64_t	card = 0;
-	//		GetDatatypeProperty(pInstance->getInstance(), rdfProperty, (void**)&values, &card);
-	//		if (card == 1) {
-	//			CString	txt = L"";
-	//			char	* propertyName = nullptr;
-	//			GetNameOfProperty(rdfProperty, &propertyName);
-	//			txt += propertyName;
-	//			txt += L" = ";
-	//			txt += std::to_wstring(values[0]).c_str();
-	//			pMeasurementsBuilder->BuildMeasure(pInstance->getInstance(), rdfProperty, txt, scaleOfInstance);
-	//		}
-	//	}
-	//	rdfProperty = GetPropertiesByIterator(pInstance->GetModel(), rdfProperty);
-	//}
-
-	///*
-	//* Load the new instances
-	//*/
-	//int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
-	//while (iInstance != 0)
-	//{
-	//	map<int64_t, CRDFInstance*>::iterator itRDFInstances = m_mapRDFInstances.find(iInstance);
-	//	if (itRDFInstances == m_mapRDFInstances.end())
-	//	{
-	//		CRDFInstance* pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-	//		if (pRDFInstance->isReferenced())
-	//		{
-	//			pRDFInstance->setEnable(false);
-	//		}
-
-	//		pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
-	//		m_mapRDFInstances[iInstance] = pRDFInstance;
-	//	}		
-
-	//	iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	//} // while (iInstance != 0)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -342,6 +293,11 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
+
+	/**
+	* Default state
+	*/
+	SetDefaultEnabledInstances();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1146,11 +1102,12 @@ void CRDFModel::LoadRDFModel()
 	} // while (iPropertyInstance != 0)
 }
 
-void EnableInstancesRecursively(CRDFModel* iModel, CRDFInstance* iRDFInstance)
+// ------------------------------------------------------------------------------------------------
+void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 {
 	iRDFInstance->setEnable(true);
 
-	auto mapRFDInstances = iModel->GetRDFInstances();
+	auto mapRFDInstances = GetRDFInstances();
 
 	//
 	//	Walk over all relations (object properties)
@@ -1166,11 +1123,27 @@ void EnableInstancesRecursively(CRDFModel* iModel, CRDFInstance* iRDFInstance)
 					auto itRFDInstance = mapRFDInstances.find(values[i]);
 
 					if (!itRFDInstance->second->getEnable())
-						EnableInstancesRecursively(iModel, itRFDInstance->second);
+						EnableInstancesRecursively(itRFDInstance->second);
 				}
 			}
 		}
 		myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), myProperty);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFModel::SetDefaultEnabledInstances()
+{
+	auto mapRFDInstances = GetRDFInstances();
+
+	auto itRFDInstances = mapRFDInstances.begin();
+	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+	{
+		if (itRFDInstances->second->getEnable() &&
+			!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
+			itRFDInstances->second->setEnable(false);
+			EnableInstancesRecursively(itRFDInstances->second);
+		}
 	}
 }
 
@@ -1203,17 +1176,10 @@ void CRDFModel::LoadRDFInstances()
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
 
-	auto mapRFDInstances = GetRDFInstances();
-
-	auto itRFDInstances = mapRFDInstances.begin();
-	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
-	{
-		if (itRFDInstances->second->getEnable() &&
-			!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
-			itRFDInstances->second->setEnable(false);
-			EnableInstancesRecursively(this, itRFDInstances->second);
-		}
-	}
+	/**
+	* Default state
+	*/
+	SetDefaultEnabledInstances();
 
 	/**
 	* Scale and Center
