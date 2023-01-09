@@ -18,13 +18,6 @@ using namespace e57;
 
 using namespace std;
 
-#ifdef _LINUX
-#include <cfloat>
-#include <wx/wx.h>
-#include <wx/stdpaths.h>
-#include <cwchar>
-#endif // _LINUX
-
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
 	: m_iModel(0)
@@ -984,23 +977,8 @@ void CRDFModel::Load(const wchar_t * szPath)
 	} // if (strExtension == L".DXF")
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _LINUX
-//	LOG_DEBUG("OpenModelW() BEGIN");
-#endif // _LINUX
-
-#ifdef _LINUX
-    wxString strPath(szPath);
-
-	m_iModel = OpenModel(strPath.char_str());
-#else    
 	m_iModel = OpenModelW(szPath);
-#endif // _LINUX
-
 	ASSERT(m_iModel != 0);
-
-#ifndef _LINUX
-//	LOG_DEBUG("OpenModelW() END");
-#endif // _LINUX
 
 	SetFormatSettings(m_iModel);
 
@@ -1022,18 +1000,6 @@ CTexture * CRDFModel::GetDefaultTexture()
 {
 	if (m_pDefaultTexture == NULL)
 	{
-#ifdef _LINUX
-        wxStandardPaths standardPaths = wxStandardPaths::Get();
-        wxString strAppPath = standardPaths.GetExecutablePath();
-
-        size_t iPosition = strAppPath.rfind("/");
-        strAppPath.replace(iPosition + 1, wcslen(L"RDGViewerNX"), L"");
-
-        string strDefaultTexture = string(strAppPath.mbc_str());
-        strDefaultTexture += "texture.bmp";
-
-        const char * szDefaultTexture = strDefaultTexture.c_str();
-#else
         wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
 
@@ -1047,16 +1013,11 @@ CTexture * CRDFModel::GetDefaultTexture()
 		strDefaultTexture += L"texture.bmp";
 
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
-#endif // _LINUX
 
 		m_pDefaultTexture = new CTexture();
 		if (!m_pDefaultTexture->LoadFile(szDefaultTexture))
 		{
-#ifdef _LINUX
-            wxLogError(wxT("The default texture is not found."));
-#else
             MessageBox(NULL, L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
-#endif // _LINUX
 		}
 	} // if (m_pDefaultTexture == NULL)
 
@@ -1068,18 +1029,6 @@ CRDFMeasurementsBuilder * CRDFModel::GetMeasurementsBuilder()
 {
 	if (m_pMeasurementsBuilder == NULL)
 	{
-#ifdef _LINUX
-		wxStandardPaths standardPaths = wxStandardPaths::Get();
-		wxString strAppPath = standardPaths.GetExecutablePath();
-
-		size_t iPosition = strAppPath.rfind("/");
-		strAppPath.replace(iPosition + 1, wcslen(L"RDGViewerNX"), L"");
-
-		string strDefaultFont = string(strAppPath.mbc_str());
-		strDefaultFont += "OpenSans-Regular.ttf";
-
-		const char * szDefaultTexture = strDefaultFont.c_str();
-#else
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
 
@@ -1093,8 +1042,6 @@ CRDFMeasurementsBuilder * CRDFModel::GetMeasurementsBuilder()
 		strDefaultFont += L"OpenSans-Regular.ttf";
 
 		LPCTSTR szDefaultFont = (LPCTSTR)strDefaultFont;
-#endif // _LINUX
-
 		m_pMeasurementsBuilder = new CRDFMeasurementsBuilder(szDefaultFont, m_iModel, EXTRSUSION_AREA_SOLID_SET);
 	} // if (m_pMeasurementsBuilder == NULL)
 
@@ -1197,18 +1144,13 @@ void CRDFModel::LoadRDFModel()
 
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
-
-	#ifndef _LINUX
-//	LOG_DEBUG("*** END PROPERTIES ***");
-//	LOG_DEBUG("CRDFModel::LoadRDFModel() END");
-	#endif // _LINUX
 }
 
-void	EnableInstancesRecursively(CRDFModel * iModel, CRDFInstance * iRDFInstance)
+void EnableInstancesRecursively(CRDFModel* iModel, CRDFInstance* iRDFInstance)
 {
 	iRDFInstance->setEnable(true);
 
-	const map<int64_t, CRDFInstance*>& mapRFDInstances = iModel->GetRDFInstances();
+	auto mapRFDInstances = iModel->GetRDFInstances();
 
 	//
 	//	Walk over all relations (object properties)
@@ -1216,8 +1158,8 @@ void	EnableInstancesRecursively(CRDFModel * iModel, CRDFInstance * iRDFInstance)
 	RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), 0);
 	while (myProperty) {
 		if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
-			OwlInstance	* values = nullptr;
-			int64_t		card = 0;
+			int64_t card = 0;
+			OwlInstance* values = nullptr;
 			GetObjectProperty(iRDFInstance->getInstance(), myProperty, &values, &card);
 			for (int64_t i = 0; i < card; i++) {
 				if (values[i]) {
@@ -1235,23 +1177,7 @@ void	EnableInstancesRecursively(CRDFModel * iModel, CRDFInstance * iRDFInstance)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFInstances()
 {
-    #ifndef _LINUX
- //   LOG_DEBUG("CRDFModel::LoadRDFInstances() BEGIN");
-    #endif // _LINUX	
-
-	m_fXmin = -1.f;
-	m_fXmax = 1.f;
-	m_fYmin = -1.f;
-	m_fYmax = 1.f;
-	m_fZmin = -1.f;
-	m_fZmax = 1.f;
-
-	/*
-	* Coordinate System
-	*/
-	//CreateCoordinateSystem();
-
-	m_fXmin = FLT_MAX;
+ 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
 	m_fYmax = -FLT_MAX;
@@ -1261,38 +1187,31 @@ void CRDFModel::LoadRDFInstances()
 	/*
 	* Enumerate all instances and calculate X/Y/Z min/max
 	*/
+	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
+	while (iInstance != 0)
 	{
-		int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
-		while (iInstance != 0)
+		auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
+		if (pRDFInstance->isReferenced())
 		{
-			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-			if (pRDFInstance->isReferenced())
-			{
-				pRDFInstance->setEnable(false);
-			}
+			pRDFInstance->setEnable(false);
+		}
 
+		pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
-			pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		m_mapRDFInstances[iInstance] = pRDFInstance;
 
-			m_mapRDFInstances[iInstance] = pRDFInstance;
+		iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	} // while (iInstance != 0)
 
-			iInstance = GetInstancesByIterator(m_iModel, iInstance);
-		} // while (iInstance != 0)
+	auto mapRFDInstances = GetRDFInstances();
 
-		{
-			{
-				const map<int64_t, CRDFInstance*>& mapRFDInstances = GetRDFInstances();
-
-				auto itRFDInstances = mapRFDInstances.begin();
-				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
-				{
-					if (itRFDInstances->second->getEnable() &&
-						!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
-						itRFDInstances->second->setEnable(false);
-						EnableInstancesRecursively(this, itRFDInstances->second);
-					}
-				}
-			}
+	auto itRFDInstances = mapRFDInstances.begin();
+	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+	{
+		if (itRFDInstances->second->getEnable() &&
+			!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
+			itRFDInstances->second->setEnable(false);
+			EnableInstancesRecursively(this, itRFDInstances->second);
 		}
 	}
 
@@ -1301,81 +1220,6 @@ void CRDFModel::LoadRDFInstances()
 	*/
 	ScaleAndCenter();
 }
-
-// ------------------------------------------------------------------------------------------------
-// UNUSED
-/*
-unsigned char * CRDFModel::LoadBMP(const char * imagepath, unsigned int& outWidth, unsigned int& outHeight, bool flipY)
-{
-	printf("Reading image %s\n", imagepath);
-	outWidth = 0;
-	outHeight = 0;
-	// Data read from the header of the BMP file
-	unsigned char header[54];
-	unsigned int dataPos;
-	unsigned int imageSize;
-	// Actual RGB data
-	unsigned char * data;
-
-	// Open the file
-	FILE * file = fopen(imagepath, "rb");
-	if (!file)							    { ASSERT(false); printf("Image could not be opened\n"); return NULL; }
-
-	// Read the header, i.e. the 54 first bytes
-
-	// If less than 54 byes are read, problem
-	if (fread(header, 1, 54, file) != 54){
-		ASSERT(false);
-		printf("Not a correct BMP file\n");
-		return NULL;
-	}
-	// A BMP files always begins with "BM"
-	if (header[0] != 'B' || header[1] != 'M'){
-		ASSERT(false);
-		printf("Not a correct BMP file\n");
-		return NULL;
-	}
-	// Make sure this is a 24bpp file
-	if (*(int*)&(header[0x1E]) != 0)         { ASSERT(false); printf("Not a correct BMP file\n");    return NULL; }
-	if (*(int*)&(header[0x1C]) != 24)         { ASSERT(false); printf("Not a correct BMP file\n");    return NULL; }
-
-	// Read the information about the image
-	dataPos = *(int*)&(header[0x0A]);
-	imageSize = *(int*)&(header[0x22]);
-	outWidth = *(int*)&(header[0x12]);
-	outHeight = *(int*)&(header[0x16]);
-
-	// Some BMP files are misformatted, guess missing information
-	if (imageSize == 0)    imageSize = outWidth*outHeight * 3; // 3 : one byte for each Red, Green and Blue component
-	if (dataPos == 0)      dataPos = 54; // The BMP header is done that way
-
-	// Create a buffer
-	data = new unsigned char[imageSize];
-
-	// Read the actual data from the file into the buffer
-	fread(data, 1, imageSize, file);
-
-	// Everything is in memory now, the file wan be closed
-	fclose(file);
-
-	if (flipY){
-		// swap y-axis
-		unsigned char * tmpBuffer = new unsigned char[outWidth * 3];
-		int size = outWidth * 3;
-		for (unsigned int i = 0; i<outHeight / 2; i++){
-			// copy row i to tmp
-			memcpy_s(tmpBuffer, size, data + outWidth * 3 * i, size);
-			// copy row h-i-1 to i
-			memcpy_s(data + outWidth * 3 * i, size, data + outWidth * 3 * (outHeight - i - 1), size);
-			// copy tmp to row h-i-1
-			memcpy_s(data + outWidth * 3 * (outHeight - i - 1), size, tmpBuffer, size);
-		}
-		delete[] tmpBuffer;
-	}
-
-	return data;
-}
-*/
 
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::Clean()
