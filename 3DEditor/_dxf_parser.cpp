@@ -1389,8 +1389,6 @@ namespace _dxf
 					m_pEndblk = new _endblk();
 					m_pEndblk->load(reader);
 
-					string nnn = getValue(_group_codes::name);
-
 					break;
 				}
 				else if ((pEntity = _parser::loadEntity(reader)) != nullptr)
@@ -1998,8 +1996,6 @@ namespace _dxf
 
 					auto pBlock = new _block();
 					m_vecBlocks.push_back(pBlock);
-
-					ASSERT(3606 != reader.rowIndex()); // SignalBox4
 
 					pBlock->load(reader);
 				}
