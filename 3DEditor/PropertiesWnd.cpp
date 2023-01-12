@@ -925,6 +925,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CPropertiesWnd::OnShowBaseInformation()
+{
+	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
+
+	LoadBaseInformation();
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CPropertiesWnd::OnShowMetaInformation()
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
@@ -2519,6 +2527,104 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	}
 	break;
 	} // switch (pRDFProperty->getType())
+}
+
+// ------------------------------------------------------------------------------------------------
+void CPropertiesWnd::LoadBaseInformation()
+{
+	m_wndPropList.RemoveAll();
+	m_wndPropList.AdjustLayout();
+
+	SetPropListFont();
+
+	m_wndPropList.EnableHeaderCtrl(FALSE);
+	m_wndPropList.EnableDescriptionArea();
+	m_wndPropList.SetVSDotNetLook();
+	m_wndPropList.MarkModifiedProperties();
+
+	ASSERT(GetController() != NULL);
+
+	auto pRDFInstance = GetController()->GetSelectedInstance();
+	if (pRDFInstance == NULL)
+	{
+		return;
+	}
+
+	wchar_t szBuffer[200];
+
+	auto pBaseInfoGroup = new CMFCPropertyGridProperty(L"Base information");
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getName());
+	pBaseInfoGroup->AddSubItem(pInstanceGroup);
+
+	/*
+	* Bounding box min
+	*/
+	{
+		auto pBBMin = pRDFInstance->getBoundingBoxMin();
+
+		swprintf(szBuffer, 100, 
+			L"%.6f, %.6f, %.6f", 
+			pBBMin->x, pBBMin->y, pBBMin->z);
+
+		auto pItem = new CMFCPropertyGridProperty(L"Bounding box min", (_variant_t)szBuffer, L"Bounding box min");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}
+
+	/*
+	* Bounding box max
+	*/
+	{	
+		auto pBBMax = pRDFInstance->getBoundingBoxMax();
+
+		swprintf(szBuffer, 100,
+			L"%.6f, %.6f, %.6f",
+			pBBMax->x, pBBMax->y, pBBMax->z);
+
+		auto pItem = new CMFCPropertyGridProperty(L"Bounding box max", (_variant_t)szBuffer, L"Bounding box max");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}
+
+	/*
+	* Vertices
+	*/
+	{	
+		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getVerticesCount());
+
+		auto pItem = new CMFCPropertyGridProperty(L"Number of vertices", (_variant_t)szBuffer, L"Number of vertices");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}	
+
+	/*
+	* Indices
+	*/
+	{	
+		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getIndicesCount());
+
+		auto pItem = new CMFCPropertyGridProperty(L"Number of indices", (_variant_t)szBuffer, L"Number of indices");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}
+
+	/*
+	* Conceptual faces
+	*/
+	{
+		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getConceptualFacesCount());
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of conceptual faces", (_variant_t)szBuffer, L"Number of conceptual faces");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	m_wndPropList.AddProperty(pBaseInfoGroup);
 }
 
 // ------------------------------------------------------------------------------------------------

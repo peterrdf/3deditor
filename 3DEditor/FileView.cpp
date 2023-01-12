@@ -1772,6 +1772,12 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 			break;
 
+			case ID_INSTANCES_BASE_INFORMATION:
+			{
+				GetController()->ShowBaseInformation(pRDFInstanceItem->getInstance());
+			}
+			break;
+
 			case ID_INSTANCES_META_INFORMATION:
 			{
 				GetController()->ShowMetaInformation(pRDFInstanceItem->getInstance());

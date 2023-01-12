@@ -107,6 +107,19 @@ void CRDFController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
+{
+	m_pSelectedInstance = pInstance;
+	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(NULL, NULL);
+
+	set<CRDFView*>::iterator itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnShowBaseInformation();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRDFController::ShowMetaInformation(CRDFInstance * pInstance)
 {
 	m_pSelectedInstance = pInstance;

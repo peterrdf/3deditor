@@ -107,6 +107,10 @@ public: // Methods
 	void ScaleAndCenter();
 
 	// --------------------------------------------------------------------------------------------
+	// Base information support
+	void ShowBaseInformation(CRDFInstance* pInstance);
+
+	// --------------------------------------------------------------------------------------------
 	// Meta information support
 	void ShowMetaInformation(CRDFInstance * pInstance);
 

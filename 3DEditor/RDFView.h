@@ -40,6 +40,10 @@ public: // Methods
 	virtual void OnWorldDimensionsChanged();
 
 	// --------------------------------------------------------------------------------------------
+	// Base information support
+	virtual void OnShowBaseInformation();
+
+	// --------------------------------------------------------------------------------------------
 	// Meta information support
 	virtual void OnShowMetaInformation();
 

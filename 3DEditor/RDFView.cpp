@@ -34,6 +34,11 @@ void CRDFView::SetController(CRDFController * pController)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CRDFView::OnShowBaseInformation()
+{
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFView::OnShowMetaInformation()
 {
 }

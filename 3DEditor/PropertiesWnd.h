@@ -310,6 +310,10 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
+	virtual void OnShowBaseInformation();
+
+	// --------------------------------------------------------------------------------------------
+	// CRDFView
 	virtual void OnShowMetaInformation();
 
 	// --------------------------------------------------------------------------------------------
@@ -384,6 +388,7 @@ protected:
 	void AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
 	void AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
 	void AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
+	void LoadBaseInformation();
 	void LoadMetaInformation();
 	void SetPropListFont();
 
