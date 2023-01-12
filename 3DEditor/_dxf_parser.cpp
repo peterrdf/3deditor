@@ -190,6 +190,7 @@ namespace _dxf
 	/*static*/ const string _group_codes::lwpolyline = "LWPOLYLINE";
 	/*static*/ const string _group_codes::seqend = "SEQEND";
 	/*static*/ const string _group_codes::circle = "CIRCLE";	
+	/*static*/ const string _group_codes::solid3d = "3DSOLID";
 	/*static*/ const string _group_codes::block = "BLOCK";
 	/*static*/ const string _group_codes::endblock = "ENDBLK";
 	/*static*/ const string _group_codes::insert = "INSERT";
@@ -1078,6 +1079,29 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
+	// _3dsolid
+	_3dsolid::_3dsolid()
+		: _entity(_group_codes::solid3d)
+	{
+		// 3DSOLID, page 65
+	}
+
+	// --------------------------------------------------------------------------------------------
+	/*virtual*/ _3dsolid::~_3dsolid()
+	{
+	}
+
+	// ----------------------------------------------------------------------------------------
+	/*virtual*/ int64_t _3dsolid::createInstance(_parser* /*pParser*/)
+	{
+		// TODO
+
+		return 0;
+	}
+	// _circle
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
 	// _seqend
 	_seqend::_seqend()
 		: _entity(_group_codes::seqend)
@@ -1364,6 +1388,8 @@ namespace _dxf
 
 					m_pEndblk = new _endblk();
 					m_pEndblk->load(reader);
+
+					string nnn = getValue(_group_codes::name);
 
 					break;
 				}
@@ -1973,6 +1999,8 @@ namespace _dxf
 					auto pBlock = new _block();
 					m_vecBlocks.push_back(pBlock);
 
+					ASSERT(3606 != reader.rowIndex()); // SignalBox4
+
 					pBlock->load(reader);
 				}
 				else
@@ -2257,6 +2285,15 @@ namespace _dxf
 			pCircle->load(reader);
 
 			return pCircle;
+		}
+		else if (reader.row() == _group_codes::solid3d)
+		{
+			reader.forth();
+
+			auto p3DSolid = new _3dsolid();
+			p3DSolid->load(reader);
+
+			return p3DSolid;
 		}
 		else if (reader.row() == _group_codes::insert)
 		{

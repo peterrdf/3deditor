@@ -126,6 +126,7 @@ namespace _dxf
 		static const string lwpolyline;
 		static const string seqend;
 		static const string circle;
+		static const string solid3d;
 		static const string block;
 		static const string endblock;
 		static const string insert;
@@ -476,6 +477,25 @@ namespace _dxf
 		virtual int64_t createInstance(_parser* pParser);
 	};
 	// _circle
+	// --------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------
+	// _3dsolid
+	class _3dsolid : public _entity
+	{
+
+	public: // Methods
+
+		// ----------------------------------------------------------------------------------------
+		_3dsolid();
+
+		// ----------------------------------------------------------------------------------------
+		virtual ~_3dsolid();
+
+		// ----------------------------------------------------------------------------------------
+		virtual int64_t createInstance(_parser* pParser);
+	};
+	// _3dsolid
 	// --------------------------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------------------------
