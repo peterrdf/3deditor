@@ -2288,7 +2288,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 			CRDFModel * pModel = GetController()->GetModel();
 			ASSERT(pModel != NULL);
 
-			const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+			auto& mapRFDInstances = pModel->GetRDFInstances();
 
 			/*
 			* Compatible instances

@@ -309,12 +309,12 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pRDFInstance, CObjectRDFPr
 	int64_t iClassInstance = GetInstanceClass(pRDFInstance->getInstance());
 	ASSERT(iClassInstance != 0);
 
-	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
+	auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 	ASSERT(!vecRestrictions.empty());
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = GetRDFInstances();
+	auto& mapRFDInstances = GetRDFInstances();
 
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
+	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 	{
 		/*
@@ -1107,7 +1107,7 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 {
 	iRDFInstance->setEnable(true);
 
-	auto mapRFDInstances = GetRDFInstances();
+	auto& mapRFDInstances = GetRDFInstances();
 
 	//
 	//	Walk over all relations (object properties)
@@ -1134,7 +1134,7 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::SetDefaultEnabledInstances()
 {
-	auto mapRFDInstances = GetRDFInstances();
+	auto& mapRFDInstances = GetRDFInstances();
 
 	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)

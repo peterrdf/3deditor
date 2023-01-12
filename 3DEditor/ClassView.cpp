@@ -293,7 +293,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 				CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pRDFProperty);
 				ASSERT(pObjectRDFProperty != NULL);
 
-				auto vecRestrictions = pObjectRDFProperty->getRestrictions();
+				auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 				{
 					auto itRestrictionRDFClass = mapRDFClasses.find(vecRestrictions[iRestriction]);

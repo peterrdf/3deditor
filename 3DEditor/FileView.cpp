@@ -174,7 +174,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	/*
 	* Update non-referenced item
@@ -953,7 +953,7 @@ void CFileView::InstancesAlphabeticalView()
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecModel;
 
@@ -1018,7 +1018,7 @@ void CFileView::InstancesGroupByClassView()
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	auto mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	map<wstring, vector<CRDFInstance *> > mapModel;
 
@@ -1106,7 +1106,7 @@ void CFileView::InstancesUnreferencedItemsView()
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	auto mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecModel;
 
@@ -1192,8 +1192,8 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFProperty *> & mapRDFProperties = pModel->GetRDFProperties();
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRDFProperties = pModel->GetRDFProperties();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
 	while (iPropertyInstance != NULL)
@@ -1252,7 +1252,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pRDFProperty);
 			ASSERT(pObjectRDFProperty != NULL);
 
-			auto vecRestrictions = pObjectRDFProperty->getRestrictions();
+			auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 			{
 				char * szClassName = NULL;
@@ -1489,7 +1489,7 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecInstances;
 	vector<HTREEITEM> vecObsoleteItems;
@@ -1740,7 +1740,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	CRDFModel* pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance*>& mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	/*
 	* Instances with a geometry

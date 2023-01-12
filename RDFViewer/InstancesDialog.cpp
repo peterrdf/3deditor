@@ -37,7 +37,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<CRDFInstance *> vecModel;
 
@@ -415,7 +415,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CRDFModel * pModel = GetController()->GetModel();
 			ASSERT(pModel != NULL);
 
-			const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+			auto& mapRFDInstances = pModel->GetRDFInstances();
 
 			switch (uiCommand)
 			{

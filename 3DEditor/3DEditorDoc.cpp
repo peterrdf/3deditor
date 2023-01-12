@@ -228,7 +228,7 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 	output << "*** Unique vertices check ***\n";
 	output << "****************************************************************************************************\n\n";
 
-	const map<int64_t, CRDFInstance *> & mapRDFInstances = m_pModel->GetRDFInstances();
+	auto& mapRDFInstances = m_pModel->GetRDFInstances();
 
 	map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
 	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)

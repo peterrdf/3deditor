@@ -79,7 +79,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	CRDFModel* pModel = m_pController->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance*>& mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	vector<int64_t> vecCompatibleInstances;
 	pModel->GetCompatibleInstances(m_pRDFInstance, m_pObjectRDFProperty, vecCompatibleInstances);

@@ -88,7 +88,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	CRDFModel * pModel = m_pController->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFInstance *> & mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapRFDInstances = pModel->GetRDFInstances();
 
 	/*
 	* Restrictions
