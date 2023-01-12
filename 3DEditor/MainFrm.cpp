@@ -263,6 +263,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 	lstBasicCommands.AddTail(ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY);
+	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
 	lstBasicCommands.AddTail(ID_TEST_GENERATE_TESTS);
 	lstBasicCommands.AddTail(ID_TEST_EXECUTE_TESTS);
 

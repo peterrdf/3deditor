@@ -162,6 +162,10 @@ public: // Methods
 	void ZoomToInstance(int64_t iInstance);
 
 	// --------------------------------------------------------------------------------------------
+	// Zoom to all enabled instances
+	void ZoomOut();
+
+	// --------------------------------------------------------------------------------------------
 	// Edit properties support
 	void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
 

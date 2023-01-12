@@ -71,4 +71,5 @@ public:
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileImport();
 	afx_msg void OnUpdateFileImport(CCmdUI* pCmdUI);
+	afx_msg void OnViewZoomOut();
 };

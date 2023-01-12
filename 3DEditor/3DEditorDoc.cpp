@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_COMMAND(ID_FILE_OPEN, &CMy3DEditorDoc::OnFileOpen)
 	ON_COMMAND(ID_FILE_IMPORT, &CMy3DEditorDoc::OnFileImport)
 	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORT, &CMy3DEditorDoc::OnUpdateFileImport)
+	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMy3DEditorDoc::OnViewZoomOut)
 END_MESSAGE_MAP()
 
 
@@ -291,7 +292,6 @@ void CMy3DEditorDoc::OnFileOpen()
 	OnOpenDocument(dlgFile.GetPathName());
 }
 
-
 void CMy3DEditorDoc::OnFileImport()
 {
 	TCHAR szFilters[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|All Files (*.*)|*.*||");
@@ -306,8 +306,12 @@ void CMy3DEditorDoc::OnFileImport()
 	ImportModel(nullptr, dlgFile.GetPathName().GetString());
 }
 
-
 void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable();
+}
+
+void CMy3DEditorDoc::OnViewZoomOut()
+{
+	ZoomOut();
 }

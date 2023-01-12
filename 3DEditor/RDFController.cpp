@@ -41,7 +41,7 @@ void CRDFController::SetModel(CRDFModel * pModel)
 
 	m_bUpdatingModel = true;
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnModelChanged();
@@ -87,7 +87,19 @@ void CRDFController::ZoomToInstance(int64_t iInstance)
 
 	m_pModel->ZoomToInstance(iInstance);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnWorldDimensionsChanged();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFController::ZoomOut()
+{
+	m_pModel->ZoomOut();
+
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnWorldDimensionsChanged();
@@ -99,7 +111,7 @@ void CRDFController::ScaleAndCenter()
 {
 	m_pModel->ScaleAndCenter();
 
-	set<CRDFView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnWorldDimensionsChanged();
@@ -112,7 +124,7 @@ void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
 	m_pSelectedInstance = pInstance;
 	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(NULL, NULL);
 
-	set<CRDFView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnShowBaseInformation();
@@ -125,7 +137,7 @@ void CRDFController::ShowMetaInformation(CRDFInstance * pInstance)
 	m_pSelectedInstance = pInstance;
 	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnShowMetaInformation();
@@ -143,7 +155,7 @@ void CRDFController::SelectInstance(CRDFView * pSender, CRDFInstance * pInstance
 	m_pSelectedInstance = pInstance;
 	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstanceSelected(pSender);
@@ -167,7 +179,7 @@ void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, CRDFProper
 	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(pInstance, pProperty);
 	m_pSelectedInstance = pInstance;
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstancePropertySelected();
@@ -191,7 +203,7 @@ void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnVisibleValuesCountLimitChanged();
@@ -220,7 +232,7 @@ void CRDFController::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProp
 		m_pModel->ScaleAndCenter();
 	}
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstancePropertyEdited(pInstance, pProperty);
@@ -233,7 +245,7 @@ CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCl
 	CRDFInstance * pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
 	ASSERT(pNewRDFInstance != NULL);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnNewInstanceCreated(pSender, pNewRDFInstance);
@@ -248,7 +260,7 @@ CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::I
 	CRDFInstance* pNewRDFInstance = m_pModel->AddNewInstance(pThing);
 	ASSERT(pNewRDFInstance != NULL);
 
-	set<CRDFView*>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnNewInstanceCreated(pSender, pNewRDFInstance);
@@ -271,7 +283,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 	bool bResult = m_pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstanceDeleted(pSender, iInstance);
@@ -327,7 +339,7 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 	bool bResult = m_pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstanceDeleted(pSender, iInstance);
@@ -359,7 +371,7 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 		ASSERT(bResult);
 	}
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnInstancesDeleted(pSender);
@@ -373,7 +385,7 @@ void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstanc
 {
 	m_pModel->AddMeasurements(pInstance);
 
-	set<CRDFView *>::iterator itView = m_setViews.begin();
+	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnMeasurementsAdded(pSender, pInstance);

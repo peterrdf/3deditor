@@ -451,6 +451,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Scale and Center all Geometry", ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY
+        MENUITEM "Zoom out",                    ID_VIEW_ZOOM_OUT
     END
     POPUP "&Help"
     BEGIN
