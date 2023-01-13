@@ -341,6 +341,14 @@ namespace _dxf
 			delete m_vecEntities[i];
 		}
 	}
+
+	// --------------------------------------------------------------------------------------------
+	void _entity::setExtrsuion(const string& strX, const string& strY, const string& strZ)
+	{
+		setValue(_group_codes::extrusion_x, strX);
+		setValue(_group_codes::extrusion_y, strY);
+		setValue(_group_codes::extrusion_z, strZ);
+	}
 	// _entity
 	// --------------------------------------------------------------------------------------------
 
@@ -442,14 +450,20 @@ namespace _dxf
 		{
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::x;
+			m_mapMapping[_group_codes::x2] = _group_codes::x2;
+
 			m_dXFactor = Ax.getX();
 
 			// Y
 			m_mapMapping[_group_codes::y] = _group_codes::y;
+			m_mapMapping[_group_codes::y2] = _group_codes::y2;
+
 			m_dYFactor = Ay.getY();
 
 			// Z			
 			m_mapMapping[_group_codes::z] = _group_codes::z;
+			m_mapMapping[_group_codes::z2] = _group_codes::z2;
+
 			m_dZFactor = Nz;				
 		} // if (Nz != 0.)
 		else if (Nx != 0.)
@@ -457,16 +471,19 @@ namespace _dxf
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::z;
 			m_mapMapping[_group_codes::x2] = _group_codes::z2;
+
 			m_dXFactor = Nx;
 
 			// Y
 			m_mapMapping[_group_codes::y] = _group_codes::x;
 			m_mapMapping[_group_codes::y2] = _group_codes::x2;
+
 			m_dYFactor = Ax.getY();
 
 			// Z
 			m_mapMapping[_group_codes::z] = _group_codes::y;
 			m_mapMapping[_group_codes::z2] = _group_codes::y2;
+
 			m_dZFactor = Ay.getZ();
 		}
 		else if (Ny != 0.)
@@ -862,7 +879,7 @@ namespace _dxf
 			{_group_codes::y, ""}, // DXF: Y value of vertex coordinates (in OCS), multiple entries; one entry for each vertex
 			{_group_codes::extrusion_x, "0"}, // Extrusion direction (optional; default = 0, 0, 1) DXF: X value; APP: 3D vector
 			{_group_codes::extrusion_y, "0"}, // DXF: Y and Z values of extrusion direction (optional)
-			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)			
+			{_group_codes::extrusion_z, "1"}, // DXF: Y and Z values of extrusion direction (optional)	
 			{_polyline::flag, "0"}, // Polyline flag (bit-coded; default = 0): 1 = Closed; 128 = Plinegen
 		};
 
@@ -1431,9 +1448,15 @@ namespace _dxf
 		{
 			itEntity->setParent(this);
 
-			itEntity->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
-			itEntity->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
-			itEntity->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
+			if ((getValue(_group_codes::extrusion_x) != "0") ||
+				(getValue(_group_codes::extrusion_y) != "0") ||
+				(getValue(_group_codes::extrusion_z) != "1"))
+			{
+				itEntity->setExtrsuion(
+					getValue(_group_codes::extrusion_x),
+					getValue(_group_codes::extrusion_y),
+					getValue(_group_codes::extrusion_z));
+			}
 
 			auto iInstance = itEntity->createInstance(pParser);
 			if (iInstance != 0)
@@ -1524,17 +1547,23 @@ namespace _dxf
 			return 0;
 		}
 
-		pBlock->setValue(_group_codes::extrusion_x, getValue(_group_codes::extrusion_x));
-		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
-		pBlock->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
+		if ((getValue(_group_codes::extrusion_x) != "0") ||
+			(getValue(_group_codes::extrusion_y) != "0") ||
+			(getValue(_group_codes::extrusion_z) != "1"))
+		{
+			pBlock->setExtrsuion(
+				getValue(_group_codes::extrusion_x),
+				getValue(_group_codes::extrusion_y),
+				getValue(_group_codes::extrusion_z));
+		}
+
+		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
 		_extrusion extrusion(this);
 
 		double dX = extrusion.getValue(_group_codes::x);
 		double dY = extrusion.getValue(_group_codes::y);
 		double dZ = extrusion.getValue(_group_codes::z);		
-
-		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
 		if ((dX != 0.) || (dY != 0.) || (dZ != 0.))
 		{

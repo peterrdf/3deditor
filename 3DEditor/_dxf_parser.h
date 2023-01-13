@@ -237,6 +237,9 @@ namespace _dxf
 		virtual ~_entity();	
 
 		// ----------------------------------------------------------------------------------------
+		void setExtrsuion(const string& strX, const string& strY, const string& strZ);
+
+		// ----------------------------------------------------------------------------------------
 		virtual int64_t createInstance(_parser* pParser) = 0;
 	};
 	// _entity
@@ -250,7 +253,7 @@ namespace _dxf
 	protected: //  Members
 
 		// ----------------------------------------------------------------------------------------
-		_entity* m_pEntity;		
+		_entity* m_pEntity;
 
 		// ----------------------------------------------------------------------------------------
 		map<string, string> m_mapMapping;
