@@ -1528,42 +1528,49 @@ namespace _dxf
 		pBlock->setValue(_group_codes::extrusion_y, getValue(_group_codes::extrusion_y));
 		pBlock->setValue(_group_codes::extrusion_z, getValue(_group_codes::extrusion_z));
 
-		int64_t iBlockInstance = pBlock->createInstance(pParser);
-
-		int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
-		assert(iTransformationClass != 0);
-
-		int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
-		assert(iMatrixClass != 0);		
-
 		_extrusion extrusion(this);
 
-		// Matrix
-		int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
-		assert(iMatrixInstance != 0);
+		double dX = extrusion.getValue(_group_codes::x);
+		double dY = extrusion.getValue(_group_codes::y);
+		double dZ = extrusion.getValue(_group_codes::z);		
 
-		double dValue = extrusion.getValue(_group_codes::x);
-		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dValue, 1);
+		int64_t iBlockInstance = pBlock->createInstance(pParser);
 
-		dValue = extrusion.getValue(_group_codes::y);
-		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dValue, 1);
+		if ((dX != 0.) || (dY != 0.) || (dZ != 0.))
+		{
+			int64_t iTransformationClass = GetClassByName(pParser->getModel(), "Transformation");
+			assert(iTransformationClass != 0);
 
-		dValue = extrusion.getValue(_group_codes::z);
-		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+			int64_t iMatrixClass = GetClassByName(pParser->getModel(), "Matrix");
+			assert(iMatrixClass != 0);
 
-		// Transformation
-		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
-		assert(iTransformationInstance != 0);
+			int64_t iMatrixInstance = CreateInstance(iMatrixClass, type().c_str());
+			assert(iMatrixInstance != 0);
 
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
-		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iBlockInstance, 1);
+			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_41"), &dX, 1);
+			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_42"), &dY, 1);
+			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dZ, 1);
+
+			int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
+			assert(iTransformationInstance != 0);
+
+			SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
+			SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iBlockInstance, 1);
+
+			if (m_pParent == nullptr)
+			{
+				pParser->onInstanceCreated(this, iTransformationInstance);
+			}
+
+			return iTransformationInstance;
+		}
 
 		if (m_pParent == nullptr)
 		{
-			pParser->onInstanceCreated(this, iTransformationInstance);
+			pParser->onInstanceCreated(this, iBlockInstance);
 		}
 
-		return iTransformationInstance;
+		return iBlockInstance;
 	}
 	// _block
 	// --------------------------------------------------------------------------------------------
