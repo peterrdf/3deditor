@@ -429,25 +429,26 @@ namespace _dxf
 		double Ny = atof(m_pEntity->getValue(_group_codes::extrusion_y).c_str());
 		double Nz = atof(m_pEntity->getValue(_group_codes::extrusion_z).c_str());
 				
-		_vector3f Wy(0., 1., 0.);
-		_vector3f Wz(0., 0., 1.);
-
-		_vector3f N(Nx, Ny, Nz);
-
 		_vector3f Ax;
-		if ((abs(Nx) < (1. / 64.)) && (abs(Ny) < (1. / 64.)))
+		_vector3f Ay;
+		_vector3f Az = _vector3f(Nx, Ny, Nz).normalized();
+		if ((abs(Az.getX()) < (1. / 64.)) && (abs(Az.getY()) < (1. / 64.)))
 		{
-			Ax = Wy.cross(N);
+			Ax = _vector3f(0., 1., 0.).cross(Az).normalized();
 		}
 		else
 		{
-			Ax = Wz.cross(N);
+			Ax = _vector3f(0., 0., 1.).cross(Az).normalized();
 		}
 
-		_vector3f Ay = N.cross(Ax);
+		Ay = Az.cross(Ax).normalized();
 
 		if (Nz != 0.)
 		{
+			assert((Nx == 0.) && (Ny == 0.));
+			assert((Ax.getX() != 0.) && (Ay.getY() != 0.));
+			assert((Ax.getZ() == 0.) && (Ay.getZ() == 0.));
+
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::x;
 			m_mapMapping[_group_codes::x2] = _group_codes::x2;
@@ -468,32 +469,112 @@ namespace _dxf
 		} // if (Nz != 0.)
 		else if (Nx != 0.)
 		{
+			assert((Ny == 0.) && (Nz == 0.));
+			assert((Ax.getX() == 0.) && (Ay.getX() == 0.));
+
 			// X
 			m_mapMapping[_group_codes::x] = _group_codes::z;
 			m_mapMapping[_group_codes::x2] = _group_codes::z2;
 
 			m_dXFactor = Nx;
 
-			// Y
-			m_mapMapping[_group_codes::y] = _group_codes::x;
-			m_mapMapping[_group_codes::y2] = _group_codes::x2;
+			if (Ax.getY() != 0.)
+			{
+				assert(Ay.getZ() != 0.);
 
-			m_dYFactor = Ax.getY();
+				// Y
+				m_mapMapping[_group_codes::y] = _group_codes::x;
+				m_mapMapping[_group_codes::y2] = _group_codes::x2;
 
-			// Z
-			m_mapMapping[_group_codes::z] = _group_codes::y;
-			m_mapMapping[_group_codes::z2] = _group_codes::y2;
+				m_dYFactor = Ax.getY();
 
-			m_dZFactor = Ay.getZ();
+				// Z
+				m_mapMapping[_group_codes::z] = _group_codes::y;
+				m_mapMapping[_group_codes::z2] = _group_codes::y2;
+
+				m_dZFactor = Ay.getZ();
+			}
+			else if (Ax.getZ() != 0.)
+			{
+				assert(Ay.getY() != 0.);
+
+				// Z
+				m_mapMapping[_group_codes::z] = _group_codes::x;
+				m_mapMapping[_group_codes::z2] = _group_codes::x2;
+
+				m_dZFactor = Ax.getZ();
+
+				// Y
+				m_mapMapping[_group_codes::y] = _group_codes::y;
+				m_mapMapping[_group_codes::y2] = _group_codes::y2;
+
+				m_dYFactor = Ay.getY();
+			}
+			else
+			{
+				assert(false); // Internal error!
+			}
 		}
 		else if (Ny != 0.)
 		{
-			assert(false); // TODO
+			assert((Nx == 0.) && (Nz == 0.));
+			assert((Ax.getY() == 0.) && (Ay.getY() == 0.));
+
+			// Y
+			m_mapMapping[_group_codes::y] = _group_codes::z;
+			m_mapMapping[_group_codes::y2] = _group_codes::z2;
+
+			m_dYFactor = Ny;
+
+			if (Ax.getX() != 0.)
+			{
+				assert(Ay.getZ() != 0.);
+
+				// X
+				m_mapMapping[_group_codes::x] = _group_codes::x;
+				m_mapMapping[_group_codes::x2] = _group_codes::x2;
+
+				m_dXFactor = Ax.getX();
+
+				// Z
+				m_mapMapping[_group_codes::z] = _group_codes::y;
+				m_mapMapping[_group_codes::z2] = _group_codes::y2;
+
+				m_dZFactor = Ay.getZ();
+			}
+			else if (Ax.getZ() != 0.)
+			{
+				assert(Ay.getX() != 0.);
+
+				// Z
+				m_mapMapping[_group_codes::z] = _group_codes::x;
+				m_mapMapping[_group_codes::z2] = _group_codes::x2;
+
+				m_dXFactor = Ax.getX();
+
+				// X
+				m_mapMapping[_group_codes::x] = _group_codes::y;
+				m_mapMapping[_group_codes::x2] = _group_codes::y2;
+
+				m_dYFactor = Ay.getX();
+			}
+			else
+			{
+				assert(false); // Internal error!
+			}
+		}
+		else
+		{
+			assert(false); // Internal error!
 		}
 
 		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::y]);
 		assert(m_mapMapping[_group_codes::x] != m_mapMapping[_group_codes::z]);
 		assert(m_mapMapping[_group_codes::y] != m_mapMapping[_group_codes::z]);
+
+		assert(m_mapMapping[_group_codes::x2] != m_mapMapping[_group_codes::y2]);
+		assert(m_mapMapping[_group_codes::x2] != m_mapMapping[_group_codes::z2]);
+		assert(m_mapMapping[_group_codes::y2] != m_mapMapping[_group_codes::z2]);
 	}
 	// _extrusion
 	// --------------------------------------------------------------------------------------------
