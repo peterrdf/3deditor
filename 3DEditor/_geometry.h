@@ -189,6 +189,8 @@ struct _matrix
 };
 
 // mathematicsGeometryDoublePrecisionDerived.h
+// Example: 30 degrees in the XY plane
+//	MatrixRotateByEulerAngles(matrix, 0, 0, 2 * Pi * 30. / 360.);
 static void	MatrixRotateByEulerAngles(
 	_matrix* matrix,
 	double	alpha,
@@ -222,6 +224,31 @@ static void	MatrixRotateByEulerAngles(
 	matrix->_41 = 0.;
 	matrix->_42 = 0.;
 	matrix->_43 = 0.;
+}
+
+static void _rotateMatrix(
+	int64_t iModel, 
+	int64_t iMatrixInstance, 
+	double	alpha,
+	double	beta,
+	double	gamma)
+{
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
+
+	MatrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_33"), &matrix._33, 1);
 }
 
 template<class T>

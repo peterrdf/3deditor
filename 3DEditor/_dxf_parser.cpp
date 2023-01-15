@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "_dxf_parser.h"
 #include "conceptMesh.h"
+#include "_geometry.h"
 
 // ------------------------------------------------------------------------------------------------
 static double PI = 3.14159265;
@@ -384,7 +385,7 @@ namespace _dxf
 	// --------------------------------------------------------------------------------------------
 	double _extrusion::getValue(const string& strCode)
 	{
-		return getValue(m_pEntity,strCode);
+		return getValue(m_pEntity, strCode);
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -412,6 +413,17 @@ namespace _dxf
 		}
 
 		return dValue;
+	}
+
+	// --------------------------------------------------------------------------------------------
+	string _extrusion::getMapping(const string& strCode)
+	{
+		if (m_mapMapping.find(strCode) != m_mapMapping.end())
+		{
+			return m_mapMapping[strCode];
+		}
+
+		return "";
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1158,10 +1170,16 @@ namespace _dxf
 
 		dValue = extrusion.getValue(_group_codes::z);
 		SetDatatypeProperty(iMatrixInstance, GetPropertyByName(pParser->getModel(), "_43"), &dValue, 1);
+		
+		if ((extrusion.getMapping(_group_codes::y) == _group_codes::z) &&
+			(extrusion.getMapping(_group_codes::z) == _group_codes::y))
+		{
+			_rotateMatrix(pParser->getModel(), iMatrixInstance, 2 * PI * 90. / 360., 0., 0.);
+		}
 
 		// Transformation
 		int64_t iTransformationInstance = CreateInstance(iTransformationClass, type().c_str());
-		assert(iTransformationInstance != 0);
+		assert(iTransformationInstance != 0);		
 
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "matrix"), &iMatrixInstance, 1);
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(pParser->getModel(), "object"), &iCircleInstance, 1);
