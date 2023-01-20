@@ -111,6 +111,9 @@ public: // Methods
 	_vector3d* getBoundingBoxMin() const;
 	_vector3d* getBoundingBoxMax() const;
 	_matrix* getBoundingBoxTransformation() const;
+
+	_vector3d* getOriginalBoundingBoxMin() const;
+	_vector3d* getOriginalBoundingBoxMax() const;
 	
 	void setEnable(bool bEnable);
 	bool getEnable() const;

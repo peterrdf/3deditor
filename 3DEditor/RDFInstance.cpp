@@ -294,6 +294,18 @@ _matrix * CRDFInstance::getBoundingBoxTransformation() const
 }
 
 // ------------------------------------------------------------------------------------------------
+_vector3d* CRDFInstance::getOriginalBoundingBoxMin() const
+{
+	return m_vecOriginalBoundingBoxMin;
+}
+
+// ------------------------------------------------------------------------------------------------
+_vector3d* CRDFInstance::getOriginalBoundingBoxMax() const
+{
+	return m_vecOriginalBoundingBoxMax;
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRDFInstance::setEnable(bool bEnable)
 {
 	m_bEnable = bEnable;

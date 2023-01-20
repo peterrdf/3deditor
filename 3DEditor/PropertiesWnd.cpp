@@ -2560,7 +2560,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Bounding box min
 	*/
 	{
-		auto pBBMin = pRDFInstance->getBoundingBoxMin();
+		auto pBBMin = pRDFInstance->getOriginalBoundingBoxMin();
 
 		swprintf(szBuffer, 100, 
 			L"%.6f, %.6f, %.6f", 
@@ -2576,7 +2576,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Bounding box max
 	*/
 	{	
-		auto pBBMax = pRDFInstance->getBoundingBoxMax();
+		auto pBBMax = pRDFInstance->getOriginalBoundingBoxMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
