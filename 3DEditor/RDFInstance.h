@@ -118,7 +118,8 @@ public: // Methods
 	void setEnable(bool bEnable);
 	bool getEnable() const;
 	
-	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);	
+	void ResetScaleAndCenter();
+	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
 	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
 	
 	GLuint& VBO();

@@ -405,11 +405,7 @@ void CRDFModel::ScaleAndCenter()
 	auto itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (!itRDFInstances->second->getEnable())
-		{
-			continue;
-		}
-
+		itRDFInstances->second->ResetScaleAndCenter();
 		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
@@ -435,11 +431,6 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (!itRDFInstances->second->getEnable())
-		{
-			continue;
-		}
-
 		itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
@@ -527,6 +518,21 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fZmax = -FLT_MAX;
 
 	m_mapRDFInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX))
+	{
+		m_fXmin = -1.;
+		m_fXmax = 1.;
+		m_fYmin = -1.;
+		m_fYmax = 1.;
+		m_fZmin = -1.;
+		m_fZmax = 1.;
+	}
 
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
@@ -1194,16 +1200,10 @@ void CRDFModel::SetDefaultEnabledInstances()
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFInstances()
 {
- 	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
 	/*
-	* Enumerate all instances and calculate X/Y/Z min/max
+	* Default instances
 	*/
+
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
 	{
@@ -1213,21 +1213,17 @@ void CRDFModel::LoadRDFInstances()
 			pRDFInstance->setEnable(false);
 		}
 
-		pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
 		m_mapRDFInstances[iInstance] = pRDFInstance;
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
 
-	/**
-	* Default state
-	*/
 	SetDefaultEnabledInstances();
 
 	/**
 	* Scale and Center
 	*/
+
 	ScaleAndCenter();
 }
 

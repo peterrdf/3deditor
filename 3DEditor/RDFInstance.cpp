@@ -325,13 +325,31 @@ bool CRDFInstance::getEnable() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
+void CRDFInstance::ResetScaleAndCenter()
 {
 	if (m_pOriginalVertexBuffer->size() == 0)
 	{
 		return;
 	}
 
+	/**
+	* Vertices
+	*/
+	delete[] m_pVertices;
+	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
+	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+
+	/**
+	* Bounding box
+	*/
+	memcpy(m_vecBoundingBoxMin, m_vecOriginalBoundingBoxMin, sizeof(_vector3d));
+	memcpy(m_vecBoundingBoxMax, m_vecOriginalBoundingBoxMax, sizeof(_vector3d));
+	memcpy(m_mtxBoundingBoxTransformation, m_mtxOriginalBoundingBoxTransformation, sizeof(_matrix));
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
+{
 	/*
 	* Triangles
 	*/
@@ -459,11 +477,7 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 	if (m_pOriginalVertexBuffer->size() == 0)
 	{
 		return;
-	}
-
-	delete[] m_pVertices;
-	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
-	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	}	
 
 	/**
 	* Vertices
@@ -485,13 +499,6 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
 	}
-
-	/**
-	* Bounding box
-	*/
-	memcpy(m_vecBoundingBoxMin, m_vecOriginalBoundingBoxMin, sizeof(_vector3d));
-	memcpy(m_vecBoundingBoxMax, m_vecOriginalBoundingBoxMax, sizeof(_vector3d));
-	memcpy(m_mtxBoundingBoxTransformation, m_mtxOriginalBoundingBoxTransformation, sizeof(_matrix));
 
 	/**
 	* Bounding box - Min
