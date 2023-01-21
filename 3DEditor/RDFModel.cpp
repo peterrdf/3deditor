@@ -272,32 +272,9 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 	ImportModelW(m_iModel, szPath);
 
 	/*
-	* Load the new instances
+	* Load
 	*/
-	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0)
-	{
-		auto itRDFInstances = m_mapRDFInstances.find(iInstance);
-		if (itRDFInstances == m_mapRDFInstances.end())
-		{
-			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-			if (pRDFInstance->isReferenced())
-			{
-				pRDFInstance->setEnable(false);
-			}
-
-			pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
-			m_mapRDFInstances[iInstance] = pRDFInstance;
-		}
-
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	} // while (iInstance != 0)
-
-	/**
-	* Default state
-	*/
-	SetDefaultEnabledInstances();
+	LoadRDFInstances();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1238,13 +1215,17 @@ void CRDFModel::LoadRDFInstances()
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
 	{
-		auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-		if (pRDFInstance->isReferenced())
+		auto itRDFInstances = m_mapRDFInstances.find(iInstance);
+		if (itRDFInstances == m_mapRDFInstances.end())
 		{
-			pRDFInstance->setEnable(false);
-		}
+			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
+			if (pRDFInstance->isReferenced())
+			{
+				pRDFInstance->setEnable(false);
+			}
 
-		m_mapRDFInstances[iInstance] = pRDFInstance;
+			m_mapRDFInstances[iInstance] = pRDFInstance;
+		}
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
