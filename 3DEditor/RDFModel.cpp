@@ -537,6 +537,22 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
+
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -581,6 +597,21 @@ void CRDFModel::ZoomOut()
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
+
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------
