@@ -484,6 +484,12 @@ float CRDFModel::GetBoundingSphereDiameter() const
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::ZoomToInstance(int64_t iInstance)
 {
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
 	ASSERT(iInstance != 0);
 	ASSERT(m_mapRDFInstances.find(iInstance) != m_mapRDFInstances.end());
 
@@ -535,6 +541,12 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::ZoomOut()
 {
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -1215,17 +1227,20 @@ void CRDFModel::LoadRDFInstances()
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
 	{
-		auto itRDFInstances = m_mapRDFInstances.find(iInstance);
-		if (itRDFInstances == m_mapRDFInstances.end())
-		{
-			auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-			if (pRDFInstance->isReferenced())
-			{
-				pRDFInstance->setEnable(false);
-			}
+		CRDFInstance* pRDFInstance = nullptr;
 
+		auto itRDFInstance = m_mapRDFInstances.find(iInstance);
+		if (itRDFInstance == m_mapRDFInstances.end())
+		{
+			pRDFInstance = new CRDFInstance(m_iID++, iInstance);
 			m_mapRDFInstances[iInstance] = pRDFInstance;
 		}
+		else
+		{
+			pRDFInstance = itRDFInstance->second;
+		}
+
+		pRDFInstance->setEnable(!pRDFInstance->isReferenced());
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
