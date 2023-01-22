@@ -383,7 +383,8 @@ void CRDFModel::ScaleAndCenter()
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
 		itRDFInstances->second->ResetScaleAndCenter();
-		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		if (itRDFInstances->second->getEnable())
+			itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -408,7 +409,8 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		if (itRDFInstances->second->getEnable())
+			itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
 	/*
@@ -425,12 +427,13 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstances = m_mapRDFInstances.begin();
 	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
 	{
-		if (!itRDFInstances->second->getEnable())
-		{
-			continue;
-		}
+//		if (!itRDFInstances->second->getEnable())
+//		{
+//			continue;
+//		}
 
-		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		if (itRDFInstances->second->getEnable())
+			itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -1175,29 +1178,33 @@ void CRDFModel::LoadRDFModel()
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 {
-	iRDFInstance->setEnable(true);
+	if (iRDFInstance->getEnable() == false) {
+		iRDFInstance->setEnable(true);
 
-	auto& mapRFDInstances = GetRDFInstances();
+		if (iRDFInstance->getConceptualFacesCount() == 0) {
+			auto& mapRFDInstances = GetRDFInstances();
 
-	//
-	//	Walk over all relations (object properties)
-	//
-	RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), 0);
-	while (myProperty) {
-		if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
-			int64_t card = 0;
-			OwlInstance* values = nullptr;
-			GetObjectProperty(iRDFInstance->getInstance(), myProperty, &values, &card);
-			for (int64_t i = 0; i < card; i++) {
-				if (values[i]) {
-					auto itRFDInstance = mapRFDInstances.find(values[i]);
+			//
+			//	Walk over all relations (object properties)
+			//
+			RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), 0);
+			while (myProperty) {
+				if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
+					int64_t card = 0;
+					OwlInstance* values = nullptr;
+					GetObjectProperty(iRDFInstance->getInstance(), myProperty, &values, &card);
+					for (int64_t i = 0; i < card; i++) {
+						if (values[i]) {
+							auto itRFDInstance = mapRFDInstances.find(values[i]);
 
-					if (!itRFDInstance->second->getEnable())
-						EnableInstancesRecursively(itRFDInstance->second);
+							if (!itRFDInstance->second->getEnable())
+								EnableInstancesRecursively(itRFDInstance->second);
+						}
+					}
 				}
+				myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), myProperty);
 			}
 		}
-		myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), myProperty);
 	}
 }
 

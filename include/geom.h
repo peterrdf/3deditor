@@ -218,7 +218,7 @@ namespace GEOM
             if (propId) {
                 int64_t clsId = GetInstanceClass(m_instance);
                 int64_t minCard = 0, maxCard = 0;
-                GetPropertyRestrictionsConsolidated(clsId, propId, &minCard, &maxCard);
+                GetClassPropertyAggregatedCardinalityRestriction(clsId, propId, &minCard, &maxCard);
                 if (minCard < 0) {
                     propId = NULL; //property is not assigned to the class
                 }
