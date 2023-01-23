@@ -16,7 +16,62 @@ using namespace e57;
 #include <fstream>
 #include <time.h>
 
+#include "CityJsonRDF.h"
+
 using namespace std;
+
+// ------------------------------------------------------------------------------------------------
+struct CityJSONLog : CityJsonRDF::ILog
+{
+	CityJSONLog()
+	{
+#ifdef SHOW_CITY_JSON_LOG
+		m_logFile = "cityJsonRDF.log.txt";
+		m_fp = fopen(m_logFile, "wt");
+		if (!m_fp) {
+			AfxMessageBox(L"Can not create log file, change name in RDFModel.cpp");
+		}
+#endif
+	}
+
+	~CityJSONLog()
+	{
+#ifdef SHOW_CITY_JSON_LOG
+		if (m_fp) {
+			fclose(m_fp);
+			ShellExecuteA(GetDesktopWindow(), "open", m_logFile, 0, 0, SW_SHOW);
+			Sleep(2000);
+			DeleteFileA(m_logFile);
+		}
+#endif
+	}
+
+	virtual void Message(Level level, const char* /*category*/, const char* msg, const char* converterState) override
+	{
+#ifdef SHOW_CITY_JSON_LOG
+		if (m_fp) {
+			const char* lev = "UNKNOWN LEVEL";
+			switch (level) {
+				case CityJsonRDF::ILog::Level::Error: lev = "ERROR"; break;
+				case CityJsonRDF::ILog::Level::Warning: lev = "WARING"; break;
+				case CityJsonRDF::ILog::Level::Info: lev = "INFO"; break;
+			}
+
+			fprintf(m_fp, "%s: %s", lev, msg);
+			if (converterState && *converterState)
+				fprintf(m_fp, " (for %s)", converterState);
+			fprintf(m_fp, "\n");
+		}
+#else
+		UNREFERENCED_PARAMETER(level);
+		UNREFERENCED_PARAMETER(msg);
+		UNREFERENCED_PARAMETER(converterState);
+#endif
+	}
+
+	const char* m_logFile = NULL;
+	FILE*		m_fp = NULL;
+};
 
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
@@ -1004,9 +1059,34 @@ void CRDFModel::Load(const wchar_t * szPath)
 
 		return;
 	} // if (strExtension == L".DXF")
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// CityJSON TEST
+	if (strExtension == L".JSON") {
+		auto ext2 = szPath + wcslen(szPath) - wcslen(L".city.json");
+		if (ext2 > szPath && !_wcsicmp(ext2, L".city.json")) {
+		
+			CStringA utf8Path;
+			int cc = 0;
+			// get length (cc) of the new multibyte string excluding the \0 terminator first
+			if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, NULL, 0, 0, 0) - 1) > 0)
+			{
+				// convert
+				char* buf = utf8Path.GetBuffer(cc);
+				if (buf) WideCharToMultiByte(CP_UTF8, 0, szPath, -1, buf, cc, 0, 0);
+				utf8Path.ReleaseBuffer();
+			}
+
+			CityJSONLog log;
+			m_iModel = CityJsonRDF::Open(utf8Path, NULL, &log);
+		}
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	m_iModel = OpenModelW(szPath);
+	if (!m_iModel) {
+		m_iModel = OpenModelW(szPath);
+	}
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
@@ -1330,12 +1410,14 @@ void CRDFModel::Clean()
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard)
 {
+	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
+#if 0
 	int64_t	minCard = 0, maxCard = -1;
 	GetClassPropertyCardinalityRestriction(iRDFClass, iRDFProperty, &minCard, &maxCard);
 	if ((*pMinCard) < minCard) {
 		(*pMinCard) = minCard;
 	}
-	if (maxCard > 0 && (*pMaxCard) > maxCard) {
+	if (maxCard > 0 && ((*pMaxCard) > maxCard || (*pMaxCard) < 0)) {
 		(*pMaxCard) = maxCard;
 	}
 
@@ -1344,6 +1426,7 @@ void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, 
 		GetClassPropertyCardinalityRestrictionNested(iRDFClassParent, iRDFProperty, pMinCard, pMaxCard);
 		iRDFClassParent = GetClassParentsByIterator(iRDFClass, iRDFClassParent);
 	}
+#endif
 }
 
 

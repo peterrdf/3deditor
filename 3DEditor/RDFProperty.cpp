@@ -237,12 +237,14 @@ wstring CRDFProperty::getCardinality(int64_t iInstance) const
 
 void CRDFProperty::GetClassPropertyCardinalityRestrictionNested_(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard) const
 {
+	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
+#if 0
 	int64_t	minCard = 0, maxCard = -1;
 	GetClassPropertyCardinalityRestriction(iRDFClass, iRDFProperty, &minCard, &maxCard);
 	if ((*pMinCard) < minCard) {
 		(*pMinCard) = minCard;
 	}
-	if (maxCard > 0 && (*pMaxCard) > maxCard) {
+	if (maxCard > 0 && ((*pMaxCard) > maxCard || (*pMaxCard) < 0)) {
 		(*pMaxCard) = maxCard;
 	}
 
@@ -251,6 +253,7 @@ void CRDFProperty::GetClassPropertyCardinalityRestrictionNested_(int64_t iRDFCla
 		GetClassPropertyCardinalityRestrictionNested_(iRDFClassParent, iRDFProperty, pMinCard, pMaxCard);
 		iRDFClassParent = GetClassParentsByIterator(iRDFClass, iRDFClassParent);
 	}
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
