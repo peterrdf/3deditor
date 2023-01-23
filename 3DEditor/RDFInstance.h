@@ -49,6 +49,8 @@ private: // Members
 	_vector3d* m_vecOriginalBoundingBoxMin;
 	_vector3d* m_vecOriginalBoundingBoxMax;
 	_matrix* m_mtxOriginalBoundingBoxTransformation;
+	_vector3d* m_vecAABBBoundingBoxMin;
+	_vector3d* m_vecAABBBoundingBoxMax;
 	_vector3d* m_vecBoundingBoxMin;
 	_vector3d* m_vecBoundingBoxMax;
 	_matrix* m_mtxBoundingBoxTransformation;
@@ -114,6 +116,9 @@ public: // Methods
 
 	_vector3d* getOriginalBoundingBoxMin() const;
 	_vector3d* getOriginalBoundingBoxMax() const;
+
+	_vector3d* getAABBBoundingBoxMin() const;
+	_vector3d* getAABBBoundingBoxMax() const;
 	
 	void setEnable(bool bEnable);
 	bool getEnable() const;

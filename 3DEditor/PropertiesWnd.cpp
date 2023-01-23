@@ -2589,6 +2589,38 @@ void CPropertiesWnd::LoadBaseInformation()
 	}
 
 	/*
+	* AABB Bounding box min
+	*/
+	{
+		auto pAABBBBMin = pRDFInstance->getAABBBoundingBoxMin();
+
+		swprintf(szBuffer, 100,
+			L"%.6f, %.6f, %.6f",
+			pAABBBBMin->x, pAABBBBMin->y, pAABBBBMin->z);
+
+		auto pItem = new CMFCPropertyGridProperty(L"AABB Bounding box min", (_variant_t)szBuffer, L"AABB Bounding box min");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}
+
+	/*
+	* AABB Bounding box max
+	*/
+	{
+		auto pAABBBBMax = pRDFInstance->getAABBBoundingBoxMax();
+
+		swprintf(szBuffer, 100,
+			L"%.6f, %.6f, %.6f",
+			pAABBBBMax->x, pAABBBBMax->y, pAABBBBMax->z);
+
+		auto pItem = new CMFCPropertyGridProperty(L"AABB Bounding box max", (_variant_t)szBuffer, L"AABB Bounding box max");
+		pItem->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pItem);
+	}
+
+	/*
 	* Vertices
 	*/
 	{	
@@ -2622,6 +2654,112 @@ void CPropertiesWnd::LoadBaseInformation()
 		pProperty->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Triangles
+	*/
+	{
+		int64_t iCount = 0;
+
+		auto& vecTriangles = pRDFInstance->getTriangles();
+		for (auto pTriangle : vecTriangles)
+		{
+			iCount += const_cast<_primitives*>(&pTriangle)->indicesCount();
+		}
+
+		swprintf(szBuffer, 100, L"%lld", iCount / 3);
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of triangles", (_variant_t)szBuffer, L"Number of triangles");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Lines
+	*/
+	{
+		int64_t iCount = 0;
+
+		auto& vecLines = pRDFInstance->getLines();
+		for (auto pLine : vecLines)
+		{
+			iCount += const_cast<_primitives*>(&pLine)->indicesCount();
+		}
+
+		swprintf(szBuffer, 100, L"%lld", iCount / 2);
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of lines", (_variant_t)szBuffer, L"Number of lines");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Points
+	*/
+	{
+		int64_t iCount = 0;
+
+		auto& vecPoints = pRDFInstance->getPoints();
+		for (auto pPoint : vecPoints)
+		{
+			iCount += const_cast<_primitives*>(&pPoint)->indicesCount();
+		}
+
+		swprintf(szBuffer, 100, L"%lld", iCount);
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of lines", (_variant_t)szBuffer, L"Number of lines");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Area
+	*/
+	{
+		swprintf(szBuffer, 100, L"%.6f", GetArea(pRDFInstance->getInstance(), NULL, NULL));
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Area", (_variant_t)szBuffer, L"Area");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Perimeter
+	*/
+	{
+		swprintf(szBuffer, 100, L"%.6f", GetPerimeter(pRDFInstance->getInstance()));
+
+		auto pProperty = new CMFCPropertyGridProperty(L"Perimeter", (_variant_t)szBuffer, L"Perimeter");
+		pProperty->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pProperty);
+	}
+
+	/*
+	* Centroid, Volume
+	*/
+	{
+		double arCentroid[3];
+		double dVolume = GetCentroid(pRDFInstance->getInstance(), NULL, NULL, arCentroid);
+
+		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
+
+		auto pCentroid = new CMFCPropertyGridProperty(L"Centroid", (_variant_t)szBuffer, L"Centroid");
+		pCentroid->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pCentroid);
+
+		swprintf(szBuffer, 100, L"%.6f", dVolume);
+
+		auto pVolume = new CMFCPropertyGridProperty(L"Volume", (_variant_t)szBuffer, L"Volume");
+		pVolume->AllowEdit(FALSE);
+
+		pInstanceGroup->AddSubItem(pVolume);
 	}
 
 	m_wndPropList.AddProperty(pBaseInfoGroup);
