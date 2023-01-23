@@ -12,8 +12,7 @@
 /x64/Debug/Test3DEditor.exe
 /x64/Debug/RDFViewer.pdb
 /x64/Debug/RDFViewer.exe
-/x64/Debug/3DEditor.pdb
-/x64/Debug/3DEditor.exe
+/x64/Debug/3DEditor.*
 /3DEditor/x64/Release
 /3DEditor/3DEditor_OpenGL_Debug.txt
 /RDFViewer/x64/Release
@@ -22,8 +21,7 @@
 /x64/Release/Test3DEditor.exe
 /x64/Release/RDFViewer.pdb
 /x64/Release/RDFViewer.exe
-/x64/Release/3DEditor.pdb
-/x64/Release/3DEditor.exe
+/x64/Release/3DEditor.*
 /Test3DEditor/Test3DEditor.vcxproj.user
 /3DEditor/3DEditor.aps
 /RDFViewer/RDFViewer.aps
