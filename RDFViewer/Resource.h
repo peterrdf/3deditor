@@ -32,26 +32,27 @@
 #define IDD_DIALOG_INSTANCES            310
 #define IDC_TREE_INSTANCE_VIEW          310
 #define IDR_POPUP_INSTANCES             310
+#define TEXTFILE                        312
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
 #define IDR_POPUP_INSTANCES_MULTI_SEL   316
+#define IDR_TEXTFILE_VERTEX_SHADER2     320
+#define IDR_TEXTFILE_FRAGMENT_SHADER2   321
 #define ID_VIEW_INSTANCES               32771
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES_DISABLE            32772
+#define ID_VIEW_ZOOM_OUT                32774
 #define ID_INSTANCES_META_INFORMATION   32779
 #define ID_INSTANCES_DISABLE_ALL_BUT_THIS 32781
 #define ID_INSTANCES_ENABLE_ALL         32783
 #define ID_INSTANCES_ENABLE             32784
 #define ID_INSTANCES_REMOVE             32786
-#define TEXTFILE                        312
-#define IDR_TEXTFILE_VERTEX_SHADER2     320
-#define IDR_TEXTFILE_FRAGMENT_SHADER2   321
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        322
-#define _APS_NEXT_COMMAND_VALUE         32773
+#define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           311
 #endif

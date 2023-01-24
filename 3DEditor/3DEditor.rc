@@ -451,7 +451,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Scale and Center all Geometry", ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY
-        MENUITEM "Zoom out",                    ID_VIEW_ZOOM_OUT
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
     END
     POPUP "&Help"
     BEGIN
@@ -516,6 +516,8 @@ BEGIN
     POPUP "Instances"
     BEGIN
         MENUITEM "Zoom to",                     ID_INSTANCES_ZOOM_TO
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
+        MENUITEM SEPARATOR
         MENUITEM "Base information",            ID_INSTANCES_BASE_INFORMATION
         MENUITEM "Meta information",            ID_INSTANCES_META_INFORMATION
         MENUITEM "Save",                        ID_INSTANCES_SAVE

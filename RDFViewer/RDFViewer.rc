@@ -290,6 +290,7 @@ BEGIN
     POPUP "Instances"
     BEGIN
         MENUITEM "Zoom to",                     ID_INSTANCES_ZOOM_TO
+        MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
         MENUITEM "Enable",                      ID_INSTANCES_ENABLE
         MENUITEM "Disable All But This",        ID_INSTANCES_DISABLE_ALL_BUT_THIS

@@ -425,6 +425,13 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			}
 			break;
 
+			case ID_VIEW_ZOOM_OUT:
+			{
+				GetController()->ZoomOut();
+			}
+			break;
+
+
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
 				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();

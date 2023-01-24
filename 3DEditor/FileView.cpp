@@ -1779,6 +1779,12 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 			break;
 
+			case ID_VIEW_ZOOM_OUT:
+			{
+				GetController()->ZoomOut();
+			}
+			break;
+
 			case ID_INSTANCES_BASE_INFORMATION:
 			{
 				GetController()->ShowBaseInformation(pRDFInstanceItem->getInstance());
