@@ -454,11 +454,7 @@ void CRDFModel::ScaleAndCenter()
 	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
 		itRDFInstance->second->ResetScaleAndCenter();
-
-		if (itRDFInstance->second->getEnable())
-		{	
-			itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-		}		
+		itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -483,10 +479,7 @@ void CRDFModel::ScaleAndCenter()
 	itRDFInstance = m_mapRDFInstances.begin();
 	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
-		if (itRDFInstance->second->getEnable())
-		{
-			itRDFInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
-		}		
+		itRDFInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
 	/*
