@@ -187,7 +187,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64;$(SolutionDir)libE57Format/lib;$(SolutionDir)libCityGML/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format.lib;xerces-c_3.lib;citygml.lib;cityJsonRDF_ReleaseStaticx64.lib;cityJsonRDF_DebugStaticx64.lib</AdditionalDependencies>
+      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format.lib;xerces-c_3.lib;citygml.lib;cityJsonRDF_ReleaseStaticx64.lib;cityJsonRDF_ReleaseStaticx64.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
