@@ -59,13 +59,16 @@ void ProgressStatus::Finish()
 // ------------------------------------------------------------------------------------------------
 void ProgressStatus::SetStatusText(LPCTSTR text)
 {
-	auto pStatusBar = AfxGetMainWnd()->GetWindow(AFX_IDW_STATUS_BAR);
-	if (pStatusBar) {
-		if (text)
-			pStatusBar->SetWindowText(text);
-		else
-			pStatusBar->SetWindowText(L"Ready");
+	auto pMainWnd = AfxGetMainWnd();
+	if (pMainWnd) {
+		auto pStatusBar = pMainWnd->GetDlgItem(AFX_IDW_STATUS_BAR);
+		if (pStatusBar) {
+			if (text)
+				pStatusBar->SetWindowText(text);
+			else
+				pStatusBar->SetWindowText(L"Ready");
 
-		pStatusBar->UpdateWindow();
+			pStatusBar->UpdateWindow();
+		}
 	}
 }
