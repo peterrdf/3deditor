@@ -450,12 +450,14 @@ void CRDFModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	auto itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	auto itRDFInstance = m_mapRDFInstances.begin();
+	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
-		itRDFInstances->second->ResetScaleAndCenter();
-		if (itRDFInstances->second->getEnable())
-			itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		if (itRDFInstance->second->getEnable())
+		{
+			itRDFInstance->second->ResetScaleAndCenter();
+			itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		}		
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -477,11 +479,13 @@ void CRDFModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	itRDFInstance = m_mapRDFInstances.begin();
+	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
-//		if (itRDFInstances->second->getEnable())
-			itRDFInstances->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		if (itRDFInstance->second->getEnable())
+		{
+			itRDFInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		}		
 	}
 
 	/*
@@ -495,16 +499,13 @@ void CRDFModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	itRDFInstance = m_mapRDFInstances.begin();
+	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
-//		if (!itRDFInstances->second->getEnable())
-//		{
-//			continue;
-//		}
-
-		if (itRDFInstances->second->getEnable())
-			itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		if (itRDFInstance->second->getEnable())
+		{
+			itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		}
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
