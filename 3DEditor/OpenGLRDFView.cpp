@@ -3,11 +3,11 @@
 #include "OpenGLRDFView.h"
 #include "RDFController.h"
 #include "RDFModel.h"
+#include "MainFrm.h"
 
 #include <chrono>
 
 #include "Resource.h"
-
 #ifdef _LINUX
 #include <cfloat>
 #include <GL/gl.h>
@@ -649,6 +649,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnModelChanged()
 {
+	ProgressStatus prgs(L"Prepare rendering");
+
 #ifdef _LINUX
     m_pOGLContext->SetCurrent(*m_pWnd);
 #else
@@ -731,8 +733,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	GLuint iPointsIndicesCount = 0;
 	vector<_cohort*> vecPointsCohorts;
 
+	prgs.Start(mapRDFInstances.size());
 	for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 	{
+		prgs.Step();
+
 		CRDFInstance* pRDFInstance = itRDFInstances->second;
 		if (pRDFInstance->getVerticesCount() == 0)
 		{
@@ -872,6 +877,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		iVerticesCount += (GLsizei)pRDFInstance->getVerticesCount();
 		vecInstancesCohort.push_back(pRDFInstance);
 	} // for (; itRDFInstances != ...
+
+	prgs.Finish();
 
 	/******************************************************************************************
 	* Geometry

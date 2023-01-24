@@ -7,6 +7,7 @@
 using namespace e57;
 
 #include "CityGMLParser.h"
+#include "CityJsonRDF.h"
 
 #include "_dxf_parser.h"
 
@@ -16,7 +17,8 @@ using namespace e57;
 #include <fstream>
 #include <time.h>
 
-#include "CityJsonRDF.h"
+
+#include "MainFrm.h"
 
 using namespace std;
 
@@ -71,6 +73,19 @@ struct CityJSONLog : CityJsonRDF::ILog
 
 	const char* m_logFile = NULL;
 	FILE*		m_fp = NULL;
+};
+
+// ------------------------------------------------------------------------------------------------
+struct CityJSONProgress : CityJsonRDF::IProgress
+{
+	CityJSONProgress() : m_status(L"Reading cityJSON file") {};
+
+	virtual void Start(int range) override { m_status.Start(range); }
+	virtual void Step() override { m_status.Step(); }
+	virtual void Finish() override { m_status.Finish(); }
+
+private:
+	ProgressStatus m_status;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -421,6 +436,8 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::ScaleAndCenter()
 {
+	ProgressStatus stat(L"Calculate scene sizes");
+
 	m_fBoundingSphereDiameter = 0.f;
 
 	m_fXTranslation = 0.f;
@@ -1078,7 +1095,8 @@ void CRDFModel::Load(const wchar_t * szPath)
 			}
 
 			CityJSONLog log;
-			m_iModel = CityJsonRDF::Open(utf8Path, NULL, &log);
+			CityJSONProgress progress;
+			m_iModel = CityJsonRDF::Open(utf8Path, &progress, &log);
 		}
 	}
 
@@ -1178,6 +1196,8 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFModel()
 {
+	ProgressStatus(L"Loading RDF model schema");
+
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
 	{
@@ -1291,6 +1311,8 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::SetDefaultEnabledInstances()
 {
+	ProgressStatus prgs (L"Collect visible instances");
+
 	auto& mapRFDInstances = GetRDFInstances();
 
 	auto itRFDInstances = mapRFDInstances.begin();
@@ -1310,10 +1332,21 @@ void CRDFModel::LoadRDFInstances()
 	/*
 	* Default instances
 	*/
+	ProgressStatus prgs(L"Loading RDF instances");
 
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
+
+	int64_t cntTotal = 0;
+	for (auto i = iInstance; i; i = GetInstancesByIterator(m_iModel, i)) {
+		cntTotal++;
+	}
+	
+	prgs.Start(cntTotal);
+
 	while (iInstance != 0)
 	{
+		prgs.Step();
+
 		CRDFInstance* pRDFInstance = nullptr;
 
 		auto itRDFInstance = m_mapRDFInstances.find(iInstance);
@@ -1331,6 +1364,8 @@ void CRDFModel::LoadRDFInstances()
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
+
+	prgs.Finish();
 
 	SetDefaultEnabledInstances();
 

@@ -1079,6 +1079,8 @@ void CFileView::InstancesGroupByClassView()
 // ------------------------------------------------------------------------------------------------
 void CFileView::InstancesUnreferencedItemsView()
 {
+	ProgressStatus prgs(L"Build project tree");
+
 	m_wndFileView.DeleteAllItems();
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.begin();
@@ -1110,9 +1112,12 @@ void CFileView::InstancesUnreferencedItemsView()
 
 	vector<CRDFInstance *> vecModel;
 
+	prgs.Start(mapRFDInstances.size());
 	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 	{
+		prgs.Step();
+
 		CRDFInstance * pRDFInstance = itRFDInstances->second;
 
 		if (pRDFInstance->isReferenced())
@@ -1129,6 +1134,7 @@ void CFileView::InstancesUnreferencedItemsView()
 			ASSERT(FALSE);
 		}
 	} // for (; itRFDInstances != ...
+	prgs.Finish();
 
 	/*
 	* Model
