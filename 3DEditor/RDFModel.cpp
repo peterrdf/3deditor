@@ -2,6 +2,7 @@
 
 #include "RDFModel.h"
 #include "Generic.h"
+#include "ProgressIndicator.h"
 
 #include "E57Format.h"
 using namespace e57;
@@ -17,8 +18,6 @@ using namespace e57;
 #include <fstream>
 #include <time.h>
 
-
-#include "MainFrm.h"
 
 using namespace std;
 

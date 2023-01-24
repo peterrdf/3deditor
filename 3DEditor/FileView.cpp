@@ -8,6 +8,7 @@
 #include "Generic.h"
 #include "NewInstanceDialog.h"
 #include "FileViewConsts.h"
+#include "ProgressIndicator.h"
 
 #include <algorithm>
 

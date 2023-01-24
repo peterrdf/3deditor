@@ -9,22 +9,6 @@
 #include "ClassView.h"
 #include "PropertiesWnd.h"
 
-struct ProgressStatus
-{
-	ProgressStatus(LPCTSTR phase);
-	~ProgressStatus();
-
-	void Start(int64_t range);
-	void Step();
-	void Finish();
-
-private:
-	LPCTSTR m_phase;
-	int64_t m_range;
-	int64_t m_step;
-	int64_t m_10procents;
-};
-
 // ------------------------------------------------------------------------------------------------
 class CMainFrame : public CFrameWndEx
 {
@@ -59,7 +43,6 @@ public:
 
 // Operations
 public:
-	static void SetStatusText(LPCTSTR text = NULL);
 
 // Overrides
 public:

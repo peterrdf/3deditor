@@ -228,6 +228,7 @@
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OpenGLRDFView.h" />
     <ClInclude Include="OT.h" />
+    <ClInclude Include="ProgressIndicator.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RDFClass.h" />
     <ClInclude Include="RDFController.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="ObjectRDFProperty.cpp" />
     <ClCompile Include="OpenGLRDFView.cpp" />
     <ClCompile Include="OT.cpp" />
+    <ClCompile Include="ProgressIndicator.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="RDFClass.cpp" />
     <ClCompile Include="RDFController.cpp" />

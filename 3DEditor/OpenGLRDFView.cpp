@@ -3,11 +3,12 @@
 #include "OpenGLRDFView.h"
 #include "RDFController.h"
 #include "RDFModel.h"
-#include "MainFrm.h"
+#include "ProgressIndicator.h"
 
 #include <chrono>
 
 #include "Resource.h"
+
 #ifdef _LINUX
 #include <cfloat>
 #include <GL/gl.h>
