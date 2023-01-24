@@ -453,9 +453,10 @@ void CRDFModel::ScaleAndCenter()
 	auto itRDFInstance = m_mapRDFInstances.begin();
 	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
 	{
+		itRDFInstance->second->ResetScaleAndCenter();
+
 		if (itRDFInstance->second->getEnable())
-		{
-			itRDFInstance->second->ResetScaleAndCenter();
+		{	
 			itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 		}		
 	}
