@@ -41,8 +41,6 @@ struct CityJSONLog : CityJsonRDF::ILog
 		if (m_fp) {
 			fclose(m_fp);
 			ShellExecuteA(GetDesktopWindow(), "open", m_logFile, 0, 0, SW_SHOW);
-			Sleep(2000);
-			DeleteFileA(m_logFile);
 		}
 #endif
 	}
