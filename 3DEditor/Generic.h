@@ -45,4 +45,7 @@ static bool SaveScreenshot(unsigned char* arPixels, unsigned int iWidth, unsigne
 	return true;
 }
 
+// ------------------------------------------------------------------------------------------------
+static TCHAR SUPPORTED_FILES[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|E57 Files (*.e57)|*.e57|CityGML Files (*.gml;*citygml)|*.gml;*citygml|CityJSON Files (*.city.json)|*.city.json|Autocad DXF Files (*.dxf)|*.dxf|All Files (*.*)|*.*||");
+
 

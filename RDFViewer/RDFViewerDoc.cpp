@@ -10,6 +10,7 @@
 #endif
 
 #include "RDFViewerDoc.h"
+#include "Generic.h"
 
 #include <propkey.h>
 
@@ -22,6 +23,7 @@
 IMPLEMENT_DYNCREATE(CRDFViewerDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CRDFViewerDoc, CDocument)
+	ON_COMMAND(ID_FILE_OPEN, &CRDFViewerDoc::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -56,9 +58,6 @@ BOOL CRDFViewerDoc::OnNewDocument()
 
 	return TRUE;
 }
-
-
-
 
 // CRDFViewerDoc serialization
 
@@ -171,4 +170,15 @@ BOOL CRDFViewerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	m_pModel->Save(lpszPathName);
 
 	return TRUE;
+}
+
+void CRDFViewerDoc::OnFileOpen()
+{
+	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	OnOpenDocument(dlgFile.GetPathName());
 }
