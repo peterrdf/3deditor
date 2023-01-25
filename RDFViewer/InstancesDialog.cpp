@@ -100,11 +100,12 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		return;
 	}
 
-	map<CRDFInstance *, int>::iterator itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
-	ASSERT(itInstance2Item != m_mapInstance2Item.end());
-		
-	m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
-	m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
+	auto itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
+	if (itInstance2Item != m_mapInstance2Item.end())
+	{
+		m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
+		m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
+	}
 
 	m_bInitInProgress = false;
 }
