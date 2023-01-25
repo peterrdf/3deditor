@@ -991,6 +991,9 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged()
 {
+	/*
+	* Center
+	*/
 	CRDFController * pController = GetController();
 	ASSERT(pController != NULL);
 
@@ -1019,14 +1022,15 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
 
-	// TODO: UPDATE THE BUFFERS
+	/*
+	* Reload model
+	*/
 	OnModelChanged();
 
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    m_pWnd->RedrawWindow();
-#endif // _LINUX
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(NULL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1167,8 +1171,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	ASSERT(GetController() != NULL);
 
-	CRDFInstance * pSelectedInstance = GetController()->GetSelectedInstance();
-
+	auto pSelectedInstance = GetController()->GetSelectedInstance();
 	if ((pSelectedInstance != NULL) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
 	{
 		pSelectedInstance = NULL;
