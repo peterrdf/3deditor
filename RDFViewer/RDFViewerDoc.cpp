@@ -162,6 +162,16 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	m_pModel->PostLoad();
 
+	// Title
+	CString strTitle = AfxGetAppName();
+	strTitle += L" - ";
+	strTitle += lpszPathName;
+
+	AfxGetMainWnd()->SetWindowTextW(strTitle);
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(lpszPathName);
+
 	return TRUE;
 }
 

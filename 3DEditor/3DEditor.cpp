@@ -105,7 +105,7 @@ BOOL CMy3DEditorApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("3DEditor, RDF LTD"));
 	LoadStdProfileSettings(4);  // Load standard INI file options (including MRU)
 
 
@@ -281,3 +281,11 @@ void CMy3DEditorApp::SaveCustomState()
 
 
 
+
+
+void CMy3DEditorApp::AddToRecentFileList(LPCTSTR lpszPathName)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	CWinAppEx::AddToRecentFileList(lpszPathName);
+}

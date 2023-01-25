@@ -35,6 +35,7 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+	virtual void AddToRecentFileList(LPCTSTR lpszPathName);
 };
 
 extern CMy3DEditorApp theApp;
