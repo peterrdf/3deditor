@@ -50,9 +50,6 @@
     <ClInclude Include="..\include\Text2RDF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\3DEditor\OT.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -137,9 +134,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\OT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\UndefinedRDFProperty.cpp">

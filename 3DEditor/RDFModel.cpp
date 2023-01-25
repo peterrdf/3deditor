@@ -1017,9 +1017,7 @@ void CRDFModel::LoadE57(const wchar_t* szPath)
 		/*
 		* Octree 2
 		*/
-#ifndef _DEBUG_OCTREE
 		m_pOctree->buildMesh();
-#endif // _DEBUG_OCTREE
 	}
 	catch (E57Exception& ex) {
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
@@ -1120,9 +1118,6 @@ void CRDFModel::LoadCityJSON(const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::PostLoad()
 {
-#ifdef _DEBUG_OCTREE
-	m_pOctree->buildMesh();
-#endif // _DEBUG_OCTREE
 }
 
 // ------------------------------------------------------------------------------------------------

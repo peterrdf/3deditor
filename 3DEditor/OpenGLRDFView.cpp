@@ -47,11 +47,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bShowLines(TRUE)
 	, m_fLineWidth(1.f)
 	, m_bShowPoints(TRUE)
-#ifdef	_DEBUG_OCTREE
-	, m_fPointSize(10.f)
-#else
 	, m_fPointSize(1.f)
-#endif // _DEBUG_OCTREE
 	, m_bShowBoundingBoxes(FALSE)
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
@@ -1048,51 +1044,17 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-#ifdef _DEBUG_OCTREE
-/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView * /*pSender*/, CRDFInstance * pInstance)
-#else
 /*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/)
-#endif // _DEBUG_OCTREE
 {
 	/*
 	* Reload model
 	*/
 	OnModelChanged();
 
-#ifdef _DEBUG_OCTREE 
-	if (COctree::s_bStepByStepMode)
-	{
-		ASSERT(GetController() != NULL);
-		GetController()->ZoomToInstance(pInstance->getInstance());
-
-		while (true)
-		{
-			MSG msg;
-			while (GetMessage(&msg, NULL, 0, 0))
-			{
-				if (msg.message == WM_KEYDOWN)
-				{
-					switch (msg.wParam)
-					{
-					case VK_RETURN:
-						return;
-
-					default:
-						break;
-					}
-				}
-
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-	} // if (COcttree::s_bStepByStepMode)
-#else
 	/*
 	* Restore the selection
 	*/
 	OnInstanceSelected(NULL);
-#endif // _DEBUG_OCTREE 	
 }
 
 // ------------------------------------------------------------------------------------------------

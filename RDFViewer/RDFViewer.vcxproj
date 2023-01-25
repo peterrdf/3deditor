@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClInclude Include="..\3DEditor\CityGMLParser.h" />
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
-    <ClInclude Include="..\3DEditor\OT.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h" />
     <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
@@ -222,7 +221,6 @@
     <ClCompile Include="..\3DEditor\IntRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\ObjectRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
-    <ClCompile Include="..\3DEditor\OT.cpp" />
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp" />
     <ClCompile Include="..\3DEditor\RDFClass.cpp" />
     <ClCompile Include="..\3DEditor\RDFController.cpp" />
