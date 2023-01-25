@@ -57,7 +57,7 @@ public: // Methods
 #ifdef _LINUX
 				wxLogError(wxT("OpenGL error state couldn't be reset."));
 #else
-				MessageBox(NULL, L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 #endif // _LINUX
@@ -70,7 +70,7 @@ public: // Methods
 #ifdef _LINUX
 			wxLogError(wxT("OpenGL error %d"), err);
 #else
-			MessageBox(NULL, (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 #endif // _LINUX
@@ -946,7 +946,7 @@ public: // Methods
 		{
 			if (RegisterClassEx(&WndClassEx) == 0)
 			{
-				MessageBox(NULL, L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
@@ -1018,7 +1018,7 @@ public: // Methods
 				CString strErrorMessage;
 				strErrorMessage.Format(L"OpenGL version %d.%d or higher is required.", MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
 
-				MessageBox(NULL, strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
@@ -1044,7 +1044,7 @@ public: // Methods
 		} // if (glewInit() == GLEW_OK) 
 		else
 		{
-			MessageBox(NULL, L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}

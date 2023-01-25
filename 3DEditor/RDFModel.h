@@ -176,6 +176,10 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Loads a model
 	void Load(const wchar_t * szPath);
+	void LoadE57(const wchar_t* szPath);
+	void LoadCityGML(const wchar_t* szPath);
+	void LoadDXF(const wchar_t* szPath);
+	void LoadCityJSON(const wchar_t* szPath);
 
 	// --------------------------------------------------------------------------------------------
 	// Loads a model
