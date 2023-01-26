@@ -3245,32 +3245,26 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::Rotate(float fXSpin, float fYSpin)
+void COpenGLRDFView::Rotate(float fXAngle, float fYAngle)
 {
-	m_fXAngle += fXSpin * (180.f / (float)M_PI);
-	if (m_fXAngle > 360.0)
+	m_fXAngle += fXAngle * (180.f / (float)M_PI);
+	if (m_fXAngle > 360.f)
 	{
-		m_fXAngle = m_fXAngle - 360.f;
+		m_fXAngle -= 360.f;
 	}
-	else
+	else if (m_fXAngle < -360.f)
 	{
-		if (m_fXAngle < 0.0)
-		{
-			m_fXAngle = m_fXAngle + 360.f;
-		}
+		m_fXAngle += 360.f;
 	}
 
-	m_fYAngle += fYSpin * (180.f / (float)M_PI);
-	if (m_fYAngle > 360.0)
+	m_fYAngle += fYAngle * (180.f / (float)M_PI);
+	if (m_fYAngle > 360.f)
 	{
 		m_fYAngle = m_fYAngle - 360.f;
 	}
-	else
+	else if (m_fYAngle < -360.f)
 	{
-		if (m_fYAngle < 0.0)
-		{
-			m_fYAngle = m_fYAngle + 360.f;
-		}
+		m_fYAngle += 360.f;
 	}
 
 #ifdef _LINUX
