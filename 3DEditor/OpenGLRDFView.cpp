@@ -34,8 +34,8 @@ wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 // ------------------------------------------------------------------------------------------------
 const float ZOOM_SPEED_MOUSE = 0.025f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
-const float PAN_SPEED_MOUSE = 5.f;
-const float PAN_SPEED_KEYS = 5.f;
+const float PAN_SPEED_MOUSE = 4.f;
+const float PAN_SPEED_KEYS = 4.f;
 
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
@@ -586,9 +586,66 @@ void COpenGLRDFView::Draw(CDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::SetView(enum enumView enView)
+{
+	switch (enView)
+	{
+		case enumView::Front:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		case enumView::Right:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = -90.;
+		}
+		break;
+
+		case enumView::Top:
+		{
+			m_fXAngle = 90.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		case enumView::Back:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = -180.;
+		}
+		break;
+
+		case enumView::Left:
+		{
+			m_fXAngle = 0.;
+			m_fYAngle = 90.;
+		}
+		break;
+
+		case enumView::Bottom:
+		{
+			m_fXAngle = -90.;
+			m_fYAngle = 0.;
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+	} // switch (enView)
+
+	m_pWnd->RedrawWindow();
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
-	if (enEvent == meLBtnUp)
+	if (enEvent == enumMouseEvent::meLBtnUp)
 	{
 		/*
 		* OnSelectedItemChanged() notification
@@ -617,24 +674,24 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	switch (enEvent)
 	{
-		case meMove:
+		case enumMouseEvent::meMove:
 		{
 			OnMouseMoveEvent(nFlags, point);
 		}
 		break;
 
-		case meLBtnDown:
-		case meMBtnDown:
-		case meRBtnDown:
+		case enumMouseEvent::meLBtnDown:
+		case enumMouseEvent::meMBtnDown:
+		case enumMouseEvent::meRBtnDown:
 		{
 			m_ptStartMousePosition = point;
 			m_ptPrevMousePosition = point;
 		}
 		break;
 
-		case meLBtnUp:
-		case meMBtnUp:
-		case meRBtnUp:
+		case enumMouseEvent::meLBtnUp:
+		case enumMouseEvent::meMBtnUp:
+		case enumMouseEvent::meRBtnUp:
 		{
 			m_ptStartMousePosition.x = -1;
 			m_ptStartMousePosition.y = -1;
@@ -3130,8 +3187,8 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
 		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
 
-		const float ROTATION_SPEED = 1.f / 250.f;
-		const float ROTATION_SENSITIVITY = 1.1f;
+		const float ROTATION_SPEED = 1.f / 2500.f;
+		const float ROTATION_SENSITIVITY = 0.1f;
 
 		if(abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
 		{
@@ -3190,29 +3247,29 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::Rotate(float fXSpin, float fYSpin)
 {
-	m_fXAngle += fXSpin;
+	m_fXAngle += fXSpin * (180.f / (float)M_PI);
 	if (m_fXAngle > 360.0)
 	{
-		m_fXAngle = m_fXAngle - 360.0f;
+		m_fXAngle = m_fXAngle - 360.f;
 	}
 	else
 	{
 		if (m_fXAngle < 0.0)
 		{
-			m_fXAngle = m_fXAngle + 360.0f;
+			m_fXAngle = m_fXAngle + 360.f;
 		}
 	}
 
-	m_fYAngle += fYSpin;
+	m_fYAngle += fYSpin * (180.f / (float)M_PI);
 	if (m_fYAngle > 360.0)
 	{
-		m_fYAngle = m_fYAngle - 360.0f;
+		m_fYAngle = m_fYAngle - 360.f;
 	}
 	else
 	{
 		if (m_fYAngle < 0.0)
 		{
-			m_fYAngle = m_fYAngle + 360.0f;
+			m_fYAngle = m_fYAngle + 360.f;
 		}
 	}
 

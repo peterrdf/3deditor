@@ -452,6 +452,16 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Scale and Center all Geometry", ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
+        MENUITEM SEPARATOR
+        POPUP "View"
+        BEGIN
+            MENUITEM "Front",                       ID_VIEW_FRONT
+            MENUITEM "Top",                         ID_VIEW_TOP
+            MENUITEM "Right",                       ID_VIEW_RIGHT
+            MENUITEM "Back",                        ID_VIEW_BACK
+            MENUITEM "Left",                        ID_VIEW_LEFT
+            MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+        END
     END
     POPUP "&Help"
     BEGIN

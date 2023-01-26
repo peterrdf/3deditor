@@ -262,8 +262,18 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYTYPE);
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
+
+	// View
 	lstBasicCommands.AddTail(ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY);
 	lstBasicCommands.AddTail(ID_VIEW_ZOOM_OUT);
+	lstBasicCommands.AddTail(ID_VIEW_TOP);
+	lstBasicCommands.AddTail(ID_VIEW_LEFT);
+	lstBasicCommands.AddTail(ID_VIEW_RIGHT);
+	lstBasicCommands.AddTail(ID_VIEW_BOTTOM);
+	lstBasicCommands.AddTail(ID_VIEW_FRONT);
+	lstBasicCommands.AddTail(ID_VIEW_BACK);
+
+	// Test
 	lstBasicCommands.AddTail(ID_TEST_GENERATE_TESTS);
 	lstBasicCommands.AddTail(ID_TEST_EXECUTE_TESTS);
 

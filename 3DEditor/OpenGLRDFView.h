@@ -17,7 +17,7 @@
 #define MK_RBUTTON 4
 #endif
 
-enum enumMouseEvent
+enum class enumMouseEvent
 {
 	meMove = 0,
 	meLBtnDown = 1,
@@ -26,6 +26,16 @@ enum enumMouseEvent
 	meMBtnUp = 4,
 	meRBtnDown = 5,
 	meRBtnUp = 6,
+};
+
+enum class enumView
+{
+	Top = 0,
+	Left,
+	Right,
+	Bottom,
+	Front,
+	Back,
 };
 
 #define CULL_FACES_NONE L"<none>"
@@ -216,6 +226,10 @@ public: // Methods
 #else
 	void Draw(CDC * pDC);
 #endif // _LINUX
+
+	// --------------------------------------------------------------------------------------------
+	// View
+	void SetView(enum enumView enView);
 
 	// --------------------------------------------------------------------------------------------
 	// Mouse

@@ -131,13 +131,20 @@
 #define ID_INSTANCES_ENABLE_ALL_REFERENCED 32805
 #define ID_INSTANCES_BASE_INFORMATION   32806
 #define ID_VIEW_ZOOM_OUT                32807
+#define ID_VIEW_VIEW                    32808
+#define ID_VIEW_FRONT                   32809
+#define ID_VIEW_TOP                     32810
+#define ID_VIEW_RIGHT                   32811
+#define ID_VIEW_BACK                    32812
+#define ID_VIEW_LEFT                    32813
+#define ID_VIEW_BOTTOM                  32814
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        322
-#define _APS_NEXT_COMMAND_VALUE         32808
+#define _APS_NEXT_COMMAND_VALUE         32815
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

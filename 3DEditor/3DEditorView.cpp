@@ -40,6 +40,12 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_WM_DROPFILES()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYUP()
+	ON_COMMAND(ID_VIEW_TOP, &CMy3DEditorView::OnViewTop)
+	ON_COMMAND(ID_VIEW_LEFT, &CMy3DEditorView::OnViewLeft)
+	ON_COMMAND(ID_VIEW_RIGHT, &CMy3DEditorView::OnViewRight)
+	ON_COMMAND(ID_VIEW_BOTTOM, &CMy3DEditorView::OnViewBottom)
+	ON_COMMAND(ID_VIEW_FRONT, &CMy3DEditorView::OnViewFront)
+	ON_COMMAND(ID_VIEW_BACK, &CMy3DEditorView::OnViewBack)
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -172,7 +178,7 @@ void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -183,7 +189,7 @@ void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -194,7 +200,7 @@ void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -205,7 +211,7 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -215,7 +221,7 @@ void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -225,7 +231,7 @@ void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -236,7 +242,7 @@ void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMove, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMove, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -289,4 +295,52 @@ void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 	CView::OnKeyUp(nChar, nRepCnt, nFlags);
+}
+
+void CMy3DEditorView::OnViewTop()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Top);
+	}
+}
+
+void CMy3DEditorView::OnViewLeft()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Left);
+	}
+}
+
+void CMy3DEditorView::OnViewRight()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Right);
+	}
+}
+
+void CMy3DEditorView::OnViewBottom()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Bottom);
+	}
+}
+
+void CMy3DEditorView::OnViewFront()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Front);
+	}
+}
+
+void CMy3DEditorView::OnViewBack()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetView(enumView::Back);
+	}
 }

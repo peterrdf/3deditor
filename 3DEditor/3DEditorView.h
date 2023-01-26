@@ -64,6 +64,12 @@ public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnViewTop();
+	afx_msg void OnViewLeft();
+	afx_msg void OnViewRight();
+	afx_msg void OnViewBottom();
+	afx_msg void OnViewFront();
+	afx_msg void OnViewBack();
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp

@@ -174,7 +174,7 @@ void CRDFViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -185,7 +185,7 @@ void CRDFViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meLBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -196,7 +196,7 @@ void CRDFViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -207,7 +207,7 @@ void CRDFViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -218,7 +218,7 @@ void CRDFViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -228,7 +228,7 @@ void CRDFViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meRBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -239,7 +239,7 @@ void CRDFViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(meMove, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMove, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
