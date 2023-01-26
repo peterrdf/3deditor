@@ -2613,7 +2613,7 @@ OwlClass	DECL STDC	GetInstanceClassByIteratorEx(
 
 //
 //
-static	inline	bool	GetInstancePropertyCardinalityRestriction(
+static	inline	void	GetInstancePropertyCardinalityRestriction(
 									OwlInstance				owlInstance,
 									RdfProperty				rdfProperty,
 									int64_t					* minCard,
