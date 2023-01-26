@@ -32,6 +32,10 @@ wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
 wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
 // ------------------------------------------------------------------------------------------------
+const float ZOOM_SPEED = 0.025f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.01f;
+
+// ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
 #else
@@ -641,6 +645,15 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 			ASSERT(FALSE);
 			break;
 	} // switch (enEvent)
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	UNREFERENCED_PARAMETER(nFlags);
+	UNREFERENCED_PARAMETER(pt);
+
+	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3062,8 +3075,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		return;
 	}
 
-	float fBoundingSphereDiameter = pModel->GetBoundingSphereDiameter();
-
 	/*
 	* Rotate
 	*/
@@ -3072,11 +3083,22 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
 		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
 
-		const float ROTATE_SPEED = 0.075f;
+		const float ROTATION_SPEED = 1.f / 250.f;
+		const float ROTATION_SENSITIVITY = 1.1f;
 
-		Rotate(fXAngle* ROTATE_SPEED, fYAngle* ROTATE_SPEED);
+		if(abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
+		{
+			fYAngle = 0.;
+		}
+		else
+		{
+			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+			{
+				fXAngle = 0.;
+			}
+		}
 
-		m_ptPrevMousePosition = point;
+		Rotate(fXAngle * ROTATION_SPEED, fYAngle * ROTATION_SPEED);
 
 		m_ptPrevMousePosition = point;
 
@@ -3088,7 +3110,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
 	{
-		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -(fBoundingSphereDiameter * 0.05f) : (fBoundingSphereDiameter * 0.05f));
+		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_fZTranslation) * ZOOM_SPEED : abs(m_fZTranslation) * ZOOM_SPEED);
 
 		m_ptPrevMousePosition = point;
 
@@ -3100,24 +3122,11 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
 	{
-		int iWidth = 0;
-		int iHeight = 0;
-
-#ifdef _LINUX
-		const wxSize szClient = m_pWnd->GetClientSize();
-
-		iWidth = szClient.GetWidth();
-		iHeight = szClient.GetHeight();
-#else
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
 
-		iWidth = rcClient.Width();
-		iHeight = rcClient.Height();
-#endif // _LINUX
-
-		m_fXTranslation += (((float)point.x - (float)m_ptPrevMousePosition.x) / iWidth) * (2.f * fBoundingSphereDiameter);
-		m_fYTranslation -= (((float)point.y - (float)m_ptPrevMousePosition.y) / iHeight) * (2.f * fBoundingSphereDiameter);
+		m_fXTranslation += 4.f * (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width());
+		m_fYTranslation -= 4.f * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
 
 #ifdef _LINUX
         m_pWnd->Refresh(false);

@@ -218,8 +218,12 @@ public: // Methods
 #endif // _LINUX
 
 	// --------------------------------------------------------------------------------------------
-	// Handles the events
+	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
+
+	// --------------------------------------------------------------------------------------------
+	// Mouse
+	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView

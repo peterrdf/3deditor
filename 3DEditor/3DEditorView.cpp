@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_DROPFILES()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -209,7 +210,6 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 	CView::OnMButtonUp(nFlags, point);
 }
 
-
 void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
@@ -268,4 +268,14 @@ void CMy3DEditorView::OnDropFiles(HDROP hDropInfo)
 
 	// Free the memory block containing the dropped-file information 
 	DragFinish(hDropInfo);
+}
+
+BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
+	}
+
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }
