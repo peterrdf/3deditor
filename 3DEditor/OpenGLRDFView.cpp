@@ -32,8 +32,10 @@ wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
 wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
 // ------------------------------------------------------------------------------------------------
-const float ZOOM_SPEED = 0.025f;
-const float ZOOM_SPEED_MOUSE_WHEEL = 0.01f;
+const float ZOOM_SPEED_MOUSE = 0.025f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
+const float PAN_SPEED_MOUSE = 5.f;
+const float PAN_SPEED_KEYS = 5.f;
 
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
@@ -654,6 +656,51 @@ void COpenGLRDFView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	UNREFERENCED_PARAMETER(pt);
 
 	Zoom((float)zDelta < 0.f ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	UNREFERENCED_PARAMETER(nRepCnt);
+	UNREFERENCED_PARAMETER(nFlags);
+
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	switch (nChar)
+	{
+		case VK_UP:
+		{
+			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_DOWN:
+		{
+			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_LEFT:
+		{
+			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+
+		case VK_RIGHT:
+		{
+			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
+
+			m_pWnd->RedrawWindow();
+		}
+		break;
+	} // switch (nChar)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3110,7 +3157,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	*/
 	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
 	{
-		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_fZTranslation) * ZOOM_SPEED : abs(m_fZTranslation) * ZOOM_SPEED);
+		Zoom(point.y - m_ptPrevMousePosition.y > 0 ? -abs(m_fZTranslation) * ZOOM_SPEED_MOUSE : abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
 
 		m_ptPrevMousePosition = point;
 
@@ -3125,8 +3172,8 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
 
-		m_fXTranslation += 4.f * (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width());
-		m_fYTranslation -= 4.f * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
+		m_fXTranslation += PAN_SPEED_MOUSE * (((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width());
+		m_fYTranslation -= PAN_SPEED_MOUSE * (((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
 
 #ifdef _LINUX
         m_pWnd->Refresh(false);

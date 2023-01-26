@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_WM_MOUSEMOVE()
 	ON_WM_DROPFILES()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -278,4 +279,14 @@ BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
+	}
+
+	CView::OnKeyUp(nChar, nRepCnt, nFlags);
 }

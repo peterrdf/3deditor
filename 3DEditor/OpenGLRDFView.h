@@ -226,6 +226,10 @@ public: // Methods
 	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 
 	// --------------------------------------------------------------------------------------------
+	// Mouse
+	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	// --------------------------------------------------------------------------------------------
 	// CRDFView
 	virtual void OnModelChanged();
 
