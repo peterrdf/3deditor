@@ -453,6 +453,11 @@ BEGIN
         MENUITEM "Scale and Center all Geometry", ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY
         MENUITEM "Zoom extent",                 ID_VIEW_ZOOM_OUT
         MENUITEM SEPARATOR
+        POPUP "Projection"
+        BEGIN
+            MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
+            MENUITEM "Isometric",                   ID_PROJECTION_ISOMETRIC
+        END
         POPUP "View"
         BEGIN
             MENUITEM "Front",                       ID_VIEW_FRONT

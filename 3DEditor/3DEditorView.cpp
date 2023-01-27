@@ -46,6 +46,10 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_COMMAND(ID_VIEW_BOTTOM, &CMy3DEditorView::OnViewBottom)
 	ON_COMMAND(ID_VIEW_FRONT, &CMy3DEditorView::OnViewFront)
 	ON_COMMAND(ID_VIEW_BACK, &CMy3DEditorView::OnViewBack)
+	ON_COMMAND(ID_PROJECTION_PERSPECTIVE, &CMy3DEditorView::OnProjectionPerspective)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CMy3DEditorView::OnUpdateProjectionPerspective)
+	ON_COMMAND(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnProjectionIsometric)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnUpdateProjectionIsometric)
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -178,7 +182,7 @@ void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -189,7 +193,7 @@ void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meLBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -200,7 +204,7 @@ void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -211,7 +215,7 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -221,7 +225,7 @@ void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnDown, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -231,7 +235,7 @@ void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meRBtnUp, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -242,7 +246,7 @@ void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::meMove, nFlags, point);
+		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -343,4 +347,32 @@ void CMy3DEditorView::OnViewBack()
 	{
 		m_pOpenGLView->SetView(enumView::Back);
 	}
+}
+
+void CMy3DEditorView::OnProjectionPerspective()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetProjection(enumProjection::Perspective);
+	}
+}
+
+void CMy3DEditorView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != NULL);
+	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->GetProjection() == enumProjection::Perspective));
+}
+
+void CMy3DEditorView::OnProjectionIsometric()
+{
+	if (m_pOpenGLView != NULL)
+	{
+		m_pOpenGLView->SetProjection(enumProjection::Isometric);
+	}
+}
+
+void CMy3DEditorView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != NULL);
+	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->GetProjection() == enumProjection::Isometric));
 }

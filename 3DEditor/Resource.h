@@ -138,13 +138,16 @@
 #define ID_VIEW_BACK                    32812
 #define ID_VIEW_LEFT                    32813
 #define ID_VIEW_BOTTOM                  32814
+#define ID_VIEW_PROJECTION              32815
+#define ID_PROJECTION_PERSPECTIVE       32816
+#define ID_PROJECTION_ISOMETRIC         32817
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        322
-#define _APS_NEXT_COMMAND_VALUE         32815
+#define _APS_NEXT_COMMAND_VALUE         32818
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

@@ -70,6 +70,10 @@ public:
 	afx_msg void OnViewBottom();
 	afx_msg void OnViewFront();
 	afx_msg void OnViewBack();
+	afx_msg void OnProjectionPerspective();
+	afx_msg void OnUpdateProjectionPerspective(CCmdUI* pCmdUI);
+	afx_msg void OnProjectionIsometric();
+	afx_msg void OnUpdateProjectionIsometric(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp

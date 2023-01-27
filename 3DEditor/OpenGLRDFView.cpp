@@ -36,6 +36,8 @@ const float ZOOM_SPEED_MOUSE = 0.025f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
 const float PAN_SPEED_MOUSE = 4.f;
 const float PAN_SPEED_KEYS = 4.f;
+const float ROTATION_SPEED = 1.f / 2500.f;
+const float ROTATION_SENSITIVITY = 0.1f;
 
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
@@ -46,6 +48,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	: _oglRenderer()
 	, CRDFView()
 	, m_pWnd(pWnd)
+	, m_enProjection(enumProjection::Perspective)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
 	, m_bShowFacesPolygons(FALSE)
@@ -468,8 +471,29 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
 
-	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-	m_pOGLProgram->setProjectionMatrix(matProjection);
+	// Projection
+	switch (m_enProjection)
+	{
+		case enumProjection::Perspective:
+		{
+			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+			m_pOGLProgram->setProjectionMatrix(matProjection);
+		}
+		break;
+
+		case enumProjection::Isometric:
+		{
+			glm::mat4 matProjection = glm::ortho<GLdouble>(-1., 1., -1., 1., zNear, zFar);
+			m_pOGLProgram->setProjectionMatrix(matProjection);
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+	}
 
 	/*
 	* Model-View Matrix
@@ -586,6 +610,20 @@ void COpenGLRDFView::Draw(CDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::SetProjection(enumProjection enProjection)
+{
+	m_enProjection = enProjection;
+
+	m_pWnd->RedrawWindow();
+}
+
+// ------------------------------------------------------------------------------------------------
+enumProjection COpenGLRDFView::GetProjection() const
+{
+	return m_enProjection;
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::SetView(enum enumView enView)
 {
 	switch (enView)
@@ -645,7 +683,7 @@ void COpenGLRDFView::SetView(enum enumView enView)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
-	if (enEvent == enumMouseEvent::meLBtnUp)
+	if (enEvent == enumMouseEvent::LBtnUp)
 	{
 		/*
 		* OnSelectedItemChanged() notification
@@ -674,24 +712,24 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	switch (enEvent)
 	{
-		case enumMouseEvent::meMove:
+		case enumMouseEvent::Move:
 		{
 			OnMouseMoveEvent(nFlags, point);
 		}
 		break;
 
-		case enumMouseEvent::meLBtnDown:
-		case enumMouseEvent::meMBtnDown:
-		case enumMouseEvent::meRBtnDown:
+		case enumMouseEvent::LBtnDown:
+		case enumMouseEvent::MBtnDown:
+		case enumMouseEvent::RBtnDown:
 		{
 			m_ptStartMousePosition = point;
 			m_ptPrevMousePosition = point;
 		}
 		break;
 
-		case enumMouseEvent::meLBtnUp:
-		case enumMouseEvent::meMBtnUp:
-		case enumMouseEvent::meRBtnUp:
+		case enumMouseEvent::LBtnUp:
+		case enumMouseEvent::MBtnUp:
+		case enumMouseEvent::RBtnUp:
 		{
 			m_ptStartMousePosition.x = -1;
 			m_ptStartMousePosition.y = -1;
@@ -3186,9 +3224,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	{
 		float fXAngle = ((float)point.y - (float)m_ptPrevMousePosition.y);
 		float fYAngle = ((float)point.x - (float)m_ptPrevMousePosition.x);
-
-		const float ROTATION_SPEED = 1.f / 2500.f;
-		const float ROTATION_SENSITIVITY = 0.1f;
 
 		if(abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
 		{

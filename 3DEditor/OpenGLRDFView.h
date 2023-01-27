@@ -19,13 +19,19 @@
 
 enum class enumMouseEvent
 {
-	meMove = 0,
-	meLBtnDown = 1,
-	meLBtnUp = 2,
-	meMBtnDown = 3,
-	meMBtnUp = 4,
-	meRBtnDown = 5,
-	meRBtnUp = 6,
+	Move = 0,
+	LBtnDown,
+	LBtnUp,
+	MBtnDown,
+	MBtnUp,
+	RBtnDown,
+	RBtnUp,
+};
+
+enum class enumProjection
+{
+	Perspective = 0,
+	Isometric,
 };
 
 enum class enumView
@@ -56,6 +62,9 @@ private: // Members
 #else
 	CWnd * m_pWnd;
 #endif // _LINUX	
+
+	// Projection
+	enumProjection  m_enProjection;
 
 	// UI
 	BOOL m_bShowFaces;
@@ -228,63 +237,35 @@ public: // Methods
 #endif // _LINUX
 
 	// --------------------------------------------------------------------------------------------
+	// Projection
+	void SetProjection(enumProjection enProjection);
+	enumProjection GetProjection() const;
+
+	// --------------------------------------------------------------------------------------------
 	// View
-	void SetView(enum enumView enView);
+	void SetView(enumView enView);
 
 	// --------------------------------------------------------------------------------------------
 	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-
-	// --------------------------------------------------------------------------------------------
-	// Mouse
 	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 
 	// --------------------------------------------------------------------------------------------
-	// Mouse
+	// Keyboard
 	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
 	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnWorldDimensionsChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstancesDeleted(CRDFView * pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void Reset();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstanceSelected(CRDFView * pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstancePropertySelected();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstancesEnabledStateChanged();
 
 protected: // Methods
