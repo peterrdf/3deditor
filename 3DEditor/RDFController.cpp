@@ -119,6 +119,21 @@ void CRDFController::ScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRDFController::Save(CRDFInstance* pInstance)
+{
+	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("bin"), pInstance->getUniqueName(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	SaveInstanceTreeW(pInstance->getInstance(), dlgFile.GetPathName());
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
 {
 	m_pSelectedInstance = pInstance;

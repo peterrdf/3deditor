@@ -575,6 +575,31 @@ BEGIN
     END
 END
 
+IDR_MENU_OPENGL MENU
+BEGIN
+    POPUP "SETTINGS"
+    BEGIN
+        MENUITEM "Zoom to", ID_INSTANCES_ZOOM_TO
+        MENUITEM "Zoom extent", ID_VIEW_ZOOM_OUT
+        MENUITEM SEPARATOR
+        MENUITEM "Save", ID_INSTANCES_SAVE
+        MENUITEM SEPARATOR
+    POPUP "Projection"
+        BEGIN
+            MENUITEM "Perspective", ID_PROJECTION_PERSPECTIVE
+            MENUITEM "Isometric", ID_PROJECTION_ISOMETRIC
+        END
+    POPUP "View"
+        BEGIN
+                MENUITEM "Front", ID_VIEW_FRONT
+                MENUITEM "Top", ID_VIEW_TOP
+                MENUITEM "Right", ID_VIEW_RIGHT
+                MENUITEM "Back", ID_VIEW_BACK
+                MENUITEM "Left", ID_VIEW_LEFT
+                MENUITEM "Bottom", ID_VIEW_BOTTOM
+        END
+    END
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //

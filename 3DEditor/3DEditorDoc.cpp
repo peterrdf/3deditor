@@ -52,6 +52,10 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_COMMAND(ID_FILE_IMPORT, &CMy3DEditorDoc::OnFileImport)
 	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORT, &CMy3DEditorDoc::OnUpdateFileImport)
 	ON_COMMAND(ID_VIEW_ZOOM_OUT, &CMy3DEditorDoc::OnViewZoomOut)
+	ON_COMMAND(ID_INSTANCES_ZOOM_TO, &CMy3DEditorDoc::OnInstancesZoomTo)
+	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMy3DEditorDoc::OnUpdateInstancesZoomTo)
+	ON_COMMAND(ID_INSTANCES_SAVE, &CMy3DEditorDoc::OnInstancesSave)
+	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMy3DEditorDoc::OnUpdateInstancesSave)
 END_MESSAGE_MAP()
 
 
@@ -319,4 +323,29 @@ void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 void CMy3DEditorDoc::OnViewZoomOut()
 {
 	ZoomOut();
+}
+
+void CMy3DEditorDoc::OnInstancesZoomTo()
+{
+	auto pInstance = GetSelectedInstance();
+	ASSERT((pInstance != NULL) && pInstance->getEnable() && pInstance->hasGeometry());
+
+	ZoomToInstance(pInstance->getInstance());
+}
+
+void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
+{
+	auto pInstance = GetSelectedInstance();
+	pCmdUI->Enable((pInstance != NULL) && pInstance->getEnable() && pInstance->hasGeometry());
+}
+
+void CMy3DEditorDoc::OnInstancesSave()
+{
+	ASSERT(GetSelectedInstance() != NULL);
+	Save(GetSelectedInstance());
+}
+
+void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetSelectedInstance() != NULL);
 }

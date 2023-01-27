@@ -111,11 +111,16 @@ void CMy3DEditorView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	// TODO: add cleanup after printing
 }
 
-void CMy3DEditorView::OnContextMenu(CWnd* /* pWnd */, CPoint /*point*/)
+void CMy3DEditorView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 {
+	CMenu menu;
+	VERIFY(menu.LoadMenuW(IDR_MENU_OPENGL));
+
+	CMenu* pPopup = menu.GetSubMenu(0);
+
 #ifndef SHARED_HANDLERS
-	// DSIABLED
-	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
+	CMFCPopupMenu* settingsMenu = theApp.GetContextMenuManager()->ShowPopupMenu(pPopup->GetSafeHmenu(), point.x, point.y, this, TRUE);
+	settingsMenu->AlwaysShowEmptyToolsEntry(1);
 #endif
 }
 

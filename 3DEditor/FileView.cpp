@@ -1731,7 +1731,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	pWndTree->SetFocus();
 
-	CRDFItem * pRDFItem = (CRDFItem *)m_wndFileView.GetItemData(hTreeItem);
+	auto pRDFItem = (CRDFItem *)m_wndFileView.GetItemData(hTreeItem);
 	if (pRDFItem == NULL)
 	{
 		return;
@@ -1742,27 +1742,46 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-	ASSERT(GetController() != NULL);
+	if (GetController() == NULL)
+	{
+		ASSERT(FALSE);
 
-	CRDFModel* pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+		return;
+	}
+
+	auto pModel = GetController()->GetModel();
+	if (pModel == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	auto& mapRFDInstances = pModel->GetRDFInstances();
+
+	auto pRDFInstanceItem = dynamic_cast<CRDFInstanceItem*>(pRDFItem);
+	auto pInstance = pRDFInstanceItem->getInstance();
 
 	/*
 	* Instances with a geometry
 	*/
-	CRDFInstanceItem * pRDFInstanceItem = dynamic_cast<CRDFInstanceItem *>(pRDFItem);
-	if (pRDFInstanceItem->getInstance()->hasGeometry())
+	if (pInstance->hasGeometry())
 	{
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
-		CMenu * pPopup = menu.GetSubMenu(0);
+		auto pPopup = menu.GetSubMenu(0);
 
-		if (pRDFInstanceItem->getInstance()->getEnable())
+		// Enable
+		if (pInstance->getEnable())
 		{
 			pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
+		}
+
+		// Zoom to
+		if (!pInstance->getEnable())
+		{
+			pPopup->EnableMenuItem(ID_INSTANCES_ZOOM_TO, MF_BYCOMMAND | MF_DISABLED);
 		}
 
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
@@ -1775,7 +1794,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(pRDFInstanceItem->getInstance()->getInstance());
+				GetController()->ZoomToInstance(pInstance->getInstance());
 			}
 			break;
 
@@ -1787,28 +1806,19 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_BASE_INFORMATION:
 			{
-				GetController()->ShowBaseInformation(pRDFInstanceItem->getInstance());
+				GetController()->ShowBaseInformation(pInstance);
 			}
 			break;
 
 			case ID_INSTANCES_META_INFORMATION:
 			{
-				GetController()->ShowMetaInformation(pRDFInstanceItem->getInstance());
+				GetController()->ShowMetaInformation(pInstance);
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
-				TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-				CFileDialog dlgFile(FALSE, _T("bin"), pRDFInstanceItem->getInstance()->getUniqueName(),
-					OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-				if (dlgFile.DoModal() != IDOK)
-				{
-					return;
-				}
-
-				SaveInstanceTreeW(pRDFInstanceItem->getInstance()->getInstance(), dlgFile.GetPathName());
+				GetController()->Save(pInstance);
 			}
 			break;
 
@@ -1817,12 +1827,12 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					if (pRDFInstanceItem->getInstance()->GetModel() != itRFDInstances->second->GetModel())
+					if (pInstance->GetModel() != itRFDInstances->second->GetModel())
 					{
 						continue;
 					}
 
-					if (itRFDInstances->second == pRDFInstanceItem->getInstance())
+					if (itRFDInstances->second == pInstance)
 					{
 						itRFDInstances->second->setEnable(true);
 
@@ -1853,7 +1863,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					itRFDInstances->second->setEnable(!pRDFInstanceItem->getInstance()->isReferenced());
+					itRFDInstances->second->setEnable(!pInstance->isReferenced());
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
@@ -1865,7 +1875,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 				auto itRFDInstances = mapRFDInstances.begin();
 				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 				{
-					itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->isReferenced());
+					itRFDInstances->second->setEnable(pInstance->isReferenced());
 				}
 
 				GetController()->OnInstancesEnabledStateChanged();
@@ -1874,7 +1884,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_ENABLE:
 			{
-				pRDFInstanceItem->getInstance()->setEnable(!pRDFInstanceItem->getInstance()->getEnable());
+				pInstance->setEnable(!pInstance->getEnable());
 
 				GetController()->OnInstancesEnabledStateChanged();
 			}
@@ -1882,33 +1892,33 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_REMOVE:
 			{
-				if (pRDFInstanceItem->getInstance()->isReferenced())
+				if (pInstance->isReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 					return;
 				}
 
-				GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
+				GetController()->DeleteInstance(this, pInstance);
 			}
 			break;
 
 			case ID_INSTANCES_REMOVE_TREE:
 			{
-				if (pRDFInstanceItem->getInstance()->isReferenced())
+				if (pInstance->isReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 					return;
 				}
 
-				GetController()->DeleteInstanceTree(this, pRDFInstanceItem->getInstance());
+				GetController()->DeleteInstanceTree(this, pInstance);
 			}
 			break;
 
 			case ID_INSTANCES_ADD_MEASUREMENTS:
 			{
-				GetController()->AddMeasurements(this, pRDFInstanceItem->getInstance());
+				GetController()->AddMeasurements(this, pInstance);
 			}
 			break;
 
@@ -1933,7 +1943,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		} // switch (uiCommand)	
 
 		return;
-	} // if (pRDFInstanceItem->getInstance()->hasGeometry())	
+	} // if (pInstance->hasGeometry())	
 
 	/*
 	* Instances without a geometry
@@ -1941,7 +1951,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	CMenu menu;
 	VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 
-	CMenu * pPopup = menu.GetSubMenu(0);
+	auto pPopup = menu.GetSubMenu(0);
 
 	UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, pWndTree);
 	if (uiCommand == 0)
@@ -1968,7 +1978,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			auto itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				itRFDInstances->second->setEnable(!pRDFInstanceItem->getInstance()->isReferenced());
+				itRFDInstances->second->setEnable(!pInstance->isReferenced());
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
@@ -1980,7 +1990,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			auto itRFDInstances = mapRFDInstances.begin();
 			for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 			{
-				itRFDInstances->second->setEnable(pRDFInstanceItem->getInstance()->isReferenced());
+				itRFDInstances->second->setEnable(pInstance->isReferenced());
 			}
 
 			GetController()->OnInstancesEnabledStateChanged();
@@ -1989,20 +1999,20 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		case ID_INSTANCES_REMOVE:
 		{
-			if (pRDFInstanceItem->getInstance()->isReferenced())
+			if (pInstance->isReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 				return;
 			}
 
-			GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
+			GetController()->DeleteInstance(this, pInstance);
 		}
 		break;
 
 		case ID_INSTANCES_REMOVE_TREE:
 		{
-			if (pRDFInstanceItem->getInstance()->isReferenced())
+			if (pInstance->isReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -2010,7 +2020,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 
 			MessageBox(L"Not an option yet I.", L"Error", MB_ICONERROR | MB_OK);
-			GetController()->DeleteInstance(this, pRDFInstanceItem->getInstance());
+			GetController()->DeleteInstance(this, pInstance);
 		}
 		break;
 
@@ -2206,7 +2216,7 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (pRDFItem->getType() == rdftInstance)
 	{
-		CRDFInstanceItem * pRDFInstanceItem = dynamic_cast<CRDFInstanceItem *>(pRDFItem);
+		auto pRDFInstanceItem = dynamic_cast<CRDFInstanceItem *>(pRDFItem);
 
 		GetController()->SelectInstance(this, pRDFInstanceItem->getInstance());		
 

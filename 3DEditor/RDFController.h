@@ -111,6 +111,10 @@ public: // Methods
 	void ScaleAndCenter();
 
 	// --------------------------------------------------------------------------------------------
+	// Save
+	void Save(CRDFInstance* pInstance);
+
+	// --------------------------------------------------------------------------------------------
 	// Base information support
 	void ShowBaseInformation(CRDFInstance* pInstance);
 

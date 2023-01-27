@@ -465,8 +465,8 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	// zFar     - The far clipping distance
 	GLdouble fovY = 45.0;
 	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.001;
-	GLdouble zFar = 1000000.0;
+	GLdouble zNear = 0.0001;
+	GLdouble zFar = 1000.0;
 
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
@@ -483,7 +483,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 
 		case enumProjection::Isometric:
 		{
-			glm::mat4 matProjection = glm::ortho<GLdouble>(-1., 1., -1., 1., zNear, zFar);
+			glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
 			m_pOGLProgram->setProjectionMatrix(matProjection);
 		}
 		break;
