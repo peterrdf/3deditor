@@ -435,11 +435,9 @@ void CRDFModel::ScaleAndCenter()
 {
 	ProgressStatus stat(L"Calculate scene sizes");
 
-	m_fBoundingSphereDiameter = 0.f;
-
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = 0.f;
+	/*
+	* Min/Max
+	*/
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -447,6 +445,12 @@ void CRDFModel::ScaleAndCenter()
 	m_fYmax = -FLT_MAX;
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
+
+	m_fBoundingSphereDiameter = 0.f;
+
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
 
 	auto itRDFInstance = m_mapRDFInstances.begin();
 	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
@@ -473,6 +477,10 @@ void CRDFModel::ScaleAndCenter()
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	/*
+	* Scale/Center
+	*/
 
 	itRDFInstance = m_mapRDFInstances.begin();
 	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)

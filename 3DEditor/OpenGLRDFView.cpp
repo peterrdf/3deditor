@@ -801,6 +801,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnModelChanged()
 {
+	CWaitCursor waitCursor;
+
 	ProgressStatus prgs(L"Prepare rendering");
 
 #ifdef _LINUX
@@ -820,10 +822,10 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 
-	CRDFController * pController = GetController();
+	auto pController = GetController();
 	ASSERT(pController != NULL);
 
-	CRDFModel * pModel = pController->GetModel();
+	auto pModel = pController->GetModel();
 	ASSERT(pModel != NULL);
 
 	float fXmin = -1.f;

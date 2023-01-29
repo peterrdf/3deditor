@@ -338,7 +338,7 @@ bool CRDFInstance::getEnable() const
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::ResetScaleAndCenter()
 {
-	if (m_pOriginalVertexBuffer->size() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}
@@ -361,6 +361,11 @@ void CRDFInstance::ResetScaleAndCenter()
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
 {
+	if (getVerticesCount() == 0)
+	{
+		return;
+	}
+
 	/*
 	* Triangles
 	*/
@@ -485,7 +490,7 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
 {
-	if (m_pOriginalVertexBuffer->size() == 0)
+	if (getVerticesCount() == 0)
 	{
 		return;
 	}	

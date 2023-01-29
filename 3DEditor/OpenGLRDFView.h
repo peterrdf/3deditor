@@ -17,6 +17,7 @@
 #define MK_RBUTTON 4
 #endif
 
+// ------------------------------------------------------------------------------------------------
 enum class enumMouseEvent
 {
 	Move = 0,
@@ -28,12 +29,14 @@ enum class enumMouseEvent
 	RBtnUp,
 };
 
+// ------------------------------------------------------------------------------------------------
 enum class enumProjection
 {
 	Perspective = 0,
 	Isometric,
 };
 
+// ------------------------------------------------------------------------------------------------
 enum class enumView
 {
 	Top = 0,
@@ -44,10 +47,12 @@ enum class enumView
 	Back,
 };
 
+// ------------------------------------------------------------------------------------------------
 #define CULL_FACES_NONE L"<none>"
 #define CULL_FACES_FRONT L"Front"
 #define CULL_FACES_BACK L"Back"
 
+// ------------------------------------------------------------------------------------------------
 class COpenGLRDFView 
 	: public _oglRenderer<CRDFInstance>
 	, public CRDFView

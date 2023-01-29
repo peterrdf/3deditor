@@ -66,11 +66,11 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Support for textures
-	CTexture * m_pDefaultTexture;
+	CTexture* m_pDefaultTexture;
 
 	// --------------------------------------------------------------------------------------------
 	// Support for measurements
-	CRDFMeasurementsBuilder * m_pMeasurementsBuilder;
+	CRDFMeasurementsBuilder* m_pMeasurementsBuilder;
 
 	// --------------------------------------------------------------------------------------------
 	// Root
