@@ -2606,10 +2606,15 @@ void COpenGLRDFView::DrawBiNormalVectors()
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawInstancesFrameBuffer()
 {
-	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
 
-	CRDFModel * pModel = pController->GetModel();
+		return;
+	}
+
+	auto pModel = pController->GetModel();
 	if (pModel == NULL)
 	{
 		return;
@@ -2617,28 +2622,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 	/*
 	* Create a frame buffer
-	*/
-
-	int iWidth = 0;
-	int iHeight = 0;
-
-#ifdef _LINUX
-	const wxSize szClient = m_pWnd->GetClientSize();
-
-	iWidth = szClient.GetWidth();
-	iHeight = szClient.GetHeight();
-#else
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	iWidth = rcClient.Width();
-	iHeight = rcClient.Height();
-#endif // _LINUX
-
-	if ((iWidth < 20) || (iHeight < 20))
-	{
-		return;
-	}
+	*/	
 
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
@@ -2653,7 +2637,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		auto& mapRDFInstances = pModel->GetRDFInstances();
 		for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 		{
-			CRDFInstance * pRDFInstance = itRDFInstances->second;
+			auto pRDFInstance = itRDFInstances->second;
 			if (!pRDFInstance->getEnable())
 			{
 				continue;
@@ -2694,22 +2678,20 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			auto pRDFInstance = itInstance;
-
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			auto& vecTriangles = pRDFInstance->getTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pRDFInstance->getInstance());
+			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->setAmbientColor(
@@ -2717,18 +2699,16 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 				itSelectionColor->second.g(),
 				itSelectionColor->second.b());
 
-			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
+			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
-				auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
-
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 			}
-		} // for (auto itInstance ...
+		} // for (auto pInstance ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
@@ -2973,10 +2953,15 @@ void COpenGLRDFView::DrawPointedFace()
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
-	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
 
-	CRDFModel * pModel = pController->GetModel();
+		return;
+	}
+
+	auto pModel = pController->GetModel();
 	if (pModel == NULL)
 	{
 		return;
