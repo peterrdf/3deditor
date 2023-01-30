@@ -38,18 +38,18 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty, CWnd* pParent /*=NULL*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent /*=NULL*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
-	, m_pRDFInstance(pRDFInstance)
-	, m_pRDFProperty(pRDFProperty)
+	, m_pInstance(pInstance)
+	, m_pProperty(pProperty)
 	, m_pExisitngRDFInstance(NULL)
 	, m_iNewInstanceRDFClass(NULL)
 	, m_iMode(0)
 {
 	ASSERT(m_pController != NULL);
-	ASSERT(m_pRDFInstance != NULL);
-	ASSERT(m_pRDFProperty != NULL);
+	ASSERT(m_pInstance != NULL);
+	ASSERT(m_pProperty != NULL);
 }
 
 CEditObjectPropertyDialog::~CEditObjectPropertyDialog()
@@ -83,17 +83,17 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 	int64_t * piInstances = NULL;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pRDFInstance->getInstance(), m_pRDFProperty->getInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getInstance(), m_pProperty->getInstance(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
 	ASSERT(pModel != NULL);
 
-	auto& mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapInstances = pModel->GetInstances();
 
 	/*
 	* Restrictions
 	*/
-	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pRDFProperty);
+	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pProperty);
 	ASSERT(pObjectRDFProperty != NULL);
 
 	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
@@ -102,13 +102,13 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Populate Existing instance combo
 	*/
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
-	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 	{
 		/*
 		* Skip this instance
 		*/
-		if (itRFDInstances->second == m_pRDFInstance)
+		if (itRFDInstances->second == m_pInstance)
 		{
 			continue;
 		}
@@ -116,7 +116,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->GetModel() != m_pRDFInstance->GetModel())
+		if (itRFDInstances->second->GetModel() != m_pInstance->GetModel())
 		{
 			continue;
 		}
@@ -172,7 +172,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Ancestors
 	*/
-	int64_t	iClassInstance = GetClassesByIterator(m_pRDFInstance->GetModel(), 0);
+	int64_t	iClassInstance = GetClassesByIterator(m_pInstance->GetModel(), 0);
 	while (iClassInstance != 0)
 	{
 		vector<int64_t> vecAncestorClasses;
@@ -191,7 +191,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 			} // for (size_t iAncestorClass = ...
 		} // if (!vecAncestorClasses.empty())
 
-		iClassInstance = GetClassesByIterator(m_pRDFInstance->GetModel(), iClassInstance);
+		iClassInstance = GetClassesByIterator(m_pInstance->GetModel(), iClassInstance);
 	} // while (iClassInstance != 0)
 
 	for (set<int64_t>::iterator itClass = setClasses.begin(); itClass != setClasses.end(); itClass++)
@@ -251,7 +251,7 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 		CString strClassName;
 		m_cmbNewInstance.GetLBText(m_cmbNewInstance.GetCurSel(), strClassName);
 
-		m_iNewInstanceRDFClass = GetClassByName(m_pRDFInstance->GetModel(), CW2A((LPCTSTR)strClassName));
+		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->GetModel(), CW2A((LPCTSTR)strClassName));
 		ASSERT(m_iNewInstanceRDFClass != 0);
 	}
 	break;

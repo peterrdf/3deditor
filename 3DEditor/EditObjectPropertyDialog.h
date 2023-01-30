@@ -18,11 +18,11 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instance
-	CRDFInstance * m_pRDFInstance;
+	CRDFInstance * m_pInstance;
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Property
-	CRDFProperty * m_pRDFProperty;
+	CRDFProperty * m_pProperty;
 
 public: // Members
 
@@ -41,7 +41,7 @@ private: // Methods
 	void ValidateUI();
 
 public:
-	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty, CWnd* pParent = NULL);   // standard constructor
+	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent = NULL);   // standard constructor
 	virtual ~CEditObjectPropertyDialog();
 
 // Dialog Data

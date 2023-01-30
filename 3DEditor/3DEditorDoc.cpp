@@ -243,34 +243,34 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 	output << "*** Unique vertices check ***\n";
 	output << "****************************************************************************************************\n\n";
 
-	auto& mapRDFInstances = m_pModel->GetRDFInstances();
+	auto& mapInstances = m_pModel->GetInstances();
 
-	map<int64_t, CRDFInstance *>::const_iterator itRDFInstances = mapRDFInstances.begin();
-	for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+	map<int64_t, CRDFInstance *>::const_iterator itInstance = mapInstances.begin();
+	for (; itInstance != mapInstances.end(); itInstance++)
 	{
-		CRDFInstance * pRDFInstance = itRDFInstances->second;
-		if (!pRDFInstance->hasGeometry())
+		CRDFInstance * pInstance = itInstance->second;
+		if (!pInstance->hasGeometry())
 		{
 			continue;
 		}
 
 		// Binning algorithm
-		/*int32_t iDuplicatesCount1 =  pUniqueVerticesCheck->Check(pRDFInstance, output);*/
+		/*int32_t iDuplicatesCount1 =  pUniqueVerticesCheck->Check(pInstance, output);*/
 
 		// Exact match - Epsilon = 0
-		/*int32_t iDuplicatesCount2 = */pUniqueVerticesCheckE0->Check(pRDFInstance, VERTEX_LENGTH, output);
+		/*int32_t iDuplicatesCount2 = */pUniqueVerticesCheckE0->Check(pInstance, VERTEX_LENGTH, output);
 
 		/*if (iDuplicatesCount2 > 0)
 		{
-			tuple<float *, int64_t, int32_t *> tpUniqueVertices = pUniqueVerticesCheck->RemoveDuplicates(pRDFInstance, VERTEX_LENGTH);
-			pRDFInstance->UpdateVertices(get<0>(tpUniqueVertices), get<1>(tpUniqueVertices), get<2>(tpUniqueVertices));
+			tuple<float *, int64_t, int32_t *> tpUniqueVertices = pUniqueVerticesCheck->RemoveDuplicates(pInstance, VERTEX_LENGTH);
+			pInstance->UpdateVertices(get<0>(tpUniqueVertices), get<1>(tpUniqueVertices), get<2>(tpUniqueVertices));
 		}*/
 
 		/*if (iDuplicatesCount1 != iDuplicatesCount2)
 		{
 			output << "ERROR!\n";
 		}*/
-	} // for (; itRDFInstances != ...
+	} // for (; itInstance != ...
 
 #ifdef _USE_BOOST
 	high_resolution_clock::time_point tpEnd = high_resolution_clock::now();

@@ -37,23 +37,23 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	CRDFModel * pModel = GetController()->GetModel();
 	ASSERT(pModel != NULL);
 
-	auto& mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapInstances = pModel->GetInstances();
 
 	vector<CRDFInstance *> vecModel;
 
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
-	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 	{
-		CRDFInstance * pRDFInstance = itRFDInstances->second;
+		CRDFInstance * pInstance = itRFDInstances->second;
 
-		if (pRDFInstance->isReferenced())
+		if (pInstance->isReferenced())
 		{
 			continue;
 		}
 
-		if (pRDFInstance->GetModel() == pModel->GetModel())
+		if (pInstance->GetModel() == pModel->GetModel())
 		{
-			vecModel.push_back(pRDFInstance);
+			vecModel.push_back(pInstance);
 		}		
 	} // for (; itRFDInstances != ...
 
@@ -139,10 +139,10 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 	{
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
-		CRDFInstance * pRDFInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
-		ASSERT(pRDFInstance != NULL);
+		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
+		ASSERT(pInstance != NULL);
 
-		vecSelectedInstances.push_back(pRDFInstance);
+		vecSelectedInstances.push_back(pInstance);
 	}
 
 	ASSERT(GetController() != NULL);
@@ -240,10 +240,10 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	{
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
-		CRDFInstance * pRDFInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
-		ASSERT(pRDFInstance != NULL);
+		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
+		ASSERT(pInstance != NULL);
 
-		vecSelectedInstances.push_back(pRDFInstance);
+		vecSelectedInstances.push_back(pInstance);
 	}
 
 	ASSERT(GetController() != NULL);
@@ -416,7 +416,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CRDFModel * pModel = GetController()->GetModel();
 			ASSERT(pModel != NULL);
 
-			auto& mapRFDInstances = pModel->GetRDFInstances();
+			auto& mapInstances = pModel->GetInstances();
 
 			switch (uiCommand)
 			{
@@ -434,8 +434,8 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
-				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
 					if (vecSelectedInstances[0]->GetModel() != itRFDInstances->second->GetModel())
 					{
@@ -458,8 +458,8 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapRFDInstances.begin();
-				for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
 					if (vecSelectedInstances[0]->GetModel() != itRFDInstances->second->GetModel())
 					{

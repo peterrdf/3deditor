@@ -866,7 +866,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
 
-	auto& mapRDFInstances = pModel->GetRDFInstances();
+	auto& mapInstances = pModel->GetInstances();
 
 	// VBO
 	GLuint iVerticesCount = 0;	
@@ -892,13 +892,13 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	GLuint iPointsIndicesCount = 0;
 	vector<_cohort*> vecPointsCohorts;
 
-	prgs.Start(mapRDFInstances.size());
-	for (auto itRDFInstance = mapRDFInstances.begin(); itRDFInstance != mapRDFInstances.end(); itRDFInstance++)
+	prgs.Start(mapInstances.size());
+	for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
 	{
 		prgs.Step();
 
-		auto pRDFInstance = itRDFInstance->second;
-		if (pRDFInstance->getVerticesCount() == 0)
+		auto pInstance = itInstance->second;
+		if (pInstance->getVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -910,7 +910,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pRDFInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -926,9 +926,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		/*
 		* IBO - Conceptual faces
 		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pRDFInstance->concFacesCohorts().size(); iFacesCohort++)
+		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -941,16 +941,16 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 				vecConcFacesCohorts.clear();
 			}
 
-			iConcFacesIndicesCount += (GLsizei)pRDFInstance->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pRDFInstance->concFacesCohorts()[iFacesCohort]);
+			iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
+			vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
 		}
 
 		/*
 		* IBO - Conceptual face polygons
 		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pRDFInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
+		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -963,16 +963,16 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 				vecConcFacePolygonsCohorts.clear();
 			}
 
-			iConcFacePolygonsIndicesCount += (GLsizei)pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pRDFInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
+			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
+			vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
 		}
 
 		/*
 		* IBO - Face polygons
 		*/
-		for (size_t iFacePolygonsCohort = 0; iFacePolygonsCohort < pRDFInstance->facePolygonsCohorts().size(); iFacePolygonsCohort++)
+		for (size_t iFacePolygonsCohort = 0; iFacePolygonsCohort < pInstance->facePolygonsCohorts().size(); iFacePolygonsCohort++)
 		{
-			if ((int_t)(iFacePolygonsIndicesCount + pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iFacePolygonsIndicesCount + pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 				{
@@ -985,16 +985,16 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 				vecFacePolygonsCohorts.clear();
 			}
 
-			iFacePolygonsIndicesCount += (GLsizei)pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size();
-			vecFacePolygonsCohorts.push_back(pRDFInstance->facePolygonsCohorts()[iFacePolygonsCohort]);
+			iFacePolygonsIndicesCount += (GLsizei)pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size();
+			vecFacePolygonsCohorts.push_back(pInstance->facePolygonsCohorts()[iFacePolygonsCohort]);
 		}
 
 		/*
 		* IBO - Lines
 		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pRDFInstance->linesCohorts().size(); iLinesCohort++)
+		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pRDFInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -1007,16 +1007,16 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 				vecLinesCohorts.clear();
 			}
 
-			iLinesIndicesCount += (GLsizei)pRDFInstance->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pRDFInstance->linesCohorts()[iLinesCohort]);
+			iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
+			vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
 		}
 
 		/*
 		* IBO - Points
 		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
+		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
@@ -1029,13 +1029,13 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 				vecPointsCohorts.clear();
 			}
 
-			iPointsIndicesCount += (GLsizei)pRDFInstance->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pRDFInstance->pointsCohorts()[iPointsCohort]);
+			iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
+			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pRDFInstance->getVerticesCount();
-		vecInstancesCohort.push_back(pRDFInstance);
-	} // for (; itRDFInstances != ...
+		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
+		vecInstancesCohort.push_back(pInstance);
+	} // for (; itInstance != ...
 
 	prgs.Finish();
 
@@ -1521,23 +1521,23 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 		for (auto itInstance : itCohort.second)
 		{
-			CRDFInstance* pRDFInstance = itInstance;
+			CRDFInstance* pInstance = itInstance;
 
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iCohort = 0; iCohort < pRDFInstance->facePolygonsCohorts().size(); iCohort++)
+			for (size_t iCohort = 0; iCohort < pInstance->facePolygonsCohorts().size(); iCohort++)
 			{
-				_cohort* pCohort = pRDFInstance->facePolygonsCohorts()[iCohort];
+				_cohort* pCohort = pInstance->facePolygonsCohorts()[iCohort];
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 			}
 		} // for (auto itInstance ...
 
@@ -1825,39 +1825,39 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		}
 	}
 
-	auto& mapRDFInstances = pModel->GetRDFInstances();
-	for (auto itRDFInstances = mapRDFInstances.begin(); 
-		itRDFInstances != mapRDFInstances.end(); 
-		itRDFInstances++)
+	auto& mapInstances = pModel->GetInstances();
+	for (auto itInstance = mapInstances.begin(); 
+		itInstance != mapInstances.end(); 
+		itInstance++)
 	{
-		CRDFInstance* pRDFInstance = itRDFInstances->second;
-		if (!pRDFInstance->getEnable())
+		CRDFInstance* pInstance = itInstance->second;
+		if (!pInstance->getEnable())
 		{
 			continue;
 		}
 
-		if ((pRDFInstance->getBoundingBoxTransformation() == NULL) || (pRDFInstance->getBoundingBoxMin() == NULL) || (pRDFInstance->getBoundingBoxMax() == NULL))
+		if ((pInstance->getBoundingBoxTransformation() == NULL) || (pInstance->getBoundingBoxMin() == NULL) || (pInstance->getBoundingBoxMax() == NULL))
 		{
 			continue;
 		}		
 
 		float arBBTransformation[] =
 			{
-				(float)pRDFInstance->getBoundingBoxTransformation()->_11,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_12,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_13,
+				(float)pInstance->getBoundingBoxTransformation()->_11,
+				(float)pInstance->getBoundingBoxTransformation()->_12,
+				(float)pInstance->getBoundingBoxTransformation()->_13,
 				0.f,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_21,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_22,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_23,
+				(float)pInstance->getBoundingBoxTransformation()->_21,
+				(float)pInstance->getBoundingBoxTransformation()->_22,
+				(float)pInstance->getBoundingBoxTransformation()->_23,
 				0.f,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_31,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_32,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_33,
+				(float)pInstance->getBoundingBoxTransformation()->_31,
+				(float)pInstance->getBoundingBoxTransformation()->_32,
+				(float)pInstance->getBoundingBoxTransformation()->_33,
 				0.f,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_41,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_42,
-				(float)pRDFInstance->getBoundingBoxTransformation()->_43,
+				(float)pInstance->getBoundingBoxTransformation()->_41,
+				(float)pInstance->getBoundingBoxTransformation()->_42,
+				(float)pInstance->getBoundingBoxTransformation()->_43,
 				1.f,
 			};
 
@@ -1868,8 +1868,8 @@ void COpenGLRDFView::DrawBoundingBoxes()
 
 		m_pOGLProgram->setModelViewMatrix(matModelView);
 
-		_vector3d vecBoundingBoxMin = { pRDFInstance->getBoundingBoxMin()->x, pRDFInstance->getBoundingBoxMin()->y, pRDFInstance->getBoundingBoxMin()->z };
-		_vector3d vecBoundingBoxMax = { pRDFInstance->getBoundingBoxMax()->x, pRDFInstance->getBoundingBoxMax()->y, pRDFInstance->getBoundingBoxMax()->z };
+		_vector3d vecBoundingBoxMin = { pInstance->getBoundingBoxMin()->x, pInstance->getBoundingBoxMin()->y, pInstance->getBoundingBoxMin()->z };
+		_vector3d vecBoundingBoxMax = { pInstance->getBoundingBoxMax()->x, pInstance->getBoundingBoxMax()->y, pInstance->getBoundingBoxMax()->z };
 
 		// Bottom face
 		/*
@@ -1932,7 +1932,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			0);
 
 		glBindVertexArray(0);
-	} // for (; itRDFInstances != ...
+	} // for (; itInstance != ...
 
 	// Restore Model-View Matrix
 	m_pOGLProgram->setModelViewMatrix(m_matModelView);
@@ -2019,18 +2019,18 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	if (m_pSelectedInstance == NULL)
 	{
-		auto& mapRDFInstances = pModel->GetRDFInstances();
+		auto& mapInstances = pModel->GetInstances();
 
-		auto itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+		auto itInstance = mapInstances.begin();
+		for (; itInstance != mapInstances.end(); itInstance++)
 		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
+			CRDFInstance* pInstance = itInstance->second;
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			auto& vecTriangles = pRDFInstance->getTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -2044,9 +2044,9 @@ void COpenGLRDFView::DrawNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2054,12 +2054,12 @@ void COpenGLRDFView::DrawNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2068,7 +2068,7 @@ void COpenGLRDFView::DrawNormalVectors()
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
+		} // for (; itInstance != ...
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
@@ -2240,18 +2240,18 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	if (m_pSelectedInstance == NULL)
 	{
-		auto& mapRDFInstances = pModel->GetRDFInstances();
+		auto& mapInstances = pModel->GetInstances();
 
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+		map<int64_t, CRDFInstance*>::const_iterator itInstance = mapInstances.begin();
+		for (; itInstance != mapInstances.end(); itInstance++)
 		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
+			CRDFInstance* pInstance = itInstance->second;
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			auto& vecTriangles = pRDFInstance->getTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -2265,9 +2265,9 @@ void COpenGLRDFView::DrawTangentVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2275,12 +2275,12 @@ void COpenGLRDFView::DrawTangentVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2289,7 +2289,7 @@ void COpenGLRDFView::DrawTangentVectors()
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
+		} // for (; itInstance != ...
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
@@ -2461,18 +2461,18 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	if (m_pSelectedInstance == NULL)
 	{
-		auto& mapRDFInstances = pModel->GetRDFInstances();
+		auto& mapInstances = pModel->GetInstances();
 
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
-		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+		map<int64_t, CRDFInstance*>::const_iterator itInstance = mapInstances.begin();
+		for (; itInstance != mapInstances.end(); itInstance++)
 		{
-			CRDFInstance* pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
+			CRDFInstance* pInstance = itInstance->second;
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			auto& vecTriangles = pRDFInstance->getTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
@@ -2486,9 +2486,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2496,12 +2496,12 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
-					vecVertices.push_back(pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pRDFInstance->getVertices()[(pRDFInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2510,7 +2510,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
-		} // for (; itRDFInstances != ...
+		} // for (; itInstance != ...
 	} // if (m_pSelectedInstance == NULL)
 	else
 	{
@@ -2634,25 +2634,25 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	*/
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
-		auto& mapRDFInstances = pModel->GetRDFInstances();
-		for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+		auto& mapInstances = pModel->GetInstances();
+		for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
 		{
-			auto pRDFInstance = itRDFInstances->second;
-			if (!pRDFInstance->getEnable())
+			auto pInstance = itInstance->second;
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			auto& vecTriangles = pRDFInstance->getTriangles();
+			auto& vecTriangles = pInstance->getTriangles();
 			if (vecTriangles.empty())
 			{
 				continue;
 			}
 
 			float fR, fG, fB;
-			_i64RGBCoder::encode(pRDFInstance->getID(), fR, fG, fB);
+			_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-			m_pInstanceSelectionFrameBuffer->encoding()[pRDFInstance->getInstance()] = _color(fR, fG, fB);
+			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getInstance()] = _color(fR, fG, fB);
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
@@ -3020,7 +3020,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			if (arPixels[3] != 0)
 			{
 				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				pPointedInstance = pModel->GetRDFInstanceByID(iObjectID);
+				pPointedInstance = pModel->GetInstanceByID(iObjectID);
 				ASSERT(pPointedInstance != NULL);
 			}
 

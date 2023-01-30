@@ -65,8 +65,8 @@ void CInstancesList::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
         {
             if ((m_pController != NULL) && (pNMCD->nmcd.lItemlParam != 0))
             {
-                CRDFInstance* pRDFInstance = (CRDFInstance*)pNMCD->nmcd.lItemlParam;
-                if (m_pController->GetSelectedInstance() == pRDFInstance)
+                CRDFInstance* pInstance = (CRDFInstance*)pNMCD->nmcd.lItemlParam;
+                if (m_pController->GetSelectedInstance() == pInstance)
                 {
                     if (CDIS_SELECTED == (pNMCD->nmcd.uItemState & CDIS_SELECTED))
                     {

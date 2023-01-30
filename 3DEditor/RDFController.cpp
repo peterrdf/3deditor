@@ -361,7 +361,7 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 	}
 
 	for (int64_t i = 0; i < childCnt; i++) {
-		CRDFInstance	* pChildInstance = m_pModel->GetRDFInstanceByIInstance(childInstanceArray[i]);
+		auto pChildInstance = m_pModel->GetInstanceByIInstance(childInstanceArray[i]);
 		if (pChildInstance) {
 			DeleteInstanceTree(pSender, pChildInstance);
 		}

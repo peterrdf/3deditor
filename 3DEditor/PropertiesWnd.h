@@ -385,9 +385,9 @@ protected:
 
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
-	void AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
-	void AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
-	void AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty);
+	void AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pInstance, CRDFProperty * pProperty);
+	void AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty);
+	void AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty);
 	void LoadBaseInformation();
 	void LoadMetaInformation();
 	void SetPropListFont();

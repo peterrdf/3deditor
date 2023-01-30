@@ -15,11 +15,11 @@
 
 IMPLEMENT_DYNAMIC(CSelectInstanceDialog, CDialogEx)
 
-CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pRDFInstance, 
+CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
 	CObjectRDFProperty* pObjectRDFProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SELECT_INSTANCE, pParent)
 	, m_pController(pController)
-	, m_pRDFInstance(pRDFInstance)
+	, m_pInstance(pInstance)
 	, m_pObjectRDFProperty(pObjectRDFProperty)
 	, m_iCard(iCard)
 	, m_iInstance(-1)
@@ -27,7 +27,7 @@ CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFIn
 	, m_strOldInstanceUniqueName(EMPTY_INSTANCE)
 {
 	ASSERT(m_pController != NULL);
-	ASSERT(m_pRDFInstance != NULL);
+	ASSERT(m_pInstance != NULL);
 	ASSERT(m_pObjectRDFProperty != NULL);
 }
 
@@ -69,7 +69,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 
 	int64_t* piInstances = NULL;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pRDFInstance->getInstance(), m_pObjectRDFProperty->getInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getInstance(), m_pObjectRDFProperty->getInstance(), &piInstances, &iCard);
 
 	ASSERT(iCard > 0);
 	ASSERT((m_iCard >= 0) && (m_iCard < iCard));
@@ -79,10 +79,10 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	CRDFModel* pModel = m_pController->GetModel();
 	ASSERT(pModel != NULL);
 
-	auto& mapRFDInstances = pModel->GetRDFInstances();
+	auto& mapInstances = pModel->GetInstances();
 
 	vector<int64_t> vecCompatibleInstances;
-	pModel->GetCompatibleInstances(m_pRDFInstance, m_pObjectRDFProperty, vecCompatibleInstances);
+	pModel->GetCompatibleInstances(m_pInstance, m_pObjectRDFProperty, vecCompatibleInstances);
 		
 	int iInstance = m_cmbInstances.AddString(EMPTY_INSTANCE);
 	m_cmbInstances.SetItemData(iInstance, 0);
@@ -90,12 +90,12 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	m_strOldInstanceUniqueName = EMPTY_INSTANCE;
 	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
 	{
-		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapRFDInstances.find(vecCompatibleInstances[iCompatibleInstance]);
-		ASSERT(itInstanceValue != mapRFDInstances.end());
+		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
+		ASSERT(itInstanceValue != mapInstances.end());
 
 		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();
-		if ((m_pRDFInstance->getInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
-			IsUsedRecursively(m_pRDFInstance->getInstance(), itInstanceValue->second->getInstance()))
+		if ((m_pInstance->getInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
+			IsUsedRecursively(m_pInstance->getInstance(), itInstanceValue->second->getInstance()))
 		{
 			strInstanceUniqueName += USED_SUFFIX;
 		}

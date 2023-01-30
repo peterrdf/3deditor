@@ -87,18 +87,18 @@ const vector<int64_t> & CRDFClass::getAncestorClasses()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pRDFPropertyRestriction)
+void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
 {
-	ASSERT(pRDFPropertyRestriction != NULL);
+	ASSERT(pPropertyRestriction != NULL);
 
 	char * szPropertyName = NULL;
-	GetNameOfProperty(pRDFPropertyRestriction->getPropertyInstance(), &szPropertyName);
+	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
 
 #ifndef _LINUX
-//	LOG_DEBUG("*** CLASS " << m_strName.c_str() << ", PROPERTY " << szPropertyName << ", MIN/MAX CARD: " << pRDFPropertyRestriction->getMinCard() << ", " << pRDFPropertyRestriction->getMaxCard());
+//	LOG_DEBUG("*** CLASS " << m_strName.c_str() << ", PROPERTY " << szPropertyName << ", MIN/MAX CARD: " << pPropertyRestriction->getMinCard() << ", " << pPropertyRestriction->getMaxCard());
 #endif // _LINUX
 
-	m_vecPropertyRestrictions.push_back(pRDFPropertyRestriction);
+	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
 // ------------------------------------------------------------------------------------------------

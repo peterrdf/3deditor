@@ -44,14 +44,14 @@ BOOL CNewInstanceDialog::OnInitDialog()
 	CRDFModel * pModel = m_pController->GetModel();
 	ASSERT(pModel != NULL);
 
-	const map<int64_t, CRDFClass *> & mapRDFClasses = pModel->GetRDFClasses();
+	auto& mapClasses = pModel->GetClasses();
 
-	map<int64_t, CRDFClass *>::const_iterator itRDFClass = mapRDFClasses.begin();
-	for (; itRDFClass != mapRDFClasses.end(); itRDFClass++)
+	auto itClass = mapClasses.begin();
+	for (; itClass != mapClasses.end(); itClass++)
 	{
-		int iItem = m_cmbClasses.AddString(itRDFClass->second->getName());
-		m_cmbClasses.SetItemDataPtr(iItem, itRDFClass->second);
-	} // for (; itRDFClass != ...
+		int iItem = m_cmbClasses.AddString(itClass->second->getName());
+		m_cmbClasses.SetItemDataPtr(iItem, itClass->second);
+	} // for (; itClass != ...
 
 	m_cmbClasses.SetCurSel(0);
 

@@ -1276,10 +1276,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* ColorComponent properties
 		*/
-		CRDFColorSelectorProperty * pColorSelectorProperty = dynamic_cast<CRDFColorSelectorProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pColorSelectorProperty = dynamic_cast<CRDFColorSelectorProperty *>((CMFCPropertyGridProperty *)lparam);
 		if (pColorSelectorProperty != NULL)
 		{	
-			CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
+			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
 			ASSERT(pData != NULL);
 
 			CRDFModel * pModel = GetController()->GetModel();
@@ -1287,7 +1287,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			ASSERT(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"));			
 
-			const map<int64_t, CRDFProperty *> & mapRDFProperties = pModel->GetRDFProperties();
+			auto& mapProperties = pModel->GetProperties();
 
 			/*
 			* R
@@ -1297,13 +1297,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			double dR = GetRValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iRProperty, &dR, 1);
 
-			map<int64_t, CRDFProperty *>::const_iterator itRDFProperty = mapRDFProperties.find(iRProperty);
-			ASSERT(itRDFProperty != mapRDFProperties.end());
+			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iRProperty);
+			ASSERT(itProperty != mapProperties.end());
 
 			/*
 			* Notify
 			*/
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itRDFProperty->second);
+			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itProperty->second);
 
 			/*
 			* G
@@ -1313,13 +1313,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			double dG = GetGValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iGProperty, &dG, 1);
 
-			itRDFProperty = mapRDFProperties.find(iGProperty);
-			ASSERT(itRDFProperty != mapRDFProperties.end());
+			itProperty = mapProperties.find(iGProperty);
+			ASSERT(itProperty != mapProperties.end());
 
 			/*
 			* Notify
 			*/
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itRDFProperty->second);
+			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itProperty->second);
 
 			/*
 			* B
@@ -1329,13 +1329,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			double dB = GetBValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iBProperty, &dB, 1);
 
-			itRDFProperty = mapRDFProperties.find(iBProperty);
-			ASSERT(itRDFProperty != mapRDFProperties.end());
+			itProperty = mapProperties.find(iBProperty);
+			ASSERT(itProperty != mapProperties.end());
 
 			/*
 			* Notify
 			*/
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itRDFProperty->second);
+			GetController()->OnInstancePropertyEdited(pData->GetInstance(), itProperty->second);
 
 			/*
 			* Update UI
@@ -1997,12 +1997,12 @@ void CPropertiesWnd::LoadInstanceProperties()
 	{
 //		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property BEGIN");
 
-		CRDFInstance * pRDFInstance = prSelectedInstanceProperty.first;
-		CRDFProperty * pRDFProperty = prSelectedInstanceProperty.second;
+		CRDFInstance * pInstance = prSelectedInstanceProperty.first;
+		CRDFProperty * pProperty = prSelectedInstanceProperty.second;
 
-		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getUniqueName());		
+		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());		
 
-		AddInstanceProperty(pInstanceGroup, pRDFInstance, pRDFProperty);
+		AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
 		m_wndPropList.AddProperty(pInstanceGroup);
 
@@ -2014,22 +2014,22 @@ void CPropertiesWnd::LoadInstanceProperties()
 	/*
 	* All properties
 	*/
-	CRDFInstance * pRDFInstance = GetController()->GetSelectedInstance();
-	if (pRDFInstance != NULL)
+	CRDFInstance * pInstance = GetController()->GetSelectedInstance();
+	if (pInstance != NULL)
 	{
 		CRDFModel * pModel = GetController()->GetModel();
 		ASSERT(pModel != NULL);
 
-		const map<int64_t, CRDFProperty *> & mapRDFProperties = pModel->GetRDFProperties();
+		const map<int64_t, CRDFProperty *> & mapProperties = pModel->GetProperties();
 
 //		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance BEGIN");
 
-		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getUniqueName());
+		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
 
 		/*
 		* ColorComponent
 		*/
-		if (pRDFInstance->getClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"))
+		if (pInstance->getClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"))
 		{
 			/*
 			* R
@@ -2038,7 +2038,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			int64_t iCard = 0;
 			double * pdRValue = NULL;
-			GetDatatypeProperty(pRDFInstance->getInstance(), iRProperty, (void **)&pdRValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), iRProperty, (void **)&pdRValue, &iCard);
 
 
 			/*
@@ -2048,7 +2048,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			iCard = 0;
 			double * pdGValue = NULL;
-			GetDatatypeProperty(pRDFInstance->getInstance(), iGProperty, (void **)&pdGValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), iGProperty, (void **)&pdGValue, &iCard);
 
 			/*
 			* B
@@ -2057,26 +2057,26 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			iCard = 0;
 			double * pdBValue = NULL;
-			GetDatatypeProperty(pRDFInstance->getInstance(), iBProperty, (void **)&pdBValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), iBProperty, (void **)&pdBValue, &iCard);
 
 			CRDFColorSelectorProperty * pColorSelectorProperty = new CRDFColorSelectorProperty(_T("Color"), RGB((BYTE)(*pdRValue * 255.), (BYTE)(*pdGValue * 255.), (BYTE)(*pdBValue * 255.)), NULL, _T("Color"),
-				(DWORD_PTR)new CRDFInstanceData(GetController(), pRDFInstance));
+				(DWORD_PTR)new CRDFInstanceData(GetController(), pInstance));
 			pColorSelectorProperty->EnableOtherButton(_T("Other..."));
 			pColorSelectorProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
 			pInstanceGroup->AddSubItem(pColorSelectorProperty);
-		} // if (pRDFInstance->getClassInstance() == ...
+		} // if (pInstance->getClassInstance() == ...
 
-		int64_t iPropertyInstance = GetInstancePropertyByIterator(pRDFInstance->getInstance(), 0);
+		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
 		while (iPropertyInstance != NULL)
 		{
-			map<int64_t, CRDFProperty *>::const_iterator itRDFProperty = mapRDFProperties.find(iPropertyInstance);
-			ASSERT(itRDFProperty != mapRDFProperties.end());
+			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
+			ASSERT(itProperty != mapProperties.end());
 
-			CRDFProperty * pRDFProperty = itRDFProperty->second;
+			CRDFProperty * pProperty = itProperty->second;
 
-			AddInstanceProperty(pInstanceGroup, pRDFInstance, pRDFProperty);
+			AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
-			iPropertyInstance = GetInstancePropertyByIterator(pRDFInstance->getInstance(), iPropertyInstance);
+			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
@@ -2084,23 +2084,23 @@ void CPropertiesWnd::LoadInstanceProperties()
 //		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 instance END");
 
 		return;
-	} // if (pRDFInstance != NULL)
+	} // if (pInstance != NULL)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty)
+void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
-	CMFCPropertyGridProperty * pPropertyGroup = new CMFCPropertyGridProperty(pRDFProperty->getName());
+	CMFCPropertyGridProperty * pPropertyGroup = new CMFCPropertyGridProperty(pProperty->getName());
 	pInstanceGroup->AddSubItem(pPropertyGroup);
 
 	/*
 	* range
 	*/
-	if (pRDFProperty->getType() == TYPE_OBJECTTYPE)
+	if (pProperty->getType() == TYPE_OBJECTTYPE)
 	{
 		ASSERT(GetController() != NULL);
 
-		CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pRDFProperty);
+		CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
 		ASSERT(pObjectRDFProperty != NULL);
 
 		wstring strRange;
@@ -2119,14 +2119,14 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGro
 			strRange += CA2W(szClassName);
 		}
 
-		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pRDFProperty->getName());
+		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
-	} // if (pRDFProperty->getType() == TYPE_OBJECTTYPE)
+	} // if (pProperty->getType() == TYPE_OBJECTTYPE)
 	else
 	{
-		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pRDFProperty->getRange().c_str(), pRDFProperty->getName());
+		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRange().c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
@@ -2135,32 +2135,32 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGro
 	/*
 	* cardinality
 	*/
-	AddInstancePropertyCardinality(pPropertyGroup, pRDFInstance, pRDFProperty);
+	AddInstancePropertyCardinality(pPropertyGroup, pInstance, pProperty);
 
 	/*
 	* values
 	*/
-	AddInstancePropertyValues(pPropertyGroup, pRDFInstance, pRDFProperty);	
+	AddInstancePropertyValues(pPropertyGroup, pInstance, pProperty);	
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty)
+void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
-	switch (pRDFProperty->getType())
+	switch (pProperty->getType())
 	{
 	case TYPE_OBJECTTYPE:
 	{
 		int64_t * piObjectInstances = NULL;
 		int64_t iCard = 0;
-		GetObjectProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), &piObjectInstances, &iCard);
+		GetObjectProperty(pInstance->getInstance(), pProperty->getInstance(), &piObjectInstances, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
-		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pRDFProperty->getName(),
-			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iCard));
+		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
@@ -2171,15 +2171,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 	{
 		int64_t iCard = 0;
 		bool* pbValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void**)&pbValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pRDFProperty->getName(),
-			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iCard));
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
@@ -2190,15 +2190,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 	{
 		int64_t iCard = 0;
 		char ** szValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&szValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
-		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pRDFProperty->getName(),
-			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iCard));
+		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
@@ -2209,15 +2209,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 	{
 		int64_t iCard = 0;
 		double * pdValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&pdValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
-		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pRDFProperty->getName(),
-			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iCard));
+		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
@@ -2228,15 +2228,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&piValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
-		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pRDFProperty->getName(),
-			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iCard));
+		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
@@ -2248,7 +2248,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 		ASSERT(false); // unknown property
 	}
 	break;
-	} // switch (pRDFProperty->getType())
+	} // switch (pProperty->getType())
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2268,9 +2268,9 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 //}
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty)
+void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
-	switch (pRDFProperty->getType())
+	switch (pProperty->getType())
 	{
 	case TYPE_OBJECTTYPE:
 	{	
@@ -2278,13 +2278,13 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 		int64_t * piInstances = NULL;
 		int64_t iCard = 0;
-		GetObjectProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), &piInstances, &iCard);
+		GetObjectProperty(pInstance->getInstance(), pProperty->getInstance(), &piInstances, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t	iMinCard = 0;
 			int64_t iMaxCard = 0;
-			pRDFProperty->GetRestrictions(pRDFInstance->getInstance(), iMinCard, iMaxCard);
+			pProperty->GetRestrictions(pInstance->getInstance(), iMinCard, iMaxCard);
 
 			if ((iMinCard == -1) && (iMaxCard == -1))
 			{
@@ -2296,36 +2296,36 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 			CRDFModel * pModel = GetController()->GetModel();
 			ASSERT(pModel != NULL);
 
-			auto& mapRFDInstances = pModel->GetRDFInstances();
+			auto& mapInstances = pModel->GetInstances();
 
 			/*
 			* Compatible instances
 			*/
 			// Moved in CSelectInstanceDialog
-			//CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pRDFProperty);
+			//CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
 			//ASSERT(pObjectRDFProperty != NULL);
 
 			// Moved in CSelectInstanceDialog
 			//vector<int64_t> vecCompatibleInstances;
-			//pModel->GetCompatibleInstances(pRDFInstance, pObjectRDFProperty, vecCompatibleInstances);
+			//pModel->GetCompatibleInstances(pInstance, pObjectRDFProperty, vecCompatibleInstances);
 
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceObjectProperty * pProperty = NULL;
+				CRDFInstanceObjectProperty * pInstanceObjectProperty = NULL;
 
 				if (piInstances[iValue] != 0)
 				{
-					map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapRFDInstances.find(piInstances[iValue]);
-					ASSERT(itInstanceValue != mapRFDInstances.end());
+					map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(piInstances[iValue]);
+					ASSERT(itInstanceValue != mapInstances.end());
 
-					pProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)itInstanceValue->second->getUniqueName(), pRDFProperty->getName(),
-						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
+					pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)itInstanceValue->second->getUniqueName(), pProperty->getName(),
+						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 				}
 				else
 				{
-					pProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)EMPTY_INSTANCE, pRDFProperty->getName(),
-						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
+					pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)EMPTY_INSTANCE, pProperty->getName(),
+						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 				}
 
 				// Moved in CSelectInstanceDialog
@@ -2333,11 +2333,11 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 				//for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
 				//{
-				//	map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapRFDInstances.find(vecCompatibleInstances[iCompatibleInstance]);
-				//	ASSERT(itInstanceValue != mapRFDInstances.end());
+				//	map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
+				//	ASSERT(itInstanceValue != mapInstances.end());
 
 				//	wstring strInstanceUniqueName = itInstanceValue->second->getUniqueName();
-				//	if ((piInstances[iValue] != vecCompatibleInstances[iCompatibleInstance]) && IsUsedRecursively(pRDFInstance->getInstance(), itInstanceValue->second->getInstance()))
+				//	if ((piInstances[iValue] != vecCompatibleInstances[iCompatibleInstance]) && IsUsedRecursively(pInstance->getInstance(), itInstanceValue->second->getInstance()))
 				//	{
 				//		strInstanceUniqueName += USED_SUFFIX;
 				//	}
@@ -2349,25 +2349,25 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 				/*
 				* Empty command
 				*/
-				pProperty->AddOption(EMPTY_INSTANCE);
-				pProperty->AddValue(EMPTY_INSTANCE, 0);
+				pInstanceObjectProperty->AddOption(EMPTY_INSTANCE);
+				pInstanceObjectProperty->AddValue(EMPTY_INSTANCE, 0);
 
 				/*
 				* Remove command
 				*/
 				if (iCard > iMinCard)
 				{
-					pProperty->AddOption(REMOVE_OBJECT_PROPERTY_COMMAND);
+					pInstanceObjectProperty->AddOption(REMOVE_OBJECT_PROPERTY_COMMAND);
 				}				
 
 				/*
 				* Select
 				*/
-				pProperty->AddOption(SELECT_OBJECT_PROPERTY_COMMAND);
+				pInstanceObjectProperty->AddOption(SELECT_OBJECT_PROPERTY_COMMAND);
 
-				pProperty->AllowEdit(FALSE);
+				pInstanceObjectProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pInstanceObjectProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -2377,10 +2377,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pRDFProperty->getName());
-				pProperty->AllowEdit(FALSE);
+				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				pGridProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
 
@@ -2392,17 +2392,17 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	{
 		int64_t iCard = 0;
 		bool* pbValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void**)&pbValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pProperty = new CRDFInstanceProperty(L"value", (_variant_t)pbValue[iValue], pRDFProperty->getName(),
-					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
+				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pbValue[iValue], pProperty->getName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pInstanceProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -2412,10 +2412,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pRDFProperty->getName());
-				pProperty->AllowEdit(FALSE);
+				CMFCPropertyGridProperty* pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				pGridProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
 	} // case TYPE_BOOL_DATATYPE:
@@ -2425,17 +2425,17 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	{
 		int64_t iCard = 0;
 		char ** szValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&szValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty * pProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pRDFProperty->getName(),
-					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
+				CRDFInstanceProperty * pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pInstancProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -2445,10 +2445,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pRDFProperty->getName());
-				pProperty->AllowEdit(FALSE);
+				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				pGridProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
 	} // case TYPE_CHAR_DATATYPE:
@@ -2458,17 +2458,17 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	{
 		int64_t iCard = 0;
 		double * pdValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&pdValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty * pProperty = new CRDFInstanceProperty(L"value", (_variant_t)pdValue[iValue], pRDFProperty->getName(),
-					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
+				CRDFInstanceProperty * pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pdValue[iValue], pProperty->getName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pInstanceProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -2478,10 +2478,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pRDFProperty->getName());
-				pProperty->AllowEdit(FALSE);
+				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				pGridProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
 	} // case TYPE_DOUBLE_DATATYPE:
@@ -2491,18 +2491,18 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = NULL;
-		GetDatatypeProperty(pRDFInstance->getInstance(), pRDFProperty->getInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&piValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty * pProperty = new CRDFInstanceProperty(L"value", (_variant_t)piValue[iValue], pRDFProperty->getName(),
-					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pRDFInstance, pRDFProperty, iValue));
-				pProperty->EnableSpinControlInt64();
+				CRDFInstanceProperty * pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)piValue[iValue], pProperty->getName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
+				pInstanceProperty->EnableSpinControlInt64();
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pInstanceProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -2512,10 +2512,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pRDFProperty->getName());
-				pProperty->AllowEdit(FALSE);
+				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				pGridProperty->AllowEdit(FALSE);
 
-				pPropertyGroup->AddSubItem(pProperty);
+				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
 	} // case TYPE_INT_DATATYPE:
@@ -2526,7 +2526,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 		ASSERT(false); // unknown property
 	}
 	break;
-	} // switch (pRDFProperty->getType())
+	} // switch (pProperty->getType())
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2544,8 +2544,8 @@ void CPropertiesWnd::LoadBaseInformation()
 
 	ASSERT(GetController() != NULL);
 
-	auto pRDFInstance = GetController()->GetSelectedInstance();
-	if (pRDFInstance == NULL)
+	auto pInstance = GetController()->GetSelectedInstance();
+	if (pInstance == NULL)
 	{
 		return;
 	}
@@ -2553,14 +2553,14 @@ void CPropertiesWnd::LoadBaseInformation()
 	wchar_t szBuffer[200];
 
 	auto pBaseInfoGroup = new CMFCPropertyGridProperty(L"Base information");
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getName());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
 	pBaseInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
 	* Bounding box min
 	*/
 	{
-		auto pBBMin = pRDFInstance->getOriginalBoundingBoxMin();
+		auto pBBMin = pInstance->getOriginalBoundingBoxMin();
 
 		swprintf(szBuffer, 100, 
 			L"%.6f, %.6f, %.6f", 
@@ -2576,7 +2576,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Bounding box max
 	*/
 	{	
-		auto pBBMax = pRDFInstance->getOriginalBoundingBoxMax();
+		auto pBBMax = pInstance->getOriginalBoundingBoxMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -2592,7 +2592,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* AABB Bounding box min
 	*/
 	{
-		auto pAABBBBMin = pRDFInstance->getAABBBoundingBoxMin();
+		auto pAABBBBMin = pInstance->getAABBBoundingBoxMin();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -2608,7 +2608,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* AABB Bounding box max
 	*/
 	{
-		auto pAABBBBMax = pRDFInstance->getAABBBoundingBoxMax();
+		auto pAABBBBMax = pInstance->getAABBBoundingBoxMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -2624,7 +2624,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Vertices
 	*/
 	{	
-		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getVerticesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getVerticesCount());
 
 		auto pItem = new CMFCPropertyGridProperty(L"Number of vertices", (_variant_t)szBuffer, L"Number of vertices");
 		pItem->AllowEdit(FALSE);
@@ -2636,7 +2636,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Indices
 	*/
 	{	
-		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getIndicesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getIndicesCount());
 
 		auto pItem = new CMFCPropertyGridProperty(L"Number of indices", (_variant_t)szBuffer, L"Number of indices");
 		pItem->AllowEdit(FALSE);
@@ -2648,7 +2648,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Conceptual faces
 	*/
 	{
-		swprintf(szBuffer, 100, L"%lld", pRDFInstance->getConceptualFacesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getConceptualFacesCount());
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Number of conceptual faces", (_variant_t)szBuffer, L"Number of conceptual faces");
 		pProperty->AllowEdit(FALSE);
@@ -2662,7 +2662,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	{
 		int64_t iCount = 0;
 
-		auto& vecTriangles = pRDFInstance->getTriangles();
+		auto& vecTriangles = pInstance->getTriangles();
 		for (auto pTriangle : vecTriangles)
 		{
 			iCount += const_cast<_primitives*>(&pTriangle)->indicesCount();
@@ -2682,7 +2682,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	{
 		int64_t iCount = 0;
 
-		auto& vecLines = pRDFInstance->getLines();
+		auto& vecLines = pInstance->getLines();
 		for (auto pLine : vecLines)
 		{
 			iCount += const_cast<_primitives*>(&pLine)->indicesCount();
@@ -2702,7 +2702,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	{
 		int64_t iCount = 0;
 
-		auto& vecPoints = pRDFInstance->getPoints();
+		auto& vecPoints = pInstance->getPoints();
 		for (auto pPoint : vecPoints)
 		{
 			iCount += const_cast<_primitives*>(&pPoint)->indicesCount();
@@ -2720,7 +2720,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Area
 	*/
 	{
-		swprintf(szBuffer, 100, L"%.6f", GetArea(pRDFInstance->getInstance(), NULL, NULL));
+		swprintf(szBuffer, 100, L"%.6f", GetArea(pInstance->getInstance(), NULL, NULL));
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Area", (_variant_t)szBuffer, L"Area");
 		pProperty->AllowEdit(FALSE);
@@ -2732,7 +2732,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Perimeter
 	*/
 	{
-		swprintf(szBuffer, 100, L"%.6f", GetPerimeter(pRDFInstance->getInstance()));
+		swprintf(szBuffer, 100, L"%.6f", GetPerimeter(pInstance->getInstance()));
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Perimeter", (_variant_t)szBuffer, L"Perimeter");
 		pProperty->AllowEdit(FALSE);
@@ -2745,7 +2745,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	*/
 	{
 		double arCentroid[3];
-		double dVolume = GetCentroid(pRDFInstance->getInstance(), NULL, NULL, arCentroid);
+		double dVolume = GetCentroid(pInstance->getInstance(), NULL, NULL, arCentroid);
 
 		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
 
@@ -2780,14 +2780,14 @@ void CPropertiesWnd::LoadMetaInformation()
 
 	ASSERT(GetController() != NULL);
 
-	CRDFInstance * pRDFInstance = GetController()->GetSelectedInstance();
-	if (pRDFInstance == NULL)
+	CRDFInstance * pInstance = GetController()->GetSelectedInstance();
+	if (pInstance == NULL)
 	{
 		return;
 	}
 
 	CMFCPropertyGridProperty * pMetaInfoGroup = new CMFCPropertyGridProperty(L"Meta information");
-	CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pRDFInstance->getName());
+	CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
 	pMetaInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
@@ -2795,7 +2795,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*/
 	{
 		double arCentroid[3];
-		double dVolume = GetCentroid(pRDFInstance->getInstance(), NULL, NULL, arCentroid);
+		double dVolume = GetCentroid(pInstance->getInstance(), NULL, NULL, arCentroid);
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
@@ -2817,7 +2817,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Area
 	*/
 	{
-		double dArea = GetArea(pRDFInstance->getInstance(), NULL, NULL);
+		double dArea = GetArea(pInstance->getInstance(), NULL, NULL);
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dArea);
@@ -2832,7 +2832,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Perimeter
 	*/
 	{
-		double dPerimeter = GetPerimeter(pRDFInstance->getInstance());
+		double dPerimeter = GetPerimeter(pInstance->getInstance());
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dPerimeter);
@@ -2853,7 +2853,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Geometry - Number of conceptual faces
 	*/
 	{
-		int64_t iConceptualFacesCount = pRDFInstance->getConceptualFacesCount();
+		int64_t iConceptualFacesCount = pInstance->getConceptualFacesCount();
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iConceptualFacesCount);
@@ -2870,9 +2870,9 @@ void CPropertiesWnd::LoadMetaInformation()
 	*/
 	{
 		int64_t iTrianglesCount = 0;
-		for (size_t iTriangle = 0; iTriangle < pRDFInstance->getTriangles().size(); iTriangle++)
+		for (size_t iTriangle = 0; iTriangle < pInstance->getTriangles().size(); iTriangle++)
 		{
-			iTrianglesCount += const_cast<_primitives*>(&(pRDFInstance->getTriangles()[iTriangle]))->indicesCount() / 3;
+			iTrianglesCount += const_cast<_primitives*>(&(pInstance->getTriangles()[iTriangle]))->indicesCount() / 3;
 		}
 
 		wchar_t szBuffer[100];
@@ -2889,9 +2889,9 @@ void CPropertiesWnd::LoadMetaInformation()
 	*/
 	{
 		int64_t iLinesCount = 0;
-		for (size_t iLine = 0; iLine < pRDFInstance->getLines().size(); iLine++)
+		for (size_t iLine = 0; iLine < pInstance->getLines().size(); iLine++)
 		{
-			iLinesCount += const_cast<_primitives*>(&(pRDFInstance->getLines()[iLine]))->indicesCount() / 2;
+			iLinesCount += const_cast<_primitives*>(&(pInstance->getLines()[iLine]))->indicesCount() / 2;
 		}
 
 		wchar_t szBuffer[100];
@@ -2907,7 +2907,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Geometry - Number of points
 	*/
 	{
-		int64_t iPointsCount = pRDFInstance->getPoints().size();
+		int64_t iPointsCount = pInstance->getPoints().size();
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iPointsCount);
@@ -2954,7 +2954,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 0:   Check Design Tree Consistency
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Design Tree Consistency", (_variant_t)szResult, L"Check Design Tree Consistency");
 		pProperty->AllowEdit(FALSE);
@@ -2966,7 +2966,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 1:   Check Consistency for Triangle Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangle Output (through API)", (_variant_t)szResult, L"Check Consistency for Triangle Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -2978,7 +2978,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 2:   Check Consistency for Line Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Line Output (through API)", (_variant_t)szResult, L"Check Consistency for Line Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -2990,7 +2990,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 3:   Check Consistency for Point Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Point Output (through API)", (_variant_t)szResult, L"Check Consistency for Point Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3002,7 +3002,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 4:   Check Consistency for Generated Surfaces (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (through API)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3014,7 +3014,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 5:   Check Consistency for Generated Surfaces (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (internal)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3026,7 +3026,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 6:   Check Consistency for Generated Solids (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (through API)", (_variant_t)szResult, L"Check Consistency for Generated Solids (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3038,7 +3038,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 7:   Check Consistency for Generated Solids (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (internal)", (_variant_t)szResult, L"Check Consistency for Generated Solids (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3050,7 +3050,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 8:   Check Consistency for BoundingBox's
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for BoundingBox's", (_variant_t)szResult, L"Check Consistency for BoundingBox's");
 		pProperty->AllowEdit(FALSE);
@@ -3062,7 +3062,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 9:   Check Consistency for Triangulation
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangulation", (_variant_t)szResult, L"Check Consistency for Triangulation");
 		pProperty->AllowEdit(FALSE);
@@ -3074,7 +3074,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 10:  Check Consistency for Relations (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Relations (through API)", (_variant_t)szResult, L"Check Consistency for Relations (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3086,7 +3086,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 16:   Contains (Closed) Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Solid(s)", (_variant_t)szResult, L"Contains (Closed) Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3098,7 +3098,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 18:   Contains (Closed) Infinite Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Infinite Solid(s)", (_variant_t)szResult, L"Contains (Closed) Infinite Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3110,7 +3110,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 20:   Contains Closed Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Surface(s)", (_variant_t)szResult, L"Contains Closed Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3122,7 +3122,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 21:   Contains Open Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Surface(s)", (_variant_t)szResult, L"Contains Open Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3134,7 +3134,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 22:   Contains Closed Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Surface(s)", (_variant_t)szResult, L"Contains Closed Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3146,7 +3146,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 23:   Contains Open Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Surface(s)", (_variant_t)szResult, L"Contains Open Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3158,7 +3158,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 24:   Contains Closed Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Line(s)", (_variant_t)szResult, L"Contains Closed Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3170,7 +3170,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 25:   Contains Open Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Line(s)", (_variant_t)szResult, L"Contains Open Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3182,7 +3182,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 26:   Contains Closed Infinite Line(s) [i.e. both ends in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Line(s)", (_variant_t)szResult, L"Contains Closed Infinite Line(s) [i.e. both ends in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -3194,7 +3194,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 27:   Contains Open Infinite Line(s) [i.e. one end in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Line(s)", (_variant_t)szResult, L"Contains Open Infinite Line(s) [i.e. one end in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -3206,7 +3206,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 28:   Contains (Closed) Point(s)
 	*/
 	{
-		wchar_t * szResult = CheckInstanceConsistency(pRDFInstance->getInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
+		wchar_t * szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
 
 		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Point(s)", (_variant_t)szResult, L"Contains (Closed) Point(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3261,8 +3261,8 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	CRDFInstancePropertyData * pValueData = (CRDFInstancePropertyData *)pValueProperty->GetData();
 	ASSERT(pValueData != NULL);
 
-	CRDFInstance * pRDFInstance = pValueData->GetInstance();
-	CRDFProperty * pRDFProperty = pValueData->GetProperty();
+	CRDFInstance * pInstance = pValueData->GetInstance();
+	CRDFProperty * pProperty = pValueData->GetProperty();
 
 	/*
 	* Select the property
@@ -3275,7 +3275,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	CAddRDFInstanceProperty * pCardinalityProperty = (CAddRDFInstanceProperty *)pPropertyGroup->GetSubItem(1);
 
-	wstring strCardinality = pRDFProperty->getCardinality(pRDFInstance->getInstance());
+	wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
 	pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
 	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());
@@ -3298,7 +3298,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	/*
 	* Add the values
 	*/
-	AddInstancePropertyValues(pPropertyGroup, pRDFInstance, pRDFProperty);
+	AddInstancePropertyValues(pPropertyGroup, pInstance, pProperty);
 
 	/*
 	* Enable the drawing

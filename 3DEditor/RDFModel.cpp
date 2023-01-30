@@ -88,9 +88,9 @@ private:
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
 	: m_iModel(0)
-	, m_mapRDFClasses()
-	, m_mapRDFProperties()
-	, m_mapRDFInstances()
+	, mapClasses()
+	, mapProperties()
+	, m_mapInstances()
 	, m_iID(1)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -205,9 +205,9 @@ void CRDFModel::CreateDefaultModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFClass *> & CRDFModel::GetRDFClasses() const
+const map<int64_t, CRDFClass *> & CRDFModel::GetClasses() const
 {
-	return m_mapRDFClasses;
+	return mapClasses;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -215,12 +215,12 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 {
 	ASSERT(iClassInstance != 0);
 
-	map<int64_t, CRDFClass *>::const_iterator itRDFClass = m_mapRDFClasses.find(iClassInstance);
-	ASSERT(itRDFClass != m_mapRDFClasses.end());
+	map<int64_t, CRDFClass *>::const_iterator itClass = mapClasses.find(iClassInstance);
+	ASSERT(itClass != mapClasses.end());
 
-	CRDFClass * pRDFClass = itRDFClass->second;
+	CRDFClass * pClass = itClass->second;
 
-	const vector<int64_t> & vecParentClasses = pRDFClass->getParentClasses();
+	const vector<int64_t> & vecParentClasses = pClass->getParentClasses();
 	if (vecParentClasses.empty())
 	{
 		return;
@@ -235,27 +235,27 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFProperty *>& CRDFModel::GetRDFProperties()
+const map<int64_t, CRDFProperty *>& CRDFModel::GetProperties()
 {
-	return m_mapRDFProperties;
+	return mapProperties;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFInstance *>& CRDFModel::GetRDFInstances() const
+const map<int64_t, CRDFInstance *>& CRDFModel::GetInstances() const
 {
-	return m_mapRDFInstances;
+	return m_mapInstances;
 }
 // ------------------------------------------------------------------------------------------------
-CRDFInstance * CRDFModel::GetRDFInstanceByID(int64_t iID)
+CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 {
 	ASSERT(iID != 0);
 
-	map<int64_t, CRDFInstance *>::iterator itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itRDFInstances->second->getID() == iID)
+		if (itInstance->second->getID() == iID)
 		{
-			return itRDFInstances->second;
+			return itInstance->second;
 		}
 	}
 
@@ -264,16 +264,16 @@ CRDFInstance * CRDFModel::GetRDFInstanceByID(int64_t iID)
 	return NULL;
 }
 
-CRDFInstance * CRDFModel::GetRDFInstanceByIInstance(int64_t iInstance)
+CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 {
 	ASSERT(iInstance != 0);
 
-	map<int64_t, CRDFInstance *>::iterator itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itRDFInstances->first == iInstance)
+		if (itInstance->first == iInstance)
 		{
-			return itRDFInstances->second;
+			return itInstance->second;
 		}
 	}
 
@@ -288,23 +288,23 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 	int64_t iInstance = CreateInstance(iClassInstance, NULL);
 	ASSERT(iInstance != 0);
 
-	auto pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-	pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	auto pInstance = new CRDFInstance(m_iID++, iInstance);
+	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
-	m_mapRDFInstances[iInstance] = pRDFInstance;
+	m_mapInstances[iInstance] = pInstance;
 
-	return pRDFInstance;
+	return pInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 {
-	auto pRDFInstance = new CRDFInstance(m_iID++, pThing);
-	pRDFInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	auto pInstance = new CRDFInstance(m_iID++, pThing);
+	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
-	m_mapRDFInstances[pThing] = pRDFInstance;
+	m_mapInstances[pThing] = pInstance;
 
-	return pRDFInstance;
+	return pInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -314,10 +314,10 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 
 	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
 
-	map<int64_t, CRDFInstance *>::iterator itRDFInstance = m_mapRDFInstances.find(pInstance->getInstance());
-	ASSERT(itRDFInstance != m_mapRDFInstances.end());
+	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->getInstance());
+	ASSERT(itInstance != m_mapInstances.end());
 
-	m_mapRDFInstances.erase(itRDFInstance);
+	m_mapInstances.erase(itInstance);
 
 	delete pInstance;
 
@@ -345,18 +345,18 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::GetCompatibleInstances(CRDFInstance * pRDFInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
+void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
-	ASSERT(pRDFInstance != NULL);
+	ASSERT(pInstance != NULL);
 	ASSERT(pObjectRDFProperty != NULL);
 
-	int64_t iClassInstance = GetInstanceClass(pRDFInstance->getInstance());
+	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
 	ASSERT(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 	ASSERT(!vecRestrictions.empty());
 
-	auto& mapRFDInstances = GetRDFInstances();
+	auto& mapRFDInstances = GetInstances();
 
 	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
@@ -364,7 +364,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pRDFInstance, CObjectRDFPr
 		/*
 		* Skip this instance
 		*/
-		if (itRFDInstances->second == pRDFInstance)
+		if (itRFDInstances->second == pInstance)
 		{
 			continue;
 		}
@@ -372,7 +372,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pRDFInstance, CObjectRDFPr
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->GetModel() != pRDFInstance->GetModel())
+		if (itRFDInstances->second->GetModel() != pInstance->GetModel())
 		{
 			continue;
 		}
@@ -452,11 +452,11 @@ void CRDFModel::ScaleAndCenter()
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
 
-	auto itRDFInstance = m_mapRDFInstances.begin();
-	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		itRDFInstance->second->ResetScaleAndCenter();
-		itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->ResetScaleAndCenter();
+		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -482,10 +482,10 @@ void CRDFModel::ScaleAndCenter()
 	* Scale/Center
 	*/
 
-	itRDFInstance = m_mapRDFInstances.begin();
-	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
+	itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		itRDFInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		itInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
 	}
 
 	/*
@@ -499,12 +499,12 @@ void CRDFModel::ScaleAndCenter()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	itRDFInstance = m_mapRDFInstances.begin();
-	for (; itRDFInstance != m_mapRDFInstances.end(); itRDFInstance++)
+	itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itRDFInstance->second->getEnable())
+		if (itInstance->second->getEnable())
 		{
-			itRDFInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+			itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 		}
 	}
 
@@ -566,7 +566,7 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fZTranslation = 0.f;
 
 	ASSERT(iInstance != 0);
-	ASSERT(m_mapRDFInstances.find(iInstance) != m_mapRDFInstances.end());
+	ASSERT(m_mapInstances.find(iInstance) != m_mapInstances.end());
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -575,7 +575,7 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	m_mapRDFInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	m_mapInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -629,15 +629,15 @@ void CRDFModel::ZoomOut()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	auto itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (!itRDFInstances->second->getEnable())
+		if (!itInstance->second->getEnable())
 		{
 			continue;
 		}
 
-		itRDFInstances->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -683,15 +683,15 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 {
 	SetFormatSettings(m_iModel);
 
-	map<int64_t, CRDFInstance *>::iterator itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itRDFInstances->second->GetModel() != m_iModel)
+		if (itInstance->second->GetModel() != m_iModel)
 		{
 			continue;
 		}
 
-		itRDFInstances->second->Recalculate();
+		itInstance->second->Recalculate();
 	}
 }
 
@@ -1207,7 +1207,7 @@ void CRDFModel::LoadRDFModel()
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
 	{
-		m_mapRDFClasses[iClassInstance] = new CRDFClass(iClassInstance);
+		mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
@@ -1223,37 +1223,37 @@ void CRDFModel::LoadRDFModel()
 		{
 			case TYPE_OBJECTTYPE:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_BOOL_DATATYPE:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_CHAR_DATATYPE:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_INT_DATATYPE:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_DOUBLE_DATATYPE:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case 0:
 			{
-				m_mapRDFProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+				mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
 			}
 			break;
 
@@ -1262,20 +1262,20 @@ void CRDFModel::LoadRDFModel()
 				break;
 		} // switch (iPropertyType)
 
-		map<int64_t, CRDFClass *>::iterator itRDFClasses = m_mapRDFClasses.begin();
-		for (; itRDFClasses != m_mapRDFClasses.end(); itRDFClasses++)
+		map<int64_t, CRDFClass *>::iterator itClasses = mapClasses.begin();
+		for (; itClasses != mapClasses.end(); itClasses++)
 		{
 			int64_t	iMinCard = -1;
 			int64_t iMaxCard = -1;
-			GetClassPropertyCardinalityRestrictionNested(itRDFClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
+			GetClassPropertyCardinalityRestrictionNested(itClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
 
 			if ((iMinCard == -1) && (iMaxCard == -1))
 			{
 				continue;
 			}
 
-			itRDFClasses->second->AddPropertyRestriction(new CRDFPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
-		} // for (; itRDFClasses != ...
+			itClasses->second->AddPropertyRestriction(new CRDFPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
+		} // for (; itClasses != ...
 
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
@@ -1288,7 +1288,7 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 		iRDFInstance->setEnable(true);
 
 		if (iRDFInstance->getConceptualFacesCount() == 0) {
-			auto& mapRFDInstances = GetRDFInstances();
+			auto& mapRFDInstances = GetInstances();
 
 			//
 			//	Walk over all relations (object properties)
@@ -1319,7 +1319,7 @@ void CRDFModel::SetDefaultEnabledInstances()
 {
 	ProgressStatus prgs (L"Collect visible instances");
 
-	auto& mapRFDInstances = GetRDFInstances();
+	auto& mapRFDInstances = GetInstances();
 
 	auto itRFDInstances = mapRFDInstances.begin();
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
@@ -1353,20 +1353,20 @@ void CRDFModel::LoadRDFInstances()
 	{
 		prgs.Step();
 
-		CRDFInstance* pRDFInstance = nullptr;
+		CRDFInstance* pInstance = nullptr;
 
-		auto itRDFInstance = m_mapRDFInstances.find(iInstance);
-		if (itRDFInstance == m_mapRDFInstances.end())
+		auto itInstance = m_mapInstances.find(iInstance);
+		if (itInstance == m_mapInstances.end())
 		{
-			pRDFInstance = new CRDFInstance(m_iID++, iInstance);
-			m_mapRDFInstances[iInstance] = pRDFInstance;
+			pInstance = new CRDFInstance(m_iID++, iInstance);
+			m_mapInstances[iInstance] = pInstance;
 		}
 		else
 		{
-			pRDFInstance = itRDFInstance->second;
+			pInstance = itInstance->second;
 		}
 
-		pRDFInstance->setEnable(!pRDFInstance->isReferenced());
+		pInstance->setEnable(!pInstance->isReferenced());
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
@@ -1397,35 +1397,35 @@ void CRDFModel::Clean()
 	/*
 	* RDF Classes
 	*/
-	auto itRDFClasses = m_mapRDFClasses.begin();
-	for (; itRDFClasses != m_mapRDFClasses.end(); itRDFClasses++)
+	auto itClasses = mapClasses.begin();
+	for (; itClasses != mapClasses.end(); itClasses++)
 	{
-		delete itRDFClasses->second;
+		delete itClasses->second;
 	}
 
-	m_mapRDFClasses.clear();
+	mapClasses.clear();
 
 	/*
 	* RDF Properties
 	*/
-	auto itRDFProperties = m_mapRDFProperties.begin();
-	for (; itRDFProperties != m_mapRDFProperties.end(); itRDFProperties++)
+	auto itProperty = mapProperties.begin();
+	for (; itProperty != mapProperties.end(); itProperty++)
 	{
-		delete itRDFProperties->second;
+		delete itProperty->second;
 	}
 
-	m_mapRDFProperties.clear();
+	mapProperties.clear();
 
 	/*
 	* RDF Instances
 	*/
-	auto itRDFInstances = m_mapRDFInstances.begin();
-	for (; itRDFInstances != m_mapRDFInstances.end(); itRDFInstances++)
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		delete itRDFInstances->second;
+		delete itInstance->second;
 	}
 
-	m_mapRDFInstances.clear();
+	m_mapInstances.clear();
 	
 	/*
 	* Texture

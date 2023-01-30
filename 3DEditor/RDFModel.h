@@ -31,15 +31,15 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Class
-	map<int64_t, CRDFClass *> m_mapRDFClasses;
+	map<int64_t, CRDFClass *> mapClasses;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Property
-	map<int64_t, CRDFProperty *> m_mapRDFProperties;
+	map<int64_t, CRDFProperty *> mapProperties;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance : Object
-	map<int64_t, CRDFInstance *> m_mapRDFInstances;
+	map<int64_t, CRDFInstance *> m_mapInstances;
 
 	// --------------------------------------------------------------------------------------------
 	// ID (1-based index)
@@ -96,7 +96,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFClass *>& GetRDFClasses() const;
+	const map<int64_t, CRDFClass *>& GetClasses() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -104,19 +104,19 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFProperty *>& GetRDFProperties();
+	const map<int64_t, CRDFProperty *>& GetProperties();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFInstance *>& GetRDFInstances() const;
+	const map<int64_t, CRDFInstance *>& GetInstances() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFInstance * GetRDFInstanceByID(int64_t iID);
+	CRDFInstance * GetInstanceByID(int64_t iID);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFInstance * GetRDFInstanceByIInstance(int64_t iInstance);
+	CRDFInstance * GetInstanceByIInstance(int64_t iInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory
@@ -139,7 +139,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Support for editing of object properties
-	void GetCompatibleInstances(CRDFInstance* pRDFInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
+	void GetCompatibleInstances(CRDFInstance* pInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter

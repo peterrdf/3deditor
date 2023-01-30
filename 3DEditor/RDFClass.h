@@ -62,7 +62,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Adds an RDF Property
-	void AddPropertyRestriction(CRDFPropertyRestriction * pRDFPropertyRestriction);
+	void AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter

@@ -96,11 +96,11 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures
-	void RemoveInstanceItemData(CRDFInstance * pRDFInstance, HTREEITEM hInstance);
+	void RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures
-	void RemovePropertyItemData(CRDFInstance * pRDFInstance, CRDFProperty * pRDFProperty, HTREEITEM hProperty);
+	void RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures
