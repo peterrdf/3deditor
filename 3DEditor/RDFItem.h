@@ -2,11 +2,11 @@
 
 #include "RDFInstance.h"
 
-enum enumRDFItemType
+enum class enumItemType
 {
-	rdftUnknown = 0,
-	rdftInstance = 1,
-	rdftProperty = 2,
+	Unknown = 0,
+	Instance = 1,
+	Property = 2,
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -21,19 +21,19 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instance
-	CRDFInstance * m_pInstance;
+	CRDFInstance* m_pInstance;
 
 protected: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Type
-	enumRDFItemType m_enRDFItemType;
+	enumItemType m_enItemType;
 
 public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CRDFItem(CRDFInstance * pInstance);
+	CRDFItem(CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// dtor
@@ -41,14 +41,14 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Accessor
-	vector<HTREEITEM> & items();
+	vector<HTREEITEM>& items();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFInstance * getInstance() const;
+	CRDFInstance* getInstance() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	enumRDFItemType getType() const;
+	enumItemType getType() const;
 };
 

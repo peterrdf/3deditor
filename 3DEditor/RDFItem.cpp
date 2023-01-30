@@ -5,7 +5,7 @@
 CRDFItem::CRDFItem(CRDFInstance * pInstance)
 	: m_vecItems()
 	, m_pInstance(pInstance)
-	, m_enRDFItemType(rdftUnknown)
+	, m_enItemType(enumItemType::Unknown)
 {
 	ASSERT(m_pInstance != NULL);
 }
@@ -22,9 +22,9 @@ CRDFInstance * CRDFItem::getInstance() const
 }
 
 // ------------------------------------------------------------------------------------------------
-enumRDFItemType CRDFItem::getType() const
+enumItemType CRDFItem::getType() const
 {
-	return m_enRDFItemType;
+	return m_enItemType;
 }
 
 // ------------------------------------------------------------------------------------------------

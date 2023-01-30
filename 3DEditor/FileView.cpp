@@ -700,7 +700,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 /*virtual*/ bool CFileView::IsSelected(HTREEITEM hItem)
 {
 	CRDFItem* pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
-	if ((pItem != NULL) && (pItem->getType() == rdftInstance) &&
+	if ((pItem != NULL) && (pItem->getType() == enumItemType::Instance) &&
 		(GetController()->GetSelectedInstance() == pItem->getInstance()))
 	{
 		return pItem->getInstance()->getEnable();
@@ -717,12 +717,12 @@ void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFPro
 		return;
 	}
 
-	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
 	if (pItem != NULL)
 	{
 		switch (pItem->getType())
 		{
-		case rdftInstance:
+		case enumItemType::Instance:
 		{
 			CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 			ASSERT(pInstanceItem != NULL);
@@ -731,7 +731,7 @@ void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFPro
 		}
 		break;
 
-		case rdftProperty:
+		case enumItemType::Property:
 		{
 			CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
 			ASSERT(pPropertyItem != NULL);
@@ -814,7 +814,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 	{
 		switch (pItem->getType())
 		{
-		case rdftInstance:
+		case enumItemType::Instance:
 		{
 			CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 			ASSERT(pInstanceItem != NULL);
@@ -823,7 +823,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 		}
 		break;
 
-		case rdftProperty:
+		case enumItemType::Property:
 		{
 			CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
 			ASSERT(pPropertyItem != NULL);
@@ -1522,7 +1522,7 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 	{
 		CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
 		ASSERT(pItem != NULL);
-		ASSERT(pItem->getType() == rdftInstance);
+		ASSERT(pItem->getType() == enumItemType::Instance);
 
 		CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 		ASSERT(pInstanceItem != NULL);
@@ -1753,7 +1753,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-	if (pItem->getType() != rdftInstance)
+	if (pItem->getType() != enumItemType::Instance)
 	{
 		return;
 	}
@@ -2230,23 +2230,23 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	}	
 
-	if (pItem->getType() == rdftInstance)
+	if (pItem->getType() == enumItemType::Instance)
 	{
 		auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 
 		GetController()->SelectInstance(this, pInstanceItem->getInstance());		
 
 		return;
-	} // if (pItem->getType() == rdftInstance)	
+	} // if (pItem->getType() == enumItemType::Instance)	
 
-	if (pItem->getType() == rdftProperty)
+	if (pItem->getType() == enumItemType::Property)
 	{
 		CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
 		
 		GetController()->SelectInstanceProperty(pPropertyItem->getInstance(), pPropertyItem->getProperty());		
 
 		return;
-	} // if (pItem->getType() == rdftProperty)
+	} // if (pItem->getType() == enumItemType::Property)
 
 	GetController()->SelectInstance(this, NULL);
 }
@@ -2265,7 +2265,7 @@ void CFileView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 
 	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(pNMTreeView->itemNew.hItem);
 	ASSERT(pItem != NULL);
-	ASSERT(pItem->getType() == rdftInstance);
+	ASSERT(pItem->getType() == enumItemType::Instance);
 
 	CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 

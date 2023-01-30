@@ -2,10 +2,10 @@
 #include "RDFInstanceItem.h"
 
 // ------------------------------------------------------------------------------------------------
-CRDFInstanceItem::CRDFInstanceItem(CRDFInstance * pInstance)
+CRDFInstanceItem::CRDFInstanceItem(CRDFInstance* pInstance)
 	: CRDFItem(pInstance)
 {
-	m_enRDFItemType = rdftInstance;
+	m_enItemType = enumItemType::Instance;
 }
 
 // ------------------------------------------------------------------------------------------------
