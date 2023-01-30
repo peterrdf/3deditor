@@ -96,7 +96,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFClass *> & GetRDFClasses() const;
+	const map<int64_t, CRDFClass *>& GetRDFClasses() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -104,11 +104,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFProperty *> & GetRDFProperties();
+	const map<int64_t, CRDFProperty *>& GetRDFProperties();
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	const map<int64_t, CRDFInstance *> & GetRDFInstances() const;
+	const map<int64_t, CRDFInstance *>& GetRDFInstances() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -127,11 +127,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Removes an instance
-	bool DeleteInstance(CRDFInstance * pInstance);
+	bool DeleteInstance(CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Adds measurements
-	void AddMeasurements(CRDFInstance * pInstance);
+	void AddMeasurements(CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Import
@@ -139,11 +139,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Support for editing of object properties
-	void GetCompatibleInstances(CRDFInstance * pRDFInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const;
+	void GetCompatibleInstances(CRDFInstance* pRDFInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	void GetWorldDimensions(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax) const;
+	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -175,7 +175,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Loads a model
-	void Load(const wchar_t * szPath);
+	void Load(const wchar_t* szPath);
 	void LoadE57(const wchar_t* szPath);
 	void LoadCityGML(const wchar_t* szPath);
 	void LoadDXF(const wchar_t* szPath);

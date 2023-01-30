@@ -235,13 +235,13 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFProperty *> & CRDFModel::GetRDFProperties()
+const map<int64_t, CRDFProperty *>& CRDFModel::GetRDFProperties()
 {
 	return m_mapRDFProperties;
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFInstance *> & CRDFModel::GetRDFInstances() const
+const map<int64_t, CRDFInstance *>& CRDFModel::GetRDFInstances() const
 {
 	return m_mapRDFInstances;
 }

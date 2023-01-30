@@ -403,10 +403,15 @@ void COpenGLRDFView::Draw(wxPaintDC * pDC)
 void COpenGLRDFView::Draw(CDC * pDC)
 #endif // _LINUX
 {
-	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
 
-	CRDFModel * pModel = pController->GetModel();
+		return;
+	}
+
+	auto pModel = pController->GetModel();
 	if (pModel == NULL)
 	{
 		return;
@@ -888,11 +893,11 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	vector<_cohort*> vecPointsCohorts;
 
 	prgs.Start(mapRDFInstances.size());
-	for (auto itRDFInstances = mapRDFInstances.begin(); itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
+	for (auto itRDFInstance = mapRDFInstances.begin(); itRDFInstance != mapRDFInstances.end(); itRDFInstance++)
 	{
 		prgs.Step();
 
-		CRDFInstance* pRDFInstance = itRDFInstances->second;
+		auto pRDFInstance = itRDFInstance->second;
 		if (pRDFInstance->getVerticesCount() == 0)
 		{
 			continue;
@@ -1372,16 +1377,21 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	auto pController = GetController();
+	if (pController == NULL)
+	{
+		ASSERT(FALSE);
 
-	CRDFModel * pModel = pController->GetModel();
+		return;
+	}
+
+	auto pModel = pController->GetModel();
 	if (pModel == NULL)
 	{
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
 
 	if (bTransparent)
 	{
@@ -1404,22 +1414,18 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			CRDFInstance* pRDFInstance = itInstance;
-
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 			
-			for (size_t iConcFacesCohort = 0; iConcFacesCohort < pRDFInstance->concFacesCohorts().size(); iConcFacesCohort++)
+			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
-				auto pConcFacesCohort = pRDFInstance->concFacesCohorts()[iConcFacesCohort];
-
 				const _material* pMaterial =
-					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 					pConcFacesCohort->getMaterial();
 
 				if (bTransparent)
@@ -1456,14 +1462,14 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 
 				if (pMaterial->hasTexture())
 				{
 					m_pOGLProgram->enableTexture(false);
 				}
-			} // for (size_t iConcFacesCohort ...
-		} // for (auto itInstance ...
+			} // for (auto pConcFacesCohort ...
+		} // for (auto pInstance ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
@@ -1482,7 +1488,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	auto end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
@@ -1503,7 +1509,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
 
 	m_pOGLProgram->enableBinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
@@ -1540,7 +1546,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	auto end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
@@ -1552,16 +1558,16 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 		return;
 	}
 
-	CRDFController * pController = GetController();
+	auto pController = GetController();
 	ASSERT(pController != NULL);
 
-	CRDFModel * pModel = pController->GetModel();
+	auto pModel = pController->GetModel();
 	if (pModel == NULL)
 	{
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
 
 	m_pOGLProgram->enableBinnPhongModel(false); 
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
@@ -1571,34 +1577,30 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			CRDFInstance* pRDFInstance = itInstance;
-
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iCohort = 0; iCohort < pRDFInstance->concFacePolygonsCohorts().size(); iCohort++)
+			for (auto pCohort : pInstance->concFacePolygonsCohorts())
 			{
-				_cohort* pCohort = pRDFInstance->concFacePolygonsCohorts()[iCohort];
-
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 			}
 		} // for (auto itInstance ...
 
 		glBindVertexArray(0);
-	} // for (auto itCohort ...
+	} // for (auto pInstance ...
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	auto end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
@@ -1619,7 +1621,7 @@ void COpenGLRDFView::DrawLines()
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
 
 	m_pOGLProgram->enableBinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
@@ -1629,33 +1631,30 @@ void COpenGLRDFView::DrawLines()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			auto pRDFInstance = itInstance;
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iCohort = 0; iCohort < pRDFInstance->linesCohorts().size(); iCohort++)
+			for (auto pCohort : pInstance->linesCohorts())
 			{
-				auto pCohort = pRDFInstance->linesCohorts()[iCohort];
-
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
+					pInstance->VBOOffset());
 			}
-		} // for (auto itInstance ...
+		} // for (auto pInstance ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	auto end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
@@ -1676,7 +1675,7 @@ void COpenGLRDFView::DrawPoints()
 		return;
 	}
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	auto begin = std::chrono::steady_clock::now();
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -1687,38 +1686,19 @@ void COpenGLRDFView::DrawPoints()
 	{
 		glBindVertexArray(itCohort.first);
 
-		for (auto itInstance : itCohort.second)
+		for (auto pInstance : itCohort.second)
 		{
-			auto pRDFInstance = itInstance;
-			if (!pRDFInstance->getEnable())
+			if (!pInstance->getEnable())
 			{
 				continue;
 			}
 
-			for (size_t iPointsCohort = 0; iPointsCohort < pRDFInstance->pointsCohorts().size(); iPointsCohort++)
+			for (auto pCohort : pInstance->pointsCohorts())
 			{
-				auto pCohort = pRDFInstance->pointsCohorts()[iPointsCohort];
-
 				const _material* pMaterial =
-					pRDFInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pRDFInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
-					pCohort->getMaterial();
-
-				if (pMaterial->hasTexture())
-				{
-					ASSERT(FALSE); // TODO!?!?
-					/*m_pOGLProgram->enableTexture(true);
-
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
-
-					m_pOGLProgram->setSampler(0);*/
-				}
-				/*else
-				{
-					ASSERT(FALSE); // TODO - Enable Binn-Phong!?!?
-					m_pOGLProgram->setMaterial(pMaterial);
-				}*/
+					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
+					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pCohort->getMaterial();				
 				
 				m_pOGLProgram->setAmbientColor(
 					pMaterial->getDiffuseColor().r(),
@@ -1730,15 +1710,9 @@ void COpenGLRDFView::DrawPoints()
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
 					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
-					pRDFInstance->VBOOffset());
-
-				/*if (pMaterial->hasTexture())
-				{
-					ASSERT(FALSE); // TODO!?!?
-					m_pOGLProgram->enableTexture(false);
-				}*/
-			} // for (size_t iPointsCohort = ...		
-		} // for (auto itInstance ...
+					pInstance->VBOOffset());
+			} // for (auto pCohort ...		
+		} // for (auto pInstance ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
@@ -1747,7 +1721,7 @@ void COpenGLRDFView::DrawPoints()
 
 	_oglUtils::checkForErrors();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	auto end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
@@ -2047,7 +2021,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	{
 		auto& mapRDFInstances = pModel->GetRDFInstances();
 
-		map<int64_t, CRDFInstance*>::const_iterator itRDFInstances = mapRDFInstances.begin();
+		auto itRDFInstances = mapRDFInstances.begin();
 		for (; itRDFInstances != mapRDFInstances.end(); itRDFInstances++)
 		{
 			CRDFInstance* pRDFInstance = itRDFInstances->second;
