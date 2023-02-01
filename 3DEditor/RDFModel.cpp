@@ -68,8 +68,8 @@ struct CityJSONLog : CityJsonRDF::ILog
 #endif
 	}
 
-	const char* m_logFile = NULL;
-	FILE*		m_fp = NULL;
+	const char* m_logFile = nullptr;
+	FILE* m_fp = nullptr;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 
 	ASSERT(false);
 
-	return NULL;
+	return nullptr;
 }
 
 CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
@@ -277,7 +277,7 @@ CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 {
 	ASSERT(iClassInstance != 0);
 
-	int64_t iInstance = CreateInstance(iClassInstance, NULL);
+	int64_t iInstance = CreateInstance(iClassInstance, nullptr);
 	ASSERT(iInstance != 0);
 
 	auto pInstance = new CRDFInstance(m_iID++, iInstance);
@@ -310,7 +310,7 @@ CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 // ------------------------------------------------------------------------------------------------
 bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
-	ASSERT(pInstance != NULL);
+	ASSERT(pInstance != nullptr);
 
 	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
 
@@ -347,8 +347,8 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
-	ASSERT(pInstance != NULL);
-	ASSERT(pObjectRDFProperty != NULL);
+	ASSERT(pInstance != nullptr);
+	ASSERT(pObjectRDFProperty != nullptr);
 
 	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
 	ASSERT(iClassInstance != 0);
@@ -1105,7 +1105,7 @@ void CRDFModel::LoadCityJSON(const wchar_t* szPath)
 		CStringA utf8Path;
 		int cc = 0;
 		// get length (cc) of the new multibyte string excluding the \0 terminator first
-		if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, NULL, 0, 0, 0) - 1) > 0)
+		if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, nullptr, 0, 0, 0) - 1) > 0)
 		{
 			// convert
 			char* buf = utf8Path.GetBuffer(cc);
@@ -1131,10 +1131,10 @@ void CRDFModel::PostLoad()
 // ------------------------------------------------------------------------------------------------
 CTexture * CRDFModel::GetDefaultTexture()
 {
-	if (m_pDefaultTexture == NULL)
+	if (m_pDefaultTexture == nullptr)
 	{
         wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
+		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
 		CString strDefaultTexture = szAppPath;
 		strDefaultTexture.MakeLower();
@@ -1152,7 +1152,7 @@ CTexture * CRDFModel::GetDefaultTexture()
 		{
             MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
 		}
-	} // if (m_pDefaultTexture == NULL)
+	} // if (m_pDefaultTexture == nullptr)
 
 	return m_pDefaultTexture;
 }
@@ -1160,10 +1160,10 @@ CTexture * CRDFModel::GetDefaultTexture()
 // ------------------------------------------------------------------------------------------------
 CRDFMeasurementsBuilder * CRDFModel::GetMeasurementsBuilder()
 {
-	if (m_pMeasurementsBuilder == NULL)
+	if (m_pMeasurementsBuilder == nullptr)
 	{
 		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(NULL), szAppPath, sizeof(szAppPath));
+		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
 		CString strDefaultFont = szAppPath;
 		strDefaultFont.MakeLower();
@@ -1176,7 +1176,7 @@ CRDFMeasurementsBuilder * CRDFModel::GetMeasurementsBuilder()
 
 		LPCTSTR szDefaultFont = (LPCTSTR)strDefaultFont;
 		m_pMeasurementsBuilder = new CRDFMeasurementsBuilder(szDefaultFont, m_iModel, EXTRSUSION_AREA_SOLID_SET);
-	} // if (m_pMeasurementsBuilder == NULL)
+	} // if (m_pMeasurementsBuilder == nullptr)
 
 	return m_pMeasurementsBuilder;
 }

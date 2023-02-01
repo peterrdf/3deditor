@@ -19,7 +19,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CInstancesDialog::OnControllerChanged()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
 
@@ -35,7 +35,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_mapInstance2Item.clear();	
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -92,10 +92,10 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		m_lcInstances.SetItemState(iItem, 0, LVIS_SELECTED);
 	}
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFInstance * pSelectedInstance = GetController()->GetSelectedInstance();
-	if (pSelectedInstance == NULL)
+	if (pSelectedInstance == nullptr)
 	{
 		return;
 	}
@@ -140,12 +140,12 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
 		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
-		ASSERT(pInstance != NULL);
+		ASSERT(pInstance != nullptr);
 
 		vecSelectedInstances.push_back(pInstance);
 	}
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	if (vecSelectedInstances.size() == 1)
 	{
@@ -153,11 +153,11 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 	} // if (vecSelectedInstances.size() == 1)
 	else
 	{
-		GetController()->SelectInstance(this, NULL);
+		GetController()->SelectInstance(this, nullptr);
 	} // if (vecSelectedInstances.size() == 1)	
 }
 
-CInstancesDialog::CInstancesDialog(CWnd* pParent /*=NULL*/)
+CInstancesDialog::CInstancesDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CInstancesDialog::IDD, pParent)
 	, m_lcInstances()
 	, m_bInitInProgress(false)
@@ -223,7 +223,7 @@ void CInstancesDialog::OnSize(UINT nType, int cx, int cy)
 
 	rcClient.DeflateRect(10, 10);
 
-	m_lcInstances.SetWindowPos(NULL, rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_lcInstances.SetWindowPos(nullptr, rcClient.left, rcClient.top, rcClient.Width(), rcClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -241,12 +241,12 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
 		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
-		ASSERT(pInstance != NULL);
+		ASSERT(pInstance != nullptr);
 
 		vecSelectedInstances.push_back(pInstance);
 	}
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	/*
 	* Multi selection
@@ -282,7 +282,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			ASSERT(GetController() != NULL);
+			ASSERT(GetController() != nullptr);
 
 			switch (uiCommand)
 			{
@@ -351,7 +351,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			ASSERT(GetController() != NULL);
+			ASSERT(GetController() != nullptr);
 
 			switch (uiCommand)
 			{
@@ -411,10 +411,10 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			ASSERT(GetController() != NULL);
+			ASSERT(GetController() != nullptr);
 
 			CRDFModel * pModel = GetController()->GetModel();
-			ASSERT(pModel != NULL);
+			ASSERT(pModel != nullptr);
 
 			auto& mapInstances = pModel->GetInstances();
 
@@ -521,7 +521,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			return;
 		}
 
-		ASSERT(GetController() != NULL);
+		ASSERT(GetController() != nullptr);
 
 		switch (uiCommand)
 		{

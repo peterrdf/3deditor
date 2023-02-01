@@ -65,14 +65,14 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
-	, m_pPointedInstance(NULL)
-	, m_pSelectedInstance(NULL)
+	, m_pPointedInstance(nullptr)
+	, m_pSelectedInstance(nullptr)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)	
-	, m_pSelectedInstanceMaterial(NULL)
-	, m_pPointedInstanceMaterial(NULL)
+	, m_pSelectedInstanceMaterial(nullptr)
+	, m_pPointedInstanceMaterial(nullptr)
 {
-	ASSERT(m_pWnd != NULL);
+	ASSERT(m_pWnd != nullptr);
 
 	_initialize(
 		*(m_pWnd->GetDC()), 
@@ -116,10 +116,10 @@ COpenGLRDFView::~COpenGLRDFView()
 	}
 
 	delete m_pSelectedInstanceMaterial;
-	m_pSelectedInstanceMaterial = NULL;
+	m_pSelectedInstanceMaterial = nullptr;
 
 	delete m_pPointedInstanceMaterial;
-	m_pPointedInstanceMaterial = NULL;
+	m_pPointedInstanceMaterial = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -404,7 +404,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 #endif // _LINUX
 {
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -412,7 +412,7 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	}
 
 	auto pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -708,7 +708,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
                 m_pWnd->RedrawWindow();
 #endif // _LINUX
 
-				ASSERT(GetController() != NULL);
+				ASSERT(GetController() != nullptr);
 
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
@@ -821,17 +821,17 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_oglBuffers.clear();
 
 	m_pInstanceSelectionFrameBuffer->encoding().clear();
-	m_pPointedInstance = NULL;
-	m_pSelectedInstance = NULL;
+	m_pPointedInstance = nullptr;
+	m_pSelectedInstance = nullptr;
 
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	auto pModel = pController->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -1153,10 +1153,10 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	* Center
 	*/
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -1188,7 +1188,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1202,7 +1202,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1216,7 +1216,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1230,7 +1230,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1244,7 +1244,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1258,7 +1258,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1293,12 +1293,17 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	ASSERT(GetController() != NULL);
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	auto pSelectedInstance = GetController()->GetSelectedInstance();
-	if ((pSelectedInstance != NULL) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
+	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
 	{
-		pSelectedInstance = NULL;
+		pSelectedInstance = nullptr;
 	}
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -1320,15 +1325,15 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnInstancePropertySelected()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 
 	CRDFInstance * pSelectedInstance = prSelectedInstanceProperty.first;
 
-	if ((pSelectedInstance != NULL) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
+	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
 	{
-		pSelectedInstance = NULL;
+		pSelectedInstance = nullptr;
 	}
 
 	if (m_pSelectedInstance != pSelectedInstance)
@@ -1358,13 +1363,13 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Restore the selection
 	*/
-	OnInstanceSelected(NULL);
+	OnInstanceSelected(nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnControllerChanged()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
 }
@@ -1378,7 +1383,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 	}
 
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1386,7 +1391,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 	}
 
 	auto pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1501,10 +1506,10 @@ void COpenGLRDFView::DrawFacesPolygons()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1559,10 +1564,10 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 	}
 
 	auto pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	auto pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1613,10 +1618,10 @@ void COpenGLRDFView::DrawLines()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1667,10 +1672,10 @@ void COpenGLRDFView::DrawPoints()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1734,10 +1739,10 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -1836,7 +1841,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			continue;
 		}
 
-		if ((pInstance->getBoundingBoxTransformation() == NULL) || (pInstance->getBoundingBoxMin() == NULL) || (pInstance->getBoundingBoxMax() == NULL))
+		if ((pInstance->getBoundingBoxTransformation() == nullptr) || (pInstance->getBoundingBoxMin() == nullptr) || (pInstance->getBoundingBoxMax() == nullptr))
 		{
 			continue;
 		}		
@@ -1949,10 +1954,10 @@ void COpenGLRDFView::DrawNormalVectors()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -2017,7 +2022,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (m_pSelectedInstance == NULL)
+	if (m_pSelectedInstance == nullptr)
 	{
 		auto& mapInstances = pModel->GetInstances();
 
@@ -2069,7 +2074,7 @@ void COpenGLRDFView::DrawNormalVectors()
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // for (; itInstance != ...
-	} // if (m_pSelectedInstance == NULL)
+	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
 		auto& vecTriangles = m_pSelectedInstance->getTriangles();
@@ -2144,7 +2149,7 @@ void COpenGLRDFView::DrawNormalVectors()
 				vecVertices.push_back(0.f); // Ty
 			} // for (size_t iIndex = ...
 		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
+	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
 	{
@@ -2170,10 +2175,10 @@ void COpenGLRDFView::DrawTangentVectors()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -2238,7 +2243,7 @@ void COpenGLRDFView::DrawTangentVectors()
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (m_pSelectedInstance == NULL)
+	if (m_pSelectedInstance == nullptr)
 	{
 		auto& mapInstances = pModel->GetInstances();
 
@@ -2290,7 +2295,7 @@ void COpenGLRDFView::DrawTangentVectors()
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // for (; itInstance != ...
-	} // if (m_pSelectedInstance == NULL)
+	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
 		auto& vecTriangles = m_pSelectedInstance->getTriangles();
@@ -2365,7 +2370,7 @@ void COpenGLRDFView::DrawTangentVectors()
 				vecVertices.push_back(0.f); // Ty
 			} // for (size_t iIndex = ...
 		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
+	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
 	{
@@ -2391,10 +2396,10 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -2459,7 +2464,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (m_pSelectedInstance == NULL)
+	if (m_pSelectedInstance == nullptr)
 	{
 		auto& mapInstances = pModel->GetInstances();
 
@@ -2511,7 +2516,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // for (; itInstance != ...
-	} // if (m_pSelectedInstance == NULL)
+	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
 		auto& vecTriangles = m_pSelectedInstance->getTriangles();
@@ -2586,7 +2591,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				vecVertices.push_back(0.f); // Ty
 			} // for (size_t iIndex = ...
 		} // else if (m_iPointedFace == -1)
-	} // else if (m_pSelectedInstance == NULL)
+	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
 	{
@@ -2607,7 +2612,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 void COpenGLRDFView::DrawInstancesFrameBuffer()
 {
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -2615,7 +2620,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	}
 
 	auto pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -2721,16 +2726,16 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawFacesFrameBuffer()
 {
-	if ((m_pSelectedInstance == NULL) || !m_pSelectedInstance->getEnable())
+	if ((m_pSelectedInstance == nullptr) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}
 
 	CRDFController * pController = GetController();
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -2878,7 +2883,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawPointedFace()
 {
-	if (m_pSelectedInstance == NULL)
+	if (m_pSelectedInstance == nullptr)
 	{
 		return;
 	}
@@ -2954,7 +2959,7 @@ void COpenGLRDFView::DrawPointedFace()
 void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 {
 	auto pController = GetController();
-	if (pController == NULL)
+	if (pController == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -2962,7 +2967,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 	}
 
 	auto pModel = pController->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		return;
 	}
@@ -3016,12 +3021,12 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			m_pInstanceSelectionFrameBuffer->unbind();
 
-			CRDFInstance * pPointedInstance = NULL;
+			CRDFInstance * pPointedInstance = nullptr;
 			if (arPixels[3] != 0)
 			{
 				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetInstanceByID(iObjectID);
-				ASSERT(pPointedInstance != NULL);
+				ASSERT(pPointedInstance != nullptr);
 			}
 
 			if (m_pPointedInstance != pPointedInstance)

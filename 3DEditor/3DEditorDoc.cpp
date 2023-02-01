@@ -31,7 +31,7 @@ using namespace boost::chrono;
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CMy3DEditorDoc::LoadModel(LPCTSTR szFileName)
 {
-	if (szFileName != NULL)
+	if (szFileName != nullptr)
 	{
 		OnOpenDocument(szFileName);
 	}	
@@ -62,7 +62,7 @@ END_MESSAGE_MAP()
 // CMy3DEditorDoc construction/destruction
 
 CMy3DEditorDoc::CMy3DEditorDoc()
-	: m_pModel(NULL)
+	: m_pModel(nullptr)
 {
 }
 
@@ -76,10 +76,10 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	if (m_pModel != NULL)
+	if (m_pModel != nullptr)
 	{
 		delete m_pModel;
-		m_pModel = NULL;
+		m_pModel = nullptr;
 	}
 
 	m_pModel = new CRDFModel();
@@ -146,9 +146,9 @@ void CMy3DEditorDoc::SetSearchContent(const CString& value)
 	}
 	else
 	{
-		CMFCFilterChunkValueImpl *pChunk = NULL;
+		CMFCFilterChunkValueImpl *pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != NULL)
+		if (pChunk != nullptr)
 		{
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
@@ -181,10 +181,10 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != NULL)
+	if (m_pModel != nullptr)
 	{
 		delete m_pModel;
-		m_pModel = NULL;
+		m_pModel = nullptr;
 	}
 
 	m_pModel = new CRDFModel();
@@ -328,7 +328,7 @@ void CMy3DEditorDoc::OnViewZoomOut()
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
 	auto pInstance = GetSelectedInstance();
-	ASSERT((pInstance != NULL) && pInstance->getEnable() && pInstance->hasGeometry());
+	ASSERT((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
 	ZoomToInstance(pInstance->getInstance());
 }
@@ -336,16 +336,16 @@ void CMy3DEditorDoc::OnInstancesZoomTo()
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
 	auto pInstance = GetSelectedInstance();
-	pCmdUI->Enable((pInstance != NULL) && pInstance->getEnable() && pInstance->hasGeometry());
+	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()
 {
-	ASSERT(GetSelectedInstance() != NULL);
+	ASSERT(GetSelectedInstance() != nullptr);
 	Save(GetSelectedInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetSelectedInstance() != NULL);
+	pCmdUI->Enable(GetSelectedInstance() != nullptr);
 }

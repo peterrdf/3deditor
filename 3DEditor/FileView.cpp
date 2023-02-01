@@ -26,7 +26,7 @@ class CFileViewMenuButton : public CMFCToolBarMenuButton
 	DECLARE_SERIAL(CFileViewMenuButton)
 
 public:
-	CFileViewMenuButton(HMENU hMenu = NULL) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CFileViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -57,7 +57,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	m_hSelectedItem = NULL;
+	m_hSelectedItem = nullptr;
 
 	UpdateView();
 }
@@ -70,22 +70,22 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	if (m_hSelectedItem != NULL)
+	if (m_hSelectedItem != nullptr)
 	{
 		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-		m_hSelectedItem = NULL;
+		m_hSelectedItem = nullptr;
 	}
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFInstance * pSelectedInstance = GetController()->GetSelectedInstance();
-	if (pSelectedInstance == NULL)
+	if (pSelectedInstance == nullptr)
 	{
 		/*
 		* Select the Model by default
 		*/
-		HTREEITEM hModel = m_wndFileView.GetChildItem(NULL);
-		ASSERT(hModel != NULL);
+		HTREEITEM hModel = m_wndFileView.GetChildItem(nullptr);
+		ASSERT(hModel != nullptr);
 
 		m_wndFileView.SelectItem(hModel);
 
@@ -149,10 +149,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	else
 	{
 		// The item is not visible - it is in "..." group
-		if (m_hSelectedItem != NULL)
+		if (m_hSelectedItem != nullptr)
 		{
 			m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-			m_hSelectedItem = NULL;
+			m_hSelectedItem = nullptr;
 		}
 
 		MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.", L"Information", MB_ICONINFORMATION | MB_OK);
@@ -167,13 +167,13 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CFileView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
-	ASSERT(pInstance != NULL);
-	ASSERT(pProperty != NULL);
+	ASSERT(pInstance != nullptr);
+	ASSERT(pProperty != nullptr);
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -182,8 +182,8 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	*/
 	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && (pProperty->getType() == TYPE_OBJECTTYPE))
 	{
-		HTREEITEM hModel = m_wndFileView.GetChildItem(NULL);
-		ASSERT(hModel != NULL);
+		HTREEITEM hModel = m_wndFileView.GetChildItem(nullptr);
+		ASSERT(hModel != nullptr);
 
 		UpdateRootItemsUnreferencedItemsView(pModel->GetModel(), hModel);
 	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
@@ -199,7 +199,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	ASSERT(itPropertyItem != itInstance2Properties->second.end());
 
 	CRDFPropertyItem * pPropertyItem = itPropertyItem->second;
-	ASSERT(pPropertyItem != NULL);
+	ASSERT(pPropertyItem != nullptr);
 
 	ASSERT(pPropertyItem->items().size() > 0);	
 
@@ -209,7 +209,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	{
 	case TYPE_OBJECTTYPE:
 	{
-		int64_t * piInstances = NULL;
+		int64_t * piInstances = nullptr;
 		int64_t iCard = 0;
 		GetObjectProperty(pInstance->getInstance(), pProperty->getInstance(), &piInstances, &iCard);
 
@@ -218,10 +218,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 		{
 			vector<HTREEITEM> vecValues;
-			HTREEITEM hCardinality = NULL;
+			HTREEITEM hCardinality = nullptr;
 
 			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
-			while (hChild != NULL)
+			while (hChild != nullptr)
 			{
 				CString strText = m_wndFileView.GetItemText(hChild);
 				if (strText.Find(_T("owl:cardinality : ")) == 0)
@@ -247,7 +247,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 			/*
 			* Update the cardinality
 			*/
-			ASSERT(hCardinality != NULL);
+			ASSERT(hCardinality != nullptr);
 
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
@@ -314,7 +314,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	case TYPE_BOOL_DATATYPE:
 	{
 		int64_t iCard = 0;
-		bool* pbValue = NULL;
+		bool* pbValue = nullptr;
 		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void**)&pbValue, &iCard);
 
 		ASSERT(iCard >= 0);
@@ -322,10 +322,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 		{
 			vector<HTREEITEM> vecValues;
-			HTREEITEM hCardinality = NULL;
+			HTREEITEM hCardinality = nullptr;
 
 			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
-			while (hChild != NULL)
+			while (hChild != nullptr)
 			{
 				CString strText = m_wndFileView.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
@@ -351,7 +351,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 			/*
 			* Update the cardinality
 			*/
-			ASSERT(hCardinality != NULL);
+			ASSERT(hCardinality != nullptr);
 
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
@@ -401,7 +401,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	case TYPE_CHAR_DATATYPE:
 	{
 		int64_t iCard = 0;
-		char ** szValue = NULL;
+		char ** szValue = nullptr;
 		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&szValue, &iCard);
 
 		ASSERT(iCard >= 0);
@@ -409,10 +409,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 		{
 			vector<HTREEITEM> vecValues;
-			HTREEITEM hCardinality = NULL;
+			HTREEITEM hCardinality = nullptr;
 
 			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
-			while (hChild != NULL)
+			while (hChild != nullptr)
 			{
 				CString strText = m_wndFileView.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
@@ -438,7 +438,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 			/*
 			* Update the cardinality
 			*/
-			ASSERT(hCardinality != NULL);
+			ASSERT(hCardinality != nullptr);
 
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
@@ -489,7 +489,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	case TYPE_DOUBLE_DATATYPE:
 	{
 		int64_t iCard = 0;
-		double * pdValue = NULL;
+		double * pdValue = nullptr;
 		GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&pdValue, &iCard);
 
 		ASSERT(iCard >= 0);
@@ -497,10 +497,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 		{
 			vector<HTREEITEM> vecValues;
-			HTREEITEM hCardinality = NULL;
+			HTREEITEM hCardinality = nullptr;
 
 			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
-			while (hChild != NULL)
+			while (hChild != nullptr)
 			{
 				CString strText = m_wndFileView.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
@@ -526,7 +526,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 			/*
 			* Update the cardinality
 			*/
-			ASSERT(hCardinality != NULL);
+			ASSERT(hCardinality != nullptr);
 
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
@@ -576,7 +576,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 	case TYPE_INT_DATATYPE:
 	{
 		int64_t iCard = 0;
-		int64_t * piValue = NULL;
+		int64_t * piValue = nullptr;
 		GetDatatypeProperty(pInstance->getInstance(), pPropertyItem->getProperty()->getInstance(), (void **)&piValue, &iCard);
 
 		ASSERT(iCard >= 0);
@@ -584,10 +584,10 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 		{
 			vector<HTREEITEM> vecValues;
-			HTREEITEM hCardinality = NULL;
+			HTREEITEM hCardinality = nullptr;
 
 			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
-			while (hChild != NULL)
+			while (hChild != nullptr)
 			{
 				CString strText = m_wndFileView.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
@@ -613,7 +613,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 			/*
 			* Update the cardinality
 			*/
-			ASSERT(hCardinality != NULL);
+			ASSERT(hCardinality != nullptr);
 
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
@@ -677,7 +677,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CFileView::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
 {
-	m_hSelectedItem = NULL;
+	m_hSelectedItem = nullptr;
 
 	UpdateView();
 }
@@ -685,7 +685,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CFileView::OnMeasurementsAdded(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
 {
-	m_hSelectedItem = NULL;
+	m_hSelectedItem = nullptr;
 
 	UpdateView();
 }
@@ -700,7 +700,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 /*virtual*/ bool CFileView::IsSelected(HTREEITEM hItem)
 {
 	CRDFItem* pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
-	if ((pItem != NULL) && (pItem->getType() == enumItemType::Instance) &&
+	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance) &&
 		(GetController()->GetSelectedInstance() == pItem->getInstance()))
 	{
 		return pItem->getInstance()->getEnable();
@@ -712,41 +712,41 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFProperty *> > & vecPath)
 {
-	if (hItem == NULL)
+	if (hItem == nullptr)
 	{
 		return;
 	}
 
-	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
-	if (pItem != NULL)
+	auto pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
+	if (pItem != nullptr)
 	{
 		switch (pItem->getType())
 		{
-		case enumItemType::Instance:
-		{
-			CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-			ASSERT(pInstanceItem != NULL);
+			case enumItemType::Instance:
+			{
+				CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
+				ASSERT(pInstanceItem != nullptr);
 
-			vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pInstanceItem->getInstance(), NULL));
+				vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pInstanceItem->getInstance(), nullptr));
+			}
+			break;
+
+			case enumItemType::Property:
+			{
+				CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
+				ASSERT(pPropertyItem != nullptr);
+
+				vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pPropertyItem->getInstance(), pPropertyItem->getProperty()));
+			}
+			break;
+
+			default:
+			{
+				ASSERT(false); // unexpected
+			}
+			break;
 		}
-		break;
-
-		case enumItemType::Property:
-		{
-			CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
-			ASSERT(pPropertyItem != NULL);
-
-			vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pPropertyItem->getInstance(), pPropertyItem->getProperty()));
-		}
-		break;
-
-		default:
-		{
-			ASSERT(false); // unexpected
-		}
-		break;
-		} // switch (pItem->getType())
-	} // if (pItem != NULL)
+	} // if (pItem != nullptr)
 
 	GetItemPath(m_wndFileView.GetParentItem(hItem), vecPath);
 }
@@ -754,10 +754,10 @@ void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFPro
 // ------------------------------------------------------------------------------------------------
 void CFileView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	HTREEITEM hChild = m_wndFileView.GetChildItem(hItem);
-	while (hChild != NULL)
+	while (hChild != nullptr)
 	{
 		if (m_wndFileView.GetItemData(hChild) != NULL)
 		{
@@ -767,14 +767,14 @@ void CFileView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendan
 		}		
 
 		hChild = m_wndFileView.GetNextSiblingItem(hChild);
-	} // while (hChild != NULL)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 void CFileView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
 {
-	ASSERT(pInstance != NULL);
-	ASSERT(hInstance != NULL);
+	ASSERT(pInstance != nullptr);
+	ASSERT(hInstance != nullptr);
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
 	ASSERT(itInstance2Item != m_mapInstance2Item.end());
@@ -788,9 +788,9 @@ void CFileView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInst
 // ------------------------------------------------------------------------------------------------
 void CFileView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty)
 {
-	ASSERT(pInstance != NULL);
-	ASSERT(pProperty != NULL);
-	ASSERT(hProperty != NULL);
+	ASSERT(pInstance != nullptr);
+	ASSERT(pProperty != nullptr);
+	ASSERT(hProperty != nullptr);
 
 	map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.find(pInstance->getInstance());
 	ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
@@ -807,17 +807,17 @@ void CFileView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * 
 // ------------------------------------------------------------------------------------------------
 void CFileView::RemoveItemData(HTREEITEM hItem)
 {
-	ASSERT(hItem != NULL);
+	ASSERT(hItem != nullptr);
 
 	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
-	if (pItem != NULL)
+	if (pItem != nullptr)
 	{
 		switch (pItem->getType())
 		{
 		case enumItemType::Instance:
 		{
 			CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-			ASSERT(pInstanceItem != NULL);
+			ASSERT(pInstanceItem != nullptr);
 
 			RemoveInstanceItemData(pInstanceItem->getInstance(), hItem);
 		}
@@ -826,7 +826,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 		case enumItemType::Property:
 		{
 			CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
-			ASSERT(pPropertyItem != NULL);
+			ASSERT(pPropertyItem != nullptr);
 
 			RemovePropertyItemData(pPropertyItem->getInstance(), pPropertyItem->getProperty(), hItem);
 		}
@@ -838,7 +838,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 		}
 		break;
 		} // switch (pItem->getType())
-	} // if (pItem != NULL)
+	} // if (pItem != nullptr)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -884,20 +884,20 @@ void CFileView::UpdateView()
 	/*
 	* Restore the selected instance
 	*/
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	
-	if (GetController()->GetSelectedInstance() != NULL)
+	if (GetController()->GetSelectedInstance() != nullptr)
 	{
-		OnInstanceSelected(NULL);
+		OnInstanceSelected(nullptr);
 	}
 
 	/*
 	* Restore the selected property
 	*/
 	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
-	if ((prSelectedInstanceProperty.first != NULL) && (prSelectedInstanceProperty.second != NULL))
+	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
 	{
-		ASSERT(m_hSelectedItem != NULL);
+		ASSERT(m_hSelectedItem != nullptr);
 		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 		m_wndFileView.Expand(m_hSelectedItem, TVE_EXPAND);
 
@@ -913,7 +913,7 @@ void CFileView::UpdateView()
 		m_wndFileView.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
 		m_wndFileView.EnsureVisible(m_hSelectedItem);
 		m_wndFileView.SelectItem(m_hSelectedItem);
-	} // if ((prSelectedInstanceProperty.first != NULL) && ...
+	} // if ((prSelectedInstanceProperty.first != nullptr) && ...
 
 	/*
 	* Enable the drawing
@@ -949,10 +949,10 @@ void CFileView::InstancesAlphabeticalView()
 
 	m_mapInstance2Properties.clear();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -1014,10 +1014,10 @@ void CFileView::InstancesGroupByClassView()
 
 	m_mapInstance2Properties.clear();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -1028,7 +1028,7 @@ void CFileView::InstancesGroupByClassView()
 	{
 		CRDFInstance * pInstance = itRFDInstances->second;
 
-		char* szName = NULL;
+		char* szName = nullptr;
 		GetNameOfClass(pInstance->getClassInstance(), &szName);
 
 		wstring strName = CA2W(szName);
@@ -1104,10 +1104,10 @@ void CFileView::InstancesUnreferencedItemsView()
 
 	m_mapInstance2Properties.clear();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -1193,14 +1193,14 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 {
 	wchar_t szBuffer[100];
 
-	if (pInstance == NULL)
+	if (pInstance == nullptr)
 	{
 		ASSERT(FALSE);
 
 		return;
 	}
 
-	if (GetController() == NULL)
+	if (GetController() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1208,7 +1208,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	}
 
 	auto pModel = GetController()->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1219,7 +1219,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	auto& mapInstances = pModel->GetInstances();
 
 	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
-	while (iPropertyInstance != NULL)
+	while (iPropertyInstance != 0)
 	{
 		map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
 		ASSERT(itProperty != mapProperties.end());
@@ -1273,12 +1273,12 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			HTREEITEM hRange = m_wndFileView.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 			CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-			ASSERT(pObjectRDFProperty != NULL);
+			ASSERT(pObjectRDFProperty != nullptr);
 
 			auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 			{
-				char * szClassName = NULL;
+				char * szClassName = nullptr;
 				GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
 
 				m_wndFileView.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
@@ -1299,7 +1299,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		{
 		case TYPE_OBJECTTYPE:
 		{
-			int64_t * piInstances = NULL;
+			int64_t * piInstances = nullptr;
 			int64_t iCard = 0;
 			GetObjectProperty(pInstance->getInstance(), pProperty->getInstance(), &piInstances, &iCard);
 
@@ -1345,7 +1345,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		case TYPE_BOOL_DATATYPE:
 		{
 			int64_t iCard = 0;
-			bool * pbValue = NULL;
+			bool * pbValue = nullptr;
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&pbValue, &iCard);
 
 			/*
@@ -1382,7 +1382,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		case TYPE_CHAR_DATATYPE:
 		{
 			int64_t iCard = 0;
-			char ** szValue = NULL;
+			char ** szValue = nullptr;
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&szValue, &iCard);
 
 			/*
@@ -1420,7 +1420,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		case TYPE_DOUBLE_DATATYPE:
 		{
 			int64_t iCard = 0;
-			double * pdValue = NULL;
+			double * pdValue = nullptr;
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&pdValue, &iCard);
 
 
@@ -1458,7 +1458,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		case TYPE_INT_DATATYPE:
 		{
 			int64_t iCard = 0;
-			int64_t * piValue = NULL;
+			int64_t * piValue = nullptr;
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->getInstance(), (void **)&piValue, &iCard);
 
 			/*
@@ -1500,17 +1500,17 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		} // switch (pProperty->getType())
 
 		iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
-	} // while (iPropertyInstance != NULL)
+	} // while (iPropertyInstance != 0)
 }
 
 // ------------------------------------------------------------------------------------------------
 void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
 {
 	ASSERT(iModel != 0);
-	ASSERT(hModel != NULL);
+	ASSERT(hModel != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -1518,14 +1518,14 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 	vector<HTREEITEM> vecObsoleteItems;
 
 	HTREEITEM hItem = m_wndFileView.GetChildItem(hModel);
-	while (hItem != NULL)
+	while (hItem != nullptr)
 	{
 		CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
-		ASSERT(pItem != NULL);
+		ASSERT(pItem != nullptr);
 		ASSERT(pItem->getType() == enumItemType::Instance);
 
 		CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-		ASSERT(pInstanceItem != NULL);
+		ASSERT(pInstanceItem != nullptr);
 
 		if (pInstanceItem->getInstance()->isReferenced())
 		{
@@ -1537,7 +1537,7 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 		}
 
 		hItem = m_wndFileView.GetNextSiblingItem(hItem);
-	} // while (hChild != NULL)
+	} // while (hChild != nullptr)
 
 	/*
 	* Delete the items with references
@@ -1590,9 +1590,9 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 CFileView::CFileView()
 	: m_mapInstance2Item()
 	, m_mapInstance2Properties()
-	, m_hSelectedItem(NULL)
+	, m_hSelectedItem(nullptr)
 	, m_bInitInProgress(false)
-	, m_pSearchDialog(NULL)
+	, m_pSearchDialog(nullptr)
 {
 	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
 }
@@ -1650,7 +1650,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -1693,7 +1693,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->m_bText = FALSE;
 		pButton->m_bImage = TRUE;
@@ -1738,7 +1738,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	UINT flags = 0;
 	HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-	if (hTreeItem == NULL)
+	if (hTreeItem == nullptr)
 	{
 		return;
 	}
@@ -1748,7 +1748,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	pWndTree->SetFocus();
 
 	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hTreeItem);
-	if (pItem == NULL)
+	if (pItem == nullptr)
 	{
 		return;
 	}
@@ -1758,7 +1758,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-	if (GetController() == NULL)
+	if (GetController() == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -1766,7 +1766,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 
 	auto pModel = GetController()->GetModel();
-	if (pModel == NULL)
+	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -2065,7 +2065,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CFileView::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 	{
 		return;
 	}
@@ -2075,8 +2075,8 @@ void CFileView::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFileView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndFileView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFileView::OnProperties()
@@ -2126,7 +2126,7 @@ void CFileView::OnSort(UINT id)
 
 	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
 		m_wndToolBar.Invalidate();
@@ -2192,7 +2192,7 @@ void CFileView::OnChangeVisualStyle()
 
 void CFileView::OnDestroy()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
 
 	__super::OnDestroy();
@@ -2211,7 +2211,7 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 	NM_TREEVIEW * pNMTreeView = (NM_TREEVIEW *)pNMHDR;
 
-	if (m_wndFileView.GetParentItem(m_hSelectedItem) != NULL)
+	if (m_wndFileView.GetParentItem(m_hSelectedItem) != nullptr)
 	{
 		// keep the roots always bold
 		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
@@ -2220,12 +2220,12 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 	m_wndFileView.SetItemState(pNMTreeView->itemNew.hItem, TVIS_BOLD, TVIS_BOLD);
 	m_hSelectedItem = pNMTreeView->itemNew.hItem;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(pNMTreeView->itemNew.hItem);
-	if (pItem == NULL)
+	if (pItem == nullptr)
 	{
-		GetController()->SelectInstance(this, NULL);
+		GetController()->SelectInstance(this, nullptr);
 
 		return;
 	}	
@@ -2248,7 +2248,7 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	} // if (pItem->getType() == enumItemType::Property)
 
-	GetController()->SelectInstance(this, NULL);
+	GetController()->SelectInstance(this, nullptr);
 }
 
 void CFileView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
@@ -2257,14 +2257,14 @@ void CFileView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	
-	if (m_wndFileView.GetChildItem(pNMTreeView->itemNew.hItem) != NULL)
+	if (m_wndFileView.GetChildItem(pNMTreeView->itemNew.hItem) != nullptr)
 	{
 		// it is loaded already
 		return;
 	}
 
 	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(pNMTreeView->itemNew.hItem);
-	ASSERT(pItem != NULL);
+	ASSERT(pItem != nullptr);
 	ASSERT(pItem->getType() == enumItemType::Instance);
 
 	CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
@@ -2280,7 +2280,7 @@ void CFileView::OnNewInstance()
 		return;
 	}
 
-	ASSERT(dlgNewInstance.m_pNewInstanceRDFClass != NULL);
+	ASSERT(dlgNewInstance.m_pNewInstanceRDFClass != nullptr);
 
 	GetController()->CreateNewInstance(this, dlgNewInstance.m_pNewInstanceRDFClass->getInstance());
 }

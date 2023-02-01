@@ -32,9 +32,9 @@ BOOL CInstancesList::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	BOOL bRes = CListCtrl::OnNotify(wParam, lParam, pResult);
 
 	NMHDR* pNMHDR = (NMHDR*)lParam;
-	ASSERT(pNMHDR != NULL);
+	ASSERT(pNMHDR != nullptr);
 
-	if (pNMHDR && pNMHDR->code == TTN_SHOW && GetToolTips() != NULL)
+	if (pNMHDR && pNMHDR->code == TTN_SHOW && GetToolTips() != nullptr)
 	{
 		GetToolTips()->SetWindowPos(&wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOSIZE);
 	}
@@ -63,7 +63,7 @@ void CInstancesList::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
 
         case CDDS_ITEMPREPAINT:
         {
-            if ((m_pController != NULL) && (pNMCD->nmcd.lItemlParam != 0))
+            if ((m_pController != nullptr) && (pNMCD->nmcd.lItemlParam != 0))
             {
                 CRDFInstance* pInstance = (CRDFInstance*)pNMCD->nmcd.lItemlParam;
                 if (m_pController->GetSelectedInstance() == pInstance)
