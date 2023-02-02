@@ -8,11 +8,11 @@ BOOL TEST_MODE = FALSE;
 
 // ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
-	: m_pModel(NULL)
+	: m_pModel(nullptr)
 	, m_bUpdatingModel(false)
 	, m_setViews()
-	, m_pSelectedInstance(NULL)
-	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(NULL, NULL))
+	, m_pSelectedInstance(nullptr)
+	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
 	, m_iVisibleValuesCountLimit(100)
 	, m_bScaleAndCenter(FALSE)
 {
@@ -32,12 +32,12 @@ CRDFModel * CRDFController::GetModel() const
 // ------------------------------------------------------------------------------------------------
 void CRDFController::SetModel(CRDFModel * pModel)
 {
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	m_pModel = pModel;
 
-	m_pSelectedInstance = NULL;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+	m_pSelectedInstance = nullptr;
+	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 
 	m_bUpdatingModel = true;
 
@@ -53,7 +53,7 @@ void CRDFController::SetModel(CRDFModel * pModel)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::RegisterView(CRDFView * pView)
 {
-	ASSERT(pView != NULL);
+	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) == m_setViews.end());
 
 	m_setViews.insert(pView);
@@ -62,7 +62,7 @@ void CRDFController::RegisterView(CRDFView * pView)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::UnRegisterView(CRDFView * pView)
 {
-	ASSERT(pView != NULL);
+	ASSERT(pView != nullptr);
 	ASSERT(m_setViews.find(pView) != m_setViews.end());
 
 	m_setViews.erase(pView);
@@ -83,7 +83,7 @@ const set<CRDFView *> & CRDFController::GetViews()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ZoomToInstance(int64_t iInstance)
 {
-	ASSERT(m_pModel != NULL);
+	ASSERT(m_pModel != nullptr);
 
 	m_pModel->ZoomToInstance(iInstance);
 
@@ -137,7 +137,7 @@ void CRDFController::Save(CRDFInstance* pInstance)
 void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
 {
 	m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(NULL, NULL);
+	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -150,7 +150,7 @@ void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
 void CRDFController::ShowMetaInformation(CRDFInstance * pInstance)
 {
 	m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -168,7 +168,7 @@ void CRDFController::SelectInstance(CRDFView * pSender, CRDFInstance * pInstance
 	}
 
 	m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -258,7 +258,7 @@ void CRDFController::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProp
 CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {
 	CRDFInstance * pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
-	ASSERT(pNewRDFInstance != NULL);
+	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -273,7 +273,7 @@ CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCl
 CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing)
 {
 	CRDFInstance* pNewRDFInstance = m_pModel->AddNewInstance(pThing);
-	ASSERT(pNewRDFInstance != NULL);
+	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -289,8 +289,8 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 {
 	if (m_pSelectedInstance == pInstance)
 	{
-		m_pSelectedInstance = NULL;
-		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+		m_pSelectedInstance = nullptr;
+		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 	}
 
 	int64_t iInstance = pInstance->getInstance();
@@ -312,8 +312,8 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 {
 	if (m_pSelectedInstance == pInstance)
 	{
-		m_pSelectedInstance = NULL;
-		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+		m_pSelectedInstance = nullptr;
+		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 	}
 
 	int64_t iInstance = pInstance->getInstance();
@@ -378,8 +378,8 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 	{
 		if (m_pSelectedInstance == vecInstances[iInstance])
 		{
-			m_pSelectedInstance = NULL;
-			m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(NULL, NULL);
+			m_pSelectedInstance = nullptr;
+			m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 		}
 
 		bResult &= m_pModel->DeleteInstance(vecInstances[iInstance]);

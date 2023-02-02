@@ -79,7 +79,7 @@ CTexture::CTexture()
 {
    m_height = 0;
    m_width = 0;
-   m_image = NULL;
+   m_image = nullptr;
    m_texname = 0;
 
    m_initialized = false;
@@ -90,7 +90,7 @@ CTexture::CTexture(const CTexture &p_img)
 {
    m_height = 0;
    m_width = 0;
-   m_image = NULL;
+   m_image = nullptr;
    m_initialized = false;
    m_mipinitialized = false;
 
@@ -151,7 +151,7 @@ GLuint CTexture::TexName()
    if(m_initialized)
       return m_texname;
 
-   if(m_image == NULL)
+   if(m_image == nullptr)
        return 0;
 
    glGenTextures(1, &m_texname);
@@ -190,7 +190,7 @@ void CTexture::SetSize(int p_x, int p_y)
    {
       delete [] m_image[0];
       delete [] m_image;
-      m_image = NULL;
+      m_image = nullptr;
    }
 
 	// Member variables
@@ -503,7 +503,7 @@ bool CTexture::ReadDIBFile(istream &file)
    {
       delete m_image[0];
       delete m_image;
-      m_image = NULL;
+      m_image = nullptr;
       m_width = 0;
       m_height = 0;
       return false;

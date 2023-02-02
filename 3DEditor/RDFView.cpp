@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------------------------------
 CRDFView::CRDFView()
-	: m_pController(NULL)
+	: m_pController(nullptr)
 {
 }
 
@@ -16,7 +16,7 @@ CRDFView::~CRDFView()
 // ------------------------------------------------------------------------------------------------
 void CRDFView::SetController(CRDFController * pController)
 {
-	ASSERT(pController != NULL);
+	ASSERT(pController != nullptr);
 
 	m_pController = pController;
 

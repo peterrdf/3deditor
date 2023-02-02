@@ -15,7 +15,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getInstance(), 0);
 	while (iRestrictionsClassInstance != 0)
 	{
-		char * szRestrictionsClassName = NULL;
+		char * szRestrictionsClassName = nullptr;
 		GetNameOfClass(iRestrictionsClassInstance, &szRestrictionsClassName);
 
 #ifndef _LINUX

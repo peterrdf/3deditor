@@ -34,7 +34,7 @@ void CCompareResults::Execute()
 		return;
 	}	
 
-	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, NULL) && (GetLastError() != ERROR_ALREADY_EXISTS))
+	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
 		AfxMessageBox(L"Error: can not create test report folder.");
 
@@ -51,7 +51,7 @@ void CCompareResults::Execute()
 //		return;
 //	}
 
-	for (POSITION posTest = lsTests.GetHeadPosition(); posTest != NULL;)
+	for (POSITION posTest = lsTests.GetHeadPosition(); posTest != nullptr;)
 	{
 		CString strTest = lsTests.GetNext(posTest);
 
@@ -73,7 +73,7 @@ void CCompareResults::Execute()
 			continue;
 		}
 
-		for (POSITION posTestFile = lsTestFiles.GetHeadPosition(); posTestFile != NULL;)
+		for (POSITION posTestFile = lsTestFiles.GetHeadPosition(); posTestFile != nullptr;)
 		{
 			CString strTestFileName = lsTestFiles.GetNext(posTestFile);
 
@@ -147,8 +147,8 @@ void CCompareResults::Execute()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void CCompareResults::FindFiles(const wchar_t* szFolder, const wchar_t* szWildcard, CStringList& lsFiles)
 {
-	ASSERT(szFolder != NULL);
-	ASSERT(szWildcard != NULL);
+	ASSERT(szFolder != nullptr);
+	ASSERT(szWildcard != nullptr);
 
 	CString strFolder = szFolder;
 
@@ -177,7 +177,7 @@ void CCompareResults::Execute()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void CCompareResults::FindTests(const wchar_t* szFolder, CStringList& lsTests)
 {
-	ASSERT(szFolder != NULL);
+	ASSERT(szFolder != nullptr);
 
 	CString strFolder = szFolder;
 

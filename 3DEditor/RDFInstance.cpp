@@ -11,7 +11,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_strName(L"NA")
 	, m_strUniqueName(L"")
 	, m_pOriginalVertexBuffer(new _vertices_f())
-	, m_pVertices(NULL)	
+	, m_pVertices(nullptr)	
 	, m_pIndexBuffer(new _indices_i32())
 	, m_iConceptualFacesCount(0)
 	, m_vecTriangles()
@@ -27,14 +27,14 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_vecNormalVecsCohorts()
 	, m_vecBiNormalVecsCohorts()
 	, m_vecTangentVecsCohorts()
-	, m_vecOriginalBoundingBoxMin(NULL)
-	, m_vecOriginalBoundingBoxMax(NULL)
-	, m_mtxOriginalBoundingBoxTransformation(NULL)
-	, m_vecAABBBoundingBoxMin(NULL)
-	, m_vecAABBBoundingBoxMax(NULL)
-	, m_vecBoundingBoxMin(NULL)
-	, m_vecBoundingBoxMax(NULL)
-	, m_mtxBoundingBoxTransformation(NULL)
+	, m_vecOriginalBoundingBoxMin(nullptr)
+	, m_vecOriginalBoundingBoxMax(nullptr)
+	, m_mtxOriginalBoundingBoxTransformation(nullptr)
+	, m_vecAABBBoundingBoxMin(nullptr)
+	, m_vecAABBBoundingBoxMax(nullptr)
+	, m_vecBoundingBoxMin(nullptr)
+	, m_vecBoundingBoxMax(nullptr)
+	, m_mtxBoundingBoxTransformation(nullptr)
 	, m_bEnable(true)
 	, m_bNeedsRefresh(false)
 	, m_iVBO(0)
@@ -55,7 +55,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 
 	wchar_t szUniqueName[200];
 
-	if (szName != NULL)
+	if (szName != nullptr)
 	{
 		m_strName = szName;
 
@@ -583,7 +583,7 @@ void CRDFInstance::Calculate()
 	m_pOriginalVertexBuffer = new _vertices_f();
 
 	delete[] m_pVertices;
-	m_pVertices = NULL;
+	m_pVertices = nullptr;
 
 	delete m_pIndexBuffer;
 	m_pIndexBuffer = new _indices_i32();
@@ -591,7 +591,7 @@ void CRDFInstance::Calculate()
 	/**
 	* Calculate
 	*/
-	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->size(), &m_pIndexBuffer->size(), NULL);
+	CalculateInstance(m_iInstance, &m_pOriginalVertexBuffer->size(), &m_pIndexBuffer->size(), nullptr);
 
 	/**
 	* Retrieve the buffers
@@ -898,12 +898,12 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = facePolygonsCohorts().empty() ? NULL : facePolygonsCohorts()[facePolygonsCohorts().size() - 1];
+		_cohort* pCohort = facePolygonsCohorts().empty() ? nullptr : facePolygonsCohorts()[facePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			facePolygonsCohorts().push_back(pCohort);
@@ -1026,12 +1026,12 @@ void CRDFInstance::Calculate()
 		/*
 		* Use the last cohort (if any)
 		*/
-		_cohort* pCohort = concFacePolygonsCohorts().empty() ? NULL : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
+		_cohort* pCohort = concFacePolygonsCohorts().empty() ? nullptr : concFacePolygonsCohorts()[concFacePolygonsCohorts().size() - 1];
 
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			concFacePolygonsCohorts().push_back(pCohort);
@@ -1159,7 +1159,7 @@ void CRDFInstance::Calculate()
 		/*
 		* Create the cohort
 		*/
-		if (pCohort == NULL)
+		if (pCohort == nullptr)
 		{
 			pCohort = new _cohort();
 			linesCohorts().push_back(pCohort);
@@ -1311,7 +1311,7 @@ void CRDFInstance::Calculate()
 	/*
 	* Bounding box
 	*/
-	if (m_mtxOriginalBoundingBoxTransformation == NULL)
+	if (m_mtxOriginalBoundingBoxTransformation == nullptr)
 	{	
 		m_vecOriginalBoundingBoxMin = new _vector3d();
 		m_vecOriginalBoundingBoxMax = new _vector3d();
@@ -1322,7 +1322,7 @@ void CRDFInstance::Calculate()
 		m_vecAABBBoundingBoxMax = new _vector3d();
 		GetBoundingBox(m_iInstance, (double*)m_vecAABBBoundingBoxMin, (double*)m_vecAABBBoundingBoxMax);
 
-		ASSERT(m_mtxBoundingBoxTransformation == NULL);
+		ASSERT(m_mtxBoundingBoxTransformation == nullptr);
 		m_mtxBoundingBoxTransformation = new _matrix();
 		m_vecBoundingBoxMin = new _vector3d();
 		m_vecBoundingBoxMax = new _vector3d();
@@ -1337,13 +1337,13 @@ void CRDFInstance::Calculate()
 void CRDFInstance::Clean()
 {
 	delete m_pOriginalVertexBuffer;
-	m_pOriginalVertexBuffer = NULL;
+	m_pOriginalVertexBuffer = nullptr;
 
 	delete[] m_pVertices;
-	m_pVertices = NULL;
+	m_pVertices = nullptr;
 
 	delete m_pIndexBuffer;
-	m_pIndexBuffer = NULL;	
+	m_pIndexBuffer = nullptr;	
 
 	m_vecTriangles.clear();
 	m_vecFacePolygons.clear();

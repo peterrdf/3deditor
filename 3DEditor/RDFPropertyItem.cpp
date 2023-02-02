@@ -6,7 +6,7 @@ CRDFPropertyItem::CRDFPropertyItem(CRDFInstance * pInstance, CRDFProperty * pPro
 	: CRDFItem(pInstance)
 	, m_pProperty(pProperty)
 {
-	ASSERT(m_pProperty != NULL);
+	ASSERT(m_pProperty != nullptr);
 
 	m_enItemType = enumItemType::Property;
 }

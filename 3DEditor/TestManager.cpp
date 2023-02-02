@@ -12,15 +12,15 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDataDir)
 	: m_pController(pController)
-	, m_pOpenGLView(NULL)
+	, m_pOpenGLView(nullptr)
 	, m_strInputDataDir(szInputDataDir)
 	, m_strTestsDir(_T(""))
 	, m_strTestReportDir(_T(""))
 {
-	ASSERT(m_pController != NULL);
+	ASSERT(m_pController != nullptr);
 
 	m_pOpenGLView = (COpenGLRDFView*)(m_pController->GetView<COpenGLRDFView>());
-	ASSERT(m_pOpenGLView != NULL);
+	ASSERT(m_pOpenGLView != nullptr);
 
 	ASSERT(!m_strInputDataDir.IsEmpty());
 }
@@ -33,8 +33,8 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 // ------------------------------------------------------------------------------------------------
 /*static*/ void CTestManager::FindFiles(const wchar_t* szFolder, const wchar_t* szWildcard, CStringList& lsFiles)
 {
-	ASSERT(szFolder != NULL);
-	ASSERT(szWildcard != NULL);
+	ASSERT(szFolder != nullptr);
+	ASSERT(szWildcard != nullptr);
 
 	CString strFolder = szFolder;
 
@@ -63,7 +63,7 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 // ------------------------------------------------------------------------------------------------
 void CTestManager::GenerateTests(const CString& strWildcards)
 {
-	int64_t iRevision = ::GetRevision(NULL);
+	int64_t iRevision = ::GetRevision(nullptr);
 
 	wchar_t szRevision[1024];
 	swprintf(szRevision, 1024, L"%lld", iRevision);
@@ -73,7 +73,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 	strTestsDir += szRevision;
 	//strTestsDir += CTime::GetCurrentTime().Format(_T("%Y-%m-%d-%H-%M-%S"));
 
-	if (!CreateDirectory((LPCTSTR)strTestsDir, NULL) && (GetLastError() != ERROR_ALREADY_EXISTS))
+	if (!CreateDirectory((LPCTSTR)strTestsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
 		AfxMessageBox(L"Error: can not create tests folder.");
 
@@ -108,7 +108,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 	m_pController->BeginTestMode();
 
-	for (POSITION pos = lsInputFiles.GetHeadPosition(); pos != NULL;)
+	for (POSITION pos = lsInputFiles.GetHeadPosition(); pos != nullptr;)
 	{
 		CString strInputFileName = lsInputFiles.GetNext(pos);
 
@@ -116,7 +116,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		stTestDir += "\\";
 		stTestDir += strInputFileName;
 
-		if (!CreateDirectory((LPCTSTR)stTestDir, NULL) && (GetLastError() != ERROR_ALREADY_EXISTS))
+		if (!CreateDirectory((LPCTSTR)stTestDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 		{
 			AfxMessageBox(L"Error: can not create test folder.");
 
@@ -218,7 +218,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 	m_strTestReportDir += L"\\Test Report-";
 	m_strTestReportDir += CTime::GetCurrentTime().Format(_T("%Y-%m-%d-%H-%M-%S"));
 
-	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, NULL) && (GetLastError() != ERROR_ALREADY_EXISTS))
+	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
 		AfxMessageBox(L"Error: can not create test report folder.");
 
@@ -245,7 +245,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 
 	m_pController->BeginTestMode();
 
-	for (POSITION posInputFile = lsInputFiles.GetHeadPosition(); posInputFile != NULL;)
+	for (POSITION posInputFile = lsInputFiles.GetHeadPosition(); posInputFile != nullptr;)
 	{
 		CString strInputFileName = lsInputFiles.GetNext(posInputFile);
 
@@ -275,7 +275,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 
 		m_pOpenGLView->Reset();
 
-		for (POSITION posTestFile = lsTestFiles.GetHeadPosition(); posTestFile != NULL;)
+		for (POSITION posTestFile = lsTestFiles.GetHeadPosition(); posTestFile != nullptr;)
 		{
 			CString strTestFileName = lsTestFiles.GetNext(posTestFile);			
 

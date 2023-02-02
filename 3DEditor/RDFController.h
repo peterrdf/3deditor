@@ -85,13 +85,13 @@ public: // Methods
 		for (; itView != m_setViews.end(); itView++)
 		{
 			T * pView = dynamic_cast<T *>(*itView);
-			if (pView != NULL)
+			if (pView != nullptr)
 			{
 				return pView;
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	// --------------------------------------------------------------------------------------------

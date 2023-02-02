@@ -7,7 +7,7 @@ CRDFItem::CRDFItem(CRDFInstance * pInstance)
 	, m_pInstance(pInstance)
 	, m_enItemType(enumItemType::Unknown)
 {
-	ASSERT(m_pInstance != NULL);
+	ASSERT(m_pInstance != nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------

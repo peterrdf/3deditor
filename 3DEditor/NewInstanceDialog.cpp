@@ -11,12 +11,12 @@
 
 IMPLEMENT_DYNAMIC(CNewInstanceDialog, CDialogEx)
 
-CNewInstanceDialog::CNewInstanceDialog(CRDFController * pController, CWnd* pParent /*=NULL*/)
+CNewInstanceDialog::CNewInstanceDialog(CRDFController * pController, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CNewInstanceDialog::IDD, pParent)
 	, m_pController(pController)
-	, m_pNewInstanceRDFClass(NULL)
+	, m_pNewInstanceRDFClass(nullptr)
 {
-	ASSERT(m_pController != NULL);
+	ASSERT(m_pController != nullptr);
 }
 
 CNewInstanceDialog::~CNewInstanceDialog()
@@ -42,7 +42,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	CRDFModel * pModel = m_pController->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapClasses = pModel->GetClasses();
 

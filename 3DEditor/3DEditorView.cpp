@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 // CMy3DEditorView construction/destruction
 
 CMy3DEditorView::CMy3DEditorView()
-	: m_pOpenGLView(NULL)
+	: m_pOpenGLView(nullptr)
 {
 	// TODO: add construction code here
 
@@ -78,7 +78,7 @@ BOOL CMy3DEditorView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CMy3DEditorView::OnDraw(CDC* pDC)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->Draw(pDC);
 	}
@@ -171,7 +171,7 @@ int CMy3DEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CMy3DEditorView::OnDestroy()
 {
 	delete m_pOpenGLView;
-	m_pOpenGLView = NULL;
+	m_pOpenGLView = nullptr;
 
 	CView::OnDestroy();
 }
@@ -185,7 +185,7 @@ BOOL CMy3DEditorView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
@@ -196,7 +196,7 @@ void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
@@ -207,7 +207,7 @@ void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
@@ -218,7 +218,7 @@ void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
@@ -228,7 +228,7 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
@@ -238,7 +238,7 @@ void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
@@ -249,7 +249,7 @@ void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
@@ -261,14 +261,14 @@ void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 void CMy3DEditorView::OnDropFiles(HDROP hDropInfo)
 {
 	// Get the number of files dropped 
-	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
 	if (iFilesDropped != 1)
 	{
 		return;
 	}
 
 	// Get the buffer size of the file.
-	DWORD dwBuffer = DragQueryFile(hDropInfo, 0, NULL, 0);
+	DWORD dwBuffer = DragQueryFile(hDropInfo, 0, nullptr, 0);
 
 	// Get path and name of the file 
 	CString strFile;
@@ -288,7 +288,7 @@ void CMy3DEditorView::OnDropFiles(HDROP hDropInfo)
 
 BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
 	}
@@ -298,7 +298,7 @@ BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
 	}
@@ -308,7 +308,7 @@ void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CMy3DEditorView::OnViewTop()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Top);
 	}
@@ -316,7 +316,7 @@ void CMy3DEditorView::OnViewTop()
 
 void CMy3DEditorView::OnViewLeft()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Left);
 	}
@@ -324,7 +324,7 @@ void CMy3DEditorView::OnViewLeft()
 
 void CMy3DEditorView::OnViewRight()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Right);
 	}
@@ -332,7 +332,7 @@ void CMy3DEditorView::OnViewRight()
 
 void CMy3DEditorView::OnViewBottom()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Bottom);
 	}
@@ -340,7 +340,7 @@ void CMy3DEditorView::OnViewBottom()
 
 void CMy3DEditorView::OnViewFront()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Front);
 	}
@@ -348,7 +348,7 @@ void CMy3DEditorView::OnViewFront()
 
 void CMy3DEditorView::OnViewBack()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Back);
 	}
@@ -356,7 +356,7 @@ void CMy3DEditorView::OnViewBack()
 
 void CMy3DEditorView::OnProjectionPerspective()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setProjection(enumProjection::Perspective);
 	}
@@ -364,13 +364,13 @@ void CMy3DEditorView::OnProjectionPerspective()
 
 void CMy3DEditorView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != NULL);
-	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->_getProjection() == enumProjection::Perspective));
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Perspective));
 }
 
 void CMy3DEditorView::OnProjectionIsometric()
 {
-	if (m_pOpenGLView != NULL)
+	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setProjection(enumProjection::Isometric);
 	}
@@ -378,6 +378,6 @@ void CMy3DEditorView::OnProjectionIsometric()
 
 void CMy3DEditorView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_pOpenGLView != NULL);
-	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->_getProjection() == enumProjection::Isometric));
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Isometric));
 }

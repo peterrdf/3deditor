@@ -26,9 +26,9 @@ CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFIn
 	, m_strInstanceUniqueName(L"")
 	, m_strOldInstanceUniqueName(EMPTY_INSTANCE)
 {
-	ASSERT(m_pController != NULL);
-	ASSERT(m_pInstance != NULL);
-	ASSERT(m_pObjectRDFProperty != NULL);
+	ASSERT(m_pController != nullptr);
+	ASSERT(m_pInstance != nullptr);
+	ASSERT(m_pObjectRDFProperty != nullptr);
 }
 
 CSelectInstanceDialog::~CSelectInstanceDialog()
@@ -67,17 +67,17 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	int64_t* piInstances = NULL;
+	int64_t* piInstances = nullptr;
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getInstance(), m_pObjectRDFProperty->getInstance(), &piInstances, &iCard);
 
 	ASSERT(iCard > 0);
 	ASSERT((m_iCard >= 0) && (m_iCard < iCard));
 	UNUSED(iCard);
-	ASSERT(piInstances != NULL);
+	ASSERT(piInstances != nullptr);
 
 	CRDFModel* pModel = m_pController->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 

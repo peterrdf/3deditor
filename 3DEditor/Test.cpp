@@ -13,9 +13,9 @@ CTest::CTest(COpenGLRDFView* pOpenGLView)
 	, m_strRevision(L"")
 	, m_strScreenshotFileName(L"")
 {
-	ASSERT(m_pOpenGLView != NULL);
+	ASSERT(m_pOpenGLView != nullptr);
 
-	char* szTimeStamp = NULL;
+	char* szTimeStamp = nullptr;
 	int64_t iRevision = ::GetRevision(&szTimeStamp);
 
 	wchar_t szBuffer[1024];

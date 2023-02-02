@@ -160,7 +160,7 @@ bool CTestHtmlReport::WriteHeader()
 
 	m_htmlReport << wstring(L"engine.dll, revision ");
 
-	char* szRevision = NULL;
+	char* szRevision = nullptr;
 	GetRevision(&szRevision);
 
 	m_htmlReport << wstring(CA2W(szRevision));

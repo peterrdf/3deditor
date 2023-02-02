@@ -117,7 +117,7 @@ public: // Methods
 
 	static char* getResource(int iResource, int iType)
 	{
-		HMODULE hModule = ::GetModuleHandleW(NULL);
+		HMODULE hModule = ::GetModuleHandleW(nullptr);
 		HRSRC hResource = ::FindResourceW(hModule, MAKEINTRESOURCEW(iResource), MAKEINTRESOURCEW(iType));
 		HGLOBAL rcData = ::LoadResource(hModule, hResource);
 
@@ -876,19 +876,19 @@ public: // Methods
 
 	_oglContext(HDC hDC, int iSamples)
 		: m_hDC(hDC)
-		, m_hGLContext(NULL)
+		, m_hGLContext(nullptr)
 		, m_iSamples(iSamples)
 	{
-		assert(m_hDC != NULL);
+		assert(m_hDC != nullptr);
 
 		create();
 	}
 
 	virtual ~_oglContext()
 	{
-		if (m_hGLContext != NULL)
+		if (m_hGLContext != nullptr)
 		{
-			BOOL bResult = wglMakeCurrent(m_hDC, NULL);
+			BOOL bResult = wglMakeCurrent(m_hDC, nullptr);
 			assert(bResult);
 
 			bResult = wglDeleteContext(m_hGLContext);
@@ -898,8 +898,8 @@ public: // Methods
 
 	BOOL makeCurrent()
 	{
-		assert(m_hDC != NULL);
-		assert(m_hGLContext != NULL);
+		assert(m_hDC != nullptr);
+		assert(m_hGLContext != nullptr);
 
 		return wglMakeCurrent(m_hDC, m_hGLContext);
 	}
@@ -937,9 +937,9 @@ public: // Methods
 		WndClassEx.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 		WndClassEx.lpfnWndProc = WndProc;
 		WndClassEx.hInstance = ::AfxGetInstanceHandle();
-		WndClassEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-		WndClassEx.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-		WndClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
+		WndClassEx.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+		WndClassEx.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
+		WndClassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		WndClassEx.lpszClassName = L"_OpenGL_Renderer_Window_";
 
 		if (!GetClassInfoEx(::AfxGetInstanceHandle(), WndClassEx.lpszClassName, &WndClassEx))
@@ -952,7 +952,7 @@ public: // Methods
 			}
 		}
 
-		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, NULL, NULL, ::AfxGetInstanceHandle(), NULL);
+		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, nullptr, nullptr, ::AfxGetInstanceHandle(), nullptr);
 
 		HDC hDCTemp = ::GetDC(hWndTemp);
 
@@ -1049,7 +1049,7 @@ public: // Methods
 			PostQuitMessage(0);
 		}
 
-		bResult = wglMakeCurrent(NULL, NULL);
+		bResult = wglMakeCurrent(nullptr, nullptr);
 		assert(bResult);
 
 		bResult = wglDeleteContext(hTempGLContext);
@@ -1099,7 +1099,7 @@ public: // Methods
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
-		glDebugMessageCallbackARB(&_oglContext::debugCallback, NULL);
+		glDebugMessageCallbackARB(&_oglContext::debugCallback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 
@@ -1224,7 +1224,7 @@ public: // Methods
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 

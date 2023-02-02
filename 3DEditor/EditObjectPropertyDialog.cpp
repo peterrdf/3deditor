@@ -38,18 +38,18 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent /*=NULL*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)
 	, m_pProperty(pProperty)
-	, m_pExisitngRDFInstance(NULL)
-	, m_iNewInstanceRDFClass(NULL)
+	, m_pExisitngRDFInstance(nullptr)
+	, m_iNewInstanceRDFClass(0)
 	, m_iMode(0)
 {
-	ASSERT(m_pController != NULL);
-	ASSERT(m_pInstance != NULL);
-	ASSERT(m_pProperty != NULL);
+	ASSERT(m_pController != nullptr);
+	ASSERT(m_pInstance != nullptr);
+	ASSERT(m_pProperty != nullptr);
 }
 
 CEditObjectPropertyDialog::~CEditObjectPropertyDialog()
@@ -81,12 +81,12 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	int64_t * piInstances = NULL;
+	int64_t * piInstances = nullptr;
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getInstance(), m_pProperty->getInstance(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -94,7 +94,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	* Restrictions
 	*/
 	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pProperty);
-	ASSERT(pObjectRDFProperty != NULL);
+	ASSERT(pObjectRDFProperty != nullptr);
 
 	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
 	ASSERT(!vecRestrictions.empty());
@@ -196,7 +196,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 	for (set<int64_t>::iterator itClass = setClasses.begin(); itClass != setClasses.end(); itClass++)
 	{
-		char * szClassName = NULL;
+		char * szClassName = nullptr;
 		GetNameOfClass(*itClass, &szClassName);
 
 		m_cmbNewInstance.AddString(CA2W(szClassName));

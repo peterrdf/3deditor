@@ -19,7 +19,7 @@ CText2RDF::CText2RDF(const CString & strText, const CString & strTTFFile, const 
 	, m_vecContours()
 	, m_mapLetters()
 	, m_vecLetters()
-	, m_pCurrentContour(NULL)
+	, m_pCurrentContour(nullptr)
 	, m_strText(strText)
 	, m_strTTFFile(strTTFFile)
 	, m_strRDFFile(strRDFFile)
@@ -46,7 +46,7 @@ CText2RDF::CText2RDF(const CString & strText, const CString & strTTFFile, int64_
 	, m_vecContours()
 	, m_mapLetters()
 	, m_vecLetters()
-	, m_pCurrentContour(NULL)
+	, m_pCurrentContour(nullptr)
 	, m_strText(strText)
 	, m_strTTFFile(strTTFFile)
 	, m_strRDFFile(L"")
@@ -75,7 +75,7 @@ CText2RDF::CText2RDF(const CString & strTTFFile, int64_t iModel, int iGeometry)
 	, m_vecContours()
 	, m_mapLetters()
 	, m_vecLetters()
-	, m_pCurrentContour(NULL)
+	, m_pCurrentContour(nullptr)
 	, m_strText(L"")
 	, m_strTTFFile(strTTFFile)
 	, m_strRDFFile(L"")
@@ -131,7 +131,7 @@ void CText2RDF::Run()
 	//***************************************************************
 	if (!m_bExternalModel)
 	{
-		m_iModel = OpenModel(NULL);
+		m_iModel = OpenModel(nullptr);
 		ASSERT(m_iModel != 0);
 
 		SetFormatSettings(m_iModel);
@@ -222,7 +222,7 @@ void CText2RDF::Run()
 				/*
 				* Create Collection for each letter
 				*/
-				__int64 iCollectionInstance = CreateInstance(m_iCollectionClass, NULL);
+				__int64 iCollectionInstance = CreateInstance(m_iCollectionClass, nullptr);
 				ASSERT(iCollectionInstance != 0);
 
 				m_vecContours[0]->m_iGeometryInstance = iCollectionInstance;
@@ -254,14 +254,14 @@ void CText2RDF::Run()
 			ASSERT(pContour->m_iGeometryInstance != 0);
 
 			// Transformation
-			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, NULL);
+			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, nullptr);
 			ASSERT(iTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &pContour->m_iGeometryInstance, 1);
 
 			// matrix
-			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, NULL);
+			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, nullptr);
 			ASSERT(iMatrixInstance != 0);
 
 			double _41 = DOUBLE_FROM_26_6(-pContour->m_iOffsetX + m_iOffsetX);
@@ -289,7 +289,7 @@ void CText2RDF::Run()
 				for (size_t iContour = 0; iContour < m_vecContours.size(); iContour++)
 				{
 					// Polygon3D
-					__int64 iPolygon3DInstance = CreateInstance(m_iPolygon3DClass, NULL);
+					__int64 iPolygon3DInstance = CreateInstance(m_iPolygon3DClass, nullptr);
 					ASSERT(iPolygon3DInstance != 0);
 
 					m_vecContours[iContour]->m_iGeometryInstance = iPolygon3DInstance;
@@ -297,14 +297,14 @@ void CText2RDF::Run()
 					SetObjectProperty(iPolygon3DInstance, GetPropertyByName(m_iModel, "lineParts"), m_vecContours[iContour]->m_vecInstances.data(), m_vecContours[iContour]->m_vecInstances.size());
 
 					// Transformation
-					__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, NULL);
+					__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, nullptr);
 					ASSERT(iTransformationInstance != 0);
 
 					// object
 					SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iPolygon3DInstance, 1);
 
 					// matrix
-					__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, NULL);
+					__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, nullptr);
 					ASSERT(iMatrixInstance != 0);
 
 					double _41 = DOUBLE_FROM_26_6(m_vecContours[iContour]->m_iOffsetX + m_iOffsetX);
@@ -320,7 +320,7 @@ void CText2RDF::Run()
 				/*
 				* Face2DSet
 				*/
-				__int64 iFace2DSetInstance = CreateInstance(m_iFace2DSetClass, NULL);
+				__int64 iFace2DSetInstance = CreateInstance(m_iFace2DSetClass, nullptr);
 				ASSERT(iFace2DSetInstance != 0);
 
 				// polygons
@@ -344,14 +344,14 @@ void CText2RDF::Run()
 			ASSERT(pContour->m_iGeometryInstance != 0);
 
 			// Transformation
-			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, NULL);
+			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, nullptr);
 			ASSERT(iTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &pContour->m_iGeometryInstance, 1);
 
 			// matrix
-			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, NULL);
+			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, nullptr);
 			ASSERT(iMatrixInstance != 0);
 
 			double _41 = DOUBLE_FROM_26_6(-pContour->m_iOffsetX + m_iOffsetX);
@@ -379,7 +379,7 @@ void CText2RDF::Run()
 				for (size_t iContour = 0; iContour < m_vecContours.size(); iContour++)
 				{
 					// Polygon3D
-					__int64 iPolygon3DInstance = CreateInstance(m_iPolygon3DClass, NULL);
+					__int64 iPolygon3DInstance = CreateInstance(m_iPolygon3DClass, nullptr);
 					ASSERT(iPolygon3DInstance != 0);
 
 					m_vecContours[iContour]->m_iGeometryInstance = iPolygon3DInstance;
@@ -387,14 +387,14 @@ void CText2RDF::Run()
 					SetObjectProperty(iPolygon3DInstance, GetPropertyByName(m_iModel, "lineParts"), m_vecContours[iContour]->m_vecInstances.data(), m_vecContours[iContour]->m_vecInstances.size());
 
 					// Transformation
-					__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, NULL);
+					__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, nullptr);
 					ASSERT(iTransformationInstance != 0);
 
 					// object
 					SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iPolygon3DInstance, 1);
 
 					// matrix
-					__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, NULL);
+					__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, nullptr);
 					ASSERT(iMatrixInstance != 0);
 
 					double _41 = DOUBLE_FROM_26_6(m_vecContours[iContour]->m_iOffsetX + m_iOffsetX);
@@ -410,7 +410,7 @@ void CText2RDF::Run()
 				/*
 				* ExtrusionAreaSolidSet
 				*/
-				__int64 iExtrusionAreaSolidSetInstance = CreateInstance(m_iExtrusionAreaSolidSetClass, NULL);
+				__int64 iExtrusionAreaSolidSetInstance = CreateInstance(m_iExtrusionAreaSolidSetClass, nullptr);
 				ASSERT(iExtrusionAreaSolidSetInstance != 0);
 
 				// extrusionAreaSet
@@ -437,14 +437,14 @@ void CText2RDF::Run()
 			ASSERT(pContour->m_iGeometryInstance != 0);
 
 			// Transformation
-			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, NULL);
+			__int64 iTransformationInstance = CreateInstance(m_iTransformationClass, nullptr);
 			ASSERT(iTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &pContour->m_iGeometryInstance, 1);
 
 			// matrix
-			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, NULL);
+			__int64 iMatrixInstance = CreateInstance(m_iMatrixClass, nullptr);
 			ASSERT(iMatrixInstance != 0);
 
 			double _41 = DOUBLE_FROM_26_6(-pContour->m_iOffsetX + m_iOffsetX);
@@ -545,7 +545,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 // ------------------------------------------------------------------------------------------------
 /*static*/ int CText2RDF::move_to(const FT_Vector *to, void *user)
 {
-	ASSERT(user != NULL);
+	ASSERT(user != nullptr);
 	CText2RDF * pData = (CText2RDF *)user;
 
 	printf("move_to([%g, %g])\n",
@@ -566,7 +566,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 // ------------------------------------------------------------------------------------------------
 /*static*/ int CText2RDF::line_to(const FT_Vector *to, void *user)
 {
-	ASSERT(user != NULL);
+	ASSERT(user != nullptr);
 	CText2RDF * pData = (CText2RDF *)user;
 
 	printf("line_to([%g, %g])\n", DOUBLE_FROM_26_6(to->x), DOUBLE_FROM_26_6(to->y));	
@@ -575,7 +575,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	double dY = DOUBLE_FROM_26_6(to->y);
 	double dZ = 0.;
 
-	__int64 iLine3DInstance = CreateInstance(pData->m_iLine3DClass, NULL);
+	__int64 iLine3DInstance = CreateInstance(pData->m_iLine3DClass, nullptr);
 	ASSERT(iLine3DInstance != 0);
 
 	pData->m_pCurrentContour->m_vecInstances.push_back(iLine3DInstance);
@@ -600,7 +600,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 // ------------------------------------------------------------------------------------------------
 /*static*/ int CText2RDF::conic_to(const FT_Vector *control, const FT_Vector *to, void *user)
 {
-	ASSERT(user != NULL);
+	ASSERT(user != nullptr);
 	CText2RDF * pData = (CText2RDF *)user;
 
 	printf("conic_to(c = [%g, %g], to = [%g, %g])\n",
@@ -613,7 +613,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	double dY2 = DOUBLE_FROM_26_6(to->y);
 	double dZ = 0.;
 
-	__int64 iBezierCurveInstance = CreateInstance(pData->m_iBezierCurveClass, NULL);
+	__int64 iBezierCurveInstance = CreateInstance(pData->m_iBezierCurveClass, nullptr);
 	ASSERT(iBezierCurveInstance != 0);
 
 	pData->m_pCurrentContour->m_vecInstances.push_back(iBezierCurveInstance);
@@ -624,7 +624,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 1
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -641,7 +641,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 2
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -658,7 +658,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 3
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -683,7 +683,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 /*static*/ int CText2RDF::cubic_to(const FT_Vector *control1, const FT_Vector *control2,
 	const FT_Vector *to, void *user)
 {
-	ASSERT(user != NULL);
+	ASSERT(user != nullptr);
 	CText2RDF * pData = (CText2RDF *)user;
 
 	printf("cubic_to(c1 = [%g, %g], c2 = [%g, %g], to = [%g, % g])\n",
@@ -699,7 +699,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	double dY3 = DOUBLE_FROM_26_6(to->y);
 	double dZ = 0.;
 
-	__int64 iBezierCurveInstance = CreateInstance(pData->m_iBezierCurveClass, NULL);
+	__int64 iBezierCurveInstance = CreateInstance(pData->m_iBezierCurveClass, nullptr);
 	ASSERT(iBezierCurveInstance != 0);
 
 	pData->m_pCurrentContour->m_vecInstances.push_back(iBezierCurveInstance);
@@ -710,7 +710,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 1
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -727,7 +727,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 2
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -744,7 +744,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 3
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;
@@ -761,7 +761,7 @@ void CText2RDF::SetFormatSettings(__int64 iModel)
 	* Point 4
 	*/
 	{
-		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, NULL);
+		__int64 iPoint3DInstance = CreateInstance(pData->m_iPoint3DClass, nullptr);
 		ASSERT(iPoint3DInstance != 0);
 
 		vector<double> vecPoints;

@@ -18,7 +18,7 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	/*
 	* Name
 	*/
-	char * szClassName = NULL;
+	char * szClassName = nullptr;
 	GetNameOfClass(m_iInstance, &szClassName);
 
 #ifndef _LINUX
@@ -40,7 +40,7 @@ CRDFClass::CRDFClass(int64_t iInstance)
 		m_vecAncestorClasses.push_back(iParentClassInstance);
 		GetAncestors(iParentClassInstance, m_vecAncestorClasses);
 
-		char * szParentClassName = NULL;
+		char * szParentClassName = nullptr;
 		GetNameOfClass(iParentClassInstance, &szParentClassName);
 
 #ifndef _LINUX
@@ -89,9 +89,9 @@ const vector<int64_t> & CRDFClass::getAncestorClasses()
 // ------------------------------------------------------------------------------------------------
 void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
 {
-	ASSERT(pPropertyRestriction != NULL);
+	ASSERT(pPropertyRestriction != nullptr);
 
-	char * szPropertyName = NULL;
+	char * szPropertyName = nullptr;
 	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
 
 #ifndef _LINUX

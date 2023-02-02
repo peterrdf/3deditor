@@ -16,7 +16,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 	/*
 	* Name
 	*/
-	char * szPropertyName = NULL;
+	char * szPropertyName = nullptr;
 	GetNameOfProperty(m_iInstance, &szPropertyName);
 
 #ifndef _LINUX
@@ -30,7 +30,7 @@ CRDFProperty::CRDFProperty(int64_t iInstance)
 	int64_t iParentClassInstance = GetClassParentsByIterator(GetInstanceClass(m_iInstance), 0);
 	while (iParentClassInstance != 0)
 	{
-		char * szParentClassName = NULL;
+		char * szParentClassName = nullptr;
 		GetNameOfClass(iParentClassInstance, &szParentClassName);
 
 //		LOG_DEBUG("*** PARENT CLASS " << szParentClassName);
@@ -172,35 +172,35 @@ wstring CRDFProperty::getCardinality(int64_t iInstance) const
 	{
 	case TYPE_OBJECTTYPE:
 	{
-		int64_t * piInstances = NULL;
+		int64_t * piInstances = nullptr;
 		GetObjectProperty(iInstance, getInstance(), &piInstances, &iCard);
 	}
 	break;
 
 	case TYPE_BOOL_DATATYPE:
 	{
-		bool* pbValue = NULL;
+		bool* pbValue = nullptr;
 		GetDatatypeProperty(iInstance, getInstance(), (void**)&pbValue, &iCard);
 	}
 	break;
 
 	case TYPE_CHAR_DATATYPE:
 	{
-		char ** szValue = NULL;
+		char ** szValue = nullptr;
 		GetDatatypeProperty(iInstance, getInstance(), (void **)&szValue, &iCard);
 	}
 	break;
 
 	case TYPE_DOUBLE_DATATYPE:
 	{
-		double * pdValue = NULL;
+		double * pdValue = nullptr;
 		GetDatatypeProperty(iInstance, getInstance(), (void **)&pdValue, &iCard);
 	}
 	break;
 
 	case TYPE_INT_DATATYPE:
 	{
-		int64_t * piValue = NULL;
+		int64_t * piValue = nullptr;
 		GetDatatypeProperty(iInstance, getInstance(), (void **)&piValue, &iCard);
 	}
 	break;

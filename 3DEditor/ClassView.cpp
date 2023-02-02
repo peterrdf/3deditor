@@ -14,7 +14,7 @@ class CClassViewMenuButton : public CMFCToolBarMenuButton
 	DECLARE_SERIAL(CClassViewMenuButton)
 
 public:
-	CClassViewMenuButton(HMENU hMenu = NULL) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CClassViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -80,10 +80,10 @@ void CClassView::ClassesAlphabeticalView()
 {
 	m_wndClassView.DeleteAllItems();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	auto& mapClasses = pModel->GetClasses();
 
@@ -126,10 +126,10 @@ void CClassView::ClassesHierarchicalView()
 {
 	m_wndClassView.DeleteAllItems();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CRDFClass *> & mapClasses = pModel->GetClasses();
 
@@ -165,10 +165,10 @@ void CClassView::ClassesHierarchicalView()
 HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses)
 {
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CRDFClass *> & mapClasses = pModel->GetClasses();
 
@@ -207,10 +207,10 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	wchar_t szBuffer[100];
 
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CRDFClass *> & mapClasses = pModel->GetClasses();
 	const map<int64_t, CRDFProperty *> & mapProperties = pModel->GetProperties();
@@ -291,14 +291,14 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 				HTREEITEM hRange = m_wndClassView.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 				CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-				ASSERT(pObjectRDFProperty != NULL);
+				ASSERT(pObjectRDFProperty != nullptr);
 
 				auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
 				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 				{
 					auto itRestrictionRDFClass = mapClasses.find(vecRestrictions[iRestriction]);
 					ASSERT(itRestrictionRDFClass != mapClasses.end());
-					ASSERT(itRestrictionRDFClass->second != NULL);
+					ASSERT(itRestrictionRDFClass->second != nullptr);
 
 					m_wndClassView.InsertItem(itRestrictionRDFClass->second->getName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
 				}
@@ -354,10 +354,10 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 {
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CRDFClass *> & mapClasses = pModel->GetClasses();
 
@@ -391,10 +391,10 @@ void CClassView::PropertiesAlphabeticalView()
 {
 	m_wndClassView.DeleteAllItems();
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 
 	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != NULL);
+	ASSERT(pModel != nullptr);
 
 	const map<int64_t, CRDFProperty *> & mapProperties = pModel->GetProperties();
 
@@ -471,14 +471,14 @@ void CClassView::PropertiesAlphabeticalView()
 			HTREEITEM hRange = m_wndClassView.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 			CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-			ASSERT(pObjectRDFProperty != NULL);
+			ASSERT(pObjectRDFProperty != nullptr);
 
 			const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
 			ASSERT(!vecRestrictions.empty());
 
 			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 			{
-				char * szClassName = NULL;
+				char * szClassName = nullptr;
 				GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
 
 				m_wndClassView.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
@@ -526,7 +526,7 @@ void CClassView::PropertiesAlphabeticalView()
 //////////////////////////////////////////////////////////////////////
 
 CClassView::CClassView()
-	: m_pSearchDialog(NULL)
+	: m_pSearchDialog(nullptr)
 {
 	m_nCurrSort = ID_SORTING_SORTALPHABETIC;
 }
@@ -560,7 +560,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -596,7 +596,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->m_bText = FALSE;
 		pButton->m_bImage = TRUE;
@@ -636,7 +636,7 @@ void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		UINT flags = 0;
 		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-		if (hTreeItem != NULL)
+		if (hTreeItem != nullptr)
 		{
 			pWndTree->SelectItem(hTreeItem);
 		}
@@ -662,7 +662,7 @@ void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CClassView::AdjustLayout()
 {
-	if (GetSafeHwnd() == NULL)
+	if (GetSafeHwnd() == nullptr)
 	{
 		return;
 	}
@@ -672,8 +672,8 @@ void CClassView::AdjustLayout()
 
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndClassView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndClassView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 BOOL CClassView::PreTranslateMessage(MSG* pMsg)
@@ -692,7 +692,7 @@ void CClassView::OnSort(UINT id)
 
 	CClassViewMenuButton* pButton =  DYNAMIC_DOWNCAST(CClassViewMenuButton, m_wndToolBar.GetButton(0));
 
-	if (pButton != NULL)
+	if (pButton != nullptr)
 	{
 		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
 		m_wndToolBar.Invalidate();
@@ -791,7 +791,7 @@ void CClassView::OnChangeVisualStyle()
 
 void CClassView::OnDestroy()
 {
-	ASSERT(GetController() != NULL);
+	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
 
 	__super::OnDestroy();

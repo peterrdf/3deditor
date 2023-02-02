@@ -47,7 +47,7 @@ public:
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = NULL, CCreateContext* pContext = NULL);
+	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr);
 
 // Implementation
 public:
@@ -114,8 +114,8 @@ public: // Methods
 		: m_pMainFrame(pMainFrame)
 		, m_pView(pView)
 	{
-		ASSERT(m_pMainFrame != NULL);
-		ASSERT(m_pView != NULL);
+		ASSERT(m_pMainFrame != nullptr);
+		ASSERT(m_pView != nullptr);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -131,14 +131,14 @@ public: // Methods
 
 		m_pView->GetWindowRect(&m_rcView);
 
-		m_pView->SetWindowPos(NULL, 0, 0, 1024, 1024, SWP_NOMOVE);
+		m_pView->SetWindowPos(nullptr, 0, 0, 1024, 1024, SWP_NOMOVE);
 		m_pView->RedrawWindow();
 	}
 
 	// --------------------------------------------------------------------------------------------
 	void Restore()
 	{
-		m_pView->SetWindowPos(NULL, 0, 0, m_rcView.Width(), m_rcView.Height(), SWP_NOMOVE);
+		m_pView->SetWindowPos(nullptr, 0, 0, m_rcView.Width(), m_rcView.Height(), SWP_NOMOVE);
 		m_pView->RedrawWindow();
 
 		if (m_bInstancesPaneVisisble)

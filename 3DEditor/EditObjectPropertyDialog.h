@@ -41,7 +41,7 @@ private: // Methods
 	void ValidateUI();
 
 public:
-	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent = NULL);   // standard constructor
+	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditObjectPropertyDialog();
 
 // Dialog Data

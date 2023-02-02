@@ -54,7 +54,7 @@ protected: // Methods
 	DECLARE_DYNAMIC(CInstancesDialog)
 
 public:
-	CInstancesDialog(CWnd* pParent = NULL);   // standard constructor
+	CInstancesDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CInstancesDialog();
 
 // Dialog Data

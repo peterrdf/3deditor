@@ -51,21 +51,21 @@ static UINT indicators[] =
 CDocument* CMainFrame::GetDocument() const
 {
 	POSITION posDocTemplate = AfxGetApp()->GetFirstDocTemplatePosition();
-	if (posDocTemplate == NULL)
+	if (posDocTemplate == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(posDocTemplate);
-	if (pDocTemplate == NULL)
+	if (pDocTemplate == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	POSITION posDocument = pDocTemplate->GetFirstDocPosition();
-	if (posDocument == NULL)
+	if (posDocument == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return pDocTemplate->GetNextDoc(posDocument);
@@ -75,15 +75,15 @@ CDocument* CMainFrame::GetDocument() const
 CView* CMainFrame::GetView() const
 {
 	CDocument* pDocument = GetDocument();
-	if (pDocument == NULL)
+	if (pDocument == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	POSITION posView = pDocument->GetFirstViewPosition();
-	if (posView == NULL)
+	if (posView == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return pDocument->GetNextView(posView);
@@ -93,9 +93,9 @@ CView* CMainFrame::GetView() const
 CRDFController * CMainFrame::GetController() const
 {
 	CDocument* pDocument = GetDocument();
-	if (pDocument == NULL)
+	if (pDocument == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return dynamic_cast<CRDFController *>(pDocument);
@@ -114,7 +114,7 @@ void CMainFrame::GenerateTests(const CString& strInputDataDir, const CString& st
 	CWaitCursor waitCursor;
 
 	CView* pView = GetView();
-	ASSERT(pView != NULL);
+	ASSERT(pView != nullptr);
 
 	CTestLayout testLayout(this, pView);
 	testLayout.Set();
@@ -124,7 +124,7 @@ void CMainFrame::GenerateTests(const CString& strInputDataDir, const CString& st
 
 	testLayout.Restore();
 
-	//GetController()->LoadModel(NULL);
+	//GetController()->LoadModel(nullptr);
 
 	//AfxMessageBox(L"Done.");
 }
@@ -177,7 +177,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// Allow user-defined toolbars operations:
-	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
+	InitUserToolbars(nullptr, uiFirstUserToolBarId, uiLastUserToolBarId);
 
 	if (!m_wndStatusBar.Create(this))
 	{
@@ -212,7 +212,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
-	CDockablePane* pTabbedBar = NULL;
+	CDockablePane* pTabbedBar = nullptr;
 	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndProperties);
@@ -226,7 +226,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// enable quick (Alt+drag) toolbar customization
 	CMFCToolBar::EnableQuickCustomization();
 
-	if (CMFCToolBar::GetUserImages() == NULL)
+	if (CMFCToolBar::GetUserImages() == nullptr)
 	{
 		// load user-defined toolbar images
 		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
@@ -468,7 +468,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		CDockingManager::SetDockingMode(DT_SMART);
 	}
 
-	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+	RedrawWindow(nullptr, nullptr, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 }
@@ -537,7 +537,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	for (int i = 0; i < iMaxUserToolbars; i ++)
 	{
 		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
-		if (pUserToolbar != NULL)
+		if (pUserToolbar != nullptr)
 		{
 			pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 		}
@@ -568,7 +568,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 //	CString strTestsOutputDir = folderPickerDialog.GetPathName();
 //
 //	CView* pView = GetView();
-//	ASSERT(pView != NULL);
+//	ASSERT(pView != nullptr);
 //
 //	CTestLayout testLayout(this, pView);
 //	testLayout.Set();

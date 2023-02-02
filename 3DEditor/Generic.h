@@ -30,15 +30,15 @@ static bool SaveScreenshot(unsigned char* arPixels, unsigned int iWidth, unsigne
 	((unsigned __int16*)header)[9] = (unsigned short)iWidth;
 	((unsigned __int16*)header)[11] = (unsigned short)iHeight;
 
-	HANDLE hFile = ::CreateFile(szFilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = ::CreateFile(szFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		return false;
 	}
 
 	unsigned long lSize = 0;
-	::WriteFile(hFile, header, sizeof(header), &lSize, NULL);
-	::WriteFile(hFile, arPixels, iWidth * iHeight * 3, &lSize, NULL);
+	::WriteFile(hFile, header, sizeof(header), &lSize, nullptr);
+	::WriteFile(hFile, arPixels, iWidth * iHeight * 3, &lSize, nullptr);
 
 	CloseHandle(hFile);
 

@@ -23,7 +23,7 @@ public: // Members
 	CRDFClass * m_pNewInstanceRDFClass;
 
 public:
-	CNewInstanceDialog(CRDFController * pController, CWnd* pParent = NULL);   // standard constructor
+	CNewInstanceDialog(CRDFController * pController, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CNewInstanceDialog();
 
 // Dialog Data

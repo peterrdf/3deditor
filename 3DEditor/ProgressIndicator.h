@@ -12,7 +12,7 @@ struct ProgressStatus
 	void Finish();
 
 private:
-	void SetStatusText(LPCTSTR text = NULL);
+	void SetStatusText(LPCTSTR text = nullptr);
 
 private:
 	LPCTSTR m_phase;
