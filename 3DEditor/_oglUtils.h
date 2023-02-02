@@ -1698,16 +1698,34 @@ public: // Methods
 	}
 };
 
+enum class enumProjection
+{
+	Perspective = 0,
+	Isometric,
+};
+
+enum class enumView
+{
+	Top = 0,
+	Left,
+	Right,
+	Bottom,
+	Front,
+	Back,
+};
+
 template <class Instance>
 class _oglRenderer
 {
 
 protected: // Members
 
+	CWnd* m_pWnd;
 	_oglContext* m_pOGLContext;
 	_oglBinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
-	_oglShader* m_pFragmentShader;	
+	_oglShader* m_pFragmentShader;
+	enumProjection m_enProjection;
 	glm::mat4 m_matModelView;	
 
 	_oglBuffers<Instance> m_oglBuffers;
@@ -1721,10 +1739,12 @@ protected: // Members
 public: // Methods
 
 	_oglRenderer()
-		: m_pOGLContext(nullptr)
+		: m_pWnd(nullptr)
+		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
 		, m_pFragmentShader(nullptr)
+		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
 		, m_fXAngle(30.0f)
@@ -1735,14 +1755,17 @@ public: // Methods
 	{
 	}
 
-	void _initialize(HDC hDC, 
+	void _initialize(CWnd* pWnd,
 		int iSamples, 
 		int iVertexShader, 
 		int iFragmentShader, 
 		int iResourceType,
 		bool bSupportsTexture)
 	{
-		m_pOGLContext = new _oglContext(hDC, iSamples);
+		m_pWnd = pWnd;
+		ASSERT(m_pWnd != nullptr);
+
+		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
 		m_pOGLProgram = new _oglBinnPhongProgram(bSupportsTexture);
@@ -1825,5 +1848,147 @@ public: // Methods
 		m_fXTranslation = 0.0f;
 		m_fYTranslation = 0.0f;
 		m_fZTranslation = -5.0f;
+	}
+
+	void _prepare(int iWidth, int iHeight)
+	{
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+		m_pOGLContext->enableDebug();
+#endif
+
+		m_pOGLProgram->use();
+
+		glViewport(0, 0, iWidth, iHeight);
+
+		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Set up the parameters
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
+		m_pOGLProgram->setMaterialShininess(30.f);
+
+		/*
+		* Projection Matrix
+		*/
+		// fovY     - Field of vision in degrees in the y direction
+		// aspect   - Aspect ratio of the viewport
+		// zNear    - The near clipping distance
+		// zFar     - The far clipping distance
+		GLdouble fovY = 45.0;
+		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+		GLdouble zNear = 0.0001;
+		GLdouble zFar = 1000.0;
+
+		GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+		GLdouble fW = fH * aspect;
+
+		// Projection
+		switch (m_enProjection)
+		{
+			case enumProjection::Perspective:
+			{
+				glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+				m_pOGLProgram->setProjectionMatrix(matProjection);
+			}
+			break;
+
+			case enumProjection::Isometric:
+			{
+				glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
+				m_pOGLProgram->setProjectionMatrix(matProjection);
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		}
+
+		/*
+		* Model-View Matrix
+		*/
+		m_matModelView = glm::identity<glm::mat4>();
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	}
+
+	void _redraw()
+	{
+		m_pWnd->RedrawWindow();
+	}
+
+	void _setProjection(enumProjection enProjection)
+	{
+		m_enProjection = enProjection;
+
+		_redraw();
+	}
+
+	enumProjection _getProjection() const
+	{
+		return m_enProjection;
+	}
+
+	void _setView(enum enumView enView)
+	{
+		switch (enView)
+		{
+			case enumView::Front:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			case enumView::Right:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = -90.;
+			}
+			break;
+
+			case enumView::Top:
+			{
+				m_fXAngle = 90.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			case enumView::Back:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = -180.;
+			}
+			break;
+
+			case enumView::Left:
+			{
+				m_fXAngle = 0.;
+				m_fYAngle = 90.;
+			}
+			break;
+
+			case enumView::Bottom:
+			{
+				m_fXAngle = -90.;
+				m_fYAngle = 0.;
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (enView)
+
+		_redraw();
 	}
 };

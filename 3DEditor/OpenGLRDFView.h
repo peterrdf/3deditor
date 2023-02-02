@@ -30,24 +30,6 @@ enum class enumMouseEvent
 };
 
 // ------------------------------------------------------------------------------------------------
-enum class enumProjection
-{
-	Perspective = 0,
-	Isometric,
-};
-
-// ------------------------------------------------------------------------------------------------
-enum class enumView
-{
-	Top = 0,
-	Left,
-	Right,
-	Bottom,
-	Front,
-	Back,
-};
-
-// ------------------------------------------------------------------------------------------------
 #define CULL_FACES_NONE L"<none>"
 #define CULL_FACES_FRONT L"Front"
 #define CULL_FACES_BACK L"Back"
@@ -61,15 +43,6 @@ class COpenGLRDFView
 #pragma region Members
 
 private: // Members
-
-#ifdef _LINUX
-    wxGLCanvas * m_pWnd;
-#else
-	CWnd * m_pWnd;
-#endif // _LINUX	
-
-	// Projection
-	enumProjection  m_enProjection;
 
 	// UI
 	BOOL m_bShowFaces;
@@ -153,13 +126,6 @@ public: // Methods
 #else
 	void Draw(CDC * pDC);
 #endif // _LINUX
-
-	// Projection
-	void SetProjection(enumProjection enProjection);
-	enumProjection GetProjection() const;
-
-	// View
-	void SetView(enumView enView);
 
 	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);

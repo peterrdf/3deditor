@@ -310,7 +310,7 @@ void CMy3DEditorView::OnViewTop()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Top);
+		m_pOpenGLView->_setView(enumView::Top);
 	}
 }
 
@@ -318,7 +318,7 @@ void CMy3DEditorView::OnViewLeft()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Left);
+		m_pOpenGLView->_setView(enumView::Left);
 	}
 }
 
@@ -326,7 +326,7 @@ void CMy3DEditorView::OnViewRight()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Right);
+		m_pOpenGLView->_setView(enumView::Right);
 	}
 }
 
@@ -334,7 +334,7 @@ void CMy3DEditorView::OnViewBottom()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Bottom);
+		m_pOpenGLView->_setView(enumView::Bottom);
 	}
 }
 
@@ -342,7 +342,7 @@ void CMy3DEditorView::OnViewFront()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Front);
+		m_pOpenGLView->_setView(enumView::Front);
 	}
 }
 
@@ -350,7 +350,7 @@ void CMy3DEditorView::OnViewBack()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetView(enumView::Back);
+		m_pOpenGLView->_setView(enumView::Back);
 	}
 }
 
@@ -358,26 +358,26 @@ void CMy3DEditorView::OnProjectionPerspective()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetProjection(enumProjection::Perspective);
+		m_pOpenGLView->_setProjection(enumProjection::Perspective);
 	}
 }
 
 void CMy3DEditorView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != NULL);
-	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->GetProjection() == enumProjection::Perspective));
+	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->_getProjection() == enumProjection::Perspective));
 }
 
 void CMy3DEditorView::OnProjectionIsometric()
 {
 	if (m_pOpenGLView != NULL)
 	{
-		m_pOpenGLView->SetProjection(enumProjection::Isometric);
+		m_pOpenGLView->_setProjection(enumProjection::Isometric);
 	}
 }
 
 void CMy3DEditorView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != NULL);
-	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->GetProjection() == enumProjection::Isometric));
+	pCmdUI->SetCheck((m_pOpenGLView != NULL) && (m_pOpenGLView->_getProjection() == enumProjection::Isometric));
 }

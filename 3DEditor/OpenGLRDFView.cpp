@@ -47,8 +47,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #endif // _LINUX
 	: _oglRenderer()
 	, CRDFView()
-	, m_pWnd(pWnd)
-	, m_enProjection(enumProjection::Perspective)
 	, m_bShowFaces(TRUE)
 	, m_strCullFaces(CULL_FACES_NONE)
 	, m_bShowFacesPolygons(FALSE)
@@ -72,10 +70,10 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
 {
-	ASSERT(m_pWnd != nullptr);
+	ASSERT(pWnd != nullptr);
 
 	_initialize(
-		*(m_pWnd->GetDC()), 
+		pWnd,
 		TEST_MODE ? 1 : 16,
 		IDR_TEXTFILE_VERTEX_SHADER2, 
 		IDR_TEXTFILE_FRAGMENT_SHADER2, 
@@ -130,7 +128,7 @@ void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
 
 	if (bRedraw)
 	{
-		m_pWnd->RedrawWindow();
+		_redraw();
 	}	
 }
 
@@ -150,7 +148,7 @@ void COpenGLRDFView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
 
 	if (bRedraw)
 	{
-		m_pWnd->RedrawWindow();
+		_redraw();
 	}
 }
 
@@ -170,7 +168,7 @@ void COpenGLRDFView::ShowFaces(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -188,7 +186,7 @@ void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
 #else
-	m_pWnd->RedrawWindow();
+	_redraw();
 #endif // _LINUX
 }
 
@@ -206,7 +204,7 @@ void COpenGLRDFView::ShowFacesPolygons(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -224,7 +222,7 @@ void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -242,7 +240,7 @@ void COpenGLRDFView::ShowLines(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -260,7 +258,7 @@ void COpenGLRDFView::SetLineWidth(GLfloat fWidth)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -278,7 +276,7 @@ void COpenGLRDFView::ShowPoints(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -296,7 +294,7 @@ void COpenGLRDFView::SetPointSize(GLfloat fSize)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -314,7 +312,7 @@ void COpenGLRDFView::ShowBoundingBoxes(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -332,7 +330,7 @@ void COpenGLRDFView::ShowNormalVectors(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -350,7 +348,7 @@ void COpenGLRDFView::ShowTangentVectors(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -368,7 +366,7 @@ void COpenGLRDFView::ShowBiNormalVectors(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -386,7 +384,7 @@ void COpenGLRDFView::ScaleVectors(BOOL bShow)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -417,94 +415,18 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		return;
 	}
 
-	int iWidth = 0;
-	int iHeight = 0;
-
-#ifdef _LINUX
-    m_pOGLContext->SetCurrent(*m_pWnd);
-
-    const wxSize szClient = m_pWnd->GetClientSize();
-
-    iWidth = szClient.GetWidth();
-    iHeight = szClient.GetHeight();
-#else
-    BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-#ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->enableDebug();
-#endif
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
-	iWidth = rcClient.Width();
-	iHeight = rcClient.Height();
-#endif // _LINUX
+	int iWidth = rcClient.Width();
+	int iHeight = rcClient.Height();
 
 	if ((iWidth < 20) || (iHeight < 20))
 	{
 		return;
 	}
 
-	m_pOGLProgram->use();
-
-	glViewport(0, 0, iWidth, iHeight);
-
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
-	m_pOGLProgram->setMaterialShininess(30.f);	
-
-	/*
-	* Projection Matrix
-	*/
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-	GLdouble zNear = 0.0001;
-	GLdouble zFar = 1000.0;
-
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	// Projection
-	switch (m_enProjection)
-	{
-		case enumProjection::Perspective:
-		{
-			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-			m_pOGLProgram->setProjectionMatrix(matProjection);
-		}
-		break;
-
-		case enumProjection::Isometric:
-		{
-			glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
-			m_pOGLProgram->setProjectionMatrix(matProjection);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	}
-
-	/*
-	* Model-View Matrix
-	*/
-	m_matModelView = glm::identity<glm::mat4>();
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	_prepare(iWidth, iHeight);
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -615,77 +537,6 @@ void COpenGLRDFView::Draw(CDC * pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetProjection(enumProjection enProjection)
-{
-	m_enProjection = enProjection;
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
-enumProjection COpenGLRDFView::GetProjection() const
-{
-	return m_enProjection;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetView(enum enumView enView)
-{
-	switch (enView)
-	{
-		case enumView::Front:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		case enumView::Right:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = -90.;
-		}
-		break;
-
-		case enumView::Top:
-		{
-			m_fXAngle = 90.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		case enumView::Back:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = -180.;
-		}
-		break;
-
-		case enumView::Left:
-		{
-			m_fXAngle = 0.;
-			m_fYAngle = 90.;
-		}
-		break;
-
-		case enumView::Bottom:
-		{
-			m_fXAngle = -90.;
-			m_fYAngle = 0.;
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
-	} // switch (enView)
-
-	m_pWnd->RedrawWindow();
-}
-
-// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
@@ -705,7 +556,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
 #else
-                m_pWnd->RedrawWindow();
+                _redraw();
 #endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
@@ -773,7 +624,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_fYTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -781,7 +632,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_fYTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Height());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -789,7 +640,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_fXTranslation -= PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 
@@ -797,7 +648,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			m_fXTranslation += PAN_SPEED_KEYS * (1.f / rcClient.Width());
 
-			m_pWnd->RedrawWindow();
+			_redraw();
 		}
 		break;
 	} // switch (nChar)
@@ -1142,7 +993,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -1281,7 +1132,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -1317,7 +1168,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 #ifdef _LINUX
         m_pWnd->Refresh(false);
 #else
-        m_pWnd->RedrawWindow();
+        _redraw();
 #endif // _LINUX
 	}
 }
@@ -1347,7 +1198,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 #ifdef _LINUX
         m_pWnd->Refresh(false);
 #else
-        m_pWnd->RedrawWindow();
+        _redraw();
 #endif // _LINUX
 	}
 }
@@ -3036,7 +2887,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
 #else
-                m_pWnd->RedrawWindow();
+                _redraw();
 #endif // _LINUX
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
@@ -3101,7 +2952,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
                 m_pWnd->Refresh(false);
 #else
-                m_pWnd->RedrawWindow();
+                _redraw();
 #endif // _LINUX
 			}
 		} // if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && ...
@@ -3165,7 +3016,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 #ifdef _LINUX
         m_pWnd->Refresh(false);
 #else
-        m_pWnd->RedrawWindow();
+        _redraw();
 #endif // _LINUX
 
 		m_ptPrevMousePosition = point;
@@ -3200,7 +3051,7 @@ void COpenGLRDFView::Rotate(float fXAngle, float fYAngle)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -3212,7 +3063,7 @@ void COpenGLRDFView::Zoom(float fZTranslation)
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
-    m_pWnd->RedrawWindow();
+    _redraw();
 #endif // _LINUX
 }
 
@@ -3285,7 +3136,7 @@ void COpenGLRDFView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWid
 
 	arPixels = (unsigned char*)malloc(iWidth * iHeight * 3);
 
-	m_pWnd->RedrawWindow();
+	_redraw();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glReadPixels(0, 0, iWidth, iHeight, GL_RGB, GL_UNSIGNED_BYTE, arPixels);
