@@ -152,7 +152,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CRDFInstanceProperty::HasButton() const
 {
-	ASSERT(GetData() != nullptr);
+	ASSERT(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
 	ASSERT(pData != nullptr);
@@ -230,7 +230,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFInstanceProperty::OnClickButton(CPoint /*point*/)
 {
-	ASSERT(GetData() != nullptr);
+	ASSERT(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
 	ASSERT(pData != nullptr);
@@ -525,7 +525,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CAddRDFInstanceProperty::HasButton() const
 {
-	ASSERT(GetData() != nullptr);
+	ASSERT(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
 	ASSERT(pData != nullptr);
@@ -648,7 +648,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CAddRDFInstanceProperty::OnClickButton(CPoint /*point*/)
 {
-	ASSERT(GetData() != nullptr);
+	ASSERT(GetData() != NULL);
 
 	/*
 	* Select the property
