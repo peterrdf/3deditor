@@ -398,7 +398,7 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 #ifdef _LINUX
 void COpenGLRDFView::Draw(wxPaintDC * pDC)
 #else
-void COpenGLRDFView::Draw(CDC * pDC)
+void COpenGLRDFView::Draw(CDC* pDC)
 #endif // _LINUX
 {
 	auto pController = GetController();
@@ -426,8 +426,6 @@ void COpenGLRDFView::Draw(CDC * pDC)
 		return;
 	}
 
-	_prepare(iWidth, iHeight);
-
 	float fXmin = -1.f;
 	float fXmax = 1.f;
 	float fYmin = -1.f;
@@ -436,33 +434,12 @@ void COpenGLRDFView::Draw(CDC * pDC)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-	m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
-	m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
-
-	/*
-	* Normal Matrix
-	*/
-	glm::mat4 matNormal = m_matModelView;
-	matNormal = glm::inverse(matNormal);
-	matNormal = glm::transpose(matNormal);
-	m_pOGLProgram->setNormalMatrix(matNormal);
+	_prepare(
+		iWidth, iHeight,
+		fXmin, fXmax, 
+		fYmin, fYmax, 
+		fZmin, fZmax);	
 	
-	m_pOGLProgram->enableBinnPhongModel(true);
 	m_pOGLProgram->enableTexture(false);
 
 	/*

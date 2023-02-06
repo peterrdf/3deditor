@@ -412,7 +412,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::GetWorldDimensions(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax) const
+void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
 {
 	fXmin = m_fXmin;
 	fXmax = m_fXmax;

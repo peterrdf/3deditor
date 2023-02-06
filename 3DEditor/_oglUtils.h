@@ -1850,7 +1850,11 @@ public: // Methods
 		m_fZTranslation = -5.0f;
 	}
 
-	void _prepare(int iWidth, int iHeight)
+	void _prepare(
+		int iWidth, int iHeight,
+		float& fXmin, float& fXmax, 
+		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax)
 	{
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
@@ -1873,9 +1877,7 @@ public: // Methods
 		m_pOGLProgram->setPointLightLocation(0.f, 0.f, 10000.f);
 		m_pOGLProgram->setMaterialShininess(30.f);
 
-		/*
-		* Projection Matrix
-		*/
+		// Projection Matrix
 		// fovY     - Field of vision in degrees in the y direction
 		// aspect   - Aspect ratio of the viewport
 		// zNear    - The near clipping distance
@@ -1912,11 +1914,36 @@ public: // Methods
 			break;
 		}
 
-		/*
-		* Model-View Matrix
-		*/
+		// Model-View Matrix
 		m_matModelView = glm::identity<glm::mat4>();
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+
+		float fXTranslation = fXmin;
+		fXTranslation += (fXmax - fXmin) / 2.f;
+		fXTranslation = -fXTranslation;
+
+		float fYTranslation = fYmin;
+		fYTranslation += (fYmax - fYmin) / 2.f;
+		fYTranslation = -fYTranslation;
+
+		float fZTranslation = fZmin;
+		fZTranslation += (fZmax - fZmin) / 2.f;
+		fZTranslation = -fZTranslation;
+
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+		m_matModelView = glm::rotate(m_matModelView, m_fXAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+		m_matModelView = glm::rotate(m_matModelView, m_fYAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+		m_pOGLProgram->setModelViewMatrix(m_matModelView);
+
+		// Normal Matrix
+		glm::mat4 matNormal = m_matModelView;
+		matNormal = glm::inverse(matNormal);
+		matNormal = glm::transpose(matNormal);
+		m_pOGLProgram->setNormalMatrix(matNormal);
+
+		// Model
+		m_pOGLProgram->enableBinnPhongModel(true);
 	}
 
 	void _redraw()
