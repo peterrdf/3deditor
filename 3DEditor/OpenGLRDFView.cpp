@@ -537,7 +537,6 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 #endif // _LINUX
 
 				ASSERT(GetController() != nullptr);
-
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 		}
@@ -2849,11 +2848,11 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 			m_pInstanceSelectionFrameBuffer->unbind();
 
-			CRDFInstance * pPointedInstance = nullptr;
+			CRDFInstance* pPointedInstance = nullptr;
 			if (arPixels[3] != 0)
 			{
-				int64_t iObjectID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				pPointedInstance = pModel->GetInstanceByID(iObjectID);
+				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
 				ASSERT(pPointedInstance != nullptr);
 			}
 
