@@ -1572,10 +1572,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	if (pModel == nullptr)
 	{
 		return;
-	}
-
-	// Save Model-View Matrix
-	glm::mat4 matModelView = m_matModelView;
+	}	
 
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
@@ -1694,10 +1691,13 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			};
 
 		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
+
+		glm::mat4 matModelView = m_matModelView;
 		matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 		matModelView = matModelView * matBBTransformation;
 		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
+		// Update Model-View Matrix
 		m_pOGLProgram->setModelViewMatrix(matModelView);
 
 		_vector3d vecBoundingBoxMin = { pInstance->getBoundingBoxMin()->x, pInstance->getBoundingBoxMin()->y, pInstance->getBoundingBoxMin()->z };
