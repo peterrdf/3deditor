@@ -994,15 +994,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	*/
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
-		COpenGLRDFView * pOpenGLView = GetController()->GetView<COpenGLRDFView>();
+		auto pOpenGLView = GetController()->GetView<COpenGLRDFView>();
 		ASSERT(pOpenGLView != nullptr);
 
-		CApplicationProperty * pApplicationProperty = dynamic_cast<CApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pApplicationProperty = dynamic_cast<CApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
 		if (pApplicationProperty != nullptr)
 		{
 			CString strValue = pApplicationProperty->GetValue();
 
-			CApplicationPropertyData * pData = (CApplicationPropertyData *)pApplicationProperty->GetData();
+			auto pData = (CApplicationPropertyData *)pApplicationProperty->GetData();
 			ASSERT(pData != nullptr);
 
 			if ((pData->GetType() == ptLightPosition) || ((pData->GetType() == ptLightPositionItem)))

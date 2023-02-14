@@ -11,9 +11,11 @@ class CMy3DEditorView : public CView
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// OpenGL View
-	COpenGLRDFView * m_pOpenGLView;
+	COpenGLRDFView* m_pOpenGLView;
+
+private: // Methods
+
+	CRDFController* GetController();
 
 protected: // create from serialization only
 	CMy3DEditorView();
@@ -74,6 +76,16 @@ public:
 	afx_msg void OnUpdateProjectionPerspective(CCmdUI* pCmdUI);
 	afx_msg void OnProjectionIsometric();
 	afx_msg void OnUpdateProjectionIsometric(CCmdUI* pCmdUI);
+	afx_msg void OnShowFaces();
+	afx_msg void OnUpdateShowFaces(CCmdUI* pCmdUI);
+	afx_msg void OnShowFacesWireframes();
+	afx_msg void OnUpdateShowFacesWireframes(CCmdUI* pCmdUI);
+	afx_msg void OnShowConcFacesWireframes();
+	afx_msg void OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI);
+	afx_msg void OnShowLines();
+	afx_msg void OnUpdateShowLines(CCmdUI* pCmdUI);
+	afx_msg void OnShowPoints();
+	afx_msg void OnUpdateShowPoints(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp

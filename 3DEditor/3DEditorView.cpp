@@ -16,6 +16,13 @@
 #define new DEBUG_NEW
 #endif
 
+CRDFController* CMy3DEditorView::GetController()
+{
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	return pDoc;
+}
 
 // CMy3DEditorView
 
@@ -50,6 +57,16 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CMy3DEditorView::OnUpdateProjectionPerspective)
 	ON_COMMAND(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnProjectionIsometric)
 	ON_UPDATE_COMMAND_UI(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnUpdateProjectionIsometric)
+	ON_COMMAND(ID_SHOW_FACES, &CMy3DEditorView::OnShowFaces)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_FACES, &CMy3DEditorView::OnUpdateShowFaces)
+	ON_COMMAND(ID_SHOW_FACES_WIREFRAMES, &CMy3DEditorView::OnShowFacesWireframes)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_FACES_WIREFRAMES, &CMy3DEditorView::OnUpdateShowFacesWireframes)
+	ON_COMMAND(ID_SHOW_CONC_FACES_WIREFRAMES, &CMy3DEditorView::OnShowConcFacesWireframes)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_CONC_FACES_WIREFRAMES, &CMy3DEditorView::OnUpdateShowConcFacesWireframes)
+	ON_COMMAND(ID_SHOW_LINES, &CMy3DEditorView::OnShowLines)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_LINES, &CMy3DEditorView::OnUpdateShowLines)
+	ON_COMMAND(ID_SHOW_POINTS, &CMy3DEditorView::OnShowPoints)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_POINTS, &CMy3DEditorView::OnUpdateShowPoints)
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -380,4 +397,74 @@ void CMy3DEditorView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
 	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Isometric));
+}
+
+void CMy3DEditorView::OnShowFaces()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowFaces(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreFacesShown());
+}
+
+void CMy3DEditorView::OnShowFacesWireframes()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowFacesPolygons(!m_pOpenGLView->AreFacesPolygonsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowFacesWireframes(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreFacesPolygonsShown());
+}
+
+void CMy3DEditorView::OnShowConcFacesWireframes()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreConceptualFacesPolygonsShown());
+}
+
+void CMy3DEditorView::OnShowLines()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowLines(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreLinesShown());
+}
+
+void CMy3DEditorView::OnShowPoints()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowPoints(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->ArePointsShown());
 }
