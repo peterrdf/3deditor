@@ -89,6 +89,11 @@ void CRDFView::SetController(CRDFController * pController)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CRDFView::OnApplicationPropertiesChanged()
+{
+}
+
+// ------------------------------------------------------------------------------------------------
 CRDFController * CRDFView::GetController() const
 {
 	return m_pController;

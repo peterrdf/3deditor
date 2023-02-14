@@ -83,6 +83,10 @@ public: // Methods
 	// UI properties support
 	virtual void OnVisibleValuesCountLimitChanged();
 
+	// --------------------------------------------------------------------------------------------
+	// UI properties support
+	virtual void OnApplicationPropertiesChanged();
+
 protected: // Methods
 
 	// --------------------------------------------------------------------------------------------

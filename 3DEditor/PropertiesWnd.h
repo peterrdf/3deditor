@@ -20,7 +20,7 @@ public:
 };
 
 // ------------------------------------------------------------------------------------------------
-enum enumPropertyType
+enum class enumPropertyType
 {
 	ptShowFaces,
 	ptCullFaces,

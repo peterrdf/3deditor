@@ -997,7 +997,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		auto pOpenGLView = GetController()->GetView<COpenGLRDFView>();
 		ASSERT(pOpenGLView != nullptr);
 
-		auto pApplicationProperty = dynamic_cast<CApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
 		{
 			CString strValue = pApplicationProperty->GetValue();
@@ -1005,7 +1005,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pData = (CApplicationPropertyData *)pApplicationProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			if ((pData->GetType() == ptLightPosition) || ((pData->GetType() == ptLightPositionItem)))
+			if ((pData->GetType() == enumPropertyType::ptLightPosition) || 
+				((pData->GetType() == enumPropertyType::ptLightPositionItem)))
 			{
 				ASSERT(FALSE); // DISABLED
 			} // if ((pData->GetType() == ptLightPosition) || ...
@@ -1013,134 +1014,134 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			{
 				switch (pData->GetType())
 				{
-				case ptShowFaces:
-				{
-					pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptCullFaces:
-				{
-					pOpenGLView->SetCullFacesMode(strValue);
-				}
-				break;
-
-				case ptShowFacesWireframes:
-				{
-					pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptShowConceptualFacesWireframes:
-				{
-					pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptShowLines:
-				{
-					pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptLineWidth:
-				{
-					int iValue = _wtoi((LPCTSTR)strValue);
-
-					pOpenGLView->SetLineWidth((GLfloat)iValue);
-				}
-				break;
-
-				case ptShowPoints:
-				{
-					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptPointSize:
-				{
-					int iValue = _wtoi((LPCTSTR)strValue);
-
-					pOpenGLView->SetPointSize((GLfloat)iValue);
-				}
-				break;
-
-				case ptShowNormalVectors:
-				{
-					pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptShowTangenVectors:
-				{
-					pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptShowBiNormalVectors:
-				{
-					pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptScaleVectors:
-				{
-					pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptShowBoundingBoxes:
-				{
-					pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				case ptLightModelLocalViewer:
-				{
-					ASSERT(FALSE); // DISABLED
-
-					//pOpenGLView->SetLightModelLocalViewer(strValue == TRUE_VALUE_PROPERTY ? true : false);
-				}
-				break;
-
-				case ptLightModel2Sided:
-				{
-					ASSERT(FALSE); // DISABLED
-
-					//pOpenGLView->SetLightModel2Sided(strValue == TRUE_VALUE_PROPERTY ? true : false);
-				}
-				break;
-
-				case ptLightIsEnabled:
-				{
-					ASSERT(FALSE); // DISABLED
-				}
-				break;
-
-				case ptVisibleValuesCountLimit:
-				{
-					int iValue = _wtoi((LPCTSTR)strValue);
-
-					GetController()->SetVisibleValuesCountLimit(iValue);
-				}
-				break;
-
-				case ptScalelAndCenter:
-				{
-					GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-				}
-				break;
-
-				default:
-					ASSERT(false);
+					case enumPropertyType::ptShowFaces:
+					{
+						pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
 					break;
+
+					case enumPropertyType::ptCullFaces:
+					{
+						pOpenGLView->SetCullFacesMode(strValue);
+					}
+					break;
+
+					case enumPropertyType::ptShowFacesWireframes:
+					{
+						pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptShowConceptualFacesWireframes:
+					{
+						pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptShowLines:
+					{
+						pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptLineWidth:
+					{
+						int iValue = _wtoi((LPCTSTR)strValue);
+
+						pOpenGLView->SetLineWidth((GLfloat)iValue);
+					}
+					break;
+
+					case enumPropertyType::ptShowPoints:
+					{
+						pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptPointSize:
+					{
+						int iValue = _wtoi((LPCTSTR)strValue);
+
+						pOpenGLView->SetPointSize((GLfloat)iValue);
+					}
+					break;
+
+					case enumPropertyType::ptShowNormalVectors:
+					{
+						pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptShowTangenVectors:
+					{
+						pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptShowBiNormalVectors:
+					{
+						pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptScaleVectors:
+					{
+						pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptShowBoundingBoxes:
+					{
+						pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					case enumPropertyType::ptLightModelLocalViewer:
+					{
+						ASSERT(FALSE); // DISABLED
+
+						//pOpenGLView->SetLightModelLocalViewer(strValue == TRUE_VALUE_PROPERTY ? true : false);
+					}
+					break;
+
+					case enumPropertyType::ptLightModel2Sided:
+					{
+						ASSERT(FALSE); // DISABLED
+
+						//pOpenGLView->SetLightModel2Sided(strValue == TRUE_VALUE_PROPERTY ? true : false);
+					}
+					break;
+
+					case enumPropertyType::ptLightIsEnabled:
+					{
+						ASSERT(FALSE); // DISABLED
+					}
+					break;
+
+					case enumPropertyType::ptVisibleValuesCountLimit:
+					{
+						int iValue = _wtoi((LPCTSTR)strValue);
+
+						GetController()->SetVisibleValuesCountLimit(iValue);
+					}
+					break;
+
+					case enumPropertyType::ptScalelAndCenter:
+					{
+						GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					}
+					break;
+
+					default:
+						ASSERT(false);
+						break;
 				} // switch (pData->GetType())
 			} // else if ((pData->GetType() == ptLightPosition) || ...			
 
 			return 0;
 		} // if (pApplicationProperty != nullptr)
 
-		CColorApplicationProperty * pColorApplicationProperty = dynamic_cast<CColorApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pColorApplicationProperty = dynamic_cast<CColorApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
 		if (pColorApplicationProperty != nullptr)
 		{
 			ASSERT(FALSE); // DISABLED
@@ -1679,7 +1680,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Faces
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Faces"), pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), (DWORD_PTR)new CApplicationPropertyData(ptShowFaces));
+		auto pProperty = new CApplicationProperty(_T("Faces"), 
+			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), 
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1693,10 +1696,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		CString strCullFacesMode = pOpenGLView->GetCullFacesMode();
 
-		CApplicationProperty* pProperty = new CApplicationProperty(
+		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"), 
 			strCullFacesMode == CULL_FACES_FRONT ? CULL_FACES_FRONT : strCullFacesMode == CULL_FACES_BACK ? CULL_FACES_BACK : CULL_FACES_NONE,
-			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(ptCullFaces));
+			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptCullFaces));
 		pProperty->AddOption(CULL_FACES_NONE);
 		pProperty->AddOption(CULL_FACES_FRONT);
 		pProperty->AddOption(CULL_FACES_BACK);
@@ -1709,7 +1712,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Faces wireframes
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Faces wireframes"), pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(ptShowFacesWireframes));
+		auto pProperty = new CApplicationProperty(_T("Faces wireframes"), 
+			pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1721,7 +1726,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Conceptual faces wireframes
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Conceptual faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(ptShowConceptualFacesWireframes));
+		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
+			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+			_T("Conceptual faces wireframes"), 
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1733,7 +1741,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Lines
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Lines"), (DWORD_PTR)new CApplicationPropertyData(ptShowLines));
+		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+			_T("Lines"), 
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1761,7 +1771,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Points
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Points"), (DWORD_PTR)new CApplicationPropertyData(ptShowPoints));
+		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+			_T("Points"), 
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1789,14 +1801,16 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Vectors
 	*/
 	{
-		CMFCPropertyGridProperty * pVectors = new CMFCPropertyGridProperty(_T("Vectors"));
+		auto pVectors = new CMFCPropertyGridProperty(_T("Vectors"));
 		pViewGroup->AddSubItem(pVectors);
 
 		/*
 		* Normal vectors
 		*/
 		{
-			CApplicationProperty * pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->AreNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Normal vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowNormalVectors));
+			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->AreNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+				_T("Normal vectors"), 
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1808,7 +1822,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Tangent vectors
 		*/
 		{
-			CApplicationProperty * pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Tangent vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowTangenVectors));
+			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+				_T("Tangent vectors"), 
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowTangenVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1820,7 +1836,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Bi-normal vectors
 		*/
 		{
-			CApplicationProperty * pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Bi-normal vectors"), (DWORD_PTR)new CApplicationPropertyData(ptShowBiNormalVectors));
+			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+				_T("Bi-normal vectors"), 
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowBiNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1832,7 +1850,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Scale
 		*/
 		{
-			CApplicationProperty * pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Scale"), (DWORD_PTR)new CApplicationPropertyData(ptScaleVectors));
+			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+				_T("Scale"), 
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptScaleVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1845,8 +1865,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 	* Bounding boxes
 	*/
 	{
-		CApplicationProperty * pProperty = new CApplicationProperty(_T("Bounding boxes"), pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Bounding boxes"), 
-			(DWORD_PTR)new CApplicationPropertyData(ptShowBoundingBoxes));
+		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
+			pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
+			_T("Bounding boxes"), 
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1873,8 +1895,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Visible values count limit
 		*/
 		{
-			CApplicationProperty * pProperty = new CApplicationProperty(_T("Visible values count limit"), (_variant_t)GetController()->GetVisibleValuesCountLimit(), _T("Visible values count limit"),
-				(DWORD_PTR)new CApplicationPropertyData(ptVisibleValuesCountLimit));
+			auto pProperty = new CApplicationProperty(_T("Visible values count limit"), 
+				(_variant_t)GetController()->GetVisibleValuesCountLimit(), 
+				_T("Visible values count limit"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptVisibleValuesCountLimit));
 			pProperty->EnableSpinControl(TRUE, 1, INT_MAX);
 
 			pUI->AddSubItem(pProperty);
@@ -1884,8 +1908,10 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Scale and Center
 		*/
 		{
-			CApplicationProperty* pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-				_T("Scale and Center all Geometry"), (DWORD_PTR)new CApplicationPropertyData(ptScalelAndCenter));
+			auto pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), 
+				GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+				_T("Scale and Center all Geometry"), 
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptScalelAndCenter));
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);

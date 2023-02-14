@@ -809,14 +809,14 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
 	if (pItem != nullptr)
 	{
 		switch (pItem->getType())
 		{
 		case enumItemType::Instance:
 		{
-			CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
+			auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 			ASSERT(pInstanceItem != nullptr);
 
 			RemoveInstanceItemData(pInstanceItem->getInstance(), hItem);
@@ -825,7 +825,7 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 
 		case enumItemType::Property:
 		{
-			CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
+			auto pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
 			ASSERT(pPropertyItem != nullptr);
 
 			RemovePropertyItemData(pPropertyItem->getInstance(), pPropertyItem->getProperty(), hItem);
@@ -856,29 +856,29 @@ void CFileView::UpdateView()
 
 	switch (m_nCurrSort)
 	{
-	case ID_SORTING_INSTANCES_SORTALPHABETIC:
-	{
-		InstancesAlphabeticalView();
-	}
-	break;
+		case ID_SORTING_INSTANCES_SORTALPHABETIC:
+		{
+			InstancesAlphabeticalView();
+		}
+		break;
 
-	case ID_SORTING_INSTANCES_SORTBYTYPE:
-	{
-		InstancesGroupByClassView();
-	}
-	break;
+		case ID_SORTING_INSTANCES_SORTBYTYPE:
+		{
+			InstancesGroupByClassView();
+		}
+		break;
 
-	case ID_SORTING_INSTANCES_NOT_REFERENCED:
-	{
-		InstancesUnreferencedItemsView();
-	}
-	break;
+		case ID_SORTING_INSTANCES_NOT_REFERENCED:
+		{
+			InstancesUnreferencedItemsView();
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false); // unknown view
-	}
-	break;
+		default:
+		{
+			ASSERT(false); // unknown view
+		}
+		break;
 	} // switch (m_nCurrSort)
 
 	/*
@@ -894,17 +894,17 @@ void CFileView::UpdateView()
 	/*
 	* Restore the selected property
 	*/
-	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
+	auto prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
 	{
 		ASSERT(m_hSelectedItem != nullptr);
 		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 		m_wndFileView.Expand(m_hSelectedItem, TVE_EXPAND);
 
-		map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.find(prSelectedInstanceProperty.first->getInstance());
+		auto itInstance2Properties = m_mapInstance2Properties.find(prSelectedInstanceProperty.first->getInstance());
 		ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
 
-		map<int64_t, CRDFPropertyItem *>::iterator itPropertyItem = itInstance2Properties->second.find(prSelectedInstanceProperty.second->getInstance());
+		auto itPropertyItem = itInstance2Properties->second.find(prSelectedInstanceProperty.second->getInstance());
 		ASSERT(itPropertyItem != itInstance2Properties->second.end());
 		ASSERT(!itPropertyItem->second->items().empty());
 
