@@ -474,6 +474,12 @@ BEGIN
             MENUITEM "Conceptual faces wireframes", ID_SHOW_CONC_FACES_WIREFRAMES
             MENUITEM "Lines",                       ID_SHOW_LINES
             MENUITEM "Points",                      ID_SHOW_POINTS
+            MENUITEM SEPARATOR
+            MENUITEM "Normal vectors",              ID_NORMAL_VECTORS
+            MENUITEM "Tangent vectors",             ID_SHOW_TANGENT_VECTORS
+            MENUITEM "Bi-normal vectors",           ID_SHOW_BI_NORMAL_VECTORS
+            MENUITEM SEPARATOR
+            MENUITEM "Bounding boxes",              ID_SHOW_BOUNDING_BOXES
         END
     END
     POPUP "&Help"
@@ -608,11 +614,17 @@ BEGIN
         END
         POPUP "Show"
         BEGIN
-            MENUITEM "Faces", ID_SHOW_FACES
-            MENUITEM "Faces wireframes", ID_SHOW_FACES_WIREFRAMES
+            MENUITEM "Faces",                       ID_SHOW_FACES
+            MENUITEM "Faces wireframes",            ID_SHOW_FACES_WIREFRAMES
             MENUITEM "Conceptual faces wireframes", ID_SHOW_CONC_FACES_WIREFRAMES
-            MENUITEM "Lines", ID_SHOW_LINES
-            MENUITEM "Points", ID_SHOW_POINTS
+            MENUITEM "Lines",                       ID_SHOW_LINES
+            MENUITEM "Points",                      ID_SHOW_POINTS
+            MENUITEM SEPARATOR
+            MENUITEM "Normal vectors", ID_NORMAL_VECTORS
+            MENUITEM "Tangent vectors", ID_SHOW_TANGENT_VECTORS
+            MENUITEM "Bi-normal vectors", ID_SHOW_BI_NORMAL_VECTORS
+            MENUITEM SEPARATOR
+            MENUITEM "Bounding boxes", ID_SHOW_BOUNDING_BOXES
         END
     END
 END

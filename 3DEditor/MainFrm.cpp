@@ -283,6 +283,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SHOW_CONC_FACES_WIREFRAMES);
 	lstBasicCommands.AddTail(ID_SHOW_LINES);
 	lstBasicCommands.AddTail(ID_SHOW_POINTS);
+	lstBasicCommands.AddTail(ID_NORMAL_VECTORS);
+	lstBasicCommands.AddTail(ID_SHOW_TANGENT_VECTORS);
+	lstBasicCommands.AddTail(ID_SHOW_BI_NORMAL_VECTORS);
+	lstBasicCommands.AddTail(ID_SHOW_BOUNDING_BOXES);
 
 	// Test
 	lstBasicCommands.AddTail(ID_TEST_GENERATE_TESTS);

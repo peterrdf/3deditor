@@ -86,6 +86,14 @@ public:
 	afx_msg void OnUpdateShowLines(CCmdUI* pCmdUI);
 	afx_msg void OnShowPoints();
 	afx_msg void OnUpdateShowPoints(CCmdUI* pCmdUI);
+	afx_msg void OnNormalVectors();
+	afx_msg void OnUpdateNormalVectors(CCmdUI* pCmdUI);
+	afx_msg void OnShowTangentVectors();
+	afx_msg void OnUpdateShowTangentVectors(CCmdUI* pCmdUI);
+	afx_msg void OnShowBiNormalVectors();
+	afx_msg void OnUpdateShowBiNormalVectors(CCmdUI* pCmdUI);
+	afx_msg void OnShowBoundingBoxes();
+	afx_msg void OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp

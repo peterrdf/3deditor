@@ -148,13 +148,17 @@
 #define ID_SHOW_CONC_FACES_WIREFRAMES   32821
 #define ID_SHOW_LINES                   32822
 #define ID_SHOW_POINTS                  32823
+#define ID_NORMAL_VECTORS               32824
+#define ID_SHOW_TANGENT_VECTORS         32825
+#define ID_SHOW_BI_NORMAL_VECTORS       32826
+#define ID_SHOW_BOUNDING_BOXES           32827
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32824
+#define _APS_NEXT_COMMAND_VALUE         32828
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

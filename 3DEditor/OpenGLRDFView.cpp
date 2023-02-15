@@ -3100,6 +3100,11 @@ void COpenGLRDFView::Rotate(float fXAngle, float fYAngle)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::Zoom(float fZTranslation)
 {
+	if (m_enProjection == enumProjection::Isometric)
+	{
+		return;
+	}
+
 	m_fZTranslation += fZTranslation;
 
 #ifdef _LINUX

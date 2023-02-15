@@ -67,6 +67,14 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_LINES, &CMy3DEditorView::OnUpdateShowLines)
 	ON_COMMAND(ID_SHOW_POINTS, &CMy3DEditorView::OnShowPoints)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_POINTS, &CMy3DEditorView::OnUpdateShowPoints)
+	ON_COMMAND(ID_NORMAL_VECTORS, &CMy3DEditorView::OnNormalVectors)
+	ON_UPDATE_COMMAND_UI(ID_NORMAL_VECTORS, &CMy3DEditorView::OnUpdateNormalVectors)
+	ON_COMMAND(ID_SHOW_TANGENT_VECTORS, &CMy3DEditorView::OnShowTangentVectors)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_TANGENT_VECTORS, &CMy3DEditorView::OnUpdateShowTangentVectors)
+	ON_COMMAND(ID_SHOW_BI_NORMAL_VECTORS, &CMy3DEditorView::OnShowBiNormalVectors)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_BI_NORMAL_VECTORS, &CMy3DEditorView::OnUpdateShowBiNormalVectors)
+	ON_COMMAND(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnShowBoundingBoxes)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnUpdateShowBoundingBoxes)
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -467,4 +475,60 @@ void CMy3DEditorView::OnUpdateShowPoints(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
 	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->ArePointsShown());
+}
+
+void CMy3DEditorView::OnNormalVectors()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowNormalVectors(!m_pOpenGLView->AreNormalVectorsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateNormalVectors(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreNormalVectorsShown());
+}
+
+void CMy3DEditorView::OnShowTangentVectors()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowTangentVectors(!m_pOpenGLView->AreTangentVectorsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowTangentVectors(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreTangentVectorsShown());
+}
+
+void CMy3DEditorView::OnShowBiNormalVectors()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowTangentVectors(!m_pOpenGLView->AreBiNormalVectorsShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowBiNormalVectors(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreBiNormalVectorsShown());
+}
+
+void CMy3DEditorView::OnShowBoundingBoxes()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->ShowBoundingBoxes(!m_pOpenGLView->AreBoundingBoxesShown());
+	}
+}
+
+void CMy3DEditorView::OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->AreBoundingBoxesShown());
 }
