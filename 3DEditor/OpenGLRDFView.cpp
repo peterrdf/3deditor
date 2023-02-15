@@ -165,6 +165,12 @@ void COpenGLRDFView::ShowFaces(BOOL bShow)
 {
 	m_bShowFaces = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowFaces);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -182,6 +188,12 @@ BOOL COpenGLRDFView::AreFacesShown() const
 void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 {
 	m_strCullFaces = szMode;
+
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::CullFaces);
+	}
 
 #ifdef _LINUX
 	m_pWnd->Refresh(false);
@@ -201,6 +213,12 @@ void COpenGLRDFView::ShowFacesPolygons(BOOL bShow)
 {
 	m_bShowFacesPolygons = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowFacesWireframes);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -219,6 +237,12 @@ void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bShow)
 {
 	m_bShowConceptualFacesPolygons = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowConceptualFacesWireframes);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -236,6 +260,12 @@ BOOL COpenGLRDFView::AreConceptualFacesPolygonsShown() const
 void COpenGLRDFView::ShowLines(BOOL bShow)
 {
 	m_bShowLines = bShow;
+
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowLines);
+	}
 
 #ifdef _LINUX
     m_pWnd->Refresh(false);
@@ -273,6 +303,12 @@ void COpenGLRDFView::ShowPoints(BOOL bShow)
 {
 	m_bShowPoints = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowPoints);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -309,6 +345,12 @@ void COpenGLRDFView::ShowBoundingBoxes(BOOL bShow)
 {
 	m_bShowBoundingBoxes = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowBoundingBoxes);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -326,6 +368,12 @@ BOOL COpenGLRDFView::AreBoundingBoxesShown() const
 void COpenGLRDFView::ShowNormalVectors(BOOL bShow)
 {
 	m_bShowNormalVectors = bShow;
+
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowNormalVectors);
+	}
 
 #ifdef _LINUX
     m_pWnd->Refresh(false);
@@ -345,6 +393,12 @@ void COpenGLRDFView::ShowTangentVectors(BOOL bShow)
 {
 	m_bShowTangenVectors = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowTangenVectors);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -363,6 +417,12 @@ void COpenGLRDFView::ShowBiNormalVectors(BOOL bShow)
 {
 	m_bShowBiNormalVectors = bShow;
 
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ShowBiNormalVectors);
+	}
+
 #ifdef _LINUX
     m_pWnd->Refresh(false);
 #else
@@ -380,6 +440,12 @@ BOOL COpenGLRDFView::AreBiNormalVectorsShown() const
 void COpenGLRDFView::ScaleVectors(BOOL bShow)
 {
 	m_bScaleVectors = bShow;
+
+	auto pController = GetController();
+	if (pController != nullptr)
+	{
+		pController->OnApplicationPropertyChanged(this, enumPropertyType::ScaleVectors);
+	}
 
 #ifdef _LINUX
     m_pWnd->Refresh(false);

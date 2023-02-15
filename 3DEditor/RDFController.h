@@ -8,6 +8,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 class CRDFModel;
 class CRDFView;
+enum class enumPropertyType;
 class CRDFInstance;
 class CRDFProperty;
 
@@ -20,7 +21,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Model - MVC
-	CRDFModel * m_pModel;
+	CRDFModel* m_pModel;
 
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
@@ -144,7 +145,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
+	void SetVisibleValuesCountLimit(CRDFView* pSender, int iVisibleValuesCountLimit);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
@@ -152,15 +153,19 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetScaleAndCenter(BOOL bScaleAndCenter);
+	void SetScaleAndCenter(CRDFView* pSender, BOOL bScaleAndCenter);
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support
-	void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
+	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
+
+	// --------------------------------------------------------------------------------------------
+	// Edit properties support
+	void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory
-	CRDFInstance* CreateNewInstance(CRDFView * pSender, int64_t iClassInstance);
+	CRDFInstance* CreateNewInstance(CRDFView* pSender, int64_t iClassInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory

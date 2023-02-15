@@ -58,27 +58,27 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnInstanceSelected(CRDFView * pSender);
+	virtual void OnInstanceSelected(CRDFView* pSender);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
+	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance);
+	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
+	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance);
+	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnVisibleValuesCountLimitChanged();
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
 
 	// --------------------------------------------------------------------------------------------
 	// CItemStateProvider
@@ -88,7 +88,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Full path of an item
-	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFProperty *> > & vecPath);
+	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath);
 
 	// --------------------------------------------------------------------------------------------
 	// All descendants
@@ -96,11 +96,11 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures
-	void RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance);
+	void RemoveInstanceItemData(CRDFInstance* pInstance, HTREEITEM hInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures
-	void RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
+	void RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Update the data structures

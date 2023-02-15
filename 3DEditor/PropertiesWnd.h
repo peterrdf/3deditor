@@ -3,6 +3,7 @@
 
 #include "RDFView.h"
 #include "RDFPropertyRestriction.h"
+#include "RDFController.h"
 
 #include <map>
 
@@ -17,35 +18,6 @@ public:
 	}
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
-};
-
-// ------------------------------------------------------------------------------------------------
-enum class enumPropertyType
-{
-	ptShowFaces,
-	ptCullFaces,
-	ptShowFacesWireframes,
-	ptShowConceptualFacesWireframes,
-	ptShowLines,
-	ptLineWidth,
-	ptShowPoints,
-	ptPointSize,
-	ptShowNormalVectors,
-	ptShowTangenVectors,
-	ptShowBiNormalVectors,
-	ptScaleVectors,
-	ptShowBoundingBoxes,
-	ptLightModelAmbient,
-	ptLightModelLocalViewer,
-	ptLightModel2Sided,
-	ptLightIsEnabled,
-	ptAmbientLight,
-	ptDiffuseLight,
-	ptSpecularLight,
-	ptLightPosition,
-	ptLightPositionItem,
-	ptVisibleValuesCountLimit,
-	ptScalelAndCenter,
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -318,7 +290,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnInstanceSelected(CRDFView * pSender);
+	virtual void OnInstanceSelected(CRDFView* pSender);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
@@ -326,11 +298,15 @@ public: // Methods
 
 	// ------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance);
+	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
 
 	// ------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
+	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
+
+	// ------------------------------------------------------------------------
+	// CRDFView
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
 
 protected: // Methods
 

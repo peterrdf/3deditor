@@ -147,10 +147,10 @@ void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::ShowMetaInformation(CRDFInstance * pInstance)
+void CRDFController::ShowMetaInformation(CRDFInstance* pInstance)
 {
 	m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
+	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -160,7 +160,7 @@ void CRDFController::ShowMetaInformation(CRDFInstance * pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SelectInstance(CRDFView * pSender, CRDFInstance * pInstance)
+void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
 {
 	if (m_bUpdatingModel)
 	{
@@ -214,15 +214,11 @@ int CRDFController::GetVisibleValuesCountLimit() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
+void CRDFController::SetVisibleValuesCountLimit(CRDFView* pSender, int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
 
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnVisibleValuesCountLimitChanged();
-	}
+	OnApplicationPropertyChanged(pSender, enumPropertyType::VisibleValuesCountLimit);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -232,13 +228,15 @@ BOOL CRDFController::GetScaleAndCenter() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
+void CRDFController::SetScaleAndCenter(CRDFView* pSender, BOOL bScaleAndCenter)
 {
 	m_bScaleAndCenter = bScaleAndCenter;
+
+	OnApplicationPropertyChanged(pSender, enumPropertyType::ScalelAndCenter);
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
+void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
 	m_pModel->OnInstancePropertyEdited(pInstance, pProperty);
 
@@ -255,9 +253,19 @@ void CRDFController::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProp
 }
 
 // ------------------------------------------------------------------------------------------------
-CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
+void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType)
 {
-	CRDFInstance * pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnApplicationPropertyChanged(pSender, enPropertyType);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
+{
+	auto pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
 	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
@@ -272,7 +280,7 @@ CRDFInstance * CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCl
 // ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing)
 {
-	CRDFInstance* pNewRDFInstance = m_pModel->AddNewInstance(pThing);
+	auto pNewRDFInstance = m_pModel->AddNewInstance(pThing);
 	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();

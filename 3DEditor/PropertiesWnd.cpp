@@ -985,6 +985,20 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType /*enPropertyType*/)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 0)
+	{
+		LoadApplicationProperties();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 /*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
 	ASSERT(GetController() != nullptr);
@@ -1005,8 +1019,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pData = (CApplicationPropertyData *)pApplicationProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			if ((pData->GetType() == enumPropertyType::ptLightPosition) || 
-				((pData->GetType() == enumPropertyType::ptLightPositionItem)))
+			if ((pData->GetType() == enumPropertyType::LightPosition) ||
+				((pData->GetType() == enumPropertyType::LightPositionItem)))
 			{
 				ASSERT(FALSE); // DISABLED
 			} // if ((pData->GetType() == ptLightPosition) || ...
@@ -1014,37 +1028,37 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			{
 				switch (pData->GetType())
 				{
-					case enumPropertyType::ptShowFaces:
+					case enumPropertyType::ShowFaces:
 					{
 						pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptCullFaces:
+					case enumPropertyType::CullFaces:
 					{
 						pOpenGLView->SetCullFacesMode(strValue);
 					}
 					break;
 
-					case enumPropertyType::ptShowFacesWireframes:
+					case enumPropertyType::ShowFacesWireframes:
 					{
 						pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptShowConceptualFacesWireframes:
+					case enumPropertyType::ShowConceptualFacesWireframes:
 					{
 						pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptShowLines:
+					case enumPropertyType::ShowLines:
 					{
 						pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptLineWidth:
+					case enumPropertyType::LineWidth:
 					{
 						int iValue = _wtoi((LPCTSTR)strValue);
 
@@ -1052,13 +1066,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
-					case enumPropertyType::ptShowPoints:
+					case enumPropertyType::ShowPoints:
 					{
 						pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptPointSize:
+					case enumPropertyType::PointSize:
 					{
 						int iValue = _wtoi((LPCTSTR)strValue);
 
@@ -1066,37 +1080,37 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
-					case enumPropertyType::ptShowNormalVectors:
+					case enumPropertyType::ShowNormalVectors:
 					{
 						pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptShowTangenVectors:
+					case enumPropertyType::ShowTangenVectors:
 					{
 						pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptShowBiNormalVectors:
+					case enumPropertyType::ShowBiNormalVectors:
 					{
 						pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptScaleVectors:
+					case enumPropertyType::ScaleVectors:
 					{
 						pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptShowBoundingBoxes:
+					case enumPropertyType::ShowBoundingBoxes:
 					{
 						pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
-					case enumPropertyType::ptLightModelLocalViewer:
+					case enumPropertyType::LightModelLocalViewer:
 					{
 						ASSERT(FALSE); // DISABLED
 
@@ -1104,7 +1118,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
-					case enumPropertyType::ptLightModel2Sided:
+					case enumPropertyType::LightModel2Sided:
 					{
 						ASSERT(FALSE); // DISABLED
 
@@ -1112,23 +1126,23 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
-					case enumPropertyType::ptLightIsEnabled:
+					case enumPropertyType::LightIsEnabled:
 					{
 						ASSERT(FALSE); // DISABLED
 					}
 					break;
 
-					case enumPropertyType::ptVisibleValuesCountLimit:
+					case enumPropertyType::VisibleValuesCountLimit:
 					{
 						int iValue = _wtoi((LPCTSTR)strValue);
 
-						GetController()->SetVisibleValuesCountLimit(iValue);
+						GetController()->SetVisibleValuesCountLimit(this, iValue);
 					}
 					break;
 
-					case enumPropertyType::ptScalelAndCenter:
+					case enumPropertyType::ScalelAndCenter:
 					{
-						GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						GetController()->SetScaleAndCenter(this, strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 					}
 					break;
 
@@ -1165,10 +1179,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			CString strValue = pObjectProperty->GetValue();
 
-			CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)pObjectProperty->GetData();
+			auto pData = (CRDFInstancePropertyData *)pObjectProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			int64_t * piInstances = nullptr;
+			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
 			GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), &piInstances, &iCard);
 
@@ -1204,17 +1218,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				/*
 				* Delete this item
 				*/
-				CMFCPropertyGridProperty * pProperty = pObjectProperty->GetParent();
+				auto pProperty = pObjectProperty->GetParent();
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
-				CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 				PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // if (strValue == REMOVE_OBJECT_PROPERTY_COMMAND)
 			else
 			{
 				if (strValue == SELECT_OBJECT_PROPERTY_COMMAND)
 				{
-					CObjectRDFProperty* pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pData->GetProperty());
+					auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pData->GetProperty());
 					ASSERT(pObjectRDFProperty != nullptr);
 
 					ASSERT(pData->GetController() != nullptr);
@@ -1355,150 +1369,150 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		CString strValue = pProperty->GetValue();
 
-		CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)pProperty->GetData();
+		auto pData = (CRDFInstancePropertyData *)pProperty->GetData();
 		ASSERT(pData != nullptr);
 
 		switch(pData->GetProperty()->getType())
 		{
-		case TYPE_BOOL_DATATYPE:
-		{
-			/*
-			* Read the original values
-			*/
-			int64_t iCard = 0;
-			bool* pbValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)&pbValue, &iCard);
-
-			ASSERT(iCard > 0);
-
-			vector<bool> vecValues;
-			vecValues.assign(pbValue, pbValue + iCard);
-
-			/*
-			* Update the modified value
-			*/
-
-			bool bValue = strValue != L"0";
-			vecValues[pData->GetCard()] = bValue;
-
-			bool* pbNewValues = new bool[vecValues.size()];
-			for (size_t iValue = 0; iValue < vecValues.size(); iValue++)
+			case TYPE_BOOL_DATATYPE:
 			{
-				pbNewValues[iValue] = vecValues[iValue];
-			}
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				bool* pbValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)&pbValue, &iCard);
 
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)pbNewValues, vecValues.size());
+				ASSERT(iCard > 0);
 
-			delete[] pbNewValues;
-			pbNewValues = nullptr;
+				vector<bool> vecValues;
+				vecValues.assign(pbValue, pbValue + iCard);
 
-			ASSERT(GetController() != nullptr);
+				/*
+				* Update the modified value
+				*/
 
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-		} // case TYPE_BOOL_DATATYPE:
-		break;
+				bool bValue = strValue != L"0";
+				vecValues[pData->GetCard()] = bValue;
 
-		case TYPE_CHAR_DATATYPE:
-		{
-			/*
-			* Read the original values
-			*/
-			int64_t iCard = 0;
-			char ** szValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&szValue, &iCard);
+				bool* pbNewValues = new bool[vecValues.size()];
+				for (size_t iValue = 0; iValue < vecValues.size(); iValue++)
+				{
+					pbNewValues[iValue] = vecValues[iValue];
+				}
 
-			ASSERT(iCard > 0);
+				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void**)pbNewValues, vecValues.size());
 
-			char ** szNewValues = (char **)new size_t[iCard];
-			for (int iValue = 0; iValue < iCard; iValue++)
+				delete[] pbNewValues;
+				pbNewValues = nullptr;
+
+				ASSERT(GetController() != nullptr);
+
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_BOOL_DATATYPE:
+			break;
+
+			case TYPE_CHAR_DATATYPE:
 			{
-				szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
-				strcpy(szNewValues[iValue], szValue[iValue]);
-			}
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				char ** szValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&szValue, &iCard);
 
-			/*
-			* Update the modified value
-			*/
-			delete[] szNewValues[pData->GetCard()];
-			szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
-			strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
+				ASSERT(iCard > 0);
 
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)szNewValues, iCard);
+				char ** szNewValues = (char **)new size_t[iCard];
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
+					strcpy(szNewValues[iValue], szValue[iValue]);
+				}
 
-			for (int iValue = 0; iValue < iCard; iValue++)
+				/*
+				* Update the modified value
+				*/
+				delete[] szNewValues[pData->GetCard()];
+				szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
+				strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
+
+				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)szNewValues, iCard);
+
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					delete [] szNewValues[iValue];
+				}
+				delete [] szNewValues;
+
+				ASSERT(GetController() != nullptr);
+
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_CHAR_DATATYPE:
+			break;
+
+			case TYPE_DOUBLE_DATATYPE:
 			{
-				delete [] szNewValues[iValue];
-			}
-			delete [] szNewValues;
-
-			ASSERT(GetController() != nullptr);
-
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-		} // case TYPE_CHAR_DATATYPE:
-		break;
-
-		case TYPE_DOUBLE_DATATYPE:
-		{
-			/*
-			* Read the original values
-			*/
-			int64_t iCard = 0;
-			double * pdValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				double * pdValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);
 			
-			ASSERT(iCard > 0);
+				ASSERT(iCard > 0);
 
-			vector<double> vecValues;
-			vecValues.assign(pdValue, pdValue + iCard);
+				vector<double> vecValues;
+				vecValues.assign(pdValue, pdValue + iCard);
 
-			/*
-			* Update the modified value
-			*/
+				/*
+				* Update the modified value
+				*/
 
-			double dValue = _wtof((LPCTSTR)strValue);
-			vecValues[pData->GetCard()] = dValue;
+				double dValue = _wtof((LPCTSTR)strValue);
+				vecValues[pData->GetCard()] = dValue;
 
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
+				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
 
-			ASSERT(GetController() != nullptr);
+				ASSERT(GetController() != nullptr);
 
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-		} // case TYPE_DOUBLE_DATATYPE:
-		break;
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_DOUBLE_DATATYPE:
+			break;
 
-		case TYPE_INT_DATATYPE:
-		{
-			/*
-			* Read the original values
-			*/
-			int64_t iCard = 0;
-			int64_t * piValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
+			case TYPE_INT_DATATYPE:
+			{
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				int64_t * piValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&piValue, &iCard);
 
-			ASSERT(iCard > 0);
+				ASSERT(iCard > 0);
 
-			vector<int64_t> vecValues;
-			vecValues.assign(piValue, piValue + iCard);
+				vector<int64_t> vecValues;
+				vecValues.assign(piValue, piValue + iCard);
 
-			/*
-			* Update the modified value
-			*/
-			int64_t iValue = _wtoi64((LPCTSTR)strValue);
-			vecValues[pData->GetCard()] = iValue;
+				/*
+				* Update the modified value
+				*/
+				int64_t iValue = _wtoi64((LPCTSTR)strValue);
+				vecValues[pData->GetCard()] = iValue;
 
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
+				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)vecValues.data(), vecValues.size());
 
-			ASSERT(GetController() != nullptr);
+				ASSERT(GetController() != nullptr);
 
-			GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-		} // case TYPE_INT_DATATYPE:
-		break;
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_INT_DATATYPE:
+			break;
 
-		default:
-		{
-			ASSERT(false); // unknown type
-		}
-		break;
+			default:
+			{
+				ASSERT(false); // unknown type
+			}
+			break;
 		} // switch(pData->GetProperty()->getType())
 
 		return 0;
@@ -1682,7 +1696,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"), 
 			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowFaces));
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1699,7 +1713,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"), 
 			strCullFacesMode == CULL_FACES_FRONT ? CULL_FACES_FRONT : strCullFacesMode == CULL_FACES_BACK ? CULL_FACES_BACK : CULL_FACES_NONE,
-			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptCullFaces));
+			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::CullFaces));
 		pProperty->AddOption(CULL_FACES_NONE);
 		pProperty->AddOption(CULL_FACES_FRONT);
 		pProperty->AddOption(CULL_FACES_BACK);
@@ -1714,7 +1728,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces wireframes"), 
 			pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
-			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowFacesWireframes));
+			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1729,7 +1743,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
 			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Conceptual faces wireframes"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowConceptualFacesWireframes));
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1743,7 +1757,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Lines"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowLines));
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1773,7 +1787,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Points"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowPoints));
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1810,7 +1824,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->AreNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Normal vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowNormalVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1824,7 +1838,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Tangent vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowTangenVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowTangenVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1838,7 +1852,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Bi-normal vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowBiNormalVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowBiNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1852,7 +1866,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Scale"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptScaleVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ScaleVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1868,7 +1882,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
 			pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Bounding boxes"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptShowBoundingBoxes));
+			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1898,7 +1912,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Visible values count limit"), 
 				(_variant_t)GetController()->GetVisibleValuesCountLimit(), 
 				_T("Visible values count limit"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptVisibleValuesCountLimit));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::VisibleValuesCountLimit));
 			pProperty->EnableSpinControl(TRUE, 1, INT_MAX);
 
 			pUI->AddSubItem(pProperty);
@@ -1911,7 +1925,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), 
 				GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Scale and Center all Geometry"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ptScalelAndCenter));
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ScalelAndCenter));
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);

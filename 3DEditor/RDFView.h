@@ -7,6 +7,35 @@
 class CRDFController;
 
 // ------------------------------------------------------------------------------------------------
+enum class enumPropertyType
+{
+	ShowFaces,
+	CullFaces,
+	ShowFacesWireframes,
+	ShowConceptualFacesWireframes,
+	ShowLines,
+	LineWidth,
+	ShowPoints,
+	PointSize,
+	ShowNormalVectors,
+	ShowTangenVectors,
+	ShowBiNormalVectors,
+	ScaleVectors,
+	ShowBoundingBoxes,
+	LightModelAmbient,
+	LightModelLocalViewer,
+	LightModel2Sided,
+	LightIsEnabled,
+	AmbientLight,
+	DiffuseLight,
+	SpecularLight,
+	LightPosition,
+	LightPositionItem,
+	VisibleValuesCountLimit,
+	ScalelAndCenter,
+};
+
+// ------------------------------------------------------------------------------------------------
 // View - MVC
 class CRDFView
 {
@@ -15,7 +44,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Controller - MVC
-	CRDFController * m_pController;
+	CRDFController* m_pController;
 
 public: // Methods
 
@@ -29,7 +58,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Sets up Controller
-	void SetController(CRDFController * pController);
+	void SetController(CRDFController* pController);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF model has been loaded
@@ -49,7 +78,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been selected
-	virtual void OnInstanceSelected(CRDFView * pSender);
+	virtual void OnInstanceSelected(CRDFView* pSender);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been selected
@@ -57,23 +86,23 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been modified
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
+	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been created
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance);
+	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been deleted
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);	
+	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);	
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instances have been deleted
-	virtual void OnInstancesDeleted(CRDFView * pSender);
+	virtual void OnInstancesDeleted(CRDFView* pSender);
 
 	// --------------------------------------------------------------------------------------------
 	// Measurements have been added
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance);
+	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
@@ -81,17 +110,13 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties support
-	virtual void OnVisibleValuesCountLimitChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties support
-	virtual void OnApplicationPropertiesChanged();
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
 
 protected: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFController * GetController() const;
+	CRDFController* GetController() const;
 
 	// --------------------------------------------------------------------------------------------
 	// The controller has been changed

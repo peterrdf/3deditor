@@ -669,37 +669,60 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnNewInstanceCreated(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
+/*virtual*/ void CFileView::OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
+	if (pSender == this)
+	{
+		return;
+	}
+
 	UpdateView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
+/*virtual*/ void CFileView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
 {
+	if (pSender == this)
+	{
+		return;
+	}
+
 	m_hSelectedItem = nullptr;
 
 	UpdateView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnMeasurementsAdded(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
+/*virtual*/ void CFileView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
+	if (pSender == this)
+	{
+		return;
+	}
+
 	m_hSelectedItem = nullptr;
 
 	UpdateView();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnVisibleValuesCountLimitChanged()
+/*virtual*/ void CFileView::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType)
 {
-	UpdateView();
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (enPropertyType == enumPropertyType::VisibleValuesCountLimit)
+	{
+		UpdateView();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CFileView::IsSelected(HTREEITEM hItem)
 {
-	CRDFItem* pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
 	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance) &&
 		(GetController()->GetSelectedInstance() == pItem->getInstance()))
 	{
@@ -710,7 +733,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFProperty *> > & vecPath)
+void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
 {
 	if (hItem == nullptr)
 	{
@@ -724,19 +747,19 @@ void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance *, CRDFPro
 		{
 			case enumItemType::Instance:
 			{
-				CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
+				auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 				ASSERT(pInstanceItem != nullptr);
 
-				vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pInstanceItem->getInstance(), nullptr));
+				vecPath.insert(vecPath.begin(), pair<CRDFInstance*, CRDFProperty *>(pInstanceItem->getInstance(), nullptr));
 			}
 			break;
 
 			case enumItemType::Property:
 			{
-				CRDFPropertyItem * pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
+				auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
 				ASSERT(pPropertyItem != nullptr);
 
-				vecPath.insert(vecPath.begin(), pair<CRDFInstance *, CRDFProperty *>(pPropertyItem->getInstance(), pPropertyItem->getProperty()));
+				vecPath.insert(vecPath.begin(), pair<CRDFInstance*, CRDFProperty*>(pPropertyItem->getInstance(), pPropertyItem->getProperty()));
 			}
 			break;
 

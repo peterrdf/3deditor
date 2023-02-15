@@ -84,12 +84,7 @@ void CRDFView::SetController(CRDFController * pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnVisibleValuesCountLimitChanged()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnApplicationPropertiesChanged()
+/*virtual*/ void CRDFView::OnApplicationPropertyChanged(CRDFView* /*pSender*/, enumPropertyType /*enPropertyType*/)
 {
 }
 
