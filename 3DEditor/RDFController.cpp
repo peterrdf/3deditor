@@ -214,11 +214,9 @@ int CRDFController::GetVisibleValuesCountLimit() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetVisibleValuesCountLimit(CRDFView* pSender, int iVisibleValuesCountLimit)
+void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
 {
 	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
-
-	OnApplicationPropertyChanged(pSender, enumPropertyType::VisibleValuesCountLimit);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -228,11 +226,9 @@ BOOL CRDFController::GetScaleAndCenter() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetScaleAndCenter(CRDFView* pSender, BOOL bScaleAndCenter)
+void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
 {
 	m_bScaleAndCenter = bScaleAndCenter;
-
-	OnApplicationPropertyChanged(pSender, enumPropertyType::ScalelAndCenter);
 }
 
 // ------------------------------------------------------------------------------------------------

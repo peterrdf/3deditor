@@ -412,6 +412,8 @@ void CMy3DEditorView::OnShowFaces()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowFaces);
 	}
 }
 
@@ -426,6 +428,8 @@ void CMy3DEditorView::OnShowFacesWireframes()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowFacesPolygons(!m_pOpenGLView->AreFacesPolygonsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowFacesWireframes);
 	}
 }
 
@@ -440,6 +444,8 @@ void CMy3DEditorView::OnShowConcFacesWireframes()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -454,6 +460,8 @@ void CMy3DEditorView::OnShowLines()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowLines);
 	}
 }
 
@@ -468,6 +476,8 @@ void CMy3DEditorView::OnShowPoints()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowPoints);
 	}
 }
 
@@ -482,6 +492,8 @@ void CMy3DEditorView::OnNormalVectors()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowNormalVectors(!m_pOpenGLView->AreNormalVectorsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowNormalVectors);
 	}
 }
 
@@ -496,6 +508,8 @@ void CMy3DEditorView::OnShowTangentVectors()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowTangentVectors(!m_pOpenGLView->AreTangentVectorsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowTangenVectors);
 	}
 }
 
@@ -509,7 +523,9 @@ void CMy3DEditorView::OnShowBiNormalVectors()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->ShowTangentVectors(!m_pOpenGLView->AreBiNormalVectorsShown());
+		m_pOpenGLView->ShowBiNormalVectors(!m_pOpenGLView->AreBiNormalVectorsShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowBiNormalVectors);
 	}
 }
 
@@ -524,6 +540,8 @@ void CMy3DEditorView::OnShowBoundingBoxes()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->ShowBoundingBoxes(!m_pOpenGLView->AreBoundingBoxesShown());
+
+		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumPropertyType::ShowBoundingBoxes);
 	}
 }
 

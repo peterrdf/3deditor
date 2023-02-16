@@ -145,7 +145,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetVisibleValuesCountLimit(CRDFView* pSender, int iVisibleValuesCountLimit);
+	void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
@@ -153,7 +153,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetScaleAndCenter(CRDFView* pSender, BOOL bScaleAndCenter);
+	void SetScaleAndCenter(BOOL bScaleAndCenter);
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support

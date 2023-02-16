@@ -1031,30 +1031,40 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					case enumPropertyType::ShowFaces:
 					{
 						pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFaces);
 					}
 					break;
 
 					case enumPropertyType::CullFaces:
 					{
 						pOpenGLView->SetCullFacesMode(strValue);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::CullFaces);
 					}
 					break;
 
 					case enumPropertyType::ShowFacesWireframes:
 					{
 						pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFacesWireframes);
 					}
 					break;
 
 					case enumPropertyType::ShowConceptualFacesWireframes:
 					{
 						pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowConceptualFacesWireframes);
 					}
 					break;
 
 					case enumPropertyType::ShowLines:
 					{
 						pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowLines);
 					}
 					break;
 
@@ -1063,12 +1073,16 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						int iValue = _wtoi((LPCTSTR)strValue);
 
 						pOpenGLView->SetLineWidth((GLfloat)iValue);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::LineWidth);
 					}
 					break;
 
 					case enumPropertyType::ShowPoints:
 					{
 						pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowPoints);
 					}
 					break;
 
@@ -1077,36 +1091,48 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						int iValue = _wtoi((LPCTSTR)strValue);
 
 						pOpenGLView->SetPointSize((GLfloat)iValue);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointSize);
 					}
 					break;
 
 					case enumPropertyType::ShowNormalVectors:
 					{
 						pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowNormalVectors);
 					}
 					break;
 
 					case enumPropertyType::ShowTangenVectors:
 					{
 						pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowTangenVectors);
 					}
 					break;
 
 					case enumPropertyType::ShowBiNormalVectors:
 					{
 						pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBiNormalVectors);
 					}
 					break;
 
 					case enumPropertyType::ScaleVectors:
 					{
 						pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScaleVectors);
 					}
 					break;
 
 					case enumPropertyType::ShowBoundingBoxes:
 					{
 						pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBoundingBoxes);
 					}
 					break;
 
@@ -1136,13 +1162,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					{
 						int iValue = _wtoi((LPCTSTR)strValue);
 
-						GetController()->SetVisibleValuesCountLimit(this, iValue);
+						GetController()->SetVisibleValuesCountLimit(iValue);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::VisibleValuesCountLimit);
 					}
 					break;
 
 					case enumPropertyType::ScalelAndCenter:
 					{
-						GetController()->SetScaleAndCenter(this, strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+						GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScalelAndCenter);
 					}
 					break;
 
