@@ -207,14 +207,6 @@ private: // Methods
 	void OnMouseMoveEvent(UINT nFlags, CPoint point);
 
 	// --------------------------------------------------------------------------------------------
-	// Rotate
-	void Rotate(float fXAngle, float fYAngle);
-
-	// --------------------------------------------------------------------------------------------
-	// Zoom
-	void Zoom(float fZTranslation);
-
-	// --------------------------------------------------------------------------------------------
 	// Screen -> Open GL coordinates
 	void GetOGLPos(int iX, int iY, float fDepth, GLfloat & fX, GLfloat & fY, GLfloat & fZ) const;
 

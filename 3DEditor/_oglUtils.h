@@ -2018,4 +2018,49 @@ public: // Methods
 
 		_redraw();
 	}
+
+	void _zoom(float fZTranslation)
+	{
+		if (m_enProjection == enumProjection::Isometric)
+		{
+			return;
+		}
+
+		m_fZTranslation += fZTranslation;
+
+		_redraw();
+	}
+
+	void _rotate(float fXAngle, float fYAngle)
+	{
+		m_fXAngle += fXAngle * (180.f / (float)M_PI);
+		if (m_fXAngle > 360.f)
+		{
+			m_fXAngle -= 360.f;
+		}
+		else if (m_fXAngle < -360.f)
+		{
+			m_fXAngle += 360.f;
+		}
+
+		m_fYAngle += fYAngle * (180.f / (float)M_PI);
+		if (m_fYAngle > 360.f)
+		{
+			m_fYAngle = m_fYAngle - 360.f;
+		}
+		else if (m_fYAngle < -360.f)
+		{
+			m_fYAngle += 360.f;
+		}
+
+		_redraw();
+	}
+
+	void _move(float fX, float fY)
+	{
+		m_fXTranslation += fX;
+		m_fYTranslation += fY;
+
+		_redraw();
+	}
 };
