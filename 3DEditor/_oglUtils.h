@@ -491,13 +491,13 @@ public: // Methods
 	}
 };
 
-class _oglBinnPhongProgram : public _oglProgram
+class _oglBlinnPhongProgram : public _oglProgram
 {
 
 private: // Members
 
 	bool m_bSupportsTexture;
-	GLint m_iUseBinnPhongModel;
+	GLint m_iUseBlinnPhongModel;
 	GLint m_iUseTexture;
 	GLint m_iSampler;
 	GLint m_iMVMatrix;
@@ -516,10 +516,10 @@ private: // Members
 
 public: // Methods
 
-	_oglBinnPhongProgram(bool bSupportsTexture)
+	_oglBlinnPhongProgram(bool bSupportsTexture)
 		: _oglProgram()
 		, m_bSupportsTexture(bSupportsTexture)
-		, m_iUseBinnPhongModel(-1)
+		, m_iUseBlinnPhongModel(-1)
 		, m_iUseTexture(-1)
 		, m_iSampler(-1)
 		, m_iMVMatrix(-1)
@@ -538,7 +538,7 @@ public: // Methods
 	{
 	}
 
-	virtual ~_oglBinnPhongProgram(void)
+	virtual ~_oglBlinnPhongProgram(void)
 	{
 	}
 
@@ -546,8 +546,8 @@ public: // Methods
 	{
 		if (_oglProgram::link())
 		{
-			m_iUseBinnPhongModel = glGetUniformLocation(m_iID, "uUseBinnPhongModel");
-			ASSERT(m_iUseBinnPhongModel >= 0);
+			m_iUseBlinnPhongModel = glGetUniformLocation(m_iID, "uUseBlinnPhongModel");
+			ASSERT(m_iUseBlinnPhongModel >= 0);
 
 			if (m_bSupportsTexture)
 			{
@@ -611,9 +611,9 @@ public: // Methods
 		return m_bSupportsTexture;
 	}
 
-	GLint getUseBinnPhongModel() const
+	GLint getUseBlinnPhongModel() const
 	{
-		return m_iUseBinnPhongModel;
+		return m_iUseBlinnPhongModel;
 	}	
 
 	GLint getUseTexture() const
@@ -728,11 +728,11 @@ public: // Methods
 			value_ptr(matNormal));
 	}
 
-	void enableBinnPhongModel(bool bEnable)
+	void enableBlinnPhongModel(bool bEnable)
 	{
 		glProgramUniform1f(
 			getID(),
-			getUseBinnPhongModel(),
+			getUseBlinnPhongModel(),
 			bEnable ? 1.f : 0.f);
 	}
 
@@ -1525,7 +1525,7 @@ public: // Methods
 		return iIndicesCount;
 	}
 
-	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBinnPhongProgram* pProgram)
+	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBlinnPhongProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -1596,7 +1596,7 @@ public: // Methods
 		return iVerticesCount;
 	}
 
-	void setVBOAttributes(_oglBinnPhongProgram* pProgram) const
+	void setVBOAttributes(_oglBlinnPhongProgram* pProgram) const
 	{
 		const int64_t _VERTEX_LENGTH = 6 + (pProgram->getSupportsTexture() ? 2 : 0);
 
@@ -1722,7 +1722,7 @@ protected: // Members
 
 	CWnd* m_pWnd;
 	_oglContext* m_pOGLContext;
-	_oglBinnPhongProgram* m_pOGLProgram;
+	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
 	_oglShader* m_pFragmentShader;
 	enumProjection m_enProjection;
@@ -1768,7 +1768,7 @@ public: // Methods
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
-		m_pOGLProgram = new _oglBinnPhongProgram(bSupportsTexture);
+		m_pOGLProgram = new _oglBlinnPhongProgram(bSupportsTexture);
 		m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
 		m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
 
@@ -1943,7 +1943,7 @@ public: // Methods
 		m_pOGLProgram->setNormalMatrix(matNormal);
 
 		// Model
-		m_pOGLProgram->enableBinnPhongModel(true);
+		m_pOGLProgram->enableBlinnPhongModel(true);
 	}
 
 	void _redraw()

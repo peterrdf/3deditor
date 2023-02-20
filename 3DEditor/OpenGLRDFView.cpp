@@ -1243,7 +1243,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		}
 	}
 	
-	m_pOGLProgram->enableBinnPhongModel(true);
+	m_pOGLProgram->enableBlinnPhongModel(true);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1346,7 +1346,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1404,7 +1404,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBinnPhongModel(false); 
+	m_pOGLProgram->enableBlinnPhongModel(false); 
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1458,7 +1458,7 @@ void COpenGLRDFView::DrawLines()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1514,7 +1514,7 @@ void COpenGLRDFView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBinnPhongModel(false);	
+	m_pOGLProgram->enableBlinnPhongModel(false);	
 	m_pOGLProgram->setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -1582,7 +1582,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -1802,7 +1802,7 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -2023,7 +2023,7 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -2244,7 +2244,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
@@ -2506,7 +2506,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -2631,7 +2631,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setTransparency(1.f);
 
 	_oglUtils::checkForErrors();	
@@ -2731,7 +2731,7 @@ void COpenGLRDFView::DrawPointedFace()
 	ASSERT(!vecTriangles.empty());
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-	m_pOGLProgram->enableBinnPhongModel(false);
+	m_pOGLProgram->enableBlinnPhongModel(false);
 	m_pOGLProgram->setAmbientColor(0.f, 1.f, 0.f);
 	m_pOGLProgram->setTransparency(1.f);
 
