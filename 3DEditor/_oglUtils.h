@@ -1896,6 +1896,30 @@ public: // Methods
 	{
 	}
 
+	const glm::vec3& _getPointLightingLocation() const { return m_vecPointLightingLocation; }
+	void _setPointLightingLocation(const glm::vec3& value) { m_vecPointLightingLocation = value; _redraw(); }
+
+	const glm::vec3& _getAmbientLightWeighting() const { return m_vecAmbientLightWeighting; }
+	void _setAmbientLightWeighting(const glm::vec3& value) { m_vecAmbientLightWeighting = value; _redraw(); }
+
+	const glm::vec3& _getSpecularLightWeighting() const { return m_vecSpecularLightWeighting; }
+	void _setSpecularLightWeighting(const glm::vec3& value) { m_vecSpecularLightWeighting = value; _redraw(); }
+
+	const glm::vec3& _getDiffuseLightWeighting() const { return m_vecDiffuseLightWeighting; }
+	void _setDiffuseLightWeighting(const glm::vec3& value) { m_vecDiffuseLightWeighting = value; _redraw(); }
+
+	float _getMaterialShininess() const { return m_fMaterialShininess; }
+	void _setMaterialShininess(float value) { m_fMaterialShininess = value; _redraw(); }
+
+	float _getContrast() const { return m_fContrast; }
+	void _setContrast(float value) { return m_fContrast; _redraw(); }
+
+	float _getBrightness() const { return m_fBrightness; }
+	void _setBrightness(float value) { m_fBrightness = value; _redraw(); }
+
+	float _getGamma() const { return m_fGamma; }
+	void _setGamma(float value) { m_fGamma = value; _redraw(); }
+
 	void _initialize(CWnd* pWnd,
 		int iSamples, 
 		int iVertexShader, 

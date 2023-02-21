@@ -298,10 +298,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Update the values
 		*/
-		CMFCPropertyGridProperty * pProperty = GetParent();
+		auto pProperty = GetParent();
 		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
-		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 	} // case TYPE_CHAR_DATATYPE:
 	break;
@@ -337,10 +337,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Update the values
 		*/
-		CMFCPropertyGridProperty * pProperty = GetParent();
+		auto pProperty = GetParent();
 		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
-		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 	} // case TYPE_DOUBLE_DATATYPE:
 	break;
@@ -376,10 +376,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Update the values
 		*/
-		CMFCPropertyGridProperty * pProperty = GetParent();
+		auto pProperty = GetParent();
 		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
-		CMFCPropertyGridProperty * pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 	} // case TYPE_INT_DATATYPE:
 	break;
@@ -653,7 +653,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	/*
 	* Select the property
 	*/
-	CMFCPropertyGridProperty * pPropertyGroup = GetParent();
+	auto pPropertyGroup = GetParent();
 	m_pWndList->SetCurSel(pPropertyGroup);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
@@ -1016,176 +1016,230 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			CString strValue = pApplicationProperty->GetValue();
 
-			auto pData = (CApplicationPropertyData *)pApplicationProperty->GetData();
+			auto pData = (CApplicationPropertyData*)pApplicationProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			if ((pData->GetType() == enumPropertyType::LightPosition) ||
-				((pData->GetType() == enumPropertyType::LightPositionItem)))
+			switch (pData->GetType())
 			{
-				ASSERT(FALSE); // DISABLED
-			} // if ((pData->GetType() == ptLightPosition) || ...
-			else
-			{
-				switch (pData->GetType())
+				case enumPropertyType::ShowFaces:
 				{
-					case enumPropertyType::ShowFaces:
-					{
-						pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFaces);
-					}
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFaces);
+				}
+				break;
+
+				case enumPropertyType::CullFaces:
+				{
+					pOpenGLView->SetCullFacesMode(strValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::CullFaces);
+				}
+				break;
+
+				case enumPropertyType::ShowFacesWireframes:
+				{
+					pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFacesWireframes);
+				}
+				break;
+
+				case enumPropertyType::ShowConceptualFacesWireframes:
+				{
+					pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowConceptualFacesWireframes);
+				}
+				break;
+
+				case enumPropertyType::ShowLines:
+				{
+					pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowLines);
+				}
+				break;
+
+				case enumPropertyType::LineWidth:
+				{
+					int iValue = _wtoi((LPCTSTR)strValue);
+
+					pOpenGLView->SetLineWidth((GLfloat)iValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::LineWidth);
+				}
+				break;
+
+				case enumPropertyType::ShowPoints:
+				{
+					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowPoints);
+				}
+				break;
+
+				case enumPropertyType::PointSize:
+				{
+					int iValue = _wtoi((LPCTSTR)strValue);
+
+					pOpenGLView->SetPointSize((GLfloat)iValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointSize);
+				}
+				break;
+
+				case enumPropertyType::ShowNormalVectors:
+				{
+					pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowNormalVectors);
+				}
+				break;
+
+				case enumPropertyType::ShowTangenVectors:
+				{
+					pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowTangenVectors);
+				}
+				break;
+
+				case enumPropertyType::ShowBiNormalVectors:
+				{
+					pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBiNormalVectors);
+				}
+				break;
+
+				case enumPropertyType::ScaleVectors:
+				{
+					pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScaleVectors);
+				}
+				break;
+
+				case enumPropertyType::ShowBoundingBoxes:
+				{
+					pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBoundingBoxes);
+				}
+				break;
+
+				case enumPropertyType::VisibleValuesCountLimit:
+				{
+					int iValue = _wtoi((LPCTSTR)strValue);
+
+					GetController()->SetVisibleValuesCountLimit(iValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::VisibleValuesCountLimit);
+				}
+				break;
+
+				case enumPropertyType::ScalelAndCenter:
+				{
+					GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScalelAndCenter);
+				}
+				break;
+
+				case enumPropertyType::PointLightingLocation:
+				{
+					auto pProperty = pApplicationProperty->GetParent();
+					ASSERT(pProperty != nullptr);
+					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+						GetData())->GetType() == enumPropertyType::PointLightingLocation);
+					ASSERT(pProperty->GetSubItemsCount() == 3);
+
+					auto pX = pProperty->GetSubItem(0);
+					auto pY = pProperty->GetSubItem(1);
+					auto pZ = pProperty->GetSubItem(2);
+
+					pOpenGLView->_setPointLightingLocation(glm::vec3(
+						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+					);
+				}
+				break;
+
+				case enumPropertyType::AmbientLightWeighting:
+				{
+					auto pProperty = pApplicationProperty->GetParent();
+					ASSERT(pProperty != nullptr);
+					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+						GetData())->GetType() == enumPropertyType::AmbientLightWeighting);
+					ASSERT(pProperty->GetSubItemsCount() == 3);
+
+					auto pX = pProperty->GetSubItem(0);
+					auto pY = pProperty->GetSubItem(1);
+					auto pZ = pProperty->GetSubItem(2);
+
+					pOpenGLView->_setAmbientLightWeighting(glm::vec3(
+						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+					);
+				}
+				break;
+
+				case enumPropertyType::DiffuseLightWeighting:
+				{
+					auto pProperty = pApplicationProperty->GetParent();
+					ASSERT(pProperty != nullptr);
+					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+						GetData())->GetType() == enumPropertyType::DiffuseLightWeighting);
+					ASSERT(pProperty->GetSubItemsCount() == 3);
+
+					auto pX = pProperty->GetSubItem(0);
+					auto pY = pProperty->GetSubItem(1);
+					auto pZ = pProperty->GetSubItem(2);
+
+					pOpenGLView->_setDiffuseLightWeighting(glm::vec3(
+						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+					);
+				}
+				break;
+
+				case enumPropertyType::SpecularLightWeighting:
+				{
+					auto pProperty = pApplicationProperty->GetParent();
+					ASSERT(pProperty != nullptr);
+					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+						GetData())->GetType() == enumPropertyType::SpecularLightWeighting);
+					ASSERT(pProperty->GetSubItemsCount() == 3);
+
+					auto pX = pProperty->GetSubItem(0);
+					auto pY = pProperty->GetSubItem(1);
+					auto pZ = pProperty->GetSubItem(2);
+
+					pOpenGLView->_setSpecularLightWeighting(glm::vec3(
+						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+					);
+				}
+				break;
+
+				default:
+					ASSERT(false);
 					break;
-
-					case enumPropertyType::CullFaces:
-					{
-						pOpenGLView->SetCullFacesMode(strValue);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::CullFaces);
-					}
-					break;
-
-					case enumPropertyType::ShowFacesWireframes:
-					{
-						pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFacesWireframes);
-					}
-					break;
-
-					case enumPropertyType::ShowConceptualFacesWireframes:
-					{
-						pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowConceptualFacesWireframes);
-					}
-					break;
-
-					case enumPropertyType::ShowLines:
-					{
-						pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowLines);
-					}
-					break;
-
-					case enumPropertyType::LineWidth:
-					{
-						int iValue = _wtoi((LPCTSTR)strValue);
-
-						pOpenGLView->SetLineWidth((GLfloat)iValue);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::LineWidth);
-					}
-					break;
-
-					case enumPropertyType::ShowPoints:
-					{
-						pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowPoints);
-					}
-					break;
-
-					case enumPropertyType::PointSize:
-					{
-						int iValue = _wtoi((LPCTSTR)strValue);
-
-						pOpenGLView->SetPointSize((GLfloat)iValue);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointSize);
-					}
-					break;
-
-					case enumPropertyType::ShowNormalVectors:
-					{
-						pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowNormalVectors);
-					}
-					break;
-
-					case enumPropertyType::ShowTangenVectors:
-					{
-						pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowTangenVectors);
-					}
-					break;
-
-					case enumPropertyType::ShowBiNormalVectors:
-					{
-						pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBiNormalVectors);
-					}
-					break;
-
-					case enumPropertyType::ScaleVectors:
-					{
-						pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScaleVectors);
-					}
-					break;
-
-					case enumPropertyType::ShowBoundingBoxes:
-					{
-						pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBoundingBoxes);
-					}
-					break;
-
-					case enumPropertyType::LightModelLocalViewer:
-					{
-						ASSERT(FALSE); // DISABLED
-
-						//pOpenGLView->SetLightModelLocalViewer(strValue == TRUE_VALUE_PROPERTY ? true : false);
-					}
-					break;
-
-					case enumPropertyType::LightModel2Sided:
-					{
-						ASSERT(FALSE); // DISABLED
-
-						//pOpenGLView->SetLightModel2Sided(strValue == TRUE_VALUE_PROPERTY ? true : false);
-					}
-					break;
-
-					case enumPropertyType::LightIsEnabled:
-					{
-						ASSERT(FALSE); // DISABLED
-					}
-					break;
-
-					case enumPropertyType::VisibleValuesCountLimit:
-					{
-						int iValue = _wtoi((LPCTSTR)strValue);
-
-						GetController()->SetVisibleValuesCountLimit(iValue);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::VisibleValuesCountLimit);
-					}
-					break;
-
-					case enumPropertyType::ScalelAndCenter:
-					{
-						GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-						GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScalelAndCenter);
-					}
-					break;
-
-					default:
-						ASSERT(false);
-						break;
-				} // switch (pData->GetType())
-			} // else if ((pData->GetType() == ptLightPosition) || ...			
+			} // switch (pData->GetType())
 
 			return 0;
 		} // if (pApplicationProperty != nullptr)
 
-		auto pColorApplicationProperty = dynamic_cast<CColorApplicationProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pColorApplicationProperty = dynamic_cast<CColorApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pColorApplicationProperty != nullptr)
 		{
 			ASSERT(FALSE); // DISABLED
@@ -1204,7 +1258,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Object properties
 		*/
-		CRDFInstanceObjectProperty * pObjectProperty = dynamic_cast<CRDFInstanceObjectProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pObjectProperty = dynamic_cast<CRDFInstanceObjectProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pObjectProperty != nullptr)
 		{
 			CString strValue = pObjectProperty->GetValue();
@@ -1321,7 +1375,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* ColorComponent properties
 		*/
-		auto pColorSelectorProperty = dynamic_cast<CRDFColorSelectorProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pColorSelectorProperty = dynamic_cast<CRDFColorSelectorProperty *>((CMFCPropertyGridProperty*)lparam);
 		if (pColorSelectorProperty != nullptr)
 		{	
 			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
@@ -1391,7 +1445,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Data properties
 		*/
-		CRDFInstanceProperty * pProperty = dynamic_cast<CRDFInstanceProperty *>((CMFCPropertyGridProperty *)lparam);
+		auto pProperty = dynamic_cast<CRDFInstanceProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pProperty == nullptr)
 		{
 			return 0;
@@ -1453,7 +1507,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				ASSERT(iCard > 0);
 
-				char ** szNewValues = (char **)new size_t[iCard];
+				char** szNewValues = (char **)new size_t[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
 					szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
@@ -1487,7 +1541,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				* Read the original values
 				*/
 				int64_t iCard = 0;
-				double * pdValue = nullptr;
+				double* pdValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->getInstance(), (void **)&pdValue, &iCard);
 			
 				ASSERT(iCard > 0);
@@ -1718,7 +1772,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	CMFCPropertyGridProperty * pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
+	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
 
 	/*
 	* Faces
@@ -1920,19 +1974,11 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	// ********************************************************************************************
-	// DSIABLED
-	/*
-	* Lights
-	*/
-	// DISABLED
-	// ********************************************************************************************
-
 	/*
 	* UI
 	*/
 	{
-		CMFCPropertyGridProperty * pUI = new CMFCPropertyGridProperty(_T("UI"));
+		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
 		pViewGroup->AddSubItem(pUI);
 
 		/*
@@ -1964,6 +2010,171 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 	}	
 
+
+	/*
+	* OpenGL
+	*/
+	{
+		auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
+		pViewGroup->AddSubItem(pOpenGL);
+
+		// Point light position
+		{
+			auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
+			pPointLightingLocation->AllowEdit(FALSE);
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pOpenGLView->_getPointLightingLocation().x,
+					_T("X"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pOpenGLView->_getPointLightingLocation().y,
+					_T("Y"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
+
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pOpenGLView->_getPointLightingLocation().z,
+					_T("Z"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+				pPointLightingLocation->AddSubItem(pProperty);
+			}
+
+			pOpenGL->AddSubItem(pPointLightingLocation);
+		}
+
+		// Ambient light weighting
+		{
+			auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
+			pAmbientLightWeighting->AllowEdit(FALSE);
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pOpenGLView->_getAmbientLightWeighting().x,
+					_T("X"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pOpenGLView->_getAmbientLightWeighting().y,
+					_T("Y"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
+
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pOpenGLView->_getAmbientLightWeighting().z,
+					_T("Z"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+				pAmbientLightWeighting->AddSubItem(pProperty);
+			}
+
+			pOpenGL->AddSubItem(pAmbientLightWeighting);
+		}
+
+		// Diffuse light weighting
+		{
+			auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
+			pDiffuseLightWeighting->AllowEdit(FALSE);
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().x,
+					_T("X"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().y,
+					_T("Y"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
+
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().z,
+					_T("Z"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+				pDiffuseLightWeighting->AddSubItem(pProperty);
+			}
+
+			pOpenGL->AddSubItem(pDiffuseLightWeighting);
+		}
+
+		// Specular light weighting
+		{
+			auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
+			pSpecularLightWeighting->AllowEdit(FALSE);
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("X"),
+					(_variant_t)pOpenGLView->_getSpecularLightWeighting().x,
+					_T("X"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
+
+			// X
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Y"),
+					(_variant_t)pOpenGLView->_getSpecularLightWeighting().y,
+					_T("Y"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
+
+			// Z
+			{
+				auto pProperty = new CApplicationProperty(
+					_T("Z"),
+					(_variant_t)pOpenGLView->_getSpecularLightWeighting().z,
+					_T("Z"),
+					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+				pSpecularLightWeighting->AddSubItem(pProperty);
+			}
+
+			pOpenGL->AddSubItem(pSpecularLightWeighting);
+		}
+	}
+
 	m_wndPropList.AddProperty(pViewGroup);
 }
 
@@ -1993,7 +2204,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		CRDFInstance * pInstance = prSelectedInstanceProperty.first;
 		CRDFProperty * pProperty = prSelectedInstanceProperty.second;
 
-		CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());		
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());		
 
 		AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
@@ -2082,9 +2293,9 @@ void CPropertiesWnd::LoadInstanceProperties()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
+void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
-	CMFCPropertyGridProperty * pPropertyGroup = new CMFCPropertyGridProperty(pProperty->getName());
+	auto pPropertyGroup = new CMFCPropertyGridProperty(pProperty->getName());
 	pInstanceGroup->AddSubItem(pPropertyGroup);
 
 	/*
@@ -2113,14 +2324,14 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGro
 			strRange += CA2W(szClassName);
 		}
 
-		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->getName());
+		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
 	} // if (pProperty->getType() == TYPE_OBJECTTYPE)
 	else
 	{
-		CMFCPropertyGridProperty * pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRange().c_str(), pProperty->getName());
+		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRange().c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
@@ -2138,7 +2349,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty * pInstanceGro
 }
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
+void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
 	switch (pProperty->getType())
 	{
@@ -2262,7 +2473,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty * p
 //}
 
 // ------------------------------------------------------------------------------------------------
-void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPropertyGroup, CRDFInstance * pInstance, CRDFProperty * pProperty)
+void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
 	switch (pProperty->getType())
 	{
@@ -2371,7 +2582,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -2406,7 +2617,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty* pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -2439,7 +2650,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -2472,7 +2683,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -2506,7 +2717,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty * pPrope
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				CMFCPropertyGridProperty * pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -2780,8 +2991,8 @@ void CPropertiesWnd::LoadMetaInformation()
 		return;
 	}
 
-	CMFCPropertyGridProperty * pMetaInfoGroup = new CMFCPropertyGridProperty(L"Meta information");
-	CMFCPropertyGridProperty * pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
+	auto pMetaInfoGroup = new CMFCPropertyGridProperty(L"Meta information");
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
 	pMetaInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
@@ -2794,14 +3005,14 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
 
-		CMFCPropertyGridProperty * pCentroid = new CMFCPropertyGridProperty(L"Centroid", (_variant_t)szBuffer, L"Centroid");
+		auto pCentroid = new CMFCPropertyGridProperty(L"Centroid", (_variant_t)szBuffer, L"Centroid");
 		pCentroid->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pCentroid);
 
 		swprintf(szBuffer, 100, L"%.6f", dVolume);
 
-		CMFCPropertyGridProperty * pVolume = new CMFCPropertyGridProperty(L"Volume", (_variant_t)szBuffer, L"Volume");
+		auto pVolume = new CMFCPropertyGridProperty(L"Volume", (_variant_t)szBuffer, L"Volume");
 		pVolume->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pVolume);
@@ -2816,7 +3027,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dArea);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Area", (_variant_t)szBuffer, L"Area");
+		auto pProperty = new CMFCPropertyGridProperty(L"Area", (_variant_t)szBuffer, L"Area");
 		pProperty->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pProperty);
@@ -2831,7 +3042,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dPerimeter);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Perimeter", (_variant_t)szBuffer, L"Perimeter");
+		auto pProperty = new CMFCPropertyGridProperty(L"Perimeter", (_variant_t)szBuffer, L"Perimeter");
 		pProperty->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pProperty);
@@ -2840,7 +3051,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	/*
 	* Geometry
 	*/
-	CMFCPropertyGridProperty * pGeometryGroup = new CMFCPropertyGridProperty(L"Geometry");
+	auto pGeometryGroup = new CMFCPropertyGridProperty(L"Geometry");
 	pMetaInfoGroup->AddSubItem(pGeometryGroup);
 
 	/*
@@ -2852,7 +3063,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iConceptualFacesCount);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Number of conceptual faces", (_variant_t)szBuffer, L"Number of conceptual faces");
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of conceptual faces", (_variant_t)szBuffer, L"Number of conceptual faces");
 		pProperty->AllowEdit(FALSE);
 
 		pGeometryGroup->AddSubItem(pProperty);
@@ -2872,7 +3083,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iTrianglesCount);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Number of triangles", (_variant_t)szBuffer, L"Number of triangles");
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of triangles", (_variant_t)szBuffer, L"Number of triangles");
 		pProperty->AllowEdit(FALSE);
 
 		pGeometryGroup->AddSubItem(pProperty);
@@ -2891,7 +3102,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iLinesCount);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Number of lines", (_variant_t)szBuffer, L"Number of lines");
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of lines", (_variant_t)szBuffer, L"Number of lines");
 		pProperty->AllowEdit(FALSE);
 
 		pGeometryGroup->AddSubItem(pProperty);
@@ -2906,7 +3117,7 @@ void CPropertiesWnd::LoadMetaInformation()
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iPointsCount);
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Number of points", (_variant_t)szBuffer, L"Number of points");
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of points", (_variant_t)szBuffer, L"Number of points");
 		pProperty->AllowEdit(FALSE);
 
 		pGeometryGroup->AddSubItem(pProperty);
@@ -2941,7 +3152,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	/*
 	* Consistency
 	*/
-	CMFCPropertyGridProperty * pConsistencyGroup = new CMFCPropertyGridProperty(L"Consistency");
+	auto pConsistencyGroup = new CMFCPropertyGridProperty(L"Consistency");
 	pMetaInfoGroup->AddSubItem(pConsistencyGroup);
 
 	/*
@@ -2950,7 +3161,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Design Tree Consistency", (_variant_t)szResult, L"Check Design Tree Consistency");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Design Tree Consistency", (_variant_t)szResult, L"Check Design Tree Consistency");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -2962,7 +3173,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangle Output (through API)", (_variant_t)szResult, L"Check Consistency for Triangle Output (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangle Output (through API)", (_variant_t)szResult, L"Check Consistency for Triangle Output (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -2974,7 +3185,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Line Output (through API)", (_variant_t)szResult, L"Check Consistency for Line Output (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Line Output (through API)", (_variant_t)szResult, L"Check Consistency for Line Output (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -2986,7 +3197,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Point Output (through API)", (_variant_t)szResult, L"Check Consistency for Point Output (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Point Output (through API)", (_variant_t)szResult, L"Check Consistency for Point Output (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -2998,7 +3209,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (through API)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (through API)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3010,7 +3221,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (internal)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (internal)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (internal)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (internal)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3022,7 +3233,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (through API)", (_variant_t)szResult, L"Check Consistency for Generated Solids (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (through API)", (_variant_t)szResult, L"Check Consistency for Generated Solids (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3034,7 +3245,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (internal)", (_variant_t)szResult, L"Check Consistency for Generated Solids (internal)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (internal)", (_variant_t)szResult, L"Check Consistency for Generated Solids (internal)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3046,7 +3257,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for BoundingBox's", (_variant_t)szResult, L"Check Consistency for BoundingBox's");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for BoundingBox's", (_variant_t)szResult, L"Check Consistency for BoundingBox's");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3058,7 +3269,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangulation", (_variant_t)szResult, L"Check Consistency for Triangulation");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangulation", (_variant_t)szResult, L"Check Consistency for Triangulation");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3070,7 +3281,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Relations (through API)", (_variant_t)szResult, L"Check Consistency for Relations (through API)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Relations (through API)", (_variant_t)szResult, L"Check Consistency for Relations (through API)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3082,7 +3293,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Solid(s)", (_variant_t)szResult, L"Contains (Closed) Solid(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Solid(s)", (_variant_t)szResult, L"Contains (Closed) Solid(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3094,7 +3305,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Infinite Solid(s)", (_variant_t)szResult, L"Contains (Closed) Infinite Solid(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Infinite Solid(s)", (_variant_t)szResult, L"Contains (Closed) Infinite Solid(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3106,7 +3317,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Surface(s)", (_variant_t)szResult, L"Contains Closed Surface(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Surface(s)", (_variant_t)szResult, L"Contains Closed Surface(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3118,7 +3329,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Surface(s)", (_variant_t)szResult, L"Contains Open Surface(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Surface(s)", (_variant_t)szResult, L"Contains Open Surface(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3130,7 +3341,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Surface(s)", (_variant_t)szResult, L"Contains Closed Infinite Surface(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Surface(s)", (_variant_t)szResult, L"Contains Closed Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3142,7 +3353,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Surface(s)", (_variant_t)szResult, L"Contains Open Infinite Surface(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Surface(s)", (_variant_t)szResult, L"Contains Open Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3154,7 +3365,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Line(s)", (_variant_t)szResult, L"Contains Closed Line(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Line(s)", (_variant_t)szResult, L"Contains Closed Line(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3166,7 +3377,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Line(s)", (_variant_t)szResult, L"Contains Open Line(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Line(s)", (_variant_t)szResult, L"Contains Open Line(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3178,7 +3389,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Line(s)", (_variant_t)szResult, L"Contains Closed Infinite Line(s) [i.e. both ends in infinity]");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Line(s)", (_variant_t)szResult, L"Contains Closed Infinite Line(s) [i.e. both ends in infinity]");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3190,7 +3401,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty* pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Line(s)", (_variant_t)szResult, L"Contains Open Infinite Line(s) [i.e. one end in infinity]");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Line(s)", (_variant_t)szResult, L"Contains Open Infinite Line(s) [i.e. one end in infinity]");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3202,7 +3413,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	{
 		wchar_t * szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
 
-		CMFCPropertyGridProperty * pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Point(s)", (_variant_t)szResult, L"Contains (Closed) Point(s)");
+		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Point(s)", (_variant_t)szResult, L"Contains (Closed) Point(s)");
 		pProperty->AllowEdit(FALSE);
 
 		pConsistencyGroup->AddSubItem(pProperty);
@@ -3251,23 +3462,23 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 {
 	ASSERT(wParam != 0);	
 
-	CMFCPropertyGridProperty * pValueProperty = (CMFCPropertyGridProperty *)wParam;	
-	CRDFInstancePropertyData * pValueData = (CRDFInstancePropertyData *)pValueProperty->GetData();
+	auto pValueProperty = (CMFCPropertyGridProperty*)wParam;
+	auto pValueData = (CRDFInstancePropertyData*)pValueProperty->GetData();
 	ASSERT(pValueData != nullptr);
 
-	CRDFInstance * pInstance = pValueData->GetInstance();
-	CRDFProperty * pProperty = pValueData->GetProperty();
+	auto pInstance = pValueData->GetInstance();
+	auto pProperty = pValueData->GetProperty();
 
 	/*
 	* Select the property
 	*/
-	CMFCPropertyGridProperty * pPropertyGroup = pValueProperty->GetParent();	
+	auto pPropertyGroup = pValueProperty->GetParent();	
 	m_wndPropList.SetCurSel(pPropertyGroup);
 
 	/*
 	* Update the cardinality
 	*/
-	CAddRDFInstanceProperty * pCardinalityProperty = (CAddRDFInstanceProperty *)pPropertyGroup->GetSubItem(1);
+	auto pCardinalityProperty = (CAddRDFInstanceProperty*)pPropertyGroup->GetSubItem(1);
 
 	wstring strCardinality = pProperty->getCardinality(pInstance->getInstance());
 
@@ -3284,7 +3495,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	while (pPropertyGroup->GetSubItemsCount() > 2/*keep range and cardinality*/)
 	{
-		CMFCPropertyGridProperty * pValue = (CRDFInstanceProperty *)(pPropertyGroup->GetSubItem(2));
+		auto pValue = (CMFCPropertyGridProperty*)(pPropertyGroup->GetSubItem(2));
 
 		m_wndPropList.DeleteProperty(pValue);
 	}	
