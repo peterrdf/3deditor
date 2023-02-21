@@ -1912,7 +1912,7 @@ public: // Methods
 	void _setMaterialShininess(float value) { m_fMaterialShininess = value; _redraw(); }
 
 	float _getContrast() const { return m_fContrast; }
-	void _setContrast(float value) { return m_fContrast; _redraw(); }
+	void _setContrast(float value) { m_fContrast = value; _redraw(); }
 
 	float _getBrightness() const { return m_fBrightness; }
 	void _setBrightness(float value) { m_fBrightness = value; _redraw(); }

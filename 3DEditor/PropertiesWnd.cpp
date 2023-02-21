@@ -1165,6 +1165,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointLightingLocation);
 				}
 				break;
 
@@ -1186,6 +1188,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::AmbientLightWeighting);
 				}
 				break;
 
@@ -1207,6 +1211,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::DiffuseLightWeighting);
 				}
 				break;
 
@@ -1228,6 +1234,48 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::SpecularLightWeighting);
+				}
+				break;
+
+				case enumPropertyType::MaterialShininess:
+				{
+					float fValue = (float)_wtof((LPCTSTR)strValue);
+
+					pOpenGLView->_setMaterialShininess(fValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::MaterialShininess);
+				}
+				break;
+
+				case enumPropertyType::Contrast:
+				{
+					float fValue = (float)_wtof((LPCTSTR)strValue);
+
+					pOpenGLView->_setContrast(fValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Contrast);
+				}
+				break;
+
+				case enumPropertyType::Brightness:
+				{
+					float fValue = (float)_wtof((LPCTSTR)strValue);
+
+					pOpenGLView->_setBrightness(fValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Brightness);
+				}
+				break;
+
+				case enumPropertyType::Gamma:
+				{
+					float fValue = (float)_wtof((LPCTSTR)strValue);
+
+					pOpenGLView->_setGamma(fValue);
+
+					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Gamma);
 				}
 				break;
 
@@ -2172,6 +2220,50 @@ void CPropertiesWnd::LoadApplicationProperties()
 			}
 
 			pOpenGL->AddSubItem(pSpecularLightWeighting);
+		}
+
+		// Material shininess
+		{
+			auto pMaterialShininess = new CApplicationProperty(
+				_T("Material shininess"),
+				(_variant_t)pOpenGLView->_getMaterialShininess(),
+				_T("Material shininess"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
+
+			pOpenGL->AddSubItem(pMaterialShininess);
+		}
+
+		// Contrast
+		{
+			auto pContrast = new CApplicationProperty(
+				_T("Contrast"),
+				(_variant_t)pOpenGLView->_getContrast(),
+				_T("Contrast"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
+
+			pOpenGL->AddSubItem(pContrast);
+		}
+
+		// Brightness
+		{
+			auto pBrightness = new CApplicationProperty(
+				_T("Brightness"),
+				(_variant_t)pOpenGLView->_getBrightness(),
+				_T("Brightness"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
+
+			pOpenGL->AddSubItem(pBrightness);
+		}
+
+		// Gamma
+		{
+			auto pGamma = new CApplicationProperty(
+				_T("Gamma"),
+				(_variant_t)pOpenGLView->_getGamma(),
+				_T("Gamma"),
+				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
+
+			pOpenGL->AddSubItem(pGamma);
 		}
 	}
 
