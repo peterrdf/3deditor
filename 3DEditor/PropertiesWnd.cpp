@@ -2082,7 +2082,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				pPointLightingLocation->AddSubItem(pProperty);
 			}
 
-			// X
+			// Y
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
@@ -2116,17 +2116,17 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
 					(_variant_t)pOpenGLView->_getAmbientLightWeighting().x,
-					_T("X"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
 
-			// X
+			// Y
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
 					(_variant_t)pOpenGLView->_getAmbientLightWeighting().y,
-					_T("Y"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
@@ -2136,7 +2136,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
 					(_variant_t)pOpenGLView->_getAmbientLightWeighting().z,
-					_T("Z"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
@@ -2155,7 +2155,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
 					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().x,
-					_T("X"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
@@ -2165,7 +2165,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
 					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().y,
-					_T("Y"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
@@ -2175,7 +2175,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
 					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().z,
-					_T("Z"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
@@ -2194,7 +2194,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
 					(_variant_t)pOpenGLView->_getSpecularLightWeighting().x,
-					_T("X"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
@@ -2204,7 +2204,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
 					(_variant_t)pOpenGLView->_getSpecularLightWeighting().y,
-					_T("Y"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
@@ -2214,7 +2214,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
 					(_variant_t)pOpenGLView->_getSpecularLightWeighting().z,
-					_T("Z"),
+					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
@@ -2227,7 +2227,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pMaterialShininess = new CApplicationProperty(
 				_T("Material shininess"),
 				(_variant_t)pOpenGLView->_getMaterialShininess(),
-				_T("Material shininess"),
+				_T("[0.0 - 1.0]"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
 
 			pOpenGL->AddSubItem(pMaterialShininess);
