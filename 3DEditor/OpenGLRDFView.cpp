@@ -97,6 +97,14 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.33f, .33f, .33f,
 		.66f,
 		nullptr);
+
+	// OpenGL
+	_setAmbientLightWeighting(glm::vec3(
+		0.5f,
+		0.5f,
+		0.5f)
+	);
+
 }
 
 // ------------------------------------------------------------------------------------------------
