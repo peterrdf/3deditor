@@ -1805,11 +1805,6 @@ void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadApplicationProperties()
 {
-	ASSERT(GetController() != nullptr);
-
-	COpenGLRDFView * pOpenGLView = GetController()->GetView<COpenGLRDFView>();
-	ASSERT(pOpenGLView != nullptr);
-
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
 
@@ -1819,6 +1814,22 @@ void CPropertiesWnd::LoadApplicationProperties()
 	m_wndPropList.EnableDescriptionArea();
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pOpenGLView = GetController()->GetView<COpenGLRDFView>();
+	if (pOpenGLView == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
 
@@ -3530,24 +3541,24 @@ void CPropertiesWnd::OnViewModeChanged()
 {
 	switch (m_wndObjectCombo.GetCurSel())
 	{
-	case 0: // Application Properties
-	{
-		LoadApplicationProperties();
-	}
-	break;
+		case 0: // Application Properties
+		{
+			LoadApplicationProperties();
+		}
+		break;
 
-	case 1: // Instance Properties
-	{
-		LoadInstanceProperties();
-	}
-	break;
+		case 1: // Instance Properties
+		{
+			LoadInstanceProperties();
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false); // unknown mode
+		default:
+		{
+			ASSERT(false); // unknown mode
+		}
+		break;
 	}
-	break;
-	} // switch (m_wndObjectCombo.GetCurSel())
 }
 
 LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lParam*/)
@@ -3587,7 +3598,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	while (pPropertyGroup->GetSubItemsCount() > 2/*keep range and cardinality*/)
 	{
-		auto pValue = (CMFCPropertyGridProperty*)(pPropertyGroup->GetSubItem(2));
+		auto pValue = pPropertyGroup->GetSubItem(2);
 
 		m_wndPropList.DeleteProperty(pValue);
 	}	

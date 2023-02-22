@@ -275,42 +275,19 @@ class CPropertiesWnd
 {
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	// CRDFView
 	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnShowBaseInformation();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnShowMetaInformation();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstanceSelected(CRDFView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstancePropertySelected();
-
-	// ------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
-
-	// ------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
-
-	// ------------------------------------------------------------------------
-	// CRDFView
 	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
 
 protected: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	// Support for properties
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 
