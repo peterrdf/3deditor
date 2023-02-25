@@ -84,7 +84,7 @@ void CRDFView::SetController(CRDFController * pController)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnApplicationPropertyChanged(CRDFView* /*pSender*/, enumPropertyType /*enPropertyType*/)
+/*virtual*/ void CRDFView::OnApplicationPropertyChanged(CRDFView* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/)
 {
 }
 

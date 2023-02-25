@@ -28,17 +28,17 @@ private:  // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Type
-	enumPropertyType m_enPropertyType;
+	enumApplicationProperty m_enPropertyType;
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CApplicationPropertyData(enumPropertyType enPropertyType);
+	CApplicationPropertyData(enumApplicationProperty enApplicationProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	enumPropertyType GetType() const;
+	enumApplicationProperty GetType() const;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CLightPropertyData(enumPropertyType enPropertyType, int iLightIndex);
+	CLightPropertyData(enumApplicationProperty enApplicationProperty, int iLightIndex);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -284,7 +284,7 @@ public: // Methods
 	virtual void OnInstancePropertySelected();
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 	

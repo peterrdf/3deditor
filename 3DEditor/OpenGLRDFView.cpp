@@ -1099,43 +1099,43 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) /*override*/
+/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	switch (enPropertyType)
+	switch (enApplicationProperty)
 	{
-		case enumPropertyType::ShowFaces:
-		case enumPropertyType::CullFaces:
-		case enumPropertyType::ShowFacesWireframes:
-		case enumPropertyType::ShowConceptualFacesWireframes:
-		case enumPropertyType::ShowLines:
-		case enumPropertyType::LineWidth:
-		case enumPropertyType::ShowPoints:
-		case enumPropertyType::PointSize:
-		case enumPropertyType::ShowNormalVectors:
-		case enumPropertyType::ShowTangenVectors:
-		case enumPropertyType::ShowBiNormalVectors:
-		case enumPropertyType::ScaleVectors:
-		case enumPropertyType::ShowBoundingBoxes:
-		case enumPropertyType::PointLightingLocation:
-		case enumPropertyType::AmbientLightWeighting:
-		case enumPropertyType::SpecularLightWeighting:
-		case enumPropertyType::DiffuseLightWeighting:
-		case enumPropertyType::MaterialShininess:
-		case enumPropertyType::Contrast:
-		case enumPropertyType::Brightness:
-		case enumPropertyType::Gamma:
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
+		case enumApplicationProperty::ShowFacesWireframes:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::LineWidth:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::PointSize:
+		case enumApplicationProperty::ShowNormalVectors:
+		case enumApplicationProperty::ShowTangenVectors:
+		case enumApplicationProperty::ShowBiNormalVectors:
+		case enumApplicationProperty::ScaleVectors:
+		case enumApplicationProperty::ShowBoundingBoxes:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
 		{
 			_redraw();
 		}
 		break;
 
-		case enumPropertyType::VisibleValuesCountLimit:
-		case enumPropertyType::ScalelAndCenter:
+		case enumApplicationProperty::VisibleValuesCountLimit:
+		case enumApplicationProperty::ScalelAndCenter:
 		{
 			// Not supported
 		}
@@ -1146,7 +1146,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 			ASSERT(FALSE); // Internal error!
 		}
 		break;
-	} // switch (enPropertyType)
+	} // switch (enApplicationProperty)
 }
 
 // ------------------------------------------------------------------------------------------------

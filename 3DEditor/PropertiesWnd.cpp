@@ -34,20 +34,20 @@ static char THIS_FILE[]=__FILE__;
 //#define USED_SUFFIX L" [used]"
 
 // ------------------------------------------------------------------------------------------------
-CApplicationPropertyData::CApplicationPropertyData(enumPropertyType enPropertyType)
+CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
 {
-	m_enPropertyType = enPropertyType;
+	m_enPropertyType = enApplicationProperty;
 }
 
 // ------------------------------------------------------------------------------------------------
-enumPropertyType CApplicationPropertyData::GetType() const
+enumApplicationProperty CApplicationPropertyData::GetType() const
 {
 	return m_enPropertyType;
 }
 
 // ------------------------------------------------------------------------------------------------
-CLightPropertyData::CLightPropertyData(enumPropertyType enPropertyType, int iLightIndex)
-	: CApplicationPropertyData(enPropertyType)
+CLightPropertyData::CLightPropertyData(enumApplicationProperty enApplicationProperty, int iLightIndex)
+	: CApplicationPropertyData(enApplicationProperty)
 	, m_iLightIndex(iLightIndex)
 {
 }
@@ -985,7 +985,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType /*enPropertyType*/)
+/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty /*enApplicationProperty*/)
 {
 	if (pSender == this)
 	{
@@ -1031,139 +1031,139 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			switch (pData->GetType())
 			{
-				case enumPropertyType::ShowFaces:
+				case enumApplicationProperty::ShowFaces:
 				{
 					pOpenGLView->ShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFaces);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
 				break;
 
-				case enumPropertyType::CullFaces:
+				case enumApplicationProperty::CullFaces:
 				{
 					pOpenGLView->SetCullFacesMode(strValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::CullFaces);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
 				break;
 
-				case enumPropertyType::ShowFacesWireframes:
+				case enumApplicationProperty::ShowFacesWireframes:
 				{
 					pOpenGLView->ShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowFacesWireframes);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFacesWireframes);
 				}
 				break;
 
-				case enumPropertyType::ShowConceptualFacesWireframes:
+				case enumApplicationProperty::ShowConceptualFacesWireframes:
 				{
 					pOpenGLView->ShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowConceptualFacesWireframes);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
 				break;
 
-				case enumPropertyType::ShowLines:
+				case enumApplicationProperty::ShowLines:
 				{
 					pOpenGLView->ShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowLines);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
 				break;
 
-				case enumPropertyType::LineWidth:
+				case enumApplicationProperty::LineWidth:
 				{
 					int iValue = _wtoi((LPCTSTR)strValue);
 
 					pOpenGLView->SetLineWidth((GLfloat)iValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::LineWidth);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::LineWidth);
 				}
 				break;
 
-				case enumPropertyType::ShowPoints:
+				case enumApplicationProperty::ShowPoints:
 				{
 					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowPoints);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
 				break;
 
-				case enumPropertyType::PointSize:
+				case enumApplicationProperty::PointSize:
 				{
 					int iValue = _wtoi((LPCTSTR)strValue);
 
 					pOpenGLView->SetPointSize((GLfloat)iValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointSize);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointSize);
 				}
 				break;
 
-				case enumPropertyType::ShowNormalVectors:
+				case enumApplicationProperty::ShowNormalVectors:
 				{
 					pOpenGLView->ShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowNormalVectors);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNormalVectors);
 				}
 				break;
 
-				case enumPropertyType::ShowTangenVectors:
+				case enumApplicationProperty::ShowTangenVectors:
 				{
 					pOpenGLView->ShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowTangenVectors);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowTangenVectors);
 				}
 				break;
 
-				case enumPropertyType::ShowBiNormalVectors:
+				case enumApplicationProperty::ShowBiNormalVectors:
 				{
 					pOpenGLView->ShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBiNormalVectors);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBiNormalVectors);
 				}
 				break;
 
-				case enumPropertyType::ScaleVectors:
+				case enumApplicationProperty::ScaleVectors:
 				{
 					pOpenGLView->ScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScaleVectors);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ScaleVectors);
 				}
 				break;
 
-				case enumPropertyType::ShowBoundingBoxes:
+				case enumApplicationProperty::ShowBoundingBoxes:
 				{
 					pOpenGLView->ShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ShowBoundingBoxes);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBoundingBoxes);
 				}
 				break;
 
-				case enumPropertyType::VisibleValuesCountLimit:
+				case enumApplicationProperty::VisibleValuesCountLimit:
 				{
 					int iValue = _wtoi((LPCTSTR)strValue);
 
 					GetController()->SetVisibleValuesCountLimit(iValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::VisibleValuesCountLimit);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::VisibleValuesCountLimit);
 				}
 				break;
 
-				case enumPropertyType::ScalelAndCenter:
+				case enumApplicationProperty::ScalelAndCenter:
 				{
 					GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::ScalelAndCenter);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ScalelAndCenter);
 				}
 				break;
 
-				case enumPropertyType::PointLightingLocation:
+				case enumApplicationProperty::PointLightingLocation:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
 					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
-						GetData())->GetType() == enumPropertyType::PointLightingLocation);
+						GetData())->GetType() == enumApplicationProperty::PointLightingLocation);
 					ASSERT(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
@@ -1176,17 +1176,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::PointLightingLocation);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
 				}
 				break;
 
-				case enumPropertyType::AmbientLightWeighting:
+				case enumApplicationProperty::AmbientLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
 					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
-						GetData())->GetType() == enumPropertyType::AmbientLightWeighting);
+						GetData())->GetType() == enumApplicationProperty::AmbientLightWeighting);
 					ASSERT(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
@@ -1199,17 +1199,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::AmbientLightWeighting);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 				}
 				break;
 
-				case enumPropertyType::DiffuseLightWeighting:
+				case enumApplicationProperty::DiffuseLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
 					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
-						GetData())->GetType() == enumPropertyType::DiffuseLightWeighting);
+						GetData())->GetType() == enumApplicationProperty::DiffuseLightWeighting);
 					ASSERT(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
@@ -1222,17 +1222,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::DiffuseLightWeighting);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
 				}
 				break;
 
-				case enumPropertyType::SpecularLightWeighting:
+				case enumApplicationProperty::SpecularLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
 					ASSERT(pProperty != nullptr);
 					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
 					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
-						GetData())->GetType() == enumPropertyType::SpecularLightWeighting);
+						GetData())->GetType() == enumApplicationProperty::SpecularLightWeighting);
 					ASSERT(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
@@ -1245,47 +1245,47 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::SpecularLightWeighting);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
 				}
 				break;
 
-				case enumPropertyType::MaterialShininess:
+				case enumApplicationProperty::MaterialShininess:
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::MaterialShininess);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
 				}
 				break;
 
-				case enumPropertyType::Contrast:
+				case enumApplicationProperty::Contrast:
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setContrast(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Contrast);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
 				}
 				break;
 
-				case enumPropertyType::Brightness:
+				case enumApplicationProperty::Brightness:
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setBrightness(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Brightness);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
 				}
 				break;
 
-				case enumPropertyType::Gamma:
+				case enumApplicationProperty::Gamma:
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setGamma(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Gamma);
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
 				}
 				break;
 
@@ -1850,7 +1850,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"), 
 			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowFaces));
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1864,7 +1864,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"), 
 			strCullFacesMode == CULL_FACES_FRONT ? CULL_FACES_FRONT : strCullFacesMode == CULL_FACES_BACK ? CULL_FACES_BACK : CULL_FACES_NONE,
-			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::CullFaces));
+			_T("Cull Faces"), (DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CullFaces));
 		pProperty->AddOption(CULL_FACES_NONE);
 		pProperty->AddOption(CULL_FACES_FRONT);
 		pProperty->AddOption(CULL_FACES_BACK);
@@ -1876,7 +1876,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces wireframes"), 
 			pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
-			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowFacesWireframes));
+			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1888,7 +1888,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
 			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Conceptual faces wireframes"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowConceptualFacesWireframes));
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1899,7 +1899,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Lines"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowLines));
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1922,7 +1922,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Points"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowPoints));
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -1952,7 +1952,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->AreNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Normal vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowNormalVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1963,7 +1963,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Tangent vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowTangenVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowTangenVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1974,7 +1974,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Bi-normal vectors"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowBiNormalVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBiNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1985,7 +1985,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		{
 			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Scale"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ScaleVectors));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScaleVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -1998,7 +1998,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
 			pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Bounding boxes"), 
-			(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ShowBoundingBoxes));
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -2017,7 +2017,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Visible values count limit"), 
 				(_variant_t)GetController()->GetVisibleValuesCountLimit(), 
 				_T("Visible values count limit"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::VisibleValuesCountLimit));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::VisibleValuesCountLimit));
 			pProperty->EnableSpinControl(TRUE, 1, INT_MAX);
 
 			pUI->AddSubItem(pProperty);
@@ -2028,7 +2028,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			auto pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), 
 				GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Scale and Center all Geometry"), 
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::ScalelAndCenter));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScalelAndCenter));
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);
@@ -2051,7 +2051,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma region Point light position
 		{
 			auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::PointLightingLocation), TRUE);
 			pPointLightingLocation->AllowEdit(FALSE);
 
 			// X
@@ -2060,7 +2060,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("X"),
 					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().x,
 					_T("X"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
 			}
 
@@ -2070,7 +2070,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Y"),
 					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().y,
 					_T("Y"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
 			}
 
@@ -2080,7 +2080,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().z,
 					_T("Z"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
 			}
 
@@ -2091,7 +2091,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma region Ambient light weighting
 		{
 			auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::AmbientLightWeighting), TRUE);
 			pAmbientLightWeighting->AllowEdit(FALSE);
 
 			// X
@@ -2100,7 +2100,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("X"),
 					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().x,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2110,7 +2110,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Y"),
 					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().y,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2120,7 +2120,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().z,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2131,7 +2131,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma region Diffuse light weighting
 		{
 			auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting), TRUE);
 			pDiffuseLightWeighting->AllowEdit(FALSE);
 
 			// X
@@ -2140,7 +2140,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("X"),
 					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().x,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2150,7 +2150,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Y"),
 					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().y,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2160,7 +2160,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().z,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2171,7 +2171,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma region Specular light weighting
 		{
 			auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SpecularLightWeighting), TRUE);
 			pSpecularLightWeighting->AllowEdit(FALSE);
 
 			// X
@@ -2180,7 +2180,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("X"),
 					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().x,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2190,7 +2190,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Y"),
 					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().y,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2200,7 +2200,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 					_T("Z"),
 					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().z,
 					_T("[0.0 - 1.0]"),
-					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
+					(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
 			}
 
@@ -2214,7 +2214,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				_T("Material shininess"),
 				(_variant_t)pBlinnPhongProgram->_getMaterialShininess(),
 				_T("[0.0 - 1.0]"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::MaterialShininess));
 
 			pOpenGL->AddSubItem(pMaterialShininess);
 		}
@@ -2226,7 +2226,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				_T("Contrast"),
 				(_variant_t)pBlinnPhongProgram->_getContrast(),
 				_T("Contrast"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::Contrast));
 
 			pOpenGL->AddSubItem(pContrast);
 		}
@@ -2238,7 +2238,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				_T("Brightness"),
 				(_variant_t)pBlinnPhongProgram->_getBrightness(),
 				_T("Brightness"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::Brightness));
 
 			pOpenGL->AddSubItem(pBrightness);
 		}
@@ -2250,7 +2250,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 				_T("Gamma"),
 				(_variant_t)pBlinnPhongProgram->_getGamma(),
 				_T("Gamma"),
-				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::Gamma));
 
 			pOpenGL->AddSubItem(pGamma);
 		}

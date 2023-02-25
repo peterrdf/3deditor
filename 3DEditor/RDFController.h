@@ -8,7 +8,7 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 class CRDFModel;
 class CRDFView;
-enum class enumPropertyType;
+enum class enumApplicationProperty;
 class CRDFInstance;
 class CRDFProperty;
 
@@ -161,7 +161,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support
-	void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
+	void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory

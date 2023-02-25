@@ -7,7 +7,7 @@
 class CRDFController;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumPropertyType
+enum class enumApplicationProperty
 {
 	ShowFaces,
 	CullFaces,
@@ -109,7 +109,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties support
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 

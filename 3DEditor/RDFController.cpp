@@ -249,12 +249,12 @@ void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFPrope
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType)
+void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
-		(*itView)->OnApplicationPropertyChanged(pSender, enPropertyType);
+		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
 	}
 }
 

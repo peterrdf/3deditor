@@ -59,7 +59,7 @@ public: // Methods
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance) override;
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
 	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance) override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) override;
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;

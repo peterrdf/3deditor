@@ -149,7 +149,7 @@ public: // Methods
 	virtual void OnInstanceSelected(CRDFView * pSender) override;
 	virtual void OnInstancePropertySelected() override;
 	virtual void OnInstancesEnabledStateChanged() override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) override;
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
 
 protected: // Methods
 
