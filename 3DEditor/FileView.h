@@ -51,87 +51,35 @@ private: // Members
 	CSearchInstancesDialog* m_pSearchDialog;
 
 public: // Methods
-
-	// --------------------------------------------------------------------------------------------
+	
 	// CRDFView
-	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceSelected(CRDFView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType);
-
-	// --------------------------------------------------------------------------------------------
+	virtual void OnModelChanged() override;
+	virtual void OnInstanceSelected(CRDFView* pSender) override;
+	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty) override;
+	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance) override;
+	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
+	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance) override;
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) override;
+	
 	// CItemStateProvider
-	virtual bool IsSelected(HTREEITEM hItem);
+	virtual bool IsSelected(HTREEITEM hItem) override;
 
 private: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// Full path of an item
+	
 	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath);
-
-	// --------------------------------------------------------------------------------------------
-	// All descendants
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants);
-
-	// --------------------------------------------------------------------------------------------
-	// Update the data structures
 	void RemoveInstanceItemData(CRDFInstance* pInstance, HTREEITEM hInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Update the data structures
 	void RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// Update the data structures
 	void RemoveItemData(HTREEITEM hItem);
-
-	// --------------------------------------------------------------------------------------------
-	// Updates the tree
 	void UpdateView();
 
-	// --------------------------------------------------------------------------------------------
-	// Alphabetical View
 	void InstancesAlphabeticalView();
-
-	// --------------------------------------------------------------------------------------------
-	// Group by Class View
 	void InstancesGroupByClassView();
-
-	// --------------------------------------------------------------------------------------------
-	// Group by Class View
 	void InstancesUnreferencedItemsView();
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
+	
 	void AddInstance(HTREEITEM hParent, CRDFInstance * pInstance);
+	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Properties
-	void AddProperties(HTREEITEM hParent, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Refreshing of Unreferenced items view
 	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
 
 // Construction

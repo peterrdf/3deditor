@@ -89,10 +89,6 @@ public: // Methods
 	virtual ~COpenGLRDFView();
 	
 	// UI
-	void SetRotation(float fX, float fY, BOOL bRedraw);
-	void GetRotation(float& fX, float& fY);
-	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
-	void GetTranslation(float& fX, float& fY, float& fZ);
 	void ShowFaces(BOOL bShow);
 	BOOL AreFacesShown() const;
 	void SetCullFacesMode(LPCTSTR szMode);
@@ -119,6 +115,14 @@ public: // Methods
 	BOOL AreBiNormalVectorsShown() const;
 	void ScaleVectors(BOOL bShow);
 	BOOL AreVectorsScaled() const;
+
+	void Reset();
+
+	// Test
+	void SetRotation(float fX, float fY, BOOL bRedraw);
+	void GetRotation(float& fX, float& fY);
+	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
+	void GetTranslation(float& fX, float& fY, float& fZ);
 	
 	// Draw
 #ifdef _LINUX
@@ -134,23 +138,23 @@ public: // Methods
 	// Keyboard
 	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 
-	// CRDFView
-	virtual void OnModelChanged();
-	virtual void OnWorldDimensionsChanged();
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance);
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
-	virtual void OnInstancesDeleted(CRDFView * pSender);
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance);
-	virtual void Reset();
-	virtual void OnInstanceSelected(CRDFView * pSender);
-	virtual void OnInstancePropertySelected();
-	virtual void OnInstancesEnabledStateChanged();
+	// CRDFView	
+	virtual void OnModelChanged() override;
+	virtual void OnWorldDimensionsChanged() override;
+	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty) override;
+	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
+	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
+	virtual void OnInstancesDeleted(CRDFView * pSender) override;
+	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
+	virtual void OnInstanceSelected(CRDFView * pSender) override;
+	virtual void OnInstancePropertySelected() override;
+	virtual void OnInstancesEnabledStateChanged() override;
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) override;
 
 protected: // Methods
 
 	// Overridden
-	virtual void OnControllerChanged();
+	virtual void OnControllerChanged() override;
 
 private: // Methods
 

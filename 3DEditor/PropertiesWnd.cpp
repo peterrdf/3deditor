@@ -1001,15 +1001,25 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 // ------------------------------------------------------------------------------------------------
 /*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
 {
-	ASSERT(GetController() != nullptr);
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
 
-	/*
-	* Application
-	*/
+		return 0;
+	}
+
+#pragma region Application
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
 		auto pOpenGLView = GetController()->GetView<COpenGLRDFView>();
 		ASSERT(pOpenGLView != nullptr);
+
+		auto ioglRender = dynamic_cast<_ioglRenderer*>(pOpenGLView);
+		ASSERT(ioglRender != nullptr);
+
+		auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
+		ASSERT(pBlinnPhongProgram != nullptr);
 
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
@@ -1160,7 +1170,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					auto pY = pProperty->GetSubItem(1);
 					auto pZ = pProperty->GetSubItem(2);
 
-					pOpenGLView->_setPointLightingLocation(glm::vec3(
+					pBlinnPhongProgram->_setPointLightingLocation(glm::vec3(
 						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
@@ -1183,10 +1193,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					auto pY = pProperty->GetSubItem(1);
 					auto pZ = pProperty->GetSubItem(2);
 
-					pOpenGLView->_setAmbientLightWeighting(glm::vec3(
+					pBlinnPhongProgram->_setAmbientLightWeighting(
 						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
-						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::AmbientLightWeighting);
@@ -1206,10 +1216,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					auto pY = pProperty->GetSubItem(1);
 					auto pZ = pProperty->GetSubItem(2);
 
-					pOpenGLView->_setDiffuseLightWeighting(glm::vec3(
+					pBlinnPhongProgram->_setDiffuseLightWeighting(
 						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
-						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::DiffuseLightWeighting);
@@ -1229,10 +1239,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					auto pY = pProperty->GetSubItem(1);
 					auto pZ = pProperty->GetSubItem(2);
 
-					pOpenGLView->_setSpecularLightWeighting(glm::vec3(
+					pBlinnPhongProgram->_setSpecularLightWeighting(
 						(float)_wtof((LPCTSTR)(CString)pX->GetValue()),
 						(float)_wtof((LPCTSTR)(CString)pY->GetValue()),
-						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
+						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::SpecularLightWeighting);
@@ -1243,7 +1253,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
-					pOpenGLView->_setMaterialShininess(fValue);
+					pBlinnPhongProgram->_setMaterialShininess(fValue);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::MaterialShininess);
 				}
@@ -1253,7 +1263,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
-					pOpenGLView->_setContrast(fValue);
+					pBlinnPhongProgram->_setContrast(fValue);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Contrast);
 				}
@@ -1263,7 +1273,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
-					pOpenGLView->_setBrightness(fValue);
+					pBlinnPhongProgram->_setBrightness(fValue);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Brightness);
 				}
@@ -1273,7 +1283,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
-					pOpenGLView->_setGamma(fValue);
+					pBlinnPhongProgram->_setGamma(fValue);
 
 					GetController()->OnApplicationPropertyChanged(this, enumPropertyType::Gamma);
 				}
@@ -1296,7 +1306,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		} // if (pColorApplicationProperty != nullptr)
 
 		ASSERT(false); // unexpected!
+
+		return 0;
 	} // if (m_wndObjectCombo.GetCurSel() == 0)
+#pragma endregion
 
 	/*
 	* Properties
@@ -1831,11 +1844,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
+#pragma region View
 	auto pViewGroup = new CMFCPropertyGridProperty(_T("View"));	
-
-	/*
-	* Faces
-	*/
+	
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"), 
 			pOpenGLView->AreFacesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"), 
@@ -1846,10 +1857,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pProperty);
 	}
-
-	/*
-	* Cull Faces
-	*/
+	
 	{
 		CString strCullFacesMode = pOpenGLView->GetCullFacesMode();
 
@@ -1865,9 +1873,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Faces wireframes
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces wireframes"), 
 			pOpenGLView->AreFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
@@ -1879,9 +1884,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Conceptual faces wireframes
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
 			pOpenGLView->AreConceptualFacesPolygonsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
@@ -1894,9 +1896,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pProperty);
 	}
 
-	/*
-	* Lines
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->AreLinesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Lines"), 
@@ -1910,7 +1909,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	// ********************************************************************************************
 	// DSIABLED
-
 	///*
 	//* Line width
 	//*/
@@ -1921,12 +1919,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 	//	pViewGroup->AddSubItem(pProperty);
 	//}
 
-	// DSIABLED
-	// ********************************************************************************************	
-
-	/*
-	* Points
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->ArePointsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 			_T("Points"), 
@@ -1940,7 +1932,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	// ********************************************************************************************
 	// DSIABLED
-
 	///*
 	//* Point size
 	//*/
@@ -1951,12 +1942,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 	//	pViewGroup->AddSubItem(pProperty);
 	//}
 
-	// DSIABLED
-	// ********************************************************************************************	
-
-	/*
-	* Vectors
-	*/
 	{
 		auto pVectors = new CMFCPropertyGridProperty(_T("Vectors"));
 		pViewGroup->AddSubItem(pVectors);
@@ -1975,9 +1960,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pVectors->AddSubItem(pProperty);
 		}
 
-		/*
-		* Tangent vectors
-		*/
 		{
 			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->AreTangentVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Tangent vectors"), 
@@ -1989,9 +1971,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pVectors->AddSubItem(pProperty);
 		}
 
-		/*
-		* Bi-normal vectors
-		*/
 		{
 			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->AreBiNormalVectorsShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Bi-normal vectors"), 
@@ -2003,9 +1982,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pVectors->AddSubItem(pProperty);
 		}
 
-		/*
-		* Scale
-		*/
 		{
 			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->AreVectorsScaled() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
 				_T("Scale"), 
@@ -2016,11 +1992,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 			pVectors->AddSubItem(pProperty);
 		}
-	}	
+	}
 
-	/*
-	* Bounding boxes
-	*/
 	{
 		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
 			pOpenGLView->AreBoundingBoxesShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, 
@@ -2032,17 +2005,14 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pProperty);
 	}
+#pragma endregion
 
-	/*
-	* UI
-	*/
+#pragma region UI
 	{
 		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
 		pViewGroup->AddSubItem(pUI);
 
-		/*
-		* Visible values count limit
-		*/
+		// Visible values count limit
 		{
 			auto pProperty = new CApplicationProperty(_T("Visible values count limit"), 
 				(_variant_t)GetController()->GetVisibleValuesCountLimit(), 
@@ -2053,9 +2023,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pUI->AddSubItem(pProperty);
 		}
 
-		/*
-		* Scale and Center
-		*/
+		// Scale and Center
 		{
 			auto pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), 
 				GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
@@ -2068,16 +2036,19 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pUI->AddSubItem(pProperty);
 		}
 	}	
+#pragma endregion
 
+#pragma region OpenGL
+	auto ioglRender = dynamic_cast<_ioglRenderer*>(pOpenGLView);
+	ASSERT(ioglRender != nullptr);
 
-	/*
-	* OpenGL
-	*/
+	auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
+	if (pBlinnPhongProgram != nullptr)
 	{
 		auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
 		pViewGroup->AddSubItem(pOpenGL);
 
-		// Point light position
+#pragma region Point light position
 		{
 			auto pPointLightingLocation = new CApplicationProperty(_T("Point lighting location"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation), TRUE);
@@ -2087,7 +2058,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
-					(_variant_t)pOpenGLView->_getPointLightingLocation().x,
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().x,
 					_T("X"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
@@ -2097,7 +2068,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
-					(_variant_t)pOpenGLView->_getPointLightingLocation().y,
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().y,
 					_T("Y"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
@@ -2107,7 +2078,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
-					(_variant_t)pOpenGLView->_getPointLightingLocation().z,
+					(_variant_t)pBlinnPhongProgram->_getPointLightingLocation().z,
 					_T("Z"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::PointLightingLocation));
 				pPointLightingLocation->AddSubItem(pProperty);
@@ -2115,8 +2086,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 			pOpenGL->AddSubItem(pPointLightingLocation);
 		}
+#pragma endregion
 
-		// Ambient light weighting
+#pragma region Ambient light weighting
 		{
 			auto pAmbientLightWeighting = new CApplicationProperty(_T("Ambient light weighting"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting), TRUE);
@@ -2126,7 +2098,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
-					(_variant_t)pOpenGLView->_getAmbientLightWeighting().x,
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().x,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
@@ -2136,7 +2108,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
-					(_variant_t)pOpenGLView->_getAmbientLightWeighting().y,
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().y,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
@@ -2146,7 +2118,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
-					(_variant_t)pOpenGLView->_getAmbientLightWeighting().z,
+					(_variant_t)pBlinnPhongProgram->_getAmbientLightWeighting().z,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::AmbientLightWeighting));
 				pAmbientLightWeighting->AddSubItem(pProperty);
@@ -2154,8 +2126,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 			pOpenGL->AddSubItem(pAmbientLightWeighting);
 		}
+#pragma endregion
 
-		// Diffuse light weighting
+#pragma region Diffuse light weighting
 		{
 			auto pDiffuseLightWeighting = new CApplicationProperty(_T("Diffuse light weighting"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting), TRUE);
@@ -2165,7 +2138,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
-					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().x,
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().x,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
@@ -2175,7 +2148,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
-					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().y,
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().y,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
@@ -2185,7 +2158,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
-					(_variant_t)pOpenGLView->_getDiffuseLightWeighting().z,
+					(_variant_t)pBlinnPhongProgram->_getDiffuseLightWeighting().z,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::DiffuseLightWeighting));
 				pDiffuseLightWeighting->AddSubItem(pProperty);
@@ -2193,8 +2166,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 			pOpenGL->AddSubItem(pDiffuseLightWeighting);
 		}
+#pragma endregion
 
-		// Specular light weighting
+#pragma region Specular light weighting
 		{
 			auto pSpecularLightWeighting = new CApplicationProperty(_T("Specular light weighting"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting), TRUE);
@@ -2204,7 +2178,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("X"),
-					(_variant_t)pOpenGLView->_getSpecularLightWeighting().x,
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().x,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
@@ -2214,7 +2188,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Y"),
-					(_variant_t)pOpenGLView->_getSpecularLightWeighting().y,
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().y,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
@@ -2224,7 +2198,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 			{
 				auto pProperty = new CApplicationProperty(
 					_T("Z"),
-					(_variant_t)pOpenGLView->_getSpecularLightWeighting().z,
+					(_variant_t)pBlinnPhongProgram->_getSpecularLightWeighting().z,
 					_T("[0.0 - 1.0]"),
 					(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::SpecularLightWeighting));
 				pSpecularLightWeighting->AddSubItem(pProperty);
@@ -2232,51 +2206,57 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 			pOpenGL->AddSubItem(pSpecularLightWeighting);
 		}
+#pragma endregion
 
-		// Material shininess
+#pragma region Material shininess
 		{
 			auto pMaterialShininess = new CApplicationProperty(
 				_T("Material shininess"),
-				(_variant_t)pOpenGLView->_getMaterialShininess(),
+				(_variant_t)pBlinnPhongProgram->_getMaterialShininess(),
 				_T("[0.0 - 1.0]"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::MaterialShininess));
 
 			pOpenGL->AddSubItem(pMaterialShininess);
 		}
+#pragma endregion
 
-		// Contrast
+#pragma region Contrast
 		{
 			auto pContrast = new CApplicationProperty(
 				_T("Contrast"),
-				(_variant_t)pOpenGLView->_getContrast(),
+				(_variant_t)pBlinnPhongProgram->_getContrast(),
 				_T("Contrast"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Contrast));
 
 			pOpenGL->AddSubItem(pContrast);
 		}
+#pragma endregion
 
-		// Brightness
+#pragma region Brightness
 		{
 			auto pBrightness = new CApplicationProperty(
 				_T("Brightness"),
-				(_variant_t)pOpenGLView->_getBrightness(),
+				(_variant_t)pBlinnPhongProgram->_getBrightness(),
 				_T("Brightness"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Brightness));
 
 			pOpenGL->AddSubItem(pBrightness);
 		}
+#pragma endregion
 
-		// Gamma
+#pragma region Gamma
 		{
 			auto pGamma = new CApplicationProperty(
 				_T("Gamma"),
-				(_variant_t)pOpenGLView->_getGamma(),
+				(_variant_t)pBlinnPhongProgram->_getGamma(),
 				_T("Gamma"),
 				(DWORD_PTR)new CApplicationPropertyData(enumPropertyType::Gamma));
 
 			pOpenGL->AddSubItem(pGamma);
 		}
-	}
+#pragma endregion
+	} // if (pBlinnPhongProgram != nullptr)
+#pragma endregion
 
 	m_wndPropList.AddProperty(pViewGroup);
 }

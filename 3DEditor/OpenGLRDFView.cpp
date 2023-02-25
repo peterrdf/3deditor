@@ -97,14 +97,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.33f, .33f, .33f,
 		.66f,
 		nullptr);
-
-	// OpenGL
-	_setAmbientLightWeighting(glm::vec3(
-		0.5f,
-		0.5f,
-		0.5f)
-	);
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -129,6 +121,182 @@ COpenGLRDFView::~COpenGLRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowFaces(BOOL bShow)
+{
+	m_bShowFaces = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreFacesShown() const
+{
+	return m_bShowFaces;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
+{
+	m_strCullFaces = szMode;
+}
+
+// ------------------------------------------------------------------------------------------------
+LPCTSTR COpenGLRDFView::GetCullFacesMode() const
+{
+	return m_strCullFaces;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowFacesPolygons(BOOL bShow)
+{
+	m_bShowFacesPolygons = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreFacesPolygonsShown() const
+{
+	return m_bShowFacesPolygons;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bShow)
+{
+	m_bShowConceptualFacesPolygons = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreConceptualFacesPolygonsShown() const
+{
+	return m_bShowConceptualFacesPolygons;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowLines(BOOL bShow)
+{
+	m_bShowLines = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreLinesShown() const
+{
+	return m_bShowLines;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::SetLineWidth(GLfloat fWidth)
+{
+	m_fLineWidth = fWidth;
+}
+
+// ------------------------------------------------------------------------------------------------
+GLfloat COpenGLRDFView::GetLineWidth() const
+{
+	return m_fLineWidth;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowPoints(BOOL bShow)
+{
+	m_bShowPoints = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::ArePointsShown() const
+{
+	return m_bShowPoints;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::SetPointSize(GLfloat fSize)
+{
+	m_fPointSize = fSize;
+}
+
+// ------------------------------------------------------------------------------------------------
+GLfloat COpenGLRDFView::GetPointSize() const
+{
+	return m_fPointSize;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowBoundingBoxes(BOOL bShow)
+{
+	m_bShowBoundingBoxes = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreBoundingBoxesShown() const
+{
+	return m_bShowBoundingBoxes;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowNormalVectors(BOOL bShow)
+{
+	m_bShowNormalVectors = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreNormalVectorsShown() const
+{
+	return m_bShowNormalVectors;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowTangentVectors(BOOL bShow)
+{
+	m_bShowTangenVectors = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreTangentVectorsShown() const
+{
+	return m_bShowTangenVectors;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ShowBiNormalVectors(BOOL bShow)
+{
+	m_bShowBiNormalVectors = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreBiNormalVectorsShown() const
+{
+	return m_bShowBiNormalVectors;
+}
+
+// ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::ScaleVectors(BOOL bShow)
+{
+	m_bScaleVectors = bShow;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL COpenGLRDFView::AreVectorsScaled() const
+{
+	return m_bScaleVectors;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::Reset()
+{
+	_reset();
+
+	m_bShowFaces = TRUE;
+	m_strCullFaces = CULL_FACES_NONE;
+	m_bShowFacesPolygons = FALSE;
+	m_bShowConceptualFacesPolygons = TRUE;
+	m_bShowLines = TRUE;
+	m_bShowPoints = TRUE;
+	m_bShowBoundingBoxes = FALSE;
+	m_bShowNormalVectors = FALSE;
+	m_bShowTangenVectors = FALSE;
+	m_bShowBiNormalVectors = FALSE;
+	m_bScaleVectors = FALSE;
+
+	_redraw();
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
 	m_fXAngle = fX;
@@ -137,7 +305,7 @@ void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
 	if (bRedraw)
 	{
 		_redraw();
-	}	
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -166,240 +334,6 @@ void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
 	fX = m_fXTranslation;
 	fY = m_fYTranslation;
 	fZ = m_fZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFaces(BOOL bShow)
-{
-	m_bShowFaces = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreFacesShown() const
-{
-	return m_bShowFaces;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
-{
-	m_strCullFaces = szMode;
-
-#ifdef _LINUX
-	m_pWnd->Refresh(false);
-#else
-	_redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-LPCTSTR COpenGLRDFView::GetCullFacesMode() const
-{
-	return m_strCullFaces;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFacesPolygons(BOOL bShow)
-{
-	m_bShowFacesPolygons = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreFacesPolygonsShown() const
-{
-	return m_bShowFacesPolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bShow)
-{
-	m_bShowConceptualFacesPolygons = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreConceptualFacesPolygonsShown() const
-{
-	return m_bShowConceptualFacesPolygons;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowLines(BOOL bShow)
-{
-	m_bShowLines = bShow;	
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreLinesShown() const
-{
-	return m_bShowLines;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetLineWidth(GLfloat fWidth)
-{
-	m_fLineWidth = fWidth;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat COpenGLRDFView::GetLineWidth() const
-{
-	return m_fLineWidth;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowPoints(BOOL bShow)
-{
-	m_bShowPoints = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::ArePointsShown() const
-{
-	return m_bShowPoints;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetPointSize(GLfloat fSize)
-{
-	m_fPointSize = fSize;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-GLfloat COpenGLRDFView::GetPointSize() const
-{
-	return m_fPointSize;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBoundingBoxes(BOOL bShow)
-{
-	m_bShowBoundingBoxes = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreBoundingBoxesShown() const
-{
-	return m_bShowBoundingBoxes;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowNormalVectors(BOOL bShow)
-{
-	m_bShowNormalVectors = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreNormalVectorsShown() const
-{
-	return m_bShowNormalVectors;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowTangentVectors(BOOL bShow)
-{
-	m_bShowTangenVectors = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreTangentVectorsShown() const
-{
-	return m_bShowTangenVectors;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBiNormalVectors(BOOL bShow)
-{
-	m_bShowBiNormalVectors = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreBiNormalVectorsShown() const
-{
-	return m_bShowBiNormalVectors;
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ScaleVectors(BOOL bShow)
-{
-	m_bScaleVectors = bShow;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreVectorsScaled() const
-{
-	return m_bScaleVectors;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -448,7 +382,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		fYmin, fYmax, 
 		fZmin, fZmax);	
 	
-	m_pOGLProgram->enableTexture(false);
+	m_pOGLProgram->_enableTexture(false);
 
 	/*
 	Non-transparent faces
@@ -538,11 +472,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				m_pFaceSelectionFrameBuffer->encoding().clear();
 
-#ifdef _LINUX
-                m_pWnd->Refresh(false);
-#else
-                _redraw();
-#endif // _LINUX
+				_redraw();
 
 				ASSERT(GetController() != nullptr);
 				GetController()->SelectInstance(this, m_pSelectedInstance);
@@ -642,7 +572,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnModelChanged()
+/*virtual*/ void COpenGLRDFView::OnModelChanged() /*override*/
 {
 	CWaitCursor waitCursor;
 
@@ -977,15 +907,11 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		vecPointsCohorts.clear();
 	}
 	
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
+	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged()
+/*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged() /*override*/
 {
 	/*
 	* Center
@@ -1030,7 +956,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
+/*virtual*/ void COpenGLRDFView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
 {
 	/*
 	* Reload model
@@ -1044,7 +970,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/)
+/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -1058,7 +984,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
+/*virtual*/ void COpenGLRDFView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -1072,7 +998,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesDeleted(CRDFView * /*pSender*/)
+/*virtual*/ void COpenGLRDFView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
 {
 	/*
 	* Reload model
@@ -1086,7 +1012,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnMeasurementsAdded(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
+/*virtual*/ void COpenGLRDFView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -1100,31 +1026,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::Reset()
-{
-	_reset();
-
-	m_bShowFaces = TRUE;
-	m_strCullFaces = CULL_FACES_NONE;
-	m_bShowFacesPolygons = FALSE;
-	m_bShowConceptualFacesPolygons = TRUE;
-	m_bShowLines = TRUE;
-	m_bShowPoints = TRUE;
-	m_bShowBoundingBoxes = FALSE;
-	m_bShowNormalVectors = FALSE;
-	m_bShowTangenVectors = FALSE;
-	m_bShowBiNormalVectors = FALSE;
-	m_bScaleVectors = FALSE;
-
-#ifdef _LINUX
-    m_pWnd->Refresh(false);
-#else
-    _redraw();
-#endif // _LINUX
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceSelected(CRDFView * pSender)
+/*virtual*/ void COpenGLRDFView::OnInstanceSelected(CRDFView* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -1152,16 +1054,12 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
-#ifdef _LINUX
-        m_pWnd->Refresh(false);
-#else
-        _redraw();
-#endif // _LINUX
+		_redraw();
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertySelected()
+/*virtual*/ void COpenGLRDFView::OnInstancePropertySelected() /*override*/
 {
 	ASSERT(GetController() != nullptr);
 
@@ -1182,16 +1080,12 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
-#ifdef _LINUX
-        m_pWnd->Refresh(false);
-#else
-        _redraw();
-#endif // _LINUX
+		_redraw();
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesEnabledStateChanged()
+/*virtual*/ void COpenGLRDFView::OnInstancesEnabledStateChanged() /*override*/
 {
 	/*
 	* Reload model
@@ -1202,6 +1096,57 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	* Restore the selection
 	*/
 	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumPropertyType enPropertyType) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enPropertyType)
+	{
+		case enumPropertyType::ShowFaces:
+		case enumPropertyType::CullFaces:
+		case enumPropertyType::ShowFacesWireframes:
+		case enumPropertyType::ShowConceptualFacesWireframes:
+		case enumPropertyType::ShowLines:
+		case enumPropertyType::LineWidth:
+		case enumPropertyType::ShowPoints:
+		case enumPropertyType::PointSize:
+		case enumPropertyType::ShowNormalVectors:
+		case enumPropertyType::ShowTangenVectors:
+		case enumPropertyType::ShowBiNormalVectors:
+		case enumPropertyType::ScaleVectors:
+		case enumPropertyType::ShowBoundingBoxes:
+		case enumPropertyType::PointLightingLocation:
+		case enumPropertyType::AmbientLightWeighting:
+		case enumPropertyType::SpecularLightWeighting:
+		case enumPropertyType::DiffuseLightWeighting:
+		case enumPropertyType::MaterialShininess:
+		case enumPropertyType::Contrast:
+		case enumPropertyType::Brightness:
+		case enumPropertyType::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		case enumPropertyType::VisibleValuesCountLimit:
+		case enumPropertyType::ScalelAndCenter:
+		{
+			// Not supported
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enPropertyType)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1251,7 +1196,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 		}
 	}
 	
-	m_pOGLProgram->enableBlinnPhongModel(true);
+	m_pOGLProgram->_enableBlinnPhongModel(true);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1288,16 +1233,16 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				
 				if (pMaterial->hasTexture())
 				{
-					m_pOGLProgram->enableTexture(true);
+					m_pOGLProgram->_enableTexture(true);
 
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
 
-					m_pOGLProgram->setSampler(0);
+					m_pOGLProgram->_setSampler(0);
 				}
 				else
 				{			
-					m_pOGLProgram->setMaterial(pMaterial);
+					m_pOGLProgram->_setMaterial(pMaterial);
 				}
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
@@ -1309,7 +1254,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 				if (pMaterial->hasTexture())
 				{
-					m_pOGLProgram->enableTexture(false);
+					m_pOGLProgram->_enableTexture(false);
 				}
 			} // for (auto pConcFacesCohort ...
 		} // for (auto pInstance ...
@@ -1354,9 +1299,9 @@ void COpenGLRDFView::DrawFacesPolygons()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1412,9 +1357,9 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false); 
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1466,9 +1411,9 @@ void COpenGLRDFView::DrawLines()
 
 	auto begin = std::chrono::steady_clock::now();
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1522,8 +1467,8 @@ void COpenGLRDFView::DrawPoints()
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);	
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1543,7 +1488,7 @@ void COpenGLRDFView::DrawPoints()
 					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
 					pCohort->getMaterial();				
 				
-				m_pOGLProgram->setAmbientColor(
+				m_pOGLProgram->_setAmbientColor(
 					pMaterial->getDiffuseColor().r(),
 					pMaterial->getDiffuseColor().g(),
 					pMaterial->getDiffuseColor().b());
@@ -1590,9 +1535,9 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	float fZTranslation = 0.f;
 	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();
 
@@ -1709,7 +1654,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 		// Update Model-View Matrix
-		m_pOGLProgram->setModelViewMatrix(matModelView);
+		m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 		_vector3d vecBoundingBoxMin = { pInstance->getBoundingBoxMin()->x, pInstance->getBoundingBoxMin()->y, pInstance->getBoundingBoxMin()->z };
 		_vector3d vecBoundingBoxMax = { pInstance->getBoundingBoxMax()->x, pInstance->getBoundingBoxMax()->y, pInstance->getBoundingBoxMax()->z };
@@ -1778,7 +1723,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	} // for (; itInstance != ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 }
@@ -1810,9 +1755,9 @@ void COpenGLRDFView::DrawNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();
 
@@ -2031,9 +1976,9 @@ void COpenGLRDFView::DrawTangentVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();
 
@@ -2252,9 +2197,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();
 
@@ -2514,8 +2459,8 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -2537,7 +2482,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
 			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
 
-			m_pOGLProgram->setAmbientColor(
+			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
 				itSelectionColor->second.g(),
 				itSelectionColor->second.b());
@@ -2639,8 +2584,8 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();	
 
@@ -2695,7 +2640,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 			auto itSelectionColor = m_pFaceSelectionFrameBuffer->encoding().find(iTriangle);
 			ASSERT(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
 
-			m_pOGLProgram->setAmbientColor(
+			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
 				itSelectionColor->second.g(),
 				itSelectionColor->second.b());
@@ -2739,9 +2684,9 @@ void COpenGLRDFView::DrawPointedFace()
 	ASSERT(!vecTriangles.empty());
 	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-	m_pOGLProgram->enableBlinnPhongModel(false);
-	m_pOGLProgram->setAmbientColor(0.f, 1.f, 0.f);
-	m_pOGLProgram->setTransparency(1.f);
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();	
 
@@ -2871,11 +2816,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			{
 				m_pPointedInstance = pPointedInstance;
 
-#ifdef _LINUX
-                m_pWnd->Refresh(false);
-#else
-                _redraw();
-#endif // _LINUX
+				_redraw();
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 
@@ -2936,11 +2877,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 			{
 				m_iPointedFace = iPointedFace;
 
-#ifdef _LINUX
-                m_pWnd->Refresh(false);
-#else
-                _redraw();
-#endif // _LINUX
+				_redraw();
 			}
 		} // if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && ...
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...

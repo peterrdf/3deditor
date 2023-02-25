@@ -713,10 +713,52 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	if (enPropertyType == enumPropertyType::VisibleValuesCountLimit)
+	switch (enPropertyType)
 	{
-		UpdateView();
-	}
+		case enumPropertyType::ShowFaces:
+		case enumPropertyType::CullFaces:
+		case enumPropertyType::ShowFacesWireframes:
+		case enumPropertyType::ShowConceptualFacesWireframes:
+		case enumPropertyType::ShowLines:
+		case enumPropertyType::LineWidth:
+		case enumPropertyType::ShowPoints:
+		case enumPropertyType::PointSize:
+		case enumPropertyType::ShowNormalVectors:
+		case enumPropertyType::ShowTangenVectors:
+		case enumPropertyType::ShowBiNormalVectors:
+		case enumPropertyType::ScaleVectors:
+		case enumPropertyType::ShowBoundingBoxes:
+		case enumPropertyType::PointLightingLocation:
+		case enumPropertyType::AmbientLightWeighting:
+		case enumPropertyType::SpecularLightWeighting:
+		case enumPropertyType::DiffuseLightWeighting:
+		case enumPropertyType::MaterialShininess:
+		case enumPropertyType::Contrast:
+		case enumPropertyType::Brightness:
+		case enumPropertyType::Gamma:
+		{
+			// Not supported
+		}
+		break;
+
+		case enumPropertyType::VisibleValuesCountLimit:
+		{
+			UpdateView();
+		}
+		break;
+
+		case enumPropertyType::ScalelAndCenter:
+		{
+			// Not supported
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enPropertyType)
 }
 
 // ------------------------------------------------------------------------------------------------

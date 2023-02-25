@@ -7,12 +7,12 @@ in vec3 vTransformedNormal;
 in float vUseTexture;
 in vec2 vTextureCoord;
 
-uniform vec3 uPointLightingLocation;
+uniform vec3 uPointLightingLocation = vec3(0.0, 0.0, 10000.0);
 uniform vec3 uAmbientLightWeighting = vec3(0.001, 0.001, 0.001);
 uniform vec3 uSpecularLightWeighting = vec3(0.8, 0.8, 0.8);
 uniform vec3 uDiffuseLightWeighting = vec3(0.8, 0.8, 0.8);
 
-uniform float uMaterialShininess;
+uniform float uMaterialShininess = 30.0;
 
 // default: 0.75, 0.125, 2.2
 uniform float uContrast = 1.50;   

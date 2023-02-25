@@ -4,8 +4,8 @@ in vec3 aVertexPosition;
 in vec3 aVertexNormal;
 in vec2 aTextureCoord;
 
-uniform float uUseBlinnPhongModel;
-uniform float uUseTexture;
+uniform float uUseBlinnPhongModel = 1.0;
+uniform float uUseTexture = 0.0;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
