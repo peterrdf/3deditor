@@ -720,9 +720,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 		case enumApplicationProperty::ShowFacesWireframes:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::LineWidth:
 		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::PointSize:
 		case enumApplicationProperty::ShowNormalVectors:
 		case enumApplicationProperty::ShowTangenVectors:
 		case enumApplicationProperty::ShowBiNormalVectors:

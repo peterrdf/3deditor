@@ -1071,31 +1071,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
-				case enumApplicationProperty::LineWidth:
-				{
-					int iValue = _wtoi((LPCTSTR)strValue);
-
-					pOpenGLView->SetLineWidth((GLfloat)iValue);
-
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::LineWidth);
-				}
-				break;
-
 				case enumApplicationProperty::ShowPoints:
 				{
 					pOpenGLView->ShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
-				}
-				break;
-
-				case enumApplicationProperty::PointSize:
-				{
-					int iValue = _wtoi((LPCTSTR)strValue);
-
-					pOpenGLView->SetPointSize((GLfloat)iValue);
-
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointSize);
 				}
 				break;
 
