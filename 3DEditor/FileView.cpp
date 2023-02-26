@@ -715,6 +715,8 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	switch (enApplicationProperty)
 	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::CullFaces:
 		case enumApplicationProperty::ShowFacesWireframes:

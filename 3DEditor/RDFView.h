@@ -9,6 +9,8 @@ class CRDFController;
 // ------------------------------------------------------------------------------------------------
 enum class enumApplicationProperty
 {
+	Projection,
+	View,
 	ShowFaces,
 	CullFaces,
 	ShowFacesWireframes,

@@ -336,6 +336,8 @@ void CMy3DEditorView::OnViewTop()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Top);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -344,6 +346,8 @@ void CMy3DEditorView::OnViewLeft()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Left);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -352,6 +356,8 @@ void CMy3DEditorView::OnViewRight()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Right);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -360,6 +366,8 @@ void CMy3DEditorView::OnViewBottom()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Bottom);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -368,6 +376,8 @@ void CMy3DEditorView::OnViewFront()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Front);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -376,6 +386,8 @@ void CMy3DEditorView::OnViewBack()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setView(enumView::Back);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
@@ -384,6 +396,8 @@ void CMy3DEditorView::OnProjectionPerspective()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setProjection(enumProjection::Perspective);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -398,6 +412,8 @@ void CMy3DEditorView::OnProjectionIsometric()
 	if (m_pOpenGLView != nullptr)
 	{
 		m_pOpenGLView->_setProjection(enumProjection::Isometric);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -413,7 +429,7 @@ void CMy3DEditorView::OnShowFaces()
 	{
 		m_pOpenGLView->ShowFaces(!m_pOpenGLView->AreFacesShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowFaces);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFaces);
 	}
 }
 
@@ -429,7 +445,7 @@ void CMy3DEditorView::OnShowFacesWireframes()
 	{
 		m_pOpenGLView->ShowFacesPolygons(!m_pOpenGLView->AreFacesPolygonsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowFacesWireframes);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFacesWireframes);
 	}
 }
 
@@ -445,7 +461,7 @@ void CMy3DEditorView::OnShowConcFacesWireframes()
 	{
 		m_pOpenGLView->ShowConceptualFacesPolygons(!m_pOpenGLView->AreConceptualFacesPolygonsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowConceptualFacesWireframes);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
@@ -461,7 +477,7 @@ void CMy3DEditorView::OnShowLines()
 	{
 		m_pOpenGLView->ShowLines(!m_pOpenGLView->AreLinesShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowLines);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowLines);
 	}
 }
 
@@ -477,7 +493,7 @@ void CMy3DEditorView::OnShowPoints()
 	{
 		m_pOpenGLView->ShowPoints(!m_pOpenGLView->ArePointsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowPoints);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowPoints);
 	}
 }
 
@@ -493,7 +509,7 @@ void CMy3DEditorView::OnNormalVectors()
 	{
 		m_pOpenGLView->ShowNormalVectors(!m_pOpenGLView->AreNormalVectorsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowNormalVectors);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowNormalVectors);
 	}
 }
 
@@ -509,7 +525,7 @@ void CMy3DEditorView::OnShowTangentVectors()
 	{
 		m_pOpenGLView->ShowTangentVectors(!m_pOpenGLView->AreTangentVectorsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowTangenVectors);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowTangenVectors);
 	}
 }
 
@@ -525,7 +541,7 @@ void CMy3DEditorView::OnShowBiNormalVectors()
 	{
 		m_pOpenGLView->ShowBiNormalVectors(!m_pOpenGLView->AreBiNormalVectorsShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowBiNormalVectors);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBiNormalVectors);
 	}
 }
 
@@ -541,7 +557,7 @@ void CMy3DEditorView::OnShowBoundingBoxes()
 	{
 		m_pOpenGLView->ShowBoundingBoxes(!m_pOpenGLView->AreBoundingBoxesShown());
 
-		GetController()->OnApplicationPropertyChanged(m_pOpenGLView, enumApplicationProperty::ShowBoundingBoxes);
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBoundingBoxes);
 	}
 }
 

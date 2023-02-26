@@ -1114,6 +1114,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	switch (enApplicationProperty)
 	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::CullFaces:
 		case enumApplicationProperty::ShowFacesWireframes:
