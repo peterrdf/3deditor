@@ -75,7 +75,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 	if (!CreateDirectory((LPCTSTR)strTestsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
-		AfxMessageBox(L"Error: can not create tests folder.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create tests folder.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -101,7 +101,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 	if (lsInputFiles.IsEmpty())
 	{
-		AfxMessageBox(L"Error: there is no test data.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: there is no test data.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -118,7 +118,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		if (!CreateDirectory((LPCTSTR)stTestDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 		{
-			AfxMessageBox(L"Error: can not create test folder.");
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create test folder.", L"Error", MB_ICONERROR | MB_OK);
 
 			continue;
 		}
@@ -146,7 +146,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 			
 			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
-				AfxMessageBox(L"Error: Can not save the screenshot.");
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
 				m_pController->EndTestMode();
 
@@ -169,7 +169,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
-				AfxMessageBox(L"Error: Can not save the screenshot.");
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
 				m_pController->EndTestMode();
 
@@ -192,7 +192,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
-				AfxMessageBox(L"Error: Can not save the screenshot.");
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
 				m_pController->EndTestMode();
 
@@ -220,7 +220,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 
 	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
-		AfxMessageBox(L"Error: can not create test report folder.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create test report folder.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -230,7 +230,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 
 	if (lsInputFiles.IsEmpty())
 	{
-		AfxMessageBox(L"Error: there is no test data.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: there is no test data.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -238,7 +238,7 @@ void CTestManager::ExecuteTests(const wchar_t* szTestsFolder)
 //	CTestHtmlReport testHtmlReport;
 //	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
 //	{
-//		AfxMessageBox(L"Error: can not create test report.");
+// 	   ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create test report.", L"Error", MB_ICONERROR | MB_OK);
 //
 //		return;
 //	}

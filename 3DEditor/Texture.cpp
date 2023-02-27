@@ -271,7 +271,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
        CString strError = L"Unable to open image file:\n";
 	   strError += lpszPathName;
 
-	   AfxMessageBox(strError);
+       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -290,7 +290,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
        CString strError = L"Unsupported file type read:\n";
 	   strError += lpszPathName;
 
-	   AfxMessageBox(strError);
+       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -321,7 +321,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
        CString strError = L"Unsupported file type read:\n";
 	   strError += lpszPathName;
 
-	   AfxMessageBox(strError);
+       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -357,7 +357,7 @@ bool CTexture::ReadDIBFile(istream &file)
 #ifdef _LINUX
        wxLogError(L"Unsupported image file type");
 #else
-       AfxMessageBox(L"Unsupported image file type");
+       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported image file type.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -368,7 +368,7 @@ bool CTexture::ReadDIBFile(istream &file)
 #ifdef _LINUX
        wxLogError(L"Note a BMP file");
 #else
-       AfxMessageBox(L"Note a BMP file");
+        ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Not a BMP file.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -387,7 +387,7 @@ bool CTexture::ReadDIBFile(istream &file)
 #ifdef _LINUX
        wxLogError(L"Premature end of file in image file");
 #else
-       AfxMessageBox(L"Premature end of file in image file");
+      ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Premature end of file in image file.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -400,7 +400,7 @@ bool CTexture::ReadDIBFile(istream &file)
 #ifdef _LINUX
       wxLogError(L"Unsupported file type");
 #else
-      AfxMessageBox(L"Unsupported file type");
+      ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported file type.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;
@@ -550,7 +550,7 @@ bool CTexture::ReadPPMFile(istream &file)
 #ifdef _LINUX
       wxLogError(L"Invalid file type!");
 #else
-      AfxMessageBox(L"Invalid file type!");
+       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid file type.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
       return false;

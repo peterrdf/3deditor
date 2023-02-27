@@ -29,27 +29,17 @@ void CCompareResults::Execute()
 
 	if (lsTests.IsEmpty())
 	{
-		AfxMessageBox(L"Error: there is no test data.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: there is no test data.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}	
 
 	if (!CreateDirectory((LPCTSTR)m_strTestReportDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
-		AfxMessageBox(L"Error: can not create test report folder.");
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create test report folder.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
-
-	CString strMessage;
-
-//	CTestHtmlReport testHtmlReport;
-//	if (!testHtmlReport.Initialize((LPCTSTR)m_strTestReportDir))
-//	{
-//		AfxMessageBox(L"Error: can not create test report.");
-
-//		return;
-//	}
 
 	for (POSITION posTest = lsTests.GetHeadPosition(); posTest != nullptr;)
 	{
@@ -62,14 +52,8 @@ void CCompareResults::Execute()
 		CStringList lsTestFiles;
 		FindFiles((LPCTSTR)stTestDir, L"*.3deditortest", lsTestFiles);
 
-//		testHtmlReport.BeginTest((LPCTSTR)strTest);
-
 		if (lsTestFiles.IsEmpty())
 		{
-//			testHtmlReport.WriteError(L"Error: There are no tests.");
-
-//			testHtmlReport.EndTest();
-
 			continue;
 		}
 
@@ -89,16 +73,12 @@ void CCompareResults::Execute()
 			strTest2FilePath += "\\";
 			strTest2FilePath += strTestFileName;
 
-			strMessage.Format(L"Test: '%s' vs '%s'", (LPCTSTR)m_strTestResults1, (LPCTSTR)m_strTestResults2);
-//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
-
 			TEST test1;
 			if (!LoadTest(strTest1FilePath, test1))
 			{
-				ASSERT(FALSE);				
-				
-				strMessage.Format(L"Error: can not load '%s'", (LPCTSTR)strTest1FilePath);
-//				testHtmlReport.WriteError((LPCTSTR)strMessage);
+				ASSERT(FALSE);
+
+				continue;
 			}			
 
 			TEST test2;
@@ -106,15 +86,14 @@ void CCompareResults::Execute()
 			{
 				ASSERT(FALSE);
 				
-				strMessage.Format(L"Error: can not load '%s'", (LPCTSTR)strTest2FilePath);
-//				testHtmlReport.WriteError((LPCTSTR)strMessage);
+				continue; 
 			}
 
 			if (!AreTestIdentical(test1, test2))
 			{
 				ASSERT(FALSE);
-				
-//				testHtmlReport.WriteError(L"Error: test settings do not match.");
+
+				continue;
 			}
 
 			CString strScreenshotFilePath1 = m_strTestResults1;
@@ -128,20 +107,8 @@ void CCompareResults::Execute()
 			strScreenshotFilePath2 += strTest;
 			strScreenshotFilePath2 += "\\";
 			strScreenshotFilePath2 += test2.SCREENSHOT;
-
-			strMessage.Format(L"Revision: '%s' vs '%s'", (LPCTSTR)test1.REVISION, (LPCTSTR)test2.REVISION);
-//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
-
-			strMessage.Format(L"Screenshot: '%s' vs '%s'", (LPCTSTR)strScreenshotFilePath1, (LPCTSTR)strScreenshotFilePath2);
-//			testHtmlReport.WriteInfo((LPCTSTR)strMessage);
-
-//			Compare((LPCTSTR)strTest, (LPCTSTR)strScreenshotFilePath1, (LPCTSTR)strScreenshotFilePath2, &testHtmlReport);
-
-//			testHtmlReport.EndTest();
 		} // for (POSITION posTestFile = ...
 	} // for (POSITION posTest = ...
-
-//	testHtmlReport.End();
 }
 
 // ------------------------------------------------------------------------------------------------

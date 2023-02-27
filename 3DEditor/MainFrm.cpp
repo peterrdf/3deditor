@@ -123,10 +123,6 @@ void CMainFrame::GenerateTests(const CString& strInputDataDir, const CString& st
 	testManager.GenerateTests(strWildcard);
 
 	testLayout.Restore();
-
-	//GetController()->LoadModel(nullptr);
-
-	//AfxMessageBox(L"Done.");
 }
 
 // CMainFrame construction/destruction
@@ -556,38 +552,3 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	return TRUE;
 }
-
-//void CMainFrame::OnTestExecuteTests()
-//{
-//	CFolderPickerDialog folderPickerDialog;
-//	folderPickerDialog.m_ofn.lpstrTitle = _T("Select input data folder");
-//	if (folderPickerDialog.DoModal() != IDOK)
-//	{
-//		return;
-//	}
-//
-//	CWaitCursor waitCursor;
-//
-//	CString strInputDataDir = folderPickerDialog.GetPathName();
-//
-//	folderPickerDialog.m_ofn.lpstrTitle = _T("Select tests folder");
-//	if (folderPickerDialog.DoModal() != IDOK)
-//	{
-//		return;
-//	}
-//
-//	CString strTestsOutputDir = folderPickerDialog.GetPathName();
-//
-//	CView* pView = GetView();
-//	ASSERT(pView != nullptr);
-//
-//	CTestLayout testLayout(this, pView);
-//	testLayout.Set();
-//
-//	CTestManager testManager(GetController(), strInputDataDir);
-//	testManager.ExecuteTests(strTestsOutputDir);
-//
-//	testLayout.Restore();
-//
-//	AfxMessageBox(L"Done.");
-//}

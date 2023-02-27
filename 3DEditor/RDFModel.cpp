@@ -30,7 +30,7 @@ struct CityJSONLog : CityJsonRDF::ILog
 		m_logFile = "cityJsonRDF.log.txt";
 		m_fp = fopen(m_logFile, "wt");
 		if (!m_fp) {
-			AfxMessageBox(L"Can not create log file, change name in RDFModel.cpp");
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Can not create log file, change name in RDFModel.cpp.", L"Error", MB_ICONERROR | MB_OK);
 		}
 #endif
 	}

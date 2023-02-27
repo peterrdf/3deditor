@@ -709,7 +709,7 @@ void CClassView::OnUpdateSort(CCmdUI* pCmdUI)
 
 void CClassView::OnClassAddMemberFunction()
 {
-	AfxMessageBox(_T("Add member function..."));
+	::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"TODO.", L"Error", MB_ICONERROR | MB_OK);
 }
 
 void CClassView::OnClassAddMemberVariable()
