@@ -124,8 +124,17 @@ public: // Methods
 	bool getEnable() const;
 	
 	void ResetScaleAndCenter();
-	void CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax);
-	void ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion);
+	void CalculateMinMax(
+		float& fXmin, float& fXmax, 
+		float& fYmin, float& fYmax, 
+		float& fZmin, float& fZmax);
+
+	void ScaleAndCenter(
+		float fXmin, float fXmax, 
+		float fYmin, float fYmax, 
+		float fZmin, float fZmax, 
+		float fResoltuion,
+		bool bScale);
 	
 	GLuint& VBO();
 	GLsizei& VBOOffset();	

@@ -455,7 +455,10 @@ void CRDFModel::ScaleAndCenter()
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
 		itInstance->second->ResetScaleAndCenter();
-		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->CalculateMinMax(
+			m_fXmin, m_fXmax, 
+			m_fYmin, m_fYmax, 
+			m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -490,13 +493,40 @@ void CRDFModel::ScaleAndCenter()
 	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f",
 		m_fBoundingSphereDiameter);
 
+	bool bScale = true;
+	if (((m_fXmax - m_fXmin) / m_fBoundingSphereDiameter) <= 0.0001)
+	{
+		bScale = false;
+	}
+	else if (((m_fYmax - m_fYmin) / m_fBoundingSphereDiameter) <= 0.0001)
+	{
+		bScale = false;
+	}
+	else if (((m_fZmax - m_fZmin) / m_fBoundingSphereDiameter) <= 0.0001)
+	{
+		bScale = false;
+	}
+
+	if (!bScale)
+	{
+		CString strWarning = L"'Scale' algorithm cannot be used.\n";
+		strWarning += L"Please, use 'Zoom to/extent' to explore the model.";
+
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strWarning, L"Warning", MB_ICONWARNING | MB_OK);
+	}
+
 	/*
 	* Scale and Center
 	*/
 	itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		itInstance->second->ScaleAndCenter(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax, m_fBoundingSphereDiameter);
+		itInstance->second->ScaleAndCenter(
+			m_fXmin, m_fXmax, 
+			m_fYmin, m_fYmax, 
+			m_fZmin, m_fZmax, 
+			m_fBoundingSphereDiameter,
+			bScale);
 	}
 
 	/*
@@ -514,7 +544,10 @@ void CRDFModel::ScaleAndCenter()
 	{
 		if (itInstance->second->getEnable())
 		{
-			itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+			itInstance->second->CalculateMinMax(
+				m_fXmin, m_fXmax, 
+				m_fYmin, m_fYmax, 
+				m_fZmin, m_fZmax);
 		}
 	}
 
@@ -564,9 +597,12 @@ void CRDFModel::ScaleAndCenter()
 	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	if (bScale)
+	{
+		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	}	
 }
 
 // ------------------------------------------------------------------------------------------------

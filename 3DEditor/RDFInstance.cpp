@@ -359,7 +359,10 @@ void CRDFInstance::ResetScaleAndCenter()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, float & fYmax, float & fZmin, float & fZmax)
+void CRDFInstance::CalculateMinMax(
+	float& fXmin, float& fXmax, 
+	float& fYmin, float& fYmax, 
+	float& fZmin, float& fZmax)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -488,7 +491,12 @@ void CRDFInstance::CalculateMinMax(float & fXmin, float & fXmax, float & fYmin, 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float fYmax, float fZmin, float fZmax, float fResoltuion)
+void CRDFInstance::ScaleAndCenter(
+	float fXmin, float fXmax, 
+	float fYmin, float fYmax, 
+	float fZmin, float fZmax, 
+	float fResoltuion,
+	bool bScale)
 {
 	if (getVerticesCount() == 0)
 	{
@@ -511,9 +519,12 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
-		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
-		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		if (bScale)
+		{
+			m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] / (fResoltuion / 2.0f);
+			m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / (fResoltuion / 2.0f);
+			m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] / (fResoltuion / 2.0f);
+		}		
 	}
 
 	/**
@@ -531,9 +542,12 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 	m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	m_vecBoundingBoxMin->x = m_vecBoundingBoxMin->x / (fResoltuion / 2.0f);
-	m_vecBoundingBoxMin->y = m_vecBoundingBoxMin->y / (fResoltuion / 2.0f);
-	m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z / (fResoltuion / 2.0f);
+	if (bScale)
+	{
+		m_vecBoundingBoxMin->x = m_vecBoundingBoxMin->x / (fResoltuion / 2.0f);
+		m_vecBoundingBoxMin->y = m_vecBoundingBoxMin->y / (fResoltuion / 2.0f);
+		m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z / (fResoltuion / 2.0f);
+	}
 
 	/**
 	* Bounding box - Max
@@ -550,18 +564,24 @@ void CRDFInstance::ScaleAndCenter(float fXmin, float fXmax, float fYmin, float f
 	m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	m_vecBoundingBoxMax->x = m_vecBoundingBoxMax->x / (fResoltuion / 2.0f);
-	m_vecBoundingBoxMax->y = m_vecBoundingBoxMax->y / (fResoltuion / 2.0f);
-	m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z / (fResoltuion / 2.0f);
+	if (bScale)
+	{
+		m_vecBoundingBoxMax->x = m_vecBoundingBoxMax->x / (fResoltuion / 2.0f);
+		m_vecBoundingBoxMax->y = m_vecBoundingBoxMax->y / (fResoltuion / 2.0f);
+		m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z / (fResoltuion / 2.0f);
+	}	
 
 	/**
 	* Bounding box - Transformation
 	*/
 
 	// [-1.0 -> 1.0]
-	m_mtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
-	m_mtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
-	m_mtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
+	if (bScale)
+	{
+		m_mtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
+		m_mtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
+		m_mtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
+	}	
 }
 
 // ------------------------------------------------------------------------------------------------
