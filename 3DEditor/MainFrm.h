@@ -58,13 +58,13 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBar       m_wndToolBar;
-	CMFCStatusBar     m_wndStatusBar;
-	CMFCToolBarImages m_UserImages;
-	CDesignTreeView         m_wndFileView;
-	CClassView        m_wndClassView;
-	CPropertiesWnd    m_wndProperties;
+	CMFCMenuBar       m_menuBar;
+	CMFCToolBar       m_toolBar;
+	CMFCStatusBar     m_statusBar;
+	CMFCToolBarImages m_userImages;
+	CDesignTreeView   m_designTreeView;
+	CClassView        m_classView;
+	CPropertiesWnd    m_propertiesView;
 
 // Generated message map functions
 protected:
@@ -121,13 +121,13 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	void Set()
 	{
-		m_bInstancesPaneVisisble = m_pMainFrame->m_wndFileView.IsVisible();
-		m_bClassPaneVisisble = m_pMainFrame->m_wndClassView.IsVisible();
-		m_bPropertiesPaneVisisble = m_pMainFrame->m_wndClassView.IsVisible();
+		m_bInstancesPaneVisisble = m_pMainFrame->m_designTreeView.IsVisible();
+		m_bClassPaneVisisble = m_pMainFrame->m_classView.IsVisible();
+		m_bPropertiesPaneVisisble = m_pMainFrame->m_classView.IsVisible();
 
-		m_pMainFrame->m_wndFileView.ShowPane(FALSE, FALSE, FALSE);
-		m_pMainFrame->m_wndClassView.ShowPane(FALSE, FALSE, FALSE);
-		m_pMainFrame->m_wndProperties.ShowPane(FALSE, FALSE, FALSE);
+		m_pMainFrame->m_designTreeView.ShowPane(FALSE, FALSE, FALSE);
+		m_pMainFrame->m_classView.ShowPane(FALSE, FALSE, FALSE);
+		m_pMainFrame->m_propertiesView.ShowPane(FALSE, FALSE, FALSE);
 
 		m_pView->GetWindowRect(&m_rcView);
 
@@ -143,17 +143,17 @@ public: // Methods
 
 		if (m_bInstancesPaneVisisble)
 		{
-			m_pMainFrame->m_wndFileView.ShowPane(TRUE, FALSE, TRUE);
+			m_pMainFrame->m_designTreeView.ShowPane(TRUE, FALSE, TRUE);
 		}
 
 		if (m_bClassPaneVisisble)
 		{
-			m_pMainFrame->m_wndClassView.ShowPane(TRUE, FALSE, TRUE);
+			m_pMainFrame->m_classView.ShowPane(TRUE, FALSE, TRUE);
 		}
 
 		if (m_bPropertiesPaneVisisble)
 		{
-			m_pMainFrame->m_wndProperties.ShowPane(TRUE, FALSE, TRUE);
+			m_pMainFrame->m_propertiesView.ShowPane(TRUE, FALSE, TRUE);
 		}
 	}
 };

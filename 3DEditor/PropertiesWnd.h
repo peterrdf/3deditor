@@ -310,7 +310,7 @@ public:
 protected:
 	CFont m_fntPropList;
 	CComboBox m_wndObjectCombo;
-	CPropertiesToolBar m_wndToolBar;
+	CPropertiesToolBar m_toolBar;
 	CMFCPropertyGridCtrl m_wndPropList;
 
 // Implementation

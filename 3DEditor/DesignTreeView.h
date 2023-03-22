@@ -92,9 +92,9 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_wndFileView;
-	CImageList m_FileViewImages;
-	CDesignTreeViewToolBar m_wndToolBar;
+	CViewTree m_treeCtrl;
+	CImageList m_images;
+	CDesignTreeViewToolBar m_toolBar;
 	UINT m_nCurrSort;
 
 protected:

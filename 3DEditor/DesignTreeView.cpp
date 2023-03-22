@@ -72,7 +72,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	if (m_hSelectedItem != nullptr)
 	{
-		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
+		m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 		m_hSelectedItem = nullptr;
 	}
 
@@ -84,10 +84,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		/*
 		* Select the Model by default
 		*/
-		HTREEITEM hModel = m_wndFileView.GetChildItem(nullptr);
+		HTREEITEM hModel = m_treeCtrl.GetChildItem(nullptr);
 		ASSERT(hModel != nullptr);
 
-		m_wndFileView.SelectItem(hModel);
+		m_treeCtrl.SelectItem(hModel);
 
 		return;
 	}
@@ -95,7 +95,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	/*
 	* Disable the drawing
 	*/
-	m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pSelectedInstance->getInstance());
 	if (itInstance2Item == m_mapInstance2Item.end())
@@ -123,7 +123,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			{
 				// The item is visible	
 				ASSERT(!itInstance2Item->second->items().empty());
-				m_wndFileView.Expand(itInstance2Item->second->items()[0], TVE_EXPAND);
+				m_treeCtrl.Expand(itInstance2Item->second->items()[0], TVE_EXPAND);
 			} 
 			else
 			{
@@ -142,16 +142,16 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		m_hSelectedItem = itInstance2Item->second->items()[0];
 
-		m_wndFileView.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
-		m_wndFileView.EnsureVisible(m_hSelectedItem);
-		m_wndFileView.SelectItem(m_hSelectedItem);
+		m_treeCtrl.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
+		m_treeCtrl.EnsureVisible(m_hSelectedItem);
+		m_treeCtrl.SelectItem(m_hSelectedItem);
 	}
 	else
 	{
 		// The item is not visible - it is in "..." group
 		if (m_hSelectedItem != nullptr)
 		{
-			m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
+			m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 			m_hSelectedItem = nullptr;
 		}
 
@@ -161,7 +161,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	/*
 	* Enable the drawing
 	*/
-	m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	*/
 	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && (pProperty->getType() == TYPE_OBJECTTYPE))
 	{
-		HTREEITEM hModel = m_wndFileView.GetChildItem(nullptr);
+		HTREEITEM hModel = m_treeCtrl.GetChildItem(nullptr);
 		ASSERT(hModel != nullptr);
 
 		UpdateRootItemsUnreferencedItemsView(pModel->GetModel(), hModel);
@@ -220,10 +220,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			vector<HTREEITEM> vecValues;
 			HTREEITEM hCardinality = nullptr;
 
-			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
+			HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->items()[iItem]);
 			while (hChild != nullptr)
 			{
-				CString strText = m_wndFileView.GetItemText(hChild);
+				CString strText = m_treeCtrl.GetItemText(hChild);
 				if (strText.Find(_T("owl:cardinality : ")) == 0)
 				{
 					hCardinality = hChild;
@@ -236,13 +236,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					}
 				}
 
-				hChild = m_wndFileView.GetNextSiblingItem(hChild);
+				hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 			}
 
 			/*
 			* Disable the drawing
 			*/
-			m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+			m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 			/*
 			* Update the cardinality
@@ -252,7 +252,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.SetItemText(hCardinality, strCardinality.c_str());
+			m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
 			/*
 			* Delete all values
@@ -269,7 +269,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					RemoveItemData(vecDescendants[iDescendant]);
 				}
 
-				m_wndFileView.DeleteItem(vecValues[iValue]);
+				m_treeCtrl.DeleteItem(vecValues[iValue]);
 			} // for (int64_t iValue = ...
 
 			/*
@@ -289,7 +289,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				} // if (piInstances[iInstance] != 0)
 				else
 				{
-					m_wndFileView.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
+					m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
 				}
 
 				if ((iInstance + 1) >= GetController()->GetVisibleValuesCountLimit())
@@ -300,14 +300,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 			if (iInstancesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 			}
 		} // for (size_t iItem = ...
 
 		/*
 		* Enable the drawing
 		*/
-		m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+		m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 	} // case TYPE_OBJECTTYPE:
 	break;
 
@@ -324,10 +324,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			vector<HTREEITEM> vecValues;
 			HTREEITEM hCardinality = nullptr;
 
-			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
+			HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->items()[iItem]);
 			while (hChild != nullptr)
 			{
-				CString strText = m_wndFileView.GetItemText(hChild);
+				CString strText = m_treeCtrl.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
 				{
 					vecValues.push_back(hChild);
@@ -340,13 +340,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					}
 				}
 
-				hChild = m_wndFileView.GetNextSiblingItem(hChild);
+				hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 			}
 
 			/*
 			* Disable the drawing
 			*/
-			m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+			m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 			/*
 			* Update the cardinality
@@ -356,14 +356,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.SetItemText(hCardinality, strCardinality.c_str());
+			m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
 			/*
 			* Delete all values
 			*/
 			for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
 			{
-				m_wndFileView.DeleteItem(vecValues[iValue]);
+				m_treeCtrl.DeleteItem(vecValues[iValue]);
 			}
 
 			/*
@@ -377,7 +377,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			{
 				swprintf(szBuffer, 100, L"value = %s", pbValue[iValue] ? L"True" : L"False");
 
-				m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -387,14 +387,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 			}
 		} // for (size_t iItem = ...
 
 		/*
 		* Enable the drawing
 		*/
-		m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+		m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 	} // case TYPE_BOOL_DATATYPE:
 	break;
 
@@ -411,10 +411,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			vector<HTREEITEM> vecValues;
 			HTREEITEM hCardinality = nullptr;
 
-			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
+			HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->items()[iItem]);
 			while (hChild != nullptr)
 			{
-				CString strText = m_wndFileView.GetItemText(hChild);
+				CString strText = m_treeCtrl.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
 				{
 					vecValues.push_back(hChild);
@@ -427,13 +427,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					}
 				}
 
-				hChild = m_wndFileView.GetNextSiblingItem(hChild);
+				hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 			}
 
 			/*
 			* Disable the drawing
 			*/
-			m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+			m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 			/*
 			* Update the cardinality
@@ -443,14 +443,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.SetItemText(hCardinality, strCardinality.c_str());
+			m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
 			/*
 			* Delete all values
 			*/
 			for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
 			{
-				m_wndFileView.DeleteItem(vecValues[iValue]);
+				m_treeCtrl.DeleteItem(vecValues[iValue]);
 			}
 
 			/*
@@ -465,7 +465,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				wstring strValue = CA2W(szValue[iValue]);
 				swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
 
-				m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -475,14 +475,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 			}
 		} // for (size_t iItem = ...
 
 		/*
 		* Enable the drawing
 		*/
-		m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+		m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 	}
 	break;
 
@@ -499,10 +499,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			vector<HTREEITEM> vecValues;
 			HTREEITEM hCardinality = nullptr;
 
-			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
+			HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->items()[iItem]);
 			while (hChild != nullptr)
 			{
-				CString strText = m_wndFileView.GetItemText(hChild);
+				CString strText = m_treeCtrl.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
 				{
 					vecValues.push_back(hChild);
@@ -515,13 +515,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					}
 				}
 
-				hChild = m_wndFileView.GetNextSiblingItem(hChild);
+				hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 			}
 
 			/*
 			* Disable the drawing
 			*/
-			m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);			
+			m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);			
 
 			/*
 			* Update the cardinality
@@ -531,14 +531,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.SetItemText(hCardinality, strCardinality.c_str());
+			m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
 			/*
 			* Delete all values
 			*/
 			for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
 			{
-				m_wndFileView.DeleteItem(vecValues[iValue]);
+				m_treeCtrl.DeleteItem(vecValues[iValue]);
 			}
 
 			/*
@@ -552,7 +552,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			{
 				swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
 
-				m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -562,14 +562,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 			}			
 		} // for (size_t iItem = ...
 
 		/*
 		* Enable the drawing
 		*/
-		m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+		m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 	} // case TYPE_DOUBLE_DATATYPE:
 	break;
 
@@ -586,10 +586,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			vector<HTREEITEM> vecValues;
 			HTREEITEM hCardinality = nullptr;
 
-			HTREEITEM hChild = m_wndFileView.GetChildItem(pPropertyItem->items()[iItem]);
+			HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->items()[iItem]);
 			while (hChild != nullptr)
 			{
-				CString strText = m_wndFileView.GetItemText(hChild);
+				CString strText = m_treeCtrl.GetItemText(hChild);
 				if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
 				{
 					vecValues.push_back(hChild);
@@ -602,13 +602,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					}
 				}
 
-				hChild = m_wndFileView.GetNextSiblingItem(hChild);
+				hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 			}
 
 			/*
 			* Disable the drawing
 			*/
-			m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+			m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 			/*
 			* Update the cardinality
@@ -618,14 +618,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.SetItemText(hCardinality, strCardinality.c_str());
+			m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
 			/*
 			* Delete all values
 			*/
 			for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
 			{
-				m_wndFileView.DeleteItem(vecValues[iValue]);
+				m_treeCtrl.DeleteItem(vecValues[iValue]);
 			}
 
 			/*
@@ -639,7 +639,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			{
 				swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
 
-				m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 				{
@@ -649,14 +649,14 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 			{
-				m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+				m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 			}
 		} // for (size_t iItem = ...
 
 		/*
 		* Enable the drawing
 		*/
-		m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+		m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 	} // case TYPE_INT_DATATYPE:
 	break;
 
@@ -764,7 +764,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem)
 {
-	auto pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
 	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance) &&
 		(GetController()->GetSelectedInstance() == pItem->getInstance()))
 	{
@@ -782,7 +782,7 @@ void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CR
 		return;
 	}
 
-	auto pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
 	if (pItem != nullptr)
 	{
 		switch (pItem->getType())
@@ -813,7 +813,7 @@ void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CR
 		}
 	} // if (pItem != nullptr)
 
-	GetItemPath(m_wndFileView.GetParentItem(hItem), vecPath);
+	GetItemPath(m_treeCtrl.GetParentItem(hItem), vecPath);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -821,17 +821,17 @@ void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDes
 {
 	ASSERT(hItem != nullptr);
 
-	HTREEITEM hChild = m_wndFileView.GetChildItem(hItem);
+	HTREEITEM hChild = m_treeCtrl.GetChildItem(hItem);
 	while (hChild != nullptr)
 	{
-		if (m_wndFileView.GetItemData(hChild) != NULL)
+		if (m_treeCtrl.GetItemData(hChild) != NULL)
 		{
 			vecDescendants.push_back(hChild);
 
 			GetDescendants(hChild, vecDescendants);
 		}		
 
-		hChild = m_wndFileView.GetNextSiblingItem(hChild);
+		hChild = m_treeCtrl.GetNextSiblingItem(hChild);
 	}
 }
 
@@ -874,7 +874,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
-	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
+	auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
 	if (pItem != nullptr)
 	{
 		switch (pItem->getType())
@@ -917,7 +917,7 @@ void CDesignTreeView::UpdateView()
 	* Disable the drawing
 	*/
 	m_bInitInProgress = true;
-	m_wndFileView.SendMessage(WM_SETREDRAW, 0, 0);
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 	switch (m_nCurrSort)
 	{
@@ -963,8 +963,8 @@ void CDesignTreeView::UpdateView()
 	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
 	{
 		ASSERT(m_hSelectedItem != nullptr);
-		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
-		m_wndFileView.Expand(m_hSelectedItem, TVE_EXPAND);
+		m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
+		m_treeCtrl.Expand(m_hSelectedItem, TVE_EXPAND);
 
 		auto itInstance2Properties = m_mapInstance2Properties.find(prSelectedInstanceProperty.first->getInstance());
 		ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
@@ -975,16 +975,16 @@ void CDesignTreeView::UpdateView()
 
 		m_hSelectedItem = itPropertyItem->second->items()[0];
 
-		m_wndFileView.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
-		m_wndFileView.EnsureVisible(m_hSelectedItem);
-		m_wndFileView.SelectItem(m_hSelectedItem);
+		m_treeCtrl.SetItemState(m_hSelectedItem, TVIS_BOLD, TVIS_BOLD);
+		m_treeCtrl.EnsureVisible(m_hSelectedItem);
+		m_treeCtrl.SelectItem(m_hSelectedItem);
 	} // if ((prSelectedInstanceProperty.first != nullptr) && ...
 
 	/*
 	* Enable the drawing
 	*/
 	m_bInitInProgress = false;
-	m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 
 //	LOG_DEBUG("CDesignTreeView::UpdateView() END");
 }
@@ -992,7 +992,7 @@ void CDesignTreeView::UpdateView()
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::InstancesAlphabeticalView()
 {
-	m_wndFileView.DeleteAllItems();
+	m_treeCtrl.DeleteAllItems();
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.begin();
 	for (; itInstance2Item != m_mapInstance2Item.end(); itInstance2Item++)
@@ -1043,21 +1043,21 @@ void CDesignTreeView::InstancesAlphabeticalView()
 	*/
 	sort(vecModel.begin(), vecModel.end(), SORT_RDFINSTANCES());
 
-	HTREEITEM hModel = m_wndFileView.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
+	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
 		AddInstance(hModel, vecModel[iInstance]);
 	}
 
-	m_wndFileView.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::InstancesGroupByClassView()
 {
-	m_wndFileView.DeleteAllItems();
+	m_treeCtrl.DeleteAllItems();
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.begin();
 	for (; itInstance2Item != m_mapInstance2Item.end(); itInstance2Item++)
@@ -1122,13 +1122,13 @@ void CDesignTreeView::InstancesGroupByClassView()
 	/*
 	* Model
 	*/
-	HTREEITEM hModel = m_wndFileView.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
+	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 
 	map<wstring, vector<CRDFInstance *> >::iterator itModel = mapModel.begin();
 	for (; itModel != mapModel.end(); itModel++)
 	{
-		HTREEITEM hClass = m_wndFileView.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
+		HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
 
 		vector<CRDFInstance *> vecInstances = itModel->second;
 		sort(vecInstances.begin(), vecInstances.end(), SORT_RDFINSTANCES());
@@ -1139,7 +1139,7 @@ void CDesignTreeView::InstancesGroupByClassView()
 		}
 	} // for (; itModel != ...
 
-	m_wndFileView.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1147,7 +1147,7 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 {
 	ProgressStatus prgs(L"Build project tree");
 
-	m_wndFileView.DeleteAllItems();
+	m_treeCtrl.DeleteAllItems();
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.begin();
 	for (; itInstance2Item != m_mapInstance2Item.end(); itInstance2Item++)
@@ -1207,15 +1207,15 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 	*/
 	sort(vecModel.begin(), vecModel.end(), SORT_RDFINSTANCES());
 
-	HTREEITEM hModel = m_wndFileView.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-	m_wndFileView.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
+	m_treeCtrl.SetItemState(hModel, TVIS_BOLD, TVIS_BOLD);
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
 		AddInstance(hModel, vecModel[iInstance]);
 	}
 
-	m_wndFileView.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1233,7 +1233,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 	tvInsertStruct.item.lParam = NULL;
 	tvInsertStruct.item.cChildren = IMAGE_INSTANCE;
 
-	HTREEITEM hInstance = m_wndFileView.InsertItem(&tvInsertStruct);
+	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
 	if (itInstance2Item == m_mapInstance2Item.end())
@@ -1243,13 +1243,13 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 
 		m_mapInstance2Item[pInstance->getInstance()] = pInstanceItem;
 
-		m_wndFileView.SetItemData(hInstance, (DWORD_PTR)pInstanceItem);
+		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)pInstanceItem);
 	}
 	else
 	{
 		itInstance2Item->second->items().push_back(hInstance);
 
-		m_wndFileView.SetItemData(hInstance, (DWORD_PTR)itInstance2Item->second);
+		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)itInstance2Item->second);
 	}
 }
 
@@ -1295,7 +1295,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		strNameAndType += L" : ";
 		strNameAndType += pProperty->getTypeAsString();		
 
-		HTREEITEM hProperty = m_wndFileView.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
+		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
 
 		map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.find(pInstance->getInstance());
 		if (itInstance2Properties == m_mapInstance2Properties.end())
@@ -1308,7 +1308,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 			m_mapInstance2Properties[pInstance->getInstance()] = mapItemProperties;
 
-			m_wndFileView.SetItemData(hProperty, (DWORD_PTR)pPropertyItem);
+			m_treeCtrl.SetItemData(hProperty, (DWORD_PTR)pPropertyItem);
 		}
 		else
 		{
@@ -1320,13 +1320,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				itInstance2Properties->second[pProperty->getInstance()] = pPropertyItem;
 
-				m_wndFileView.SetItemData(hProperty, (DWORD_PTR)pPropertyItem);
+				m_treeCtrl.SetItemData(hProperty, (DWORD_PTR)pPropertyItem);
 			}
 			else
 			{
 				itPropertyItem->second->items().push_back(hProperty);
 
-				m_wndFileView.SetItemData(hProperty, (DWORD_PTR)itPropertyItem->second);
+				m_treeCtrl.SetItemData(hProperty, (DWORD_PTR)itPropertyItem->second);
 			}
 		}
 
@@ -1335,7 +1335,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		*/
 		if (pProperty->getType() == TYPE_OBJECTTYPE)
 		{
-			HTREEITEM hRange = m_wndFileView.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 			CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
 			ASSERT(pObjectRDFProperty != nullptr);
@@ -1346,7 +1346,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 				char * szClassName = nullptr;
 				GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
 
-				m_wndFileView.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
+				m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
 			}
 		} // if (pProperty->getType() == TYPE_OBJECTTYPE)
 		else
@@ -1354,7 +1354,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strRange = L"rdfs:range : ";
 			strRange += pProperty->getRange();
 
-			m_wndFileView.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			m_treeCtrl.InsertItem(strRange.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 		}
 
 		/*
@@ -1374,7 +1374,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 			if (iCard > 0)
 			{
@@ -1390,7 +1390,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 					} // if (piInstances[iInstance] != 0)
 					else
 					{
-						m_wndFileView.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
+						m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
 					}					
 
 					if ((iInstance + 1) >= GetController()->GetVisibleValuesCountLimit())
@@ -1401,7 +1401,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				if (iInstancesCount > GetController()->GetVisibleValuesCountLimit())
 				{
-					m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
 			} // if (iCard > 0)
 		}
@@ -1419,7 +1419,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 			if (iCard > 0)
 			{
@@ -1428,7 +1428,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 				{
 					swprintf(szBuffer, 100, L"value = %s", pbValue[iValue] ? L"TRUE" : L"FALSE");
 
-					m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 					{
@@ -1438,7 +1438,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 				{
-					m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
 			} // if (iCard > 0)			
 		}
@@ -1456,7 +1456,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 			if (iCard > 0)
 			{
@@ -1466,7 +1466,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 					wstring strValue = CA2W(szValue[iValue]);
 					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
 
-					m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 					{
@@ -1476,7 +1476,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 				{
-					m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
 			} // if (iCard > 0)			
 		}
@@ -1495,7 +1495,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 			if (iCard > 0)
 			{
@@ -1504,7 +1504,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 				{
 					swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
 
-					m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 					{
@@ -1514,7 +1514,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 				{
-					m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
 			} // if (iCard > 0)
 		}
@@ -1532,7 +1532,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			wstring strCardinality = L"owl:cardinality : ";
 			strCardinality += pProperty->getCardinality(pInstance->getInstance());
 
-			m_wndFileView.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
+			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 			if (iCard > 0)
 			{
@@ -1541,7 +1541,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 				{
 					swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
 
-					m_wndFileView.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
 					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
 					{
@@ -1551,7 +1551,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
 				{
-					m_wndFileView.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
 			} // if (iCard > 0)			
 		}
@@ -1582,10 +1582,10 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 	vector<CRDFInstance *> vecInstances;
 	vector<HTREEITEM> vecObsoleteItems;
 
-	HTREEITEM hItem = m_wndFileView.GetChildItem(hModel);
+	HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
 	while (hItem != nullptr)
 	{
-		CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(hItem);
+		CRDFItem * pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
 		ASSERT(pItem != nullptr);
 		ASSERT(pItem->getType() == enumItemType::Instance);
 
@@ -1601,7 +1601,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 			vecInstances.push_back(pInstanceItem->getInstance());
 		}
 
-		hItem = m_wndFileView.GetNextSiblingItem(hItem);
+		hItem = m_treeCtrl.GetNextSiblingItem(hItem);
 	} // while (hChild != nullptr)
 
 	/*
@@ -1619,7 +1619,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 			RemoveItemData(vecDescendants[iDescendant]);
 		}
 
-		m_wndFileView.DeleteItem(vecObsoleteItems[iItem]);
+		m_treeCtrl.DeleteItem(vecObsoleteItems[iItem]);
 	} // for (int64_t iItem = ...
 
 	/*
@@ -1724,39 +1724,39 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create view:
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS;
 
-	if (!m_wndFileView.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
+	if (!m_treeCtrl.Create(dwViewStyle, rectDummy, this, IDC_TREE_INSTANCE_VIEW))
 	{
 		TRACE0("Failed to create file view\n");
 		return -1;      // fail to create
 	}
 
 	// State provider
-	m_wndFileView.SetItemStateProvider(this);
+	m_treeCtrl.SetItemStateProvider(this);
 
 	// Load view images:
-	m_FileViewImages.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
-	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
+	m_images.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
+	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT_INSTANCES);
-	m_wndToolBar.LoadToolBar(IDR_SORT_INSTANCES, 0, 0, TRUE /* Is locked */);
+	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT_INSTANCES);
+	m_toolBar.LoadToolBar(IDR_SORT_INSTANCES, 0, 0, TRUE /* Is locked */);
 
 	OnChangeVisualStyle();
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
 
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+	m_toolBar.SetPaneStyle(m_toolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
-	m_wndToolBar.SetOwner(this);
+	m_toolBar.SetOwner(this);
 
 	// All commands will be routed via this control , not via the parent frame:
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+	m_toolBar.SetRouteCommandsViaFrame(FALSE);
 
 	CMenu menuSort;
 	menuSort.LoadMenu(IDR_POPUP_SORT_INSTANCES);
 
-	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CDesignTreeViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
+	m_toolBar.ReplaceButton(ID_SORT_MENU, CDesignTreeViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
 
-	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_wndToolBar.GetButton(0));
+	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_toolBar.GetButton(0));
 
 	if (pButton != nullptr)
 	{
@@ -1769,7 +1769,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchInstancesDialog(&m_wndFileView);
+	m_pSearchDialog = new CSearchInstancesDialog(&m_treeCtrl);
 	m_pSearchDialog->Create(IDD_DIALOG_SEARCH_INSTANCES, this);
 
 	return 0;
@@ -1783,7 +1783,7 @@ void CDesignTreeView::OnSize(UINT nType, int cx, int cy)
 
 void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndFileView;
+	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_treeCtrl;
 	ASSERT_VALID(pWndTree);
 
 	if (pWnd != pWndTree)
@@ -1812,7 +1812,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	pWndTree->SetFocus();
 
-	auto pItem = (CRDFItem *)m_wndFileView.GetItemData(hTreeItem);
+	auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hTreeItem);
 	if (pItem == nullptr)
 	{
 		return;
@@ -2138,10 +2138,10 @@ void CDesignTreeView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	int cyTlb = m_toolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFileView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_toolBar.SetWindowPos(nullptr, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_treeCtrl.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CDesignTreeView::OnProperties()
@@ -2188,13 +2188,13 @@ void CDesignTreeView::OnSort(UINT id)
 
 	m_nCurrSort = id;
 
-	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_wndToolBar.GetButton(0));
+	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_toolBar.GetButton(0));
 
 	if (pButton != nullptr)
 	{
 		pButton->SetImage(GetCmdMgr()->GetCmdImage(id));
-		m_wndToolBar.Invalidate();
-		m_wndToolBar.UpdateWindow();
+		m_toolBar.Invalidate();
+		m_toolBar.UpdateWindow();
 	}
 
 	UpdateView();
@@ -2210,7 +2210,7 @@ void CDesignTreeView::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rectTree;
-	m_wndFileView.GetWindowRect(rectTree);
+	m_treeCtrl.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
@@ -2221,12 +2221,12 @@ void CDesignTreeView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_wndFileView.SetFocus();
+	m_treeCtrl.SetFocus();
 }
 
 void CDesignTreeView::OnChangeVisualStyle()
 {
-	m_FileViewImages.DeleteImageList();
+	m_images.DeleteImageList();
 
 	UINT uiBmpId = theApp.m_bHiColorIcons ? IDB_CLASS_VIEW_24 : IDB_CLASS_VIEW;
 
@@ -2245,13 +2245,13 @@ void CDesignTreeView::OnChangeVisualStyle()
 
 	nFlags |= (theApp.m_bHiColorIcons) ? ILC_COLOR24 : ILC_COLOR4;
 
-	m_FileViewImages.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
-	m_FileViewImages.Add(&bmp, RGB(255, 0, 0));
+	m_images.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
+	m_images.Add(&bmp, RGB(255, 0, 0));
 
-	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
+	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
-	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_INSTANCES_24 : IDR_SORT_INSTANCES, 0, 0, TRUE /* Locked */);
+	m_toolBar.CleanUpLockedImages();
+	m_toolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_INSTANCES_24 : IDR_SORT_INSTANCES, 0, 0, TRUE /* Locked */);
 }
 
 void CDesignTreeView::OnDestroy()
@@ -2275,18 +2275,18 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 	NM_TREEVIEW * pNMTreeView = (NM_TREEVIEW *)pNMHDR;
 
-	if (m_wndFileView.GetParentItem(m_hSelectedItem) != nullptr)
+	if (m_treeCtrl.GetParentItem(m_hSelectedItem) != nullptr)
 	{
 		// keep the roots always bold
-		m_wndFileView.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
+		m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 	}
 
-	m_wndFileView.SetItemState(pNMTreeView->itemNew.hItem, TVIS_BOLD, TVIS_BOLD);
+	m_treeCtrl.SetItemState(pNMTreeView->itemNew.hItem, TVIS_BOLD, TVIS_BOLD);
 	m_hSelectedItem = pNMTreeView->itemNew.hItem;
 
 	ASSERT(GetController() != nullptr);
 
-	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(pNMTreeView->itemNew.hItem);
+	CRDFItem * pItem = (CRDFItem *)m_treeCtrl.GetItemData(pNMTreeView->itemNew.hItem);
 	if (pItem == nullptr)
 	{
 		GetController()->SelectInstance(this, nullptr);
@@ -2321,13 +2321,13 @@ void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	
-	if (m_wndFileView.GetChildItem(pNMTreeView->itemNew.hItem) != nullptr)
+	if (m_treeCtrl.GetChildItem(pNMTreeView->itemNew.hItem) != nullptr)
 	{
 		// it is loaded already
 		return;
 	}
 
-	CRDFItem * pItem = (CRDFItem *)m_wndFileView.GetItemData(pNMTreeView->itemNew.hItem);
+	CRDFItem * pItem = (CRDFItem *)m_treeCtrl.GetItemData(pNMTreeView->itemNew.hItem);
 	ASSERT(pItem != nullptr);
 	ASSERT(pItem->getType() == enumItemType::Instance);
 

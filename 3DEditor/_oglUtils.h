@@ -2097,7 +2097,7 @@ public: // Methods
 		return m_enProjection;
 	}
 
-	void _setView(enum enumView enView)
+	void _setView(enumView enView)
 	{
 		switch (enView)
 		{

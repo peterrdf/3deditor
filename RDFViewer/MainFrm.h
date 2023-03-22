@@ -31,10 +31,10 @@ public:
 #endif
 
 protected:  // control bar embedded members
-	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBar       m_wndToolBar;
-	CMFCStatusBar     m_wndStatusBar;
-	CMFCToolBarImages m_UserImages;
+	CMFCMenuBar       m_menuBar;
+	CMFCToolBar       m_toolBar;
+	CMFCStatusBar     m_statusBar;
+	CMFCToolBarImages m_userImages;
 
 // Generated message map functions
 protected:

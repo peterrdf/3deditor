@@ -70,9 +70,9 @@ public:
 	void OnChangeVisualStyle();
 
 protected:
-	CClassToolBar m_wndToolBar;
-	CViewTree m_wndClassView;
-	CImageList m_ClassViewImages;
+	CClassToolBar m_toolBar;
+	CViewTree m_treeCtrl;
+	CImageList m_images;
 	UINT m_nCurrSort;
 
 // Overrides

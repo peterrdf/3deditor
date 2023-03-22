@@ -144,19 +144,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	BOOL bNameValid;
 
-	if (!m_wndMenuBar.Create(this))
+	if (!m_menuBar.Create(this))
 	{
 		TRACE0("Failed to create menubar\n");
 		return -1;      // fail to create
 	}
 
-	m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_menuBar.SetPaneStyle(m_menuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
 
 	// prevent the menu bar from taking the focus on activation
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
+	if (!m_toolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_toolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
 		TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
@@ -165,29 +165,29 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CString strToolBarName;
 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);
-	m_wndToolBar.SetWindowText(strToolBarName);
+	m_toolBar.SetWindowText(strToolBarName);
 
 	CString strCustomize;
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
-	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+	m_toolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(nullptr, uiFirstUserToolBarId, uiLastUserToolBarId);
 
-	if (!m_wndStatusBar.Create(this))
+	if (!m_statusBar.Create(this))
 	{
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+	m_statusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 
 	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
-	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_menuBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_toolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndMenuBar);
-	DockPane(&m_wndToolBar);
+	DockPane(&m_menuBar);
+	DockPane(&m_toolBar);
 
 
 	// enable Visual Studio 2005 style docking window behavior
@@ -205,13 +205,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
-	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndFileView);
+	m_designTreeView.EnableDocking(CBRS_ALIGN_ANY);
+	m_classView.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&m_designTreeView);
 	CDockablePane* pTabbedBar = nullptr;
-	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
-	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndProperties);
+	m_classView.AttachToTabWnd(&m_designTreeView, DM_SHOW, TRUE, &pTabbedBar);
+	m_propertiesView.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&m_propertiesView);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -225,9 +225,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMFCToolBar::GetUserImages() == nullptr)
 	{
 		// load user-defined toolbar images
-		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
+		if (m_userImages.Load(_T(".\\UserImages.bmp")))
 		{
-			CMFCToolBar::SetUserImages(&m_UserImages);
+			CMFCToolBar::SetUserImages(&m_userImages);
 		}
 	}
 
@@ -314,36 +314,36 @@ BOOL CMainFrame::CreateDockingWindows()
 	BOOL bNameValid;
 
 	// Create class view
-	m_wndClassView.SetController(pController);
+	m_classView.SetController(pController);
 
 	CString strClassView;
 	bNameValid = strClassView.LoadString(IDS_CLASS_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndClassView.Create(strClassView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_CLASSVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	if (!m_classView.Create(strClassView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_CLASSVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create Class View window\n");
 		return FALSE; // failed to create
 	}
 
 	// Create file view
-	m_wndFileView.SetController(pController);
+	m_designTreeView.SetController(pController);
 	
 	CString strFileView;
 	bNameValid = strFileView.LoadString(IDS_FILE_VIEW);
 	ASSERT(bNameValid);
-	if (!m_wndFileView.Create(strFileView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
+	if (!m_designTreeView.Create(strFileView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create File View window\n");
 		return FALSE; // failed to create
 	}
 
 	// Create properties window
-	m_wndProperties.SetController(pController);
+	m_propertiesView.SetController(pController);
 	
 	CString strPropertiesWnd;
 	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
 	ASSERT(bNameValid);
-	if (!m_wndProperties.Create(strPropertiesWnd, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
+	if (!m_propertiesView.Create(strPropertiesWnd, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
 	{
 		TRACE0("Failed to create Properties window\n");
 		return FALSE; // failed to create
@@ -356,13 +356,13 @@ BOOL CMainFrame::CreateDockingWindows()
 void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 {
 	HICON hFileViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
+	m_designTreeView.SetIcon(hFileViewIcon, FALSE);
 
 	HICON hClassViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndClassView.SetIcon(hClassViewIcon, FALSE);
+	m_classView.SetIcon(hClassViewIcon, FALSE);
 
 	HICON hPropertiesBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndProperties.SetIcon(hPropertiesBarIcon, FALSE);
+	m_propertiesView.SetIcon(hPropertiesBarIcon, FALSE);
 
 }
 
@@ -489,8 +489,8 @@ void CMainFrame::OnViewFileView()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	m_wndFileView.ShowPane(TRUE, FALSE, TRUE);
-	m_wndFileView.SetFocus();
+	m_designTreeView.ShowPane(TRUE, FALSE, TRUE);
+	m_designTreeView.SetFocus();
 }
 
 void CMainFrame::OnUpdateViewFileView(CCmdUI* pCmdUI)
@@ -502,8 +502,8 @@ void CMainFrame::OnViewClassView()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	m_wndClassView.ShowPane(TRUE, FALSE, TRUE);
-	m_wndClassView.SetFocus();
+	m_classView.ShowPane(TRUE, FALSE, TRUE);
+	m_classView.SetFocus();
 }
 
 void CMainFrame::OnUpdateViewClassView(CCmdUI* pCmdUI)
@@ -515,8 +515,8 @@ void CMainFrame::OnViewPropertiesWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	m_wndProperties.ShowPane(TRUE, FALSE, TRUE);
-	m_wndProperties.SetFocus();
+	m_propertiesView.ShowPane(TRUE, FALSE, TRUE);
+	m_propertiesView.SetFocus();
 }
 
 void CMainFrame::OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI)
