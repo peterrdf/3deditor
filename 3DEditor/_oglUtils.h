@@ -94,7 +94,7 @@ public: // Methods
 		, m_szCode(nullptr)
 	{
 		m_iID = glCreateShader(m_iType);
-		assert(m_iID != 0);
+		ASSERT(m_iID != 0);
 	}
 
 	virtual ~_oglShader(void)
@@ -201,7 +201,7 @@ public: // Methods
 	_oglProgram(void)
 	{
 		m_iID = glCreateProgram();
-		assert(m_iID > 0);
+		ASSERT(m_iID > 0);
 	}
 
 	virtual ~_oglProgram()
@@ -265,7 +265,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}			
@@ -284,7 +284,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -304,7 +304,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -316,7 +316,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -329,7 +329,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}			
@@ -349,7 +349,7 @@ protected: // Methods
 		GLint iLocation = glGetUniformLocation(m_iID, szName);
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -360,7 +360,7 @@ protected: // Methods
 		}
 		else
 		{
-			assert(false);
+			ASSERT(FALSE);
 		}			
 	}
 
@@ -368,7 +368,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -379,7 +379,7 @@ protected: // Methods
 		}
 		else
 		{
-			assert(false);
+			ASSERT(FALSE);
 		}
 	}
 
@@ -387,7 +387,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -411,7 +411,7 @@ protected: // Methods
 	{ 
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -423,7 +423,7 @@ protected: // Methods
 	{
 		if (iLocation == -1)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return;
 		}
@@ -632,7 +632,7 @@ public: // Methods
 
 	void _enableTexture(bool bEnable)
 	{
-		assert(m_bSupportsTexture);
+		ASSERT(m_bSupportsTexture);
 
 		_setUniform1f(
 			m_iUseTexture,
@@ -658,7 +658,7 @@ public: // Methods
 
 	void _setAmbientLightWeighting(float fX, float fY, float fZ) const
 	{
-		assert(m_iAmbientLightWeighting >= 0);
+		ASSERT(m_iAmbientLightWeighting >= 0);
 
 		_setUniform3f(
 			m_iAmbientLightWeighting,
@@ -754,7 +754,7 @@ public: // Methods
 
 	void _setAmbientColor(const _material* pMaterial)
 	{
-		assert(pMaterial != nullptr);
+		ASSERT(pMaterial != nullptr);
 
 		_setAmbientColor(
 			pMaterial->getAmbientColor().r(),
@@ -771,7 +771,7 @@ public: // Methods
 
 	void _setDiffuseColor(const _material* pMaterial)
 	{
-		assert(pMaterial != nullptr);
+		ASSERT(pMaterial != nullptr);
 
 		_setUniform3f(
 			m_iMaterialDiffuseColor,
@@ -782,7 +782,7 @@ public: // Methods
 
 	void _setSpecularColor(const _material* pMaterial)
 	{
-		assert(pMaterial != nullptr);
+		ASSERT(pMaterial != nullptr);
 
 		_setUniform3f(
 			m_iMaterialSpecularColor,
@@ -793,7 +793,7 @@ public: // Methods
 
 	void _setEmissiveColor(const _material* pMaterial)
 	{
-		assert(pMaterial != nullptr);
+		ASSERT(pMaterial != nullptr);
 
 		_setUniform3f(
 			m_iMaterialEmissiveColor,
@@ -804,7 +804,7 @@ public: // Methods
 
 	void _setMaterial(const _material* pMaterial)
 	{
-		assert(pMaterial != nullptr);
+		ASSERT(pMaterial != nullptr);
 
 		_setAmbientColor(pMaterial);
 		_setTransparency(pMaterial->getA());
@@ -817,81 +817,81 @@ public: // Methods
 	{
 		if (!_oglProgram::_link())
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return false;
 		}
 
 		m_iUseBlinnPhongModel = glGetUniformLocation(_getID(), "uUseBlinnPhongModel");
-		assert(m_iUseBlinnPhongModel >= 0);
+		ASSERT(m_iUseBlinnPhongModel >= 0);
 
 		if (m_bSupportsTexture)
 		{
 			m_iUseTexture = glGetUniformLocation(_getID(), "uUseTexture");
-			assert(m_iUseTexture >= 0);
+			ASSERT(m_iUseTexture >= 0);
 
 			m_iSampler = glGetUniformLocation(_getID(), "uSampler");
-			assert(m_iSampler >= 0);
+			ASSERT(m_iSampler >= 0);
 		}
 
 		m_iMVMatrix = glGetUniformLocation(_getID(), "uMVMatrix");
-		assert(m_iMVMatrix >= 0);
+		ASSERT(m_iMVMatrix >= 0);
 
 		m_iPMatrix = glGetUniformLocation(_getID(), "uPMatrix");
-		assert(m_iPMatrix >= 0);
+		ASSERT(m_iPMatrix >= 0);
 
 		m_iNMatrix = glGetUniformLocation(_getID(), "uNMatrix");
-		assert(m_iNMatrix >= 0);
+		ASSERT(m_iNMatrix >= 0);
 
 		m_iPointLightingLocation = glGetUniformLocation(_getID(), "uPointLightingLocation");
-		assert(m_iPointLightingLocation >= 0);
+		ASSERT(m_iPointLightingLocation >= 0);
 
 		m_iAmbientLightWeighting = glGetUniformLocation(_getID(), "uAmbientLightWeighting");
-		assert(m_iAmbientLightWeighting >= 0);
+		ASSERT(m_iAmbientLightWeighting >= 0);
 
 		m_iSpecularLightWeighting = glGetUniformLocation(_getID(), "uSpecularLightWeighting");
-		assert(m_iSpecularLightWeighting >= 0);
+		ASSERT(m_iSpecularLightWeighting >= 0);
 
 		m_iDiffuseLightWeighting = glGetUniformLocation(_getID(), "uDiffuseLightWeighting");
-		assert(m_iDiffuseLightWeighting >= 0);
+		ASSERT(m_iDiffuseLightWeighting >= 0);
 
 		m_iMaterialShininess = glGetUniformLocation(_getID(), "uMaterialShininess");
-		assert(m_iMaterialShininess >= 0);
+		ASSERT(m_iMaterialShininess >= 0);
 
 		m_iContrast = glGetUniformLocation(_getID(), "uContrast");
-		assert(m_iContrast >= 0);
+		ASSERT(m_iContrast >= 0);
 
 		m_iBrightness = glGetUniformLocation(_getID(), "uBrightness");
-		assert(m_iBrightness >= 0);
+		ASSERT(m_iBrightness >= 0);
 
 		m_iGamma = glGetUniformLocation(_getID(), "uGamma");
-		assert(m_iGamma >= 0);
+		ASSERT(m_iGamma >= 0);
 
 		m_iMaterialAmbientColor = glGetUniformLocation(_getID(), "uMaterialAmbientColor");
-		assert(m_iMaterialAmbientColor >= 0);
+		ASSERT(m_iMaterialAmbientColor >= 0);
 
 		m_iTransparency = glGetUniformLocation(_getID(), "uTransparency");
-		assert(m_iTransparency >= 0);
+		ASSERT(m_iTransparency >= 0);
 
 		m_iMaterialDiffuseColor = glGetUniformLocation(_getID(), "uMaterialDiffuseColor");
-		assert(m_iMaterialDiffuseColor >= 0);
+		ASSERT(m_iMaterialDiffuseColor >= 0);
 
 		m_iMaterialSpecularColor = glGetUniformLocation(_getID(), "uMaterialSpecularColor");
-		assert(m_iMaterialSpecularColor >= 0);
+		ASSERT(m_iMaterialSpecularColor >= 0);
 
 		m_iMaterialEmissiveColor = glGetUniformLocation(_getID(), "uMaterialEmissiveColor");
-		assert(m_iMaterialEmissiveColor >= 0);
+		ASSERT(m_iMaterialEmissiveColor >= 0);
 
 		m_iVertexPosition = glGetAttribLocation(_getID(), "aVertexPosition");
-		assert(m_iVertexPosition >= 0);
+		ASSERT(m_iVertexPosition >= 0);
 
 		m_iVertexNormal = glGetAttribLocation(_getID(), "aVertexNormal");
-		assert(m_iVertexNormal >= 0);
+		ASSERT(m_iVertexNormal >= 0);
 
 		if (m_bSupportsTexture)
 		{
 			m_iTextureCoord = glGetAttribLocation(_getID(), "aTextureCoord");
-			assert(m_iTextureCoord >= 0);
+			ASSERT(m_iTextureCoord >= 0);
 		}
 
 		return true;
@@ -909,7 +909,7 @@ public: // Methods
 
 	GLint _getTextureCoord() const
 	{
-		assert(m_bSupportsTexture);
+		ASSERT(m_bSupportsTexture);
 
 		return m_iTextureCoord;
 	}
@@ -946,7 +946,7 @@ public: // Methods
 
 	void _setSampler(int iSampler) const
 	{
-		assert(m_bSupportsTexture);
+		ASSERT(m_bSupportsTexture);
 
 		glProgramUniform1i(
 			_getID(),
@@ -992,7 +992,7 @@ public: // Methods
 		, m_hGLContext(nullptr)
 		, m_iSamples(iSamples)
 	{
-		assert(m_hDC != nullptr);
+		ASSERT(m_hDC != nullptr);
 
 		create();
 	}
@@ -1002,17 +1002,17 @@ public: // Methods
 		if (m_hGLContext != nullptr)
 		{
 			BOOL bResult = wglMakeCurrent(m_hDC, nullptr);
-			assert(bResult);
+			ASSERT(bResult);
 
 			bResult = wglDeleteContext(m_hGLContext);
-			assert(bResult);
+			ASSERT(bResult);
 		}
 	}
 
 	BOOL makeCurrent()
 	{
-		assert(m_hDC != nullptr);
-		assert(m_hGLContext != nullptr);
+		ASSERT(m_hDC != nullptr);
+		ASSERT(m_hGLContext != nullptr);
 
 		return wglMakeCurrent(m_hDC, m_hGLContext);
 	}
@@ -1071,17 +1071,17 @@ public: // Methods
 
 		// Get the best available match of pixel format for the device context   
 		int iPixelFormat = ChoosePixelFormat(hDCTemp, &pfd);
-		assert(iPixelFormat > 0);
+		ASSERT(iPixelFormat > 0);
 
 		// Make that the pixel format of the device context  
 		BOOL bResult = SetPixelFormat(hDCTemp, iPixelFormat, &pfd);
-		assert(bResult);
+		ASSERT(bResult);
 
 		HGLRC hTempGLContext = wglCreateContext(hDCTemp);
-		assert(hTempGLContext);
+		ASSERT(hTempGLContext);
 
 		bResult = wglMakeCurrent(hDCTemp, hTempGLContext);
-		assert(bResult);
+		ASSERT(bResult);
 
 		_oglUtils::checkForErrors();
 
@@ -1163,15 +1163,15 @@ public: // Methods
 		}
 
 		bResult = wglMakeCurrent(nullptr, nullptr);
-		assert(bResult);
+		ASSERT(bResult);
 
 		bResult = wglDeleteContext(hTempGLContext);
-		assert(bResult);
+		ASSERT(bResult);
 
 		if (bMSAASupport)
 		{
 			bResult = SetPixelFormat(m_hDC, iPixelFormat, &pfd);
-			assert(bResult);
+			ASSERT(bResult);
 
 			int arContextAttributes[] = {
 				WGL_CONTEXT_MAJOR_VERSION_ARB, MIN_GL_MAJOR_VERSION,
@@ -1184,18 +1184,18 @@ public: // Methods
 			};
 
 			m_hGLContext = wglCreateContextAttribsARB(m_hDC, 0, arContextAttributes);
-			assert(m_hGLContext);
+			ASSERT(m_hGLContext);
 		}
 		else
 		{
 			iPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
-			assert(iPixelFormat > 0);
+			ASSERT(iPixelFormat > 0);
 
 			bResult = SetPixelFormat(m_hDC, iPixelFormat, &pfd);
-			assert(bResult);
+			ASSERT(bResult);
 
 			m_hGLContext = wglCreateContext(m_hDC);
-			assert(m_hGLContext);
+			ASSERT(m_hGLContext);
 		}
 
 		::ReleaseDC(hWndTemp, hDCTemp);
@@ -1314,14 +1314,14 @@ public: // Methods
 	{
 		if (m_iFrameBuffer == 0)
 		{
-			assert(m_iTextureBuffer == 0);
-			assert(m_iRenderBuffer == 0);
+			ASSERT(m_iTextureBuffer == 0);
+			ASSERT(m_iRenderBuffer == 0);
 
 			/*
 			* Frame buffer
 			*/
 			glGenFramebuffers(1, &m_iFrameBuffer);
-			assert(m_iFrameBuffer != 0);
+			ASSERT(m_iFrameBuffer != 0);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, m_iFrameBuffer);
 
@@ -1329,7 +1329,7 @@ public: // Methods
 			* Texture buffer
 			*/
 			glGenTextures(1, &m_iTextureBuffer);
-			assert(m_iTextureBuffer != 0);
+			ASSERT(m_iTextureBuffer != 0);
 
 			glBindTexture(GL_TEXTURE_2D, m_iTextureBuffer);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -1347,7 +1347,7 @@ public: // Methods
 			* Depth buffer
 			*/
 			glGenRenderbuffers(1, &m_iRenderBuffer);
-			assert(m_iRenderBuffer != 0);
+			ASSERT(m_iRenderBuffer != 0);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_iRenderBuffer);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, iWidth, iHeight);
@@ -1372,14 +1372,14 @@ public: // Methods
 
 	void bind()
 	{
-		assert(m_iFrameBuffer != 0);
+		ASSERT(m_iFrameBuffer != 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_iFrameBuffer);
 	}
 
 	void unbind()
 	{
-		assert(m_iFrameBuffer != 0);
+		ASSERT(m_iFrameBuffer != 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -1538,7 +1538,7 @@ public: // Methods
 			glGenVertexArrays(1, &iVAO);
 			if (iVAO == 0)
 			{
-				assert(false);
+				ASSERT(FALSE);
 
 				return 0;
 			}
@@ -1573,7 +1573,7 @@ public: // Methods
 			glGenBuffers(1, &iBuffer);
 			if (iBuffer == 0)
 			{
-				assert(false);
+				ASSERT(FALSE);
 
 				return 0;
 			}
@@ -1591,7 +1591,7 @@ public: // Methods
 	{
 		if (vecCohorts.empty())
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1601,7 +1601,7 @@ public: // Methods
 
 		if (iIBO == 0)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1613,7 +1613,7 @@ public: // Methods
 
 		if ((pIndices == nullptr) || (iIndicesCount == 0))
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1642,7 +1642,7 @@ public: // Methods
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1652,7 +1652,7 @@ public: // Methods
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1662,7 +1662,7 @@ public: // Methods
 
 		if (iVAO == 0)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1676,7 +1676,7 @@ public: // Methods
 
 		if (iVBO == 0)
 		{
-			assert(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1905,7 +1905,7 @@ public: // Methods
 		bool bSupportsTexture)
 	{
 		m_pWnd = pWnd;
-		assert(m_pWnd != nullptr);
+		ASSERT(m_pWnd != nullptr);
 
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
@@ -2048,7 +2048,7 @@ public: // Methods
 
 			default:
 			{
-				assert(false);
+				ASSERT(FALSE);
 			}
 			break;
 		}
@@ -2145,7 +2145,7 @@ public: // Methods
 
 			default:
 			{
-				assert(false);
+				ASSERT(FALSE);
 			}
 			break;
 		} // switch (enView)
