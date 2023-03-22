@@ -218,8 +218,8 @@
     <ClInclude Include="CUniqueVerticesCheck.h" />
     <ClInclude Include="DoubleRDFProperty.h" />
     <ClInclude Include="EditObjectPropertyDialog.h" />
-    <ClInclude Include="FileView.h" />
-    <ClInclude Include="FileViewConsts.h" />
+    <ClInclude Include="DesignTreeView.h" />
+    <ClInclude Include="DesignTreeViewConsts.h" />
     <ClInclude Include="Generic.h" />
     <ClInclude Include="IntRDFProperty.h" />
     <ClInclude Include="MainFrm.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="CUniqueVerticesCheck.cpp" />
     <ClCompile Include="DoubleRDFProperty.cpp" />
     <ClCompile Include="EditObjectPropertyDialog.cpp" />
-    <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="IntRDFProperty.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="NewInstanceDialog.cpp" />

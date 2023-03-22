@@ -1811,13 +1811,13 @@ public: // Methods
 	}
 };
 
-enum class enumProjection
+enum class enumProjection : int
 {
 	Perspective = 0,
 	Isometric,
 };
 
-enum class enumView
+enum class enumView : int
 {
 	Top = 0,
 	Left,

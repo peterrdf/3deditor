@@ -5,7 +5,7 @@
 #include "SearchInstancesDialog.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "FileViewConsts.h"
+#include "DesignTreeViewConsts.h"
 
 
 // CSearchInstancesDialog dialog
@@ -22,7 +22,7 @@ BOOL CSearchInstancesDialog::ContainsText(HTREEITEM hItem, const CString& strTex
 	strTextLower.MakeLower();
 
 	// Instance
-	if (m_enSearchWhere == swInstances)
+	if (m_enSearchFilter == enumSearchFilter::Instances)
 	{
 		int iImage = -1;
 		int iSelectedImage = -1;
@@ -178,7 +178,7 @@ IMPLEMENT_DYNAMIC(CSearchInstancesDialog, CDialogEx)
 CSearchInstancesDialog::CSearchInstancesDialog(CViewTree* pIFCTreeCtrl)
 	: CDialogEx(IDD_DIALOG_SEARCH_INSTANCES, nullptr)
 	, m_pIFCTreeCtrl(pIFCTreeCtrl)
-	, m_enSearchWhere(swAll)
+	, m_enSearchFilter(enumSearchFilter::All)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_strSearchText(_T(""))
@@ -195,7 +195,7 @@ void CSearchInstancesDialog::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_SEARCH_TEXT, m_strSearchText);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_btnSearch);
-	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchWhere);
+	DDX_Control(pDX, IDC_COMBO_SEARCH_FILTER, m_cmbSearchFilter);
 }
 
 
@@ -293,10 +293,10 @@ BOOL CSearchInstancesDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_cmbSearchWhere.AddString(_T("(All)"));
-	m_cmbSearchWhere.AddString(_T("Instances"));
+	m_cmbSearchFilter.AddString(_T("(All)"));
+	m_cmbSearchFilter.AddString(_T("Instances"));
 
-	m_cmbSearchWhere.SetCurSel(m_enSearchWhere);
+	m_cmbSearchFilter.SetCurSel((int)m_enSearchFilter);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -305,5 +305,5 @@ BOOL CSearchInstancesDialog::OnInitDialog()
 // ------------------------------------------------------------------------------------------------
 void CSearchInstancesDialog::OnCbnSelchangeComboSearchFilter()
 {
-	m_enSearchWhere = (enumSearchWhere)m_cmbSearchWhere.GetCurSel();
+	m_enSearchFilter = (enumSearchFilter)m_cmbSearchFilter.GetCurSel();
 }

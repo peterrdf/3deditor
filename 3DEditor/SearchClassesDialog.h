@@ -10,20 +10,20 @@ class CSearchClassesDialog : public CDialogEx
 
 private: // Declarations
 
-	enum enumSearchWhere {
-		swAll = 0,
-		swClasses = 1
+	enum class enumSearchFilter : int {
+		All = 0,
+		Classes = 1
 	};
 
 private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// IFC Tree
-	CViewTree * m_pIFCTreeCtrl;
+	CViewTree* m_pIFCTreeCtrl;
 
 	// --------------------------------------------------------------------------------------------
 	// Filter
-	enumSearchWhere m_enSearchWhere;
+	enumSearchFilter m_enSearchFilter;
 
 	// --------------------------------------------------------------------------------------------
 	// Last found HTREEITEM
@@ -83,7 +83,7 @@ public:
 	afx_msg void OnEnChangeEditSearchText();
 	CButton m_btnSearch;
 	afx_msg void OnBnClickedButtonSearch();
-	CComboBox m_cmbSearchWhere;
+	CComboBox m_cmbSearchFilter;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeComboSearchFilter();
 };

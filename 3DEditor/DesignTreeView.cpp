@@ -1,13 +1,13 @@
 
 #include "stdafx.h"
 #include "mainfrm.h"
-#include "FileView.h"
+#include "DesignTreeView.h"
 #include "Resource.h"
 #include "3DEditor.h"
 #include "RDFModel.h"
 #include "Generic.h"
 #include "NewInstanceDialog.h"
-#include "FileViewConsts.h"
+#include "DesignTreeViewConsts.h"
 #include "ProgressIndicator.h"
 
 #include <algorithm>
@@ -20,13 +20,13 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-class CFileViewMenuButton : public CMFCToolBarMenuButton
+class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
 {
 
-	DECLARE_SERIAL(CFileViewMenuButton)
+	DECLARE_SERIAL(CDesignTreeViewMenuButton)
 
 public:
-	CFileViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
+	CDesignTreeViewMenuButton(HMENU hMenu = nullptr) : CMFCToolBarMenuButton((UINT)-1, hMenu, -1)
 	{
 	}
 
@@ -47,10 +47,10 @@ public:
 	}
 };
 
-IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
+IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnModelChanged()
+/*virtual*/ void CDesignTreeView::OnModelChanged()
 {
 	if (GetController()->IsTestMode())
 	{
@@ -63,7 +63,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnInstanceSelected(CRDFView * pSender)
+/*virtual*/ void CDesignTreeView::OnInstanceSelected(CRDFView * pSender)
 {
 	if (pSender == this)
 	{
@@ -165,7 +165,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
+/*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(pProperty != nullptr);
@@ -669,7 +669,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * /*pInstance*/)
+/*virtual*/ void CDesignTreeView::OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
 	if (pSender == this)
 	{
@@ -680,20 +680,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	m_hSelectedItem = nullptr;
-
-	UpdateView();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
+/*virtual*/ void CDesignTreeView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
 {
 	if (pSender == this)
 	{
@@ -706,7 +693,20 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CFileView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
+/*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	m_hSelectedItem = nullptr;
+
+	UpdateView();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CDesignTreeView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
 {
 	if (pSender == this)
 	{
@@ -762,7 +762,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ bool CFileView::IsSelected(HTREEITEM hItem)
+/*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem)
 {
 	auto pItem = (CRDFItem*)m_wndFileView.GetItemData(hItem);
 	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance) &&
@@ -775,7 +775,7 @@ IMPLEMENT_SERIAL(CFileViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
+void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
 {
 	if (hItem == nullptr)
 	{
@@ -817,7 +817,7 @@ void CFileView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProp
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
+void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
 {
 	ASSERT(hItem != nullptr);
 
@@ -836,7 +836,7 @@ void CFileView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendan
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
+void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(hInstance != nullptr);
@@ -851,7 +851,7 @@ void CFileView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInst
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty)
+void CDesignTreeView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(pProperty != nullptr);
@@ -870,7 +870,7 @@ void CFileView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::RemoveItemData(HTREEITEM hItem)
+void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
 
@@ -907,9 +907,9 @@ void CFileView::RemoveItemData(HTREEITEM hItem)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::UpdateView()
+void CDesignTreeView::UpdateView()
 {
-//	LOG_DEBUG("CFileView::UpdateView() BEGIN");
+//	LOG_DEBUG("CDesignTreeView::UpdateView() BEGIN");
 
 	m_pSearchDialog->Reset();
 
@@ -986,11 +986,11 @@ void CFileView::UpdateView()
 	m_bInitInProgress = false;
 	m_wndFileView.SendMessage(WM_SETREDRAW, 1, 0);
 
-//	LOG_DEBUG("CFileView::UpdateView() END");
+//	LOG_DEBUG("CDesignTreeView::UpdateView() END");
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::InstancesAlphabeticalView()
+void CDesignTreeView::InstancesAlphabeticalView()
 {
 	m_wndFileView.DeleteAllItems();
 
@@ -1055,7 +1055,7 @@ void CFileView::InstancesAlphabeticalView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::InstancesGroupByClassView()
+void CDesignTreeView::InstancesGroupByClassView()
 {
 	m_wndFileView.DeleteAllItems();
 
@@ -1143,7 +1143,7 @@ void CFileView::InstancesGroupByClassView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::InstancesUnreferencedItemsView()
+void CDesignTreeView::InstancesUnreferencedItemsView()
 {
 	ProgressStatus prgs(L"Build project tree");
 
@@ -1219,7 +1219,7 @@ void CFileView::InstancesUnreferencedItemsView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -1254,7 +1254,7 @@ void CFileView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 {
 	wchar_t szBuffer[100];
 
@@ -1569,7 +1569,7 @@ void CFileView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
+void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
 {
 	ASSERT(iModel != 0);
 	ASSERT(hModel != nullptr);
@@ -1650,9 +1650,9 @@ void CFileView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM h
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CFileView
+// CDesignTreeView
 
-CFileView::CFileView()
+CDesignTreeView::CDesignTreeView()
 	: m_mapInstance2Item()
 	, m_mapInstance2Properties()
 	, m_hSelectedItem(nullptr)
@@ -1662,7 +1662,7 @@ CFileView::CFileView()
 	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
 }
 
-CFileView::~CFileView()
+CDesignTreeView::~CDesignTreeView()
 {	
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.begin();
 	for (; itInstance2Item != m_mapInstance2Item.end(); itInstance2Item++)
@@ -1685,7 +1685,7 @@ CFileView::~CFileView()
 	m_mapInstance2Properties.clear();	
 }
 
-BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
+BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
@@ -1710,7 +1710,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CWorkspaceBar message handlers
 
-int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -1754,9 +1754,9 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMenu menuSort;
 	menuSort.LoadMenu(IDR_POPUP_SORT_INSTANCES);
 
-	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CFileViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
+	m_wndToolBar.ReplaceButton(ID_SORT_MENU, CDesignTreeViewMenuButton(menuSort.GetSubMenu(0)->GetSafeHmenu()));
 
-	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
+	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_wndToolBar.GetButton(0));
 
 	if (pButton != nullptr)
 	{
@@ -1775,13 +1775,13 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFileView::OnSize(UINT nType, int cx, int cy)
+void CDesignTreeView::OnSize(UINT nType, int cx, int cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
+void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndFileView;
 	ASSERT_VALID(pWndTree);
@@ -2128,7 +2128,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);	
 }
 
-void CFileView::AdjustLayout()
+void CDesignTreeView::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 	{
@@ -2144,42 +2144,42 @@ void CFileView::AdjustLayout()
 	m_wndFileView.SetWindowPos(nullptr, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFileView::OnProperties()
+void CDesignTreeView::OnProperties()
 {
 	::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"TODO.", L"Error", MB_ICONERROR | MB_OK);
 }
 
-void CFileView::OnFileOpen()
+void CDesignTreeView::OnFileOpen()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnFileOpenWith()
+void CDesignTreeView::OnFileOpenWith()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnDummyCompile()
+void CDesignTreeView::OnDummyCompile()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnEditCut()
+void CDesignTreeView::OnEditCut()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnEditCopy()
+void CDesignTreeView::OnEditCopy()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnEditClear()
+void CDesignTreeView::OnEditClear()
 {
 	// TODO: Add your command handler code here
 }
 
-void CFileView::OnSort(UINT id)
+void CDesignTreeView::OnSort(UINT id)
 {
 	if (m_nCurrSort == id)
 	{
@@ -2188,7 +2188,7 @@ void CFileView::OnSort(UINT id)
 
 	m_nCurrSort = id;
 
-	CFileViewMenuButton* pButton = DYNAMIC_DOWNCAST(CFileViewMenuButton, m_wndToolBar.GetButton(0));
+	CDesignTreeViewMenuButton* pButton = DYNAMIC_DOWNCAST(CDesignTreeViewMenuButton, m_wndToolBar.GetButton(0));
 
 	if (pButton != nullptr)
 	{
@@ -2200,12 +2200,12 @@ void CFileView::OnSort(UINT id)
 	UpdateView();
 }
 
-void CFileView::OnUpdateSort(CCmdUI* pCmdUI)
+void CDesignTreeView::OnUpdateSort(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(pCmdUI->m_nID == m_nCurrSort);
 }
 
-void CFileView::OnPaint()
+void CDesignTreeView::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -2217,14 +2217,14 @@ void CFileView::OnPaint()
 	dc.Draw3dRect(rectTree, ::GetSysColor(COLOR_3DSHADOW), ::GetSysColor(COLOR_3DSHADOW));
 }
 
-void CFileView::OnSetFocus(CWnd* pOldWnd)
+void CDesignTreeView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
 	m_wndFileView.SetFocus();
 }
 
-void CFileView::OnChangeVisualStyle()
+void CDesignTreeView::OnChangeVisualStyle()
 {
 	m_FileViewImages.DeleteImageList();
 
@@ -2254,7 +2254,7 @@ void CFileView::OnChangeVisualStyle()
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_INSTANCES_24 : IDR_SORT_INSTANCES, 0, 0, TRUE /* Locked */);
 }
 
-void CFileView::OnDestroy()
+void CDesignTreeView::OnDestroy()
 {
 	ASSERT(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
@@ -2264,7 +2264,7 @@ void CFileView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
@@ -2315,7 +2315,7 @@ void CFileView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 	GetController()->SelectInstance(this, nullptr);
 }
 
-void CFileView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
+void CDesignTreeView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 
@@ -2336,7 +2336,7 @@ void CFileView::OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult)
 	AddProperties(pNMTreeView->itemNew.hItem, pInstanceItem->getInstance());
 }
 
-void CFileView::OnNewInstance()
+void CDesignTreeView::OnNewInstance()
 {
 	CNewInstanceDialog dlgNewInstance(GetController(), ::AfxGetMainWnd());
 	if (dlgNewInstance.DoModal() != IDOK)
@@ -2349,7 +2349,7 @@ void CFileView::OnNewInstance()
 	GetController()->CreateNewInstance(this, dlgNewInstance.m_pNewInstanceRDFClass->getInstance());
 }
 
-void CFileView::OnShowWindow(BOOL bShow, UINT nStatus)
+void CDesignTreeView::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	__super::OnShowWindow(bShow, nStatus);
 

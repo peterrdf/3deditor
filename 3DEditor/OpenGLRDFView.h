@@ -18,7 +18,7 @@
 #endif
 
 // ------------------------------------------------------------------------------------------------
-enum class enumMouseEvent
+enum class enumMouseEvent : int
 {
 	Move = 0,
 	LBtnDown,

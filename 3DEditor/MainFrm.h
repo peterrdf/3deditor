@@ -5,7 +5,7 @@
 #pragma once
 
 #include "RDFController.h"
-#include "FileView.h"
+#include "DesignTreeView.h"
 #include "ClassView.h"
 #include "PropertiesWnd.h"
 
@@ -62,7 +62,7 @@ protected:  // control bar embedded members
 	CMFCToolBar       m_wndToolBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
-	CFileView         m_wndFileView;
+	CDesignTreeView         m_wndFileView;
 	CClassView        m_wndClassView;
 	CPropertiesWnd    m_wndProperties;
 

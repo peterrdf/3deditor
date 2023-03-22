@@ -12,7 +12,7 @@
 
 using namespace std;
 
-class CFileViewToolBar : public CMFCToolBar
+class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
 	{
@@ -22,7 +22,7 @@ class CFileViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
-class CFileView
+class CDesignTreeView
 	: public CDockablePane
 	, public CRDFView
 	, CItemStateProvider
@@ -84,7 +84,7 @@ private: // Methods
 
 // Construction
 public:
-	CFileView();
+	CDesignTreeView();
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
@@ -94,14 +94,14 @@ protected:
 
 	CViewTree m_wndFileView;
 	CImageList m_FileViewImages;
-	CFileViewToolBar m_wndToolBar;
+	CDesignTreeViewToolBar m_wndToolBar;
 	UINT m_nCurrSort;
 
 protected:
 
 // Implementation
 public:
-	virtual ~CFileView();
+	virtual ~CDesignTreeView();
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

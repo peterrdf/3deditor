@@ -10,9 +10,9 @@ class CSearchInstancesDialog : public CDialogEx
 
 private: // Declarations
 
-	enum enumSearchWhere {
-		swAll = 0,
-		swInstances = 1
+	enum class enumSearchFilter : int {
+		All = 0,
+		Instances = 1
 	};
 
 private: // Members
@@ -23,7 +23,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Filter
-	enumSearchWhere m_enSearchWhere;
+	enumSearchFilter m_enSearchFilter;
 
 	// --------------------------------------------------------------------------------------------
 	// Last found HTREEITEM
@@ -84,7 +84,7 @@ public:
 	afx_msg void OnEnChangeEditSearchText();
 	CButton m_btnSearch;
 	afx_msg void OnBnClickedButtonSearch();
-	CComboBox m_cmbSearchWhere;
+	CComboBox m_cmbSearchFilter;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeComboSearchFilter();
 };

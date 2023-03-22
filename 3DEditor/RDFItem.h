@@ -2,7 +2,7 @@
 
 #include "RDFInstance.h"
 
-enum class enumItemType
+enum class enumItemType : int
 {
 	Unknown = 0,
 	Instance = 1,

@@ -41,7 +41,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileView.h">
+    <ClInclude Include="DesignTreeView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassView.h">
@@ -131,7 +131,7 @@
     <ClInclude Include="SearchInstancesDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileViewConsts.h">
+    <ClInclude Include="DesignTreeViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassViewConsts.h">
@@ -196,7 +196,7 @@
     <ClCompile Include="3DEditorView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileView.cpp">
+    <ClCompile Include="DesignTreeView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClassView.cpp">
