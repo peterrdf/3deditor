@@ -1697,7 +1697,7 @@ public: // Methods
 			pInstance->VBO() = iVBO;
 			pInstance->VBOOffset() = iVBOOffset;
 
-			iVBOOffset += (GLsizei)pInstance->getVerticesCount();
+			iVBOOffset += (GLsizei)pInstance->GetVerticesCount();
 		}
 
 		glBindVertexArray(0);
@@ -1738,7 +1738,7 @@ public: // Methods
 		iVerticesCount = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
-			iVerticesCount += vecInstances[i]->getVerticesCount();
+			iVerticesCount += vecInstances[i]->GetVerticesCount();
 		}
 
 		float* pVertices = new float[iVerticesCount * _VERTEX_LENGTH];
@@ -1749,11 +1749,11 @@ public: // Methods
 			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
-				vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH * sizeof(float));
+				vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH * sizeof(float));
 
 			delete[] pSrcVertices;
 
-			iOffset += vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH;
+			iOffset += vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH;
 		}
 
 		return pVertices;
@@ -1762,29 +1762,29 @@ public: // Methods
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
 	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
 	{
-		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
+		const int64_t _SRC_VERTEX_LENGTH = pInstance->GetVertexLength();
 		const int64_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
-		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
-		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+		float* pVertices = new float[pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
 
-		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
+		for (int64_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
 		{
 			// X, Y, Z
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
 
 			// Nx, Ny, Nz
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
 
 			// Tx, Ty
 			if (bSupportsTexture)
 			{
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
 			}
 		}
 
@@ -1839,6 +1839,14 @@ struct _ioglRenderer
 
 	virtual void _redraw() PURE;
 };
+
+const float ZOOM_SPEED_MOUSE = 0.025f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
+const float ZOOM_SPEED_KEYS = 0.025f;
+const float PAN_SPEED_MOUSE = 4.f;
+const float PAN_SPEED_KEYS = 40.f;
+const float ROTATION_SPEED = 1.f / 2500.f;
+const float ROTATION_SENSITIVITY = 0.1f;
 
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
@@ -2151,19 +2159,103 @@ public: // Methods
 		} // switch (enView)
 
 		_redraw();
-	}
+	}		
 
-	void _zoom(float fZTranslation)
+	void _rotateMouseLButton(float fXAngle, float fYAngle)
 	{
-		if (m_enProjection == enumProjection::Isometric)
+		if (abs(fXAngle) >= abs(fYAngle) * ROTATION_SENSITIVITY)
 		{
-			return;
+			fYAngle = 0.;
+		}
+		else
+		{
+			if (abs(fYAngle) >= abs(fXAngle) * ROTATION_SENSITIVITY)
+			{
+				fXAngle = 0.;
+			}
 		}
 
-		m_fZTranslation += fZTranslation;
-
-		_redraw();
+		_rotate(
+			fXAngle * ROTATION_SPEED,
+			fYAngle * ROTATION_SPEED);
 	}
+
+	void _zoomMouseMButton(LONG lDelta)
+	{
+		_zoom(
+			lDelta > 0 ?
+			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE :
+			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+	}
+
+	void _panMouseRButton(float fX, float fY)
+	{
+		_pan(
+			PAN_SPEED_MOUSE * fX,
+			PAN_SPEED_MOUSE * -fY);
+	}
+
+	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+	{
+		_zoom(zDelta < 0 ?
+			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
+			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+	}	
+
+	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+	{
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		switch (nChar)
+		{
+			case VK_UP:
+			{
+				_pan(
+					0.f,
+					PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+			}
+			break;
+
+			case VK_DOWN:
+			{
+				_pan(
+					0.f,
+					-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+			}
+			break;
+
+			case VK_LEFT:
+			{
+				_pan(
+					-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+					0.f);
+			}
+			break;
+
+			case VK_RIGHT:
+			{
+				_pan(
+					PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+					0.f);
+			}
+			break;
+
+			case VK_PRIOR:
+			{
+				_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+			}
+			break;
+
+			case VK_NEXT:
+			{
+				_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+			}
+			break;
+		} // switch (nChar)
+	}	
+
+private: //  Methods
 
 	void _rotate(float fXAngle, float fYAngle)
 	{
@@ -2190,7 +2282,19 @@ public: // Methods
 		_redraw();
 	}
 
-	void _move(float fX, float fY)
+	void _zoom(float fZTranslation)
+	{
+		if (m_enProjection == enumProjection::Isometric)
+		{
+			return;
+		}
+
+		m_fZTranslation += fZTranslation;
+
+		_redraw();
+	}
+
+	void _pan(float fX, float fY)
 	{
 		m_fXTranslation += fX;
 		m_fYTranslation += fY;
