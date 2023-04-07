@@ -619,7 +619,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		prgs.Step();
 
 		auto pInstance = itInstance->second;
-		if (pInstance->getVerticesCount() == 0)
+		if (pInstance->GetVerticesCount() == 0)
 		{
 			continue;
 		}
@@ -631,7 +631,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int_t)iVerticesCount + pInstance->GetVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -754,7 +754,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
 		}
 
-		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
+		iVerticesCount += (GLsizei)pInstance->GetVerticesCount();
 		vecInstancesCohort.push_back(pInstance);
 	} // for (; itInstance != ...
 
@@ -1785,9 +1785,9 @@ void COpenGLRDFView::DrawNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -1795,12 +1795,12 @@ void COpenGLRDFView::DrawNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -1826,9 +1826,9 @@ void COpenGLRDFView::DrawNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -1836,12 +1836,12 @@ void COpenGLRDFView::DrawNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -1861,9 +1861,9 @@ void COpenGLRDFView::DrawNormalVectors()
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 				iIndex++)
 			{
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny
@@ -1871,12 +1871,12 @@ void COpenGLRDFView::DrawNormalVectors()
 				vecVertices.push_back(0.f); // Tx
 				vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny
@@ -2006,9 +2006,9 @@ void COpenGLRDFView::DrawTangentVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2016,12 +2016,12 @@ void COpenGLRDFView::DrawTangentVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2047,9 +2047,9 @@ void COpenGLRDFView::DrawTangentVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2057,12 +2057,12 @@ void COpenGLRDFView::DrawTangentVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2082,9 +2082,9 @@ void COpenGLRDFView::DrawTangentVectors()
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 				iIndex++)
 			{
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny
@@ -2092,12 +2092,12 @@ void COpenGLRDFView::DrawTangentVectors()
 				vecVertices.push_back(0.f); // Tx
 				vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny
@@ -2227,9 +2227,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2237,12 +2237,12 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
-					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
+					vecVertices.push_back(pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pInstance->GetVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2268,9 +2268,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 					iIndex++)
 				{
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2278,12 +2278,12 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
-					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
+					vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
 
 					vecVertices.push_back(0.f); // Nx
 					vecVertices.push_back(0.f); // Ny
@@ -2303,9 +2303,9 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
 				iIndex++)
 			{
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny
@@ -2313,12 +2313,12 @@ void COpenGLRDFView::DrawBiNormalVectors()
 				vecVertices.push_back(0.f); // Tx
 				vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
+				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
 
 				vecVertices.push_back(0.f); // Nx
 				vecVertices.push_back(0.f); // Ny

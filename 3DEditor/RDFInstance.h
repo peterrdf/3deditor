@@ -77,19 +77,19 @@ public: // Methods
 	int64_t getInstance() const;
 	int64_t getClassInstance() const;
 
-	const wchar_t * getName() const;
-	const wchar_t * getUniqueName() const;
+	const wchar_t* getName() const;
+	const wchar_t* getUniqueName() const;
 
 	bool isReferenced() const;
 	bool hasGeometry() const;
 	
-	int32_t * getIndices() const;
+	int32_t* getIndices() const;
 	int64_t getIndicesCount() const;	
 
-	float * getVertices() const;
+	float* GetVertices() const;
 	float* getOriginalVertices() const;	
-	int64_t getVerticesCount() const;
-	int64_t getVertexLength() const;
+	int64_t GetVerticesCount() const;
+	int64_t GetVertexLength() const;
 
 	int64_t getConceptualFacesCount() const;
 

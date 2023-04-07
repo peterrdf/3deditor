@@ -35,7 +35,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	ASSERT(pInstance != nullptr);
 	ASSERT(iVertexLength > 0);
 
-	if (pInstance->getVerticesCount() == 0)
+	if (pInstance->GetVerticesCount() == 0)
 	{
 		return 0;
 	}	
@@ -62,10 +62,10 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	* Mapping
 	*/
 
-	m_vecVerticesMapping.resize(pInstance->getVerticesCount());
+	m_vecVerticesMapping.resize(pInstance->GetVerticesCount());
 	fill(m_vecVerticesMapping.begin(), m_vecVerticesMapping.end(), -1);
 
-	m_vecVerticesConvertor.resize(pInstance->getVerticesCount());
+	m_vecVerticesConvertor.resize(pInstance->GetVerticesCount());
 	fill(m_vecVerticesConvertor.begin(), m_vecVerticesConvertor.end(), -1);
 
 	output << "****************************************************************************************************\n";
@@ -76,10 +76,10 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	*/
 
 	Clear(m_mapXDistribution);
-	for (int32_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
+	for (int32_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
 	{
 		// X
-		float fX = pInstance->getVertices()[(iVertex * iVertexLength) + 0];
+		float fX = pInstance->GetVertices()[(iVertex * iVertexLength) + 0];
 
 		map<float, vector<int32_t> *>::iterator itX = m_mapXDistribution.find(fX);
 		if (itX == m_mapXDistribution.end())
@@ -95,14 +95,14 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 		}
 	} // for (int32_t iVertex = ...
 
-	if (m_mapXDistribution.size() == (size_t)pInstance->getVerticesCount())
+	if (m_mapXDistribution.size() == (size_t)pInstance->GetVerticesCount())
 	{
 #ifdef _USE_BOOST
 		high_resolution_clock::time_point tpEnd = high_resolution_clock::now();
 		duration<float> duration = tpEnd - tpStart;
 
 		output << "0 duplicates were found.\n";
-		output << "Vertices count: " << pInstance->getVerticesCount() << "\n";
+		output << "Vertices count: " << pInstance->GetVerticesCount() << "\n";
 		output << "The check is done in " << duration << "." << "\n";
 		output << "****************************************************************************************************\n";
 #endif
@@ -128,7 +128,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 		for (size_t iIndex = 0; iIndex < itX->second->size(); iIndex++)
 		{
 			// Y
-			float fY = pInstance->getVertices()[(itX->second->at(iIndex) * iVertexLength) + 1];
+			float fY = pInstance->GetVertices()[(itX->second->at(iIndex) * iVertexLength) + 1];
 
 			map<float, vector<int32_t> *>::iterator itY = m_mapYDistribution.find(fY);
 			if (itY == m_mapYDistribution.end())
@@ -160,7 +160,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 			for (size_t iIndex = 0; iIndex < itY->second->size(); iIndex++)
 			{
 				// Z
-				float fZ = pInstance->getVertices()[(itY->second->at(iIndex) * iVertexLength) + 2];
+				float fZ = pInstance->GetVertices()[(itY->second->at(iIndex) * iVertexLength) + 2];
 
 				map<float, vector<int32_t> *>::iterator itZ = m_mapZDistribution.find(fZ);
 				if (itZ == m_mapZDistribution.end())
@@ -203,8 +203,8 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 
 				//	for (size_t iVertex = 1; iVertex < itZ->second->size(); iVertex++)
 				//	{
-				//		if ((pInstance->getVertices()[(itZ->second->at(0) * iVertexLength) + 6] == pInstance->getVertices()[(itZ->second->at(iVertex) * iVertexLength) + 6]) &&
-				//			pInstance->getVertices()[(itZ->second->at(0) * iVertexLength) + 7] == pInstance->getVertices()[(itZ->second->at(iVertex) * iVertexLength) + 7])
+				//		if ((pInstance->GetVertices()[(itZ->second->at(0) * iVertexLength) + 6] == pInstance->GetVertices()[(itZ->second->at(iVertex) * iVertexLength) + 6]) &&
+				//			pInstance->GetVertices()[(itZ->second->at(0) * iVertexLength) + 7] == pInstance->GetVertices()[(itZ->second->at(iVertex) * iVertexLength) + 7])
 				//		{
 				//			vecIndices.push_back(itZ->second->at(iVertex));
 				//		}
@@ -238,13 +238,13 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 				for (size_t iIndex = 0; iIndex < itZ->second->size(); iIndex++)
 				{
 					// X
-					float fX = pInstance->getVertices()[(itZ->second->at(iIndex) * iVertexLength) + 0];
+					float fX = pInstance->GetVertices()[(itZ->second->at(iIndex) * iVertexLength) + 0];
 
 					// Y
-					float fY = pInstance->getVertices()[(itZ->second->at(iIndex) * iVertexLength) + 1];
+					float fY = pInstance->GetVertices()[(itZ->second->at(iIndex) * iVertexLength) + 1];
 
 					// Z
-					float fZ = pInstance->getVertices()[(itZ->second->at(iIndex) * iVertexLength) + 2];
+					float fZ = pInstance->GetVertices()[(itZ->second->at(iIndex) * iVertexLength) + 2];
 
 					output << "Vertex: " << itZ->second->at(iIndex) << "(" << fX << ", " << fY << ", " << fZ << ")" << "\n";
 				} // for (size_t iIndex = ...
@@ -263,7 +263,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	high_resolution_clock::time_point tpEnd = high_resolution_clock::now();
 	duration<float> duration = tpEnd - tpStart;
 
-	output << "Vertices count: " << pInstance->getVerticesCount() << "\n";
+	output << "Vertices count: " << pInstance->GetVerticesCount() << "\n";
 	output << iDuplicatesCount << " duplicates were found.\n";
 	output << "The check is done in " << duration << "." << "\n";	
 	output << "****************************************************************************************************\n";
@@ -276,7 +276,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 tuple<float *, int64_t, int32_t *> CUniqueVerticesCheckE0::RemoveDuplicates(CRDFInstance * pInstance, int32_t iVertexLength)
 {
 	ASSERT(pInstance != nullptr);
-	ASSERT(pInstance->getVerticesCount() > 0);
+	ASSERT(pInstance->GetVerticesCount() > 0);
 	ASSERT(pInstance->getIndicesCount() > 0);
 	ASSERT(iVertexLength > 0);
 
@@ -345,7 +345,7 @@ tuple<float *, int64_t, int32_t *> CUniqueVerticesCheckE0::RemoveDuplicates(CRDF
 			continue;
 		}
 		
-		memcpy(pVertices + (iVertex * iVertexLength), pInstance->getVertices() + (iIndex * iVertexLength), iVertexLength * sizeof(float));
+		memcpy(pVertices + (iVertex * iVertexLength), pInstance->GetVertices() + (iIndex * iVertexLength), iVertexLength * sizeof(float));
 
 		iVertex++;
 	} // for (size_t iIndex = ...

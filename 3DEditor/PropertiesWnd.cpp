@@ -2892,7 +2892,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Vertices
 	*/
 	{	
-		swprintf(szBuffer, 100, L"%lld", pInstance->getVerticesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->GetVerticesCount());
 
 		auto pItem = new CMFCPropertyGridProperty(L"Number of vertices", (_variant_t)szBuffer, L"Number of vertices");
 		pItem->AllowEdit(FALSE);
