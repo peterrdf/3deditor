@@ -62,14 +62,14 @@ CRDFClass::~CRDFClass()
 
 // ------------------------------------------------------------------------------------------------
 // Getter
-int64_t CRDFClass::getInstance() const
+int64_t CRDFClass::GetInstance() const
 {
 	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
 // Getter
-const wchar_t * CRDFClass::getName() const
+const wchar_t * CRDFClass::GetName() const
 {
 	return m_strName.c_str();
 }

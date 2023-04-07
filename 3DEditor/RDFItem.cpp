@@ -16,7 +16,7 @@ CRDFItem::~CRDFItem()
 }
 
 // ------------------------------------------------------------------------------------------------
-CRDFInstance * CRDFItem::getInstance() const
+CRDFInstance * CRDFItem::GetInstance() const
 {
 	return m_pInstance;
 }

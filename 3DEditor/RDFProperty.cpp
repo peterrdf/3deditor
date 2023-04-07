@@ -47,14 +47,14 @@ CRDFProperty::~CRDFProperty()
 
 // ------------------------------------------------------------------------------------------------
 // Getter
-int64_t CRDFProperty::getInstance() const
+int64_t CRDFProperty::GetInstance() const
 {
 	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
 // Getter
-const wchar_t * CRDFProperty::getName() const
+const wchar_t * CRDFProperty::GetName() const
 {
 	return m_strName.c_str();
 }
@@ -173,35 +173,35 @@ wstring CRDFProperty::getCardinality(int64_t iInstance) const
 	case TYPE_OBJECTTYPE:
 	{
 		int64_t * piInstances = nullptr;
-		GetObjectProperty(iInstance, getInstance(), &piInstances, &iCard);
+		GetObjectProperty(iInstance, GetInstance(), &piInstances, &iCard);
 	}
 	break;
 
 	case TYPE_BOOL_DATATYPE:
 	{
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(iInstance, getInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(iInstance, GetInstance(), (void**)&pbValue, &iCard);
 	}
 	break;
 
 	case TYPE_CHAR_DATATYPE:
 	{
 		char ** szValue = nullptr;
-		GetDatatypeProperty(iInstance, getInstance(), (void **)&szValue, &iCard);
+		GetDatatypeProperty(iInstance, GetInstance(), (void **)&szValue, &iCard);
 	}
 	break;
 
 	case TYPE_DOUBLE_DATATYPE:
 	{
 		double * pdValue = nullptr;
-		GetDatatypeProperty(iInstance, getInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(iInstance, GetInstance(), (void **)&pdValue, &iCard);
 	}
 	break;
 
 	case TYPE_INT_DATATYPE:
 	{
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(iInstance, getInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(iInstance, GetInstance(), (void **)&piValue, &iCard);
 	}
 	break;
 
@@ -266,6 +266,6 @@ void CRDFProperty::GetRestrictions(int64_t iInstance, int64_t& iMinCard, int64_t
 
 	iMinCard = -1;
 	iMaxCard = -1;
-	GetClassPropertyCardinalityRestrictionNested_(iClassInstance, (int64_t) getInstance(), &iMinCard, &iMaxCard);
+	GetClassPropertyCardinalityRestrictionNested_(iClassInstance, (int64_t) GetInstance(), &iMinCard, &iMaxCard);
 }
 

@@ -75,7 +75,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
     m_strName = wxString(szName).wchar_str();
 
     wchar_t szUniqueName[200];
-	swprintf(szUniqueName, 200, L"%lld (%ls)", m_pInstance->getInstance(), wxString(szClassName).wc_str());
+	swprintf(szUniqueName, 200, L"%lld (%ls)", m_pInstance->GetInstance(), wxString(szClassName).wc_str());
 
 	m_strUniqueName = szUniqueName;
 #endif // _LINUX
@@ -117,7 +117,7 @@ void CRDFInstance::Recalculate()
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::getID() const
+int64_t CRDFInstance::GetID() const
 {
 	return m_iID;
 }
@@ -132,13 +132,13 @@ int64_t CRDFInstance::GetModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::getInstance() const
+int64_t CRDFInstance::GetInstance() const
 {
 	return m_iInstance;
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::getClassInstance() const
+int64_t CRDFInstance::GetClassInstance() const
 {
 	int64_t iClassInstance = GetInstanceClass(m_iInstance);
 	ASSERT(iClassInstance != 0);
@@ -147,36 +147,36 @@ int64_t CRDFInstance::getClassInstance() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t * CRDFInstance::getName() const
+const wchar_t* CRDFInstance::GetName() const
 {
 	return m_strName.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-const wchar_t * CRDFInstance::getUniqueName() const
+const wchar_t* CRDFInstance::GetUniqueName() const
 {
 	return m_strUniqueName.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRDFInstance::isReferenced() const
+bool CRDFInstance::IsReferenced() const
 {
 	return GetInstanceInverseReferencesByIterator(m_iInstance, 0);
 }
 
 // ------------------------------------------------------------------------------------------------
-bool CRDFInstance::hasGeometry() const
+bool CRDFInstance::HasGeometry() const
 {
 	return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0);
 }
 
 // ------------------------------------------------------------------------------------------------
-int32_t * CRDFInstance::getIndices() const
+int32_t * CRDFInstance::GetIndices() const
 {
 	return m_pIndexBuffer->data();
 }
 
-int64_t CRDFInstance::getIndicesCount() const
+int64_t CRDFInstance::GetIndicesCount() const
 {
 	return m_pIndexBuffer->size();
 }
@@ -186,7 +186,7 @@ float * CRDFInstance::GetVertices() const
 	return m_pVertices;
 }
 
-float* CRDFInstance::getOriginalVertices() const
+float* CRDFInstance::GetOriginalVertices() const
 {
 	return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr;
 }
@@ -201,7 +201,7 @@ int64_t CRDFInstance::GetVertexLength() const
 	return VERTEX_LENGTH; 
 }
 
-int64_t CRDFInstance::getConceptualFacesCount() const
+int64_t CRDFInstance::GetConceptualFacesCount() const
 {
 	return m_iConceptualFacesCount;
 }
@@ -380,12 +380,12 @@ void CRDFInstance::CalculateMinMax(
 				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iTriangle = ...
 	} // if (!m_vecTriangles.empty())
@@ -401,17 +401,17 @@ void CRDFInstance::CalculateMinMax(
 				iIndex < m_vecFacePolygons[iPolygon].startIndex() + m_vecFacePolygons[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
+				if ((GetIndices()[iIndex] == -1) || (GetIndices()[iIndex] == -2))
 				{
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecFacePolygons.empty())
@@ -427,17 +427,17 @@ void CRDFInstance::CalculateMinMax(
 				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount(); 
 				iIndex++)
 			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
+				if ((GetIndices()[iIndex] == -1) || (GetIndices()[iIndex] == -2))
 				{
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecConcFacePolygons.empty())
@@ -453,17 +453,17 @@ void CRDFInstance::CalculateMinMax(
 				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
 				iIndex++)
 			{
-				if (getIndices()[iIndex] == -1)
+				if (GetIndices()[iIndex] == -1)
 				{
 					continue;
 				}
 
-				fXmin = (float)fmin(fXmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecLines.empty())
@@ -479,12 +479,12 @@ void CRDFInstance::CalculateMinMax(
 				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
 				iIndex++)
 			{
-				fXmin = (float)fmin(fXmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fXmax = (float)fmax(fXmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH)]);
-				fYmin = (float)fmin(fYmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fYmax = (float)fmax(fYmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				fZmin = (float)fmin(fZmin, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-				fZmax = (float)fmax(fZmax, GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fXmin = (float)fmin(fXmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fXmax = (float)fmax(fXmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH)]);
+				fYmin = (float)fmin(fYmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fYmax = (float)fmax(fYmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				fZmin = (float)fmin(fZmin, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+				fZmax = (float)fmax(fZmax, GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 			} // for (size_t iIndex = ...
 		} // for (size_t iPolygon = ...
 	} // if (!m_vecPoints.empty())
@@ -694,7 +694,7 @@ void CRDFInstance::Calculate()
 			*/
 			for (int64_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
 			{
-				if ((GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
+				if ((GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
 				{
 					bHasTexture = true;
 
@@ -769,7 +769,7 @@ void CRDFInstance::Calculate()
 			*/
 			for (int64_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesCountPoints; iIndex++)
 			{
-				if ((GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(getIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
+				if ((GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
 				{
 					bHasTexture = true;
 

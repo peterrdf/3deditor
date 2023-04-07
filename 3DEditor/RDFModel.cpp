@@ -253,7 +253,7 @@ CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->getID() == iID)
+		if (itInstance->second->GetID() == iID)
 		{
 			return itInstance->second;
 		}
@@ -312,9 +312,9 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
 	ASSERT(pInstance != nullptr);
 
-	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
+	bool bResult = RemoveInstance(pInstance->GetInstance()) == 0 ? true : false;
 
-	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->getInstance());
+	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->GetInstance());
 	ASSERT(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
@@ -350,7 +350,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	ASSERT(pInstance != nullptr);
 	ASSERT(pObjectRDFProperty != nullptr);
 
-	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
+	int64_t iClassInstance = GetInstanceClass(pInstance->GetInstance());
 	ASSERT(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
@@ -380,9 +380,9 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Check this instance
 		*/
-		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
+		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->GetClassInstance()) != vecRestrictions.end())
 		{
-			vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
+			vecCompatibleInstances.push_back(itRFDInstances->second->GetInstance());
 
 			continue;
 		}
@@ -403,7 +403,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
+				vecCompatibleInstances.push_back(itRFDInstances->second->GetInstance());
 
 				break;
 			}
@@ -1342,18 +1342,18 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 	if (iRDFInstance->getEnable() == false) {
 		iRDFInstance->setEnable(true);
 
-		if (iRDFInstance->getConceptualFacesCount() == 0) {
+		if (iRDFInstance->GetConceptualFacesCount() == 0) {
 			auto& mapRFDInstances = GetInstances();
 
 			//
 			//	Walk over all relations (object properties)
 			//
-			RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), 0);
+			RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->GetInstance(), 0);
 			while (myProperty) {
 				if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
 					int64_t card = 0;
 					OwlInstance* values = nullptr;
-					GetObjectProperty(iRDFInstance->getInstance(), myProperty, &values, &card);
+					GetObjectProperty(iRDFInstance->GetInstance(), myProperty, &values, &card);
 					for (int64_t i = 0; i < card; i++) {
 						if (values[i]) {
 							auto itRFDInstance = mapRFDInstances.find(values[i]);
@@ -1363,7 +1363,7 @@ void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
 						}
 					}
 				}
-				myProperty = GetInstancePropertyByIterator(iRDFInstance->getInstance(), myProperty);
+				myProperty = GetInstancePropertyByIterator(iRDFInstance->GetInstance(), myProperty);
 			}
 		}
 	}
@@ -1380,7 +1380,7 @@ void CRDFModel::SetDefaultEnabledInstances()
 	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
 	{
 		if (itRFDInstances->second->getEnable() &&
-			!GetInstanceGeometryClass(itRFDInstances->second->getInstance())) {
+			!GetInstanceGeometryClass(itRFDInstances->second->GetInstance())) {
 			itRFDInstances->second->setEnable(false);
 			EnableInstancesRecursively(itRFDInstances->second);
 		}
@@ -1421,7 +1421,7 @@ void CRDFModel::LoadRDFInstances()
 			pInstance = itInstance->second;
 		}
 
-		pInstance->setEnable(!pInstance->isReferenced());
+		pInstance->setEnable(!pInstance->IsReferenced());
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)

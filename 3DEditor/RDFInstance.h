@@ -70,28 +70,28 @@ public: // Methods
 
 	void Recalculate();
 
-	int64_t getID() const;
+	int64_t GetID() const;
 
 	int64_t GetModel() const;
 
-	int64_t getInstance() const;
-	int64_t getClassInstance() const;
+	int64_t GetInstance() const;
+	int64_t GetClassInstance() const;
 
-	const wchar_t* getName() const;
-	const wchar_t* getUniqueName() const;
+	const wchar_t* GetName() const;
+	const wchar_t* GetUniqueName() const;
 
-	bool isReferenced() const;
-	bool hasGeometry() const;
+	bool IsReferenced() const;
+	bool HasGeometry() const;
 	
-	int32_t* getIndices() const;
-	int64_t getIndicesCount() const;	
+	int32_t* GetIndices() const;
+	int64_t GetIndicesCount() const;	
 
 	float* GetVertices() const;
-	float* getOriginalVertices() const;	
+	float* GetOriginalVertices() const;	
 	int64_t GetVerticesCount() const;
 	int64_t GetVertexLength() const;
 
-	int64_t getConceptualFacesCount() const;
+	int64_t GetConceptualFacesCount() const;
 
 	const vector<_primitives>& getTriangles() const;
 	const vector<_primitives>& getLines() const;
@@ -150,7 +150,7 @@ struct SORT_RDFINSTANCES
 {
 	bool operator()(const CRDFInstance * a, const CRDFInstance * b) const
 	{
-		return wcscmp(a->getName(), b->getName()) < 0;
+		return wcscmp(a->GetName(), b->GetName()) < 0;
 	}
 };
 

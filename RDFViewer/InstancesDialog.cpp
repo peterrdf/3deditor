@@ -46,7 +46,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	{
 		CRDFInstance * pInstance = itRFDInstances->second;
 
-		if (pInstance->isReferenced())
+		if (pInstance->IsReferenced())
 		{
 			continue;
 		}
@@ -64,7 +64,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
-		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
+		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->GetUniqueName());
 
 		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
 
@@ -257,7 +257,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		bool bIsGeometryInstanceSelected = false;		
 		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 		{
-			if (vecSelectedInstances[iInstance]->hasGeometry())
+			if (vecSelectedInstances[iInstance]->HasGeometry())
 			{
 				bIsGeometryInstanceSelected = true;
 
@@ -313,7 +313,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				vector<CRDFInstance *> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
-					if (vecSelectedInstances[iInstance]->isReferenced())
+					if (vecSelectedInstances[iInstance]->IsReferenced())
 					{
 						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -360,7 +360,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				vector<CRDFInstance *> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
-					if (vecSelectedInstances[iInstance]->isReferenced())
+					if (vecSelectedInstances[iInstance]->IsReferenced())
 					{
 						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -393,7 +393,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		/*
 		* Instances with a geometry
 		*/
-		if (vecSelectedInstances[0]->hasGeometry())
+		if (vecSelectedInstances[0]->HasGeometry())
 		{
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -422,7 +422,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(vecSelectedInstances[0]->getInstance());
+				GetController()->ZoomToInstance(vecSelectedInstances[0]->GetInstance());
 			}
 			break;
 
@@ -466,7 +466,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 						continue;
 					}
 
-					if (!itRFDInstances->second->isReferenced())
+					if (!itRFDInstances->second->IsReferenced())
 					{
 						itRFDInstances->second->setEnable(true);
 					}					
@@ -486,7 +486,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_REMOVE:
 			{
-				if (vecSelectedInstances[0]->isReferenced())
+				if (vecSelectedInstances[0]->IsReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -505,7 +505,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			} // switch (uiCommand)	
 
 			return;
-		} // if (vecSelectedInstances[0]->hasGeometry())
+		} // if (vecSelectedInstances[0]->HasGeometry())
 
 		/*
 		* Instances without a geometry
@@ -527,7 +527,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 		case ID_INSTANCES_REMOVE:
 		{
-			if (vecSelectedInstances[0]->isReferenced())
+			if (vecSelectedInstances[0]->IsReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 

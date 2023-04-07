@@ -12,7 +12,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 //	LOG_DEBUG("*** RESTRICTIONS ***");
 #endif // _LINUX
 
-	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getInstance(), 0);
+	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), 0);
 	while (iRestrictionsClassInstance != 0)
 	{
 		char * szRestrictionsClassName = nullptr;
@@ -24,7 +24,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 
 		m_vecRestrictions.push_back(iRestrictionsClassInstance);
 
-		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getInstance(), iRestrictionsClassInstance);
+		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), iRestrictionsClassInstance);
 	} // while (iRestrictionsClassInstance != 0)
 
 #ifndef _LINUX

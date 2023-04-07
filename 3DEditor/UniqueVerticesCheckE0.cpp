@@ -43,7 +43,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	/*if (pInstance->hasConceptualFaceWithTexture())
 	{
 		output << "****************************************************************************************************\n";
-		output << "Instance: " << pInstance->getName() << "\n";
+		output << "Instance: " << pInstance->GetName() << "\n";
 		output << "Skipped - found conceptual face with a texture.\n";
 		output << "****************************************************************************************************\n";
 
@@ -69,7 +69,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	fill(m_vecVerticesConvertor.begin(), m_vecVerticesConvertor.end(), -1);
 
 	output << "****************************************************************************************************\n";
-	output << "Instance: " << pInstance->getName() << "\n";
+	output << "Instance: " << pInstance->GetName() << "\n";
 
 	/*
 	* X distribution
@@ -277,7 +277,7 @@ tuple<float *, int64_t, int32_t *> CUniqueVerticesCheckE0::RemoveDuplicates(CRDF
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(pInstance->GetVerticesCount() > 0);
-	ASSERT(pInstance->getIndicesCount() > 0);
+	ASSERT(pInstance->GetIndicesCount() > 0);
 	ASSERT(iVertexLength > 0);
 
 	/*
@@ -298,18 +298,18 @@ tuple<float *, int64_t, int32_t *> CUniqueVerticesCheckE0::RemoveDuplicates(CRDF
 	* Update the indices
 	*/
 
-	int32_t* pIndices = new int32_t[pInstance->getIndicesCount()];
+	int32_t* pIndices = new int32_t[pInstance->GetIndicesCount()];
 
-	for (int32_t iIndex = 0; iIndex < pInstance->getIndicesCount(); iIndex++)
+	for (int32_t iIndex = 0; iIndex < pInstance->GetIndicesCount(); iIndex++)
 	{
-		if (pInstance->getIndices()[iIndex] < 0)
+		if (pInstance->GetIndices()[iIndex] < 0)
 		{
-			pIndices[iIndex] = pInstance->getIndices()[iIndex];
+			pIndices[iIndex] = pInstance->GetIndices()[iIndex];
 
 			continue;
 		}
 
-		pIndices[iIndex] = m_vecVerticesMapping[pInstance->getIndices()[iIndex]];
+		pIndices[iIndex] = m_vecVerticesMapping[pInstance->GetIndices()[iIndex]];
 	} // for (int32_t iIndex = ...	
 
 	/*
@@ -353,7 +353,7 @@ tuple<float *, int64_t, int32_t *> CUniqueVerticesCheckE0::RemoveDuplicates(CRDF
 	/*
 	* Update the indices
 	*/
-	for (int32_t iIndex = 0; iIndex < pInstance->getIndicesCount(); iIndex++)
+	for (int32_t iIndex = 0; iIndex < pInstance->GetIndicesCount(); iIndex++)
 	{
 		if (pIndices[iIndex] < 0)
 		{

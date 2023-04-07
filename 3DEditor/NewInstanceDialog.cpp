@@ -49,7 +49,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 	auto itClass = mapClasses.begin();
 	for (; itClass != mapClasses.end(); itClass++)
 	{
-		int iItem = m_cmbClasses.AddString(itClass->second->getName());
+		int iItem = m_cmbClasses.AddString(itClass->second->GetName());
 		m_cmbClasses.SetItemDataPtr(iItem, itClass->second);
 	} // for (; itClass != ...
 

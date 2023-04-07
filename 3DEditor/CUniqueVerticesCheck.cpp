@@ -61,7 +61,7 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 	/*if (pInstance->hasConceptualFaceWithTexture())
 	{
 		output << "****************************************************************************************************\n";
-		output << "Instance: " << pInstance->getName() << "\n";
+		output << "Instance: " << pInstance->GetName() << "\n";
 		output << "Skipped - found conceptual face with a texture.\n";
 		output << "****************************************************************************************************\n";
 
@@ -77,7 +77,7 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 #endif
 
 	output << "****************************************************************************************************\n";
-	output << "Instance: " << pInstance->getName() << "\n";
+	output << "Instance: " << pInstance->GetName() << "\n";
 
 	/*
 	* Clean

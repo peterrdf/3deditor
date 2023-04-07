@@ -93,7 +93,7 @@ void CClassView::ClassesAlphabeticalView()
 	map<int64_t, CRDFClass *>::const_iterator itClass = mapClasses.begin();
 	for (; itClass != mapClasses.end(); itClass++)
 	{
-		mapName2Instance[itClass->second->getName()] = itClass->second->getInstance();
+		mapName2Instance[itClass->second->GetName()] = itClass->second->GetInstance();
 	}
 
 	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Classes"), IMAGE_MODEL, IMAGE_MODEL);
@@ -110,12 +110,12 @@ void CClassView::ClassesAlphabeticalView()
 		/*
 		* Classes
 		*/
-		HTREEITEM hClass = AddClass(hRoot, pClass->getInstance(), true);
+		HTREEITEM hClass = AddClass(hRoot, pClass->GetInstance(), true);
 
 		/*
 		* Properties
 		*/
-		AddProperties(hClass, pClass->getInstance());
+		AddProperties(hClass, pClass->GetInstance());
 	} // for (; itName2Instance != ...	
 
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
@@ -142,7 +142,7 @@ void CClassView::ClassesHierarchicalView()
 
 		if (pClass->getParentClasses().size() == 0)
 		{
-			vecRootClasses.push_back(pClass->getInstance());
+			vecRootClasses.push_back(pClass->GetInstance());
 		}
 	}
 
@@ -177,7 +177,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 
 	CRDFClass * pClass = itClass->second;
 
-	HTREEITEM hClass = m_treeCtrl.InsertItem(pClass->getName(), IMAGE_CLASS, IMAGE_CLASS, hParent);
+	HTREEITEM hClass = m_treeCtrl.InsertItem(pClass->GetName(), IMAGE_CLASS, IMAGE_CLASS, hParent);
 
 	if (bAddParentClasses)
 	{
@@ -193,7 +193,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 
 				CRDFClass * pParentRDFClass = itParentRDFClass->second;
 
-				m_treeCtrl.InsertItem(pParentRDFClass->getName(), IMAGE_CLASS, IMAGE_CLASS, hParentClasses);
+				m_treeCtrl.InsertItem(pParentRDFClass->GetName(), IMAGE_CLASS, IMAGE_CLASS, hParentClasses);
 			} // for (size_t iParentClass = ...
 		} // if (!vecParentClasses.empty())
 	} // if (bAddParentClasses)	
@@ -221,9 +221,9 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	CRDFClass * pClass = itClass->second;
 
 	vector<int64_t> vecAncestors;
-	pModel->GetClassAncestors(pClass->getInstance(), vecAncestors);
+	pModel->GetClassAncestors(pClass->GetInstance(), vecAncestors);
 
-	vecAncestors.push_back(pClass->getInstance());
+	vecAncestors.push_back(pClass->GetInstance());
 
 	for (size_t iAncestorClass = 0; iAncestorClass < vecAncestors.size(); iAncestorClass++)
 	{
@@ -240,7 +240,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 
 			CRDFProperty * pProperty = itProperty->second;
 
-			wstring strNameAndType = pProperty->getName();
+			wstring strNameAndType = pProperty->GetName();
 			strNameAndType += L" : ";
 
 			switch (pProperty->getType())
@@ -300,7 +300,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 					ASSERT(itRestrictionRDFClass != mapClasses.end());
 					ASSERT(itRestrictionRDFClass->second != nullptr);
 
-					m_treeCtrl.InsertItem(itRestrictionRDFClass->second->getName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
+					m_treeCtrl.InsertItem(itRestrictionRDFClass->second->GetName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
 				}
 			}
 			break;
@@ -377,11 +377,11 @@ void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 
 		if (vecParentClasses[0] == iClassInstance)
 		{
-			HTREEITEM hClass = AddClass(hParent, pClass->getInstance(), false);
+			HTREEITEM hClass = AddClass(hParent, pClass->GetInstance(), false);
 
-			AddProperties(hClass, pClass->getInstance());
+			AddProperties(hClass, pClass->GetInstance());
 
-			AddChildClasses(hClass, pClass->getInstance());
+			AddChildClasses(hClass, pClass->GetInstance());
 		}
 	} // for (; itClass != ...
 }
@@ -409,7 +409,7 @@ void CClassView::PropertiesAlphabeticalView()
 	{
 		CRDFProperty * pProperty = itProperty->second;
 
-		mapName2Instance[pProperty->getName()] = pProperty->getInstance();
+		mapName2Instance[pProperty->GetName()] = pProperty->GetInstance();
 	} // for (; itProperty != ...	
 
 	map<wstring, int64_t>::iterator itName2Instance = mapName2Instance.begin();
@@ -420,7 +420,7 @@ void CClassView::PropertiesAlphabeticalView()
 
 		CRDFProperty * pProperty = itProperty->second;
 
-		wstring strNameAndType = pProperty->getName();
+		wstring strNameAndType = pProperty->GetName();
 		strNameAndType += L" : ";
 
 		switch (pProperty->getType())
