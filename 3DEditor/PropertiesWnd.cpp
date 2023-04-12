@@ -27,6 +27,8 @@ static char THIS_FILE[]=__FILE__;
 
 #define TRUE_VALUE_PROPERTY L"Yes"
 #define FALSE_VALUE_PROPERTY L"No"
+#define ROTATION_MODE_XY L"2D"
+#define ROTATION_MODE_XYZ L"3D"
 #define REMOVE_OBJECT_PROPERTY_COMMAND L"---<REMOVE>---"
 #define SELECT_OBJECT_PROPERTY_COMMAND L"---<SELECT>---"
 
@@ -1137,6 +1139,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
+				case enumApplicationProperty::RotationMode:
+				{
+					pOpenGLView->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
+				}
+				break;
+
 				case enumApplicationProperty::PointLightingLocation:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
@@ -1981,6 +1991,19 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(
+			_T("Rotation mode"),
+			pOpenGLView->_getRotationMode() == enumRotationMode::XY ? ROTATION_MODE_XY : ROTATION_MODE_XYZ,
+			_T("XY/XYZ"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
+		pProperty->AddOption(ROTATION_MODE_XY);
+		pProperty->AddOption(ROTATION_MODE_XYZ);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);

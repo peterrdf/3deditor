@@ -261,7 +261,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Projection
 	lstBasicCommands.AddTail(ID_PROJECTION_PERSPECTIVE);
-	lstBasicCommands.AddTail(ID_PROJECTION_ISOMETRIC);
+	lstBasicCommands.AddTail(ID_PROJECTION_ORTHOGRAPHIC);
 
 	// View
 	lstBasicCommands.AddTail(ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY);
@@ -272,6 +272,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_BOTTOM);
 	lstBasicCommands.AddTail(ID_VIEW_FRONT);
 	lstBasicCommands.AddTail(ID_VIEW_BACK);
+	lstBasicCommands.AddTail(ID_VIEW_ISOMETRIC);
 
 	// Show
 	lstBasicCommands.AddTail(ID_SHOW_FACES);

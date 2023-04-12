@@ -22,6 +22,7 @@ enum class enumApplicationProperty : int
 	ShowBiNormalVectors,
 	ScaleVectors,
 	ShowBoundingBoxes,
+	RotationMode,
 	PointLightingLocation,
 	AmbientLightWeighting,
 	SpecularLightWeighting,

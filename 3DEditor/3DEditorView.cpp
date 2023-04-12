@@ -53,10 +53,11 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_COMMAND(ID_VIEW_BOTTOM, &CMy3DEditorView::OnViewBottom)
 	ON_COMMAND(ID_VIEW_FRONT, &CMy3DEditorView::OnViewFront)
 	ON_COMMAND(ID_VIEW_BACK, &CMy3DEditorView::OnViewBack)
+	ON_COMMAND(ID_VIEW_ISOMETRIC, &CMy3DEditorView::OnViewIsometric)
 	ON_COMMAND(ID_PROJECTION_PERSPECTIVE, &CMy3DEditorView::OnProjectionPerspective)
 	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CMy3DEditorView::OnUpdateProjectionPerspective)
-	ON_COMMAND(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnProjectionIsometric)
-	ON_UPDATE_COMMAND_UI(ID_PROJECTION_ISOMETRIC, &CMy3DEditorView::OnUpdateProjectionIsometric)
+	ON_COMMAND(ID_PROJECTION_ORTHOGRAPHIC, &CMy3DEditorView::OnProjectionOrthographic)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_ORTHOGRAPHIC, &CMy3DEditorView::OnUpdateProjectionOrthographic)
 	ON_COMMAND(ID_SHOW_FACES, &CMy3DEditorView::OnShowFaces)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_FACES, &CMy3DEditorView::OnUpdateShowFaces)
 	ON_COMMAND(ID_SHOW_FACES_WIREFRAMES, &CMy3DEditorView::OnShowFacesWireframes)
@@ -391,6 +392,16 @@ void CMy3DEditorView::OnViewBack()
 	}
 }
 
+void CMy3DEditorView::OnViewIsometric()
+{
+	if (m_pOpenGLView != nullptr)
+	{
+		m_pOpenGLView->_setView(enumView::Isometric);
+
+		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+	}
+}
+
 void CMy3DEditorView::OnProjectionPerspective()
 {
 	if (m_pOpenGLView != nullptr)
@@ -407,20 +418,20 @@ void CMy3DEditorView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Perspective));
 }
 
-void CMy3DEditorView::OnProjectionIsometric()
+void CMy3DEditorView::OnProjectionOrthographic()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->_setProjection(enumProjection::Isometric);
+		m_pOpenGLView->_setProjection(enumProjection::Orthographic);
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
-void CMy3DEditorView::OnUpdateProjectionIsometric(CCmdUI* pCmdUI)
+void CMy3DEditorView::OnUpdateProjectionOrthographic(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Isometric));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && (m_pOpenGLView->_getProjection() == enumProjection::Orthographic));
 }
 
 void CMy3DEditorView::OnShowFaces()

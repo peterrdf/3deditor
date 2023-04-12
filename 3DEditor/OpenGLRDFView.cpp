@@ -1074,6 +1074,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case enumApplicationProperty::ShowBiNormalVectors:
 		case enumApplicationProperty::ScaleVectors:
 		case enumApplicationProperty::ShowBoundingBoxes:
+		case enumApplicationProperty::RotationMode:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
 		case enumApplicationProperty::SpecularLightWeighting:

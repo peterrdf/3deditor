@@ -456,16 +456,18 @@ BEGIN
         POPUP "Projection"
         BEGIN
             MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
-            MENUITEM "Isometric",                   ID_PROJECTION_ISOMETRIC
+            MENUITEM "Orthographic",                ID_PROJECTION_ORTHOGRAPHIC
         END
         POPUP "View"
         BEGIN
             MENUITEM "Front",                       ID_VIEW_FRONT
-            MENUITEM "Top",                         ID_VIEW_TOP
-            MENUITEM "Right",                       ID_VIEW_RIGHT
             MENUITEM "Back",                        ID_VIEW_BACK
-            MENUITEM "Left",                        ID_VIEW_LEFT
+            MENUITEM "Top",                         ID_VIEW_TOP
             MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+            MENUITEM "Left",                        ID_VIEW_LEFT
+            MENUITEM "Right",                       ID_VIEW_RIGHT
+            MENUITEM SEPARATOR
+            MENUITEM "Isometric",                   ID_VIEW_ISOMETRIC
         END
         POPUP "Show"
         BEGIN
@@ -601,16 +603,18 @@ BEGIN
         POPUP "Projection"
         BEGIN
             MENUITEM "Perspective",                 ID_PROJECTION_PERSPECTIVE
-            MENUITEM "Isometric",                   ID_PROJECTION_ISOMETRIC
+            MENUITEM "Orthographic",                ID_PROJECTION_ORTHOGRAPHIC
         END
         POPUP "View"
         BEGIN
-            MENUITEM "Front",                       ID_VIEW_FRONT
-            MENUITEM "Top",                         ID_VIEW_TOP
-            MENUITEM "Right",                       ID_VIEW_RIGHT
-            MENUITEM "Back",                        ID_VIEW_BACK
-            MENUITEM "Left",                        ID_VIEW_LEFT
-            MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+            MENUITEM "Front",                   ID_VIEW_FRONT
+            MENUITEM "Back",                    ID_VIEW_BACK
+            MENUITEM "Top",                     ID_VIEW_TOP
+            MENUITEM "Bottom",                  ID_VIEW_BOTTOM
+            MENUITEM "Left",                    ID_VIEW_LEFT
+            MENUITEM "Right",                   ID_VIEW_RIGHT
+            MENUITEM SEPARATOR
+            MENUITEM "Isometric",               ID_VIEW_ISOMETRIC
         END
         POPUP "Show"
         BEGIN
