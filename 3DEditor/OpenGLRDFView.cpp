@@ -277,8 +277,18 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::Reset()
 {
-	_reset();
+	// Rotation
+	m_fXAngle = 0.f;
+	m_fYAngle = 0.f;
+	m_fZAngle = 0.f;
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
+	// Translation
+	m_fXTranslation = 0.0f;
+	m_fYTranslation = 0.0f;
+	m_fZTranslation = -5.0f;
+
+	// UI
 	m_bShowFaces = TRUE;
 	m_strCullFaces = CULL_FACES_NONE;
 	m_bShowFacesPolygons = FALSE;
