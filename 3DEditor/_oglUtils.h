@@ -2265,7 +2265,6 @@ public: // Methods
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
 					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
-					_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
 				}
 				else
 				{
