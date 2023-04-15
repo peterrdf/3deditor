@@ -1848,9 +1848,9 @@ struct _ioglRenderer
 	virtual void _redraw() PURE;
 };
 
-const float ZOOM_SPEED_MOUSE = 0.025f;
-const float ZOOM_SPEED_MOUSE_WHEEL = 0.0125f;
-const float ZOOM_SPEED_KEYS = 0.025f;
+const float ZOOM_SPEED_MOUSE = 0.01f;
+const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
+const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
 const float PAN_SPEED_MOUSE = 4.f;
 const float PAN_SPEED_KEYS = 40.f;
 const float ROTATION_SPEED = 1.f / 25.f;
@@ -1889,6 +1889,10 @@ protected: // Members
 	float m_fYmax;
 	float m_fZmin;
 	float m_fZmax;
+	float m_fZoomMin;
+	float m_fZoomMax;
+	float m_fZoomInterval;
+
 
 	// Translation
 	float m_fXTranslation;
@@ -1917,6 +1921,9 @@ public: // Methods
 		, m_fYmax(1.f)
 		, m_fZmin(-1.f)
 		, m_fZmax(1.f)
+		, m_fZoomMin(-1.f)
+		, m_fZoomMax(1.f)
+		, m_fZoomInterval(2.f)
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2036,6 +2043,17 @@ public: // Methods
 		m_fZmin = fZmin;
 		m_fZmax = fZmax;
 
+		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		m_fZoomMin = m_fZmin;
+		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
+		m_fZoomMin = -m_fZoomMin;
+		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
+		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
+		m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -2148,23 +2166,15 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
-	enumProjection _getProjection() const
-	{
-		return m_enProjection;
-	}
-
-	void _setProjection(enumProjection enProjection)
+	enumProjection _getProjection() const { return m_enProjection; }
+	void _setProjection(enumProjection enProjection) 
 	{
 		m_enProjection = enProjection;
 
 		_setView(enumView::Isometric);
 	}
 
-	enumRotationMode _getRotationMode() const
-	{
-		return m_enRotationMode;
-	}
-
+	enumRotationMode _getRotationMode() const { return m_enRotationMode; }
 	void _setRotationMode(enumRotationMode enRotationMode)
 	{
 		m_enRotationMode = enRotationMode;
@@ -2342,8 +2352,8 @@ public: // Methods
 	{
 		_zoom(
 			lDelta > 0 ?
-			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE :
-			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE);
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
 	}
 
 	void _panMouseRButton(float fX, float fY)
@@ -2355,31 +2365,9 @@ public: // Methods
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	{
-		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
-		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
-		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-		float m_fZoomMin = m_fZmin;
-		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
-		m_fZoomMin = -m_fZoomMin;
-
-		m_fZoomMin -= (fBoundingSphereDiameter * 2.f);
-
-		float m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);// m_fZoomMin + abs(m_fZmax - m_fZmin);
-		float m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
-
-		// speed constants??????
-		/*float f3 = m_fZoomInterval >= 1.f ?
-			(1.f / m_fZoomInterval) :
-			(m_fZoomInterval* 0.01);*/
-
-		//float ff = m_fZTranslation * f3;
-
-		float f3 = m_fZoomInterval * 0.01f;
-
 		_zoom(zDelta < 0 ?
-			-abs(f3) :
-			abs(f3));
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
 	}	
 
 	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
@@ -2423,13 +2411,13 @@ public: // Methods
 
 			case VK_PRIOR:
 			{
-				_zoom(abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+				_zoom(abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
 			}
 			break;
 
 			case VK_NEXT:
 			{
-				_zoom(-abs(m_fZTranslation) * ZOOM_SPEED_KEYS);
+				_zoom(-abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
 			}
 			break;
 		} // switch (nChar)
@@ -2467,41 +2455,17 @@ private: //  Methods
 		if (m_enProjection == enumProjection::Orthographic)
 		{
 			return;
-		}
+		}		
 
-		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
-		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
-		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+		float fNewZTranslation = m_fZTranslation + fZTranslation;
 
-		float m_fZoomMin = m_fZmin;
-		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
-		m_fZoomMin = -m_fZoomMin;
-
-		m_fZoomMin -= (fBoundingSphereDiameter * 2.f);
-
-		float m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);// m_fZoomMin + abs(m_fZmax - m_fZmin);
-		float m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
-
-		if ((m_fZTranslation + fZTranslation) >= m_fZoomMax)
+		if ((fNewZTranslation >= m_fZoomMax) ||
+			(fNewZTranslation <= m_fZoomMin))
 		{
 			return;
 		}
 
-		if ((m_fZTranslation + fZTranslation) <= m_fZoomMin)
-		{
-			return;
-		}
-
-		/*float t = m_fZmin;
-		t += (m_fZmax - m_fZmin) / 2.f;
-		t = -t;
-
-		if ((m_fZTranslation + fZTranslation) <= t/ 2.f)
-		{
-			return;
-		}*/
-
-		m_fZTranslation += fZTranslation;
+		m_fZTranslation = fNewZTranslation;
 
 		_redraw();
 	}
