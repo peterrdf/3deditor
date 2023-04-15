@@ -573,12 +573,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	/*
-	* Bounding sphere diameter
+	* Center the World
 	*/
-	float fBoundingSphereDiameter = fXmax - fXmin;
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fYmax - fYmin);
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, fZmax - fZmin);
-
 	m_fXTranslation = fXmin;
 	m_fXTranslation += (fXmax - fXmin) / 2.f;
 	m_fXTranslation = -m_fXTranslation;

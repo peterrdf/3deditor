@@ -1882,6 +1882,14 @@ protected: // Members
 	// radians
 	_quaterniond m_rotation;
 
+	// World
+	float m_fXmin;
+	float m_fXmax;
+	float m_fYmin;
+	float m_fYmax;
+	float m_fZmin;
+	float m_fZmax;
+
 	// Translation
 	float m_fXTranslation;
 	float m_fYTranslation;
@@ -1903,6 +1911,12 @@ public: // Methods
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
 		, m_rotation(_quaterniond::toQuaternion(0., 0., 0.))
+		, m_fXmin(-1.f)
+		, m_fXmax(1.f)
+		, m_fYmin(-1.f)
+		, m_fYmax(1.f)
+		, m_fZmin(-1.f)
+		, m_fZmax(1.f)
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2011,10 +2025,17 @@ public: // Methods
 
 	void _prepare(
 		int iWidth, int iHeight,
-		float& fXmin, float& fXmax, 
-		float& fYmin, float& fYmax, 
-		float& fZmin, float& fZmax)
+		float fXmin, float fXmax, 
+		float fYmin, float fYmax, 
+		float fZmin, float fZmax)
 	{
+		m_fXmin = fXmin;
+		m_fXmax = fXmax;
+		m_fYmin = fYmin;
+		m_fYmax = fYmax;
+		m_fZmin = fZmin;
+		m_fZmax = fZmax;
+
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -2151,6 +2172,8 @@ public: // Methods
 
 	void _setView(enumView enView)
 	{
+		// Note: OpenGL/Quaternions - CW/CCW
+
 		m_fXAngle = 0.f;
 		m_fYAngle = 0.f;
 		m_fZAngle = 0.f;
@@ -2330,9 +2353,31 @@ public: // Methods
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	{
+		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		float m_fZoomMin = m_fZmin;
+		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
+		m_fZoomMin = -m_fZoomMin;
+
+		m_fZoomMin -= (fBoundingSphereDiameter * 2.f);
+
+		float m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);// m_fZoomMin + abs(m_fZmax - m_fZmin);
+		float m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+
+		// speed constants??????
+		/*float f3 = m_fZoomInterval >= 1.f ?
+			(1.f / m_fZoomInterval) :
+			(m_fZoomInterval* 0.01);*/
+
+		//float ff = m_fZTranslation * f3;
+
+		float f3 = m_fZoomInterval * 0.01f;
+
 		_zoom(zDelta < 0 ?
-			-abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL :
-			abs(m_fZTranslation) * ZOOM_SPEED_MOUSE_WHEEL);
+			-abs(f3) :
+			abs(f3));
 	}	
 
 	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
@@ -2421,6 +2466,38 @@ private: //  Methods
 		{
 			return;
 		}
+
+		float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		float m_fZoomMin = m_fZmin;
+		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
+		m_fZoomMin = -m_fZoomMin;
+
+		m_fZoomMin -= (fBoundingSphereDiameter * 2.f);
+
+		float m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);// m_fZoomMin + abs(m_fZmax - m_fZmin);
+		float m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+
+		if ((m_fZTranslation + fZTranslation) >= m_fZoomMax)
+		{
+			return;
+		}
+
+		if ((m_fZTranslation + fZTranslation) <= m_fZoomMin)
+		{
+			return;
+		}
+
+		/*float t = m_fZmin;
+		t += (m_fZmax - m_fZmin) / 2.f;
+		t = -t;
+
+		if ((m_fZTranslation + fZTranslation) <= t/ 2.f)
+		{
+			return;
+		}*/
 
 		m_fZTranslation += fZTranslation;
 
