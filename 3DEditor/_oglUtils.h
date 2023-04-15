@@ -1921,7 +1921,7 @@ public: // Methods
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
 	{
-		_setView(enumView::Front);
+		_setView(enumView::Isometric);
 	}	
 
 	// _ioglRenderer
@@ -2156,6 +2156,8 @@ public: // Methods
 	void _setProjection(enumProjection enProjection)
 	{
 		m_enProjection = enProjection;
+
+		_setView(enumView::Isometric);
 	}
 
 	enumRotationMode _getRotationMode() const
@@ -2167,7 +2169,7 @@ public: // Methods
 	{
 		m_enRotationMode = enRotationMode;
 
-		_setView(enumView::Front);
+		_setView(enumView::Isometric);
 	}
 
 	void _setView(enumView enView)
