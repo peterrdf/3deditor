@@ -1851,8 +1851,7 @@ struct _ioglRenderer
 const float ZOOM_SPEED_MOUSE = 0.01f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
 const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
-const float PAN_SPEED_MOUSE = 4.f;
-const float PAN_SPEED_KEYS = 40.f;
+const float PAN_SPEED_KEYS = 0.01f;
 const float ROTATION_SPEED = 1.f / 25.f;
 
 template <class Instance>
@@ -1889,9 +1888,17 @@ protected: // Members
 	float m_fYmax;
 	float m_fZmin;
 	float m_fZmax;
+
+	// Zoom/Pan
 	float m_fZoomMin;
 	float m_fZoomMax;
 	float m_fZoomInterval;
+	float m_fPanXMin;
+	float m_fPanXMax;
+	float m_fPanXInterval;
+	float m_fPanYMin;
+	float m_fPanYMax;
+	float m_fPanYInterval;
 
 
 	// Translation
@@ -1924,6 +1931,12 @@ public: // Methods
 		, m_fZoomMin(-1.f)
 		, m_fZoomMax(1.f)
 		, m_fZoomInterval(2.f)
+		, m_fPanXMin(-1.f)
+		, m_fPanXMax(1.f)
+		, m_fPanXInterval(2.f)
+		, m_fPanYMin(-1.f)
+		, m_fPanYMax(1.f)
+		, m_fPanYInterval(2.f)
 		, m_fXTranslation(0.0f)
 		, m_fYTranslation(0.0f)
 		, m_fZTranslation(-5.0f)
@@ -2047,12 +2060,30 @@ public: // Methods
 		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
 		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+		// Zoom
 		m_fZoomMin = m_fZmin;
 		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
 		m_fZoomMin = -m_fZoomMin;
 		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
 		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
-		m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+
+		m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+
+		// Pan X
+		m_fPanXMin = fXmin;
+		m_fPanXMin += (fXmax - fXmin) / 2.f;
+		m_fPanXMin = -m_fPanXMin;
+		m_fPanXMax = m_fPanXMin + (fBoundingSphereDiameter * 2.f);
+
+		m_fPanXInterval = abs(m_fPanXMax - m_fPanXMin);
+
+		// Pan Y
+		m_fPanYMin = fXmin;
+		m_fPanYMin += (fXmax - fXmin) / 2.f;
+		m_fPanYMin = -m_fPanYMin;
+		m_fPanYMax = m_fPanYMin + (fBoundingSphereDiameter * 2.f);
+
+		m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
 
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
@@ -2359,8 +2390,8 @@ public: // Methods
 	void _panMouseRButton(float fX, float fY)
 	{
 		_pan(
-			PAN_SPEED_MOUSE * fX,
-			PAN_SPEED_MOUSE * -fY);
+			m_fPanXInterval * fX,
+			m_fPanYInterval * -fY);
 	}
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
@@ -2381,7 +2412,7 @@ public: // Methods
 			{
 				_pan(
 					0.f,
-					PAN_SPEED_KEYS * (1.f / rcClient.Height()));
+					PAN_SPEED_KEYS * m_fPanYInterval);
 			}
 			break;
 
@@ -2389,14 +2420,14 @@ public: // Methods
 			{
 				_pan(
 					0.f,
-					-(PAN_SPEED_KEYS * (1.f / rcClient.Height())));
+					-PAN_SPEED_KEYS * m_fPanYInterval);
 			}
 			break;
 
 			case VK_LEFT:
 			{
 				_pan(
-					-(PAN_SPEED_KEYS * (1.f / rcClient.Width())),
+					-PAN_SPEED_KEYS * m_fPanXInterval,
 					0.f);
 			}
 			break;
@@ -2404,7 +2435,7 @@ public: // Methods
 			case VK_RIGHT:
 			{
 				_pan(
-					PAN_SPEED_KEYS * (1.f / rcClient.Width()),
+					PAN_SPEED_KEYS * m_fPanXInterval,
 					0.f);
 			}
 			break;
