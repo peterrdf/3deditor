@@ -2205,10 +2205,8 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 	auto pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-	if ((m_hSelectedItem != NULL) && 
-		(m_treeCtrl.GetParentItem(m_hSelectedItem) != NULL))
+	if (m_hSelectedItem != NULL)
 	{
-		// keep the roots always bold
 		m_treeCtrl.SetItemState(m_hSelectedItem, 0, TVIS_BOLD);
 		m_hSelectedItem = NULL;
 	}
