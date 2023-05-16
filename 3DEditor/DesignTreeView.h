@@ -55,6 +55,8 @@ public: // Methods
 	virtual bool IsSelected(HTREEITEM hItem) override;
 
 private: // Methods
+
+	CRDFModel* GetModel() const;
 	
 	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants);
@@ -71,6 +73,8 @@ private: // Methods
 	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
 
 	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
+
+	void Clean();
 
 // Construction
 public:
