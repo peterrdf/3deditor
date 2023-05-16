@@ -49,7 +49,6 @@ public:
 
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnModelChanged()
 {
 	if (GetController()->IsTestMode())
@@ -62,7 +61,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnInstanceSelected(CRDFView* pSender)
 {
 	if (pSender == this)
@@ -157,7 +155,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
 {
 	ASSERT(pInstance != nullptr);
@@ -664,7 +661,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (pPropertyItem->getProperty()->getType())
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
 	if (pSender == this)
@@ -675,7 +671,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
 {
 	if (pSender == this)
@@ -688,7 +683,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
 	if (pSender == this)
@@ -701,7 +695,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
 {
 	if (pSender == this)
@@ -758,7 +751,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (enApplicationProperty)
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem)
 {
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
@@ -784,7 +776,6 @@ CRDFModel* CDesignTreeView::GetModel() const
 	return pController->GetModel();
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
 {
 	if (hItem == nullptr)
@@ -826,7 +817,6 @@ void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CR
 	GetItemPath(m_treeCtrl.GetParentItem(hItem), vecPath);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
 {
 	ASSERT(hItem != nullptr);
@@ -845,7 +835,6 @@ void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDes
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
 {
 	ASSERT(pInstance != nullptr);
@@ -860,7 +849,6 @@ void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM
 	itInstance2Item->second->items().erase(itInstance);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFProperty * pProperty, HTREEITEM hProperty)
 {
 	ASSERT(pInstance != nullptr);
@@ -879,7 +867,6 @@ void CDesignTreeView::RemovePropertyItemData(CRDFInstance * pInstance, CRDFPrope
 	itPropertyItem->second->items().erase(itInstance);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -916,7 +903,6 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 	} // if (pItem != nullptr)
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::UpdateView()
 {
 	m_pSearchDialog->Reset();
@@ -989,7 +975,6 @@ void CDesignTreeView::UpdateView()
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::InstancesAlphabeticalView()
 {
 	m_treeCtrl.DeleteAllItems(); 
@@ -1036,7 +1021,6 @@ void CDesignTreeView::InstancesAlphabeticalView()
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::InstancesGroupByClassView()
 {
 	m_treeCtrl.DeleteAllItems();
@@ -1107,7 +1091,6 @@ void CDesignTreeView::InstancesGroupByClassView()
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::InstancesUnreferencedItemsView()
 {
 	ProgressStatus prgs(L"Build project tree");
@@ -1165,7 +1148,6 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 {
 	/*
@@ -1200,7 +1182,6 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 {
 	wchar_t szBuffer[100];
@@ -1508,7 +1489,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	} // while (iPropertyInstance != 0)
 }
 
-// ------------------------------------------------------------------------------------------------
 void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
 {
 	ASSERT(iModel != 0);
