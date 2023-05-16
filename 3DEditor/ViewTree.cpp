@@ -66,9 +66,11 @@ void CViewTree::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
             if (m_pItemStateProvider != nullptr)
             {
                 HTREEITEM hItem = (HTREEITEM)pNMCD->nmcd.dwItemSpec;
-                if (m_pItemStateProvider->IsSelected(hItem))
+
+                COLORREF clr;
+                if (m_pItemStateProvider->IsSelected(hItem, clr))
                 {
-                    pNMCD->clrTextBk = RGB(255, 0, 0);
+                    pNMCD->clrTextBk = clr;
                 }
             }
 

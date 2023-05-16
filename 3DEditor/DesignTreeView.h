@@ -33,8 +33,11 @@ private: // Members
 	map<int64_t, CRDFInstanceItem*> m_mapInstance2Item; // INSTANCE : CRDFInstanceItem*	
 	map<int64_t, map<int64_t, CRDFPropertyItem*>> m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem*)
 
-	HTREEITEM m_hSelectedItem;
+	// Selection
+	CRDFInstance* m_pSelectedInstance;
+	HTREEITEM m_hSelectedInstance;
 
+	// UI
 	bool m_bUpdateInProgress; // Don't send notifications while updating the view
 
 	// Search
@@ -52,7 +55,7 @@ public: // Methods
 	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CItemStateProvider
-	virtual bool IsSelected(HTREEITEM hItem) override;
+	virtual bool IsSelected(HTREEITEM hItem, COLORREF& clr) override;
 
 private: // Methods
 

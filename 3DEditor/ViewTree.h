@@ -13,7 +13,7 @@ public: // Methods
 	}
 
 	// --------------------------------------------------------------------------------------------
-	virtual bool IsSelected(HTREEITEM hItem) = 0;
+	virtual bool IsSelected(HTREEITEM hItem, COLORREF& clr) = 0;
 };
 
 /////////////////////////////////////////////////////////////////////////////
