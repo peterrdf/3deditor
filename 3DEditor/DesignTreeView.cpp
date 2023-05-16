@@ -73,6 +73,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
 			m_hSelectedInstance = NULL;
+			m_pSelectedInstance = nullptr;
 		}
 
 		m_pSelectedInstance = pSelectedInstance;
@@ -147,6 +148,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
 			m_hSelectedInstance = NULL;
+			m_pSelectedInstance = nullptr;
 		}
 
 		MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.", 
@@ -976,8 +978,7 @@ void CDesignTreeView::UpdateView()
 
 void CDesignTreeView::InstancesAlphabeticalView()
 {
-	m_treeCtrl.DeleteAllItems();
-	m_hSelectedInstance = NULL;
+	m_treeCtrl.DeleteAllItems();	
 	Clean();
 
 	auto pModel = GetModel();
@@ -1024,7 +1025,6 @@ void CDesignTreeView::InstancesAlphabeticalView()
 void CDesignTreeView::InstancesGroupByClassView()
 {
 	m_treeCtrl.DeleteAllItems();
-	m_hSelectedInstance = NULL;
 	Clean();
 
 	auto pModel = GetModel();
@@ -1097,7 +1097,6 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 	ProgressStatus prgs(L"Build project tree");
 
 	m_treeCtrl.DeleteAllItems();
-	m_hSelectedInstance = NULL;
 	Clean();	
 
 	auto pModel = GetModel();
@@ -1600,6 +1599,9 @@ void CDesignTreeView::Clean()
 		}
 	}
 	m_mapInstance2Properties.clear();
+
+	m_hSelectedInstance = NULL;
+	m_pSelectedInstance = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2210,15 +2212,6 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 	auto pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-	if (m_hSelectedInstance != NULL)
-	{
-		m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
-		m_hSelectedInstance = NULL;
-	}
-
-	m_hSelectedInstance = pNMTreeView->itemNew.hItem;
-	m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);
-
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(pNMTreeView->itemNew.hItem);
 	if (pItem != nullptr)
 	{
@@ -2226,19 +2219,30 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 
-			GetController()->SelectInstance(this, pInstanceItem->GetInstance());
-		} 
+			GetController()->SelectInstance(nullptr/*update this view*/, pInstanceItem->GetInstance());
+		}
 		else if (pItem->getType() == enumItemType::Property)
 		{
-			auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
+			ASSERT(0);//todo
+			/*auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
 
-			GetController()->SelectInstanceProperty(pPropertyItem->GetInstance(), pPropertyItem->getProperty());
+			GetController()->SelectInstanceProperty(pPropertyItem->GetInstance(), pPropertyItem->getProperty());*/
 		}
 	} // if (pItem != nullptr)
 	else
 	{
-		GetController()->SelectInstance(this, nullptr);
-	}	
+		GetController()->SelectInstance(nullptr/*update this view*/, nullptr);
+	}
+
+	/*if (m_hSelectedInstance != NULL)
+	{
+		m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
+		m_hSelectedInstance = NULL;
+		m_pSelectedInstance = nullptr;
+	}
+
+	m_hSelectedInstance = pNMTreeView->itemNew.hItem;
+	m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);	*/
 }
 
 void CDesignTreeView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
