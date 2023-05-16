@@ -4,29 +4,19 @@
 #include "RDFProperty.h"
 #include "RDFPropertyRestriction.h"
 
-// ------------------------------------------------------------------------------------------------
 class CRDFPropertyItem :
 	public CRDFItem
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Property
-	CRDFProperty * m_pProperty;
+	CRDFProperty* m_pProperty;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CRDFPropertyItem(CRDFInstance * pInstance, CRDFProperty * pProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// ctor
+	CRDFPropertyItem(CRDFInstance* pInstance, CRDFProperty* pProperty);
 	virtual ~CRDFPropertyItem();
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CRDFProperty * getProperty() const;
+	CRDFProperty* GetProperty() const { return m_pProperty; }
 };
 
