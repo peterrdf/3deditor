@@ -34,6 +34,8 @@ public: // Methods
 
 private: // Methods
 
+	CRDFModel* GetModel() const;
+
 	// --------------------------------------------------------------------------------------------
 	// Reloads the tree
 	void UpdateView();

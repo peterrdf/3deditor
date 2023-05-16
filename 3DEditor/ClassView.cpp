@@ -48,6 +48,22 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
+CRDFModel* CClassView::GetModel() const
+{
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return nullptr;
+	}
+
+	auto pModel = pController->GetModel();
+	ASSERT(pModel != nullptr);
+
+	return pModel;
+}
+
 // ------------------------------------------------------------------------------------------------
 void CClassView::UpdateView()
 {
@@ -55,23 +71,23 @@ void CClassView::UpdateView()
 
 	switch (m_nCurrSort)
 	{
-	case ID_SORTING_SORTALPHABETIC:
-	{
-		ClassesAlphabeticalView();
-	}
-	break;
+		case ID_SORTING_SORTALPHABETIC:
+		{
+			ClassesAlphabeticalView();
+		}
+		break;
 
-	case ID_SORTING_SORTBYTYPE:
-	{
-		ClassesHierarchicalView();
-	}
-	break;
+		case ID_SORTING_SORTBYTYPE:
+		{
+			ClassesHierarchicalView();
+		}
+		break;
 
-	case ID_SORTING_SORTBYACCESS:
-	{
-		PropertiesAlphabeticalView();
-	}
-	break;
+		case ID_SORTING_SORTBYACCESS:
+		{
+			PropertiesAlphabeticalView();
+		}
+		break;
 	} // switch (m_nCurrSort)
 }
 
@@ -80,10 +96,7 @@ void CClassView::ClassesAlphabeticalView()
 {
 	m_treeCtrl.DeleteAllItems();
 
-	ASSERT(GetController() != nullptr);
-
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
@@ -118,10 +131,7 @@ void CClassView::ClassesHierarchicalView()
 {
 	m_treeCtrl.DeleteAllItems();
 
-	ASSERT(GetController() != nullptr);
-
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
@@ -154,10 +164,8 @@ void CClassView::ClassesHierarchicalView()
 HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses)
 {
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != nullptr);
-
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	
+	auto pModel = GetModel();
 
 	auto mapClasses = pModel->GetClasses();
 
@@ -193,13 +201,11 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 // ------------------------------------------------------------------------------------------------
 void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 {
-	wchar_t szBuffer[100];
-
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != nullptr);
 
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	wchar_t szBuffer[512];	
+	
+	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 	auto& mapProperties = pModel->GetProperties();
@@ -343,10 +349,8 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 {
 	ASSERT(iClassInstance != 0);
-	ASSERT(GetController() != nullptr);
-
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	
+	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
@@ -378,10 +382,7 @@ void CClassView::PropertiesAlphabeticalView()
 {
 	m_treeCtrl.DeleteAllItems();
 
-	ASSERT(GetController() != nullptr);
-
-	auto pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	auto pModel = GetModel();
 
 	auto& mapProperties = pModel->GetProperties();
 
