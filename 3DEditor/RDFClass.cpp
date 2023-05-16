@@ -22,8 +22,6 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	GetNameOfClass(m_iInstance, &szClassName);
 
 #ifndef _LINUX
-//    LOG_DEBUG("*** CLASS " << szClassName);
-
     m_strName = CA2W(szClassName);
 #else
 	m_strName = wxString(szClassName).wchar_str();
@@ -42,10 +40,6 @@ CRDFClass::CRDFClass(int64_t iInstance)
 
 		char * szParentClassName = nullptr;
 		GetNameOfClass(iParentClassInstance, &szParentClassName);
-
-#ifndef _LINUX
-//		LOG_DEBUG("*** PARENT CLASS " << szParentClassName);
-#endif // _LINUX
 
 		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
 	}
@@ -93,10 +87,6 @@ void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestri
 
 	char * szPropertyName = nullptr;
 	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
-
-#ifndef _LINUX
-//	LOG_DEBUG("*** CLASS " << m_strName.c_str() << ", PROPERTY " << szPropertyName << ", MIN/MAX CARD: " << pPropertyRestriction->getMinCard() << ", " << pPropertyRestriction->getMaxCard());
-#endif // _LINUX
 
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }

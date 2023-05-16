@@ -910,14 +910,12 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 // ------------------------------------------------------------------------------------------------
 void CDesignTreeView::UpdateView()
 {
-//	LOG_DEBUG("CDesignTreeView::UpdateView() BEGIN");
-
 	m_pSearchDialog->Reset();
 
 	/*
 	* Disable the drawing
 	*/
-	m_bInitInProgress = true;
+	m_bUpdateInProgress = true;
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 	switch (m_nCurrSort)
@@ -984,10 +982,8 @@ void CDesignTreeView::UpdateView()
 	/*
 	* Enable the drawing
 	*/
-	m_bInitInProgress = false;
+	m_bUpdateInProgress = false;
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-
-//	LOG_DEBUG("CDesignTreeView::UpdateView() END");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1657,7 +1653,7 @@ CDesignTreeView::CDesignTreeView()
 	: m_mapInstance2Item()
 	, m_mapInstance2Properties()
 	, m_hSelectedItem(nullptr)
-	, m_bInitInProgress(false)
+	, m_bUpdateInProgress(false)
 	, m_pSearchDialog(nullptr)
 {
 	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
@@ -2269,7 +2265,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
-	if (m_bInitInProgress)
+	if (m_bUpdateInProgress)
 	{
 		return;
 	}

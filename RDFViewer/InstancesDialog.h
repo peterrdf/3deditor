@@ -23,7 +23,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Don't send notifications while updating the view
-	bool m_bInitInProgress;
+	bool m_bUpdateInProgress;
 
 	// --------------------------------------------------------------------------------------------
 	// Find an item by CRDFInstance *

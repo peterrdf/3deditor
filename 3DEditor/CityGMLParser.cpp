@@ -32,7 +32,7 @@ void CCityGMLParser::Import(const wchar_t* szGMLFile)
 		ImportObject(rootObject, vecRootObjects);
 	}
 
-	pModelCollection.set_objects(&vecRootObjects[0], vecRootObjects.size());
+	pModelCollection.set_objects(vecRootObjects.data(), vecRootObjects.size());
 }
 
 
@@ -64,10 +64,10 @@ void CCityGMLParser::ImportObject(const citygml::CityObject& object, vector<GEOM
 	}
 
 	auto pObjectGeometryCollection = GEOM::Collection::Create(m_pModel, "Geometry");
-	pObjectGeometryCollection.set_objects(&vecTriangleSets[0], vecTriangleSets.size());
+	pObjectGeometryCollection.set_objects(vecTriangleSets.data(), vecTriangleSets.size());
 
 	auto pObjectChildsCollection = GEOM::Collection::Create(m_pModel, "Objects");
-	pObjectChildsCollection.set_objects(&vecChildObjects[0], vecChildObjects.size());
+	pObjectChildsCollection.set_objects(vecChildObjects.data(), vecChildObjects.size());
 
 	GEOM::GeometricItem coll[2] = { pObjectGeometryCollection, pObjectChildsCollection };
 	pObjectCollection.set_objects(coll, 2);
@@ -120,8 +120,8 @@ void CCityGMLParser::ImportGeometry(const citygml::Geometry& geometry, vector<GE
 
 		auto pTriangleSet = GEOM::TriangleSet::Create(m_pModel, "Triangles");
 
-		pTriangleSet.set_vertices(&vecVertices[0], vecVertices.size());
-		pTriangleSet.set_indices(&vecIndices[0], vecIndices.size());
+		pTriangleSet.set_vertices(vecVertices.data(), vecVertices.size());
+		pTriangleSet.set_indices(vecIndices.data(), vecIndices.size());
 
 		shared_ptr<const citygml::Material> materail = polygon->getMaterialFor("", true);
 

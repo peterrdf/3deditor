@@ -9,7 +9,6 @@
 #include "SearchInstancesDialog.h"
 
 #include <map>
-
 using namespace std;
 
 class CDesignTreeViewToolBar : public CMFCToolBar
@@ -25,28 +24,19 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 class CDesignTreeView
 	: public CDockablePane
 	, public CRDFView
-	, CItemStateProvider
+	, public CItemStateProvider
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// INSTANCE : CRDFInstanceItem *
-	map<int64_t, CRDFInstanceItem *> m_mapInstance2Item;
+	// Cache
+	map<int64_t, CRDFInstanceItem*> m_mapInstance2Item; // INSTANCE : CRDFInstanceItem*	
+	map<int64_t, map<int64_t, CRDFPropertyItem*>> m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem*)
 
-	// --------------------------------------------------------------------------------------------
-	// INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem *)
-	map<int64_t, map<int64_t, CRDFPropertyItem *> > m_mapInstance2Properties;
-
-	// --------------------------------------------------------------------------------------------
-	// Selected HTREEITEM
 	HTREEITEM m_hSelectedItem;
 
-	// --------------------------------------------------------------------------------------------
-	// Don't send notifications while updating the view
-	bool m_bInitInProgress;
+	bool m_bUpdateInProgress; // Don't send notifications while updating the view
 
-	// --------------------------------------------------------------------------------------------
 	// Search
 	CSearchInstancesDialog* m_pSearchDialog;
 

@@ -65,10 +65,6 @@ CRDFViewerApp theApp;
 
 BOOL CRDFViewerApp::InitInstance()
 {
-	LOG_INIT("RDFViewer_%N.log");
-
-	LOG_INFO("RDFViewer is starting...");
-
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
@@ -156,8 +152,6 @@ BOOL CRDFViewerApp::InitInstance()
 
 int CRDFViewerApp::ExitInstance()
 {
-	LOG_INFO("RDFViewer is terminating...");
-
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 

@@ -29,7 +29,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CInstancesDialog::OnModelChanged()
 {
-	m_bInitInProgress = true;
+	m_bUpdateInProgress = true;
 
 	m_lcInstances.DeleteAllItems();
 	m_mapInstance2Item.clear();	
@@ -71,7 +71,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		m_mapInstance2Item[vecModel[iInstance]] = iItem;
 	}
 
-	m_bInitInProgress = false;
+	m_bUpdateInProgress = false;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		return;
 	}	
 
-	m_bInitInProgress = true;
+	m_bUpdateInProgress = true;
 
 	// Unselect
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
@@ -107,7 +107,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
 	}
 
-	m_bInitInProgress = false;
+	m_bUpdateInProgress = false;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 {
 	*pResult = 0;
 
-	if (m_bInitInProgress)
+	if (m_bUpdateInProgress)
 	{
 		return;
 	}
@@ -160,7 +160,7 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 CInstancesDialog::CInstancesDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CInstancesDialog::IDD, pParent)
 	, m_lcInstances()
-	, m_bInitInProgress(false)
+	, m_bUpdateInProgress(false)
 	, m_mapInstance2Item()
 {
 

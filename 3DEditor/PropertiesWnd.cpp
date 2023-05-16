@@ -2285,8 +2285,6 @@ void CPropertiesWnd::LoadInstanceProperties()
 	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
 	{
-//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property BEGIN");
-
 		CRDFInstance * pInstance = prSelectedInstanceProperty.first;
 		CRDFProperty * pProperty = prSelectedInstanceProperty.second;
 
@@ -2295,8 +2293,6 @@ void CPropertiesWnd::LoadInstanceProperties()
 		AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
 		m_wndPropList.AddProperty(pInstanceGroup);
-
-//		LOG_DEBUG("CPropertiesWnd::LoadInstanceProperties() - 1 property END");
 
 		return;		
 	} // if ((prSelectedInstanceProperty.first != nullptr) && ...
@@ -2565,8 +2561,6 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 	case TYPE_OBJECTTYPE:
 	{	
-//		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE BEGIN");
-
 		int64_t * piInstances = nullptr;
 		int64_t iCard = 0;
 		GetObjectProperty(pInstance->GetInstance(), pProperty->GetInstance(), &piInstances, &iCard);
@@ -2620,8 +2614,6 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				}
 
 				// Moved in CSelectInstanceDialog
-				//LOG_DEBUG("Compatible instances: " << (int)vecCompatibleInstances.size());
-
 				//for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
 				//{
 				//	map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
@@ -2674,8 +2666,6 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
-
-//		LOG_DEBUG("CPropertiesWnd::AddInstancePropertyValues() - TYPE_OBJECTTYPE END");
 	} // case TYPE_OBJECTTYPE:
 	break;
 
