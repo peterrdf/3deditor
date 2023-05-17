@@ -923,7 +923,6 @@ void CDesignTreeView::UpdateView()
 	
 	/** Disable the drawing */	
 	m_bUpdateInProgress = true;
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 	switch (m_nCurrSort)
 	{
@@ -952,41 +951,14 @@ void CDesignTreeView::UpdateView()
 		break;
 	} // switch (m_nCurrSort)
 	
-	/** Restore the selected instance */		
+	/** Restore the selected instance */
 	if (GetController()->GetSelectedInstance() != nullptr)
 	{
 		OnInstanceSelected(nullptr);
 	}
 	
-	/** Restore the selected property */	
-	auto prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
-	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
-	{
-		ASSERT(m_hSelectedInstance != NULL);
-		if (m_hSelectedInstance != NULL)
-		{
-			m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
-			m_treeCtrl.Expand(m_hSelectedInstance, TVE_EXPAND);
-		}		
-
-		auto itInstance2Properties = m_mapInstance2Properties.find(prSelectedInstanceProperty.first->GetInstance());
-		ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
-
-		auto itPropertyItem = itInstance2Properties->second.find(prSelectedInstanceProperty.second->GetInstance());
-		ASSERT(itPropertyItem != itInstance2Properties->second.end());
-		ASSERT(!itPropertyItem->second->items().empty());
-
-		m_hSelectedInstance = itPropertyItem->second->items()[0];
-
-		m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);
-		m_treeCtrl.EnsureVisible(m_hSelectedInstance);
-		m_treeCtrl.SelectItem(m_hSelectedInstance);
-	} // if ((prSelectedInstanceProperty.first != nullptr) && ...
-
-	
 	/** Enable the drawing */	
 	m_bUpdateInProgress = false;
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
 void CDesignTreeView::InstancesAlphabeticalView()
