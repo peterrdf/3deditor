@@ -60,6 +60,8 @@ public: // Methods
 private: // Methods
 
 	CRDFModel* GetModel() const;
+
+	void SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem);
 	
 	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants);
@@ -72,7 +74,7 @@ private: // Methods
 	void InstancesGroupByClassView();
 	void InstancesUnreferencedItemsView();
 	
-	void AddInstance(HTREEITEM hParent, CRDFInstance * pInstance);
+	void AddInstance(HTREEITEM hParent, CRDFInstance* pInstance);
 	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
 
 	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);

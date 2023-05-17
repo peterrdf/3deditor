@@ -66,98 +66,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
-	auto pSelectedInstance = GetController()->GetSelectedInstance();
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		if (m_hSelectedInstance != NULL)
-		{
-			m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
-			m_hSelectedInstance = NULL;
-			m_pSelectedInstance = nullptr;
-		}
-
-		m_pSelectedInstance = pSelectedInstance;
-	}
-
-	if (m_pSelectedInstance == nullptr)
-	{		
-		/** Select the Model by default */		
-		HTREEITEM hModel = m_treeCtrl.GetRootItem();
-		ASSERT(hModel != NULL); // Internal error!
-
-		if (hModel != NULL)
-		{
-			m_treeCtrl.SelectItem(hModel);
-		}
-
-		return;
-	} // if (m_pSelectedInstance == nullptr)
-	
-	/** Disable the drawing */	
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-	auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->GetInstance());
-	if (itInstance2Item == m_mapInstance2Item.end())
-	{
-		/** Find all ancestors */		
-		vector<int64_t> vecAncestors;
-
-		int64_t iInstance = GetInstanceInverseReferencesByIterator(m_pSelectedInstance->GetInstance(), 0);
-		while (iInstance != 0)
-		{
-			vecAncestors.push_back(iInstance);
-
-			iInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);			
-		}
-		
-		/** Load the ancestors */		
-		for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor >= 0; iAncestor--)
-		{
-			itInstance2Item = m_mapInstance2Item.find(vecAncestors[iAncestor]);
-			if (itInstance2Item != m_mapInstance2Item.end())
-			{
-				// The item is visible	
-				ASSERT(!itInstance2Item->second->items().empty());
-				m_treeCtrl.Expand(itInstance2Item->second->items()[0], TVE_EXPAND);
-			} 
-			else
-			{
-				// The item is not visible - it is in "..." group
-				break;
-			}
-		} // for (size_t iAncestor = ...
-
-		itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->GetInstance());
-	} // if (itInstance2Item == m_mapInstance2Item.end())
-
-	if (itInstance2Item != m_mapInstance2Item.end())
-	{
-		// The item is visible
-		ASSERT(!itInstance2Item->second->items().empty());
-
-		m_hSelectedInstance = itInstance2Item->second->items()[0];
-
-		m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);
-		m_treeCtrl.EnsureVisible(m_hSelectedInstance);
-		m_treeCtrl.SelectItem(m_hSelectedInstance);
-	}
-	else
-	{
-		// The item is not visible - it is in "..." group
-		if (m_hSelectedInstance != NULL)
-		{
-			m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
-			m_hSelectedInstance = NULL;
-			m_pSelectedInstance = nullptr;
-		}
-
-		MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.", 
-			L"Information", 
-			MB_ICONINFORMATION | MB_OK);
-	}
-	
-	/** Enable the drawing */	
-	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+	SelectInstance(GetController()->GetSelectedInstance(), TRUE);
 }
 
 /*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
@@ -775,6 +684,105 @@ CRDFModel* CDesignTreeView::GetModel() const
 	}
 
 	return pController->GetModel();
+}
+
+void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem)
+{
+	if (m_pSelectedInstance == pInstance)
+	{
+		return;
+	}
+
+	if (m_hSelectedInstance != NULL)
+	{
+		m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
+		m_hSelectedInstance = NULL;
+		m_pSelectedInstance = nullptr;
+	}
+
+	m_pSelectedInstance = pInstance;
+	
+	if (m_pSelectedInstance == nullptr)
+	{
+		/** Select the Model by default */
+		if (bSelectTreeItem)
+		{
+			HTREEITEM hModel = m_treeCtrl.GetRootItem();
+			ASSERT(hModel != NULL); // Internal error!
+
+			if (hModel != NULL)
+			{
+				m_treeCtrl.SelectItem(hModel);
+			}
+		}
+
+		return;
+	}
+
+	/** Disable the drawing */
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+
+	/** Load instance on demand */
+	auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->GetInstance());
+	if (itInstance2Item == m_mapInstance2Item.end())
+	{
+		/** Find all ancestors */
+		vector<int64_t> vecAncestors;
+
+		int64_t iInstance = GetInstanceInverseReferencesByIterator(m_pSelectedInstance->GetInstance(), 0);
+		while (iInstance != 0)
+		{
+			vecAncestors.push_back(iInstance);
+
+			iInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
+		}
+
+		/** Load the ancestors */
+		for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor >= 0; iAncestor--)
+		{
+			itInstance2Item = m_mapInstance2Item.find(vecAncestors[iAncestor]);
+			if (itInstance2Item != m_mapInstance2Item.end())
+			{
+				// The item is visible	
+				ASSERT(!itInstance2Item->second->items().empty());
+				m_treeCtrl.Expand(itInstance2Item->second->items()[0], TVE_EXPAND);
+			}
+			else
+			{
+				// The item is not visible - it is in "..." group
+				break;
+			}
+		} // for (size_t iAncestor = ...
+
+		itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->GetInstance());
+	} // if (itInstance2Item == m_mapInstance2Item.end())
+
+	/** Select */
+	if (itInstance2Item != m_mapInstance2Item.end())
+	{
+		// The item is visible
+		ASSERT(!itInstance2Item->second->items().empty());
+
+		m_hSelectedInstance = itInstance2Item->second->items()[0];
+
+		m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);		
+
+		if (bSelectTreeItem)
+		{
+			m_treeCtrl.EnsureVisible(m_hSelectedInstance);
+			m_treeCtrl.SelectItem(m_hSelectedInstance);
+		}
+	}
+	else
+	{
+		// The item is not visible - it is in "..." group
+		MessageBox(L"The selected item is not visible in Instance View.\nPlease, increase 'Visible values count limit' property.",
+			L"Information",
+			MB_ICONINFORMATION | MB_OK);
+	}
+
+	/** Enable the drawing */
+	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
 void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
@@ -2230,32 +2238,11 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
 			auto pSelectedInstance = pPropertyItem->GetInstance();
-			auto pSelectedProperty = pPropertyItem->GetProperty();
-
-			if (m_pSelectedInstance != pSelectedInstance)
-			{
-				if (m_hSelectedInstance != NULL)
-				{
-					m_treeCtrl.SetItemState(m_hSelectedInstance, 0, TVIS_BOLD);
-					m_hSelectedInstance = NULL;
-					m_pSelectedInstance = nullptr;
-				}
-
-				m_pSelectedInstance = pSelectedInstance;
-
-				// The item is visible
-				auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->GetInstance());
-				ASSERT(itInstance2Item != m_mapInstance2Item.end());
-				ASSERT(!itInstance2Item->second->items().empty());
-
-				m_hSelectedInstance = itInstance2Item->second->items()[0];
-
-				m_treeCtrl.SetItemState(m_hSelectedInstance, TVIS_BOLD, TVIS_BOLD);
-				m_treeCtrl.EnsureVisible(m_hSelectedInstance);
-				m_treeCtrl.SelectItem(m_hSelectedInstance);
-			} // if (m_pSelectedInstance != pSelectedInstance)			
+			auto pSelectedProperty = pPropertyItem->GetProperty();			
 
 			GetController()->SelectInstanceProperty(pSelectedInstance, pSelectedProperty);
+
+			SelectInstance(GetController()->GetSelectedInstance(), FALSE);
 		} // else if (pItem->getType() == enumItemType::Property)
 		else
 		{
@@ -2264,7 +2251,9 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 	} // if (pItem != nullptr)
 	else
 	{
-		GetController()->SelectInstance(nullptr/*update this view*/, nullptr);
+		GetController()->SelectInstance(this, nullptr);
+
+		SelectInstance(nullptr, FALSE);
 	}
 }
 
