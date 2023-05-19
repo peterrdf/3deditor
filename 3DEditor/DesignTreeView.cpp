@@ -2262,7 +2262,7 @@ void CDesignTreeView::OnNewInstance()
 
 	if (dlgNewInstance.m_pNewInstanceRDFClass != nullptr)
 	{
-		GetController()->CreateNewInstance(this, dlgNewInstance.m_pNewInstanceRDFClass->GetInstance());
+		GetController()->CreateNewInstance(nullptr/*update this view also*/, dlgNewInstance.m_pNewInstanceRDFClass->GetInstance());
 	}
 }
 
