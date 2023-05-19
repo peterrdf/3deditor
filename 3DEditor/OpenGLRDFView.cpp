@@ -1481,19 +1481,14 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		return;
 	}
 
-	CRDFController * pController = GetController();
+	auto pController = GetController();
 	ASSERT(pController != nullptr);
 
-	CRDFModel * pModel = pController->GetModel();
+	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
 	}	
-
-	float fXTranslation = 0.f;
-	float fYTranslation = 0.f;
-	float fZTranslation = 0.f;
-	pModel->GetWorldTranslations(fXTranslation, fYTranslation, fZTranslation);	
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -1609,9 +1604,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
 
 		glm::mat4 matModelView = m_matModelView;
-		matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 		matModelView = matModelView * matBBTransformation;
-		matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 		// Update Model-View Matrix
 		m_pOGLProgram->_setModelViewMatrix(matModelView);
