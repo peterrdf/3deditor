@@ -188,10 +188,22 @@ struct _matrix
 	double _41, _42, _43;
 };
 
+static void	_transform(const _vector3d* pV, const _matrix* pM, _vector3d* pOut)
+{
+	_vector3d vecTmp;
+	vecTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
+	vecTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
+	vecTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
+
+	pOut->x = vecTmp.x;
+	pOut->y = vecTmp.y;
+	pOut->z = vecTmp.z;
+}
+
 // mathematicsGeometryDoublePrecisionDerived.h
 // Example: 30 degrees in the XY plane
-//	MatrixRotateByEulerAngles(matrix, 0, 0, 2 * Pi * 30. / 360.);
-static void	MatrixRotateByEulerAngles(
+// => MatrixRotateByEulerAngles(matrix, 0, 0, 2 * Pi * 30. / 360.);
+static void	_matrixRotateByEulerAngles(
 	_matrix* matrix,
 	double	alpha,
 	double	beta,
@@ -236,7 +248,7 @@ static void _rotateMatrix(
 	_matrix matrix;
 	memset(&matrix, 0, sizeof(_matrix));
 
-	MatrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
 
 	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_11"), &matrix._11, 1);
 	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_12"), &matrix._12, 1);

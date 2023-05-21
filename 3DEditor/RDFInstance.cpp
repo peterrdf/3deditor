@@ -27,14 +27,14 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_vecNormalVecsCohorts()
 	, m_vecBiNormalVecsCohorts()
 	, m_vecTangentVecsCohorts()
-	, m_vecOriginalBoundingBoxMin(nullptr)
-	, m_vecOriginalBoundingBoxMax(nullptr)
-	, m_mtxOriginalBoundingBoxTransformation(nullptr)
-	, m_vecAABBBoundingBoxMin(nullptr)
-	, m_vecAABBBoundingBoxMax(nullptr)
-	, m_vecBoundingBoxMin(nullptr)
-	, m_vecBoundingBoxMax(nullptr)
-	, m_mtxBoundingBoxTransformation(nullptr)
+	, m_pvecOriginalBoundingBoxMin(nullptr)
+	, m_pvecOriginalBoundingBoxMax(nullptr)
+	, m_pmtxOriginalBoundingBoxTransformation(nullptr)
+	, m_pvecAABBBoundingBoxMin(nullptr)
+	, m_pvecAABBBoundingBoxMax(nullptr)
+	, m_pvecBoundingBoxMin(nullptr)
+	, m_pvecBoundingBoxMax(nullptr)
+	, m_pmtxBoundingBoxTransformation(nullptr)
 	, m_bEnable(true)
 	, m_bNeedsRefresh(false)
 	, m_iVBO(0)
@@ -86,16 +86,16 @@ CRDFInstance::~CRDFInstance()
 {
 	Clean();	
 	
-	delete m_vecOriginalBoundingBoxMin;
-	delete m_vecOriginalBoundingBoxMax;
-	delete m_mtxOriginalBoundingBoxTransformation;
+	delete m_pvecOriginalBoundingBoxMin;
+	delete m_pvecOriginalBoundingBoxMax;
+	delete m_pmtxOriginalBoundingBoxTransformation;
 
-	delete m_vecAABBBoundingBoxMin;
-	delete m_vecAABBBoundingBoxMax;
+	delete m_pvecAABBBoundingBoxMin;
+	delete m_pvecAABBBoundingBoxMax;
 	
-	delete m_vecBoundingBoxMin;
-	delete m_vecBoundingBoxMax;
-	delete m_mtxBoundingBoxTransformation;
+	delete m_pvecBoundingBoxMin;
+	delete m_pvecBoundingBoxMax;
+	delete m_pmtxBoundingBoxTransformation;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -275,43 +275,43 @@ vector<_cohort*>& CRDFInstance::tangentVecsCohorts()
 // ------------------------------------------------------------------------------------------------
 _vector3d * CRDFInstance::getBoundingBoxMin() const
 {
-	return m_vecBoundingBoxMin;
+	return m_pvecBoundingBoxMin;
 }
 
 // ------------------------------------------------------------------------------------------------
 _vector3d* CRDFInstance::getBoundingBoxMax() const
 {
-	return m_vecBoundingBoxMax;
+	return m_pvecBoundingBoxMax;
 }
 
 // ------------------------------------------------------------------------------------------------
 _matrix * CRDFInstance::getBoundingBoxTransformation() const
 {
-	return m_mtxBoundingBoxTransformation;
+	return m_pmtxBoundingBoxTransformation;
 }
 
 // ------------------------------------------------------------------------------------------------
 _vector3d* CRDFInstance::getOriginalBoundingBoxMin() const
 {
-	return m_vecOriginalBoundingBoxMin;
+	return m_pvecOriginalBoundingBoxMin;
 }
 
 // ------------------------------------------------------------------------------------------------
 _vector3d* CRDFInstance::getOriginalBoundingBoxMax() const
 {
-	return m_vecOriginalBoundingBoxMax;
+	return m_pvecOriginalBoundingBoxMax;
 }
 
 // ------------------------------------------------------------------------------------------------
 _vector3d* CRDFInstance::getAABBBoundingBoxMin() const
 {
-	return m_vecAABBBoundingBoxMin;
+	return m_pvecAABBBoundingBoxMin;
 }
 
 // ------------------------------------------------------------------------------------------------
 _vector3d* CRDFInstance::getAABBBoundingBoxMax() const
 {
-	return m_vecAABBBoundingBoxMax;
+	return m_pvecAABBBoundingBoxMax;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -351,9 +351,9 @@ void CRDFInstance::ResetScaleAndCenter()
 	/**
 	* Bounding box
 	*/
-	memcpy(m_vecBoundingBoxMin, m_vecOriginalBoundingBoxMin, sizeof(_vector3d));
-	memcpy(m_vecBoundingBoxMax, m_vecOriginalBoundingBoxMax, sizeof(_vector3d));
-	memcpy(m_mtxBoundingBoxTransformation, m_mtxOriginalBoundingBoxTransformation, sizeof(_matrix));
+	memcpy(m_pvecBoundingBoxMin, m_pvecOriginalBoundingBoxMin, sizeof(_vector3d));
+	memcpy(m_pvecBoundingBoxMax, m_pvecOriginalBoundingBoxMax, sizeof(_vector3d));
+	memcpy(m_pmtxBoundingBoxTransformation, m_pmtxOriginalBoundingBoxTransformation, sizeof(_matrix));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -530,21 +530,21 @@ void CRDFInstance::ScaleAndCenter(
 	*/
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_vecBoundingBoxMin->x = m_vecBoundingBoxMin->x - fXmin;
-	m_vecBoundingBoxMin->y = m_vecBoundingBoxMin->y - fYmin;
-	m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z - fZmin;
+	m_pvecBoundingBoxMin->x = m_pvecBoundingBoxMin->x - fXmin;
+	m_pvecBoundingBoxMin->y = m_pvecBoundingBoxMin->y - fYmin;
+	m_pvecBoundingBoxMin->z = m_pvecBoundingBoxMin->z - fZmin;
 
 	// center
-	m_vecBoundingBoxMin->x = m_vecBoundingBoxMin->x - ((fXmax - fXmin) / 2.0f);
-	m_vecBoundingBoxMin->y = m_vecBoundingBoxMin->y - ((fYmax - fYmin) / 2.0f);
-	m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z - ((fZmax - fZmin) / 2.0f);
+	m_pvecBoundingBoxMin->x = m_pvecBoundingBoxMin->x - ((fXmax - fXmin) / 2.0f);
+	m_pvecBoundingBoxMin->y = m_pvecBoundingBoxMin->y - ((fYmax - fYmin) / 2.0f);
+	m_pvecBoundingBoxMin->z = m_pvecBoundingBoxMin->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
 	if (bScale)
 	{
-		m_vecBoundingBoxMin->x = m_vecBoundingBoxMin->x / (fResoltuion / 2.0f);
-		m_vecBoundingBoxMin->y = m_vecBoundingBoxMin->y / (fResoltuion / 2.0f);
-		m_vecBoundingBoxMin->z = m_vecBoundingBoxMin->z / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMin->x = m_pvecBoundingBoxMin->x / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMin->y = m_pvecBoundingBoxMin->y / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMin->z = m_pvecBoundingBoxMin->z / (fResoltuion / 2.0f);
 	}
 
 	/**
@@ -552,21 +552,21 @@ void CRDFInstance::ScaleAndCenter(
 	*/
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_vecBoundingBoxMax->x = m_vecBoundingBoxMax->x - fXmin;
-	m_vecBoundingBoxMax->y = m_vecBoundingBoxMax->y - fYmin;
-	m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z - fZmin;
+	m_pvecBoundingBoxMax->x = m_pvecBoundingBoxMax->x - fXmin;
+	m_pvecBoundingBoxMax->y = m_pvecBoundingBoxMax->y - fYmin;
+	m_pvecBoundingBoxMax->z = m_pvecBoundingBoxMax->z - fZmin;
 
 	// center
-	m_vecBoundingBoxMax->x = m_vecBoundingBoxMax->x - ((fXmax - fXmin) / 2.0f);
-	m_vecBoundingBoxMax->y = m_vecBoundingBoxMax->y - ((fYmax - fYmin) / 2.0f);
-	m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z - ((fZmax - fZmin) / 2.0f);
+	m_pvecBoundingBoxMax->x = m_pvecBoundingBoxMax->x - ((fXmax - fXmin) / 2.0f);
+	m_pvecBoundingBoxMax->y = m_pvecBoundingBoxMax->y - ((fYmax - fYmin) / 2.0f);
+	m_pvecBoundingBoxMax->z = m_pvecBoundingBoxMax->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
 	if (bScale)
 	{
-		m_vecBoundingBoxMax->x = m_vecBoundingBoxMax->x / (fResoltuion / 2.0f);
-		m_vecBoundingBoxMax->y = m_vecBoundingBoxMax->y / (fResoltuion / 2.0f);
-		m_vecBoundingBoxMax->z = m_vecBoundingBoxMax->z / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMax->x = m_pvecBoundingBoxMax->x / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMax->y = m_pvecBoundingBoxMax->y / (fResoltuion / 2.0f);
+		m_pvecBoundingBoxMax->z = m_pvecBoundingBoxMax->z / (fResoltuion / 2.0f);
 	}	
 
 	/**
@@ -576,9 +576,9 @@ void CRDFInstance::ScaleAndCenter(
 	// [-1.0 -> 1.0]
 	if (bScale)
 	{
-		m_mtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
-		m_mtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
-		m_mtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
+		m_pmtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
+		m_pmtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
+		m_pmtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
 	}	
 }
 
@@ -1329,25 +1329,32 @@ void CRDFInstance::Calculate()
 	/*
 	* Bounding box
 	*/
-	if (m_mtxOriginalBoundingBoxTransformation == nullptr)
+	if (m_pmtxOriginalBoundingBoxTransformation == nullptr)
 	{	
-		m_vecOriginalBoundingBoxMin = new _vector3d();
-		m_vecOriginalBoundingBoxMax = new _vector3d();
-		m_mtxOriginalBoundingBoxTransformation = new _matrix();
-		SetBoundingBoxReference(m_iInstance, (double*)m_mtxOriginalBoundingBoxTransformation, (double*)m_vecOriginalBoundingBoxMin, (double*)m_vecOriginalBoundingBoxMax);
+		m_pvecOriginalBoundingBoxMin = new _vector3d();
+		m_pvecOriginalBoundingBoxMax = new _vector3d();
+		m_pmtxOriginalBoundingBoxTransformation = new _matrix();
+		SetBoundingBoxReference(
+			m_iInstance, (double*)
+			m_pmtxOriginalBoundingBoxTransformation, (double*)
+			m_pvecOriginalBoundingBoxMin, (double*)
+			m_pvecOriginalBoundingBoxMax);
 
-		m_vecAABBBoundingBoxMin = new _vector3d();
-		m_vecAABBBoundingBoxMax = new _vector3d();
-		GetBoundingBox(m_iInstance, (double*)m_vecAABBBoundingBoxMin, (double*)m_vecAABBBoundingBoxMax);
+		m_pvecAABBBoundingBoxMin = new _vector3d();
+		m_pvecAABBBoundingBoxMax = new _vector3d();
+		GetBoundingBox(
+			m_iInstance, 
+			(double*)m_pvecAABBBoundingBoxMin, 
+			(double*)m_pvecAABBBoundingBoxMax);
 
-		ASSERT(m_mtxBoundingBoxTransformation == nullptr);
-		m_mtxBoundingBoxTransformation = new _matrix();
-		m_vecBoundingBoxMin = new _vector3d();
-		m_vecBoundingBoxMax = new _vector3d();
+		ASSERT(m_pmtxBoundingBoxTransformation == nullptr);
+		m_pmtxBoundingBoxTransformation = new _matrix();
+		m_pvecBoundingBoxMin = new _vector3d();
+		m_pvecBoundingBoxMax = new _vector3d();
 
-		memcpy(m_vecBoundingBoxMin, m_vecOriginalBoundingBoxMin, sizeof(_vector3d));
-		memcpy(m_vecBoundingBoxMax, m_vecOriginalBoundingBoxMax, sizeof(_vector3d));
-		memcpy(m_mtxBoundingBoxTransformation, m_mtxOriginalBoundingBoxTransformation, sizeof(_matrix));
+		memcpy(m_pvecBoundingBoxMin, m_pvecOriginalBoundingBoxMin, sizeof(_vector3d));
+		memcpy(m_pvecBoundingBoxMax, m_pvecOriginalBoundingBoxMax, sizeof(_vector3d));
+		memcpy(m_pmtxBoundingBoxTransformation, m_pmtxOriginalBoundingBoxTransformation, sizeof(_matrix));
 	}
 }
 

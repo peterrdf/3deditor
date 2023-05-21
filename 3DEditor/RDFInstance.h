@@ -46,14 +46,14 @@ private: // Members
 	vector<_cohort*> m_vecTangentVecsCohorts;
 
 	// Bounding box
-	_vector3d* m_vecOriginalBoundingBoxMin;
-	_vector3d* m_vecOriginalBoundingBoxMax;
-	_matrix* m_mtxOriginalBoundingBoxTransformation;
-	_vector3d* m_vecAABBBoundingBoxMin;
-	_vector3d* m_vecAABBBoundingBoxMax;
-	_vector3d* m_vecBoundingBoxMin;
-	_vector3d* m_vecBoundingBoxMax;
-	_matrix* m_mtxBoundingBoxTransformation;
+	_vector3d* m_pvecOriginalBoundingBoxMin;
+	_vector3d* m_pvecOriginalBoundingBoxMax;
+	_matrix* m_pmtxOriginalBoundingBoxTransformation;
+	_vector3d* m_pvecAABBBoundingBoxMin;
+	_vector3d* m_pvecAABBBoundingBoxMax;
+	_vector3d* m_pvecBoundingBoxMin;
+	_vector3d* m_pvecBoundingBoxMax;
+	_matrix* m_pmtxBoundingBoxTransformation;
 	
 	bool m_bEnable; // UI
 
