@@ -501,9 +501,8 @@ void CRDFInstance::ScaleAndCenter(
 		return;
 	}	
 
-	/**
-	* Vertices
-	*/
+	/** Vertices */	
+
 	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
@@ -525,9 +524,7 @@ void CRDFInstance::ScaleAndCenter(
 		}		
 	}
 
-	/**
-	* Bounding box - Min
-	*/
+	/** Bounding box - Min */	
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_pvecBoundingBoxMin->x = m_pvecBoundingBoxMin->x - fXmin;
@@ -545,7 +542,7 @@ void CRDFInstance::ScaleAndCenter(
 		m_pvecBoundingBoxMin->x = m_pvecBoundingBoxMin->x / (fResoltuion / 2.0f);
 		m_pvecBoundingBoxMin->y = m_pvecBoundingBoxMin->y / (fResoltuion / 2.0f);
 		m_pvecBoundingBoxMin->z = m_pvecBoundingBoxMin->z / (fResoltuion / 2.0f);
-	}
+	}	
 
 	/**
 	* Bounding box - Max
@@ -569,17 +566,18 @@ void CRDFInstance::ScaleAndCenter(
 		m_pvecBoundingBoxMax->z = m_pvecBoundingBoxMax->z / (fResoltuion / 2.0f);
 	}	
 
-	/**
-	* Bounding box - Transformation
-	*/
+	//bbref!!!
+	///**
+	//* Bounding box - Transformation
+	//*/
 
-	// [-1.0 -> 1.0]
-	if (bScale)
-	{
-		m_pmtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
-		m_pmtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
-		m_pmtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
-	}	
+	//// [-1.0 -> 1.0]
+	//if (bScale)
+	//{
+	//	m_pmtxBoundingBoxTransformation->_41 /= (fResoltuion / 2.0f);
+	//	m_pmtxBoundingBoxTransformation->_42 /= (fResoltuion / 2.0f);
+	//	m_pmtxBoundingBoxTransformation->_43 /= (fResoltuion / 2.0f);
+	//}	
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1326,36 +1324,53 @@ void CRDFInstance::Calculate()
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
 
-	/*
-	* Bounding box
-	*/
+	
+	/** Bounding box */	
 	if (m_pmtxOriginalBoundingBoxTransformation == nullptr)
-	{	
-		m_pvecOriginalBoundingBoxMin = new _vector3d();
-		m_pvecOriginalBoundingBoxMax = new _vector3d();
+	{
+		ASSERT(m_pmtxBoundingBoxTransformation == nullptr);
+		ASSERT((m_pvecOriginalBoundingBoxMin == nullptr) && (m_pvecOriginalBoundingBoxMax == nullptr));
+		ASSERT((m_pvecAABBBoundingBoxMin == nullptr) && (m_pvecAABBBoundingBoxMax == nullptr));
+
 		m_pmtxOriginalBoundingBoxTransformation = new _matrix();
-		SetBoundingBoxReference(
+		m_pvecOriginalBoundingBoxMin = new _vector3d();
+		m_pvecOriginalBoundingBoxMax = new _vector3d();		
+
+		//bbref!!!
+		/*SetBoundingBoxReference(
 			m_iInstance, (double*)
 			m_pmtxOriginalBoundingBoxTransformation, (double*)
 			m_pvecOriginalBoundingBoxMin, (double*)
-			m_pvecOriginalBoundingBoxMax);
+			m_pvecOriginalBoundingBoxMax);	*/
 
-		m_pvecAABBBoundingBoxMin = new _vector3d();
-		m_pvecAABBBoundingBoxMax = new _vector3d();
+		// Object BB
 		GetBoundingBox(
-			m_iInstance, 
-			(double*)m_pvecAABBBoundingBoxMin, 
-			(double*)m_pvecAABBBoundingBoxMax);
+			m_iInstance,
+			(double*)m_pmtxOriginalBoundingBoxTransformation,
+			(double*)m_pvecOriginalBoundingBoxMin,
+			(double*)m_pvecOriginalBoundingBoxMax);
 
-		ASSERT(m_pmtxBoundingBoxTransformation == nullptr);
+		// Copy BB //bbref!!!
 		m_pmtxBoundingBoxTransformation = new _matrix();
 		m_pvecBoundingBoxMin = new _vector3d();
 		m_pvecBoundingBoxMax = new _vector3d();
 
+		memcpy(m_pmtxBoundingBoxTransformation, m_pmtxOriginalBoundingBoxTransformation, sizeof(_matrix));
 		memcpy(m_pvecBoundingBoxMin, m_pvecOriginalBoundingBoxMin, sizeof(_vector3d));
 		memcpy(m_pvecBoundingBoxMax, m_pvecOriginalBoundingBoxMax, sizeof(_vector3d));
-		memcpy(m_pmtxBoundingBoxTransformation, m_pmtxOriginalBoundingBoxTransformation, sizeof(_matrix));
-	}
+
+		// Apply the Transformation
+		_transform(m_pvecBoundingBoxMin, m_pmtxBoundingBoxTransformation, m_pvecBoundingBoxMin);
+		_transform(m_pvecBoundingBoxMax, m_pmtxBoundingBoxTransformation, m_pvecBoundingBoxMax);
+
+		// AABB
+		m_pvecAABBBoundingBoxMin = new _vector3d();
+		m_pvecAABBBoundingBoxMax = new _vector3d();
+		GetBoundingBox(
+			m_iInstance,
+			(double*)m_pvecAABBBoundingBoxMin,
+			(double*)m_pvecAABBBoundingBoxMax);
+	} // if (m_pmtxOriginalBoundingBoxTransformation == nullptr)
 }
 
 // ------------------------------------------------------------------------------------------------
