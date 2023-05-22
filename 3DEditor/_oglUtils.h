@@ -1900,11 +1900,17 @@ protected: // Members
 	float m_fPanYMax;
 	float m_fPanYInterval;
 
-
 	// Translation
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
+	float m_fXTranslation; // Perspective & Orthographic
+	float m_fYTranslation; // Perspective & Orthographic
+
+	float m_fZTranslation; // Perspective
+
+	// Orthographic
+	float m_fScaleFactor; 
+	float m_fScaleFactorMin;
+	float m_fScaleFactorMax;
+	float m_fScaleFactorInterval;
 
 public: // Methods
 
@@ -1937,9 +1943,13 @@ public: // Methods
 		, m_fPanYMin(-1.f)
 		, m_fPanYMax(1.f)
 		, m_fPanYInterval(2.f)
-		, m_fXTranslation(0.0f)
-		, m_fYTranslation(0.0f)
-		, m_fZTranslation(-5.0f)
+		, m_fXTranslation(.0f)
+		, m_fYTranslation(.0f)
+		, m_fZTranslation(-5.f)
+		, m_fScaleFactor(2.f)
+		, m_fScaleFactorMin(0.f)
+		, m_fScaleFactorMax(2.f)
+		, m_fScaleFactorInterval(2.f)
 	{
 		_setView(enumView::Isometric);
 	}	
@@ -2066,7 +2076,6 @@ public: // Methods
 		m_fZoomMin = -m_fZoomMin;
 		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
 		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
-
 		m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
 
 		// Pan X
@@ -2074,7 +2083,6 @@ public: // Methods
 		m_fPanXMin += (fXmax - fXmin) / 2.f;
 		m_fPanXMin = -m_fPanXMin;
 		m_fPanXMax = m_fPanXMin + (fBoundingSphereDiameter * 2.f);
-
 		m_fPanXInterval = abs(m_fPanXMax - m_fPanXMin);
 
 		// Pan Y
@@ -2082,8 +2090,12 @@ public: // Methods
 		m_fPanYMin += (fXmax - fXmin) / 2.f;
 		m_fPanYMin = -m_fPanYMin;
 		m_fPanYMax = m_fPanYMin + (fBoundingSphereDiameter * 2.f);
-
 		m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
+
+		// Scale (Orthographic)
+		m_fScaleFactorMin = 0.f;
+		m_fScaleFactorMax = fBoundingSphereDiameter;
+		m_fScaleFactorInterval = abs(m_fScaleFactorMax - m_fScaleFactorMin);
 
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
@@ -2128,7 +2140,7 @@ public: // Methods
 
 			case enumProjection::Orthographic:
 			{
-				glm::mat4 matProjection = glm::ortho<GLdouble>(-1.5, 1.5, -1.5, 1.5, zNear, zFar);
+				glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 				m_pOGLProgram->_setProjectionMatrix(matProjection);
 			}
 			break;
@@ -2138,7 +2150,7 @@ public: // Methods
 				ASSERT(FALSE);
 			}
 			break;
-		}
+		} // switch (m_enProjection)
 
 		// Model-View Matrix
 		m_matModelView = glm::identity<glm::mat4>();
@@ -2381,10 +2393,32 @@ public: // Methods
 
 	void _zoomMouseMButton(LONG lDelta)
 	{
-		_zoom(
-			lDelta > 0 ?
-			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
-			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
+		switch (m_enProjection)
+		{
+			case enumProjection::Perspective:
+			{
+				_zoom(
+					lDelta > 0 ? 
+					-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
+					abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
+			}
+			break;
+
+			case enumProjection::Orthographic:
+			{
+				_zoom(
+					lDelta > 0 ?
+					abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE) :
+					-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE));
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (m_enProjection)
 	}
 
 	void _panMouseRButton(float fX, float fY)
@@ -2396,9 +2430,31 @@ public: // Methods
 
 	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	{
-		_zoom(zDelta < 0 ?
-			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
-			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
+		switch (m_enProjection)
+		{
+			case enumProjection::Perspective:
+			{
+				_zoom(
+					zDelta > 0 ?
+					-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+					abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
+			}
+			break;
+
+			case enumProjection::Orthographic:
+			{
+				_zoom(zDelta > 0 ? 
+					-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+					abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL));
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (m_enProjection)
 	}	
 
 	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
@@ -2483,20 +2539,40 @@ private: //  Methods
 
 	void _zoom(float fZTranslation)
 	{
-		if (m_enProjection == enumProjection::Orthographic)
+		switch (m_enProjection)
 		{
-			return;
-		}		
+			case enumProjection::Perspective:
+			{
+				float fNewZTranslation = m_fZTranslation + fZTranslation;
+				if ((fNewZTranslation >= m_fZoomMax) ||
+					(fNewZTranslation <= m_fZoomMin))
+				{
+					return;
+				}
 
-		float fNewZTranslation = m_fZTranslation + fZTranslation;
+				m_fZTranslation = fNewZTranslation;
+			}
+			break;
 
-		if ((fNewZTranslation >= m_fZoomMax) ||
-			(fNewZTranslation <= m_fZoomMin))
-		{
-			return;
-		}
+			case enumProjection::Orthographic:
+			{
+				float fNewScaleFactor = m_fScaleFactor + fZTranslation;				
+				if ((fNewScaleFactor >= m_fScaleFactorMax) ||
+					(fNewScaleFactor <= m_fScaleFactorMin))
+				{
+					return;
+				}
 
-		m_fZTranslation = fNewZTranslation;
+				m_fScaleFactor = fNewScaleFactor;
+			}
+			break;
+
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
+		} // switch (m_enProjection)
 
 		_redraw();
 	}

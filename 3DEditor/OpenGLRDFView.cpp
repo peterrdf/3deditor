@@ -284,9 +284,10 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
 	// Translation
-	m_fXTranslation = 0.0f;
-	m_fYTranslation = 0.0f;
-	m_fZTranslation = -5.0f;
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = -5.f;
+	m_fScaleFactor = 2.f;
 
 	// UI
 	m_bShowFaces = TRUE;
@@ -586,8 +587,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
@@ -875,7 +877,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	/*
 	* Center
 	*/
-	CRDFController * pController = GetController();
+	auto pController = GetController();
 	ASSERT(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
@@ -900,8 +902,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_fZTranslation = fZmin;
 	m_fZTranslation += (fZmax - fZmin) / 2.f;
 	m_fZTranslation = -m_fZTranslation;
-
 	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
 	/*
 	* Reload model
