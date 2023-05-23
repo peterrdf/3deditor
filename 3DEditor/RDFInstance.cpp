@@ -341,19 +341,20 @@ void CRDFInstance::ResetScaleAndCenter()
 		return;
 	}
 
-	/**
-	* Vertices
-	*/
+	
+	// Vertices
 	delete[] m_pVertices;
 	m_pVertices = new float[m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
 	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
-	/**
-	* Bounding box
-	*/
+	// Bounding box
 	memcpy(m_pvecBoundingBoxMin, m_pvecOriginalBoundingBoxMin, sizeof(_vector3d));
 	memcpy(m_pvecBoundingBoxMax, m_pvecOriginalBoundingBoxMax, sizeof(_vector3d));
 	memcpy(m_pmtxBoundingBoxTransformation, m_pmtxOriginalBoundingBoxTransformation, sizeof(_matrix));
+
+	// Apply the Transformation
+	_transform(m_pvecBoundingBoxMin, m_pmtxBoundingBoxTransformation, m_pvecBoundingBoxMin);
+	_transform(m_pvecBoundingBoxMax, m_pmtxBoundingBoxTransformation, m_pvecBoundingBoxMax);
 }
 
 // ------------------------------------------------------------------------------------------------
