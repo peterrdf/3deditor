@@ -1579,38 +1579,40 @@ void COpenGLRDFView::DrawBoundingBoxes()
 			continue;
 		}
 
-		if ((pInstance->getBoundingBoxTransformation() == nullptr) || (pInstance->getBoundingBoxMin() == nullptr) || (pInstance->getBoundingBoxMax() == nullptr))
+		//bbref!!!
+		if (/*(pInstance->getBoundingBoxTransformation() == nullptr) ||*/ (pInstance->getBoundingBoxMin() == nullptr) || (pInstance->getBoundingBoxMax() == nullptr))
 		{
 			continue;
 		}		
 
-		float arBBTransformation[] =
-			{
-				(float)pInstance->getBoundingBoxTransformation()->_11,
-				(float)pInstance->getBoundingBoxTransformation()->_12,
-				(float)pInstance->getBoundingBoxTransformation()->_13,
-				0.f,
-				(float)pInstance->getBoundingBoxTransformation()->_21,
-				(float)pInstance->getBoundingBoxTransformation()->_22,
-				(float)pInstance->getBoundingBoxTransformation()->_23,
-				0.f,
-				(float)pInstance->getBoundingBoxTransformation()->_31,
-				(float)pInstance->getBoundingBoxTransformation()->_32,
-				(float)pInstance->getBoundingBoxTransformation()->_33,
-				0.f,
-				(float)pInstance->getBoundingBoxTransformation()->_41,
-				(float)pInstance->getBoundingBoxTransformation()->_42,
-				(float)pInstance->getBoundingBoxTransformation()->_43,
-				1.f,
-			};
+		//bbref!!!
+		//float arBBTransformation[] =
+		//	{
+		//		(float)pInstance->getBoundingBoxTransformation()->_11,
+		//		(float)pInstance->getBoundingBoxTransformation()->_12,
+		//		(float)pInstance->getBoundingBoxTransformation()->_13,
+		//		0.f,
+		//		(float)pInstance->getBoundingBoxTransformation()->_21,
+		//		(float)pInstance->getBoundingBoxTransformation()->_22,
+		//		(float)pInstance->getBoundingBoxTransformation()->_23,
+		//		0.f,
+		//		(float)pInstance->getBoundingBoxTransformation()->_31,
+		//		(float)pInstance->getBoundingBoxTransformation()->_32,
+		//		(float)pInstance->getBoundingBoxTransformation()->_33,
+		//		0.f,
+		//		(float)pInstance->getBoundingBoxTransformation()->_41,
+		//		(float)pInstance->getBoundingBoxTransformation()->_42,
+		//		(float)pInstance->getBoundingBoxTransformation()->_43,
+		//		1.f,
+		//	};
 
-		glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
+		//glm::mat4 matBBTransformation = glm::make_mat4(arBBTransformation);
 
-		glm::mat4 matModelView = m_matModelView;
-		matModelView = matModelView * matBBTransformation;
+		//glm::mat4 matModelView = m_matModelView;
+		//matModelView = matModelView * matBBTransformation;
 
-		// Update Model-View Matrix
-		m_pOGLProgram->_setModelViewMatrix(matModelView);
+		//// Update Model-View Matrix
+		//m_pOGLProgram->_setModelViewMatrix(matModelView);
 
 		_vector3d vecBoundingBoxMin = { pInstance->getBoundingBoxMin()->x, pInstance->getBoundingBoxMin()->y, pInstance->getBoundingBoxMin()->z };
 		_vector3d vecBoundingBoxMax = { pInstance->getBoundingBoxMax()->x, pInstance->getBoundingBoxMax()->y, pInstance->getBoundingBoxMax()->z };
@@ -1678,8 +1680,9 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glBindVertexArray(0);
 	} // for (; itInstance != ...
 
+	//bbref!!!
 	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+	/*m_pOGLProgram->_setModelViewMatrix(m_matModelView);*/
 
 	_oglUtils::checkForErrors();
 }
