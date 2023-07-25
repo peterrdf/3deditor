@@ -73,5 +73,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Helper
 	static void GetAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestorClasses);
+	static wstring GetAncestors(int64_t iClassInstance);
 };
 

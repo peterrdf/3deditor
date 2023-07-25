@@ -2277,18 +2277,26 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	ASSERT(GetController() != nullptr);
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	/*
 	* One property
 	*/
-	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
+	auto prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 	if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
 	{
-		CRDFInstance * pInstance = prSelectedInstanceProperty.first;
-		CRDFProperty * pProperty = prSelectedInstanceProperty.second;
+		auto pInstance = prSelectedInstanceProperty.first;
+		auto pProperty = prSelectedInstanceProperty.second;
 
-		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->GetUniqueName());		
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->GetUniqueName());
+		
+		wstring strAncestors = CRDFClass::GetAncestors(pInstance->GetClassInstance());
+		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
@@ -2314,6 +2322,9 @@ void CPropertiesWnd::LoadInstanceProperties()
 		auto& mapProperties = pModel->GetProperties();
 
 		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->GetUniqueName());
+
+		wstring strAncestors = CRDFClass::GetAncestors(pInstance->GetClassInstance());
+		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		/*
 		* ColorComponent

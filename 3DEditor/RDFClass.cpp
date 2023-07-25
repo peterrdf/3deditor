@@ -18,11 +18,11 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	/*
 	* Name
 	*/
-	char * szClassName = nullptr;
-	GetNameOfClass(m_iInstance, &szClassName);
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(m_iInstance, &szClassName);
 
 #ifndef _LINUX
-    m_strName = CA2W(szClassName);
+    m_strName = szClassName;
 #else
 	m_strName = wxString(szClassName).wchar_str();
 #endif // _LINUX
@@ -109,4 +109,26 @@ void CRDFClass::GetAncestors(int64_t iClassInstance, vector<int64_t> & vecAncest
 
 		iParentClassInstance = GetClassParentsByIterator(iClassInstance, iParentClassInstance);
 	}
+}
+
+/*static*/ wstring CRDFClass::GetAncestors(int64_t iClassInstance)
+{
+	vector<int64_t> vecAncestors;
+	GetAncestors(iClassInstance, vecAncestors);
+
+	wstring strAncestors;
+	for (auto iAncestor : vecAncestors)
+	{
+		if (!strAncestors.empty())
+		{
+			strAncestors += L";";
+		}
+
+		wchar_t* szClassName = nullptr;
+		GetNameOfClassW(iAncestor, &szClassName);
+
+		strAncestors += szClassName;
+	}
+
+	return strAncestors;
 }
