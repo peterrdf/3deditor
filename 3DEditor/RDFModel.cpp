@@ -125,7 +125,7 @@ void CRDFModel::CreateDefaultModel()
 {
 	Clean();
 	
-	m_iModel = OpenModelW(nullptr);
+	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);	
 
 	int64_t	pModel = m_iModel;
@@ -285,7 +285,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 {
 	ASSERT(iClassInstance != 0);
 
-	int64_t iInstance = CreateInstance(iClassInstance, nullptr);
+	int64_t iInstance = CreateInstance(iClassInstance);
 	ASSERT(iInstance != 0);
 
 	auto pInstance = new CRDFInstance(m_iID++, iInstance);
@@ -801,7 +801,7 @@ void CRDFModel::Load(const wchar_t * szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadE57(const wchar_t* szPath)
 {
-	m_iModel = OpenModelW(nullptr);
+	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
@@ -1104,7 +1104,7 @@ void CRDFModel::LoadE57(const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadCityGML(const wchar_t* szPath)
 {
-	m_iModel = OpenModelW(nullptr);
+	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
@@ -1129,7 +1129,7 @@ void CRDFModel::LoadCityGML(const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
-	m_iModel = OpenModelW(nullptr);
+	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);

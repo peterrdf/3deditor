@@ -243,37 +243,37 @@ void CRDFMeasurementsBuilder::BuildMeasure(int64_t iInstance, int64_t iProperty,
 		ASSERT(iMatrixMultiplicationClass != 0);
 
 		// Collection text (inner)
-		int64_t iCollectionInstanceText = CreateInstance(iCollectionClass, nullptr);
+		int64_t iCollectionInstanceText = CreateInstance(iCollectionClass);
 		ASSERT(iCollectionInstanceText != 0);
 
 		// object
 		SetObjectProperty(iCollectionInstanceText, GetPropertyByName(GetModel(), "objects"), vecLetters.data(), vecLetters.size());
 
 		// Transformation outer
-		int64_t iTransformationInstanceOuter = CreateInstance(iTransformationClass, nullptr);
+		int64_t iTransformationInstanceOuter = CreateInstance(iTransformationClass);
 		ASSERT(iTransformationInstanceOuter != 0);
 
 		// Transformation inner (text)
-		int64_t iTransformationInstanceText = CreateInstance(iTransformationClass, nullptr);
+		int64_t iTransformationInstanceText = CreateInstance(iTransformationClass);
 		ASSERT(iTransformationInstanceText != 0);
 
 		// object
 		SetObjectProperty(iTransformationInstanceText, GetPropertyByName(GetModel(), "object"), &iCollectionInstanceText, 1);
 
 		// matrix multiplication
-		int64_t iMatrixMultiplicationInstance = CreateInstance(iMatrixMultiplicationClass, nullptr);
+		int64_t iMatrixMultiplicationInstance = CreateInstance(iMatrixMultiplicationClass);
 		ASSERT(iMatrixMultiplicationInstance != 0);
 
 		// matrix outer I
-		int64_t iMatrixInstanceOuterI = CreateInstance(iMatrixClass, nullptr);
+		int64_t iMatrixInstanceOuterI = CreateInstance(iMatrixClass);
 		ASSERT(iMatrixInstanceOuterI != 0);
 
 		// matrix outer II
-		int64_t iMatrixInstanceOuterII = CreateInstance(iMatrixClass, nullptr);
+		int64_t iMatrixInstanceOuterII = CreateInstance(iMatrixClass);
 		ASSERT(iMatrixInstanceOuterII != 0);
 
 		// matrix inner (text)
-		int64_t iMatrixInstanceText = CreateInstance(iMatrixClass, nullptr);
+		int64_t iMatrixInstanceText = CreateInstance(iMatrixClass);
 		ASSERT(iMatrixInstanceText != 0);
 
 		VECTOR3	refDirection, normal;
@@ -373,7 +373,7 @@ void CRDFMeasurementsBuilder::BuildMeasure(int64_t iInstance, int64_t iProperty,
 		vector<int64_t> vecInstances = BuildLineMeasurementArrows(&arMin.x, &arMax.x, scale, _scale * 1.03);
 
 		// Collection measure + text (outer)
-		int64_t iCollectionInstanceOuter = CreateInstance(iCollectionClass, nullptr);
+		int64_t iCollectionInstanceOuter = CreateInstance(iCollectionClass);
 		ASSERT(iCollectionInstanceOuter != 0);
 		
 //		vecInstances.push_back(iTransformationInstanceText);
@@ -451,21 +451,21 @@ void CRDFMeasurementsBuilder::Build(int64_t iInstance, const double * arBounding
 		ASSERT(iMatrixClass != 0);		
 
 		// Collection
-		int64_t iCollectionInstance = CreateInstance(iCollectionClass, nullptr);
+		int64_t iCollectionInstance = CreateInstance(iCollectionClass);
 		ASSERT(iCollectionInstance != 0);
 
 		// object
 		SetObjectProperty(iCollectionInstance, GetPropertyByName(GetModel(), "objects"), vecLetters.data(), vecLetters.size()); 
 
 		// Transformation
-		int64_t iTransformationInstance = CreateInstance(iTransformationClass, nullptr);
+		int64_t iTransformationInstance = CreateInstance(iTransformationClass);
 		ASSERT(iTransformationInstance != 0);
 
 		// object
 		SetObjectProperty(iTransformationInstance, GetPropertyByName(GetModel(), "object"), &iCollectionInstance, 1);
 
 		// matrix
-		int64_t iMatrixInstance = CreateInstance(iMatrixClass, nullptr);
+		int64_t iMatrixInstance = CreateInstance(iMatrixClass);
 		ASSERT(iMatrixInstance != 0);
 
 		// Scale
@@ -545,21 +545,21 @@ void CRDFMeasurementsBuilder::Build(int64_t iInstance, const double * arBounding
 			ASSERT(iMatrixClass != 0);
 
 			// Collection
-			int64_t iCollectionInstance = CreateInstance(iCollectionClass, nullptr);
+			int64_t iCollectionInstance = CreateInstance(iCollectionClass);
 			ASSERT(iCollectionInstance != 0);
 
 			// object
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(GetModel(), "objects"), vecLetters.data(), vecLetters.size());
 
 			// Transformation
-			int64_t iTransformationInstance = CreateInstance(iTransformationClass, nullptr);
+			int64_t iTransformationInstance = CreateInstance(iTransformationClass);
 			ASSERT(iTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(GetModel(), "object"), &iCollectionInstance, 1);
 
 			// matrix
-			int64_t iMatrixInstance = CreateInstance(iMatrixClass, nullptr);
+			int64_t iMatrixInstance = CreateInstance(iMatrixClass);
 			ASSERT(iMatrixInstance != 0);
 
 			// Scale
@@ -623,21 +623,21 @@ void CRDFMeasurementsBuilder::Build(int64_t iInstance, const double * arBounding
 			ASSERT(iMatrixClass != 0);
 
 			// Collection
-			int64_t iCollectionInstance = CreateInstance(iCollectionClass, nullptr);
+			int64_t iCollectionInstance = CreateInstance(iCollectionClass);
 			ASSERT(iCollectionInstance != 0);
 
 			// objects
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(GetModel(), "objects"), vecLetters.data(), vecLetters.size());
 
 			// Transformation - Scale and Translate
-			int64_t iTransformationInstance = CreateInstance(iTransformationClass, nullptr);
+			int64_t iTransformationInstance = CreateInstance(iTransformationClass);
 			ASSERT(iTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(GetModel(), "object"), &iCollectionInstance, 1);
 
 			// matrix
-			int64_t iMatrixInstance = CreateInstance(iMatrixClass, nullptr);
+			int64_t iMatrixInstance = CreateInstance(iMatrixClass);
 			ASSERT(iMatrixInstance != 0);
 
 			// Scale
@@ -677,21 +677,21 @@ void CRDFMeasurementsBuilder::Build(int64_t iInstance, const double * arBounding
 			vecInstances.push_back(iTransformationInstance);
 
 			// Collection
-			iCollectionInstance = CreateInstance(iCollectionClass, nullptr);
+			iCollectionInstance = CreateInstance(iCollectionClass);
 			ASSERT(iCollectionInstance != 0);
 
 			// object
 			SetObjectProperty(iCollectionInstance, GetPropertyByName(GetModel(), "objects"), vecInstances.data(), vecInstances.size());
 
 			// Transformation - Rotate
-			int64_t iRotateTransformationInstance = CreateInstance(iTransformationClass, nullptr);
+			int64_t iRotateTransformationInstance = CreateInstance(iTransformationClass);
 			ASSERT(iRotateTransformationInstance != 0);
 
 			// object
 			SetObjectProperty(iRotateTransformationInstance, GetPropertyByName(GetModel(), "object"), &iCollectionInstance, 1);
 
 			// matrix
-			int64_t iRotateMatrixInstance = CreateInstance(iMatrixClass, nullptr);
+			int64_t iRotateMatrixInstance = CreateInstance(iMatrixClass);
 			ASSERT(iRotateMatrixInstance != 0);
 
 			// Rotate
@@ -728,7 +728,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Line
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -752,7 +752,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Left arrow - up
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -770,7 +770,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Left arrow - down
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -788,7 +788,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Right arrow - up
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -806,7 +806,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Right arrow - down
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -824,7 +824,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Left line
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =
@@ -842,7 +842,7 @@ vector<int64_t> CRDFMeasurementsBuilder::BuildLineMeasurementArrows(const double
 	* Right line
 	*/
 	{
-		int64_t iLine3DInstance = CreateInstance(iLine3DClass, 0);
+		int64_t iLine3DInstance = CreateInstance(iLine3DClass);
 		ASSERT(iLine3DInstance != 0);
 
 		double arPoints[6] =

@@ -63,7 +63,7 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 // ------------------------------------------------------------------------------------------------
 void CTestManager::GenerateTests(const CString& strWildcards)
 {
-	int64_t iRevision = ::GetRevision(nullptr);
+	int64_t iRevision = ::GetRevision();
 
 	wchar_t szRevision[1024];
 	swprintf(szRevision, 1024, L"%lld", iRevision);
