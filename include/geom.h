@@ -42,6 +42,7 @@ namespace GEOM
     class Cone;
     class ConicalCurve;
     class ConicalSurface;
+    class ConvexPolyhedron;
     class Copy;
     class CosineCurve;
     class Cube;
@@ -249,7 +250,7 @@ namespace GEOM
 
             TElem* values = NULL;
             int64_t count = 0;
-            int64_t res = ::GetDatatypeProperty(m_instance, propId, (void**)&values, &count);
+            int64_t res = ::GetDatatypeProperty(m_instance, propId, (const void**)&values, &count);
             if (res != 0) {
                 count = 0;
             }
@@ -2557,6 +2558,10 @@ namespace GEOM
         const GeometricItem* get_objects(int64_t* pCount) { return GetObjectProperty<GeometricItem>("objects", pCount); }
         ///<summary>Get an array of related instance handles. OWL cardinality 0..-1. The method returns pointer to inernal buffer, a caller should not free or change it.</summary>
         const int64_t* get_objects_int64(int64_t* pCount) { return GetObjectProperty<int64_t>("objects", pCount); }
+        ///<summary>Sets value of recalculateBBox</summary>
+        bool set_recalculateBBox(bool value) { return SetDatatypeProperty ("recalculateBBox", &value, 1); }
+        ///<summary>Gets a value of recalculateBBox, returns NULL is the property was not set. The method returns pointer to inernal buffer, a caller should not free or change it.</summary>
+        const bool* get_recalculateBBox() { return GetDatatypeProperty<bool>("recalculateBBox", NULL); }
         ///<summary>Sets value of relativeEpsilon</summary>
         bool set_relativeEpsilon(double value) { return SetDatatypeProperty ("relativeEpsilon", &value, 1); }
         ///<summary>Gets a value of relativeEpsilon, returns NULL is the property was not set. The method returns pointer to inernal buffer, a caller should not free or change it.</summary>
@@ -2856,6 +2861,55 @@ namespace GEOM
         bool set_semiVerticalAngle(double value) { return SetDatatypeProperty ("semiVerticalAngle", &value, 1); }
         ///<summary>Gets a value of semiVerticalAngle, returns NULL is the property was not set. The method returns pointer to inernal buffer, a caller should not free or change it.</summary>
         const double* get_semiVerticalAngle() { return GetDatatypeProperty<double>("semiVerticalAngle", NULL); }
+    };
+
+    /// <summary>
+    /// Provides utility methods to interact with an instance of OWL class ConvexPolyhedron
+    /// You also can use object of this C++ class instead of int64_t handle of the OWL instance in any place where the handle is required
+    /// </summary>
+    class ConvexPolyhedron : public Solid
+    {
+    public:
+        /// <summary>
+        /// Create new instace of OWL class ConvexPolyhedron and returns object of this C++ class to interact with
+        /// </summary>
+        /// <param name="model">The handle to the model</param>
+        /// <param name="name">This attribute represents the name of the instance (given as char array / ASCII). The name is given by the host and the attribute is not changed</param>
+        /// <returns></returns>
+        static ConvexPolyhedron Create(int64_t model, const char* name=NULL) { return ConvexPolyhedron(Instance::Create(model, "ConvexPolyhedron", name, NULL), "ConvexPolyhedron");}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="name">This attribute represents the name of the instance (given as wchar_t array / Unicode). The name is given by the host and the attribute is not changed</param>
+        /// <returns></returns>
+        static ConvexPolyhedron CreateW(int64_t model, const wchar_t* name = NULL) { return ConvexPolyhedron(Instance::Create(model, "ConvexPolyhedron", NULL, name), "ConvexPolyhedron"); }
+
+    public:
+        /// <summary>
+        /// Constructs object of this C++ class that wraps existing OWL instance
+        /// </summary>
+        /// <param name="instance">OWL instance to interact with</param>
+        ///
+        ConvexPolyhedron(int64_t instance = NULL)
+            : Solid(instance, "ConvexPolyhedron")
+        {}
+
+    protected:
+        ConvexPolyhedron(int64_t instance, const char* checkClassName)
+            : Solid(instance, checkClassName)
+        {}
+
+    public:
+       //
+       // Properties with known cardinality restrictions to ConvexPolyhedron
+       //
+
+        ///<summary>Sets relationship from this instance to an instance of GeometricItem</summary>
+        bool set_object(const GeometricItem& instance) { return SetObjectProperty<GeometricItem>("object", &instance, 1); }
+        ///<summary>Get related instance. The method returns pointer to inernal buffer, a caller should not free or change it</summary>
+        const GeometricItem* get_object() { return GetObjectProperty<GeometricItem>("object", NULL); }
     };
 
     /// <summary>
