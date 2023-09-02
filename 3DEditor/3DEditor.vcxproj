@@ -175,7 +175,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)libE57Format/include/E57Format;$(SolutionDir)libCityGML/include;$(SolutionDir)glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -208,15 +208,6 @@
     <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
     <ClInclude Include="..\JpegLoader\JpegLoader.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jconfig.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jdct.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jerror.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jinclude.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jmemsys.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jmorecfg.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jpegint.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jpeglib.h" />
-    <ClInclude Include="..\JpegLoader\LibJpeg\jversion.h" />
     <ClInclude Include="..\JpegLoader\StbImageWrite\stb_image_write.h" />
     <ClInclude Include="3DEditor.h" />
     <ClInclude Include="3DEditorDoc.h" />
@@ -273,54 +264,151 @@
   <ItemGroup>
     <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
     <ClCompile Include="..\include\Text2RDF.cpp" />
-    <ClCompile Include="..\JpegLoader\JpegLoader.cpp" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jaricom.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcapimin.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcapistd.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcarith.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jccoefct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jccolor.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcdctmgr.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jchuff.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcinit.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmainct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmarker.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmaster.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcomapi.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcparam.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcprepct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcsample.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jctrans.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdapimin.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdapistd.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdarith.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdatadst.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdatasrc.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdcoefct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdcolor.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jddctmgr.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdhuff.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdinput.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmainct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmarker.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmaster.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmerge.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdpostct.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdsample.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdtrans.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jerror.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctflt.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctfst.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctint.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctflt.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctfst.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctint.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jmemmgr.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jmemnobs.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jquant1.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jquant2.c" />
-    <ClCompile Include="..\JpegLoader\LibJpeg\jutils.c" />
-    <ClCompile Include="..\JpegLoader\StbImageWrite\stb_image_write.c" />
+    <ClCompile Include="..\JpegLoader\JpegLoader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jaricom.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcapimin.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcapistd.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcarith.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jccoefct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jccolor.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcdctmgr.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jchuff.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcinit.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcmainct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcmarker.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcmaster.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcomapi.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcparam.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcprepct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jcsample.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jctrans.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdapimin.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdapistd.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdarith.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdatadst.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdatasrc.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdcoefct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdcolor.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jddctmgr.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdhuff.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdinput.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdmainct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdmarker.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdmaster.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdmerge.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdpostct.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdsample.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jdtrans.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jerror.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctflt.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctfst.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctint.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jidctflt.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jidctfst.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jidctint.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jmemmgr.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jmemnobs.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jquant1.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jquant2.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\LibJpeg\jutils.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\StbImageWrite\stb_image_write.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="3DEditor.cpp" />
     <ClCompile Include="3DEditorDoc.cpp" />
     <ClCompile Include="3DEditorView.cpp" />
@@ -399,6 +487,7 @@
     <Image Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
     <None Include="res\My3DEditor.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

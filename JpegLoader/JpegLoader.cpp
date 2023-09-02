@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "JpegLoader.h"
 
 JpegLoader :: JpegLoader()

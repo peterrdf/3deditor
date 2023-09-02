@@ -191,33 +191,6 @@
     <ClInclude Include="..\JpegLoader\JpegLoader.h">
       <Filter>JpegLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jconfig.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jdct.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jerror.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jinclude.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jmemsys.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jmorecfg.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jpegint.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jpeglib.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\LibJpeg\jversion.h">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClInclude>
     <ClInclude Include="..\JpegLoader\StbImageWrite\stb_image_write.h">
       <Filter>JpegLoader\StbImageWrite</Filter>
     </ClInclude>
@@ -354,6 +327,9 @@
     </ClCompile>
     <ClCompile Include="..\JpegLoader\JpegLoader.cpp">
       <Filter>JpegLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\JpegLoader\StbImageWrite\stb_image_write.c">
+      <Filter>JpegLoader\StbImageWrite</Filter>
     </ClCompile>
     <ClCompile Include="..\JpegLoader\LibJpeg\jaricom.c">
       <Filter>JpegLoader\LibJpeg</Filter>
@@ -493,9 +469,6 @@
     <ClCompile Include="..\JpegLoader\LibJpeg\jutils.c">
       <Filter>JpegLoader\LibJpeg</Filter>
     </ClCompile>
-    <ClCompile Include="..\JpegLoader\StbImageWrite\stb_image_write.c">
-      <Filter>JpegLoader\StbImageWrite</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DEditor.rc">
@@ -583,5 +556,6 @@
     <None Include="res\My3DEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
   </ItemGroup>
 </Project>

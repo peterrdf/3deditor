@@ -20,6 +20,8 @@
 
 			const ImageInfo* Load(const char* szFileName);
 
+			ImageInfo* getImageInfo() const { return m_pImageInfo; }
+
 		private:
 			ImageInfo* m_pImageInfo;
 			void Cleanup();
