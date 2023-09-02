@@ -1198,7 +1198,7 @@ CTexture * CRDFModel::GetDefaultTexture()
 		ASSERT(iLastSlash != -1);
 
 		strDefaultTexture = strDefaultTexture.Left(iLastSlash + 1);
-		strDefaultTexture += L"texture.bmp";
+		strDefaultTexture += L"texture.jpg";
 
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
 

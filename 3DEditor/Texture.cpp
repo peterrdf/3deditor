@@ -15,9 +15,14 @@ using namespace std;
 
 #include <GL/glu.h>
 
+//#include "./../LibJpeg/JpegLoader.h"
+
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -33,33 +38,33 @@ typedef unsigned short WORD;
 
 typedef struct tagBITMAPFILEHEADER
 {
-    WORD    bfType; // 2  /* Magic identifier */
-    DWORD   bfSize; // 4  /* File size in bytes */
-    WORD    bfReserved1; // 2
-    WORD    bfReserved2; // 2
-    DWORD   bfOffBits; // 4 /* Offset to image data, bytes */
+	WORD    bfType; // 2  /* Magic identifier */
+	DWORD   bfSize; // 4  /* File size in bytes */
+	WORD    bfReserved1; // 2
+	WORD    bfReserved2; // 2
+	DWORD   bfOffBits; // 4 /* Offset to image data, bytes */
 } __attribute__((packed)) BITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER
 {
-    DWORD    biSize; // 4 /* Header size in bytes */
-    LONG     biWidth; // 4 /* Width of image */
-    LONG     biHeight; // 4 /* Height of image */
-    WORD     biPlanes; // 2 /* Number of colour planes */
-    WORD     biBitCount; // 2 /* Bits per pixel */
-    DWORD    biCompression; // 4 /* Compression type */
-    DWORD    biSizeImage; // 4 /* Image size in bytes */
-    LONG     biXPelsPerMeter; // 4
-    LONG     biYPelsPerMeter; // 4 /* Pixels per meter */
-    DWORD    biClrUsed; // 4 /* Number of colours */
-    DWORD    biClrImportant; // 4 /* Important colours */
+	DWORD    biSize; // 4 /* Header size in bytes */
+	LONG     biWidth; // 4 /* Width of image */
+	LONG     biHeight; // 4 /* Height of image */
+	WORD     biPlanes; // 2 /* Number of colour planes */
+	WORD     biBitCount; // 2 /* Bits per pixel */
+	DWORD    biCompression; // 4 /* Compression type */
+	DWORD    biSizeImage; // 4 /* Image size in bytes */
+	LONG     biXPelsPerMeter; // 4
+	LONG     biYPelsPerMeter; // 4 /* Pixels per meter */
+	DWORD    biClrUsed; // 4 /* Number of colours */
+	DWORD    biClrImportant; // 4 /* Important colours */
 } __attribute__((packed)) BITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD {
-        BYTE    rgbBlue;
-        BYTE    rgbGreen;
-        BYTE    rgbRed;
-        BYTE    rgbReserved;
+	BYTE    rgbBlue;
+	BYTE    rgbGreen;
+	BYTE    rgbRed;
+	BYTE    rgbReserved;
 } RGBQUAD;
 
 #define BI_RGB 0L
@@ -77,33 +82,33 @@ const int PADSIZE = 4;
 
 CTexture::CTexture()
 {
-   m_height = 0;
-   m_width = 0;
-   m_image = nullptr;
-   m_texname = 0;
+	m_height = 0;
+	m_width = 0;
+	m_image = nullptr;
+	m_texname = 0;
 
-   m_initialized = false;
-   m_mipinitialized = false;
+	m_initialized = false;
+	m_mipinitialized = false;
 }
 
-CTexture::CTexture(const CTexture &p_img)
+CTexture::CTexture(const CTexture& p_img)
 {
-   m_height = 0;
-   m_width = 0;
-   m_image = nullptr;
-   m_initialized = false;
-   m_mipinitialized = false;
+	m_height = 0;
+	m_width = 0;
+	m_image = nullptr;
+	m_initialized = false;
+	m_mipinitialized = false;
 
-   Copy(p_img);
+	Copy(p_img);
 }
 
 CTexture::~CTexture()
 {
-   if(m_image)
-   {
-      delete [] m_image[0];
-      delete [] m_image;
-   }
+	if (m_image)
+	{
+		delete[] m_image[0];
+		delete[] m_image;
+	}
 
 }
 
@@ -116,27 +121,27 @@ CTexture::~CTexture()
 // Description :  Copy another image into this one.
 //
 
-void CTexture::Copy(const CTexture &p_img)
+void CTexture::Copy(const CTexture& p_img)
 {
 	SameSize(p_img);
 
-   for(int i=0;  i<m_height;  i++)
-   {
-      for(int j=0;  j<m_width * 3;  j++)
-      {
-         m_image[i][j] = p_img.m_image[i][j];
-      }
+	for (int i = 0; i < m_height; i++)
+	{
+		for (int j = 0; j < m_width * 3; j++)
+		{
+			m_image[i][j] = p_img.m_image[i][j];
+		}
 
-   }
+	}
 
 
 }
 
 
-CTexture & CTexture::operator =(const CTexture &p_img)
+CTexture& CTexture::operator =(const CTexture& p_img)
 {
-   Copy(p_img);
-   return *this;
+	Copy(p_img);
+	return *this;
 }
 
 //
@@ -148,29 +153,29 @@ CTexture & CTexture::operator =(const CTexture &p_img)
 
 GLuint CTexture::TexName()
 {
-   if(m_initialized)
-      return m_texname;
+	if (m_initialized)
+		return m_texname;
 
-   if(m_image == nullptr)
-       return 0;
+	if (m_image == nullptr)
+		return 0;
 
-   glGenTextures(1, &m_texname);
-   glBindTexture(GL_TEXTURE_2D, m_texname);
+	glGenTextures(1, &m_texname);
+	glBindTexture(GL_TEXTURE_2D, m_texname);
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0,
-     GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0,
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
 
-   m_initialized = true;
+	m_initialized = true;
 
-   return m_texname;
+	return m_texname;
 }
 
 
-void CTexture::SameSize(const CTexture &p_img)
+void CTexture::SameSize(const CTexture& p_img)
 {
 	SetSize(p_img.m_width, p_img.m_height);
 }
@@ -183,63 +188,63 @@ void CTexture::SameSize(const CTexture &p_img)
 
 void CTexture::SetSize(int p_x, int p_y)
 {
-   if(p_x == m_width || m_height == p_y)
-      return;
+	if (p_x == m_width || m_height == p_y)
+		return;
 
-   if(m_image)
-   {
-      delete [] m_image[0];
-      delete [] m_image;
-      m_image = nullptr;
-   }
+	if (m_image)
+	{
+		delete[] m_image[0];
+		delete[] m_image;
+		m_image = nullptr;
+	}
 
 	// Member variables
-   m_height = p_y;
-   m_width = p_x;
-   m_initialized = false;
-   m_mipinitialized = false;
+	m_height = p_y;
+	m_width = p_x;
+	m_initialized = false;
+	m_mipinitialized = false;
 
-   if(p_x <= 0 || p_y <= 0)
-      return;
+	if (p_x <= 0 || p_y <= 0)
+		return;
 
-   // Allocate memory for the image.  Note that storage for rows must
-   // be on DWORD boundaries.  (or 16 word boundaries?)
-   int usewidth = (m_width * 3 + (PADSIZE - 1)) / PADSIZE;
-   usewidth *= PADSIZE;
+	// Allocate memory for the image.  Note that storage for rows must
+	// be on DWORD boundaries.  (or 16 word boundaries?)
+	int usewidth = (m_width * 3 + (PADSIZE - 1)) / PADSIZE;
+	usewidth *= PADSIZE;
 
-   BYTE *image = new BYTE[usewidth * m_height];
-   m_image = new BYTE *[m_height];
-   for(int i=0;  i<m_height;  i++, image += usewidth)
-   {
-      m_image[i] = image;
-   }
+	BYTE* image = new BYTE[usewidth * m_height];
+	m_image = new BYTE * [m_height];
+	for (int i = 0; i < m_height; i++, image += usewidth)
+	{
+		m_image[i] = image;
+	}
 }
 
 void CTexture::Set(int x, int y, int r, int g, int b)
 {
-   if(x >= 0 && x < m_width && y >= 0 && y < m_height)
-   {
-      BYTE *img = m_image[y] + x * 3;
-	  *img++ = (BYTE)b;
-	  *img++ = (BYTE)g;
-	  *img++ = (BYTE)r;
-   }
+	if (x >= 0 && x < m_width && y >= 0 && y < m_height)
+	{
+		BYTE* img = m_image[y] + x * 3;
+		*img++ = (BYTE)b;
+		*img++ = (BYTE)g;
+		*img++ = (BYTE)r;
+	}
 }
 
 
 void CTexture::Fill(int r, int g, int b)
 {
-   for(int i=0;  i<m_height;  i++)
-   {
-      BYTE *img = m_image[i];
-      for(int j=0;  j<m_width * 3;  j+=3)
-      {
-		  *img++ = (BYTE)b;
-		  *img++ = (BYTE)g;
-		  *img++ = (BYTE)r;
-      }
+	for (int i = 0; i < m_height; i++)
+	{
+		BYTE* img = m_image[i];
+		for (int j = 0; j < m_width * 3; j += 3)
+		{
+			*img++ = (BYTE)b;
+			*img++ = (BYTE)g;
+			*img++ = (BYTE)r;
+		}
 
-   }
+	}
 
 }
 
@@ -254,80 +259,151 @@ void CTexture::Fill(int r, int g, int b)
 //  Description :  Load this image from a file of type BMP or PPM
 //
 
+//int loadJpg(const char* Name) {
+//	unsigned char a, r, g, b;
+//	int width, height;
+//	struct jpeg_decompress_struct cinfo;
+//	struct jpeg_error_mgr jerr;
+//
+//	FILE* infile;        /* source file */
+//	JSAMPARRAY pJpegBuffer;       /* Output row buffer */
+//	int row_stride;       /* physical row width in output buffer */
+//	if ((infile = fopen(Name, "rb")) == NULL) {
+//		fprintf(stderr, "can't open %s\n", Name);
+//		return 0;
+//	}
+//	cinfo.err = jpeg_std_error(&jerr);
+//	jpeg_create_decompress(&cinfo);
+//	jpeg_stdio_src(&cinfo, infile);
+//	(void)jpeg_read_header(&cinfo, TRUE);
+//	(void)jpeg_start_decompress(&cinfo);
+//	width = cinfo.output_width;
+//	height = cinfo.output_height;
+//
+//	unsigned char* pDummy = new unsigned char[width * height * 4];
+//	unsigned char* pTest = pDummy;
+//	if (!pDummy) {
+//		printf("NO MEM FOR JPEG CONVERT!\n");
+//		return 0;
+//	}
+//	row_stride = width * cinfo.output_components;
+//	pJpegBuffer = (*cinfo.mem->alloc_sarray)
+//		((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
+//
+//	while (cinfo.output_scanline < cinfo.output_height) {
+//		(void)jpeg_read_scanlines(&cinfo, pJpegBuffer, 1);
+//		for (int x = 0; x < width; x++) {
+//			a = 0; // alpha value is not supported on jpg
+//			r = pJpegBuffer[0][cinfo.output_components * x];
+//			if (cinfo.output_components > 2) {
+//				g = pJpegBuffer[0][cinfo.output_components * x + 1];
+//				b = pJpegBuffer[0][cinfo.output_components * x + 2];
+//			}
+//			else {
+//				g = r;
+//				b = r;
+//			}
+//			*(pDummy++) = b;
+//			*(pDummy++) = g;
+//			*(pDummy++) = r;
+//			*(pDummy++) = a;
+//		}
+//	}
+//	fclose(infile);
+//	(void)jpeg_finish_decompress(&cinfo);
+//	jpeg_destroy_decompress(&cinfo);
+//
+//	/*BMap = (int*)pTest;
+//	Height = height;
+//	Width = width;
+//	Depth = 32;*/
+//}
+
 bool CTexture::LoadFile(LPCTSTR lpszPathName)
 {
-   // Open the file we are reading from.  Note that
-   // I'm opening in binary.
+	fs::path pthFile = (LPCSTR)CW2A(lpszPathName);
+	if (pthFile.extension() == ".jpg")
+	{
+		ASSERT(FALSE);
+	}
+	else if (pthFile.extension() == ".png")
+	{
+		ASSERT(FALSE);
+	}
 
-   ifstream file(lpszPathName, ios::binary);
-   if(!file)
-   {
+	auto pthRoot = pthFile.parent_path();
+	//auto pthStorage = pthNamespace.parent_path();
+
+	// Open the file we are reading from.  Note that
+	// I'm opening in binary.
+
+	ifstream file(lpszPathName, ios::binary);
+	if (!file)
+	{
 #ifdef _LINUX
-        wxString strError = L"Unable to open image file:\n";
-        strError += lpszPathName;
+		wxString strError = L"Unable to open image file:\n";
+		strError += lpszPathName;
 
-        wxLogError(strError);
+		wxLogError(strError);
 #else
-       CString strError = L"Unable to open image file:\n";
-	   strError += lpszPathName;
+		CString strError = L"Unable to open image file:\n";
+		strError += lpszPathName;
 
-       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
 	BYTE begin[20];
-   file.read((char *)begin, sizeof(begin));
-   if(!file)
-   {
+	file.read((char*)begin, sizeof(begin));
+	if (!file)
+	{
 #ifdef _LINUX
-       wxString strError = L"Unsupported file type read:\n";
-	   strError += lpszPathName;
+		wxString strError = L"Unsupported file type read:\n";
+		strError += lpszPathName;
 
-	   wxLogError(strError);
+		wxLogError(strError);
 #else
-       CString strError = L"Unsupported file type read:\n";
-	   strError += lpszPathName;
+		CString strError = L"Unsupported file type read:\n";
+		strError += lpszPathName;
 
-       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
 	// Rewind the file so load can start at the beginning
-   file.seekg(0);
-
-
-	if(begin[0] == 'B' && begin[1] == 'M')
+	file.seekg(0);
+	if (begin[0] == 'B' && begin[1] == 'M')
 	{
 		// We have a Windows BITMAP file
 		return ReadDIBFile(file);
 	}
-	else if(begin[0] == 'P' && begin[1] == '6')
+	else if (begin[0] == 'P' && begin[1] == '6')
 	{
 		// We have a PPM file
 		return ReadPPMFile(file);
 	}
 	else
-   {
+	{
 #ifdef _LINUX
-       wxString strError = L"Unsupported file type read:\n";
-	   strError += lpszPathName;
+		wxString strError = L"Unsupported file type read:\n";
+		strError += lpszPathName;
 
-	   wxLogError(strError);
+		wxLogError(strError);
 #else
-       CString strError = L"Unsupported file type read:\n";
-	   strError += lpszPathName;
+		CString strError = L"Unsupported file type read:\n";
+		strError += lpszPathName;
 
-       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
-   return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -340,176 +416,176 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 //  Description :  Load a BMP file.
 //
 
-bool CTexture::ReadDIBFile(istream &file)
+bool CTexture::ReadDIBFile(istream& file)
 {
-   // Variables for loading of BITMAP files
+	// Variables for loading of BITMAP files
 	BITMAPFILEHEADER bmfHeader;
 
-   int nBMISize;
-	BITMAPINFOHEADER * pBMI;
+	int nBMISize;
+	BITMAPINFOHEADER* pBMI;
 
 	/*
 	 * Go read the DIB file header and check if it's valid.
 	 */
-   file.read((char *)&bmfHeader, sizeof(bmfHeader));
-   if(!file)
-   {
+	file.read((char*)&bmfHeader, sizeof(bmfHeader));
+	if (!file)
+	{
 #ifdef _LINUX
-       wxLogError(L"Unsupported image file type");
+		wxLogError(L"Unsupported image file type");
 #else
-       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported image file type.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported image file type.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
 	if (bmfHeader.bfType != DIB_HEADER_MARKER)
-   {
+	{
 #ifdef _LINUX
-       wxLogError(L"Note a BMP file");
+		wxLogError(L"Note a BMP file");
 #else
-        ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Not a BMP file.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Not a BMP file.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
-   // We allocate memory for the bitmapinfo header, which varies in size
-   // depending on the palette and/or the version.  We assume it goes from
-   // the current location to the start of the data.
-   nBMISize = bmfHeader.bfOffBits - sizeof(bmfHeader);
-   pBMI = (BITMAPINFOHEADER *)(new BYTE[nBMISize]);
-   file.read((char *)pBMI, nBMISize);
-   if(!file)
-   {
-      delete (BYTE *)pBMI;
-
-#ifdef _LINUX
-       wxLogError(L"Premature end of file in image file");
-#else
-      ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Premature end of file in image file.", L"Error", MB_ICONERROR | MB_OK);
-#endif // _LINUX
-
-      return false;
-   }
-
-   if(pBMI->biHeight < 0 || pBMI->biWidth < 0 || pBMI->biCompression != BI_RGB)
-   {
-      delete (BYTE *)pBMI;
+	// We allocate memory for the bitmapinfo header, which varies in size
+	// depending on the palette and/or the version.  We assume it goes from
+	// the current location to the start of the data.
+	nBMISize = bmfHeader.bfOffBits - sizeof(bmfHeader);
+	pBMI = (BITMAPINFOHEADER*)(new BYTE[nBMISize]);
+	file.read((char*)pBMI, nBMISize);
+	if (!file)
+	{
+		delete (BYTE*)pBMI;
 
 #ifdef _LINUX
-      wxLogError(L"Unsupported file type");
+		wxLogError(L"Premature end of file in image file");
 #else
-      ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported file type.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Premature end of file in image file.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
-   // Extract information from the header
+	if (pBMI->biHeight < 0 || pBMI->biWidth < 0 || pBMI->biCompression != BI_RGB)
+	{
+		delete (BYTE*)pBMI;
+
+#ifdef _LINUX
+		wxLogError(L"Unsupported file type");
+#else
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unsupported file type.", L"Error", MB_ICONERROR | MB_OK);
+#endif // _LINUX
+
+		return false;
+	}
+
+	// Extract information from the header
 	SetSize(pBMI->biWidth, pBMI->biHeight);
 
-   // We'll need a pointer to the colormap if any
-   // It's right after the BITMAPINFOHEADER in memory.
-   RGBQUAD *bmiColors = (RGBQUAD *)(((BYTE *)pBMI) + pBMI->biSize);
+	// We'll need a pointer to the colormap if any
+	// It's right after the BITMAPINFOHEADER in memory.
+	RGBQUAD* bmiColors = (RGBQUAD*)(((BYTE*)pBMI) + pBMI->biSize);
 
-   int r, c;
-   int usewidth1 = (m_width + (PADSIZE - 1)) / PADSIZE;         usewidth1 *= PADSIZE;
-   int usewidth3 = (m_width * 3 + (PADSIZE - 1)) / PADSIZE;     usewidth3 *= PADSIZE;
-   int usewidth4 = (m_width * 4 + (PADSIZE - 1)) / PADSIZE;     usewidth4 *= PADSIZE;
+	int r, c;
+	int usewidth1 = (m_width + (PADSIZE - 1)) / PADSIZE;         usewidth1 *= PADSIZE;
+	int usewidth3 = (m_width * 3 + (PADSIZE - 1)) / PADSIZE;     usewidth3 *= PADSIZE;
+	int usewidth4 = (m_width * 4 + (PADSIZE - 1)) / PADSIZE;     usewidth4 *= PADSIZE;
 
-   // Allocate memory for one row of data from the file.
-   // This is worst case allocation, we'll often need less.
-   BYTE *rowbuf = new BYTE[usewidth4];
-   bool err = false;
+	// Allocate memory for one row of data from the file.
+	// This is worst case allocation, we'll often need less.
+	BYTE* rowbuf = new BYTE[usewidth4];
+	bool err = false;
 
-   switch(pBMI->biBitCount)
-   {
-   default:
-      err = true;
-      break;
+	switch (pBMI->biBitCount)
+	{
+	default:
+		err = true;
+		break;
 
-   case 8:
-      for(r=0;  r<m_height;  r++)
-      {
-         file.read((char *)rowbuf, usewidth1);
-         if(!file)
-         {
-            err = true;
-            break;
-         }
+	case 8:
+		for (r = 0; r < m_height; r++)
+		{
+			file.read((char*)rowbuf, usewidth1);
+			if (!file)
+			{
+				err = true;
+				break;
+			}
 
-         BYTE *img = rowbuf;
-         BYTE *row = m_image[r];
-         for(c=0;  c<m_width;  c++)
-         {
-            *row++ = bmiColors[*img].rgbBlue;
-            *row++ = bmiColors[*img].rgbGreen;
-            *row++ = bmiColors[*img++].rgbRed;
-         }
-      }
-      break;
+			BYTE* img = rowbuf;
+			BYTE* row = m_image[r];
+			for (c = 0; c < m_width; c++)
+			{
+				*row++ = bmiColors[*img].rgbBlue;
+				*row++ = bmiColors[*img].rgbGreen;
+				*row++ = bmiColors[*img++].rgbRed;
+			}
+		}
+		break;
 
-   case 24:
-      for(r=0;  r<m_height;  r++)
-      {
-         file.read((char *)rowbuf, usewidth3);
-         if(!file)
-         {
-            err = true;
-            break;
-         }
+	case 24:
+		for (r = 0; r < m_height; r++)
+		{
+			file.read((char*)rowbuf, usewidth3);
+			if (!file)
+			{
+				err = true;
+				break;
+			}
 
-         BYTE *img = rowbuf;
-         BYTE *row = m_image[r];
-         for(c=0;  c<m_width*3;  c++)
-         {
-            // Guess what:  Microsoft stores images as BGR, not RGB
-            *row++ = *img++;
-         }
-      }
-      break;
+			BYTE* img = rowbuf;
+			BYTE* row = m_image[r];
+			for (c = 0; c < m_width * 3; c++)
+			{
+				// Guess what:  Microsoft stores images as BGR, not RGB
+				*row++ = *img++;
+			}
+		}
+		break;
 
-   case 32:
-      for(r=0;  r<m_height;  r++)
-      {
-         file.read((char *)rowbuf, usewidth4);
-         if(!file)
-         {
-            err = true;
-            break;
-         }
+	case 32:
+		for (r = 0; r < m_height; r++)
+		{
+			file.read((char*)rowbuf, usewidth4);
+			if (!file)
+			{
+				err = true;
+				break;
+			}
 
-         BYTE *img = rowbuf;
-         BYTE *row = m_image[r];
-         for(c=0;  c<m_width;  c++)
-         {
-            // Guess what:  Microsoft stores images as BGR, not RGB
-            *row++ = *img++;
-            *row++ = *img++;
-            *row++ = *img++;
-            img++;
-         }
-      }
-      break;
+			BYTE* img = rowbuf;
+			BYTE* row = m_image[r];
+			for (c = 0; c < m_width; c++)
+			{
+				// Guess what:  Microsoft stores images as BGR, not RGB
+				*row++ = *img++;
+				*row++ = *img++;
+				*row++ = *img++;
+				img++;
+			}
+		}
+		break;
 
 
-   }
+	}
 
-   // Free all of the temporary allocations
-   delete (BYTE *)pBMI;
-   delete [] rowbuf;
-   if(err)
-   {
-      delete m_image[0];
-      delete m_image;
-      m_image = nullptr;
-      m_width = 0;
-      m_height = 0;
-      return false;
-   }
+	// Free all of the temporary allocations
+	delete (BYTE*)pBMI;
+	delete[] rowbuf;
+	if (err)
+	{
+		delete m_image[0];
+		delete m_image;
+		m_image = nullptr;
+		m_width = 0;
+		m_height = 0;
+		return false;
+	}
 
-   return true;
+	return true;
 }
 
 
@@ -519,66 +595,66 @@ bool CTexture::ReadDIBFile(istream &file)
 //                any PPM comments.
 //
 
-static int _ReadSkip(istream &str)
+static int _ReadSkip(istream& str)
 {
-   char c;
+	char c;
 
-   // Grab the first non-whitespace character...
-   str >> c;
+	// Grab the first non-whitespace character...
+	str >> c;
 
-   while(c == '#')
-   {
-      // We know this is enough because lines can't be larger than
-      // 76 characters by the rules of the game.
-      str.ignore(80, '\n');
-      str >> c;
-   }
+	while (c == '#')
+	{
+		// We know this is enough because lines can't be larger than
+		// 76 characters by the rules of the game.
+		str.ignore(80, '\n');
+		str >> c;
+	}
 
-   // Put the character back so we can read as an integer...
-   str.putback(c);
-   int i;
-   str >> i;
-   return i;
+	// Put the character back so we can read as an integer...
+	str.putback(c);
+	int i;
+	str >> i;
+	return i;
 }
 
-bool CTexture::ReadPPMFile(istream &file)
+bool CTexture::ReadPPMFile(istream& file)
 {
-   char c1, c2;
-   file >> c1 >> c2;
-   if(c1 != 'P' || c2 != '6')
-   {
+	char c1, c2;
+	file >> c1 >> c2;
+	if (c1 != 'P' || c2 != '6')
+	{
 #ifdef _LINUX
-      wxLogError(L"Invalid file type!");
+		wxLogError(L"Invalid file type!");
 #else
-       ::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid file type.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid file type.", L"Error", MB_ICONERROR | MB_OK);
 #endif // _LINUX
 
-      return false;
-   }
+		return false;
+	}
 
-   int w = _ReadSkip(file);
-   int h = _ReadSkip(file);
-   /*int maxval = */_ReadSkip(file);
+	int w = _ReadSkip(file);
+	int h = _ReadSkip(file);
+	/*int maxval = */_ReadSkip(file);
 
-   // Read over the newline character after
-   // the last integer.
-   char c;
-   file.read(&c, 1);
+	// Read over the newline character after
+	// the last integer.
+	char c;
+	file.read(&c, 1);
 
-   SetSize(w, h);
+	SetSize(w, h);
 
-   for(int r=h-1; r>=0; r--)
-   {
-      // Byte reversal
-      for(c=0;  c<w;  c++)
-      {
-         file.read((char *)&m_image[r][c * 3 + 2], 1);
-         file.read((char *)&m_image[r][c * 3 + 1], 1);
-         file.read((char *)&m_image[r][c * 3 + 0], 1);
-      }
-   }
+	for (int r = h - 1; r >= 0; r--)
+	{
+		// Byte reversal
+		for (c = 0; c < w; c++)
+		{
+			file.read((char*)&m_image[r][c * 3 + 2], 1);
+			file.read((char*)&m_image[r][c * 3 + 1], 1);
+			file.read((char*)&m_image[r][c * 3 + 0], 1);
+		}
+	}
 
-   return true;
+	return true;
 }
 
 
@@ -586,20 +662,20 @@ bool CTexture::ReadPPMFile(istream &file)
 
 GLuint CTexture::MipTexName()
 {
-   if(m_mipinitialized)
-      return m_miptexname;
+	if (m_mipinitialized)
+		return m_miptexname;
 
-   glGenTextures(1, &m_miptexname);
-   glBindTexture(GL_TEXTURE_2D, m_miptexname);
+	glGenTextures(1, &m_miptexname);
+	glBindTexture(GL_TEXTURE_2D, m_miptexname);
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-   gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
 
-   m_mipinitialized = true;
+	m_mipinitialized = true;
 
-   return m_miptexname;
+	return m_miptexname;
 
 }
