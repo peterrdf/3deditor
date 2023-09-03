@@ -149,6 +149,15 @@ CTexture& CTexture::operator =(const CTexture& p_img)
 //                not yet been assigned, do so, now.
 //
 
+static bool isPowerOf2(int iNumber)
+{
+	if (iNumber > 0)
+	{
+		return (iNumber & (iNumber - 1)) == 0;
+	}
+
+	return false;
+}
 
 GLuint CTexture::TexName()
 {
@@ -166,7 +175,15 @@ GLuint CTexture::TexName()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, jpegLoader->getImageInfo()->nWidth, jpegLoader->getImageInfo()->nHeight, 0,
+	if (!isPowerOf2(jpegLoader->getImageInfo()->nHeight) ||
+		!isPowerOf2(jpegLoader->getImageInfo()->nWidth))
+	{
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	}
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+		jpegLoader->getImageInfo()->nWidth, 
+		jpegLoader->getImageInfo()->nHeight, 0,
 		GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);
 
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0,
@@ -264,7 +281,7 @@ void CTexture::Fill(int r, int g, int b)
 
 bool CTexture::LoadFile(LPCTSTR lpszPathName)
 {
-	fs::path pthFile = (LPCSTR)CW2A(lpszPathName);
+	fs::path pthFile = lpszPathName;
 	if (pthFile.extension() == ".jpg")
 	{
 		jpegLoader = new JpegLoader();
@@ -277,8 +294,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 		ASSERT(FALSE);
 	}
 
-	auto pthRoot = pthFile.parent_path();
-	//auto pthStorage = pthNamespace.parent_path();
+	ASSERT(pthFile.extension() == ".bmp");
 
 	// Open the file we are reading from.  Note that
 	// I'm opening in binary.

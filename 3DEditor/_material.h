@@ -259,6 +259,11 @@ public:
 	// --------------------------------------------------------------------------------------------
 	bool operator()(const _material& left, const _material& right) const
 	{
+		if (left.hasTexture() || right.hasTexture())
+		{
+			return left.texture() < right.texture();
+		}
+
 		if (left.getAmbientColor() < right.getAmbientColor())
 		{
 			return true;
@@ -307,17 +312,7 @@ public:
 		if (left.getA() > right.getA())
 		{
 			return false;
-		}
-
-		if (left.texture() < right.texture())
-		{
-			return true;
-		}
-
-		if (left.texture() > right.texture())
-		{
-			return false;
-		}
+		}		
 
 		return false;
 	}

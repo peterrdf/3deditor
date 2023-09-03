@@ -17,9 +17,10 @@ using namespace e57;
 #include <iostream>
 #include <fstream>
 #include <time.h>
-
-
 using namespace std;
+
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 
 // ------------------------------------------------------------------------------------------------
 struct CityJSONLog : CityJsonRDF::ILog
@@ -87,7 +88,8 @@ private:
 
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
-	: m_iModel(0)
+	: m_strModel(L"")
+	, m_iModel(0)
 	, mapClasses()
 	, mapProperties()
 	, m_mapInstances()
@@ -103,6 +105,7 @@ CRDFModel::CRDFModel()
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
 	, m_pDefaultTexture(nullptr)
+	, m_mapTextures()
 	, m_pMeasurementsBuilder(nullptr)
 	, m_pOctree(nullptr)
 {
@@ -760,6 +763,8 @@ void CRDFModel::Save(const wchar_t * szPath)
 void CRDFModel::Load(const wchar_t * szPath)
 {
 	Clean();
+
+	m_strModel = szPath;
 	
 	CString strExtension = PathFindExtension(szPath);
 	strExtension.MakeUpper();
@@ -1183,12 +1188,39 @@ void CRDFModel::PostLoad()
 {
 }
 
+CTexture* CRDFModel::GetTexture(const wstring& strTexture)
+{
+	if (!m_strModel.empty())
+	{
+		if (m_mapTextures.find(strTexture) != m_mapTextures.end())
+		{
+			return m_mapTextures.at(strTexture);
+		}
+
+		fs::path pthFile = m_strModel;
+		fs::path pthTexture = pthFile.parent_path();
+		pthTexture.append(strTexture);
+
+		if (fs::exists(pthTexture))
+		{
+			auto pOGLTexture = new CTexture();
+			pOGLTexture->LoadFile(pthTexture.wstring().c_str());
+
+			m_mapTextures[strTexture] = pOGLTexture;
+
+			return pOGLTexture;
+		}
+	} // if (!m_strModel.empty())
+
+	return GetDefaultTexture();
+}
+
 // ------------------------------------------------------------------------------------------------
 CTexture * CRDFModel::GetDefaultTexture()
 {
 	if (m_pDefaultTexture == nullptr)
 	{
-        wchar_t szAppPath[_MAX_PATH];
+		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
 		CString strDefaultTexture = szAppPath;
@@ -1457,7 +1489,6 @@ void CRDFModel::Clean()
 	{
 		delete itClasses->second;
 	}
-
 	mapClasses.clear();
 
 	/*
@@ -1468,7 +1499,6 @@ void CRDFModel::Clean()
 	{
 		delete itProperty->second;
 	}
-
 	mapProperties.clear();
 
 	/*
@@ -1479,7 +1509,6 @@ void CRDFModel::Clean()
 	{
 		delete itInstance->second;
 	}
-
 	m_mapInstances.clear();
 	
 	/*
@@ -1487,6 +1516,12 @@ void CRDFModel::Clean()
 	*/
 	delete m_pDefaultTexture;
 	m_pDefaultTexture = nullptr;
+
+	for (auto itTexure : m_mapTextures)
+	{
+		delete itTexure.second;
+	}
+	m_mapTextures.clear();
 
 	/*
 	* Measurements

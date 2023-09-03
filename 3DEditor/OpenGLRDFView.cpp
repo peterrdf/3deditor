@@ -1196,10 +1196,12 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 				
 				if (pMaterial->hasTexture())
 				{
+					auto pOGLTexture = pModel->GetTexture(pMaterial->texture());
+
 					m_pOGLProgram->_enableTexture(true);
 
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, pModel->GetDefaultTexture()->TexName());
+					glBindTexture(GL_TEXTURE_2D, pOGLTexture->TexName());
 
 					m_pOGLProgram->_setSampler(0);
 				}

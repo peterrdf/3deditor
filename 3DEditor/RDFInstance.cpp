@@ -656,20 +656,55 @@ void CRDFInstance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 
-		GetConceptualFace(m_iInstance, iConceptualFace,
+		ConceptualFace conceptualFace = GetConceptualFace(m_iInstance, iConceptualFace,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,
 			&iStartIndexPoints, &iIndicesCountPoints,
 			&iStartIndexFacePolygons, &iIndicesCountFacePolygons,
-			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);		
+			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
+
+		// Check for Texture
+		wstring strTexture;
+		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(conceptualFace);
+		if (iMaterialInstance != 0)
+		{
+			int64_t* piInstances = nullptr;
+			int64_t iCard = 0;
+			GetObjectProperty(
+				iMaterialInstance, 
+				GetPropertyByName(GetModel(), "textures"),
+				&piInstances, 
+				&iCard);
+
+			if (iCard == 1)
+			{
+				iCard = 0;
+				char** szValue = nullptr;
+				GetDatatypeProperty(
+					piInstances[0],
+					GetPropertyByName(GetModel(), "name"),
+					(void**)&szValue, 
+					&iCard);
+
+				ASSERT(iCard >= 0);
+
+				if (iCard == 1)
+				{
+					strTexture = CA2W(szValue[0]);
+				}
+
+				if (strTexture.empty())
+				{
+					strTexture = L"default";
+				}
+			} // if (iCard == 1)
+		} // if (iMaterialInstance != 0)
 		
 		if (iIndicesCountTriangles > 0)
 		{
 			/*
 			* Material
 			*/
-			bool bHasTexture = false;
-
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
@@ -687,19 +722,6 @@ void CRDFInstance::Calculate()
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
-			* Check for a texture
-			*/
-			for (int64_t iIndex = iStartIndexTriangles; iIndex < iStartIndexTriangles + iIndicesCountTriangles; iIndex++)
-			{
-				if ((GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
-				{
-					bHasTexture = true;
-
-					break;
-				}
-			} // for (size_t iIndex = ...
-
-			/*
 			* Material
 			*/
 			_material material(
@@ -708,7 +730,7 @@ void CRDFInstance::Calculate()
 				iEmissiveColor, 
 				iSpecularColor, 
 				fTransparency,
-				bHasTexture ? L"default" : nullptr);
+				!strTexture.empty() ? strTexture.c_str() : nullptr);
 
 			MATERIALS::iterator itMaterial2ConcFaces = mapMaterial2ConcFaces.find(material);
 			if (itMaterial2ConcFaces == mapMaterial2ConcFaces.end())

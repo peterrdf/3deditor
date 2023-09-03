@@ -42,7 +42,7 @@ const JpegLoader :: ImageInfo* JpegLoader :: Load(const char* szFileName)
 	m_pImageInfo = new ImageInfo();
 	m_pImageInfo->nWidth = cinfo.image_width;
 	m_pImageInfo->nHeight = cinfo.image_height;
-	m_pImageInfo->nNumComponent = cinfo.num_components;
+	m_pImageInfo->nNumComponent = (uint8_t)cinfo.num_components;
 	m_pImageInfo->pData = new uint8_t[m_pImageInfo->nWidth*m_pImageInfo->nHeight*m_pImageInfo->nNumComponent];
 
 	while(cinfo.output_scanline < cinfo.image_height)
@@ -81,7 +81,7 @@ void JpegLoader :: ErrorExit(j_common_ptr cinfo)
 void JpegLoader :: OutputMessage(j_common_ptr cinfo)
 {
 	// disable error messages
-	/*char buffer[JMSG_LENGTH_MAX];
+	char buffer[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message) (cinfo, buffer);
-	fprintf(stderr, "%s\n", buffer);*/
+	fprintf(stderr, "%s\n", buffer);
 }
