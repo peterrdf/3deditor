@@ -17,6 +17,7 @@
 #include <GL/gl.h>
 
 #include "./../JpegLoader/JpegLoader.h"
+#include "./../PngLoader/PngLoader.h"
 
 #ifdef _LINUX
 typedef int BOOLEAN;
@@ -28,6 +29,7 @@ typedef unsigned char BYTE;
 class CTexture
 {
 	JpegLoader* jpegLoader;
+	PngLoader* pngLoader;
 public:
 	GLuint MipTexName();
 	CTexture();

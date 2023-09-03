@@ -22,6 +22,12 @@
     <Filter Include="JpegLoader\StbImageWrite">
       <UniqueIdentifier>{841f1a1a-c067-461b-927c-0dc437f69824}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PngLoader">
+      <UniqueIdentifier>{9aad9bb7-ff97-451d-8b33-6d6c963e5644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PngLoader\LodePNG">
+      <UniqueIdentifier>{d41e5ffd-1d2d-4dab-8c29-5f87b0dbe95d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -193,6 +199,12 @@
     </ClInclude>
     <ClInclude Include="..\JpegLoader\StbImageWrite\stb_image_write.h">
       <Filter>JpegLoader\StbImageWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PngLoader\PngLoader.h">
+      <Filter>PngLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PngLoader\LodePNG\lodepng.h">
+      <Filter>PngLoader\LodePNG</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -468,6 +480,12 @@
     </ClCompile>
     <ClCompile Include="..\JpegLoader\LibJpeg\jutils.c">
       <Filter>JpegLoader\LibJpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PngLoader\PngLoader.cpp">
+      <Filter>PngLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PngLoader\LodePNG\lodepng.cpp">
+      <Filter>PngLoader\LodePNG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

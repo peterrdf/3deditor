@@ -87,6 +87,9 @@ CTexture::CTexture()
 
 	m_initialized = false;
 	m_mipinitialized = false;
+
+	jpegLoader = nullptr;
+	pngLoader = nullptr;
 }
 
 CTexture::CTexture(const CTexture& p_img)
@@ -109,6 +112,7 @@ CTexture::~CTexture()
 	}
 
 	delete jpegLoader;
+	delete pngLoader;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -175,6 +179,7 @@ GLuint CTexture::TexName()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	//jpeg
 	if (!isPowerOf2(jpegLoader->getImageInfo()->nHeight) ||
 		!isPowerOf2(jpegLoader->getImageInfo()->nWidth))
 	{
@@ -184,8 +189,22 @@ GLuint CTexture::TexName()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 		jpegLoader->getImageInfo()->nWidth, 
 		jpegLoader->getImageInfo()->nHeight, 0,
-		GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);/**/
 
+	//png
+	//if (!isPowerOf2(pngLoader->getImageInfo()->nHeight) ||
+	//	!isPowerOf2(pngLoader->getImageInfo()->nWidth))
+	//{
+	//	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//}
+
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+	//	pngLoader->getImageInfo()->nWidth,
+	//	pngLoader->getImageInfo()->nHeight, 0,
+	//	GL_BGRA_EXT, //??????????????????????????????????????????
+	//	GL_UNSIGNED_BYTE, pngLoader->getImageInfo()->pData);
+
+	//bmp
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0,
 	//	GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
 
@@ -291,7 +310,10 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 	}
 	else if (pthFile.extension() == ".png")
 	{
-		ASSERT(FALSE);
+		pngLoader = new PngLoader();
+		pngLoader->Load(pthFile.string().c_str());
+
+		return true;
 	}
 
 	ASSERT(pthFile.extension() == ".bmp");
@@ -635,7 +657,10 @@ GLuint CTexture::MipTexName()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+	//jpg
 	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);
+
+	//bmp
 	//gluBuild2DMipmaps(GL_TEXTURE_2D, 3, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_image[0]);
 
 	m_mipinitialized = true;
