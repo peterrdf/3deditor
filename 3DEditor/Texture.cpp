@@ -17,7 +17,12 @@ CTexture::CTexture()
 {}
 
 /*virtual*/ CTexture::~CTexture()
-{}
+{
+	if (m_iOGLName != 0)
+	{
+		glDeleteTextures(1, &m_iOGLName);
+	}
+}
 
 
 static bool isPowerOf2(int iNumber)
