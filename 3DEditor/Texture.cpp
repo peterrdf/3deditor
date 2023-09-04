@@ -176,20 +176,37 @@ GLuint CTexture::TexName()
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//jpeg
-	if (!isPowerOf2(jpegLoader->getImageInfo()->nHeight) ||
-		!isPowerOf2(jpegLoader->getImageInfo()->nWidth))
+	// std
+	if (!isPowerOf2(width) ||
+		!isPowerOf2(height))
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 
+		nrChannels == 3 ? GL_RGB : GL_RGBA,
+		width,
+		height, 0,
+		nrChannels == 3 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_pdata);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	//jpeg
+	/*if (!isPowerOf2(jpegLoader->getImageInfo()->nHeight) ||
+		!isPowerOf2(jpegLoader->getImageInfo()->nWidth))
+	{
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	}*/	
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+	//jpg
+	/*glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 		jpegLoader->getImageInfo()->nWidth, 
 		jpegLoader->getImageInfo()->nHeight, 0,
-		GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);/**/
+		GL_BGR_EXT, GL_UNSIGNED_BYTE, jpegLoader->getImageInfo()->pData);*/
 
 	//png
 	//if (!isPowerOf2(pngLoader->getImageInfo()->nHeight) ||
@@ -303,17 +320,30 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 	fs::path pthFile = lpszPathName;
 	if (pthFile.extension() == ".jpg")
 	{
-		jpegLoader = new JpegLoader();
-		jpegLoader->Load(pthFile.string().c_str());
+		/*jpegLoader = new JpegLoader();
+		jpegLoader->Load(pthFile.string().c_str());*/
 
-		return true;
+		m_pdata = stbi_load(CW2A(lpszPathName), &width, &height, &nrChannels, 0);
+
+		return m_pdata != nullptr;
 	}
 	else if (pthFile.extension() == ".png")
 	{
-		pngLoader = new PngLoader();
-		pngLoader->Load(pthFile.string().c_str());
+		//pngLoader = new PngLoader();
+		//pngLoader->Load(pthFile.string().c_str());
 
-		return true;
+		m_pdata = stbi_load(CW2A(lpszPathName), &width, &height, &nrChannels, 0);
+
+		return m_pdata != nullptr;
+	}
+	else if (pthFile.extension() == ".bmp")
+	{
+		//pngLoader = new PngLoader();
+		//pngLoader->Load(pthFile.string().c_str());
+
+		m_pdata = stbi_load(CW2A(lpszPathName), &width, &height, &nrChannels, 0);
+
+		return m_pdata != nullptr;
 	}
 
 	ASSERT(pthFile.extension() == ".bmp");

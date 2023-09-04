@@ -19,6 +19,8 @@
 #include "./../JpegLoader/JpegLoader.h"
 #include "./../PngLoader/PngLoader.h"
 
+#include "./../stb/stb_image.h"
+
 #ifdef _LINUX
 typedef int BOOLEAN;
 typedef const char * LPCTSTR;
@@ -66,6 +68,10 @@ private:
 	int m_height;
 	int m_width;
 	BYTE ** m_image;
+	unsigned char* m_pdata;
+	int width, height, nrChannels;
+
+
 };
 
 #endif

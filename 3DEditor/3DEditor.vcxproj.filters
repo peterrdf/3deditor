@@ -28,6 +28,9 @@
     <Filter Include="PngLoader\LodePNG">
       <UniqueIdentifier>{d41e5ffd-1d2d-4dab-8c29-5f87b0dbe95d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="stb">
+      <UniqueIdentifier>{a8a477c5-cceb-42de-b704-85cdf4ba14bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -205,6 +208,12 @@
     </ClInclude>
     <ClInclude Include="..\PngLoader\LodePNG\lodepng.h">
       <Filter>PngLoader\LodePNG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stb\stb_image.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stb\stb_easy_font.h">
+      <Filter>stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -486,6 +495,9 @@
     </ClCompile>
     <ClCompile Include="..\PngLoader\LodePNG\lodepng.cpp">
       <Filter>PngLoader\LodePNG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\stb\stb_image.cpp">
+      <Filter>stb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
