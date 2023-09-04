@@ -13,21 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="JpegLoader">
-      <UniqueIdentifier>{6042064e-cd90-4b78-bd9d-6879df870a81}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="JpegLoader\LibJpeg">
-      <UniqueIdentifier>{2e889d7b-3842-4be5-ac3d-657fe383b455}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="JpegLoader\StbImageWrite">
-      <UniqueIdentifier>{841f1a1a-c067-461b-927c-0dc437f69824}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PngLoader">
-      <UniqueIdentifier>{9aad9bb7-ff97-451d-8b33-6d6c963e5644}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PngLoader\LodePNG">
-      <UniqueIdentifier>{d41e5ffd-1d2d-4dab-8c29-5f87b0dbe95d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="stb">
       <UniqueIdentifier>{a8a477c5-cceb-42de-b704-85cdf4ba14bc}</UniqueIdentifier>
     </Filter>
@@ -197,18 +182,6 @@
     <ClInclude Include="ProgressIndicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\JpegLoader\JpegLoader.h">
-      <Filter>JpegLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\JpegLoader\StbImageWrite\stb_image_write.h">
-      <Filter>JpegLoader\StbImageWrite</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PngLoader\PngLoader.h">
-      <Filter>PngLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PngLoader\LodePNG\lodepng.h">
-      <Filter>PngLoader\LodePNG</Filter>
-    </ClInclude>
     <ClInclude Include="..\stb\stb_image.h">
       <Filter>stb</Filter>
     </ClInclude>
@@ -345,156 +318,6 @@
     </ClCompile>
     <ClCompile Include="ProgressIndicator.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\JpegLoader.cpp">
-      <Filter>JpegLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\StbImageWrite\stb_image_write.c">
-      <Filter>JpegLoader\StbImageWrite</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jaricom.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcapimin.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcapistd.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcarith.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jccoefct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jccolor.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcdctmgr.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jchuff.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcinit.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmainct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmarker.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcmaster.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcomapi.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcparam.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcprepct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jcsample.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jctrans.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdapimin.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdapistd.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdarith.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdatadst.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdatasrc.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdcoefct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdcolor.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jddctmgr.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdhuff.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdinput.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmainct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmarker.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmaster.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdmerge.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdpostct.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdsample.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jdtrans.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jerror.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctflt.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctfst.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jfdctint.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctflt.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctfst.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jidctint.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jmemmgr.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jmemnobs.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jquant1.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jquant2.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\JpegLoader\LibJpeg\jutils.c">
-      <Filter>JpegLoader\LibJpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PngLoader\PngLoader.cpp">
-      <Filter>PngLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PngLoader\LodePNG\lodepng.cpp">
-      <Filter>PngLoader\LodePNG</Filter>
     </ClCompile>
     <ClCompile Include="..\stb\stb_image.cpp">
       <Filter>stb</Filter>

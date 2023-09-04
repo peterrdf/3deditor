@@ -1201,7 +1201,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 					m_pOGLProgram->_enableTexture(true);
 
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, pOGLTexture->TexName());
+					glBindTexture(GL_TEXTURE_2D, pOGLTexture->getOGLName());
 
 					m_pOGLProgram->_setSampler(0);
 				}

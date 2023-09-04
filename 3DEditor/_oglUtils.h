@@ -1785,7 +1785,7 @@ public: // Methods
 			if (bSupportsTexture)
 			{
 				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = 1. - pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
 			}
 		}
 
