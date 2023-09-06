@@ -152,9 +152,6 @@
     <ClInclude Include="UndefinedRDFProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CityGMLParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -296,9 +293,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UndefinedRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CityGMLParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestManager.cpp">

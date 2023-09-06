@@ -119,7 +119,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format-d.lib;xerces-c_3D.lib;citygmld.lib;cityJsonRDF_DebugStaticx64.lib</AdditionalDependencies>
+      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format-d.lib;xerces-c_3D.lib;gisengine.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>./../lib/x64;./../glew-2.2.0/lib/Release/x64;./../libE57Format/lib;./../libCityGML/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -177,7 +177,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format.lib;xerces-c_3.lib;citygml.lib;cityJsonRDF_ReleaseStaticx64.lib</AdditionalDependencies>
+      <AdditionalDependencies>engine.lib;freetype28.lib;opengl32.lib;glu32.lib;glew32.lib;E57Format.lib;xerces-c_3.lib;gisengine.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>./../lib/x64;./../glew-2.2.0/lib/Release/x64;./../libE57Format/lib;./../libCityGML/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -196,7 +196,6 @@
     <Text Include="res\vertex_shader2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\3DEditor\CityGMLParser.h" />
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h" />
@@ -215,7 +214,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3DEditor\BoolRDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\CityGMLParser.cpp" />
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
     <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp" />
     <ClCompile Include="..\3DEditor\DoubleRDFProperty.cpp" />

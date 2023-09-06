@@ -7,10 +7,8 @@
 #include "E57Format.h"
 using namespace e57;
 
-#include "CityGMLParser.h"
-#include "CityJsonRDF.h"
-
 #include "_dxf_parser.h"
+#include "gisengine.h"
 
 #include <bitset>
 #include <algorithm>
@@ -21,70 +19,6 @@ using namespace std;
 
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
-
-// ------------------------------------------------------------------------------------------------
-struct CityJSONLog : CityJsonRDF::ILog
-{
-	CityJSONLog()
-	{
-#ifdef SHOW_CITY_JSON_LOG
-		m_logFile = "cityJsonRDF.log.txt";
-		m_fp = fopen(m_logFile, "wt");
-		if (!m_fp) {
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Can not create log file, change name in RDFModel.cpp.", L"Error", MB_ICONERROR | MB_OK);
-		}
-#endif
-	}
-
-	~CityJSONLog()
-	{
-#ifdef SHOW_CITY_JSON_LOG
-		if (m_fp) {
-			fclose(m_fp);
-			ShellExecuteA(GetDesktopWindow(), "open", m_logFile, 0, 0, SW_SHOW);
-		}
-#endif
-	}
-
-	virtual void Message(Level level, const char* /*category*/, const char* msg, const char* converterState) override
-	{
-#ifdef SHOW_CITY_JSON_LOG
-		if (m_fp) {
-			const char* lev = "UNKNOWN LEVEL";
-			switch (level) {
-				case CityJsonRDF::ILog::Level::Error: lev = "ERROR"; break;
-				case CityJsonRDF::ILog::Level::Warning: lev = "WARING"; break;
-				case CityJsonRDF::ILog::Level::Info: lev = "INFO"; break;
-			}
-
-			fprintf(m_fp, "%s: %s", lev, msg);
-			if (converterState && *converterState)
-				fprintf(m_fp, " (for %s)", converterState);
-			fprintf(m_fp, "\n");
-		}
-#else
-		UNREFERENCED_PARAMETER(level);
-		UNREFERENCED_PARAMETER(msg);
-		UNREFERENCED_PARAMETER(converterState);
-#endif
-	}
-
-	const char* m_logFile = nullptr;
-	FILE* m_fp = nullptr;
-};
-
-// ------------------------------------------------------------------------------------------------
-struct CityJSONProgress : CityJsonRDF::IProgress
-{
-	CityJSONProgress() : m_status(L"Reading cityJSON file") {};
-
-	virtual void Start(int range) override { m_status.Start(range); }
-	virtual void Step() override { m_status.Step(); }
-	virtual void Finish() override { m_status.Finish(); }
-
-private:
-	ProgressStatus m_status;
-};
 
 // ------------------------------------------------------------------------------------------------
 CRDFModel::CRDFModel()
@@ -773,15 +707,15 @@ void CRDFModel::Load(const wchar_t * szPath)
 	{
 		LoadE57(szPath);
 		
-	} else if ((strExtension == L".GML") || (strExtension == L".CITYGML"))
-	{
-		LoadCityGML(szPath);
-	} else if (strExtension == L".DXF")
+	} if (strExtension == L".DXF")
 	{
 		LoadDXF(szPath);
-	} else if (strExtension == L".JSON") 
+	} else if ((strExtension == L".GML") ||
+		(strExtension == L".CITYGML") ||
+		(strExtension == L".XML") ||
+		(strExtension == L".JSON"))
 	{
-		LoadCityJSON(szPath);
+		LoadGISModel(szPath);
 	}
 	else
 	{
@@ -1107,31 +1041,6 @@ void CRDFModel::LoadE57(const wchar_t* szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::LoadCityGML(const wchar_t* szPath)
-{
-	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
-
-	SetFormatSettings(m_iModel);
-
-	LoadRDFModel();
-
-	try
-	{
-		CCityGMLParser cityGMLParser(m_iModel);
-		cityGMLParser.Import(szPath);
-	}
-	catch (const std::runtime_error& ex)
-	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-
-	LoadRDFInstances();
-}
-
-// ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
 	m_iModel = CreateModel();
@@ -1156,31 +1065,96 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	LoadRDFInstances();
 }
 
+void CRDFModel::LoadGISModel(const wchar_t* szPath)
+{
+	Clean();
+
+	m_iModel = CreateModel();
+	ASSERT(m_iModel != 0);
+
+	SetFormatSettings(m_iModel);
+
+	LoadRDFModel();
+
+	try
+	{
+		wchar_t szAppPath[_MAX_PATH];
+		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+		fs::path pthExe = szAppPath;
+		auto pthRootFolder = pthExe.parent_path();
+		string strRootFolder = pthRootFolder.string();
+		strRootFolder += "\\";
+
+		SetGISOptions(strRootFolder.c_str(), true);
+
+		ImportGISModel(m_iModel, CW2A(szPath));
+	}
+	catch (const std::runtime_error& err)
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(err.what()), L"Error", MB_ICONERROR | MB_OK);
+
+		return;
+	}
+	catch (...)
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
+	}	
+
+	LoadRDFInstances();
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFModel::LoadCityGML(const wchar_t* szPath)
+{
+	m_iModel = CreateModel();
+	ASSERT(m_iModel != 0);
+
+	SetFormatSettings(m_iModel);
+
+	LoadRDFModel();
+
+	try
+	{
+		ASSERT(0);//todo
+		/*CCityGMLParser cityGMLParser(m_iModel);
+		cityGMLParser.Import(szPath);*/
+	}
+	catch (const std::runtime_error& ex)
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
+
+		return;
+	}
+
+	LoadRDFInstances();
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadCityJSON(const wchar_t* szPath)
 {
-	auto ext2 = szPath + wcslen(szPath) - wcslen(L".city.json");
-	if (ext2 > szPath && !_wcsicmp(ext2, L".city.json")) {
+	//auto ext2 = szPath + wcslen(szPath) - wcslen(L".city.json");
+	//if (ext2 > szPath && !_wcsicmp(ext2, L".city.json")) {
 
-		CStringA utf8Path;
-		int cc = 0;
-		// get length (cc) of the new multibyte string excluding the \0 terminator first
-		if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, nullptr, 0, 0, 0) - 1) > 0)
-		{
-			// convert
-			char* buf = utf8Path.GetBuffer(cc);
-			if (buf) WideCharToMultiByte(CP_UTF8, 0, szPath, -1, buf, cc, 0, 0);
-			utf8Path.ReleaseBuffer();
-		}
+	//	CStringA utf8Path;
+	//	int cc = 0;
+	//	// get length (cc) of the new multibyte string excluding the \0 terminator first
+	//	if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, nullptr, 0, 0, 0) - 1) > 0)
+	//	{
+	//		// convert
+	//		char* buf = utf8Path.GetBuffer(cc);
+	//		if (buf) WideCharToMultiByte(CP_UTF8, 0, szPath, -1, buf, cc, 0, 0);
+	//		utf8Path.ReleaseBuffer();
+	//	}
 
-		CityJSONLog log;
-		CityJSONProgress progress;
-		m_iModel = CityJsonRDF::Open(utf8Path, &progress, &log);
-	}
+	//	CityJSONLog log;
+	//	CityJSONProgress progress;
+	//	m_iModel = CityJsonRDF::Open(utf8Path, &progress, &log);
+	//}
 
-	SetFormatSettings(m_iModel);
-	LoadRDFModel();
-	LoadRDFInstances();
+	//SetFormatSettings(m_iModel);
+	//LoadRDFModel();
+	//LoadRDFInstances();
 }
 
 // ------------------------------------------------------------------------------------------------
