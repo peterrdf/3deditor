@@ -1,7 +1,6 @@
 #pragma once
 
 #include "conceptMesh.h"
-#include "RDFMeasurementsBuilder.h"
 #include "Texture.h"
 #include "RDFClass.h"
 #include "ObjectRDFProperty.h"
@@ -56,9 +55,6 @@ private: // Members
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;
 
-	// Support for measurements
-	CRDFMeasurementsBuilder* m_pMeasurementsBuilder;
-
 	// Root
 	_octree* m_pOctree;
 
@@ -101,16 +97,13 @@ public: // Methods
 
 	void Save(const wchar_t * szPath);
 
-	void Load(const wchar_t* szPath);
-	void LoadE57(const wchar_t* szPath);	
+	void Load(const wchar_t* szPath);	
 	void LoadDXF(const wchar_t* szPath);
 	void LoadGISModel(const wchar_t* szPath);
 	void PostLoad();
 
 	CTexture* GetTexture(const wstring& strTexture);
 	CTexture* GetDefaultTexture();
-
-	CRDFMeasurementsBuilder * GetMeasurementsBuilder();
 
 private: // Methods
 

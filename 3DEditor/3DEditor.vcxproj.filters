@@ -116,12 +116,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\RDFMeasurementsBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Text2RDF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Octree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -269,12 +263,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\Text2RDF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CUniqueVerticesCheck.cpp">

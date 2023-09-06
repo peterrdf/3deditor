@@ -199,7 +199,6 @@
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h" />
-    <ClInclude Include="..\include\RDFMeasurementsBuilder.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
     <ClInclude Include="..\stb\stb_image.h" />
     <ClInclude Include="InstancesDialog.h" />
@@ -232,8 +231,6 @@
     <ClCompile Include="..\3DEditor\Texture.cpp" />
     <ClCompile Include="..\3DEditor\UndefinedRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\_dxf_parser.cpp" />
-    <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp" />
-    <ClCompile Include="..\include\Text2RDF.cpp" />
     <ClCompile Include="..\stb\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

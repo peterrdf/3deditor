@@ -47,9 +47,6 @@
     <ClInclude Include="InstancesDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\RDFMeasurementsBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Text2RDF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -128,12 +125,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InstancesDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\RDFMeasurementsBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\Text2RDF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp">

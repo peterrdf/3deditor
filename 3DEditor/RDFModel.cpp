@@ -4,9 +4,6 @@
 #include "Generic.h"
 #include "ProgressIndicator.h"
 
-#include "E57Format.h"
-using namespace e57;
-
 #include "_dxf_parser.h"
 #include "gisengine.h"
 
@@ -40,7 +37,6 @@ CRDFModel::CRDFModel()
 	, m_fZTranslation(0.f)
 	, m_pDefaultTexture(nullptr)
 	, m_mapTextures()
-	, m_pMeasurementsBuilder(nullptr)
 	, m_pOctree(nullptr)
 {
 }
@@ -701,11 +697,7 @@ void CRDFModel::Load(const wchar_t * szPath)
 	CString strExtension = PathFindExtension(szPath);
 	strExtension.MakeUpper();
 
-	if (strExtension == L".E57")
-	{
-		LoadE57(szPath);
-		
-	} if (strExtension == L".DXF")
+	if (strExtension == L".DXF")
 	{
 		LoadDXF(szPath);
 	} else if ((strExtension == L".GML") ||
@@ -732,307 +724,6 @@ void CRDFModel::Load(const wchar_t * szPath)
 
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
 	}	
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::LoadE57(const wchar_t* szPath)
-{
-	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
-
-	SetFormatSettings(m_iModel);
-
-	try {
-		/// Read file from disk
-		ImageFile imf(ustring(CW2A(szPath)), "r");
-		StructureNode root = imf.root();
-
-		/// Make sure vector of scans is defined and of expected type.
-		/// If "/data3D" wasn't defined, the call to root.get below would raise an exception.
-		if (!root.isDefined("/data3D")) {
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"File doesn't contain 3D images.", L"Error", MB_ICONERROR | MB_OK);
-
-			return;
-		}
-		Node n = root.get("/data3D");
-		if (n.type() != E57_VECTOR) {
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Invalid format.", L"Error", MB_ICONERROR | MB_OK);
-
-			return;
-		}
-
-		//ofstream dump("dump.txt");
-		//imf.dump(0, dump);
-
-		/// The node is a vector so we can safely get a VectorNode handle to it.
-		/// If n was not a VectorNode, this would raise an exception.
-		VectorNode data3D(n);
-
-		/// Print number of children of data3D.  This is the number of scans in file.
-		int64_t scanCount = data3D.childCount();
-		TRACE(L"\nNumber of scans in file: %d", scanCount);
-
-		if (scanCount == 1)
-		{
-			/// For each scan, print out first N points in either Cartesian or Spherical coordinates.
-			for (int scanIndex = 0; scanIndex < scanCount; scanIndex++)
-			{
-				/// Get scan from "/data3D", assume its a Structure (else get exception)
-				StructureNode scan(data3D.get(scanIndex));
-				TRACE(L"\nGot: %s", CA2W(scan.pathName().c_str()).m_psz);
-
-				if (scan.isDefined("pointGroupingSchemes"))
-				{
-					::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Point Grouping Schemes are not supported.", L"Error", MB_ICONERROR | MB_OK);
-
-					//StructureNode pointGroupingSchemes(scan.get("pointGroupingSchemes"));
-					//if (pointGroupingSchemes.isDefined("groupingByLine"))
-					//{
-					//	StructureNode groupingByLine(pointGroupingSchemes.get("groupingByLine"));
-
-					//	StringNode	idElementName(groupingByLine.get("idElementName"));
-					//	CompressedVectorNode groups(groupingByLine.get("groups"));
-					//	StructureNode lineGroupRecord(groups.prototype()); //not used here
-
-					//	int64_t protoCount = lineGroupRecord.childCount();
-					//	int64_t protoIndex;
-					//	vector<SourceDestBuffer> groupSDBuffers;
-					//}
-				} // if (scan.isDefined("pointGroupingSchemes"))
-				else
-				{
-					/*
-					* X/Y/Z min/max
-					*/
-					double xMinimum = -1.;
-					double xMaximum = 1.;
-					double yMinimum = -1.;
-					double yMaximum = 1.;
-					double zMinimum = -1.;
-					double zMaximum = 1.;
-
-					// Get Cartesian bounding box to scan.
-					if (scan.isDefined("cartesianBounds"))
-					{
-						StructureNode bbox(scan.get("cartesianBounds"));
-						if (bbox.get("xMinimum").type() == E57_SCALED_INTEGER)
-						{
-							xMinimum = (double)ScaledIntegerNode(bbox.get("xMinimum")).scaledValue();
-							xMaximum = (double)ScaledIntegerNode(bbox.get("xMaximum")).scaledValue();
-							yMinimum = (double)ScaledIntegerNode(bbox.get("yMinimum")).scaledValue();
-							yMaximum = (double)ScaledIntegerNode(bbox.get("yMaximum")).scaledValue();
-							zMinimum = (double)ScaledIntegerNode(bbox.get("zMinimum")).scaledValue();
-							zMaximum = (double)ScaledIntegerNode(bbox.get("zMaximum")).scaledValue();
-						}
-						else if (bbox.get("xMinimum").type() == E57_FLOAT)
-						{
-							xMinimum = FloatNode(bbox.get("xMinimum")).value();
-							xMaximum = FloatNode(bbox.get("xMaximum")).value();
-							yMinimum = FloatNode(bbox.get("yMinimum")).value();
-							yMaximum = FloatNode(bbox.get("yMaximum")).value();
-							zMinimum = FloatNode(bbox.get("zMinimum")).value();
-							zMaximum = FloatNode(bbox.get("zMaximum")).value();
-						}
-					}
-					else
-					{
-						::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The bounds are not detected.", L"Error", MB_ICONERROR | MB_OK);
-
-						return;
-					}
-
-					/*
-					* Cube octree
-					*/
-					double dMaxDimesion = xMaximum - xMinimum;
-					dMaxDimesion = max(dMaxDimesion, yMaximum - yMinimum);
-					dMaxDimesion = max(dMaxDimesion, zMaximum - zMinimum);
-
-					if ((xMaximum - xMinimum) < dMaxDimesion)
-					{
-						xMaximum += dMaxDimesion - (xMaximum - xMinimum);
-					}
-
-					if ((yMaximum - yMinimum) < dMaxDimesion)
-					{
-						yMaximum += dMaxDimesion - (yMaximum - yMinimum);
-					}
-
-					if ((zMaximum - zMinimum) < dMaxDimesion)
-					{
-						zMaximum += dMaxDimesion - (zMaximum - zMinimum);
-					}
-
-					ASSERT(m_pOctree == nullptr);
-					m_pOctree = new _octree(m_iModel, xMinimum, xMaximum, yMinimum, yMaximum, zMinimum, zMaximum);
-
-					/// Get "points" field in scan.  Should be a CompressedVectorNode.
-					CompressedVectorNode points(scan.get("points"));
-					TRACE(L"\nGot: %s", CA2W(points.pathName().c_str()).m_psz);
-
-					/// Need to figure out if has Cartesian or spherical coordinate system.
-					/// Interrogate the CompressedVector's prototype of its records.
-					StructureNode proto(points.prototype());
-
-					if (proto.isDefined("cartesianX") && proto.isDefined("cartesianY") && proto.isDefined("cartesianZ"))
-					{
-						auto type = proto.get("cartesianX").type();
-						bool bScaled = type == E57_SCALED_INTEGER;
-
-						/// Make a list of buffers to receive the xyz values.
-						const int N = 10240;
-						vector<SourceDestBuffer> destBuffers;
-						double x[N];     destBuffers.push_back(SourceDestBuffer(imf, "cartesianX", x, N, true, bScaled));
-						double y[N];     destBuffers.push_back(SourceDestBuffer(imf, "cartesianY", y, N, true, bScaled));
-						double z[N];     destBuffers.push_back(SourceDestBuffer(imf, "cartesianZ", z, N, true, bScaled));
-
-						// TODO
-						/*int16_t intensities[N];
-						if (proto.isDefined("intensity"))
-						{
-							destBuffers.push_back(SourceDestBuffer(imf, "intensity", intensities, N, true));
-						}*/
-
-						double red[N];
-						if (proto.isDefined("colorRed"))
-						{
-							destBuffers.push_back(SourceDestBuffer(imf, "colorRed", red, N, true));
-						}
-
-						double green[N];
-						if (proto.isDefined("colorGreen"))
-						{
-							destBuffers.push_back(SourceDestBuffer(imf, "colorGreen", green, N, true));
-						}
-
-						double blue[N];
-						if (proto.isDefined("colorBlue"))
-						{
-							destBuffers.push_back(SourceDestBuffer(imf, "colorBlue", blue, N, true));
-						}
-
-						/// Create a reader of the points CompressedVector, try to read first block of N points
-						/// Each call to reader.read() will fill the xyz buffers until the points are exhausted.
-						CompressedVectorReader reader = points.reader(destBuffers);
-						unsigned gotCount = 0;
-						while ((gotCount = reader.read()) > 0)
-						{
-							TRACE(L"*** Point read: %d ***", gotCount);
-
-							//vector<double> vecCoordinates;
-							vector<int16_t> vecIntensities;
-							vector<double> vecR;
-							vector<double> vecG;
-							vector<double> vecB;
-							for (unsigned i = 0; i < gotCount; i++)
-							{
-								if (!m_pOctree->insertPoint(x[i], y[i], z[i]))
-								{
-									continue;
-								}
-
-								/*vecCoordinates.push_back(x[i]);
-								vecCoordinates.push_back(y[i]);
-								vecCoordinates.push_back(z[i]);*/
-
-								// ScaledInteger - see scale
-								/*if (proto.isDefined("intensity"))
-								{
-									vecIntensities.push_back(intensities[i]);
-								}*/
-
-								if (proto.isDefined("colorRed"))
-								{
-									vecR.push_back(red[i]);
-								}
-
-								if (proto.isDefined("colorGreen"))
-								{
-									vecG.push_back(green[i]);
-								}
-
-								if (proto.isDefined("colorBlue"))
-								{
-									vecB.push_back(blue[i]);
-								}
-							}
-
-							//auto pPoint3DSet = m_pModel->create<Point3DSet>();
-							//pPoint3DSet->coordinates = vecCoordinates;
-
-							//auto pLine3DSet = m_pModel->create<Line3DSet>();
-							//pLine3DSet->points = vecCoordinates;
-
-							/*auto pMesh = m_pModel->create<Mesh>();
-							pMesh->pointSet = pPoint3DSet;
-
-							auto pAmbient = m_pModel->create<ColorComponent>();
-							pAmbient->R = 0.;
-							pAmbient->G = 0.;
-							pAmbient->B = 1.;
-							pAmbient->W = 1.;
-
-							auto pColor = m_pModel->create<Color>();
-							pColor->ambient = pAmbient;
-
-							auto pMaterial = m_pModel->create<Material>();
-							pMaterial->color = pColor;
-
-							pMesh->material = pMaterial;*/
-						} // while ((gotCount = reader.read()) > 0)
-
-						reader.close();
-					} // if (proto.isDefined("cartesianX") && ...
-					else if (proto.isDefined("sphericalRange"))
-					{
-						::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Spherical coordinate system is not supported.", L"Error", MB_ICONERROR | MB_OK);
-					}
-				} // else if (scan.isDefined("pointGroupingSchemes"))
-			} // for (int scanIndex = ...
-		} // if (scanCount == 1)
-		else
-		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Multiple scans are not supported.", L"Error", MB_ICONERROR | MB_OK);
-		}
-
-		imf.close();
-
-		/*
-		* Statistics
-		*/
-		m_pOctree->dump();
-
-		/*
-		* Octree 1
-		*/
-		/*vector<GeometricItem*> vecOctantsGeometry;
-		BuildOctants(m_pOctree, vecOctantsGeometry);
-
-		auto pCollection = m_pModel->create<Collection>();
-		pCollection->objects = vecOctantsGeometry;*/
-
-		/*
-		* Octree 2
-		*/
-		m_pOctree->buildMesh();
-	}
-	catch (E57Exception& ex) {
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-	catch (std::exception& ex) {
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-	catch (...) {
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-
-	LoadRDFModel();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1154,30 +845,6 @@ CTexture * CRDFModel::GetDefaultTexture()
 	} // if (m_pDefaultTexture == nullptr)
 
 	return m_pDefaultTexture;
-}
-
-// ------------------------------------------------------------------------------------------------
-CRDFMeasurementsBuilder * CRDFModel::GetMeasurementsBuilder()
-{
-	if (m_pMeasurementsBuilder == nullptr)
-	{
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
-		CString strDefaultFont = szAppPath;
-		strDefaultFont.MakeLower();
-
-		int iLastSlash = strDefaultFont.ReverseFind(L'\\');
-		ASSERT(iLastSlash != -1);
-
-		strDefaultFont = strDefaultFont.Left(iLastSlash + 1);
-		strDefaultFont += L"OpenSans-Regular.ttf";
-
-		LPCTSTR szDefaultFont = (LPCTSTR)strDefaultFont;
-		m_pMeasurementsBuilder = new CRDFMeasurementsBuilder(szDefaultFont, m_iModel, EXTRSUSION_AREA_SOLID_SET);
-	} // if (m_pMeasurementsBuilder == nullptr)
-
-	return m_pMeasurementsBuilder;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1437,12 +1104,6 @@ void CRDFModel::Clean()
 		delete itTexure.second;
 	}
 	m_mapTextures.clear();
-
-	/*
-	* Measurements
-	*/
-	delete m_pMeasurementsBuilder;
-	m_pMeasurementsBuilder = nullptr;
 
 	m_iID = 1;
 
