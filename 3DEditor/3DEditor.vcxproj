@@ -127,7 +127,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64;$(SolutionDir)libE57Format/lib;$(SolutionDir)libCityGML/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32.lib;gisengine.lib</AdditionalDependencies>
+      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -187,8 +188,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64;$(SolutionDir)libE57Format/lib;$(SolutionDir)libCityGML/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32.lib;gisengine.lib</AdditionalDependencies>
-     </Link>
+      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
