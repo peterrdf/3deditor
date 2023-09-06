@@ -105,8 +105,6 @@ public: // Methods
 	void LoadE57(const wchar_t* szPath);	
 	void LoadDXF(const wchar_t* szPath);
 	void LoadGISModel(const wchar_t* szPath);
-	void LoadCityGML(const wchar_t* szPath);
-	void LoadCityJSON(const wchar_t* szPath);
 	void PostLoad();
 
 	CTexture* GetTexture(const wstring& strTexture);

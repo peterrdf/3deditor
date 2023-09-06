@@ -69,8 +69,6 @@ void CRDFModel::CreateDefaultModel()
 
 	SetFormatSettings(m_iModel);
 
-	LoadRDFModel();
-
 	// Cube 1
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(pModel);
@@ -138,7 +136,7 @@ void CRDFModel::CreateDefaultModel()
 		pCylinder.set_segmentationParts(36);
 	}
 
-	LoadRDFInstances();
+	LoadRDFModel();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -724,7 +722,6 @@ void CRDFModel::Load(const wchar_t * szPath)
 		{
 			SetFormatSettings(m_iModel);
 			LoadRDFModel();
-			LoadRDFInstances();
 		}
 	}
 
@@ -744,8 +741,6 @@ void CRDFModel::LoadE57(const wchar_t* szPath)
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
-
-	LoadRDFModel();
 
 	try {
 		/// Read file from disk
@@ -1037,7 +1032,7 @@ void CRDFModel::LoadE57(const wchar_t* szPath)
 		return;
 	}
 
-	LoadRDFInstances();
+	LoadRDFModel();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1046,9 +1041,7 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);
 
-	SetFormatSettings(m_iModel);
-
-	LoadRDFModel();
+	SetFormatSettings(m_iModel);	
 
 	try
 	{
@@ -1062,7 +1055,7 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 		return;
 	}
 
-	LoadRDFInstances();
+	LoadRDFModel();
 }
 
 void CRDFModel::LoadGISModel(const wchar_t* szPath)
@@ -1072,9 +1065,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);
 
-	SetFormatSettings(m_iModel);
-
-	LoadRDFModel();
+	SetFormatSettings(m_iModel);	
 
 	try
 	{
@@ -1101,60 +1092,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
 	}	
 
-	LoadRDFInstances();
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::LoadCityGML(const wchar_t* szPath)
-{
-	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
-
-	SetFormatSettings(m_iModel);
-
 	LoadRDFModel();
-
-	try
-	{
-		ASSERT(0);//todo
-		/*CCityGMLParser cityGMLParser(m_iModel);
-		cityGMLParser.Import(szPath);*/
-	}
-	catch (const std::runtime_error& ex)
-	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
-
-		return;
-	}
-
-	LoadRDFInstances();
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::LoadCityJSON(const wchar_t* szPath)
-{
-	//auto ext2 = szPath + wcslen(szPath) - wcslen(L".city.json");
-	//if (ext2 > szPath && !_wcsicmp(ext2, L".city.json")) {
-
-	//	CStringA utf8Path;
-	//	int cc = 0;
-	//	// get length (cc) of the new multibyte string excluding the \0 terminator first
-	//	if ((cc = WideCharToMultiByte(CP_UTF8, 0, szPath, -1, nullptr, 0, 0, 0) - 1) > 0)
-	//	{
-	//		// convert
-	//		char* buf = utf8Path.GetBuffer(cc);
-	//		if (buf) WideCharToMultiByte(CP_UTF8, 0, szPath, -1, buf, cc, 0, 0);
-	//		utf8Path.ReleaseBuffer();
-	//	}
-
-	//	CityJSONLog log;
-	//	CityJSONProgress progress;
-	//	m_iModel = CityJsonRDF::Open(utf8Path, &progress, &log);
-	//}
-
-	//SetFormatSettings(m_iModel);
-	//LoadRDFModel();
-	//LoadRDFInstances();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1340,6 +1278,9 @@ void CRDFModel::LoadRDFModel()
 
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
+
+	// Instances
+	LoadRDFInstances();
 }
 
 // ------------------------------------------------------------------------------------------------
