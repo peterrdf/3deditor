@@ -73,14 +73,14 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 				iWidth,
 				iHeight,
 				0,
-				iChannels == 3 ? GL_BGR_EXT : GL_BGRA_EXT, 
+				iChannels == 3 ? GL_RGB : GL_RGBA,
 				GL_UNSIGNED_BYTE, 
 				pData);
 		}
 
 		stbi_image_free(pData);
 
-		return pData != nullptr;
+		return true;
 	} // if (pData != nullptr)
 
 	ASSERT(FALSE); // Unknown file type
