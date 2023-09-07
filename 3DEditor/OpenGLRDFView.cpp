@@ -393,73 +393,50 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	
 	m_pOGLProgram->_enableTexture(false);
 
-	/*
-	Non-transparent faces
-	*/
+	/* Coordinate System */
+	_drawCoordinateSystem();
+
+	/* Non-transparent faces */
 	DrawFaces(false);
 
-	/*
-	Transparent faces
-	*/
+	/* Transparent faces */	
 	DrawFaces(true);
 
-	/*
-	Pointed face
-	*/
+	/* Pointed face */
 	DrawPointedFace();
 
-	/*
-	Faces polygons
-	*/
+	/* Faces polygons */
 	DrawFacesPolygons();
 
-	/*
-	Conceptual faces polygons
-	*/
+	/* Conceptual faces polygons */
 	DrawConceptualFacesPolygons();
 
-	/*
-	Lines
-	*/
+	/* Lines */
 	DrawLines();
 
-	/*
-	Points
-	*/
+	/* Points */
 	DrawPoints();
 
-	/*
-	Bounding boxes
-	*/
+	/* Bounding boxes */
 	DrawBoundingBoxes();
 
-	/*
-	Normal vectors
-	*/
+	/* Normal vectors */
 	DrawNormalVectors();
 
-	/*
-	Tangent vectors
-	*/
+	/* Tangent vectors */
 	DrawTangentVectors();
 
-	/*
-	Bi-Normal vectors
-	*/
+	/* Bi-Normal vectors */
 	DrawBiNormalVectors();	
 
-	/*
-	End
-	*/
+	/* End */
 #ifdef _LINUX
 	m_pWnd->SwapBuffers();
 #else
 	SwapBuffers(*pDC);
 #endif // _LINUX
 
-	/*
-	Selection support
-	*/
+	/* Selection support */
 	DrawInstancesFrameBuffer();
 	DrawFacesFrameBuffer();
 }
@@ -1502,7 +1479,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglBuffers.getVAOcreateNew(BOUNDING_BOX_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -1517,7 +1494,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglBuffers.getBufferCreateNew(BOUNDING_BOX_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -1528,7 +1505,7 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
 
-		GLuint iIBO = m_oglBuffers.getBufferCreateNew(BOUNDING_BOX_IBO, bIsNew);
+		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -1723,7 +1700,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglBuffers.getVAOcreateNew(NORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -1738,7 +1715,7 @@ void COpenGLRDFView::DrawNormalVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglBuffers.getBufferCreateNew(NORMAL_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -1748,6 +1725,7 @@ void COpenGLRDFView::DrawNormalVectors()
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
@@ -1944,7 +1922,7 @@ void COpenGLRDFView::DrawTangentVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglBuffers.getVAOcreateNew(TANGENT_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(TANGENT_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -1959,7 +1937,7 @@ void COpenGLRDFView::DrawTangentVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglBuffers.getBufferCreateNew(TANGENT_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(TANGENT_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -1969,6 +1947,7 @@ void COpenGLRDFView::DrawTangentVectors()
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
@@ -2165,7 +2144,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglBuffers.getVAOcreateNew(BINORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BINORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0)
 	{
@@ -2180,7 +2159,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	{
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglBuffers.getBufferCreateNew(BINORMAL_VECS_VBO, bIsNew);
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BINORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
 			ASSERT(FALSE);
@@ -2190,6 +2169,7 @@ void COpenGLRDFView::DrawBiNormalVectors()
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
@@ -2558,7 +2538,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 		return;
 	}
 	bool bIsNew = false;
-	GLuint iIBO = m_oglBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{
@@ -2660,7 +2640,7 @@ void COpenGLRDFView::DrawPointedFace()
 	}
 
 	bool bIsNew = false;
-	GLuint iIBO = m_oglBuffers.getBufferCreateNew(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0)
 	{

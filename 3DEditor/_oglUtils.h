@@ -14,13 +14,12 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <limits>
 #include <map>
-
 #undef max
 using namespace std;
 
+// ************************************************************************************************
 class _oglUtils
 {
 
@@ -79,6 +78,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglShader
 {
 
@@ -190,6 +190,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglProgram
 {
 
@@ -542,6 +543,7 @@ protected: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglBlinnPhongProgram : public _oglProgram
 {
 
@@ -956,6 +958,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uiMsg)
@@ -971,6 +974,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lPa
 	return 0;
 }
 
+// ************************************************************************************************
 class _oglContext
 {
 
@@ -1273,6 +1277,7 @@ public: // Methods
 #endif
 };
 
+// ************************************************************************************************
 #define BUFFER_SIZE 512
 
 class _oglFramebuffer
@@ -1386,6 +1391,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 class _oglSelectionFramebuffer : public _oglFramebuffer
 {
 
@@ -1411,6 +1417,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 // (255 * 255 * 255)[R] + (255 * 255)[G] + 255[B]
 class _i64RGBCoder
 {
@@ -1464,6 +1471,7 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 template <class Instance>
 class _oglBuffers
 {
@@ -1529,7 +1537,7 @@ public: // Methods
 		return 0;
 	}
 
-	GLuint getVAOcreateNew(const wstring& strName, bool& bIsNew)
+	GLuint getVAOcreateNewIfNeeded(const wstring& strName, bool& bIsNew)
 	{
 		bIsNew = false;
 
@@ -1564,7 +1572,7 @@ public: // Methods
 		return 0;
 	}
 
-	GLuint getBufferCreateNew(const wstring& strName, bool& bIsNew)
+	GLuint getBufferCreateNewIfNeeded(const wstring& strName, bool& bIsNew)
 	{
 		bIsNew = false;
 
@@ -1812,12 +1820,14 @@ public: // Methods
 	}
 };
 
+// ************************************************************************************************
 enum class enumProjection : int
 {
 	Perspective = 0,
 	Orthographic,
 };
 
+// ************************************************************************************************
 enum class enumView : int
 {
 	Front = 0,
@@ -1835,6 +1845,7 @@ enum class enumRotationMode : int
 	XYZ,	// Quaternions
 };
 
+// ************************************************************************************************
 struct _ioglRenderer
 {
 	virtual _oglProgram* _getOGLProgram() const PURE;
@@ -1848,12 +1859,18 @@ struct _ioglRenderer
 	virtual void _redraw() PURE;
 };
 
+// ************************************************************************************************
 const float ZOOM_SPEED_MOUSE = 0.01f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
 const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
 const float PAN_SPEED_KEYS = 0.01f;
 const float ROTATION_SPEED = 1.f / 25.f;
 
+const wchar_t COORDINATE_SYSTEM_VAO[] = L"COORDINATE_SYSTEM_VAO";
+const wchar_t COORDINATE_SYSTEM_VBO[] = L"COORDINATE_SYSTEM_VBO";
+const wchar_t COORDINATE_SYSTEM_IBO[] = L"COORDINATE_SYSTEM_IBO";
+
+// ************************************************************************************************
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {
@@ -2207,6 +2224,164 @@ public: // Methods
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
+	}
+
+	void _drawCoordinateSystem()
+	{
+		m_pOGLProgram->_enableBlinnPhongModel(false);		
+		m_pOGLProgram->_setTransparency(1.f);
+
+		_oglUtils::checkForErrors();
+
+		bool bIsNew = false;
+		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(COORDINATE_SYSTEM_VAO, bIsNew);
+
+		if (iVAO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		GLuint iVBO = 0;
+
+		if (bIsNew)
+		{
+			glBindVertexArray(iVAO);
+
+			iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_VBO, bIsNew);
+			if ((iVBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}			
+
+			float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+			vector<float> vecVertices;
+
+			/* Origin */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* X */
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* Y */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+			vecVertices.push_back(0.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* Z */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(2 * fBoundingSphereDiameter);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+			GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_IBO, bIsNew);
+			if ((iIBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			vector<unsigned int> vecIndices =
+			{
+				0, 1,
+				0, 2,
+				0, 3,
+			};
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+
+			glBindVertexArray(0);
+
+			_oglUtils::checkForErrors();
+		} // if (bIsNew)
+
+		glBindVertexArray(iVAO);
+
+		m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint)* 0),
+			0);
+
+		m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 2),
+			0);
+
+		m_pOGLProgram->_setAmbientColor(0.f, 0.f, 1.f);
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)2,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 4),
+			0);
+
+		glBindVertexArray(0);
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }
