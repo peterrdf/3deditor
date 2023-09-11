@@ -13,7 +13,7 @@ CRDFController::CRDFController()
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
-	, m_iVisibleValuesCountLimit(100)
+	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenter(FALSE)
 {
 }
