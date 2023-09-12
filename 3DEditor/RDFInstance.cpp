@@ -762,11 +762,6 @@ void CRDFInstance::Calculate()
 
 		if (iIndicesCountPoints > 0)
 		{
-			/*
-			* Material
-			*/
-			bool bHasTexture = false;
-
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexPoints);
 			iIndexValue *= VERTEX_LENGTH;
 
@@ -784,19 +779,6 @@ void CRDFInstance::Calculate()
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
-			* Check for a texture
-			*/
-			for (int64_t iIndex = iStartIndexPoints; iIndex < iStartIndexPoints + iIndicesCountPoints; iIndex++)
-			{
-				if ((GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 6] != 0.f) || (GetVertices()[(GetIndices()[iIndex] * VERTEX_LENGTH) + 7] != 0.f))
-				{
-					bHasTexture = true;
-
-					break;
-				}
-			} // for (size_t iIndex = ...
-
-			/*
 			* Material
 			*/
 			_material material(
@@ -805,7 +787,7 @@ void CRDFInstance::Calculate()
 				iEmissiveColor,
 				iSpecularColor,
 				fTransparency,
-				bHasTexture ? L"default" : nullptr);
+				!strTexture.empty() ? strTexture.c_str() : nullptr);
 
 			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
 			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
