@@ -23,6 +23,7 @@ void main(void) {
     vPosition = vertex;
 
     gl_Position = uPMatrix * vertex;
+    gl_PointSize = 5;
 
     if (uUseTexture > 0.5) {
         vTextureCoord = aTextureCoord;
@@ -35,6 +36,4 @@ void main(void) {
 
     vUseBlinnPhongModel = uUseBlinnPhongModel;
     vUseTexture = uUseTexture;
-
-    gl_PointSize = 2;
 }
