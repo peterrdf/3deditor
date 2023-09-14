@@ -28,9 +28,10 @@ private: // Members
 	int64_t m_iModel;
 
 	// Cache
-	map<int64_t, CRDFClass *> mapClasses;
-	map<int64_t, CRDFProperty *> mapProperties;
+	map<int64_t, CRDFClass *> m_mapClasses;
+	map<int64_t, CRDFProperty *> m_mapProperties;
 	map<int64_t, CRDFInstance *> m_mapInstances;
+	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
 	// ID (1-based index)
 	int64_t m_iID;
@@ -93,7 +94,7 @@ public: // Methods
 	void ZoomToInstance(int64_t iInstance);
 	void ZoomOut();
 
-	void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty);
+	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
 	void Save(const wchar_t * szPath);
 
@@ -104,6 +105,9 @@ public: // Methods
 
 	CTexture* GetTexture(const wstring& strTexture);
 	CTexture* GetDefaultTexture();
+
+	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
+	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData);
 
 private: // Methods
 

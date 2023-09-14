@@ -31,6 +31,8 @@ wchar_t TANGENT_VECS_VBO[] = L"TANGENT_VECS_VBO";
 wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
 wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
+wchar_t TOOLTIP_INFORMATION[] = L"Information";
+
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
@@ -537,10 +539,20 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_iPointedFace = -1;
 
 	auto pController = GetController();
-	ASSERT(pController != nullptr);
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	auto pModel = pController->GetModel();
-	ASSERT(pModel != nullptr);
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -2825,10 +2837,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 
 	if (m_pPointedInstance != nullptr)
 	{		
-		wchar_t* szName = nullptr;
-		GetNameOfInstanceW(m_pPointedInstance->GetInstance(), &szName);
-
-		_showTooltip(L"Instance", szName);
+		_showTooltip(TOOLTIP_INFORMATION, pModel->GetInstanceMetaData(m_pPointedInstance));
 	}
 	else
 	{

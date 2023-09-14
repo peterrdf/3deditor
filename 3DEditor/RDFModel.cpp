@@ -21,9 +21,10 @@ namespace fs = std::experimental::filesystem;
 CRDFModel::CRDFModel()
 	: m_strModel(L"")
 	, m_iModel(0)
-	, mapClasses()
-	, mapProperties()
+	, m_mapClasses()
+	, m_mapProperties()
 	, m_mapInstances()
+	, m_mapInstanceMetaData()
 	, m_iID(1)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -138,7 +139,7 @@ void CRDFModel::CreateDefaultModel()
 // ------------------------------------------------------------------------------------------------
 const map<int64_t, CRDFClass *> & CRDFModel::GetClasses() const
 {
-	return mapClasses;
+	return m_mapClasses;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,8 +147,8 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 {
 	ASSERT(iClassInstance != 0);
 
-	map<int64_t, CRDFClass *>::const_iterator itClass = mapClasses.find(iClassInstance);
-	ASSERT(itClass != mapClasses.end());
+	map<int64_t, CRDFClass *>::const_iterator itClass = m_mapClasses.find(iClassInstance);
+	ASSERT(itClass != m_mapClasses.end());
 
 	CRDFClass * pClass = itClass->second;
 
@@ -168,7 +169,7 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 // ------------------------------------------------------------------------------------------------
 const map<int64_t, CRDFProperty *>& CRDFModel::GetProperties()
 {
-	return mapProperties;
+	return m_mapProperties;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -847,12 +848,161 @@ CTexture * CRDFModel::GetDefaultTexture()
 	return m_pDefaultTexture;
 }
 
+const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
+{
+	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
+	{
+		wchar_t* szName = nullptr;
+		GetNameOfInstanceW(pInstance->GetInstance(), &szName);
+
+		CString strMetaData = szName != nullptr ? szName : L"NA";
+
+		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->GetInstance(), 0);
+		while (iPropertyInstance != 0)
+		{
+			auto itProperty = m_mapProperties.find(iPropertyInstance);
+			ASSERT(itProperty != m_mapProperties.end());
+
+			GetPropertyMetaData(pInstance, itProperty->second, strMetaData);
+
+			iPropertyInstance = GetInstancePropertyByIterator(pInstance->GetInstance(), iPropertyInstance);
+		} // while (iPropertyInstance != 0)
+
+		if (strMetaData.GetLength() >= 256)
+		{
+			strMetaData = strMetaData.Left(250);
+			strMetaData += L"...";
+		}
+		 
+		m_mapInstanceMetaData[pInstance] = strMetaData;
+	} // if (m_mapInstanceMetaData.find(pInstance) == ...
+
+	return m_mapInstanceMetaData.at(pInstance);
+}
+
+void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData)
+{
+	strMetaData += L"\n";
+	strMetaData += pProperty->GetName() != nullptr ? pProperty->GetName() : L"NA";
+	strMetaData += L": ";
+
+	/* value */
+	wchar_t szBuffer[1000];
+	switch (pProperty->getType())
+	{
+		case TYPE_OBJECTTYPE:
+		{
+			int64_t* piInstances = nullptr;
+			int64_t iCard = 0;
+			GetObjectProperty(pInstance->GetInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+
+			if ((iCard == 1) && (pProperty->GetName() == CString(L"$semantics")))
+			{
+				auto itInstance = m_mapInstances.find(piInstances[0]);
+				ASSERT(itInstance != m_mapInstances.end());
+
+				int64_t iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], 0);
+				while (iPropertyInstance != 0)
+				{
+					auto itProperty = m_mapProperties.find(iPropertyInstance);
+					ASSERT(itProperty != m_mapProperties.end());
+
+					GetPropertyMetaData(itInstance->second, itProperty->second, strMetaData);
+
+					iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], iPropertyInstance);
+				} // while (iPropertyInstance != 0)
+			}
+			else
+			{
+				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+			}
+		}
+		break;
+
+		case TYPE_BOOL_DATATYPE:
+		{
+			int64_t iCard = 0;
+			bool* pbValue = nullptr;
+			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+
+			if (iCard == 1)
+			{
+				swprintf(szBuffer, 100, L"value = %s", pbValue[0] ? L"TRUE" : L"FALSE");
+				strMetaData += szBuffer;
+			}
+			else
+			{
+				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+			}
+		}
+		break;
+
+		case TYPE_CHAR_DATATYPE:
+		{
+			int64_t iCard = 0;
+			char** szValue = nullptr;
+			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+
+			if (iCard == 1)
+			{
+				strMetaData += CA2W(szValue[0]);
+			}
+			else
+			{
+				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+			}
+		}
+		break;
+
+		case TYPE_DOUBLE_DATATYPE:
+		{
+			int64_t iCard = 0;
+			double* pdValue = nullptr;
+			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+
+			if (iCard == 1)
+			{
+				swprintf(szBuffer, 100, L"%.6f", pdValue[0]);
+				strMetaData += szBuffer;
+			}
+			else
+			{
+				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+			}
+		}
+		break;
+
+		case TYPE_INT_DATATYPE:
+		{
+			int64_t iCard = 0;
+			int64_t* piValue = nullptr;
+			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+
+			if (iCard == 1)
+			{
+				swprintf(szBuffer, 100, L"%lld", piValue[0]);
+				strMetaData += szBuffer;
+			}
+			else
+			{
+				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+			}
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // unknown property
+
+			strMetaData += L"NA";
+		}
+		break;
+	} // switch (pProperty->getType())
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::SetFormatSettings(int64_t iModel)
 {
-	// Model
-//	int64_t pModel = iModel;
-
 	string strSettings = "111111000000001011000001110001";
 
 	bitset<64> bitSettings(strSettings);
@@ -873,7 +1023,7 @@ void CRDFModel::LoadRDFModel()
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
 	{
-		mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
+		m_mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
@@ -889,37 +1039,37 @@ void CRDFModel::LoadRDFModel()
 		{
 			case TYPE_OBJECTTYPE:
 			{
-				mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_BOOL_DATATYPE:
 			{
-				mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_CHAR_DATATYPE:
 			{
-				mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_INT_DATATYPE:
 			{
-				mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case TYPE_DOUBLE_DATATYPE:
 			{
-				mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
 			}
 			break;
 
 			case 0:
 			{
-				mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
 			}
 			break;
 
@@ -928,8 +1078,8 @@ void CRDFModel::LoadRDFModel()
 				break;
 		} // switch (iPropertyType)
 
-		map<int64_t, CRDFClass *>::iterator itClasses = mapClasses.begin();
-		for (; itClasses != mapClasses.end(); itClasses++)
+		map<int64_t, CRDFClass *>::iterator itClasses = m_mapClasses.begin();
+		for (; itClasses != m_mapClasses.end(); itClasses++)
 		{
 			int64_t	iMinCard = -1;
 			int64_t iMaxCard = -1;
@@ -1066,22 +1216,22 @@ void CRDFModel::Clean()
 	/*
 	* RDF Classes
 	*/
-	auto itClasses = mapClasses.begin();
-	for (; itClasses != mapClasses.end(); itClasses++)
+	auto itClasses = m_mapClasses.begin();
+	for (; itClasses != m_mapClasses.end(); itClasses++)
 	{
 		delete itClasses->second;
 	}
-	mapClasses.clear();
+	m_mapClasses.clear();
 
 	/*
 	* RDF Properties
 	*/
-	auto itProperty = mapProperties.begin();
-	for (; itProperty != mapProperties.end(); itProperty++)
+	auto itProperty = m_mapProperties.begin();
+	for (; itProperty != m_mapProperties.end(); itProperty++)
 	{
 		delete itProperty->second;
 	}
-	mapProperties.clear();
+	m_mapProperties.clear();
 
 	/*
 	* RDF Instances
@@ -1092,6 +1242,8 @@ void CRDFModel::Clean()
 		delete itInstance->second;
 	}
 	m_mapInstances.clear();
+
+	m_mapInstanceMetaData.clear();
 	
 	/*
 	* Texture

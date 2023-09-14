@@ -1878,7 +1878,7 @@ class _oglRenderer : public _ioglRenderer
 protected: // Members
 
 	CWnd* m_pWnd;
-	CToolTipCtrl m_toolTipCtrl;
+	CMFCToolTipCtrl m_toolTipCtrl;
 
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
@@ -2236,7 +2236,7 @@ public: // Methods
 		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
-	void _showTooltip(const CString& strTitle, const CString& strText)
+	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 	{
 		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
 
@@ -2245,15 +2245,15 @@ public: // Methods
 			CToolInfo toolInfo;
 			m_toolTipCtrl.GetToolInfo(toolInfo, m_pWnd);
 
-			toolInfo.lpszText = (LPTSTR)(LPCTSTR)strText;
+			toolInfo.lpszText = (LPWSTR)szText;
 			m_toolTipCtrl.SetToolInfo(&toolInfo);
 		} // if (m_toolTipCtrl.GetToolCount() == 1)
 		else
 		{
-			m_toolTipCtrl.AddTool(m_pWnd, strText);
+			m_toolTipCtrl.AddTool(m_pWnd, szText);
 		}
 
-		m_toolTipCtrl.SetTitle(0, strTitle);
+		m_toolTipCtrl.SetTitle(0, szTitle);
 
 		m_toolTipCtrl.Popup();
 	}

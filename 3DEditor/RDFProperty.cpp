@@ -68,41 +68,41 @@ wstring CRDFProperty::getTypeAsString() const
 
 	switch (getType())
 	{
-	case TYPE_OBJECTTYPE:
-	{
-		strType = L"owl:ObjectProperty";
-	}
-	break;
+		case TYPE_OBJECTTYPE:
+		{
+			strType = L"owl:ObjectProperty";
+		}
+		break;
 
-	case TYPE_BOOL_DATATYPE:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
+		case TYPE_BOOL_DATATYPE:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
 
-	case TYPE_CHAR_DATATYPE:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
+		case TYPE_CHAR_DATATYPE:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
 
-	case TYPE_DOUBLE_DATATYPE:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
+		case TYPE_DOUBLE_DATATYPE:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
 
-	case TYPE_INT_DATATYPE:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
+		case TYPE_INT_DATATYPE:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false);
-	}
-	break;
+		default:
+		{
+			ASSERT(false);
+		}
+		break;
 	} // switch (getType())
 
 	return strType;

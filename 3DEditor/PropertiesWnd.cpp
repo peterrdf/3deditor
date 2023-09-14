@@ -577,7 +577,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_CHAR_DATATYPE
+	} // case TYPE_BOOL_DATATYPE
 	break;
 
 	case TYPE_CHAR_DATATYPE:
