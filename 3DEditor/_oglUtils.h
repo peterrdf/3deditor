@@ -1878,6 +1878,8 @@ class _oglRenderer : public _ioglRenderer
 protected: // Members
 
 	CWnd* m_pWnd;
+	CToolTipCtrl m_toolTipCtrl;
+
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
@@ -1933,6 +1935,7 @@ public: // Methods
 
 	_oglRenderer()
 		: m_pWnd(nullptr)
+		, m_toolTipCtrl()
 		, m_pOGLContext(nullptr)
 		, m_pOGLProgram(nullptr)
 		, m_pVertexShader(nullptr)
@@ -1993,6 +1996,13 @@ public: // Methods
 	{
 		m_pWnd = pWnd;
 		ASSERT(m_pWnd != nullptr);
+
+		m_toolTipCtrl.Create(m_pWnd, TTS_NOPREFIX | TTS_ALWAYSTIP);
+		m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
+		m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
+		m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
+		m_toolTipCtrl.Activate(TRUE);
+		m_toolTipCtrl.AddTool(m_pWnd, _T(""));
 
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
@@ -2224,6 +2234,38 @@ public: // Methods
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
+	}
+
+	void _showTooltip(const CString& strTitle, const CString& strText)
+	{
+		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
+
+		if (m_toolTipCtrl.GetToolCount() == 1)
+		{
+			CToolInfo toolInfo;
+			m_toolTipCtrl.GetToolInfo(toolInfo, m_pWnd);
+
+			toolInfo.lpszText = (LPTSTR)(LPCTSTR)strText;
+			m_toolTipCtrl.SetToolInfo(&toolInfo);
+		} // if (m_toolTipCtrl.GetToolCount() == 1)
+		else
+		{
+			m_toolTipCtrl.AddTool(m_pWnd, strText);
+		}
+
+		m_toolTipCtrl.SetTitle(0, strTitle);
+
+		m_toolTipCtrl.Popup();
+	}
+
+	void _hideTooltip()
+	{
+		ASSERT(m_toolTipCtrl.GetToolCount() <= 1);
+
+		if (m_toolTipCtrl.GetToolCount() == 1)
+		{
+			m_toolTipCtrl.Pop();
+		}
 	}
 
 	void _drawCoordinateSystem()

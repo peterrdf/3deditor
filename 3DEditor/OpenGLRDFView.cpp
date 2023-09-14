@@ -2823,6 +2823,18 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 		} // if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && ...
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
+	if (m_pPointedInstance != nullptr)
+	{		
+		wchar_t* szName = nullptr;
+		GetNameOfInstanceW(m_pPointedInstance->GetInstance(), &szName);
+
+		_showTooltip(L"Instance", szName);
+	}
+	else
+	{
+		_hideTooltip();
+	}
+
 	if (m_ptPrevMousePosition.x == -1)
 	{
 		return;
