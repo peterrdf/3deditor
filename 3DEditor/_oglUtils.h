@@ -2610,6 +2610,11 @@ public: // Methods
 
 	void _zoomMouseMButton(LONG lDelta)
 	{
+		if (lDelta == 0)
+		{
+			return;
+		}
+
 		switch (m_enProjection)
 		{
 			case enumProjection::Perspective:
