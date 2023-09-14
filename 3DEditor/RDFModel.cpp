@@ -880,9 +880,10 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 	return m_mapInstanceMetaData.at(pInstance);
 }
 
-void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData)
+void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix/* = L""*/)
 {
 	strMetaData += L"\n";
+	strMetaData += strPrefix;
 	strMetaData += pProperty->GetName() != nullptr ? pProperty->GetName() : L"NA";
 	strMetaData += L": ";
 
@@ -907,7 +908,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 					auto itProperty = m_mapProperties.find(iPropertyInstance);
 					ASSERT(itProperty != m_mapProperties.end());
 
-					GetPropertyMetaData(itInstance->second, itProperty->second, strMetaData);
+					GetPropertyMetaData(itInstance->second, itProperty->second, strMetaData, L" - ");
 
 					iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], iPropertyInstance);
 				} // while (iPropertyInstance != 0)
@@ -923,7 +924,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);			
 
 			if (iCard == 1)
 			{

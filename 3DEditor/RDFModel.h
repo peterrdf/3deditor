@@ -107,7 +107,7 @@ public: // Methods
 	CTexture* GetDefaultTexture();
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData);
+	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix=L"");
 
 private: // Methods
 
