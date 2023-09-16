@@ -57,7 +57,11 @@ public: // Methods
 #ifdef _LINUX
 				wxLogError(wxT("OpenGL error state couldn't be reset."));
 #else
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"OpenGL error state couldn't be reset.", L"OpenGL", MB_ICONERROR | MB_OK);
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(), 
+					_T("OpenGL error state couldn't be reset."), 
+					_T("OpenGL"), 
+					MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 #endif // _LINUX
@@ -70,8 +74,19 @@ public: // Methods
 #ifdef _LINUX
 			wxLogError(wxT("OpenGL error %d"), err);
 #else
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), (const wchar_t*)gluErrorStringWIN(errLast), L"OpenGL", MB_ICONERROR | MB_OK);
-
+#ifdef UNICODE
+			::MessageBoxW(
+				::AfxGetMainWnd()->GetSafeHwnd(),
+				gluErrorUnicodeStringEXT(errLast),
+				_T("OpenGL"),
+				MB_ICONERROR | MB_OK);
+#else
+			::MessageBoxA(
+				::AfxGetMainWnd()->GetSafeHwnd(),
+				(LPCSTR)gluErrorString(errLast),
+				_T("OpenGL"),
+				MB_ICONERROR | MB_OK);
+#endif
 			PostQuitMessage(0);
 #endif // _LINUX
 		}
@@ -164,7 +179,7 @@ public: // Methods
 
 	void getInfoLog(CString& strInfoLog)
 	{
-		strInfoLog = L"NA";
+		strInfoLog = _T("NA");
 
 		int iLength = 0;
 		glGetShaderiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -186,7 +201,7 @@ public: // Methods
 		CString strInfoLog;
 		getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, _T("Error"), MB_ICONERROR | MB_OK);
 	}
 };
 
@@ -469,7 +484,7 @@ protected: // Methods
 
 	void _getInfoLog(CString& strInfoLog) const
 	{
-		strInfoLog = L"NA";
+		strInfoLog = _T("NA");
 
 		int iLength = 0;
 		glGetProgramiv(m_iID, GL_INFO_LOG_LENGTH, &iLength);
@@ -491,7 +506,7 @@ protected: // Methods
 		CString strInfoLog;
 		_getInfoLog(strInfoLog);
 
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strInfoLog, _T("Error"), MB_ICONERROR | MB_OK);
 	}
 
 	glm::vec3 _getUniform3f(GLint iUniform) const
@@ -1058,19 +1073,31 @@ public: // Methods
 		WndClassEx.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		WndClassEx.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		WndClassEx.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		WndClassEx.lpszClassName = L"_OpenGL_Renderer_Window_";
+		WndClassEx.lpszClassName = _T("_OpenGL_Renderer_Window_");
 
 		if (!GetClassInfoEx(::AfxGetInstanceHandle(), WndClassEx.lpszClassName, &WndClassEx))
 		{
 			if (RegisterClassEx(&WndClassEx) == 0)
 			{
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"RegisterClassEx() failed.", L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(), 
+					_T("RegisterClassEx() failed."), 
+					_T("Error"), 
+					MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
 		}
 
-		HWND hWndTemp = CreateWindowEx(WS_EX_APPWINDOW, WndClassEx.lpszClassName, L"OpenGL", dwStyle, 0, 0, 600, 600, nullptr, nullptr, ::AfxGetInstanceHandle(), nullptr);
+		HWND hWndTemp = CreateWindowEx(
+			WS_EX_APPWINDOW, 
+			WndClassEx.lpszClassName, _T("OpenGL"), 
+			dwStyle, 
+			0, 0, 600, 600, 
+			nullptr, 
+			nullptr, 
+			::AfxGetInstanceHandle(), 
+			nullptr);
 
 		HDC hDCTemp = ::GetDC(hWndTemp);
 
@@ -1134,9 +1161,9 @@ public: // Methods
 			if (bWrongGLVersion)
 			{
 				CString strErrorMessage;
-				strErrorMessage.Format(L"OpenGL version %d.%d or higher is required.", MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
+				strErrorMessage.Format(_T("OpenGL version %d.%d or higher is required."), MIN_GL_MAJOR_VERSION, MIN_GL_MINOR_VERSION);
 
-				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, L"Error", MB_ICONERROR | MB_OK);
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strErrorMessage, _T("Error"), MB_ICONERROR | MB_OK);
 
 				PostQuitMessage(0);
 			}
@@ -1162,7 +1189,7 @@ public: // Methods
 		} // if (glewInit() == GLEW_OK) 
 		else
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"glewInit() failed.", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("glewInit() failed."), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -2013,28 +2040,28 @@ public: // Methods
 
 		if (!m_pVertexShader->load(iVertexShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader loading error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->load(iFragmentShader, iResourceType))
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader loading error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader loading error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pVertexShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Vertex shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Vertex shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
 
 		if (!m_pFragmentShader->compile())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Fragment shader compiling error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Fragment shader compiling error!"), _T("Error"), MB_ICONERROR | MB_OK);
 
 			PostQuitMessage(0);
 		}
@@ -2046,7 +2073,7 @@ public: // Methods
 
 		if (!m_pOGLProgram->_link())
 		{
-			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Program linking error!", L"Error", MB_ICONERROR | MB_OK);
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), _T("Program linking error!"), _T("Error"), MB_ICONERROR | MB_OK);
 		}
 
 		m_matModelView = glm::identity<glm::mat4>();

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "glew.h"
+#include "wglew.h"
+
 #include "_material.h"
 
 #include <map>
