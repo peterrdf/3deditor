@@ -1997,17 +1997,12 @@ public: // Methods
 		m_pWnd = pWnd;
 		ASSERT(m_pWnd != nullptr);
 
-		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | WS_CLIPSIBLINGS | TTS_NOANIMATE | TTS_NOFADE | TTS_BALLOON | TTS_ALWAYSTIP);
+		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | WS_CLIPSIBLINGS | TTS_NOANIMATE | TTS_NOFADE | TTS_ALWAYSTIP);
 		m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
 		m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
 		m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
 		m_toolTipCtrl.Activate(TRUE);
 		m_toolTipCtrl.AddTool(m_pWnd, _T(""));
-
-		CMFCToolTipInfo ttInfo;
-		ttInfo.m_bBalloonTooltip = TRUE;
-
-		m_toolTipCtrl.SetParams(&ttInfo);
 
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
