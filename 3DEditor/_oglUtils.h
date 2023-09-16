@@ -2252,7 +2252,22 @@ public: // Methods
 				toolInfo.lpszText = (LPWSTR)szText;
 				m_toolTipCtrl.SetToolInfo(&toolInfo);
 			}
-		}
+			else
+			{
+				CPoint ptCursor;
+				GetCursorPos(&ptCursor);
+
+				m_toolTipCtrl.SetWindowPos(
+					NULL, 
+					ptCursor.x + 10, 
+					ptCursor.y + 10, 
+					0, 
+					0,
+					SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+				return;
+			}
+		} // if (m_toolTipCtrl.GetToolCount() == 1)
 		else
 		{
 			m_toolTipCtrl.SetTitle(0, szTitle);
