@@ -1997,7 +1997,7 @@ public: // Methods
 		m_pWnd = pWnd;
 		ASSERT(m_pWnd != nullptr);
 
-		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | TTS_NOANIMATE | TTS_NOFADE | TTS_BALLOON | TTS_ALWAYSTIP);
+		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | WS_CLIPSIBLINGS | TTS_NOANIMATE | TTS_NOFADE | TTS_BALLOON | TTS_ALWAYSTIP);
 		m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
 		m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
 		m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
@@ -2163,25 +2163,25 @@ public: // Methods
 		// Projection
 		switch (m_enProjection)
 		{
-		case enumProjection::Perspective:
-		{
-			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-			m_pOGLProgram->_setProjectionMatrix(matProjection);
-		}
-		break;
+			case enumProjection::Perspective:
+			{
+				glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+				m_pOGLProgram->_setProjectionMatrix(matProjection);
+			}
+			break;
 
-		case enumProjection::Orthographic:
-		{
-			glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
-			m_pOGLProgram->_setProjectionMatrix(matProjection);
-		}
-		break;
+			case enumProjection::Orthographic:
+			{
+				glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+				m_pOGLProgram->_setProjectionMatrix(matProjection);
+			}
+			break;
 
-		default:
-		{
-			ASSERT(FALSE);
-		}
-		break;
+			default:
+			{
+				ASSERT(FALSE);
+			}
+			break;
 		} // switch (m_enProjection)
 
 		// Model-View Matrix
@@ -2252,16 +2252,17 @@ public: // Methods
 
 			if (CString(toolInfo.lpszText) != szText)
 			{
+				m_toolTipCtrl.SetTitle(0, szTitle);
+
 				toolInfo.lpszText = (LPWSTR)szText;
 				m_toolTipCtrl.SetToolInfo(&toolInfo);
-			}			
+			}
 		}
 		else
 		{
+			m_toolTipCtrl.SetTitle(0, szTitle);
 			m_toolTipCtrl.AddTool(m_pWnd, szText);
-		}
-
-		m_toolTipCtrl.SetTitle(0, szTitle);
+		}		
 
 		m_toolTipCtrl.Popup();
 	}
@@ -2272,7 +2273,7 @@ public: // Methods
 
 		if (m_toolTipCtrl.GetToolCount() == 1)
 		{
-			m_toolTipCtrl.Pop();
+			m_toolTipCtrl.DelTool(m_pWnd, 0);
 		}
 	}
 
