@@ -1997,12 +1997,17 @@ public: // Methods
 		m_pWnd = pWnd;
 		ASSERT(m_pWnd != nullptr);
 
-		m_toolTipCtrl.Create(m_pWnd, TTS_NOPREFIX | TTS_ALWAYSTIP);
+		m_toolTipCtrl.Create(m_pWnd, WS_POPUP | TTS_NOANIMATE | TTS_NOFADE | TTS_BALLOON | TTS_ALWAYSTIP);
 		m_toolTipCtrl.SetDelayTime(TTDT_INITIAL, 0);
 		m_toolTipCtrl.SetDelayTime(TTDT_AUTOPOP, 30000);
 		m_toolTipCtrl.SetDelayTime(TTDT_RESHOW, 30000);
 		m_toolTipCtrl.Activate(TRUE);
 		m_toolTipCtrl.AddTool(m_pWnd, _T(""));
+
+		CMFCToolTipInfo ttInfo;
+		ttInfo.m_bBalloonTooltip = TRUE;
+
+		m_toolTipCtrl.SetParams(&ttInfo);
 
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
@@ -2146,94 +2151,94 @@ public: // Methods
 		// fovY     - Field of vision in degrees in the y direction
 		// aspect   - Aspect ratio of the viewport
 		// zNear    - The near clipping distance
-// zFar     - The far clipping distance
-GLdouble fovY = 45.0;
-GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-GLdouble zNear = 0.0001;
-GLdouble zFar = 1000.0;
+		// zFar     - The far clipping distance
+		GLdouble fovY = 45.0;
+		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+		GLdouble zNear = 0.0001;
+		GLdouble zFar = 1000.0;
 
-GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-GLdouble fW = fH * aspect;
+		GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+		GLdouble fW = fH * aspect;
 
-// Projection
-switch (m_enProjection)
-{
-case enumProjection::Perspective:
-{
-	glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-	m_pOGLProgram->_setProjectionMatrix(matProjection);
-}
-break;
+		// Projection
+		switch (m_enProjection)
+		{
+		case enumProjection::Perspective:
+		{
+			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+			m_pOGLProgram->_setProjectionMatrix(matProjection);
+		}
+		break;
 
-case enumProjection::Orthographic:
-{
-	glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
-	m_pOGLProgram->_setProjectionMatrix(matProjection);
-}
-break;
+		case enumProjection::Orthographic:
+		{
+			glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+			m_pOGLProgram->_setProjectionMatrix(matProjection);
+		}
+		break;
 
-default:
-{
-	ASSERT(FALSE);
-}
-break;
-} // switch (m_enProjection)
+		default:
+		{
+			ASSERT(FALSE);
+		}
+		break;
+		} // switch (m_enProjection)
 
-// Model-View Matrix
-m_matModelView = glm::identity<glm::mat4>();
-m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		// Model-View Matrix
+		m_matModelView = glm::identity<glm::mat4>();
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
 
-float fXTranslation = fXmin;
-fXTranslation += (fXmax - fXmin) / 2.f;
-fXTranslation = -fXTranslation;
+		float fXTranslation = fXmin;
+		fXTranslation += (fXmax - fXmin) / 2.f;
+		fXTranslation = -fXTranslation;
 
-float fYTranslation = fYmin;
-fYTranslation += (fYmax - fYmin) / 2.f;
-fYTranslation = -fYTranslation;
+		float fYTranslation = fYmin;
+		fYTranslation += (fYmax - fYmin) / 2.f;
+		fYTranslation = -fYTranslation;
 
-float fZTranslation = fZmin;
-fZTranslation += (fZmax - fZmin) / 2.f;
-fZTranslation = -fZTranslation;
+		float fZTranslation = fZmin;
+		fZTranslation += (fZmax - fZmin) / 2.f;
+		fZTranslation = -fZTranslation;
 
-m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
-if (m_enRotationMode == enumRotationMode::XY)
-{
-	m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
-	m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
-	m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
-}
-else if (m_enRotationMode == enumRotationMode::XYZ)
-{
-	// Apply rotation...
-	_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
-	m_rotation.cross(rotation);
+		if (m_enRotationMode == enumRotationMode::XY)
+		{
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ)
+		{
+			// Apply rotation...
+			_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
+			m_rotation.cross(rotation);
 
-	// ... and reset
-	m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+			// ... and reset
+			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
 
-	const double* pRotationMatirx = m_rotation.toMatrix();
-	glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
-	delete pRotationMatirx;
+			const double* pRotationMatirx = m_rotation.toMatrix();
+			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
+			delete pRotationMatirx;
 
-	m_matModelView = m_matModelView * matTransformation;
-}
-else
-{
-	ASSERT(FALSE);
-}
+			m_matModelView = m_matModelView * matTransformation;
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
 
-m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
-// Normal Matrix
-glm::mat4 matNormal = m_matModelView;
-matNormal = glm::inverse(matNormal);
-matNormal = glm::transpose(matNormal);
-m_pOGLProgram->_setNormalMatrix(matNormal);
+		// Normal Matrix
+		glm::mat4 matNormal = m_matModelView;
+		matNormal = glm::inverse(matNormal);
+		matNormal = glm::transpose(matNormal);
+		m_pOGLProgram->_setNormalMatrix(matNormal);
 
-// Model
-m_pOGLProgram->_enableBlinnPhongModel(true);
+		// Model
+		m_pOGLProgram->_enableBlinnPhongModel(true);
 	}
 
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
