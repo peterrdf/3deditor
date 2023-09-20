@@ -152,14 +152,14 @@
 #define ID_SHOW_TANGENT_VECTORS         32825
 #define ID_SHOW_BI_NORMAL_VECTORS       32826
 #define ID_SHOW_BOUNDING_BOXES          32827
-#define ID_VIEW_ISOMETRIC				32828
+#define ID_VIEW_ISOMETRIC               32828
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32829
+#define _APS_NEXT_COMMAND_VALUE         32830
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

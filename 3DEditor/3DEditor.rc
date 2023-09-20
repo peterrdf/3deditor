@@ -551,7 +551,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Base information",            ID_INSTANCES_BASE_INFORMATION
         MENUITEM "Meta information",            ID_INSTANCES_META_INFORMATION
-        MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Enable",                      ID_INSTANCES_ENABLE
         MENUITEM "Disable All But This",        ID_INSTANCES_DISABLE_ALL_BUT_THIS
@@ -561,6 +560,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Remove",                      ID_INSTANCES_REMOVE
         MENUITEM "Remove Tree",                 ID_INSTANCES_REMOVE_TREE
+        MENUITEM SEPARATOR
+        MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Search",                      ID_INSTANCES_SEARCH
     END
@@ -580,12 +581,15 @@ IDR_POPUP_INSTANCES_NO_GEOMETRY MENU
 BEGIN
     POPUP "Instances"
     BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "Enable All",                  ID_INSTANCES_ENABLE_ALL
         MENUITEM "Enable All Unreferenced",     ID_INSTANCES_ENABLE_ALL_UNREFERENCED
         MENUITEM "Enable All Referenced",       ID_INSTANCES_ENABLE_ALL_REFERENCED
         MENUITEM SEPARATOR
         MENUITEM "Remove",                      ID_INSTANCES_REMOVE
         MENUITEM "Remove Tree",                 ID_INSTANCES_REMOVE_TREE
+        MENUITEM SEPARATOR
+        MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Search",                      ID_INSTANCES_SEARCH
     END
@@ -607,14 +611,14 @@ BEGIN
         END
         POPUP "View"
         BEGIN
-            MENUITEM "Front",                   ID_VIEW_FRONT
-            MENUITEM "Back",                    ID_VIEW_BACK
-            MENUITEM "Top",                     ID_VIEW_TOP
-            MENUITEM "Bottom",                  ID_VIEW_BOTTOM
-            MENUITEM "Left",                    ID_VIEW_LEFT
-            MENUITEM "Right",                   ID_VIEW_RIGHT
+            MENUITEM "Front",                       ID_VIEW_FRONT
+            MENUITEM "Back",                        ID_VIEW_BACK
+            MENUITEM "Top",                         ID_VIEW_TOP
+            MENUITEM "Bottom",                      ID_VIEW_BOTTOM
+            MENUITEM "Left",                        ID_VIEW_LEFT
+            MENUITEM "Right",                       ID_VIEW_RIGHT
             MENUITEM SEPARATOR
-            MENUITEM "Isometric",               ID_VIEW_ISOMETRIC
+            MENUITEM "Isometric",                   ID_VIEW_ISOMETRIC
         END
         POPUP "Show"
         BEGIN
@@ -624,11 +628,11 @@ BEGIN
             MENUITEM "Lines",                       ID_SHOW_LINES
             MENUITEM "Points",                      ID_SHOW_POINTS
             MENUITEM SEPARATOR
-            MENUITEM "Normal vectors", ID_NORMAL_VECTORS
-            MENUITEM "Tangent vectors", ID_SHOW_TANGENT_VECTORS
-            MENUITEM "Bi-normal vectors", ID_SHOW_BI_NORMAL_VECTORS
+            MENUITEM "Normal vectors",              ID_NORMAL_VECTORS
+            MENUITEM "Tangent vectors",             ID_SHOW_TANGENT_VECTORS
+            MENUITEM "Bi-normal vectors",           ID_SHOW_BI_NORMAL_VECTORS
             MENUITEM SEPARATOR
-            MENUITEM "Bounding boxes", ID_SHOW_BOUNDING_BOXES
+            MENUITEM "Bounding boxes",              ID_SHOW_BOUNDING_BOXES
         END
     END
 END

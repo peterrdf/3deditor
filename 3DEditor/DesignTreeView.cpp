@@ -1820,12 +1820,6 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 			break;
 
-			case ID_INSTANCES_SAVE:
-			{
-				GetController()->Save(pInstance);
-			}
-			break;
-
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
 				auto itRFDInstances = mapInstances.begin();
@@ -1923,6 +1917,12 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			case ID_INSTANCES_ADD_MEASUREMENTS:
 			{
 				GetController()->AddMeasurements(this, pInstance);
+			}
+			break;
+
+			case ID_INSTANCES_SAVE:
+			{
+				GetController()->Save(pInstance);
 			}
 			break;
 
@@ -2025,6 +2025,12 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			MessageBox(L"Not an option yet I.", L"Error", MB_ICONERROR | MB_OK);
 			GetController()->DeleteInstance(this, pInstance);
+		}
+		break;
+
+		case ID_INSTANCES_SAVE:
+		{
+			GetController()->Save(pInstance);
 		}
 		break;
 
