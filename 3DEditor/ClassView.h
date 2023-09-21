@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 #include "RDFView.h"
-#include "SearchClassesDialog.h"
+#include "SearchTreeCtrlDialog.h"
 
 class CClassToolBar : public CMFCToolBar
 {
@@ -18,19 +18,32 @@ class CClassToolBar : public CMFCToolBar
 class CClassView
 	: public CDockablePane
 	, public CRDFView
+	, public CSearchTreeCtrlDialogSite
 {
+
+private: // Classes
+
+	enum class enumSearchFilter {
+		All = 0,
+		Classes = 1,
+		Properties = 2,
+		Values = 3,
+	};
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Search
-	CSearchClassesDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Overridden
-	virtual void OnModelChanged();
+	// CRDFView
+	virtual void OnModelChanged() override;
+
+	// CSearchTreeCtrlDialogSite
+	virtual CTreeCtrlEx* GetTreeView() override;
+	virtual vector<CString> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM /*hItem*/) override {};
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
 private: // Methods
 
@@ -73,7 +86,7 @@ public:
 
 protected:
 	CClassToolBar m_toolBar;
-	CViewTree m_treeCtrl;
+	CTreeCtrlEx m_treeCtrl;
 	CImageList m_images;
 	UINT m_nCurrSort;
 

@@ -13,28 +13,26 @@ public: // Methods
 	}
 
 	// --------------------------------------------------------------------------------------------
-	virtual bool IsSelected(HTREEITEM hItem, COLORREF& clr) = 0;
+	virtual bool IsSelected(HTREEITEM hItem) PURE;
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CViewTree window
+// CTreeCtrlEx window
 
-class CViewTree : public CTreeCtrl
+class CTreeCtrlEx : public CTreeCtrl
 {
 
 private: // Members
-
-	// --------------------------------------------------------------------------------------------
+	
 	CItemStateProvider* m_pItemStateProvider;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	void SetItemStateProvider(CItemStateProvider* pItemStateProvider);
 
 // Construction
 public:
-	CViewTree();
+	CTreeCtrlEx();
 
 // Overrides
 protected:
@@ -42,10 +40,11 @@ protected:
 
 // Implementation
 public:
-	virtual ~CViewTree();
+	virtual ~CTreeCtrlEx();
 
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 };

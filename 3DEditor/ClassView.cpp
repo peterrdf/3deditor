@@ -48,6 +48,98 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CTreeCtrlEx* CClassView::GetTreeView() /*override*/
+{
+	return &m_treeCtrl;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<CString> CClassView::GetSearchFilters() /*override*/
+{
+	return vector<CString>
+	{
+		_T("(All)"),
+		_T("Classes"),
+		_T("Properties"),
+		_T("Values"),
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CClassView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// Classes
+	if (iFilter == (int)enumSearchFilter::Classes)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_CLASS)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Properties
+	if (iFilter == (int)enumSearchFilter::Properties)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_PROPERTY)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Values
+	if (iFilter == (int)enumSearchFilter::Values)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_VALUE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
+}
+
 CRDFModel* CClassView::GetModel() const
 {
 	auto pController = GetController();
@@ -592,8 +684,8 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	//  Search
-	m_pSearchDialog = new CSearchClassesDialog(&m_treeCtrl);
-	m_pSearchDialog->Create(IDD_DIALOG_SEARCH_CLASSES, this);
+	m_pSearchDialog = new CSearchTreeCtrlDialog(this);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }

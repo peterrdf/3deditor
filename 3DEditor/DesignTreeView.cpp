@@ -661,16 +661,139 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem, COLORREF& clr) /*override*/
+/*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
 	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance))
 	{
-		clr = RGB(255, 0, 0);
 		return pItem->GetInstance() == GetController()->GetSelectedInstance();
 	}
 
 	return false;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
+{
+	return &m_treeCtrl;
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
+{
+	return vector<CString>
+	{
+		_T("(All)"),
+		_T("Instances"),
+		_T("Properties"),
+		_T("Values"),
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
+{
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	TVITEMW tvItem = {};
+	tvItem.hItem = hItem;
+	tvItem.mask = TVIF_HANDLE | TVIF_CHILDREN;
+
+	if (!GetTreeView()->GetItem(&tvItem))
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	if (tvItem.cChildren != 1)
+	{
+		return;
+	}
+
+	if (m_treeCtrl.GetChildItem(hItem) == nullptr)
+	{
+		GetTreeView()->Expand(hItem, TVE_EXPAND);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
+{
+	if (hItem == NULL)
+	{
+		ASSERT(FALSE);
+
+		return FALSE;
+	}
+
+	CString strItemText = GetTreeView()->GetItemText(hItem);
+	strItemText.MakeLower();
+
+	CString strTextLower = strText;
+	strTextLower.MakeLower();
+
+	// Instances
+	if (iFilter == (int)enumSearchFilter::Instances)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_INSTANCE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Properties
+	if (iFilter == (int)enumSearchFilter::Properties)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_PROPERTY)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// Values
+	if (iFilter == (int)enumSearchFilter::Values)
+	{
+		int iImage, iSelectedImage = -1;
+		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
+
+		ASSERT(iImage == iSelectedImage);
+
+		if (iImage == IMAGE_VALUE)
+		{
+			return strItemText.Find(strTextLower, 0) != -1;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	// All
+	return strItemText.Find(strTextLower, 0) != -1;
 }
 
 CRDFModel* CDesignTreeView::GetModel() const
@@ -1148,7 +1271,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 	tvInsertStruct.item.pszText = (LPWSTR)pInstance->GetUniqueName();
 	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
 	tvInsertStruct.item.lParam = NULL;
-	tvInsertStruct.item.cChildren = IMAGE_INSTANCE;
+	tvInsertStruct.item.cChildren = 1;
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
@@ -1692,8 +1815,8 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 
 	//  Search
-	m_pSearchDialog = new CSearchInstancesDialog(&m_treeCtrl);
-	m_pSearchDialog->Create(IDD_DIALOG_SEARCH_INSTANCES, this);
+	m_pSearchDialog = new CSearchTreeCtrlDialog(this);
+	m_pSearchDialog->Create(IDD_DIALOG_SEARCH, this);
 
 	return 0;
 }

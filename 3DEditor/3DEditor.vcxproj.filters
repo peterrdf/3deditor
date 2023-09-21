@@ -50,9 +50,6 @@
     <ClInclude Include="ClassView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ViewTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PropertiesWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -125,16 +122,10 @@
     <ClInclude Include="UniqueVerticesCheckE0.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchInstancesDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DesignTreeViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassViewConsts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SearchClassesDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectInstanceDialog.h">
@@ -179,6 +170,12 @@
     <ClInclude Include="..\stb\stb_easy_font.h">
       <Filter>stb</Filter>
     </ClInclude>
+    <ClInclude Include="SearchTreeCtrlDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeCtrlEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -200,9 +197,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClassView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropertiesWnd.cpp">
@@ -271,12 +265,6 @@
     <ClCompile Include="UniqueVerticesCheckE0.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SearchInstancesDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SearchClassesDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SelectInstanceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -303,6 +291,12 @@
     </ClCompile>
     <ClCompile Include="..\stb\stb_image.cpp">
       <Filter>stb</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchTreeCtrlDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeCtrlEx.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

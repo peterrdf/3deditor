@@ -241,8 +241,7 @@
     <ClInclude Include="RDFPropertyRestriction.h" />
     <ClInclude Include="RDFView.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SearchClassesDialog.h" />
-    <ClInclude Include="SearchInstancesDialog.h" />
+    <ClInclude Include="SearchTreeCtrlDialog.h" />
     <ClInclude Include="SelectInstanceDialog.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringRDFProperty.h" />
@@ -251,10 +250,10 @@
     <ClInclude Include="TestHtmlReport.h" />
     <ClInclude Include="TestManager.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="UndefinedRDFProperty.h" />
     <ClInclude Include="UniqueVerticesCheckE0.h" />
     <ClInclude Include="Vector.h" />
-    <ClInclude Include="ViewTree.h" />
     <ClInclude Include="_dxf_parser.h" />
     <ClInclude Include="_geometry.h" />
     <ClInclude Include="_material.h" />
@@ -292,8 +291,7 @@
     <ClCompile Include="RDFPropertyItem.cpp" />
     <ClCompile Include="RDFPropertyRestriction.cpp" />
     <ClCompile Include="RDFView.cpp" />
-    <ClCompile Include="SearchClassesDialog.cpp" />
-    <ClCompile Include="SearchInstancesDialog.cpp" />
+    <ClCompile Include="SearchTreeCtrlDialog.cpp" />
     <ClCompile Include="SelectInstanceDialog.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -306,9 +304,9 @@
     <ClCompile Include="TestHtmlReport.cpp" />
     <ClCompile Include="TestManager.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="UndefinedRDFProperty.cpp" />
     <ClCompile Include="UniqueVerticesCheckE0.cpp" />
-    <ClCompile Include="ViewTree.cpp" />
     <ClCompile Include="_dxf_parser.cpp" />
   </ItemGroup>
   <ItemGroup>

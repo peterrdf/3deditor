@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include "ViewTree.h"
+#include "TreeCtrlEx.h"
 #include "RDFView.h"
 #include "RDFInstance.h"
 #include "RDFInstanceItem.h"
 #include "RDFPropertyItem.h"
-#include "SearchInstancesDialog.h"
+#include "SearchTreeCtrlDialog.h"
 
 #include <map>
 using namespace std;
@@ -25,7 +25,15 @@ class CDesignTreeView
 	: public CDockablePane
 	, public CRDFView
 	, public CItemStateProvider
+	, public CSearchTreeCtrlDialogSite
 {
+
+	enum class enumSearchFilter : int {
+		All = 0,
+		Instances,
+		Properties,
+		Values,
+	};
 
 private: // Members
 
@@ -41,7 +49,7 @@ private: // Members
 	bool m_bUpdateInProgress; // Don't send notifications while updating the view
 
 	// Search
-	CSearchInstancesDialog* m_pSearchDialog;
+	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 	
@@ -55,7 +63,13 @@ public: // Methods
 	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CItemStateProvider
-	virtual bool IsSelected(HTREEITEM hItem, COLORREF& clr) override;
+	virtual bool IsSelected(HTREEITEM hItem) override;
+
+	// CSearchTreeCtrlDialogSite
+	virtual CTreeCtrlEx* GetTreeView() override;
+	virtual vector<CString> GetSearchFilters() override;
+	virtual void LoadChildrenIfNeeded(HTREEITEM hItem) override;
+	virtual BOOL ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) override;
 
 private: // Methods
 
@@ -91,7 +105,7 @@ public:
 // Attributes
 protected:
 
-	CViewTree m_treeCtrl;
+	CTreeCtrlEx m_treeCtrl;
 	CImageList m_images;
 	CDesignTreeViewToolBar m_toolBar;
 	UINT m_nCurrSort;
