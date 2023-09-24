@@ -178,6 +178,7 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Removes an instance tree
 	bool DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInstance);
+	bool DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Removes instances

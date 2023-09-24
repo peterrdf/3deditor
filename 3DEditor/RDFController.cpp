@@ -320,6 +320,22 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 	}
 
+	if (DeleteInstanceTreeRecursive(pSender, pInstance))
+	{
+		auto itView = m_setViews.begin();
+		for (; itView != m_setViews.end(); itView++)
+		{
+			(*itView)->OnInstancesDeleted(pSender);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance)
+{
 	int64_t iInstance = pInstance->GetInstance();
 
 	//
@@ -331,7 +347,7 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 		int64_t iProperty = GetInstancePropertyByIterator(iInstance, 0);
 		while (iProperty) {
 			if (GetPropertyType(iProperty) == 1) {
-				int64_t	* values = 0, card = 0;
+				int64_t* values = 0, card = 0;
 				GetObjectProperty(iInstance, iProperty, &values, &card);
 				childCnt += card;
 			}
@@ -339,13 +355,13 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 		}
 	}
 
-	int64_t	* childInstanceArray = new int64_t[childCnt];
+	int64_t* childInstanceArray = new int64_t[childCnt];
 
 	{
 		int64_t	i = 0, iProperty = GetInstancePropertyByIterator(iInstance, 0);
 		while (iProperty) {
 			if (GetPropertyType(iProperty) == 1) {
-				int64_t	* values = 0, card = 0;
+				int64_t* values = 0, card = 0;
 				GetObjectProperty(iInstance, iProperty, &values, &card);
 				memcpy(&childInstanceArray[i], values, card * sizeof(int64_t));
 				i += card;
@@ -358,16 +374,10 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 	bool bResult = m_pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
 
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnInstanceDeleted(pSender, iInstance);
-	}
-
 	for (int64_t i = 0; i < childCnt; i++) {
 		auto pChildInstance = m_pModel->GetInstanceByIInstance(childInstanceArray[i]);
 		if (pChildInstance) {
-			DeleteInstanceTree(pSender, pChildInstance);
+			DeleteInstanceTreeRecursive(pSender, pChildInstance);
 		}
 	}
 

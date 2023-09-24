@@ -595,6 +595,16 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
+/*virtual*/ void CDesignTreeView::OnInstancesDeleted(CRDFView* pSender)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	UpdateView();
+}
+
 /*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
 {
 	if (pSender == this)
@@ -2020,7 +2030,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				GetController()->DeleteInstance(this, pInstance);
+				GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
 			}
 			break;
 
@@ -2033,7 +2043,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				GetController()->DeleteInstanceTree(this, pInstance);
+				GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);
 			}
 			break;
 
@@ -2133,7 +2143,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			GetController()->DeleteInstance(this, pInstance);
+			GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
 		}
 		break;
 
@@ -2146,8 +2156,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			MessageBox(L"Not an option yet I.", L"Error", MB_ICONERROR | MB_OK);
-			GetController()->DeleteInstance(this, pInstance);
+			GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
 		}
 		break;
 
@@ -2333,7 +2342,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 
-			GetController()->SelectInstance(nullptr/*update this view*/, pInstanceItem->GetInstance());
+			GetController()->SelectInstance(nullptr/*update this view also*/, pInstanceItem->GetInstance());
 		}
 		else if (pItem->getType() == enumItemType::Property)
 		{
