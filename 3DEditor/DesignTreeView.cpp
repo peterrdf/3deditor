@@ -867,7 +867,7 @@ void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeIt
 		{
 			vecAncestors.push_back(iInstance);
 
-			iInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
+			iInstance = GetInstanceInverseReferencesByIterator(m_pSelectedInstance->GetInstance(), iInstance);
 		}
 
 		/** Load the ancestors */
