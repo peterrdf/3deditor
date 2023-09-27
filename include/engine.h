@@ -39,23 +39,25 @@
 #endif
 
 
-typedef		int64_t								RdfsResource;
-typedef		RdfsResource						OwlModel;
-typedef		RdfsResource						OwlClass;
-typedef		RdfsResource						OwlInstance;
-typedef		RdfsResource						RdfProperty;
-typedef		RdfProperty							OwlDatatypeProperty;
-typedef		RdfProperty							OwlObjectProperty;
-typedef		int64_t								RdfPropertyType;
-typedef		int64_t								ConceptualFace;
+typedef		int64_t										RdfsResource;
+typedef		RdfsResource								OwlModel;
+typedef		RdfsResource								OwlClass;
+typedef		RdfsResource								OwlInstance;
+typedef		RdfsResource								RdfProperty;
+typedef		RdfProperty									OwlDatatypeProperty;
+typedef		RdfProperty									OwlObjectProperty;
+typedef		int64_t										RdfPropertyType;
+typedef		int64_t										ConceptualFace;
 
-#define		OBJECTPROPERTY_TYPE					1
-#define		OBJECTTYPEPROPERTY_TYPE				1
-#define		DATATYPEPROPERTY_TYPE_BOOLEAN 		2
-#define		DATATYPEPROPERTY_TYPE_CHAR			3
-#define		DATATYPEPROPERTY_TYPE_INTEGER		4
-#define		DATATYPEPROPERTY_TYPE_DOUBLE		5
-#define		DATATYPEPROPERTY_TYPE_BYTE			6
+#define		OBJECTPROPERTY_TYPE							1
+#define		OBJECTTYPEPROPERTY_TYPE						1
+#define		DATATYPEPROPERTY_TYPE_BOOLEAN 				2
+#define		DATATYPEPROPERTY_TYPE_STRING				3		//	DATATYPEPROPERTY_TYPE_CHAR
+#define		DATATYPEPROPERTY_TYPE_INTEGER				4
+#define		DATATYPEPROPERTY_TYPE_DOUBLE				5
+#define		DATATYPEPROPERTY_TYPE_BYTE					6
+#define		DATATYPEPROPERTY_TYPE_CHAR_ARRAY			7
+#define		DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY			8
 
 //
 // Flags can be used in bitwise combination for settings and masks to SetFormat, GetFormat and other functions working with settings
@@ -1857,8 +1859,15 @@ OwlModel		DECL STDC	IsModel(
 //
 //				OwlClass				returns								OUT
 //
-//	Returns a handle to an on the fly created class.
-//	If the model input is zero or not a model handle 0 will be returned,
+//	Returns a handle to an on the fly created class, however when
+//	a class with this name already exists the handle of existing class will be returned.
+//
+//	The following reasons will cause a return value of 0:
+//		-	when the name is already used for an instance or property;
+//		-	if the model input is zero or not a model handle.
+//
+//	Giving the class a name is optional, if a name is not given it will recieve an automatically generated name,
+//	it's automatically generated name can change between sessions.
 //
 OwlClass		DECL STDC	CreateClass(
 									OwlModel				model,
@@ -1882,6 +1891,18 @@ static	inline	OwlClass	CreateClass(
 				);
 }
 
+//
+//
+static	inline	OwlClass	CreateClass(
+									OwlModel				model
+								)
+{
+	return	CreateClass(
+					model,
+					(const char*) nullptr					//	name
+				);
+}
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -1893,8 +1914,15 @@ static	inline	OwlClass	CreateClass(
 //
 //				OwlClass				returns								OUT
 //
-//	Returns a handle to an on the fly created class.
-//	If the model input is zero or not a model handle 0 will be returned,
+//	Returns a handle to an on the fly created class, however when
+//	a class with this name already exists the handle of existing class will be returned.
+//
+//	The following reasons will cause a return value of 0:
+//		-	when the name is already used for an instance or property;
+//		-	if the model input is zero or not a model handle.
+//
+//	Giving the class a name is optional, if a name is not given it will recieve an automatically generated name,
+//	it's automatically generated name can change between sessions.
 //
 OwlClass		DECL STDC	CreateClassW(
 									OwlModel				model,
@@ -1918,6 +1946,18 @@ static	inline	OwlClass	CreateClassW(
 				);
 }
 
+//
+//
+static	inline	OwlClass	CreateClassW(
+									OwlModel				model
+								)
+{
+	return	CreateClassW(
+					model,
+					(const wchar_t*) nullptr				//	name
+				);
+}
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -1930,10 +1970,7 @@ static	inline	OwlClass	CreateClassW(
 //				OwlClass				returns								OUT
 //
 //	Returns a handle to the class as stored inside.
-//	When the class does not exist yet and the name is unique
-//	the class will be created on the fly and the handle will be returned.
-//	When the name is not unique and given to an instance, objectTypeProperty
-//	or dataTypeProperty 0 will be returned.
+//	When there is no class with such a name the return value is 0 (note that GetModellingStyle(..) can change this behavior).
 //
 OwlClass		DECL STDC	GetClassByName(
 									OwlModel				model,
@@ -1969,10 +2006,7 @@ static	inline	OwlClass	GetClassByName(
 //				OwlClass				returns								OUT
 //
 //	Returns a handle to the class as stored inside.
-//	When the class does not exist yet and the name is unique
-//	the class will be created on the fly and the handle will be returned.
-//	When the name is not unique and given to an instance, objectTypeProperty
-//	or dataTypeProperty 0 will be returned.
+//	When there is no class with such a name the return value is 0 (note that GetModellingStyle(..) can change this behavior).
 //
 OwlClass		DECL STDC	GetClassByNameW(
 									OwlModel				model,
@@ -2054,6 +2088,13 @@ int64_t			DECL STDC	SetClassParent(
 //	of parent classes is also inherited as well as cardinality restrictions on datatype properties and
 //	object properties (relations).
 //
+//	When set: it adds parentOwlClass as immediate parent of owlClass if and only if 
+//	parentOwlClass is not ancestor of owlClass and owlClass is not ancestor of parentOwlClass.
+//	Returns the same value as IsClassAncestor after the call.
+//
+//	When unset: it removes parentOwlClass from immediate parents and returns 1, 
+//	or retunrs 0 if parentOwlClass is not immediate parent
+// 
 //	This call has the same behavior as SetClassParent, however needs to be
 //	used in case classes are exchanged as a successive series of integers.
 //
@@ -2102,8 +2143,17 @@ OwlClass		DECL STDC	GetClassParentsByIterator(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the class, if no error it returns 0.
-//	In case class does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the class, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument owlClass is incorrect (not a proper handle to an active class)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of owlClass is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfClass(
 									OwlClass				owlClass,
@@ -2138,8 +2188,17 @@ static	inline	int64_t	SetNameOfClass(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the class, if no error it returns 0.
-//	In case class does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the class, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument owlClass is incorrect (not a proper handle to an active class)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of owlClass is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfClassW(
 									OwlClass				owlClass,
@@ -2175,8 +2234,17 @@ static	inline	int64_t	SetNameOfClassW(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the class, if no error it returns 0.
-//	In case class does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the class, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or owlClass is incorrect (not a proper handle to an active class)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of owlClass is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 //	This call has the same behavior as SetNameOfClass, however needs to be
 //	used in case classes are exchanged as a successive series of integers.
@@ -2218,8 +2286,17 @@ static	inline	int64_t	SetNameOfClassEx(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the class, if no error it returns 0.
-//	In case class does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the class, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or owlClass is incorrect (not a proper handle to an active class)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of owlClass is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 //	This call has the same behavior as SetNameOfClassW, however needs to be
 //	used in case classes are exchanged as a successive series of integers.
@@ -2778,8 +2855,15 @@ OwlClass		DECL STDC	IsClass(
 //
 //				RdfProperty				returns								OUT
 //
-//	Returns a handle to an on the fly created property.
-//	If the model input is zero or not a model handle 0 will be returned,
+//	Returns a handle to an on the fly created property, however when
+//	a property with this name already exists the handle of existing property will be returned.
+//
+//	The following reasons will cause a return value of 0:
+//		-	when the name is already used for a class or instance;
+//		-	if the model input is zero or not a model handle.
+//
+//	Giving the property a name is optional, if a name is not given it will recieve an automatically generated name,
+//	it's automatically generated name can change between sessions.
 //
 RdfProperty		DECL STDC	CreateProperty(
 									OwlModel				model,
@@ -2806,6 +2890,33 @@ static	inline	RdfProperty	CreateProperty(
 				);
 }
 
+//
+//
+static	inline	RdfProperty	CreateProperty(
+									OwlModel				model,
+									int64_t					rdfPropertyType
+								)
+{
+	return	CreateProperty(
+					model,
+					rdfPropertyType,
+					(const char*) nullptr				//	name
+				);
+}
+
+//
+//
+static	inline	RdfProperty	CreateProperty(
+									OwlModel				model
+								)
+{
+	return	CreateProperty(
+					model,
+					0,									//	rdfPropertyType
+					(const char*) nullptr				//	name
+				);
+}
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -2818,8 +2929,15 @@ static	inline	RdfProperty	CreateProperty(
 //
 //				RdfProperty				returns								OUT
 //
-//	Returns a handle to an on the fly created property.
-//	If the model input is zero or not a model handle 0 will be returned,
+//	Returns a handle to an on the fly created property, however when
+//	a property with this name already exists the handle of existing property will be returned.
+//
+//	The following reasons will cause a return value of 0:
+//		-	when the name is already used for a class or instance;
+//		-	if the model input is zero or not a model handle.
+//
+//	Giving the property a name is optional, if a name is not given it will recieve an automatically generated name,
+//	it's automatically generated name can change between sessions.
 //
 RdfProperty		DECL STDC	CreatePropertyW(
 									OwlModel				model,
@@ -2846,6 +2964,33 @@ static	inline	RdfProperty	CreatePropertyW(
 				);
 }
 
+//
+//
+static	inline	RdfProperty	CreatePropertyW(
+									OwlModel				model,
+									int64_t					rdfPropertyType
+								)
+{
+	return	CreatePropertyW(
+					model,
+					rdfPropertyType,
+					(const wchar_t*) nullptr			//	name
+				);
+}
+
+//
+//
+static	inline	RdfProperty	CreatePropertyW(
+									OwlModel				model
+								)
+{
+	return	CreatePropertyW(
+					model,
+					0,									//	rdfPropertyType
+					(const wchar_t*) nullptr			//	name
+				);
+}
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
@@ -2858,9 +3003,7 @@ static	inline	RdfProperty	CreatePropertyW(
 //				RdfProperty				returns								OUT
 //
 //	Returns a handle to the objectTypeProperty or dataTypeProperty as stored inside.
-//	When the property does not exist yet and the name is unique
-//	the property will be created on-the-fly and the handle will be returned.
-//	When the name is not unique and given to a class or instance 0 will be returned.
+//	When there is no property with such a name the return value is 0 (note that GetModellingStyle(..) can change this behavior).
 //
 RdfProperty		DECL STDC	GetPropertyByName(
 									OwlModel				model,
@@ -2896,9 +3039,7 @@ static	inline	RdfProperty	GetPropertyByName(
 //				RdfProperty				returns								OUT
 //
 //	Returns a handle to the objectTypeProperty or dataTypeProperty as stored inside.
-//	When the property does not exist yet and the name is unique
-//	the property will be created on-the-fly and the handle will be returned.
-//	When the name is not unique and given to a class or instance 0 will be returned.
+//	When there is no property with such a name the return value is 0 (note that GetModellingStyle(..) can change this behavior).
 //
 RdfProperty		DECL STDC	GetPropertyByNameW(
 									OwlModel				model,
@@ -3037,8 +3178,17 @@ RdfProperty		DECL STDC	GetPropertyParentsByIterator(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the property, if no error it returns 0.
-//	In case property does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the property, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of rdfProperty is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfProperty(
 									RdfProperty				rdfProperty,
@@ -3073,8 +3223,17 @@ static	inline	int64_t	SetNameOfProperty(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the property, if no error it returns 0.
-//	In case property does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the property, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of rdfProperty is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfPropertyW(
 									RdfProperty				rdfProperty,
@@ -3110,8 +3269,20 @@ static	inline	int64_t	SetNameOfPropertyW(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the property, if no error it returns 0.
-//	In case property does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the property, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or rdfProperty is incorrect (not a proper handle to an active property)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of rdfProperty is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
+//
+//	This call has the same behavior as SetNameOfProperty, however needs to be
+//	used in case properties are exchanged as a successive series of integers.
 //
 int64_t			DECL STDC	SetNameOfPropertyEx(
 									OwlModel				model,
@@ -3150,8 +3321,20 @@ static	inline	int64_t	SetNameOfPropertyEx(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the property, if no error it returns 0.
-//	In case property does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the property, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or rdfProperty is incorrect (not a proper handle to an active property)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of rdfProperty is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
+//
+//	This call has the same behavior as SetNameOfPropertyW, however needs to be
+//	used in case properties are exchanged as a successive series of integers.
 //
 int64_t			DECL STDC	SetNameOfPropertyWEx(
 									OwlModel				model,
@@ -3468,7 +3651,7 @@ RdfPropertyType	DECL STDC	GetPropertyTypeEx(
 //	The return value represents a bit set defining findings during the removal, if a clean removal with no side effects was possible the return value is 0. In all other cases 
 //	the following bits represent the findings during removal:
 //		bit 0:
-//			0	Iunput as expected
+//			0	Input as expected
 //			1	Encountered an issue on input value, i.e. property was not recognized as property
 //		bit 1:
 //			0	No 'child' properties found
@@ -3985,8 +4168,17 @@ OwlInstance		DECL STDC	GetInstanceReferencesByIterator(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the instance, if no error it returns 0.
-//	In case instance does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the instance, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument owlInstance is incorrect (not a proper handle to an active instance)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of instance is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfInstance(
 									OwlInstance				owlInstance,
@@ -4021,8 +4213,17 @@ static	inline	int64_t	SetNameOfInstance(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the instance, if no error it returns 0.
-//	In case instance does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the instance, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument owlInstance is incorrect (not a proper handle to an active instance)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of instance is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
 //
 int64_t			DECL STDC	SetNameOfInstanceW(
 									OwlInstance				owlInstance,
@@ -4058,8 +4259,20 @@ static	inline	int64_t	SetNameOfInstanceW(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the instance, if no error it returns 0.
-//	In case instance does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the instance, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or owlInstance is incorrect (not a proper handle to an active instance)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of instance is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
+//
+//	This call has the same behavior as SetNameOfInstance, however needs to be
+//	used in case instance are exchanged as a successive series of integers.
 //
 int64_t			DECL STDC	SetNameOfInstanceEx(
 									OwlModel				model,
@@ -4098,8 +4311,20 @@ static	inline	int64_t	SetNameOfInstanceEx(
 //
 //				int64_t					returns								OUT
 //
-//	Sets/updates the name of the instance, if no error it returns 0.
-//	In case instance does not exist it returns 1, when name cannot be updated 2.
+//	Sets or updates the name of the instance, it returns 0 on success.
+//
+//	Error return codes:
+//		0	successful
+//		1	argument model or owlInstance is incorrect (not a proper handle to an active instance)
+//		2	argument name is incorrect (nullptr or zero length name)
+//		3	the name of instance is locked
+//		4	name is already used by another class
+//		5	name is already used by a property
+//		6	name is already used by an instance
+//		7	undefined error
+//
+//	This call has the same behavior as SetNameOfInstanceW, however needs to be
+//	used in case instances are exchanged as a successive series of integers.
 //
 int64_t			DECL STDC	SetNameOfInstanceWEx(
 									OwlModel				model,
@@ -4387,7 +4612,7 @@ static	inline	int64_t	SetDatatypeProperty(
 								const char				* value
 							)
 {
-	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_CHAR);
+	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_STRING || GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_CHAR_ARRAY);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
 					owlInstance,
@@ -4405,7 +4630,7 @@ static	inline	int64_t	SetDatatypeProperty(
 								const wchar_t			* value
 							)
 {
-	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_CHAR);
+	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_STRING || GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
 					owlInstance,
@@ -4509,7 +4734,7 @@ int64_t			DECL STDC	SetDatatypePropertyEx(
 //		GetDatatypeProperty                                     (http://rdf.bg/gkdoc/CP64/GetDatatypeProperty.html)
 //				OwlInstance				owlInstance							IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
-//				const void				** values							IN
+//				const void				** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
@@ -4559,7 +4784,7 @@ static	inline	int64_t	GetDatatypeProperty(
 //				OwlModel				model								IN
 //				OwlInstance				owlInstance							IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
-//				const void				** values							IN
+//				const void				** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
@@ -6467,6 +6692,7 @@ void			DECL STDC	GetRelativeTransformation(
 //				OwlInstance				secondOwlInstance					IN
 //				double					* pointFirstInstance				IN / OUT
 //				double					* pointSecondInstance				IN / OUT
+//				bool					allowCalculateInstance				IN
 //
 //				double					returns								OUT
 //
@@ -6476,7 +6702,8 @@ double			DECL STDC	GetDistance(
 									OwlInstance				firstOwlInstance,
 									OwlInstance				secondOwlInstance,
 									double					* pointFirstInstance,
-									double					* pointSecondInstance
+									double					* pointSecondInstance,
+									bool					allowCalculateInstance
 								);
 
 #ifdef __cplusplus
@@ -6494,7 +6721,26 @@ static	inline	double	GetDistance(
 					firstOwlInstance,
 					secondOwlInstance,
 					nullptr,							//	pointFirstInstance
-					nullptr								//	pointSecondInstance
+					nullptr,							//	pointSecondInstance
+					true								//	allowCalculateInstance
+				);
+}
+
+//
+//
+static	inline	double	GetDistance(
+								OwlInstance				firstOwlInstance,
+								OwlInstance				secondOwlInstance,
+								double					* pointFirstInstance,
+								double					* pointSecondInstance
+							)
+{
+	return	GetDistance(
+					firstOwlInstance,
+					secondOwlInstance,
+					pointFirstInstance,
+					pointSecondInstance,
+					true								//	allowCalculateInstance
 				);
 }
 
