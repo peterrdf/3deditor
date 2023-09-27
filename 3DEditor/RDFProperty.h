@@ -5,11 +5,11 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-#define			TYPE_OBJECTTYPE						1
-#define			TYPE_BOOL_DATATYPE					2
-#define			TYPE_CHAR_DATATYPE					3
-#define			TYPE_DOUBLE_DATATYPE				5
-#define			TYPE_INT_DATATYPE					4
+//#define			TYPE_OBJECTTYPE						1
+//#define			TYPE_BOOL_DATATYPE					2
+//#define			TYPE_CHAR_DATATYPE					3
+//#define			TYPE_DOUBLE_DATATYPE				5
+//#define			TYPE_INT_DATATYPE					4
 
 // ------------------------------------------------------------------------------------------------
 class CRDFProperty

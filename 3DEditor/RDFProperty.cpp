@@ -68,31 +68,43 @@ wstring CRDFProperty::getTypeAsString() const
 
 	switch (getType())
 	{
-		case TYPE_OBJECTTYPE:
+		case OBJECTPROPERTY_TYPE:
 		{
 			strType = L"owl:ObjectProperty";
 		}
 		break;
 
-		case TYPE_BOOL_DATATYPE:
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
 		{
 			strType = L"owl:DatatypeProperty";
 		}
 		break;
 
-		case TYPE_CHAR_DATATYPE:
+		case DATATYPEPROPERTY_TYPE_STRING:
 		{
 			strType = L"owl:DatatypeProperty";
 		}
 		break;
 
-		case TYPE_DOUBLE_DATATYPE:
+		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
 		{
 			strType = L"owl:DatatypeProperty";
 		}
 		break;
 
-		case TYPE_INT_DATATYPE:
+		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			strType = L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_INTEGER:
 		{
 			strType = L"owl:DatatypeProperty";
 		}
@@ -115,31 +127,43 @@ wstring CRDFProperty::getRange() const
 
 	switch (getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{
 		strRange = L"xsd:object";
 	}
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		strRange = L"xsd:boolean";
 	}
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		strRange = L"xsd:string";
 	}
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		strRange = L"xsd:string";
+	}
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		strRange = L"xsd:string";
+	}
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		strRange = L"xsd:double";
 	}
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		strRange = L"xsd:integer";
 	}
@@ -166,35 +190,51 @@ wstring CRDFProperty::getCardinality(int64_t iInstance) const
 
 	switch (getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{
 		int64_t * piInstances = nullptr;
 		GetObjectProperty(iInstance, GetInstance(), &piInstances, &iCard);
 	}
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		bool* pbValue = nullptr;
 		GetDatatypeProperty(iInstance, GetInstance(), (void**)&pbValue, &iCard);
 	}
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
-		char ** szValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void **)&szValue, &iCard);
+		wchar_t ** szValue = nullptr;
+		SetCharacterSerialization(GetModel(iInstance), 0, 0, false);
+		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+		SetCharacterSerialization(GetModel(iInstance), 0, 0, true);
 	}
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		char ** szValue = nullptr;
+		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+	}
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		wchar_t ** szValue = nullptr;
+		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+	}
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		double * pdValue = nullptr;
 		GetDatatypeProperty(iInstance, GetInstance(), (void **)&pdValue, &iCard);
 	}
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		int64_t * piValue = nullptr;
 		GetDatatypeProperty(iInstance, GetInstance(), (void **)&piValue, &iCard);

@@ -5,7 +5,7 @@
 CDoubleRDFProperty::CDoubleRDFProperty(int64_t iInstance)
 	: CRDFProperty(iInstance)
 {
-	m_iType = TYPE_DOUBLE_DATATYPE;
+	m_iType = DATATYPEPROPERTY_TYPE_DOUBLE;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -6,7 +6,7 @@ CObjectRDFProperty::CObjectRDFProperty(int64_t iInstance)
 	: CRDFProperty(iInstance)
 	, m_vecRestrictions()
 {
-	m_iType = TYPE_OBJECTTYPE;
+	m_iType = OBJECTPROPERTY_TYPE;
 
 	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), 0);
 	while (iRestrictionsClassInstance != 0)

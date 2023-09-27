@@ -332,31 +332,43 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 
 			switch (pProperty->getType())
 			{
-				case TYPE_OBJECTTYPE:
+				case OBJECTPROPERTY_TYPE:
 				{
 					strNameAndType += L"owl:ObjectProperty";
 				}
 				break;
 
-				case TYPE_BOOL_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				{
 					strNameAndType += L"owl:DatatypeProperty";
 				}
 				break;
 
-				case TYPE_CHAR_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_STRING:
 				{
 					strNameAndType += L"owl:DatatypeProperty";
 				}
 				break;
 
-				case TYPE_DOUBLE_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
 				{
 					strNameAndType += L"owl:DatatypeProperty";
 				}
 				break;
 
-				case TYPE_INT_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+				{
+					strNameAndType += L"owl:DatatypeProperty";
+				}
+				break;
+
+				case DATATYPEPROPERTY_TYPE_DOUBLE:
+				{
+					strNameAndType += L"owl:DatatypeProperty";
+				}
+				break;
+
+				case DATATYPEPROPERTY_TYPE_INTEGER:
 				{
 					strNameAndType += L"owl:DatatypeProperty";
 				}
@@ -373,7 +385,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 
 			switch (pProperty->getType())
 			{
-				case TYPE_OBJECTTYPE:
+				case OBJECTPROPERTY_TYPE:
 				{
 					HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
@@ -392,25 +404,37 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 				}
 				break;
 
-				case TYPE_BOOL_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				{
 					m_treeCtrl.InsertItem(L"rdfs:range : xsd:boolean", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 				}
 				break;
 
-				case TYPE_CHAR_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_STRING:
 				{
 					m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 				}
 				break;
 
-				case TYPE_DOUBLE_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+				{
+					m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+				}
+				break;
+
+				case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+				{
+					m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+				}
+				break;
+
+				case DATATYPEPROPERTY_TYPE_DOUBLE:
 				{
 					m_treeCtrl.InsertItem(L"rdfs:range : xsd:double", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 				}
 				break;
 
-				case TYPE_INT_DATATYPE:
+				case DATATYPEPROPERTY_TYPE_INTEGER:
 				{
 					m_treeCtrl.InsertItem(L"rdfs:range : xsd:integer", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 				}
@@ -505,31 +529,43 @@ void CClassView::PropertiesAlphabeticalView()
 
 		switch (pProperty->getType())
 		{
-			case TYPE_OBJECTTYPE:
+			case OBJECTPROPERTY_TYPE:
 			{
 				strNameAndType += L"owl:ObjectProperty";
 			}
 			break;
 
-			case TYPE_BOOL_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
 				strNameAndType += L"owl:DatatypeProperty";
 			}
 			break;
 
-			case TYPE_CHAR_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_STRING:
 			{
 				strNameAndType += L"owl:DatatypeProperty";
 			}
 			break;
 
-			case TYPE_DOUBLE_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
 			{
 				strNameAndType += L"owl:DatatypeProperty";
 			}
 			break;
 
-			case TYPE_INT_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+			{
+				strNameAndType += L"owl:DatatypeProperty";
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_DOUBLE:
+			{
+				strNameAndType += L"owl:DatatypeProperty";
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_INTEGER:
 			{
 				strNameAndType += L"owl:DatatypeProperty";
 			}
@@ -545,7 +581,7 @@ void CClassView::PropertiesAlphabeticalView()
 		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hRoot);
 		switch (pProperty->getType())
 		{
-			case TYPE_OBJECTTYPE:
+			case OBJECTPROPERTY_TYPE:
 			{
 				HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
@@ -565,25 +601,37 @@ void CClassView::PropertiesAlphabeticalView()
 			}
 			break;
 
-			case TYPE_BOOL_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
 				m_treeCtrl.InsertItem(L"rdfs:range : xsd:boolean", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 			}
 			break;
 
-			case TYPE_CHAR_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_STRING:
 			{
 				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 			}
 			break;
 
-			case TYPE_DOUBLE_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+			{
+				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+			{
+				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_DOUBLE:
 			{
 				m_treeCtrl.InsertItem(L"rdfs:range : xsd:double", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 			}
 			break;
 
-			case TYPE_INT_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_INTEGER:
 			{
 				m_treeCtrl.InsertItem(L"rdfs:range : xsd:integer", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 			}

@@ -175,23 +175,45 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 	switch (pData->GetProperty()->getType())
 	{
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		bHasButton = FALSE;
-	} // case TYPE_BOOL_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		int64_t iCard = 0;
-		char ** szValue = nullptr;
+		wchar_t ** szValue = nullptr;
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		int64_t iCard = 0;
+		char** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		bHasButton = iCard > iMinCard ? TRUE : FALSE;
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		int64_t iCard = 0;
+		wchar_t** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		bHasButton = iCard > iMinCard ? TRUE : FALSE;
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		/*
 		* Read the values
@@ -201,10 +223,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		/*
 		* Read the values
@@ -216,7 +238,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		ASSERT(iCard > 0);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
@@ -246,20 +268,22 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 	switch (pData->GetProperty()->getType())
 	{
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		// NA
-	} // case TYPE_BOOL_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		/*
 		* Read the original values
 		*/
 		int64_t iCard = 0;
-		char ** szValue = nullptr;
+		wchar_t** szValue = nullptr;
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		ASSERT(iCard > 0);
 		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -267,7 +291,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Remove a value
 		*/
-		char ** szNewValues = (char **)new size_t[iCard - 1];
+		wchar_t** szNewValues = (wchar_t**)new size_t[iCard - 1];
 
 		int iCurrentValue = 0;
 		for (int iValue = 0; iValue < iCard; iValue++)
@@ -277,13 +301,15 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 				continue;
 			}
 
-			szNewValues[iCurrentValue] = new char[strlen(szValue[iCurrentValue]) + 1];
-			strcpy(szNewValues[iCurrentValue], szValue[iCurrentValue]);
+			szNewValues[iCurrentValue] = new wchar_t[wcslen(szValue[iCurrentValue]) + 1];
+			wcscpy(szNewValues[iCurrentValue], szValue[iCurrentValue]);
 
 			iCurrentValue++;
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard - 1);		
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
+		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard - 1);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -308,7 +334,119 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	} // case TYPE_CHAR_DATATYPE:
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		/*
+		* Read the original values
+		*/
+		int64_t iCard = 0;
+		char** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		ASSERT(iCard > 0);
+		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+
+		/*
+		* Remove a value
+		*/
+		char** szNewValues = (char**)new size_t[iCard - 1];
+
+		int iCurrentValue = 0;
+		for (int iValue = 0; iValue < iCard; iValue++)
+		{
+			if (iValue == pData->GetCard())
+			{
+				continue;
+			}
+
+			szNewValues[iCurrentValue] = new char[strlen(szValue[iCurrentValue]) + 1];
+			strcpy(szNewValues[iCurrentValue], szValue[iCurrentValue]);
+
+			iCurrentValue++;
+		}
+
+		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+
+		for (int iValue = 0; iValue < iCard - 1; iValue++)
+		{
+			delete[] szNewValues[iValue];
+		}
+		delete[] szNewValues;
+
+		/*
+		* Notify
+		*/
+		ASSERT(pData->GetController() != nullptr);
+		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+
+		/*
+		* Update the values
+		*/
+		auto pProperty = GetParent();
+		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+
+		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		/*
+		* Read the original values
+		*/
+		int64_t iCard = 0;
+		wchar_t ** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		ASSERT(iCard > 0);
+		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+
+		/*
+		* Remove a value
+		*/
+		wchar_t** szNewValues = (wchar_t**)new size_t[iCard - 1];
+
+		int iCurrentValue = 0;
+		for (int iValue = 0; iValue < iCard; iValue++)
+		{
+			if (iValue == pData->GetCard())
+			{
+				continue;
+			}
+
+			szNewValues[iCurrentValue] = new wchar_t[wcslen(szValue[iCurrentValue]) + 1];
+			wcscpy(szNewValues[iCurrentValue], szValue[iCurrentValue]);
+
+			iCurrentValue++;
+		}
+
+		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+
+		for (int iValue = 0; iValue < iCard - 1; iValue++)
+		{
+			delete[] szNewValues[iValue];
+		}
+		delete[] szNewValues;
+
+		/*
+		* Notify
+		*/
+		ASSERT(pData->GetController() != nullptr);
+		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+
+		/*
+		* Update the values
+		*/
+		auto pProperty = GetParent();
+		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+
+		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
+		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		/*
 		* Read the original values
@@ -344,10 +482,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		/*
 		* Read the original values
@@ -383,7 +521,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
@@ -540,7 +678,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	switch (pData->GetProperty()->getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{
 		/*
 		* Read the card
@@ -557,10 +695,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_OBJECTTYPE:
+	} // case OBJECTPROPERTY_TYPE:
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		/*
 		* Read the card
@@ -577,14 +715,16 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_BOOL_DATATYPE
+	} // case DATATYPEPROPERTY_TYPE_BOOLEAN
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		int64_t iCard = 0;
-		char ** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+		char** szValue = nullptr;
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		if (iMaxCard == -1)
 		{
@@ -594,10 +734,44 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_CHAR_DATATYPE
+	} // case DATATYPEPROPERTY_TYPE_STRING
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		int64_t iCard = 0;
+		char** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		if (iMaxCard == -1)
+		{
+			bHasButton = TRUE;
+		}
+		else
+		{
+			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
+		}
+	} // case DATATYPEPROPERTY_TYPE_CHAR_ARRAY
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		int64_t iCard = 0;
+		wchar_t** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+		if (iMaxCard == -1)
+		{
+			bHasButton = TRUE;
+		}
+		else
+		{
+			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
+		}
+	} // case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		/*
 		* Read the card
@@ -614,10 +788,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		/*
 		* Read the card
@@ -634,7 +808,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			bHasButton = iCard < iMaxCard ? TRUE : FALSE;
 		}
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
@@ -667,7 +841,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	switch (pData->GetProperty()->getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{
 		CEditObjectPropertyDialog dlgEditObjectProperty(pData->GetController(), pData->GetInstance(), pData->GetProperty(), ::AfxGetMainWnd());
 		if (dlgEditObjectProperty.DoModal() != IDOK)
@@ -733,10 +907,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		* Update UI
 		*/
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
-	} // case TYPE_OBJECTTYPE:
+	} // case OBJECTPROPERTY_TYPE:
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		/*
 		* Read the original values
@@ -779,38 +953,42 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		* Update the values
 		*/
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		/*
 		* Read the original values
 		*/
 		int64_t iCard = 0;
-		char ** szValue = nullptr;
+		wchar_t ** szValue = nullptr;
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetInstance()->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
 		ASSERT(iMaxCard == 1);
 
-		char ** szNewValues = (char **)new size_t[iCard + 1];
+		wchar_t** szNewValues = (wchar_t**)new size_t[iCard + 1];
 		if (iCard > 0)
 		{
 			for (int iValue = 0; iValue < iCard; iValue++)
 			{
-				szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
-				strcpy(szNewValues[iValue], szValue[iValue]);
+				szNewValues[iValue] = new wchar_t[wcslen(szValue[iValue]) + 1];
+				wcscpy(szNewValues[iValue], szValue[iValue]);
 			}
 		}
 
-		szNewValues[iCard] = new char[1];
+		szNewValues[iCard] = new wchar_t[1];
 		szNewValues[iCard][0] = '\0';
 
 		/*
 		* Add a value
 		*/
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard + 1);
+		SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -831,7 +1009,105 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	} // case TYPE_CHAR_DATATYPE
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		/*
+		* Read the original values
+		*/
+		int64_t iCard = 0;
+		char** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetInstance()->GetInstance(), (void**)&szValue, &iCard);
+
+		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		ASSERT(iMaxCard == 1);
+
+		char** szNewValues = (char**)new size_t[iCard + 1];
+		if (iCard > 0)
+		{
+			for (int iValue = 0; iValue < iCard; iValue++)
+			{
+				szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
+				strcpy(szNewValues[iValue], szValue[iValue]);
+			}
+		}
+
+		szNewValues[iCard] = new char[1];
+		szNewValues[iCard][0] = '\0';
+
+		/*
+		* Add a value
+		*/
+		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+
+		for (int iValue = 0; iValue < iCard + 1; iValue++)
+		{
+			delete[] szNewValues[iValue];
+		}
+		delete[] szNewValues;
+
+		/*
+		* Notify
+		*/
+		ASSERT(pData->GetController() != nullptr);
+		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+
+		/*
+		* Update the values
+		*/
+		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+	} // case TYPE_CHAR_DATATYPE
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		/*
+		* Read the original values
+		*/
+		int64_t iCard = 0;
+		wchar_t** szValue = nullptr;
+		GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetInstance()->GetInstance(), (void**)&szValue, &iCard);
+
+		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		ASSERT(iMaxCard == 1);
+
+		wchar_t** szNewValues = (wchar_t**)new size_t[iCard + 1];
+		if (iCard > 0)
+		{
+			for (int iValue = 0; iValue < iCard; iValue++)
+			{
+				szNewValues[iValue] = new wchar_t[wcslen(szValue[iValue]) + 1];
+				wcscpy(szNewValues[iValue], szValue[iValue]);
+			}
+		}
+
+		szNewValues[iCard] = new wchar_t[1];
+		szNewValues[iCard][0] = '\0';
+
+		/*
+		* Add a value
+		*/
+		SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+
+		for (int iValue = 0; iValue < iCard + 1; iValue++)
+		{
+			delete[] szNewValues[iValue];
+		}
+		delete[] szNewValues;
+
+		/*
+		* Notify
+		*/
+		ASSERT(pData->GetController() != nullptr);
+		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+
+		/*
+		* Update the values
+		*/
+		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+	} // case TYPE_CHAR_DATATYPE
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		/*
 		* Read the original values
@@ -865,10 +1141,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		* Update the values
 		*/
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		/*
 		* Read the original values
@@ -902,7 +1178,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		* Update the values
 		*/
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
@@ -1509,7 +1785,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		switch(pData->GetProperty()->getType())
 		{
-			case TYPE_BOOL_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
 				/*
 				* Read the original values
@@ -1544,35 +1820,39 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-			} // case TYPE_BOOL_DATATYPE:
+			} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			break;
 
-			case TYPE_CHAR_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_STRING:
 			{
 				/*
 				* Read the original values
 				*/
 				int64_t iCard = 0;
-				char ** szValue = nullptr;
+				wchar_t ** szValue = nullptr;
+				SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 				GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+				SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 				ASSERT(iCard > 0);
 
-				char** szNewValues = (char **)new size_t[iCard];
+				wchar_t** szNewValues = (wchar_t**)new size_t[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
-					szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
-					strcpy(szNewValues[iValue], szValue[iValue]);
+					szNewValues[iValue] = new wchar_t[wcslen(szValue[iValue]) + 1];
+					wcscpy(szNewValues[iValue], szValue[iValue]);
 				}
 
 				/*
 				* Update the modified value
 				*/
 				delete[] szNewValues[pData->GetCard()];
-				szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
-				strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
+				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
+				wcscpy(szNewValues[pData->GetCard()], strValue);
 
+				SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, false);
 				SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard);
+				SetCharacterSerialization(pData->GetInstance()->GetModel(), 0, 0, true);
 
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
@@ -1586,7 +1866,85 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
-			case TYPE_DOUBLE_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+			{
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				char** szValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+				ASSERT(iCard > 0);
+
+				char** szNewValues = (char**)new size_t[iCard];
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
+					strcpy(szNewValues[iValue], szValue[iValue]);
+				}
+
+				/*
+				* Update the modified value
+				*/
+				delete[] szNewValues[pData->GetCard()];
+				szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
+				strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
+
+				SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					delete[] szNewValues[iValue];
+				}
+				delete[] szNewValues;
+
+				ASSERT(GetController() != nullptr);
+
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_CHAR_DATATYPE:
+			break;
+
+			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+			{
+				/*
+				* Read the original values
+				*/
+				int64_t iCard = 0;
+				wchar_t** szValue = nullptr;
+				GetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+
+				ASSERT(iCard > 0);
+
+				wchar_t** szNewValues = (wchar_t**)new size_t[iCard];
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					szNewValues[iValue] = new wchar_t[wcslen(szValue[iValue]) + 1];
+					wcscpy(szNewValues[iValue], szValue[iValue]);
+				}
+
+				/*
+				* Update the modified value
+				*/
+				delete[] szNewValues[pData->GetCard()];
+				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
+				wcscpy(szNewValues[pData->GetCard()], strValue);
+
+				SetDatatypeProperty(pData->GetInstance()->GetInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+
+				for (int iValue = 0; iValue < iCard; iValue++)
+				{
+					delete[] szNewValues[iValue];
+				}
+				delete[] szNewValues;
+
+				ASSERT(GetController() != nullptr);
+
+				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
+			} // case TYPE_CHAR_DATATYPE:
+			break;
+
+			case DATATYPEPROPERTY_TYPE_DOUBLE:
 			{
 				/*
 				* Read the original values
@@ -1612,10 +1970,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-			} // case TYPE_DOUBLE_DATATYPE:
+			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
-			case TYPE_INT_DATATYPE:
+			case DATATYPEPROPERTY_TYPE_INTEGER:
 			{
 				/*
 				* Read the original values
@@ -1640,7 +1998,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
-			} // case TYPE_INT_DATATYPE:
+			} // case DATATYPEPROPERTY_TYPE_INTEGER:
 			break;
 
 			default:
@@ -2394,7 +2752,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	/*
 	* range
 	*/
-	if (pProperty->getType() == TYPE_OBJECTTYPE)
+	if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	{
 		ASSERT(GetController() != nullptr);
 
@@ -2421,7 +2779,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
-	} // if (pProperty->getType() == TYPE_OBJECTTYPE)
+	} // if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	else
 	{
 		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRange().c_str(), pProperty->GetName());
@@ -2446,7 +2804,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 {
 	switch (pProperty->getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{
 		int64_t * piObjectInstances = nullptr;
 		int64_t iCard = 0;
@@ -2462,10 +2820,10 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
-	} // case TYPE_OBJECTTYPE:
+	} // case OBJECTPROPERTY_TYPE:
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
@@ -2481,14 +2839,16 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
-	} // case TYPE_BOOL_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		int64_t iCard = 0;
 		char ** szValue = nullptr;
+		SetCharacterSerialization(pInstance->GetModel(), 0, 0, false);
 		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pInstance->GetModel(), 0, 0, true);
 
 		/*
 		* owl:cardinality
@@ -2500,10 +2860,48 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
-	} // case TYPE_CHAR_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_STRING:
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		int64_t iCard = 0;
+		char** szValue = nullptr;
+		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+
+		/*
+		* owl:cardinality
+		*/
+		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
+		pCardinality->AllowEdit(FALSE);
+
+		pPropertyGroup->AddSubItem(pCardinality);
+	} // case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		int64_t iCard = 0;
+		wchar_t** szValue = nullptr;
+		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+
+		/*
+		* owl:cardinality
+		*/
+		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
+		pCardinality->AllowEdit(FALSE);
+
+		pPropertyGroup->AddSubItem(pCardinality);
+	} // case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
@@ -2519,10 +2917,10 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
@@ -2538,7 +2936,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		pCardinality->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pCardinality);
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
@@ -2570,7 +2968,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 {
 	switch (pProperty->getType())
 	{
-	case TYPE_OBJECTTYPE:
+	case OBJECTPROPERTY_TYPE:
 	{	
 		int64_t * piInstances = nullptr;
 		int64_t iCard = 0;
@@ -2677,10 +3075,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
-	} // case TYPE_OBJECTTYPE:
+	} // case OBJECTPROPERTY_TYPE:
 	break;
 
-	case TYPE_BOOL_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
@@ -2710,14 +3108,16 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
-	} // case TYPE_BOOL_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	break;
 
-	case TYPE_CHAR_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_STRING:
 	{
 		int64_t iCard = 0;
-		char ** szValue = nullptr;
+		wchar_t ** szValue = nullptr;
+		SetCharacterSerialization(pInstance->GetModel(), 0, 0, false);
 		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pInstance->GetModel(), 0, 0, true);
 
 		if (iCard > 0)
 		{
@@ -2746,7 +3146,73 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	} // case TYPE_CHAR_DATATYPE:
 	break;
 
-	case TYPE_DOUBLE_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+	{
+		int64_t iCard = 0;
+		char ** szValue = nullptr;
+		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+
+		if (iCard > 0)
+		{
+			int64_t iValuesCount = iCard;
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+			{
+				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->GetName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
+
+				pPropertyGroup->AddSubItem(pInstancProperty);
+
+				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+				{
+					break;
+				}
+			} // for (int64_t iValue = ...
+
+			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+			{
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				pGridProperty->AllowEdit(FALSE);
+
+				pPropertyGroup->AddSubItem(pGridProperty);
+			}
+		} // if (iCard > 0)
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+	{
+		int64_t iCard = 0;
+		wchar_t** szValue = nullptr;
+		GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+
+		if (iCard > 0)
+		{
+			int64_t iValuesCount = iCard;
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+			{
+				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->GetName(),
+					(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
+
+				pPropertyGroup->AddSubItem(pInstancProperty);
+
+				if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+				{
+					break;
+				}
+			} // for (int64_t iValue = ...
+
+			if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+			{
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				pGridProperty->AllowEdit(FALSE);
+
+				pPropertyGroup->AddSubItem(pGridProperty);
+			}
+		} // if (iCard > 0)
+	} // case TYPE_CHAR_DATATYPE:
+	break;
+
+	case DATATYPEPROPERTY_TYPE_DOUBLE:
 	{
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
@@ -2776,10 +3242,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
-	} // case TYPE_DOUBLE_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 	break;
 
-	case TYPE_INT_DATATYPE:
+	case DATATYPEPROPERTY_TYPE_INTEGER:
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
@@ -2810,7 +3276,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				pPropertyGroup->AddSubItem(pGridProperty);
 			}
 		} // if (iCard > 0)
-	} // case TYPE_INT_DATATYPE:
+	} // case DATATYPEPROPERTY_TYPE_INTEGER:
 	break;
 
 	default:
