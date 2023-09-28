@@ -96,6 +96,8 @@ private: // Methods
 
 	void Clean();
 
+	void GetAncestors(OwlInstance iInstance, vector<int64_t>& vecAncestors);
+
 // Construction
 public:
 	CDesignTreeView();
