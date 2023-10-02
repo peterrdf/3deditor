@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <vector>
-
 using namespace std;
 
 #include "RDFInstance.h"

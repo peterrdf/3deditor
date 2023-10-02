@@ -6,7 +6,6 @@
 #include "RDFController.h"
 
 #include <map>
-
 using namespace std;
 
 class CPropertiesToolBar : public CMFCToolBar

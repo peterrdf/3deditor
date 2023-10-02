@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <vector>
 #include <fstream>
-
 using namespace std;
 
 #include "RDFInstance.h"

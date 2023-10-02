@@ -1,8 +1,8 @@
 #pragma once
 
 #include "RDFProperty.h"
-#include <vector>
 
+#include <vector>
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------

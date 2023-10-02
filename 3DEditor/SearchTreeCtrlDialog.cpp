@@ -9,10 +9,10 @@
 
 // CSearchTreeCtrlDialog dialog
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 const int MAX_SEARCH_DEPTH = 20;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -29,7 +29,6 @@ void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 	GetTreeView()->SetFocus();
 }
 
-// ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::UnselectItem(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -37,42 +36,41 @@ void CSearchTreeCtrlDialog::UnselectItem(HTREEITEM hItem)
 	GetTreeView()->SetItemState(hItem, 0, TVIS_SELECTED);
 }
 
-// ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 {
-	ASSERT(hParent != nullptr);	
+	ASSERT(hParent != nullptr);
 
-	if (m_iSearchDepth > MAX_SEARCH_DEPTH)
-	{
-		return nullptr;
-	}
-
+	m_iSearchDepth++;
+	ASSERT(m_iSearchDepth <= MAX_SEARCH_DEPTH);
+	
 	m_pSite->LoadChildrenIfNeeded(hParent);
 
 	HTREEITEM hChild = GetTreeView()->GetNextItem(hParent, TVGN_CHILD);
 	while (hChild != nullptr)
 	{
-		m_iSearchDepth++;
-		ASSERT(m_iSearchDepth >= 0);
-
 		if (m_pSite->ContainsText(m_cmbSearchFilter.GetCurSel(), hChild, m_strSearchText))
 		{
 			return hChild;
 		}
 
-		HTREEITEM hGrandchild = SearchChildren(hChild);
-		if (hGrandchild != nullptr)
+		if (m_iSearchDepth + 1 < MAX_SEARCH_DEPTH)
 		{
-			return hGrandchild;
-		}
+			HTREEITEM hSearchResult = SearchChildren(hChild);
+			if (hSearchResult != nullptr)
+			{
+				return hSearchResult;
+			}
+		}		
 
 		hChild = GetTreeView()->GetNextSiblingItem(hChild);
 	} // while (hChild != nullptr)
 
+	m_iSearchDepth--;
+	ASSERT(m_iSearchDepth > 0);
+
 	return nullptr;
 }
 
-// ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -85,11 +83,14 @@ HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 			return hSibling;
 		}
 
-		HTREEITEM hGrandchild = SearchChildren(hSibling);
-		if (hGrandchild != nullptr)
+		if (m_iSearchDepth + 1 < MAX_SEARCH_DEPTH)
 		{
-			return hGrandchild;
-		}
+			HTREEITEM hSearchResult = SearchChildren(hSibling);
+			if (hSearchResult != nullptr)
+			{
+				return hSearchResult;
+			}
+		}		
 
 		hSibling = GetTreeView()->GetNextSiblingItem(hSibling);
 	} // while (hSibling != nullptr)
@@ -97,7 +98,6 @@ HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 	return nullptr;
 }
 
-// ------------------------------------------------------------------------------------------------
 HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 {
 	ASSERT(hItem != nullptr);
@@ -109,36 +109,23 @@ HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 	}
 
 	m_iSearchDepth--;
+	ASSERT(m_iSearchDepth >= 0);
 
-	HTREEITEM hSibling = GetTreeView()->GetNextSiblingItem(hParent);
-	if (hSibling == nullptr)
-	{
-		return SearchParents(hParent);
-	}
-
-	// Children
-	HTREEITEM hSearchResult = SearchChildren(hSibling);
+	HTREEITEM hSearchResult = SearchSiblings(hParent);
 	if (hSearchResult != nullptr)
 	{
 		return hSearchResult;
 	}
 
-	// Siblings and their children
-	hSearchResult = SearchSiblings(hSibling);
-	if (hSearchResult != nullptr)
-	{
-		return hSearchResult;
-	}
-
-	return SearchParents(hSibling);
+	return SearchParents(hParent);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::Reset()
 {
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 	m_iSearchDepth = 0;
+	m_setSearchedItems.clear();
 }
 
 IMPLEMENT_DYNAMIC(CSearchTreeCtrlDialog, CDialogEx)
@@ -149,6 +136,7 @@ CSearchTreeCtrlDialog::CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_iSearchDepth(0)
+	, m_setSearchedItems()
 	, m_strSearchText(_T(""))
 {
 	ASSERT(m_pSite != nullptr);
@@ -176,7 +164,6 @@ END_MESSAGE_MAP()
 
 // CSearchTreeCtrlDialog message handlers
 
-// ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::OnEnChangeEditSearchText()
 {
 	UpdateData();
@@ -184,7 +171,6 @@ void CSearchTreeCtrlDialog::OnEnChangeEditSearchText()
 	m_btnSearch.EnableWindow(!m_strSearchText.IsEmpty());
 }
 
-// ------------------------------------------------------------------------------------------------
 void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 {
 	UpdateData();
@@ -261,7 +247,6 @@ void CSearchTreeCtrlDialog::OnBnClickedButtonSearch()
 	::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"No more results found.", L"Search", MB_ICONINFORMATION | MB_OK);
 }
 
-// ------------------------------------------------------------------------------------------------
 BOOL CSearchTreeCtrlDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();

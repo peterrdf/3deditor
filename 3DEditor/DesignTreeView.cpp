@@ -11,7 +11,6 @@
 #include "ProgressIndicator.h"
 
 #include <algorithm>
-
 using namespace std;
 
 #ifdef _DEBUG
