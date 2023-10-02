@@ -125,7 +125,6 @@ void CSearchTreeCtrlDialog::Reset()
 	m_hSearchResult = nullptr;
 	m_bEndOfSearch = FALSE;
 	m_iSearchDepth = 0;
-	m_setSearchedItems.clear();
 }
 
 IMPLEMENT_DYNAMIC(CSearchTreeCtrlDialog, CDialogEx)
@@ -136,7 +135,6 @@ CSearchTreeCtrlDialog::CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite)
 	, m_hSearchResult(nullptr)
 	, m_bEndOfSearch(FALSE)
 	, m_iSearchDepth(0)
-	, m_setSearchedItems()
 	, m_strSearchText(_T(""))
 {
 	ASSERT(m_pSite != nullptr);

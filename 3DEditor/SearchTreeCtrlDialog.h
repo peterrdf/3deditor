@@ -34,8 +34,6 @@ private: // Members
 	BOOL m_bEndOfSearch;
 	int m_iSearchDepth;
 
-	set<HTREEITEM> m_setSearchedItems;
-
 private: // Methods
 
 	CTreeCtrlEx* GetTreeView() { return m_pSite->GetTreeView(); }
