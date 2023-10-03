@@ -2176,8 +2176,24 @@ public: // Methods
 		// zFar     - The far clipping distance
 		GLdouble fovY = 45.0;
 		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
-		GLdouble zNear = 0.0001;
-		GLdouble zFar = 1000.0;
+
+		// !!!Frustum v1
+		/*GLdouble zNear = 0.0001;
+		GLdouble zFar = 1000.0;*/
+
+		// !!!Frustum v2
+		GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
+		zNear = min(zNear, abs((double)fZmin));
+		if (zNear != 0.)
+		{
+			zNear /= 25.;
+		}
+		else
+		{
+			zNear = fBoundingSphereDiameter * .1;
+		}
+
+		GLdouble zFar = zNear + (fBoundingSphereDiameter * 30.);
 
 		GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 		GLdouble fW = fH * aspect;
