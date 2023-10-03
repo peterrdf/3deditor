@@ -2719,7 +2719,7 @@ public: // Methods
 			case enumProjection::Perspective:
 			{
 				_zoom(
-					zDelta > 0 ?
+					zDelta < 0 ?
 					-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
 					abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
 			}
@@ -2727,7 +2727,7 @@ public: // Methods
 
 			case enumProjection::Orthographic:
 			{
-				_zoom(zDelta > 0 ? 
+				_zoom(zDelta < 0 ? 
 					-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL) :
 					abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL));
 			}
