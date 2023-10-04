@@ -99,15 +99,18 @@ CRDFInstance::~CRDFInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::Recalculate()
+void CRDFInstance::Recalculate(bool bForceUpdate)
 {	
-	if (!m_bEnable)
+	if (!bForceUpdate)
 	{
-		// Reloading on demand
-		m_bNeedsRefresh = true;
+		if (!m_bEnable)
+		{
+			// Reloading on demand
+			m_bNeedsRefresh = true;
 
-		return;
-	}
+			return;
+		}
+	}	
 
 	Clean();
 
@@ -323,7 +326,7 @@ void CRDFInstance::setEnable(bool bEnable)
 	{
 		m_bNeedsRefresh = false;
 
-		Recalculate();
+		Recalculate(false);
 	}
 }
 

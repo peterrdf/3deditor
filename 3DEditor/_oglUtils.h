@@ -2177,11 +2177,6 @@ public: // Methods
 		GLdouble fovY = 45.0;
 		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
 
-		// !!!Frustum v1
-		/*GLdouble zNear = 0.0001;
-		GLdouble zFar = 1000.0;*/
-
-		// !!!Frustum v2
 		GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 		zNear = min(zNear, abs((double)fZmin));
 		if (zNear != 0.)
