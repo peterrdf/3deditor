@@ -546,12 +546,9 @@ void CRDFModel::ScaleAndCenter()
 	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
-	if (true)
-	{
-		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	}	
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------

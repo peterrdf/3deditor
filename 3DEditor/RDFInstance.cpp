@@ -101,16 +101,13 @@ CRDFInstance::~CRDFInstance()
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::Recalculate(bool bForceUpdate)
 {	
-	if (!bForceUpdate)
+	if (!bForceUpdate && !m_bEnable)
 	{
-		if (!m_bEnable)
-		{
-			// Reloading on demand
-			m_bNeedsRefresh = true;
+		// Reloading on demand
+		m_bNeedsRefresh = true;
 
-			return;
-		}
-	}	
+		return;
+	}
 
 	Clean();
 
@@ -343,7 +340,6 @@ void CRDFInstance::ResetScaleAndCenter()
 	{
 		return;
 	}
-
 	
 	// Vertices
 	delete[] m_pVertices;
@@ -1331,8 +1327,7 @@ void CRDFInstance::Calculate()
 			pCohort->faces().push_back(concFace);
 		} // for (size_t iConcFace = ...
 	} // for (; itMaterial2ConceptualFaces != ...
-
-	
+		
 	/** Bounding box */	
 	if (m_pmtxOriginalBoundingBoxTransformation == nullptr)
 	{
