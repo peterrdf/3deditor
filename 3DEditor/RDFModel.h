@@ -87,7 +87,7 @@ public: // Methods
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 
-	void ScaleAndCenter();
+	void ScaleAndCenter(bool bLoadingModel = false);
 
 	float GetBoundingSphereDiameter() const;
 

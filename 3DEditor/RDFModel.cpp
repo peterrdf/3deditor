@@ -363,7 +363,7 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::ScaleAndCenter()
+void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
 	ProgressStatus stat(L"Calculate scene sizes");
 
@@ -385,7 +385,11 @@ void CRDFModel::ScaleAndCenter()
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		itInstance->second->ResetScaleAndCenter();
+		if (!bLoadingModel)
+		{
+			itInstance->second->ResetScaleAndCenter();
+		}
+		
 		itInstance->second->CalculateMinMax(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
@@ -1261,7 +1265,7 @@ void CRDFModel::LoadRDFInstances()
 	* Scale and Center
 	*/
 
-	ScaleAndCenter();
+	ScaleAndCenter(true);
 }
 
 // ------------------------------------------------------------------------------------------------
