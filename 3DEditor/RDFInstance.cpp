@@ -40,43 +40,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {	
-	ASSERT(m_iInstance != 0);
-
-	int64_t iClassInstance = GetInstanceClass(m_iInstance);
-	ASSERT(iClassInstance != 0);
-
-	wchar_t* szClassName = nullptr;
-	GetNameOfClassW(iClassInstance, &szClassName);
-
-	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(m_iInstance, &szName);
-
-#ifndef _LINUX	
-
-	wchar_t szUniqueName[200];
-
-	if (szName != nullptr)
-	{
-		m_strName = szName;
-
-		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
-	}
-	else
-	{
-		m_strName = szClassName;
-
-		swprintf(szUniqueName, 200, L"#%lld (%s)", m_iInstance, szClassName);
-	}	
-
-	m_strUniqueName = szUniqueName;
-#else
-    m_strName = wxString(szName).wchar_str();
-
-    wchar_t szUniqueName[200];
-	swprintf(szUniqueName, 200, L"%lld (%ls)", m_pInstance->GetInstance(), wxString(szClassName).wc_str());
-
-	m_strUniqueName = szUniqueName;
-#endif // _LINUX
+	LoadName();
 
 	Calculate();
 }
@@ -96,6 +60,47 @@ CRDFInstance::~CRDFInstance()
 	delete m_pvecBoundingBoxMin;
 	delete m_pvecBoundingBoxMax;
 	delete m_pmtxBoundingBoxTransformation;
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFInstance::LoadName()
+{
+	ASSERT(m_iInstance != 0);
+
+	int64_t iClassInstance = GetInstanceClass(m_iInstance);
+	ASSERT(iClassInstance != 0);
+
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(iClassInstance, &szClassName);
+
+	wchar_t* szName = nullptr;
+	GetNameOfInstanceW(m_iInstance, &szName);
+
+#ifndef _LINUX
+	wchar_t szUniqueName[200];
+
+	if (szName != nullptr)
+	{
+		m_strName = szName;
+
+		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
+	}
+	else
+	{
+		m_strName = szClassName;
+
+		swprintf(szUniqueName, 200, L"#%lld (%s)", m_iInstance, szClassName);
+	}
+
+	m_strUniqueName = szUniqueName;
+#else
+	m_strName = wxString(szName).wchar_str();
+
+	wchar_t szUniqueName[200];
+	swprintf(szUniqueName, 200, L"%lld (%ls)", m_pInstance->GetInstance(), wxString(szClassName).wc_str());
+
+	m_strUniqueName = szUniqueName;
+#endif // _LINUX
 }
 
 // ------------------------------------------------------------------------------------------------

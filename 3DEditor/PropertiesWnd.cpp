@@ -1235,6 +1235,19 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CPropertiesWnd::OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* /*pInstance*/)
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
+
+	LoadInstanceProperties();
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CPropertiesWnd::OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * /*pInstance*/)
 {
 	if (pSender == this)

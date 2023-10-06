@@ -94,6 +94,7 @@ public: // Methods
 	void ZoomToInstance(int64_t iInstance);
 	void ZoomOut();
 
+	void OnInstanceNameEdited(CRDFInstance* pInstance);
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
 	void Save(const wchar_t * szPath);

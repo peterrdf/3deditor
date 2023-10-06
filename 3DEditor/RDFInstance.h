@@ -68,6 +68,8 @@ public: // Methods
 	CRDFInstance(int64_t iID, int64_t iInstance);
 	virtual ~CRDFInstance();
 
+	void LoadName();
+
 	void Recalculate(bool bForceUpdate);
 
 	int64_t GetID() const;
@@ -79,7 +81,7 @@ public: // Methods
 
 	const wchar_t* GetName() const;
 	const wchar_t* GetUniqueName() const;
-
+	
 	bool IsReferenced() const;
 	bool HasGeometry() const;
 	

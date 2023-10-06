@@ -176,6 +176,9 @@
     <ClInclude Include="TreeCtrlEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenameDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -296,6 +299,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TreeCtrlEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenameDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

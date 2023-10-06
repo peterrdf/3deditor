@@ -9,6 +9,7 @@
 #include "NewInstanceDialog.h"
 #include "DesignTreeViewConsts.h"
 #include "ProgressIndicator.h"
+#include "RenameDialog.h"
 
 #include <algorithm>
 using namespace std;
@@ -2347,6 +2348,18 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 			break;
 
+			case ID_INSTANCES_RENAME:
+			{
+				CRenameDialog dlgRename(pInstance->GetName());
+				if (dlgRename.DoModal() == IDOK)
+				{
+					GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);
+
+					m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
+				}
+			}
+			break;
+
 			default:
 			{
 				ASSERT(false);
@@ -2450,6 +2463,18 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			else
 			{
 				m_pSearchDialog->ShowWindow(SW_HIDE);
+			}
+		}
+		break;
+
+		case ID_INSTANCES_RENAME:
+		{
+			CRenameDialog dlgRename(pInstance->GetName());
+			if (dlgRename.DoModal() == IDOK)
+			{
+				GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);
+
+				m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
 			}
 		}
 		break;

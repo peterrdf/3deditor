@@ -281,6 +281,7 @@ public: // Methods
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CRDFView* pSender);
 	virtual void OnInstancePropertySelected();
+	virtual void OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* pInstance);
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
 	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);

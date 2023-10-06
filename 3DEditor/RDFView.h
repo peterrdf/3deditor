@@ -85,6 +85,10 @@ public: // Methods
 	virtual void OnInstancePropertySelected();
 
 	// --------------------------------------------------------------------------------------------
+	// The Name has been modified
+	virtual void OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* pInstance);
+
+	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been modified
 	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 

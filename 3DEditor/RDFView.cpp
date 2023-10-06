@@ -54,6 +54,11 @@ void CRDFView::SetController(CRDFController * pController)
 }
 
 // ------------------------------------------------------------------------------------------------
+/*virtual*/ void CRDFView::OnInstanceNameEdited(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/)
+{
+}
+
+// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFView::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
 {
 }

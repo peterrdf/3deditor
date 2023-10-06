@@ -133,6 +133,15 @@ BEGIN
     COMBOBOX        IDC_COMBO_CLASSES,13,18,204,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
+IDD_DIALOG_RENAME DIALOGEX 0, 0, 113, 47
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rename"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,29,27,50,14
+    EDITTEXT        IDC_EDIT_NAME,7,7,94,14,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -173,6 +182,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 71
     END
+
+    IDD_DIALOG_RENAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 106
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -188,6 +205,11 @@ BEGIN
 END
 
 IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_RENAME AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -538,6 +560,8 @@ BEGIN
         MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Search",                      ID_INSTANCES_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM "Rename",                      ID_INSTANCES_RENAME
     END
 END
 
@@ -565,6 +589,8 @@ BEGIN
         MENUITEM "Save",                        ID_INSTANCES_SAVE
         MENUITEM SEPARATOR
         MENUITEM "Search",                      ID_INSTANCES_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM "Rename",                      ID_INSTANCES_RENAME
     END
 END
 

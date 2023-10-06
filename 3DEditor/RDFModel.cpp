@@ -684,6 +684,16 @@ void CRDFModel::ZoomOut()
 }
 
 // ------------------------------------------------------------------------------------------------
+void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
+{
+	auto itMetaData = m_mapInstanceMetaData.find(pInstance);
+	if (itMetaData != m_mapInstanceMetaData.end())
+	{
+		m_mapInstanceMetaData.erase(pInstance);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
 {
 	SetFormatSettings(m_iModel);

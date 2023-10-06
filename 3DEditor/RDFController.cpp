@@ -258,7 +258,6 @@ void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplica
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {
 	auto pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
@@ -271,6 +270,25 @@ CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCla
 	}
 
 	return pNewRDFInstance;
+}
+
+void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName)
+{
+	// Rename
+	SetNameOfInstanceW(
+		pInstance->GetInstance(),
+		szName);
+
+	// Update cache
+	pInstance->LoadName();
+	m_pModel->OnInstanceNameEdited(pInstance);
+
+	// Notify
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnInstanceNameEdited(pSender, pInstance);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

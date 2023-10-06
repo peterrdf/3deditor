@@ -165,6 +165,7 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Factory
 	CRDFInstance* CreateNewInstance(CRDFView* pSender, int64_t iClassInstance);
+	void RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory
