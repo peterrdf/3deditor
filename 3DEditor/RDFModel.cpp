@@ -414,9 +414,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		return;
 	}
 	
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -430,9 +428,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		m_fZmax);
 	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/*
-	* Scale and Center
-	*/
+	/* Scale and Center */
 	itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
@@ -449,9 +445,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 			true);
 	}
 
-	/*
-	* Min/Max
-	*/
+	/* Min/Max */
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
 	m_fYmin = FLT_MAX;
@@ -485,9 +479,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		return;
 	}
 
-	/*
-	* World
-	*/
+	/* World */
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
@@ -501,9 +493,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		m_fZmax);
 	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/*
-	* Translations
-	*/
+	/* Translations */
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_fXTranslation -= m_fXmin;
 	m_fYTranslation -= m_fYmin;

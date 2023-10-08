@@ -142,7 +142,7 @@ public: // Methods
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax, 
-		float fResoltuion,
+		float fScaleFactor,
 		bool bScale);
 	
 	GLuint& VBO();
