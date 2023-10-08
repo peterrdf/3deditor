@@ -1203,6 +1203,11 @@ void CRDFModel::UpdateVertexBufferOffset()
 		return;
 	}
 
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		-(dXmin + dXmax) / 2.,
+		-(dYmin + dYmax) / 2.,
+		-(dZmin + dZmax) / 2.);
+
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
 		m_iModel,

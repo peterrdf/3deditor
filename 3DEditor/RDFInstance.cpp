@@ -503,19 +503,20 @@ void CRDFInstance::CalculateMinMax(
 
 	_vector3d vecOriginalBBMin;
 	_vector3d vecOriginalBBMax;
-
-	GetBoundingBox(
+	if (GetInstanceGeometryClass(iInstance) &&
+		GetBoundingBox(
 		iInstance,
 		(double*)&vecOriginalBBMin,
-		(double*)&vecOriginalBBMax);
+		(double*)&vecOriginalBBMax))
+	{
+		dXmin = fmin(dXmin, vecOriginalBBMin.x);
+		dYmin = fmin(dYmin, vecOriginalBBMin.y);
+		dZmin = fmin(dZmin, vecOriginalBBMin.z);
 
-	dXmin = fmin(dXmin, vecOriginalBBMin.x);
-	dYmin = fmin(dYmin, vecOriginalBBMin.y);
-	dZmin = fmin(dZmin, vecOriginalBBMin.z);
-
-	dXmax = fmax(dXmax, vecOriginalBBMax.x);
-	dYmax = fmax(dYmax, vecOriginalBBMax.y);
-	dZmax = fmax(dZmax, vecOriginalBBMax.z);
+		dXmax = fmax(dXmax, vecOriginalBBMax.x);
+		dYmax = fmax(dYmax, vecOriginalBBMax.y);
+		dZmax = fmax(dZmax, vecOriginalBBMax.z);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
