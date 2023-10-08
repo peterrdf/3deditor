@@ -221,7 +221,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 	int64_t iInstance = CreateInstance(iClassInstance);
 	ASSERT(iInstance != 0);
 
-	auto pInstance = new CRDFInstance(m_iID++, iInstance);
+	auto pInstance = new CRDFInstance(m_iID++, iInstance, true);
 	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[iInstance] = pInstance;
@@ -232,7 +232,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 // ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 {
-	auto pInstance = new CRDFInstance(m_iID++, pThing);
+	auto pInstance = new CRDFInstance(m_iID++, pThing, true);
 	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[pThing] = pInstance;
@@ -409,12 +409,9 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 	
 	/*
@@ -483,12 +480,9 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
 	}
 
 	/*
@@ -1260,57 +1254,6 @@ void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::EnableInstancesRecursively(CRDFInstance* iRDFInstance)
-{
-	if (iRDFInstance->getEnable() == false) {
-		iRDFInstance->setEnable(true);
-
-		if (iRDFInstance->GetConceptualFacesCount() == 0) {
-			auto& mapRFDInstances = GetInstances();
-
-			//
-			//	Walk over all relations (object properties)
-			//
-			RdfProperty myProperty = GetInstancePropertyByIterator(iRDFInstance->GetInstance(), 0);
-			while (myProperty) {
-				if (GetPropertyType(myProperty) == OBJECTPROPERTY_TYPE) {
-					int64_t card = 0;
-					OwlInstance* values = nullptr;
-					GetObjectProperty(iRDFInstance->GetInstance(), myProperty, &values, &card);
-					for (int64_t i = 0; i < card; i++) {
-						if (values[i]) {
-							auto itRFDInstance = mapRFDInstances.find(values[i]);
-
-							if (!itRFDInstance->second->getEnable())
-								EnableInstancesRecursively(itRFDInstance->second);
-						}
-					}
-				}
-				myProperty = GetInstancePropertyByIterator(iRDFInstance->GetInstance(), myProperty);
-			}
-		}
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::SetDefaultEnabledInstances()
-{
-	ProgressStatus prgs (L"Collect visible instances");
-
-	auto& mapRFDInstances = GetInstances();
-
-	auto itRFDInstances = mapRFDInstances.begin();
-	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
-	{
-		if (itRFDInstances->second->getEnable() &&
-			!GetInstanceGeometryClass(itRFDInstances->second->GetInstance())) {
-			itRFDInstances->second->setEnable(false);
-			EnableInstancesRecursively(itRFDInstances->second);
-		}
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFInstances()
 {
 	/*
@@ -1336,7 +1279,7 @@ void CRDFModel::LoadRDFInstances()
 		auto itInstance = m_mapInstances.find(iInstance);
 		if (itInstance == m_mapInstances.end())
 		{
-			pInstance = new CRDFInstance(m_iID++, iInstance);
+			pInstance = new CRDFInstance(m_iID++, iInstance, m_mapInstanceDefaultState.at(iInstance));
 			m_mapInstances[iInstance] = pInstance;
 		}
 		else
@@ -1344,14 +1287,10 @@ void CRDFModel::LoadRDFInstances()
 			pInstance = itInstance->second;
 		}
 
-		pInstance->setEnable(!pInstance->IsReferenced());
-
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	} // while (iInstance != 0)
 
 	prgs.Finish();
-
-	SetDefaultEnabledInstances();
 
 	/**
 	* Scale and Center

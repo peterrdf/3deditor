@@ -117,8 +117,6 @@ private: // Methods
 	void LoadRDFModel();
 	void UpdateVertexBufferOffset();
 	void SetInstanceDefaultStateRecursive(OwlInstance iInstance);
-	void EnableInstancesRecursively(CRDFInstance* iRDFInstance);
-	void SetDefaultEnabledInstances();
 	void LoadRDFInstances();
 
 	void Clean();

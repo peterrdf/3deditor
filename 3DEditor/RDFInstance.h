@@ -65,7 +65,7 @@ private: // Members
 
 public: // Methods
 
-	CRDFInstance(int64_t iID, int64_t iInstance);
+	CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable);
 	virtual ~CRDFInstance();
 
 	void LoadName();

@@ -5,7 +5,7 @@
 #include <memory>
 
 // ------------------------------------------------------------------------------------------------
-CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
+CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable)
 	: m_iID(iID)
 	, m_iInstance(iInstance)
 	, m_strName(L"NA")
@@ -35,7 +35,7 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance)
 	, m_pvecBoundingBoxMin(nullptr)
 	, m_pvecBoundingBoxMax(nullptr)
 	, m_pmtxBoundingBoxTransformation(nullptr)
-	, m_bEnable(true)
+	, m_bEnable(bEnable)
 	, m_bNeedsRefresh(false)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
