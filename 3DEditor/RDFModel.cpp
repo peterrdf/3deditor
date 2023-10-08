@@ -24,6 +24,7 @@ CRDFModel::CRDFModel()
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_mapInstances()
+	, m_mapInstanceDefaultState()
 	, m_mapInstanceMetaData()
 	, m_iID(1)
 	, m_fXmin(-1.f)
@@ -385,6 +386,11 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
+		if (!itInstance->second->getEnable())
+		{
+			continue;
+		}
+
 		if (!bLoadingModel)
 		{
 			itInstance->second->ResetScaleAndCenter();
@@ -410,49 +416,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		m_fZmin = -1.;
 		m_fZmax = 1.;
 	}
-
-	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	SetVertexBufferOffset(
-		m_iModel,
-		-(m_fXmin + m_fXmax) / 2.,
-		-(m_fYmin + m_fYmax) / 2.,
-		-(m_fZmin + m_fZmax) / 2.);
-
-	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-	ClearedExternalBuffers(m_iModel);
 	
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
-
-	itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		itInstance->second->Recalculate(true);
-		itInstance->second->CalculateMinMax(
-			m_fXmin, m_fXmax,
-			m_fYmin, m_fYmax,
-			m_fZmin, m_fZmax);
-	}
-
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
-	}
-
 	/*
 	* World
 	*/
@@ -475,6 +439,11 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
+		if (!itInstance->second->getEnable())
+		{
+			continue;
+		}
+
 		itInstance->second->ScaleAndCenter(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
@@ -496,13 +465,15 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->getEnable())
+		if (!itInstance->second->getEnable())
 		{
-			itInstance->second->CalculateMinMax(
-				m_fXmin, m_fXmax, 
-				m_fYmin, m_fYmax, 
-				m_fZmin, m_fZmax);
+			continue;
 		}
+
+		itInstance->second->CalculateMinMax(
+			m_fXmin, m_fXmax,
+			m_fYmin, m_fYmax,
+			m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -1173,8 +1144,119 @@ void CRDFModel::LoadRDFModel()
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
 
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	UpdateVertexBufferOffset();
+
 	// Instances
 	LoadRDFInstances();
+}
+
+void CRDFModel::UpdateVertexBufferOffset()
+{
+	m_mapInstanceDefaultState.clear();
+
+	// Enable only unreferenced instances
+	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
+	while (iInstance != 0)
+	{
+		m_mapInstanceDefaultState[iInstance] = GetInstanceInverseReferencesByIterator(iInstance, 0) == 0;
+
+		iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	}
+
+	// Enable children/descendants with geometry
+	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState)
+	{
+		if (itInstanceDefaultState.second &&
+			!GetInstanceGeometryClass(itInstanceDefaultState.first))
+		{
+			SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
+		}
+	}
+
+	/* Min/Max */
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	iInstance = GetInstancesByIterator(m_iModel, 0);
+	while (iInstance != 0)
+	{
+		if (m_mapInstanceDefaultState.at(iInstance))
+		{
+			CRDFInstance::CalculateBBMinMax(
+				iInstance,
+				dXmin, dXmax,
+				dYmin, dYmax,
+				dZmin, dZmax);
+		}
+
+		iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	}
+
+	if ((dXmin == DBL_MAX) ||
+		(dXmax == -DBL_MAX) ||
+		(dYmin == DBL_MAX) ||
+		(dYmax == -DBL_MAX) ||
+		(dZmin == DBL_MAX) ||
+		(dZmax == -DBL_MAX))
+	{
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+
+		return;
+	}
+
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		m_iModel,
+		-(dXmin + dXmax) / 2.,
+		-(dYmin + dYmax) / 2.,
+		-(dZmin + dZmax) / 2.);
+
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(m_iModel);
+}
+
+void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
+	while (iProperty != 0) 
+	{
+		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE) 
+		{
+			int64_t iValuesCount = 0;
+			OwlInstance* piValues = nullptr;
+			GetObjectProperty(iInstance, iProperty, &piValues, &iValuesCount);
+
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+			{
+				if ((piValues[iValue] != 0) &&
+					!m_mapInstanceDefaultState.at(piValues[iValue]))
+				{
+					// Set Enabled to avoid infinity recursion
+					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
+					
+					bool bHasGeometry = GetInstanceGeometryClass(piValues[iValue]);
+					if (bHasGeometry)
+					{
+						bHasGeometry &= GetBoundingBox(piValues[iValue], nullptr, nullptr);
+					}
+
+					if (!bHasGeometry)
+					{
+						SetInstanceDefaultStateRecursive(piValues[iValue]);
+					}
+				}
+			}
+		}
+
+		iProperty = GetInstancePropertyByIterator(iInstance, iProperty);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

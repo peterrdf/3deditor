@@ -493,6 +493,31 @@ void CRDFInstance::CalculateMinMax(
 	} // if (!m_vecPoints.empty())
 }
 
+/*static*/ void CRDFInstance::CalculateBBMinMax(
+	OwlInstance iInstance,
+	double& dXmin, double& dXmax,
+	double& dYmin, double& dYmax,
+	double& dZmin, double& dZmax)
+{
+	ASSERT(iInstance != 0);
+
+	_vector3d vecOriginalBBMin;
+	_vector3d vecOriginalBBMax;
+
+	GetBoundingBox(
+		iInstance,
+		(double*)&vecOriginalBBMin,
+		(double*)&vecOriginalBBMax);
+
+	dXmin = fmin(dXmin, vecOriginalBBMin.x);
+	dYmin = fmin(dYmin, vecOriginalBBMin.y);
+	dZmin = fmin(dZmin, vecOriginalBBMin.z);
+
+	dXmax = fmax(dXmax, vecOriginalBBMax.x);
+	dYmax = fmax(dYmax, vecOriginalBBMax.y);
+	dZmax = fmax(dZmax, vecOriginalBBMax.z);
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::ScaleAndCenter(
 	float fXmin, float fXmax, 

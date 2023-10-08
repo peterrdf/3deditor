@@ -126,10 +126,17 @@ public: // Methods
 	bool getEnable() const;
 	
 	void ResetScaleAndCenter();
+
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 
 		float& fYmin, float& fYmax, 
 		float& fZmin, float& fZmax);
+
+	static void CalculateBBMinMax(
+		OwlInstance iInstance,
+		double& dXmin, double& dXmax,
+		double& dYmin, double& dYmax,
+		double& dZmin, double& dZmax);
 
 	void ScaleAndCenter(
 		float fXmin, float fXmax, 

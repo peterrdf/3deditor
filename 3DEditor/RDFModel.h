@@ -31,6 +31,7 @@ private: // Members
 	map<int64_t, CRDFClass *> m_mapClasses;
 	map<int64_t, CRDFProperty *> m_mapProperties;
 	map<int64_t, CRDFInstance *> m_mapInstances;
+	map<OwlInstance, bool> m_mapInstanceDefaultState; 
 	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
 	// ID (1-based index)
@@ -114,6 +115,8 @@ private: // Methods
 
 	void SetFormatSettings(int64_t iModel);
 	void LoadRDFModel();
+	void UpdateVertexBufferOffset();
+	void SetInstanceDefaultStateRecursive(OwlInstance iInstance);
 	void EnableInstancesRecursively(CRDFInstance* iRDFInstance);
 	void SetDefaultEnabledInstances();
 	void LoadRDFInstances();
