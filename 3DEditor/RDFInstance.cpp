@@ -104,9 +104,9 @@ void CRDFInstance::LoadName()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::Recalculate(bool bForceUpdate)
+void CRDFInstance::Recalculate()
 {	
-	if (!bForceUpdate && !m_bEnable)
+	if (!m_bEnable)
 	{
 		// Reloading on demand
 		m_bNeedsRefresh = true;
@@ -328,7 +328,7 @@ void CRDFInstance::setEnable(bool bEnable)
 	{
 		m_bNeedsRefresh = false;
 
-		Recalculate(false);
+		Recalculate();
 	}
 }
 

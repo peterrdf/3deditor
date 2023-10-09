@@ -70,7 +70,7 @@ public: // Methods
 
 	void LoadName();
 
-	void Recalculate(bool bForceUpdate);
+	void Recalculate();
 
 	int64_t GetID() const;
 

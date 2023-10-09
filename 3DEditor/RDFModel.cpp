@@ -661,7 +661,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 			continue;
 		}
 
-		itInstance->second->Recalculate(false);
+		itInstance->second->Recalculate();
 	}
 }
 
