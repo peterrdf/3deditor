@@ -3331,7 +3331,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Bounding box min
 	*/
 	{
-		auto pBBMin = pInstance->getOriginalBoundingBoxMin();
+		auto pBBMin = pInstance->getOriginalBBMin();
 
 		swprintf(szBuffer, 100, 
 			L"%.6f, %.6f, %.6f", 
@@ -3347,7 +3347,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Bounding box max
 	*/
 	{	
-		auto pBBMax = pInstance->getOriginalBoundingBoxMax();
+		auto pBBMax = pInstance->getOriginalBBMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -3363,7 +3363,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* AABB Bounding box min
 	*/
 	{
-		auto pAABBBBMin = pInstance->getAABBBoundingBoxMin();
+		auto pAABBBBMin = pInstance->getAABBMin();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -3379,7 +3379,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* AABB Bounding box max
 	*/
 	{
-		auto pAABBBBMax = pInstance->getAABBBoundingBoxMax();
+		auto pAABBBBMax = pInstance->getAABBMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
