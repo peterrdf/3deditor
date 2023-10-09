@@ -1227,16 +1227,11 @@ void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
 				if ((piValues[iValue] != 0) &&
 					!m_mapInstanceDefaultState.at(piValues[iValue]))
 				{
-					// Set Enabled to avoid infinity recursion
+					// Enable to avoid infinity recursion
 					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
-					
-					bool bHasGeometry = GetInstanceGeometryClass(piValues[iValue]);
-					if (bHasGeometry)
-					{
-						bHasGeometry &= GetBoundingBox(piValues[iValue], nullptr, nullptr);
-					}
 
-					if (!bHasGeometry)
+					if (!GetInstanceGeometryClass(piValues[iValue]) ||
+						!GetBoundingBox(piValues[iValue], nullptr, nullptr))
 					{
 						SetInstanceDefaultStateRecursive(piValues[iValue]);
 					}
