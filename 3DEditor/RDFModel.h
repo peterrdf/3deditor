@@ -100,7 +100,7 @@ public: // Methods
 
 	void Save(const wchar_t * szPath);
 
-	void Load(const wchar_t* szPath);	
+	void Load(const wchar_t* szPath, bool bLoading);	
 	void LoadDXF(const wchar_t* szPath);
 	void LoadGISModel(const wchar_t* szPath);
 	void PostLoad();

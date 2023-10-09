@@ -267,10 +267,7 @@ void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
 void CRDFModel::ImportModel(const wchar_t* szPath)
 {
 	/* Import */
-	ImportModelW(m_iModel, szPath);	
-
-	/* Update cache */
-	LoadRDFModel();
+	Load(szPath, false);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -668,11 +665,14 @@ void CRDFModel::Save(const wchar_t * szPath)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::Load(const wchar_t * szPath)
+void CRDFModel::Load(const wchar_t * szPath, bool bLoading)
 {
-	Clean();
+	if (bLoading)
+	{
+		Clean();
 
-	m_strModel = szPath;
+		m_strModel = szPath;
+	}	
 	
 	CString strExtension = PathFindExtension(szPath);
 	strExtension.MakeUpper();
@@ -689,10 +689,22 @@ void CRDFModel::Load(const wchar_t * szPath)
 	}
 	else
 	{
-		m_iModel = OpenModelW(szPath);
-		if (m_iModel != 0)
+		if (bLoading)
 		{
-			SetFormatSettings(m_iModel);
+			m_iModel = OpenModelW(szPath);
+			if (m_iModel != 0)
+			{
+				SetFormatSettings(m_iModel);
+
+				LoadRDFModel();
+			}
+		}
+		else
+		{
+			ASSERT(m_iModel != 0);
+
+			ImportModelW(m_iModel, szPath);
+
 			LoadRDFModel();
 		}
 	}
@@ -709,10 +721,13 @@ void CRDFModel::Load(const wchar_t * szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
-	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
+	if (m_iModel == 0)
+	{
+		m_iModel = CreateModel();
+		ASSERT(m_iModel != 0);
 
-	SetFormatSettings(m_iModel);	
+		SetFormatSettings(m_iModel);
+	}		
 
 	try
 	{
@@ -731,12 +746,13 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 
 void CRDFModel::LoadGISModel(const wchar_t* szPath)
 {
-	Clean();
+	if (m_iModel == 0)
+	{
+		m_iModel = CreateModel();
+		ASSERT(m_iModel != 0);
 
-	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
-
-	SetFormatSettings(m_iModel);	
+		SetFormatSettings(m_iModel);
+	}
 
 	try
 	{
