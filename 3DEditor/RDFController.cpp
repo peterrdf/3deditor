@@ -444,8 +444,6 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 {
 	m_pModel->ImportModel(szPath);
 
-	m_pModel->ScaleAndCenter();
-
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
