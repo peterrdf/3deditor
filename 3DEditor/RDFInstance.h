@@ -29,7 +29,8 @@ private: // Members
 	_matrix* m_pmtxOriginalBBTransformation;
 	_vector3d* m_pvecOriginalBBMin;
 	_vector3d* m_pvecOriginalBBMax;	
-	_matrix* m_pmtxBBTransformation;
+	_vector3d* m_pvecAABBMin;
+	_vector3d* m_pvecAABBMax;
 	_vector3d* m_pvecBBMin;
 	_vector3d* m_pvecBBMax;	
 	

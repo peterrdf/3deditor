@@ -1170,8 +1170,13 @@ void CRDFModel::UpdateVertexBufferOffset()
 	// Enable children/descendants with geometry
 	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState)
 	{
-		if (itInstanceDefaultState.second &&
-			!GetInstanceGeometryClass(itInstanceDefaultState.first))
+		if (!itInstanceDefaultState.second)
+		{
+			continue;
+		}
+
+		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
+				!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr))
 		{
 			SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
 		}
