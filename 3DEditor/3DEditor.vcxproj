@@ -216,6 +216,7 @@
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="ClassViewConsts.h" />
     <ClInclude Include="conceptMesh.h" />
+    <ClInclude Include="ProgressDialog.h" />
     <ClInclude Include="RenameDialog.h" />
     <ClInclude Include="CUniqueVerticesCheck.h" />
     <ClInclude Include="DoubleRDFProperty.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="BoolRDFProperty.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="conceptMesh.cpp" />
+    <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="RenameDialog.cpp" />
     <ClCompile Include="CUniqueVerticesCheck.cpp" />
     <ClCompile Include="DoubleRDFProperty.cpp" />

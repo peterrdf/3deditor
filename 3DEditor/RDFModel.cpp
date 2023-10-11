@@ -3,6 +3,8 @@
 #include "RDFModel.h"
 #include "Generic.h"
 #include "ProgressIndicator.h"
+#include "ProgressDialog.h"
+#include "gisengine.h"
 
 #include "_dxf_parser.h"
 #include "gisengine.h"
@@ -17,7 +19,110 @@ using namespace std;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
+CProgressDialog* m_pProgressDialog = nullptr;
+
+// ************************************************************************************************
+void STDCALL LogCallbackImpl(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
+{
+	ASSERT(m_pProgressDialog != nullptr);
+
+	m_pProgressDialog->Log(enLogEvent, szEvent);
+}
+
+// ************************************************************************************************
+class CLoadTask : public CTask
+{
+
+private: // Members
+
+	CRDFModel* m_pModel;
+	const wchar_t* m_szPath;
+	bool m_bLoading;
+
+public: // Methods
+
+	CLoadTask(CRDFModel* pModel, const wchar_t* szPath, bool bLoading)
+		: CTask()
+		, m_pModel(pModel)
+		, m_szPath(szPath)
+		, m_bLoading(bLoading)
+	{
+		ASSERT(m_pModel != nullptr);
+		ASSERT(szPath != nullptr);
+	}
+
+	virtual ~CLoadTask()
+	{}
+
+	virtual void Run() override
+	{
+		ASSERT(m_pProgressDialog != nullptr);
+
+		CString strLog;
+		if (m_bLoading)
+		{
+			strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
+		}
+		else
+		{
+			strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
+		}		
+
+		m_pProgressDialog->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+
+		CString strExtension = PathFindExtension(m_szPath);
+		strExtension.MakeUpper();
+
+		if (strExtension == L".DXF")
+		{
+			m_pModel->LoadDXF(m_szPath);
+		}
+		else if ((strExtension == L".GML") ||
+			(strExtension == L".CITYGML") ||
+			(strExtension == L".XML") ||
+			(strExtension == L".JSON"))
+		{
+			m_pModel->LoadGISModel(m_szPath);
+		}
+		else
+		{
+			if (m_bLoading)
+			{
+				m_pModel->m_iModel = OpenModelW(m_szPath);
+				if (m_pModel->m_iModel != 0)
+				{
+					m_pModel->SetFormatSettings(m_pModel->m_iModel);
+
+					m_pModel->LoadRDFModel();
+				}
+			}
+			else
+			{
+				ASSERT(m_pModel->m_iModel != 0);
+
+				ImportModelW(m_pModel->m_iModel, m_szPath);
+
+				m_pModel->LoadRDFModel();
+			}
+		}
+
+		if (m_pModel->m_iModel == 0)
+		{
+			CString strError;
+			strError.Format(L"Failed to open '%s'.", m_szPath);
+
+			m_pProgressDialog->Log(2/*enumLogEvent::error*/, CW2A(strError));
+			::MessageBox(m_pProgressDialog->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+		}
+		else
+		{
+			m_pProgressDialog->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+		}
+	}
+};
+
+// ************************************************************************************************
 CRDFModel::CRDFModel()
 	: m_strModel(L"")
 	, m_iModel(0)
@@ -402,7 +507,9 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -467,7 +574,9 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -673,49 +782,13 @@ void CRDFModel::Load(const wchar_t * szPath, bool bLoading)
 
 		m_strModel = szPath;
 	}	
-	
-	CString strExtension = PathFindExtension(szPath);
-	strExtension.MakeUpper();
 
-	if (strExtension == L".DXF")
-	{
-		LoadDXF(szPath);
-	} else if ((strExtension == L".GML") ||
-		(strExtension == L".CITYGML") ||
-		(strExtension == L".XML") ||
-		(strExtension == L".JSON"))
-	{
-		LoadGISModel(szPath);
-	}
-	else
-	{
-		if (bLoading)
-		{
-			m_iModel = OpenModelW(szPath);
-			if (m_iModel != 0)
-			{
-				SetFormatSettings(m_iModel);
+	CLoadTask loadTask(this, szPath, bLoading);
+	CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 
-				LoadRDFModel();
-			}
-		}
-		else
-		{
-			ASSERT(m_iModel != 0);
-
-			ImportModelW(m_iModel, szPath);
-
-			LoadRDFModel();
-		}
-	}
-
-	if (m_iModel == 0) 
-	{
-		CString strError;
-		strError.Format(L"Failed to open '%s'.", szPath);
-
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
-	}	
+	m_pProgressDialog = &dlgProgress;
+	dlgProgress.DoModal();
+	m_pProgressDialog = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -736,7 +809,9 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	}
 	catch (const std::runtime_error& ex)
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -764,19 +839,23 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 		string strRootFolder = pthRootFolder.string();
 		strRootFolder += "\\";
 
-		SetGISOptions(strRootFolder.c_str(), true);
+		SetGISOptions(strRootFolder.c_str(), true, LogCallbackImpl);
 
 		ImportGISModel(m_iModel, CW2A(szPath));
 	}
 	catch (const std::runtime_error& err)
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), CA2W(err.what()), L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			CA2W(err.what()), L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}
 	catch (...)
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
 	}	
 
 	LoadRDFModel();
@@ -1212,7 +1291,9 @@ void CRDFModel::UpdateVertexBufferOffset()
 		(dZmin == DBL_MAX) ||
 		(dZmax == -DBL_MAX))
 	{
-		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+		::MessageBox(
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
 	}

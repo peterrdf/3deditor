@@ -95,6 +95,7 @@
 #define IDR_TEXTFILE_FRAGMENT_SHADER2   321
 #define IDR_MENU_OPENGL                 322
 #define IDD_DIALOG_RENAME               323
+#define IDD_DIALOG_PROGRESS             325
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -106,6 +107,7 @@
 #define IDC_COMBO_SEARCH_FILTER         1008
 #define IDC_COMBO_INSTANCES             1009
 #define IDC_EDIT_NAME                   1010
+#define IDC_EDIT_PROGRESS               1011
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -159,9 +161,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        325
+#define _APS_NEXT_RESOURCE_VALUE        327
 #define _APS_NEXT_COMMAND_VALUE         32831
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           313
 #endif
 #endif

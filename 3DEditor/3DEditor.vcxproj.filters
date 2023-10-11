@@ -179,6 +179,9 @@
     <ClInclude Include="RenameDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -302,6 +305,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RenameDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
