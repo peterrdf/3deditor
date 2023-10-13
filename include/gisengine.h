@@ -19,19 +19,22 @@
 typedef size_t(STDCALL* ReadDataCallback)(unsigned char* szData, size_t iSize);
 
 /* C interface */
+#ifdef __cplusplus
 extern "C" {
-	void DECSPEC STDCALL SetGISOptions(const char* szRootFolder, bool bUseEmbeddedSchemas, const void* pLogCallback = nullptr);
+#endif
+	void DECSPEC STDCALL SetGISOptions(const char* szRootFolder, bool bUseEmbeddedSchemas, const void* pLogCallback = nullptr, int iValidationLevel = 0);
 
-	OwlInstance DECSPEC STDCALL ImportGISModel(OwlModel owlModel, const char* szFile, OwlInstance* pOwlSchemaInstance = nullptr);
-	OwlInstance DECSPEC STDCALL ImportGISModelW(OwlModel owlModel, const wchar_t* szFile, OwlInstance* pOwlSchemaInstance = nullptr);
-	OwlInstance DECSPEC STDCALL ImportGISModelA(OwlModel owlModel, const unsigned char* szData, size_t iSize, OwlInstance* pOwlSchemaInstance = nullptr);
-	OwlInstance DECSPEC STDCALL ImportGISModelS(OwlModel owlModel, const void* pReadDataCallback, OwlInstance* pOwlSchemaInstance = nullptr);
+	OwlInstance DECSPEC STDCALL ImportGISModel(OwlModel iModel, const char* szFile, OwlInstance* pSchemaInstance = nullptr);
+	OwlInstance DECSPEC STDCALL ImportGISModelW(OwlModel iModel, const wchar_t* szFile, OwlInstance* pSchemaInstance = nullptr);
+	OwlInstance DECSPEC STDCALL ImportGISModelA(OwlModel iModel, const unsigned char* szData, size_t iSize, OwlInstance* pSchemaInstance = nullptr);
+	OwlInstance DECSPEC STDCALL ImportGISModelS(OwlModel iModel, const void* pReadDataCallback, OwlInstance* pSchemaInstance = nullptr);
 
-	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);
-
+	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);	
 #ifdef _DEBUG
 	void DECSPEC STDCALL BuildGISEmbeddedSchemaStorage(const char* szSourcesRootFolder);
 #endif
+#ifdef __cplusplus
 };
+#endif
 
 
