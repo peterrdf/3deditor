@@ -2250,9 +2250,9 @@ public: // Methods
 			// ... and reset
 			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
 
-			const double* pRotationMatirx = m_rotation.toMatrix();
-			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatirx);
-			delete pRotationMatirx;
+			const double* pRotationMatrix = m_rotation.toMatrix();
+			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
+			delete pRotationMatrix;
 
 			m_matModelView = m_matModelView * matTransformation;
 		}
