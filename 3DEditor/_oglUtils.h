@@ -2108,7 +2108,8 @@ public: // Methods
 	}
 
 	void _prepare(
-		int iWidth, int iHeight,
+		int iViewportX, int iViewportY,
+		int iViewportWidth, int iViewportHeight,
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax)
@@ -2160,7 +2161,7 @@ public: // Methods
 
 		m_pOGLProgram->_use();
 
-		glViewport(0, 0, iWidth, iHeight);
+		glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
 		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2175,7 +2176,7 @@ public: // Methods
 		// zNear    - The near clipping distance
 		// zFar     - The far clipping distance
 		GLdouble fovY = 45.0;
-		GLdouble aspect = (GLdouble)iWidth / (GLdouble)iHeight;
+		GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
 
 		GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 		zNear = min(zNear, abs((double)fZmin));
