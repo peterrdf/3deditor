@@ -1887,6 +1887,8 @@ struct _ioglRenderer
 };
 
 // ************************************************************************************************
+const float DEFAULT_TRANSLATION = -4.f;
+
 const float ZOOM_SPEED_MOUSE = 0.01f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;
 const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
@@ -1992,7 +1994,7 @@ public: // Methods
 		, m_fPanYInterval(2.f)
 		, m_fXTranslation(.0f)
 		, m_fYTranslation(.0f)
-		, m_fZTranslation(-5.f)
+		, m_fZTranslation(DEFAULT_TRANSLATION)
 		, m_fScaleFactor(2.f)
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
@@ -2112,7 +2114,9 @@ public: // Methods
 		int iViewportWidth, int iViewportHeight,
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
-		float fZmin, float fZmax)
+		float fZmin, float fZmax,
+		bool bClearScene,
+		bool bApplyTranslations)
 	{
 		m_fXmin = fXmin;
 		m_fXmax = fXmax;
@@ -2163,8 +2167,11 @@ public: // Methods
 
 		glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
-		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (bClearScene)
+		{
+			glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}		
 
 		// Set up the parameters
 		glEnable(GL_DEPTH_TEST);
@@ -2220,7 +2227,15 @@ public: // Methods
 
 		// Model-View Matrix
 		m_matModelView = glm::identity<glm::mat4>();
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+
+		if (bApplyTranslations)
+		{
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		}
+		else
+		{
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		}		
 
 		float fXTranslation = fXmin;
 		fXTranslation += (fXmax - fXmin) / 2.f;
@@ -2482,6 +2497,11 @@ public: // Methods
 			0);
 
 		glBindVertexArray(0);
+	}
+
+	void _drawNavigationView()
+	{
+		_drawCoordinateSystem();
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }

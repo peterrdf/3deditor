@@ -388,15 +388,15 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
+		0, 0,
 		iWidth, iHeight,
 		fXmin, fXmax, 
 		fYmin, fYmax, 
-		fZmin, fZmax);	
+		fZmin, fZmax,
+		true,
+		true);	
 	
-	m_pOGLProgram->_enableTexture(false);
-
-	/* Coordinate System */
-	_drawCoordinateSystem();
+	m_pOGLProgram->_enableTexture(false);	
 
 	/* Non-transparent faces */
 	DrawFaces(false);
@@ -429,7 +429,21 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	DrawTangentVectors();
 
 	/* Bi-Normal vectors */
-	DrawBiNormalVectors();	
+	DrawBiNormalVectors();
+
+	/* Coordinate System */
+	_drawCoordinateSystem();
+
+	_prepare(
+		iWidth - 150, 0,
+		150, 150,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	_drawNavigationView();
 
 	/* End */
 #ifdef _LINUX
