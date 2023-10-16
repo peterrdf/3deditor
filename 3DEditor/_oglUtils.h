@@ -1858,11 +1858,11 @@ enum class enumProjection : int
 enum class enumView : int
 {
 	Front = 0,
-	Back,
-	Top,
-	Bottom,
+	Back,	
 	Left,
 	Right,
+	Top,
+	Bottom,
 	Isometric,
 };
 
@@ -1964,6 +1964,12 @@ protected: // Members
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
 
+private: // Members
+
+	// Selection
+	_oglSelectionFramebuffer* m_pSceneSelectionFrameBuffer;
+	int64_t m_iPointedElement;
+
 public: // Methods
 
 	_oglRenderer()
@@ -2003,9 +2009,16 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
+		, m_pSceneSelectionFrameBuffer(new _oglSelectionFramebuffer())
+		, m_iPointedElement(0)
 	{
 		_setView(enumView::Isometric);
 	}	
+
+	virtual ~_oglRenderer()
+	{
+		delete m_pSceneSelectionFrameBuffer;
+	}
 
 	// _ioglRenderer
 	virtual _oglProgram* _getOGLProgram() const override { return m_pOGLProgram; }
@@ -2730,10 +2743,20 @@ public: // Methods
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		m_pOGLProgram->_setTransparency(.35f);
-		m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		int64_t iElement = 1;		
 
 		/* Front */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2741,6 +2764,17 @@ public: // Methods
 			0);
 
 		/* Back */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2748,6 +2782,17 @@ public: // Methods
 			0);
 
 		/* Left */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2755,6 +2800,17 @@ public: // Methods
 			0);
 
 		/* Right */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2762,6 +2818,17 @@ public: // Methods
 			0);
 
 		/* Top */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2769,6 +2836,17 @@ public: // Methods
 			0);
 
 		/* Bottom */
+		if (m_iPointedElement == iElement++)
+		{
+			m_pOGLProgram->_setTransparency(1.f);
+			m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		}
+		else
+		{
+			m_pOGLProgram->_setTransparency(.35f);
+			m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+		}
+
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
@@ -2780,6 +2858,245 @@ public: // Methods
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
+	}
+
+	void _drawSceneFrameBuffer()
+	{
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		/* Create a frame buffer */
+		m_pSceneSelectionFrameBuffer->create();
+
+		/* Selection colors */
+		if (m_pSceneSelectionFrameBuffer->encoding().empty())
+		{
+			float fR, fG, fB;
+			int64_t iElement = 1;
+
+			/* Front */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+
+			/* Back */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+
+			/* Left */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+
+			/* Right */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+
+			/* Top */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+
+			/* Bottom */
+			_i64RGBCoder::encode(iElement, fR, fG, fB);
+			m_pSceneSelectionFrameBuffer->encoding()[iElement++] = _color(fR, fG, fB);
+		} // if (m_pSceneSelectionFrameBuffer->encoding().empty())
+
+		/* Draw */
+
+		m_pSceneSelectionFrameBuffer->bind();
+
+		glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+
+		glClearColor(0.0, 0.0, 0.0, 0.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Set up the parameters
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		m_pOGLProgram->_enableBlinnPhongModel(false);
+		m_pOGLProgram->_setTransparency(1.f);
+
+		GLuint iVAO = m_oglBuffers.getVAO(NAVIGATION_VIEW_VAO);
+		if (iVAO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		glBindVertexArray(iVAO);
+
+		int64_t iElement = 1;
+
+		/* Front */
+		auto itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 0),
+			0);
+
+		/* Back */
+		itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 6),
+			0);
+
+		/* Left */
+		itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 12),
+			0);
+
+		/* Right */
+		itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 18),
+			0);
+
+		/* Top */
+		itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 24),
+			0);
+
+		/* Bottom */
+		itSelectionColor = m_pSceneSelectionFrameBuffer->encoding().find(iElement++);
+		ASSERT(itSelectionColor != m_pSceneSelectionFrameBuffer->encoding().end());
+
+		m_pOGLProgram->_setAmbientColor(
+			itSelectionColor->second.r(),
+			itSelectionColor->second.g(),
+			itSelectionColor->second.b());
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 30),
+			0);
+
+		glBindVertexArray(0);
+
+		m_pSceneSelectionFrameBuffer->unbind();
+
+		_oglUtils::checkForErrors();
+	}
+
+	void _pointSceneElement(const CPoint& point)
+	{
+		if (m_pSceneSelectionFrameBuffer->isInitialized())
+		{
+			int iWidth = 0;
+			int iHeight = 0;
+
+#ifdef _LINUX
+			m_pOGLContext->SetCurrent(*m_pWnd);
+
+			const wxSize szClient = m_pWnd->GetClientSize();
+
+			iWidth = szClient.GetWidth();
+			iHeight = szClient.GetHeight();
+#else
+			BOOL bResult = m_pOGLContext->makeCurrent();
+			VERIFY(bResult);
+
+			CRect rcClient;
+			m_pWnd->GetClientRect(&rcClient);
+
+			iWidth = rcClient.Width();
+			iHeight = rcClient.Height();
+#endif // _LINUX
+
+			if ((point.x > (iWidth - 150)) && (point.x < iWidth) &&
+				(point.y > (iHeight - 150)) && (point.y < iHeight))
+			{
+				GLubyte arPixels[4];
+				memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+				double dX = (double)(point.x - (iWidth - 150)) * ((double)BUFFER_SIZE / (double)150.);
+				double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)150.);
+
+				m_pSceneSelectionFrameBuffer->bind();
+
+				glReadPixels(
+					(GLint)dX,
+					(GLint)dY,
+					1, 1,
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					arPixels);
+
+				m_pSceneSelectionFrameBuffer->unbind();
+
+				int64_t iPointedElement = 0;
+				if (arPixels[3] != 0)
+				{
+					iPointedElement = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+					ASSERT(iPointedElement != 0);
+				}
+
+				if (m_iPointedElement != iPointedElement)
+				{
+					m_iPointedElement = iPointedElement;
+
+					_redraw();
+				}
+			}
+		}
+	}
+
+	void _selectSceneElement()
+	{
+		if (m_iPointedElement != 0)
+		{
+			_setView((enumView)(m_iPointedElement - 1));
+
+			m_iPointedElement = 0;
+
+			_redraw();
+		}
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }

@@ -208,7 +208,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Handler
-	void OnMouseMoveEvent(UINT nFlags, CPoint point);
+	void OnMouseMoveEvent(UINT nFlags, const CPoint& point);
 
 	// --------------------------------------------------------------------------------------------
 	// Screen -> Open GL coordinates

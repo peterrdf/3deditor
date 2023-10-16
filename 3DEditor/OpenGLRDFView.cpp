@@ -466,6 +466,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	/* Selection support */
 	DrawInstancesFrameBuffer();
 	DrawFacesFrameBuffer();
+	_drawSceneFrameBuffer();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -490,6 +491,11 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				ASSERT(GetController() != nullptr);
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
+
+			if (m_pSelectedInstance == nullptr)
+			{
+				_selectSceneElement();
+			}
 		}
 	} // if (enEvent == meLBtnDown)
 
@@ -2352,18 +2358,13 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		return;
 	}
 
-	/*
-	* Create a frame buffer
-	*/	
-
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
+	/* Create a frame buffer */
 	m_pInstanceSelectionFrameBuffer->create();
 
-	/*
-	* Selection colors
-	*/
+	/* Selection colors */
 	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 	{
 		auto& mapInstances = pModel->GetInstances();
@@ -2388,9 +2389,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 		}
 	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
 
-	/*
-	* Draw
-	*/
+	/* Draw */
 
 	m_pInstanceSelectionFrameBuffer->bind();
 
@@ -2683,7 +2682,7 @@ void COpenGLRDFView::DrawPointedFace()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
+void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -2761,6 +2760,11 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, CPoint point)
 				m_pPointedInstance = pPointedInstance;
 
 				_redraw();
+			}
+			
+			if (m_pPointedInstance == nullptr)
+			{
+				_pointSceneElement(point);
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 
