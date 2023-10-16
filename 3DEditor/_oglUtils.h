@@ -2506,15 +2506,13 @@ public: // Methods
 			0);
 
 		glBindVertexArray(0);
+
+		_oglUtils::checkForErrors();
 	}
 
 	void _drawNavigationView()
 	{
 		_drawCoordinateSystem();
-
-		m_pOGLProgram->_enableBlinnPhongModel(true);		
-
-		_oglUtils::checkForErrors();
 
 		bool bIsNew = false;
 		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NAVIGATION_VIEW_VAO, bIsNew);
@@ -2780,6 +2778,8 @@ public: // Methods
 		glDisable(GL_BLEND);
 
 		glBindVertexArray(0);
+
+		_oglUtils::checkForErrors();
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }

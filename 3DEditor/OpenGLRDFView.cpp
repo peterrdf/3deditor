@@ -434,6 +434,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	/* Coordinate System */
 	_drawCoordinateSystem();
 
+	/* Nested view port */
 	_prepare(
 		iWidth - 150, 0,
 		150, 150,
@@ -451,6 +452,16 @@ void COpenGLRDFView::Draw(CDC* pDC)
 #else
 	SwapBuffers(*pDC);
 #endif // _LINUX
+
+	/* Restore */
+	_prepare(
+		0, 0,
+		iWidth, iHeight,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
 
 	/* Selection support */
 	DrawInstancesFrameBuffer();
