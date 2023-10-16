@@ -440,7 +440,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
-		true,
+		false,
 		false);
 
 	_drawNavigationView();

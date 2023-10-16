@@ -2615,7 +2615,74 @@ public: // Methods
 			}
 
 			/* Back */	
-			//...
+
+			// Top/Left (0)
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Bottom/Left (1)
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Bottom/Right (2)
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Top/Right (3)
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
 
 			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
@@ -2634,6 +2701,21 @@ public: // Methods
 				// Front
 				0, 1, 2,
 				2, 3, 0, 
+				// Back
+				4, 5, 6,
+				6, 7, 4,
+				// Left
+				0, 4, 5,
+				5, 1, 0,
+				// Right
+				3, 2, 6, 
+				6, 7, 3,
+				// Top
+				0, 4, 7,
+				7, 3, 0,
+				// Bottom
+				1, 2, 6,
+				6, 5, 1,
 			};
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
@@ -2650,7 +2732,7 @@ public: // Methods
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		m_pOGLProgram->_setTransparency(.15f);
+		m_pOGLProgram->_setTransparency(.35f);
 		m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
 
 		/* Front */
@@ -2658,6 +2740,41 @@ public: // Methods
 			(GLsizei)6,
 			GL_UNSIGNED_INT,
 			(void*)(sizeof(GLuint) * 0),
+			0);
+
+		/* Back */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 6),
+			0);
+
+		/* Left */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 12),
+			0);
+
+		/* Right */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 18),
+			0);
+
+		/* Top */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 24),
+			0);
+
+		/* Bottom */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 30),
 			0);
 
 		glDisable(GL_BLEND);
