@@ -1895,6 +1895,10 @@ const float ZOOM_SPEED_KEYS = ZOOM_SPEED_MOUSE;
 const float PAN_SPEED_KEYS = 0.01f;
 const float ROTATION_SPEED = 1.f / 25.f;
 
+const wchar_t NAVIGATION_VIEW_VAO[] = L"NAVIGATION_VIEW_VAO";
+const wchar_t NAVIGATION_VIEW_VBO[] = L"NAVIGATION_VIEW_VBO";
+const wchar_t NAVIGATION_VIEW_IBO[] = L"NAVIGATION_VIEW_IBO";
+
 const wchar_t COORDINATE_SYSTEM_VAO[] = L"COORDINATE_SYSTEM_VAO";
 const wchar_t COORDINATE_SYSTEM_VBO[] = L"COORDINATE_SYSTEM_VBO";
 const wchar_t COORDINATE_SYSTEM_IBO[] = L"COORDINATE_SYSTEM_IBO";
@@ -2507,6 +2511,158 @@ public: // Methods
 	void _drawNavigationView()
 	{
 		_drawCoordinateSystem();
+
+		m_pOGLProgram->_enableBlinnPhongModel(true);		
+
+		_oglUtils::checkForErrors();
+
+		bool bIsNew = false;
+		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NAVIGATION_VIEW_VAO, bIsNew);
+
+		if (iVAO == 0)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		GLuint iVBO = 0;
+
+		if (bIsNew)
+		{
+			glBindVertexArray(iVAO);
+
+			iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NAVIGATION_VIEW_VBO, bIsNew);
+			if ((iVBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			const float L = 1.5f; 
+
+			vector<float> vecVertices;
+
+			/* Front */
+
+			// Top/Left (0)
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Bottom/Left (1)
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Bottom/Right (2)
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			// Top/Right (3)
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(-L / 2.f);
+
+			/* Nx, Ny, Nz */
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+			vecVertices.push_back(0.f);
+
+			if (m_pOGLProgram->_getSupportsTexture())
+			{
+				/* Tx, Ty */
+				vecVertices.push_back(0.f);
+				vecVertices.push_back(0.f);
+			}
+
+			/* Back */	
+			//...
+
+			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+			GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(NAVIGATION_VIEW_IBO, bIsNew);
+			if ((iIBO == 0) || !bIsNew)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			vector<unsigned int> vecIndices =
+			{ 
+				// Front
+				0, 1, 2,
+				2, 3, 0, 
+			};
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+
+			glBindVertexArray(0);
+
+			_oglUtils::checkForErrors();
+		} // if (bIsNew)
+
+		glBindVertexArray(iVAO);
+
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		m_pOGLProgram->_setTransparency(.15f);
+		m_pOGLProgram->_setAmbientColor(.75f, .75f, .75f);
+
+		/* Front */
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)6,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 0),
+			0);
+
+		glDisable(GL_BLEND);
+
+		glBindVertexArray(0);
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }
