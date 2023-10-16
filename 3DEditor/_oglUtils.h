@@ -3159,32 +3159,7 @@ public: // Methods
 					ASSERT(FALSE);
 				}
 			}
-			break;
-
-			case enumView::Top:
-			{
-				m_fXAngle = 0.f;
-				m_fYAngle = 0.f;
-				m_fZAngle = 0.f;
-			}
-			break;
-
-			case enumView::Bottom:
-			{
-				if (m_enRotationMode == enumRotationMode::XY)
-				{
-					m_fXAngle = 180.f;
-				}
-				else if (m_enRotationMode == enumRotationMode::XYZ)
-				{
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
-				}
-				else
-				{
-					ASSERT(FALSE);
-				}
-			}
-			break;
+			break;			
 
 			case enumView::Left:
 			{
@@ -3219,6 +3194,31 @@ public: // Methods
 				{
 					ASSERT(FALSE);
 				}				
+			}
+			break;
+
+			case enumView::Top:
+			{
+				m_fXAngle = 0.f;
+				m_fYAngle = 0.f;
+				m_fZAngle = 0.f;
+			}
+			break;
+
+			case enumView::Bottom:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 180.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
 			}
 			break;
 
