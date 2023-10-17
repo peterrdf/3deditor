@@ -2559,8 +2559,8 @@ public: // Methods
 
 			// Top/Left (0)
 			vecVertices.push_back(-L / 2.f);
-			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
 
 			/* Nx, Ny, Nz */
 			vecVertices.push_back(0.f);
@@ -2610,8 +2610,8 @@ public: // Methods
 
 			// Top/Right (3)
 			vecVertices.push_back(L / 2.f);
-			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(-L / 2.f);
+			vecVertices.push_back(L / 2.f);
 
 			/* Nx, Ny, Nz */
 			vecVertices.push_back(0.f);
@@ -2627,7 +2627,7 @@ public: // Methods
 
 			/* Back */	
 
-			// Top/Left (0)
+			// Top/Left (4)
 			vecVertices.push_back(-L / 2.f);
 			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(L / 2.f);
@@ -2644,10 +2644,10 @@ public: // Methods
 				vecVertices.push_back(0.f);
 			}
 
-			// Bottom/Left (1)
-			vecVertices.push_back(-L / 2.f);
+			// Bottom/Left (5)
 			vecVertices.push_back(-L / 2.f);
 			vecVertices.push_back(L / 2.f);
+			vecVertices.push_back(-L / 2.f);
 
 			/* Nx, Ny, Nz */
 			vecVertices.push_back(0.f);
@@ -2661,10 +2661,10 @@ public: // Methods
 				vecVertices.push_back(0.f);
 			}
 
-			// Bottom/Right (2)
+			// Bottom/Right (6)
+			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(-L / 2.f);
-			vecVertices.push_back(L / 2.f);
 
 			/* Nx, Ny, Nz */
 			vecVertices.push_back(0.f);
@@ -2678,7 +2678,7 @@ public: // Methods
 				vecVertices.push_back(0.f);
 			}
 
-			// Top/Right (3)
+			// Top/Right (7)
 			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(L / 2.f);
 			vecVertices.push_back(L / 2.f);
