@@ -466,6 +466,17 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	/* Selection support */
 	DrawInstancesFrameBuffer();
 	DrawFacesFrameBuffer();
+
+	/* Nested view port */
+	_prepare(
+		iWidth - 150, 0,
+		150, 150,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
 	_drawSceneFrameBuffer();
 }
 
