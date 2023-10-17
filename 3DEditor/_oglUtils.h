@@ -1855,7 +1855,7 @@ enum class enumProjection : int
 };
 
 // ************************************************************************************************
-enum class enumView : int
+enum class enumView : int64_t
 {
 	Front = 0,
 	Back,	
@@ -3091,11 +3091,19 @@ public: // Methods
 	{
 		if (m_iPointedElement != 0)
 		{
-			_setView((enumView)(m_iPointedElement - 1));
+			if (((m_iPointedElement - 1) >= (int64_t)enumView::Front) &&
+				((m_iPointedElement - 1) <= (int64_t)enumView::Bottom))
+			{
+				_setView((enumView)(m_iPointedElement - 1));
 
-			m_iPointedElement = 0;
+				m_iPointedElement = 0;
 
-			_redraw();
+				_redraw();
+			}
+			else
+			{
+				ASSERT(FALSE);
+			}
 		}
 	}
 
