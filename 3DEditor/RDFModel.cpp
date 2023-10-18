@@ -1762,10 +1762,10 @@ void CSceneRDFModel::LoadLabels()
 			double dScaleX = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_11"), &dScaleX, 1);
 
-			double dScaleY = 0.07;
+			double dScaleY = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_22"), &dScaleY, 1);
 
-			double dScaleZ = 1.;
+			double dScaleZ = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_33"), &dScaleZ, 1);
 
 			int64_t iTransformationInstance = CreateInstance(iTransformationClass, "Top Scale");
@@ -1829,10 +1829,10 @@ void CSceneRDFModel::LoadLabels()
 			double dScaleX = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_11"), &dScaleX, 1);
 
-			double dScaleY = 0.07;
+			double dScaleY = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_22"), &dScaleY, 1);
 
-			double dScaleZ = 1.;
+			double dScaleZ = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_33"), &dScaleZ, 1);
 
 			int64_t iTransformationInstance = CreateInstance(iTransformationClass, "Bottom Scale");
