@@ -1721,6 +1721,10 @@ CSceneRDFModel::CSceneRDFModel()
 	ASSERT(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
+
+	LoadLabels();
+
+	LoadRDFModel();
 }
 
 void CSceneRDFModel::LoadLabels()
