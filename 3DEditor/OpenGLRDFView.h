@@ -129,8 +129,8 @@ public: // Methods
 #ifdef _LINUX
     void Draw(wxPaintDC * pDC);
 #else
-	void Draw(CDC * pDC);
-#endif // _LINUX
+	void Draw(CDC* pDC);
+#endif // _LINUX	
 
 	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
@@ -160,6 +160,9 @@ protected: // Methods
 private: // Methods
 
 	void LoadModel(CRDFModel* pModel);
+
+	void DrawModel(CRDFModel* pModel);
+	void DrawSceneComponents();
 
 	// --------------------------------------------------------------------------------------------
 	// Faces

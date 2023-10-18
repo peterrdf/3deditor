@@ -63,7 +63,7 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Getter
 	CRDFModel * GetModel() const { return m_pModel; }
-	CSceneRDFModel* GeSceneModel() const { return m_pSceneModel; }
+	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
 
 	// --------------------------------------------------------------------------------------------
 	// Setter

@@ -353,6 +353,17 @@ void COpenGLRDFView::Draw(wxPaintDC * pDC)
 void COpenGLRDFView::Draw(CDC* pDC)
 #endif // _LINUX
 {
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	int iWidth = rcClient.Width();
+	int iHeight = rcClient.Height();
+
+	if ((iWidth < 100) || (iHeight < 100))
+	{
+		return;
+	}
+
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
@@ -365,18 +376,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	if (pModel == nullptr)
 	{
 		return;
-	}
-
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	int iWidth = rcClient.Width();
-	int iHeight = rcClient.Height();
-
-	if ((iWidth < 20) || (iHeight < 20))
-	{
-		return;
-	}
+	}	
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -389,61 +389,16 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	_prepare(
 		0, 0,
 		iWidth, iHeight,
-		fXmin, fXmax, 
-		fYmin, fYmax, 
-		fZmin, fZmax,
-		true,
-		true);	
-	
-	m_pOGLProgram->_enableTexture(false);	
-
-	/* Non-transparent faces */
-	DrawFaces(pModel, false);
-
-	/* Transparent faces */	
-	DrawFaces(pModel, true);
-
-	/* Pointed face */
-	DrawPointedFace(pModel);
-
-	/* Faces polygons */
-	DrawFacesPolygons(pModel);
-
-	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons(pModel);
-
-	/* Lines */
-	DrawLines(pModel);
-
-	/* Points */
-	DrawPoints(pModel);
-
-	/* Bounding boxes */
-	DrawBoundingBoxes(pModel);
-
-	/* Normal vectors */
-	DrawNormalVectors(pModel);
-
-	/* Tangent vectors */
-	DrawTangentVectors(pModel);
-
-	/* Bi-Normal vectors */
-	DrawBiNormalVectors(pModel);
-
-	/* Coordinate System */
-	_drawCoordinateSystem();
-
-	/* Nested view port */
-	/*_prepare(
-		iWidth - 150, 0,
-		150, 150,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
-		false,
-		false);
+		true,
+		true);
 
-	_drawNavigationView();*/
+	DrawModel(pModel);
+
+	/* Scene */
+	DrawSceneComponents();
 
 	/* End */
 #ifdef _LINUX
@@ -620,7 +575,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
 	LoadModel(pModel);
-	LoadModel(pController->GeSceneModel());
+	LoadModel(pController->GetSceneModel());
 	
 	_redraw();
 }
@@ -1163,6 +1118,96 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 	}
 }
 
+void COpenGLRDFView::DrawModel(CRDFModel* pModel)
+{
+	m_pOGLProgram->_enableTexture(false);
+
+	/* Non-transparent faces */
+	DrawFaces(pModel, false);
+
+	/* Transparent faces */
+	DrawFaces(pModel, true);
+
+	/* Pointed face */
+	DrawPointedFace(pModel);
+
+	/* Faces polygons */
+	DrawFacesPolygons(pModel);
+
+	/* Conceptual faces polygons */
+	DrawConceptualFacesPolygons(pModel);
+
+	/* Lines */
+	DrawLines(pModel);
+
+	/* Points */
+	DrawPoints(pModel);
+
+	/* Bounding boxes */
+	DrawBoundingBoxes(pModel);
+
+	/* Normal vectors */
+	DrawNormalVectors(pModel);
+
+	/* Tangent vectors */
+	DrawTangentVectors(pModel);
+
+	/* Bi-Normal vectors */
+	DrawBiNormalVectors(pModel);
+
+	/* Coordinate System */
+	_drawCoordinateSystem();
+}
+
+void COpenGLRDFView::DrawSceneComponents()
+{
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	int iWidth = rcClient.Width();
+	int iHeight = rcClient.Height();
+
+	if ((iWidth < 100) || (iHeight < 100))
+	{
+		return;
+	}
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetSceneModel();
+	if (pModel == nullptr)
+	{
+		return;
+	}	
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	_prepare(
+		iWidth - 150, 0,
+		150, 150,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	DrawModel(pModel);
+
+	_drawNavigationView();
+}
+
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 {
@@ -1173,8 +1218,6 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
-
 		return;
 	}
 
@@ -2474,7 +2517,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	if ((iWidth < 20) || (iHeight < 20))
+	if ((iWidth < 100) || (iHeight < 100))
 	{
 		return;
 	}
