@@ -6,6 +6,7 @@ using namespace std;
 
 // ------------------------------------------------------------------------------------------------
 class CRDFModel;
+class CSceneRDFModel;
 class CRDFView;
 enum class enumApplicationProperty;
 class CRDFInstance;
@@ -21,6 +22,9 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Model - MVC
 	CRDFModel* m_pModel;
+
+	// Scene
+	CSceneRDFModel* m_pSceneModel;
 
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
@@ -58,7 +62,8 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFModel * GetModel() const;
+	CRDFModel * GetModel() const { return m_pModel; }
+	CSceneRDFModel* GeScenetModel() const { return m_pSceneModel; }
 
 	// --------------------------------------------------------------------------------------------
 	// Setter

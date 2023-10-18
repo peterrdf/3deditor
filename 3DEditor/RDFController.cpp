@@ -9,6 +9,7 @@ BOOL TEST_MODE = FALSE;
 // ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
 	: m_pModel(nullptr)
+	, m_pSceneModel(new CSceneRDFModel())
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
@@ -16,17 +17,13 @@ CRDFController::CRDFController()
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenter(FALSE)
 {
+	m_pSceneModel->CreateDefaultModel();
 }
 
 // ------------------------------------------------------------------------------------------------
 CRDFController::~CRDFController()
 {
-}
-
-// ------------------------------------------------------------------------------------------------
-CRDFModel * CRDFController::GetModel() const
-{
-	return m_pModel;
+	delete m_pSceneModel;
 }
 
 // ------------------------------------------------------------------------------------------------

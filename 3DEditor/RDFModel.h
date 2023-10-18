@@ -23,10 +23,9 @@ class CLoadTask;
 // ************************************************************************************************
 class CRDFModel
 {
-
 	friend class CLoadTask;
 
-private: // Members
+protected: // Members
 
 	wstring m_strModel;
 	int64_t m_iModel;
@@ -61,16 +60,13 @@ private: // Members
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;
 
-	// Root
-	_octree* m_pOctree;
-
 public: // Methods
 
 	CRDFModel();
 	virtual ~CRDFModel();
 
 	int64_t GetModel() const;
-	void CreateDefaultModel();
+	virtual void CreateDefaultModel();
 
 	const map<int64_t, CRDFClass *>& GetClasses() const;
 	void GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestors) const;
@@ -113,9 +109,9 @@ public: // Methods
 	CTexture* GetDefaultTexture();
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix=L"");
+	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix = L"");
 
-private: // Methods
+protected: // Methods
 
 	void SetFormatSettings(int64_t iModel);
 	void LoadRDFModel();
@@ -125,7 +121,25 @@ private: // Methods
 
 	void Clean();
 
+private: // Methods	
+
 	void GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard);
 	void BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry);
+};
+
+// ************************************************************************************************
+class CSceneRDFModel : public CRDFModel
+{
+
+public: // Methods
+
+	CSceneRDFModel();
+	virtual ~CSceneRDFModel();
+
+	virtual void CreateDefaultModel() override;
+
+private: // Methods
+
+	void LoadLabels();
 };
 

@@ -144,7 +144,6 @@ CRDFModel::CRDFModel()
 	, m_fZTranslation(0.f)
 	, m_pDefaultTexture(nullptr)
 	, m_mapTextures()
-	, m_pOctree(nullptr)
 {
 }
 
@@ -161,57 +160,55 @@ int64_t CRDFModel::GetModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::CreateDefaultModel()
+/*virtual*/ void CRDFModel::CreateDefaultModel()
 {
 	Clean();
 	
 	m_iModel = CreateModel();
 	ASSERT(m_iModel != 0);	
 
-	int64_t	pModel = m_iModel;
-
 	SetFormatSettings(m_iModel);
 
 	// Cube 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(pModel);
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(1.);
 		pAmbient.set_B(0.);
 		pAmbient.set_W(1.);
 
-		auto pColor = GEOM::Color::Create(pModel);
+		auto pColor = GEOM::Color::Create(m_iModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pTexture = GEOM::Texture::Create(pModel);
+		auto pTexture = GEOM::Texture::Create(m_iModel);
 		pTexture.set_scalingX(1.);
 		pTexture.set_scalingY(1.);
 		vector<GEOM::Texture> vecTexures = { pTexture };
 
-		auto pMaterial = GEOM::Material::Create(pModel);
+		auto pMaterial = GEOM::Material::Create(m_iModel);
 		pMaterial.set_color(pColor);
 		pMaterial.set_textures(&vecTexures[0], 1);
 
-		auto pCube = GEOM::Cube::Create(pModel, "Cube 1");
+		auto pCube = GEOM::Cube::Create(m_iModel, "Cube 1");
 		pCube.set_material(pMaterial);
 		pCube.set_length(7.);
 	}
 
 	// Cone 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(pModel);
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(1.);
 		pAmbient.set_W(1.);
 
-		auto pColor = GEOM::Color::Create(pModel);
+		auto pColor = GEOM::Color::Create(m_iModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(pModel);
+		auto pMaterial = GEOM::Material::Create(m_iModel);
 		pMaterial.set_color(pColor);
 
-		auto pCone = GEOM::Cone::Create(pModel, "Cone 1");
+		auto pCone = GEOM::Cone::Create(m_iModel, "Cone 1");
 		pCone.set_material(pMaterial);
 		pCone.set_radius(4.);
 		pCone.set_height(12.);
@@ -220,19 +217,19 @@ void CRDFModel::CreateDefaultModel()
 
 	// Cylinder 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(pModel);
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(1.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(0.);
 		pAmbient.set_W(.5);
 
-		auto pColor = GEOM::Color::Create(pModel);
+		auto pColor = GEOM::Color::Create(m_iModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(pModel);
+		auto pMaterial = GEOM::Material::Create(m_iModel);
 		pMaterial.set_color(pColor);
 
-		auto pCylinder = GEOM::Cylinder::Create(pModel, "Cylinder 1");
+		auto pCylinder = GEOM::Cylinder::Create(m_iModel, "Cylinder 1");
 		pCylinder.set_material(pMaterial);
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
@@ -1139,11 +1136,11 @@ void CRDFModel::LoadRDFModel()
 		if (itClass == m_mapClasses.end())
 		{
 			m_mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
-		}		
+		}
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
 	} // while (iClassInstance != 0)
-	
+
 	// Load/Import Model
 	int64_t iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
 	while (iPropertyInstance != 0)
@@ -1154,57 +1151,57 @@ void CRDFModel::LoadRDFModel()
 			int64_t iPropertyType = GetPropertyType(iPropertyInstance);
 			switch (iPropertyType)
 			{
-				case OBJECTPROPERTY_TYPE:
-				{
-					m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
-				}
-				break;
+			case OBJECTPROPERTY_TYPE:
+			{
+				m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_BOOLEAN:
-				{
-					m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_BOOLEAN:
+			{
+				m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_STRING:
-				{
-					m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_STRING:
+			{
+				m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-				{
-					m_mapProperties[iPropertyInstance] = new CCharArrayRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+			{
+				m_mapProperties[iPropertyInstance] = new CCharArrayRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-				{
-					m_mapProperties[iPropertyInstance] = new CWCharArrayRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+			{
+				m_mapProperties[iPropertyInstance] = new CWCharArrayRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_INTEGER:
-				{
-					m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_INTEGER:
+			{
+				m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case DATATYPEPROPERTY_TYPE_DOUBLE:
-				{
-					m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
-				}
-				break;
+			case DATATYPEPROPERTY_TYPE_DOUBLE:
+			{
+				m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				case 0:
-				{
-					m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
-				}
-				break;
+			case 0:
+			{
+				m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+			}
+			break;
 
-				default:
-					ASSERT(false);
-					break;
+			default:
+				ASSERT(false);
+				break;
 			} // switch (iPropertyType)
 
 			auto itClasses = m_mapClasses.begin();
@@ -1255,7 +1252,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 		}
 
 		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
-				!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr))
+			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr))
 		{
 			SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
 		}
@@ -1292,7 +1289,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 		(dZmax == -DBL_MAX))
 	{
 		::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
 
 		return;
@@ -1319,9 +1316,9 @@ void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
 	ASSERT(iInstance != 0);
 
 	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
-	while (iProperty != 0) 
+	while (iProperty != 0)
 	{
-		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE) 
+		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE)
 		{
 			int64_t iValuesCount = 0;
 			OwlInstance* piValues = nullptr;
@@ -1362,7 +1359,7 @@ void CRDFModel::LoadRDFInstances()
 	for (auto i = iInstance; i; i = GetInstancesByIterator(m_iModel, i)) {
 		cntTotal++;
 	}
-	
+
 	prgs.Start(cntTotal);
 
 	while (iInstance != 0)
@@ -1436,7 +1433,7 @@ void CRDFModel::Clean()
 	m_mapInstances.clear();
 
 	m_mapInstanceMetaData.clear();
-	
+
 	/*
 	* Texture
 	*/
@@ -1450,12 +1447,6 @@ void CRDFModel::Clean()
 	m_mapTextures.clear();
 
 	m_iID = 1;
-
-	/*
-	* Octree
-	*/
-	delete m_pOctree;
-	m_pOctree = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1463,7 +1454,6 @@ void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, 
 {
 	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // Octants
@@ -1473,8 +1463,6 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 	{
 		return;
 	}
-
-	int64_t	pModel = m_iModel;
 
 	double dXmin = 0.;
 	double dXmax = 0.;
@@ -1563,7 +1551,7 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMin1.y);
 		vecCoordinates.push_back(vecMin1.z);
 
-		auto pPolyLine3D = GEOM::PolyLine3D::Create(pModel);
+		auto pPolyLine3D = GEOM::PolyLine3D::Create(m_iModel);
 		pPolyLine3D.set_coordinates(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pPolyLine3D);
@@ -1610,7 +1598,7 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMax1.y);
 		vecCoordinates.push_back(vecMax1.z);
 
-		auto pPolyLine3D = GEOM::PolyLine3D::Create(pModel);
+		auto pPolyLine3D = GEOM::PolyLine3D::Create(m_iModel);
 		pPolyLine3D.set_coordinates(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pPolyLine3D);
@@ -1638,7 +1626,7 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMax3.y);
 		vecCoordinates.push_back(vecMax3.z);
 
-		auto pLine3D = GEOM::Line3D::Create(pModel);
+		auto pLine3D = GEOM::Line3D::Create(m_iModel);
 		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pLine3D);
@@ -1655,7 +1643,7 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMax2.y);
 		vecCoordinates.push_back(vecMax2.z);
 
-		auto pLine3D = GEOM::Line3D::Create(pModel);
+		auto pLine3D = GEOM::Line3D::Create(m_iModel);
 		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pLine3D);
@@ -1683,7 +1671,7 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMax1.y);
 		vecCoordinates.push_back(vecMax1.z);
 
-		auto pLine3D = GEOM::Line3D::Create(pModel);
+		auto pLine3D = GEOM::Line3D::Create(m_iModel);
 		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pLine3D);
@@ -1700,14 +1688,43 @@ void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecO
 		vecCoordinates.push_back(vecMax4.y);
 		vecCoordinates.push_back(vecMax4.z);
 
-		auto pLine3D = GEOM::Line3D::Create(pModel);
+		auto pLine3D = GEOM::Line3D::Create(m_iModel);
 		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
 
 		vecObjects.push_back(pLine3D);
 	}
 
-	auto pCollection = GEOM::Collection::Create(pModel);
+	auto pCollection = GEOM::Collection::Create(m_iModel);
 	pCollection.set_objects(&vecObjects[0], vecObjects.size());
 
 	vecOctantsGeometry.push_back(pCollection);
+}
+
+// ************************************************************************************************
+// Labels
+static const char* BOTTOM_LABEL = "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";
+
+
+// ************************************************************************************************
+CSceneRDFModel::CSceneRDFModel()
+	: CRDFModel()
+{}
+
+/*virtual*/ CSceneRDFModel::~CSceneRDFModel()
+{}
+
+/*virtual*/ void CSceneRDFModel::CreateDefaultModel() /*override*/
+{
+	Clean();
+
+	m_iModel = CreateModel();
+	ASSERT(m_iModel != 0);
+
+	SetFormatSettings(m_iModel);
+}
+
+void CSceneRDFModel::LoadLabels()
+{
+	OwlInstance iLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BOTTOM_LABEL);
+	ASSERT(iLabelInstance != 0);
 }
