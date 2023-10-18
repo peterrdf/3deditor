@@ -2,7 +2,6 @@
 
 #include "OpenGLRDFView.h"
 #include "RDFController.h"
-#include "RDFModel.h"
 #include "ProgressIndicator.h"
 
 #include <chrono>
@@ -399,43 +398,43 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	m_pOGLProgram->_enableTexture(false);	
 
 	/* Non-transparent faces */
-	DrawFaces(false);
+	DrawFaces(pModel, false);
 
 	/* Transparent faces */	
-	DrawFaces(true);
+	DrawFaces(pModel, true);
 
 	/* Pointed face */
-	DrawPointedFace();
+	DrawPointedFace(pModel);
 
 	/* Faces polygons */
-	DrawFacesPolygons();
+	DrawFacesPolygons(pModel);
 
 	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons();
+	DrawConceptualFacesPolygons(pModel);
 
 	/* Lines */
-	DrawLines();
+	DrawLines(pModel);
 
 	/* Points */
-	DrawPoints();
+	DrawPoints(pModel);
 
 	/* Bounding boxes */
-	DrawBoundingBoxes();
+	DrawBoundingBoxes(pModel);
 
 	/* Normal vectors */
-	DrawNormalVectors();
+	DrawNormalVectors(pModel);
 
 	/* Tangent vectors */
-	DrawTangentVectors();
+	DrawTangentVectors(pModel);
 
 	/* Bi-Normal vectors */
-	DrawBiNormalVectors();
+	DrawBiNormalVectors(pModel);
 
 	/* Coordinate System */
 	_drawCoordinateSystem();
 
 	/* Nested view port */
-	_prepare(
+	/*_prepare(
 		iWidth - 150, 0,
 		150, 150,
 		fXmin, fXmax,
@@ -444,7 +443,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		false,
 		false);
 
-	_drawNavigationView();
+	_drawNavigationView();*/
 
 	/* End */
 #ifdef _LINUX
@@ -464,20 +463,20 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		true);
 
 	/* Selection support */
-	DrawInstancesFrameBuffer();
-	DrawFacesFrameBuffer();
+	DrawInstancesFrameBuffer(pModel);
+	DrawFacesFrameBuffer(pModel);
 
-	/* Nested view port */
-	_prepare(
-		iWidth - 150, 0,
-		150, 150,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
+	///* Nested view port */
+	//_prepare(
+	//	iWidth - 150, 0,
+	//	150, 150,
+	//	fXmin, fXmax,
+	//	fYmin, fYmax,
+	//	fZmin, fZmax,
+	//	false,
+	//	false);
 
-	_drawSceneFrameBuffer();
+	//_drawSceneFrameBuffer();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -559,9 +558,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnModelChanged() /*override*/
 {
-	CWaitCursor waitCursor;
-
-	ProgressStatus prgs(L"Prepare rendering");
+	CWaitCursor waitCursor;	
 
 #ifdef _LINUX
     m_pOGLContext->SetCurrent(*m_pWnd);
@@ -622,6 +619,272 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
 
+	LoadModel(pModel);
+	LoadModel(pController->GeSceneModel());
+	
+	_redraw();
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged() /*override*/
+{
+	/*
+	* Center
+	*/
+	auto pController = GetController();
+	ASSERT(pController != nullptr);
+
+	CRDFModel * pModel = pController->GetModel();
+	ASSERT(pModel != nullptr);
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	m_fXTranslation = fXmin;
+	m_fXTranslation += (fXmax - fXmin) / 2.f;
+	m_fXTranslation = -m_fXTranslation;
+
+	m_fYTranslation = fYmin;
+	m_fYTranslation += (fYmax - fYmin) / 2.f;
+	m_fYTranslation = -m_fYTranslation;
+
+	m_fZTranslation = fZmin;
+	m_fZTranslation += (fZmax - fZmin) / 2.f;
+	m_fZTranslation = -m_fZTranslation;
+	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
+
+	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
+
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstanceSelected(CRDFView* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (GetController() == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pSelectedInstance = GetController()->GetSelectedInstance();
+	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->HasGeometry() || pSelectedInstance->getTriangles().empty()))
+	{
+		pSelectedInstance = nullptr;
+	}
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_iPointedFace = -1;
+
+		m_pSelectedInstance = pSelectedInstance;
+
+		m_pFaceSelectionFrameBuffer->encoding().clear();
+
+		_redraw();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstancePropertySelected() /*override*/
+{
+	ASSERT(GetController() != nullptr);
+
+	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
+
+	CRDFInstance * pSelectedInstance = prSelectedInstanceProperty.first;
+
+	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->HasGeometry() || pSelectedInstance->getTriangles().empty()))
+	{
+		pSelectedInstance = nullptr;
+	}
+
+	if (m_pSelectedInstance != pSelectedInstance)
+	{
+		m_iPointedFace = -1;
+
+		m_pSelectedInstance = pSelectedInstance;
+
+		m_pFaceSelectionFrameBuffer->encoding().clear();
+
+		_redraw();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnInstancesEnabledStateChanged() /*override*/
+{
+	/*
+	* Reload model
+	*/
+	OnModelChanged();
+
+	/*
+	* Restore the selection
+	*/
+	OnInstanceSelected(nullptr);
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::Projection:
+		case enumApplicationProperty::View:
+		case enumApplicationProperty::ShowFaces:
+		case enumApplicationProperty::CullFaces:
+		case enumApplicationProperty::ShowFacesWireframes:
+		case enumApplicationProperty::ShowConceptualFacesWireframes:
+		case enumApplicationProperty::ShowLines:
+		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::ShowNormalVectors:
+		case enumApplicationProperty::ShowTangenVectors:
+		case enumApplicationProperty::ShowBiNormalVectors:
+		case enumApplicationProperty::ScaleVectors:
+		case enumApplicationProperty::ShowBoundingBoxes:
+		case enumApplicationProperty::RotationMode:
+		case enumApplicationProperty::PointLightingLocation:
+		case enumApplicationProperty::AmbientLightWeighting:
+		case enumApplicationProperty::SpecularLightWeighting:
+		case enumApplicationProperty::DiffuseLightWeighting:
+		case enumApplicationProperty::MaterialShininess:
+		case enumApplicationProperty::Contrast:
+		case enumApplicationProperty::Brightness:
+		case enumApplicationProperty::Gamma:
+		{
+			_redraw();
+		}
+		break;
+
+		case enumApplicationProperty::VisibleValuesCountLimit:
+		case enumApplicationProperty::ScalelAndCenter:
+		{
+			// Not supported
+		}
+		break;
+
+		default:
+		{
+			ASSERT(FALSE); // Internal error!
+		}
+		break;
+	} // switch (enApplicationProperty)
+}
+
+// ------------------------------------------------------------------------------------------------
+/*virtual*/ void COpenGLRDFView::OnControllerChanged()
+{
+	ASSERT(GetController() != nullptr);
+
+	GetController()->RegisterView(this);
+}
+
+void COpenGLRDFView::LoadModel(CRDFModel* pModel)
+{
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	ProgressStatus prgs(L"Prepare rendering");
+
 	// Limits
 	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
 	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
@@ -629,7 +892,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	auto& mapInstances = pModel->GetInstances();
 
 	// VBO
-	GLuint iVerticesCount = 0;	
+	GLuint iVerticesCount = 0;
 	vector<CRDFInstance*> vecInstancesCohort;
 
 	// IBO - Conceptual faces
@@ -898,278 +1161,20 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		iPointsIndicesCount = 0;
 		vecPointsCohorts.clear();
 	}
-	
-	_redraw();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged() /*override*/
-{
-	/*
-	* Center
-	*/
-	auto pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
-	ASSERT(pModel != nullptr);
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	m_fXTranslation = fXmin;
-	m_fXTranslation += (fXmax - fXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
-
-	m_fYTranslation = fYmin;
-	m_fYTranslation += (fYmax - fYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
-
-	m_fZTranslation = fZmin;
-	m_fZTranslation += (fZmax - fZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
-
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceSelected(CRDFView* pSender) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (GetController() == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pSelectedInstance = GetController()->GetSelectedInstance();
-	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->HasGeometry() || pSelectedInstance->getTriangles().empty()))
-	{
-		pSelectedInstance = nullptr;
-	}
-
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_iPointedFace = -1;
-
-		m_pSelectedInstance = pSelectedInstance;
-
-		m_pFaceSelectionFrameBuffer->encoding().clear();
-
-		_redraw();
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertySelected() /*override*/
-{
-	ASSERT(GetController() != nullptr);
-
-	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
-
-	CRDFInstance * pSelectedInstance = prSelectedInstanceProperty.first;
-
-	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->HasGeometry() || pSelectedInstance->getTriangles().empty()))
-	{
-		pSelectedInstance = nullptr;
-	}
-
-	if (m_pSelectedInstance != pSelectedInstance)
-	{
-		m_iPointedFace = -1;
-
-		m_pSelectedInstance = pSelectedInstance;
-
-		m_pFaceSelectionFrameBuffer->encoding().clear();
-
-		_redraw();
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesEnabledStateChanged() /*override*/
-{
-	/*
-	* Reload model
-	*/
-	OnModelChanged();
-
-	/*
-	* Restore the selection
-	*/
-	OnInstanceSelected(nullptr);
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	switch (enApplicationProperty)
-	{
-		case enumApplicationProperty::Projection:
-		case enumApplicationProperty::View:
-		case enumApplicationProperty::ShowFaces:
-		case enumApplicationProperty::CullFaces:
-		case enumApplicationProperty::ShowFacesWireframes:
-		case enumApplicationProperty::ShowConceptualFacesWireframes:
-		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::ShowNormalVectors:
-		case enumApplicationProperty::ShowTangenVectors:
-		case enumApplicationProperty::ShowBiNormalVectors:
-		case enumApplicationProperty::ScaleVectors:
-		case enumApplicationProperty::ShowBoundingBoxes:
-		case enumApplicationProperty::RotationMode:
-		case enumApplicationProperty::PointLightingLocation:
-		case enumApplicationProperty::AmbientLightWeighting:
-		case enumApplicationProperty::SpecularLightWeighting:
-		case enumApplicationProperty::DiffuseLightWeighting:
-		case enumApplicationProperty::MaterialShininess:
-		case enumApplicationProperty::Contrast:
-		case enumApplicationProperty::Brightness:
-		case enumApplicationProperty::Gamma:
-		{
-			_redraw();
-		}
-		break;
-
-		case enumApplicationProperty::VisibleValuesCountLimit:
-		case enumApplicationProperty::ScalelAndCenter:
-		{
-			// Not supported
-		}
-		break;
-
-		default:
-		{
-			ASSERT(FALSE); // Internal error!
-		}
-		break;
-	} // switch (enApplicationProperty)
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnControllerChanged()
-{
-	ASSERT(GetController() != nullptr);
-
-	GetController()->RegisterView(this);
-}
-
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFaces(bool bTransparent)
+void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 {
 	if (!m_bShowFaces)
 	{
 		return;
 	}
 
-	auto pController = GetController();
-	if (pController == nullptr)
+	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
-		return;
-	}
-
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
-	{
 		return;
 	}
 
@@ -1198,7 +1203,7 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1277,17 +1282,13 @@ void COpenGLRDFView::DrawFaces(bool bTransparent)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFacesPolygons()
+void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 {
 	if (!m_bShowFacesPolygons)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1307,7 +1308,7 @@ void COpenGLRDFView::DrawFacesPolygons()
 		{
 			CRDFInstance* pInstance = itInstance;
 
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1335,17 +1336,13 @@ void COpenGLRDFView::DrawFacesPolygons()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawConceptualFacesPolygons()
+void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 {
 	if (!m_bShowConceptualFacesPolygons)
 	{
 		return;
 	}
 
-	auto pController = GetController();
-	ASSERT(pController != nullptr);
-
-	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1363,7 +1360,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1389,17 +1386,13 @@ void COpenGLRDFView::DrawConceptualFacesPolygons()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawLines()
+void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 {
 	if (!m_bShowLines)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1417,7 +1410,7 @@ void COpenGLRDFView::DrawLines()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1443,17 +1436,13 @@ void COpenGLRDFView::DrawLines()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawPoints()
+void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 {
 	if (!m_bShowPoints)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1472,7 +1461,7 @@ void COpenGLRDFView::DrawPoints()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1510,17 +1499,13 @@ void COpenGLRDFView::DrawPoints()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawBoundingBoxes()
+void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 {
 	if (!m_bShowBoundingBoxes)
 	{
 		return;
 	}
 
-	auto pController = GetController();
-	ASSERT(pController != nullptr);
-
-	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1607,7 +1592,8 @@ void COpenGLRDFView::DrawBoundingBoxes()
 		itInstance++)
 	{
 		CRDFInstance* pInstance = itInstance->second;
-		if (!pInstance->getEnable())
+
+		if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 		{
 			continue;
 		}
@@ -1687,17 +1673,13 @@ void COpenGLRDFView::DrawBoundingBoxes()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawNormalVectors()
+void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 {
 	if (!m_bShowNormalVectors)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1772,7 +1754,8 @@ void COpenGLRDFView::DrawNormalVectors()
 		for (; itInstance != mapInstances.end(); itInstance++)
 		{
 			CRDFInstance* pInstance = itInstance->second;
-			if (!pInstance->getEnable())
+
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1819,14 +1802,51 @@ void COpenGLRDFView::DrawNormalVectors()
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		auto& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
+		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
 		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+			auto& vecTriangles = m_pSelectedInstance->getTriangles();
+			ASSERT(!vecTriangles.empty());
+
+			if (m_iPointedFace == -1)
 			{
-				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+				for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+				{
+					auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+					for (int64_t iIndex = pTriangle->startIndex();
+						iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+						iIndex++)
+					{
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+					} // for (size_t iIndex = ...
+				} // for (size_t iTriangle = ...
+			} // if (m_iPointedFace == -1)
+			else
+			{
+				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
@@ -1855,42 +1875,8 @@ void COpenGLRDFView::DrawNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-
-			for (int64_t iIndex = pTriangle->startIndex();
-				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
+			} // else if (m_iPointedFace == -1)
+		} // if (m_pSelectedInstance->GetModel() == pModel->GetModel())		
 	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
@@ -1909,17 +1895,13 @@ void COpenGLRDFView::DrawNormalVectors()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawTangentVectors()
+void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 {
 	if (!m_bShowTangenVectors)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -1994,7 +1976,8 @@ void COpenGLRDFView::DrawTangentVectors()
 		for (; itInstance != mapInstances.end(); itInstance++)
 		{
 			CRDFInstance* pInstance = itInstance->second;
-			if (!pInstance->getEnable())
+
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2041,14 +2024,51 @@ void COpenGLRDFView::DrawTangentVectors()
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		auto& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
+		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
 		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+			auto& vecTriangles = m_pSelectedInstance->getTriangles();
+			ASSERT(!vecTriangles.empty());
+
+			if (m_iPointedFace == -1)
 			{
-				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+				for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+				{
+					auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+					for (int64_t iIndex = pTriangle->startIndex();
+						iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+						iIndex++)
+					{
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+					} // for (size_t iIndex = ...
+				} // for (size_t iTriangle = ...
+			} // if (m_iPointedFace == -1)
+			else
+			{
+				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
@@ -2077,42 +2097,8 @@ void COpenGLRDFView::DrawTangentVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-
-			for (int64_t iIndex = pTriangle->startIndex();
-				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
+			} // else if (m_iPointedFace == -1)
+		} // if (m_pSelectedInstance->GetModel() == pModel->GetModel())		
 	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
@@ -2131,17 +2117,13 @@ void COpenGLRDFView::DrawTangentVectors()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawBiNormalVectors()
+void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 {
 	if (!m_bShowBiNormalVectors)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -2216,7 +2198,8 @@ void COpenGLRDFView::DrawBiNormalVectors()
 		for (; itInstance != mapInstances.end(); itInstance++)
 		{
 			CRDFInstance* pInstance = itInstance->second;
-			if (!pInstance->getEnable())
+
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2263,14 +2246,51 @@ void COpenGLRDFView::DrawBiNormalVectors()
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		auto& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
-
-		if (m_iPointedFace == -1)
+		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
 		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+			auto& vecTriangles = m_pSelectedInstance->getTriangles();
+			ASSERT(!vecTriangles.empty());
+
+			if (m_iPointedFace == -1)
 			{
-				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+				for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+				{
+					auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+					for (int64_t iIndex = pTriangle->startIndex();
+						iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+						iIndex++)
+					{
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
+						vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+							m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
+
+						vecVertices.push_back(0.f); // Nx
+						vecVertices.push_back(0.f); // Ny
+						vecVertices.push_back(0.f); // Nz
+						vecVertices.push_back(0.f); // Tx
+						vecVertices.push_back(0.f); // Ty
+					} // for (size_t iIndex = ...
+				} // for (size_t iTriangle = ...
+			} // if (m_iPointedFace == -1)
+			else
+			{
+				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
@@ -2299,42 +2319,8 @@ void COpenGLRDFView::DrawBiNormalVectors()
 					vecVertices.push_back(0.f); // Tx
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
-			} // for (size_t iTriangle = ...
-		} // if (m_iPointedFace == -1)
-		else
-		{
-			ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-
-			for (int64_t iIndex = pTriangle->startIndex();
-				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 15] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 16] * SCALE_FACTOR);
-				vecVertices.push_back(m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					m_pSelectedInstance->GetVertices()[(m_pSelectedInstance->GetIndices()[iIndex] * VERTEX_LENGTH) + 17] * SCALE_FACTOR);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
-		} // else if (m_iPointedFace == -1)
+			} // else if (m_iPointedFace == -1)
+		} // if (m_pSelectedInstance->GetModel() == pModel->GetModel())		
 	} // else if (m_pSelectedInstance == nullptr)
 
 	if (!vecVertices.empty())
@@ -2353,17 +2339,8 @@ void COpenGLRDFView::DrawBiNormalVectors()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawInstancesFrameBuffer()
+void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
 {
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -2422,7 +2399,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 
 		for (auto pInstance : itCohort.second)
 		{
-			if (!pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2461,18 +2438,19 @@ void COpenGLRDFView::DrawInstancesFrameBuffer()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFacesFrameBuffer()
+void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 {
-	if ((m_pSelectedInstance == nullptr) || !m_pSelectedInstance->getEnable())
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	CRDFController * pController = GetController();
-	ASSERT(pController != nullptr);
-
-	CRDFModel * pModel = pController->GetModel();
-	if (pModel == nullptr)
+	if (m_pSelectedInstance == nullptr)
+	{
+		return;
+	}
+	
+	if ((m_pSelectedInstance->GetModel() != pModel->GetModel()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}
@@ -2618,9 +2596,19 @@ void COpenGLRDFView::DrawFacesFrameBuffer()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawPointedFace()
+void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
 {
+	if (pModel == nullptr)
+	{
+		return;
+	}
+
 	if (m_pSelectedInstance == nullptr)
+	{
+		return;
+	}
+
+	if ((m_pSelectedInstance->GetModel() != pModel->GetModel()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}

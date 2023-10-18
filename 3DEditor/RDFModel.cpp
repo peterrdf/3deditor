@@ -1729,6 +1729,6 @@ CSceneRDFModel::CSceneRDFModel()
 
 void CSceneRDFModel::LoadLabels()
 {
-	OwlInstance iLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BOTTOM_LABEL);
-	ASSERT(iLabelInstance != 0);
+	/*OwlInstance iLabelInstance = */ImportModelA(m_iModel, (const unsigned char*)BOTTOM_LABEL);
+	//ASSERT(iLabelInstance != 0);
 }

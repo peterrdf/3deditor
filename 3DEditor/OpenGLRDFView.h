@@ -10,6 +10,7 @@
 #include "_oglUtils.h"
 #endif // _LINUX
 #include "RDFInstance.h"
+#include "RDFModel.h"
 
 #ifdef _LINUX
 #define MK_LBUTTON 1
@@ -158,53 +159,55 @@ protected: // Methods
 
 private: // Methods
 
+	void LoadModel(CRDFModel* pModel);
+
 	// --------------------------------------------------------------------------------------------
 	// Faces
-	void DrawFaces(bool bTransparent);
+	void DrawFaces(CRDFModel* pModel, bool bTransparent);
 
 	// --------------------------------------------------------------------------------------------
 	// Faces polygons
-	void DrawFacesPolygons();
+	void DrawFacesPolygons(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Conceptual faces polygons
-	void DrawConceptualFacesPolygons();
+	void DrawConceptualFacesPolygons(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Lines
-	void DrawLines();
+	void DrawLines(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Points
-	void DrawPoints();
+	void DrawPoints(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
-	void DrawBoundingBoxes();
+	void DrawBoundingBoxes(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Normal vectors
-	void DrawNormalVectors();
+	void DrawNormalVectors(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Tangent vectors
-	void DrawTangentVectors();
+	void DrawTangentVectors(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Bi-normal vectors
-	void DrawBiNormalVectors();
+	void DrawBiNormalVectors(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	void DrawInstancesFrameBuffer();
+	void DrawInstancesFrameBuffer(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	void DrawFacesFrameBuffer();
+	void DrawFacesFrameBuffer(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	void DrawPointedFace();
+	void DrawPointedFace(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Handler
