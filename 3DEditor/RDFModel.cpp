@@ -1759,10 +1759,10 @@ void CSceneRDFModel::LoadLabels()
 			int64_t iMatrixInstance = CreateInstance(iMatrixClass, "Top Scale");
 			ASSERT(iMatrixInstance != 0);
 
-			double dScaleX = 10.;
+			double dScaleX = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_11"), &dScaleX, 1);
 
-			double dScaleY = 7.;
+			double dScaleY = 0.07;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_22"), &dScaleY, 1);
 
 			double dScaleZ = 1.;
@@ -1826,10 +1826,10 @@ void CSceneRDFModel::LoadLabels()
 			int64_t iMatrixInstance = CreateInstance(iMatrixClass, "Bottom Scale");
 			ASSERT(iMatrixInstance != 0);
 
-			double dScaleX = 10.;
+			double dScaleX = 0.1;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_11"), &dScaleX, 1);
 
-			double dScaleY = 7.;
+			double dScaleY = 0.07;
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(GetModel(), "_22"), &dScaleY, 1);
 
 			double dScaleZ = 1.;
@@ -1872,5 +1872,5 @@ void CSceneRDFModel::LoadLabels()
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//TEST
-	SaveModelW(m_iModel, L"D:\\Temp\\test.bin");
+	//SaveModelW(m_iModel, L"D:\\Temp\\labels.bin");
 }
