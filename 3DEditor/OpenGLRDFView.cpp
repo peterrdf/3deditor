@@ -32,6 +32,9 @@ wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
 wchar_t TOOLTIP_INFORMATION[] = L"Information";
 
+int NVIGATION_VIEW_LENGTH = 150;
+int MIN_VIEW_PORT_LENGTH = 100;
+
 // ------------------------------------------------------------------------------------------------
 #ifdef _LINUX
 COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
@@ -362,7 +365,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	int iWidth = rcClient.Width();
 	int iHeight = rcClient.Height();
 
-	if ((iWidth < 100) || (iHeight < 100))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
@@ -429,15 +432,15 @@ void COpenGLRDFView::Draw(CDC* pDC)
 
 	// Scene
 	_prepare(
-		iWidth - 150, 0,
-		150, 150,
+		iWidth - NVIGATION_VIEW_LENGTH, 0,
+		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
 		false,
 		false);
 
-	DrawInstancesFrameBuffer(pModel, m_pSceneSelectionFrameBuffer);
+	DrawInstancesFrameBuffer(pController->GetSceneModel(), m_pSceneSelectionFrameBuffer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1176,7 +1179,7 @@ void COpenGLRDFView::DrawScene()
 	int iWidth = rcClient.Width();
 	int iHeight = rcClient.Height();
 
-	if ((iWidth < 100) || (iHeight < 100))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
@@ -1204,8 +1207,8 @@ void COpenGLRDFView::DrawScene()
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
-		iWidth - 150, 0,
-		150, 150,
+		iWidth - NVIGATION_VIEW_LENGTH, 0,
+		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
@@ -2524,7 +2527,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 	iHeight = rcClient.Height();
 #endif // _LINUX
 
-	if ((iWidth < 100) || (iHeight < 100))
+	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
 		return;
 	}
@@ -2769,14 +2772,14 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 		iHeight = rcClient.Height();
 #endif // _LINUX
 
-		if ((point.x > (iWidth - 150)) && (point.x < iWidth) &&
-			(point.y > (iHeight - 150)) && (point.y < iHeight))
+		if ((point.x > (iWidth - NVIGATION_VIEW_LENGTH)) && (point.x < iWidth) &&
+			(point.y > (iHeight - NVIGATION_VIEW_LENGTH)) && (point.y < iHeight))
 		{
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			double dX = (double)(point.x - (iWidth - 150)) * ((double)BUFFER_SIZE / (double)150.);
-			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)150.);
+			double dX = (double)(point.x - (iWidth - NVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
+			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
 
 			m_pSceneSelectionFrameBuffer->bind();
 
