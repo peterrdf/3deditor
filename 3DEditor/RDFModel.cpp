@@ -1847,9 +1847,9 @@ void CSceneRDFModel::LoadLabels()
 
 	Translate(
 		Scale(iTopLabelInstance, dScaleFactor),
-		0., 0., .75);
+		0., 0., .751);
 
-	Translate(
+	iBottomLabelInstance = Translate(
 		Scale(iBottomLabelInstance, dScaleFactor),
-		0., 0., -.75);
+		0., 0., -.751);
 }
