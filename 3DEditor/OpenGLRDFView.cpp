@@ -398,10 +398,11 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		true,
 		true);
 
+	/* Model */
 	DrawModel(pModel);
 
 	/* Scene */
-	DrawSceneComponents();
+	DrawScene();
 
 	/* End */
 #ifdef _LINUX
@@ -421,20 +422,22 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		true);
 
 	/* Selection support */
-	DrawInstancesFrameBuffer(pModel);
+
+	// Model
+	DrawInstancesFrameBuffer(pModel, m_pInstanceSelectionFrameBuffer);
 	DrawFacesFrameBuffer(pModel);
 
-	///* Nested view port */
-	//_prepare(
-	//	iWidth - 150, 0,
-	//	150, 150,
-	//	fXmin, fXmax,
-	//	fYmin, fYmax,
-	//	fZmin, fZmax,
-	//	false,
-	//	false);
+	// Scene
+	_prepare(
+		iWidth - 150, 0,
+		150, 150,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
 
-	//_drawSceneFrameBuffer();
+	DrawInstancesFrameBuffer(pModel, m_pSceneSelectionFrameBuffer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1165,7 +1168,7 @@ void COpenGLRDFView::DrawModel(CRDFModel* pModel)
 	_drawCoordinateSystem();
 }
 
-void COpenGLRDFView::DrawSceneComponents()
+void COpenGLRDFView::DrawScene()
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -2386,9 +2389,9 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
+void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
 {
-	if (pModel == nullptr)
+	if ((pModel == nullptr) || (pInstanceSelectionFrameBuffer == nullptr))
 	{
 		return;
 	}
@@ -2397,10 +2400,10 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
 	VERIFY(bResult);
 
 	/* Create a frame buffer */
-	m_pInstanceSelectionFrameBuffer->create();
+	pInstanceSelectionFrameBuffer->create();
 
 	/* Selection colors */
-	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+	if (pInstanceSelectionFrameBuffer->encoding().empty())
 	{
 		auto& mapInstances = pModel->GetInstances();
 		for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
@@ -2420,13 +2423,13 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
 			float fR, fG, fB;
 			_i64RGBCoder::encode(pInstance->GetID(), fR, fG, fB);
 
-			m_pInstanceSelectionFrameBuffer->encoding()[pInstance->GetInstance()] = _color(fR, fG, fB);
+			pInstanceSelectionFrameBuffer->encoding()[pInstance->GetInstance()] = _color(fR, fG, fB);
 		}
-	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+	} // if (pInstanceSelectionFrameBuffer->encoding().empty())
 
 	/* Draw */
 
-	m_pInstanceSelectionFrameBuffer->bind();
+	pInstanceSelectionFrameBuffer->bind();
 
 	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
 
@@ -2457,8 +2460,8 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
 				continue;
 			}
 
-			auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetInstance());
-			ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
+			auto itSelectionColor = pInstanceSelectionFrameBuffer->encoding().find(pInstance->GetInstance());
+			ASSERT(itSelectionColor != pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
@@ -2479,7 +2482,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel)
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
 
-	m_pInstanceSelectionFrameBuffer->unbind();
+	pInstanceSelectionFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
 }

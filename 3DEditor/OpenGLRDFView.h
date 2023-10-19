@@ -165,7 +165,7 @@ private: // Methods
 	void LoadModel(CRDFModel* pModel);
 
 	void DrawModel(CRDFModel* pModel);
-	void DrawSceneComponents();
+	void DrawScene();
 
 	// --------------------------------------------------------------------------------------------
 	// Faces
@@ -205,7 +205,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	void DrawInstancesFrameBuffer(CRDFModel* pModel);
+	void DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
