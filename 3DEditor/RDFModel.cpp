@@ -1503,7 +1503,41 @@ OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Scale");
+	ASSERT(iTransformationInstance != 0);
+
+	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
+	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
+
+	return iTransformationInstance;
+}
+
+OwlInstance CRDFModel::Rotate(
+	OwlInstance iInstance,
+	double alpha, double beta, double gamma)
+{
+	ASSERT(iInstance != 0);
+
+	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
+	ASSERT(iMatrixInstance != 0);
+
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
+	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_33"), &matrix._33, 1);
+
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Rotate");
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -1907,25 +1941,25 @@ void CSceneRDFModel::LoadLabels()
 
 	// Front
 	Translate(
-		Scale(iFrontLabelInstance, dScaleFactor),
-		0., -.751, 0., 
+		Rotate(Scale(iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., -.751, 0.,
 		1., 1., 1.);
 
 	// Back
 	Translate(
-		Scale(iBackLabelInstance, dScaleFactor),
+		Rotate(Scale(iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., .751, 0.,
-		1., 1., 1.);
+		-1., 1., 1.);
 
 	// Left
 	Translate(
-		Scale(iLeftLabelInstance, dScaleFactor),
-		-.751, 0., 0., 
-		1., 1., 1.);
+		Rotate(Scale(iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		-.751, 0., 0.,
+		1., -1., 1.);
 
 	// Right
 	Translate(
-		Scale(iRightLabelInstance, dScaleFactor),
+		Rotate(Scale(iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		.751, 0., 0.,
 		1., 1., 1.);
 }

@@ -126,6 +126,9 @@ protected: // Methods
 		double dX, double dY, double dZ,
 		double d11, double d22, double d33);
 	OwlInstance Scale(OwlInstance iInstance, double dFactor);
+	OwlInstance Rotate(
+		OwlInstance iInstance, 
+		double alpha, double beta, double gamma);
 
 private: // Methods	
 

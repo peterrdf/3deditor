@@ -9,6 +9,8 @@
 #include <vector>
 using namespace std;
 
+static double PI = 3.14159265;
+
 class _primitives
 {
 
