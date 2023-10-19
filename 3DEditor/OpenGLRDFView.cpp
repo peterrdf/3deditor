@@ -65,8 +65,9 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_iPointedFace(-1)
 	, m_pSceneSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pScenePointedInstance(nullptr)
-	, m_pSelectedInstanceMaterial(nullptr)
-	, m_pPointedInstanceMaterial(nullptr)
+	, m_pSelectedInstanceMaterial(new _material())
+	, m_pPointedInstanceMaterial(new _material())
+	, m_pScenePointedInstanceMaterial(new _material())
 {
 	ASSERT(pWnd != nullptr);
 
@@ -78,7 +79,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		TEXTFILE,
 		true);
 	
-	m_pSelectedInstanceMaterial = new _material();
 	m_pSelectedInstanceMaterial->init(
 		1.f, 0.f, 0.f,
 		1.f, 0.f, 0.f,
@@ -87,13 +87,20 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		1.f,
 		nullptr);
 
-	m_pPointedInstanceMaterial = new _material();
 	m_pPointedInstanceMaterial->init(
 		.33f, .33f, .33f,
 		.33f, .33f, .33f,
 		.33f, .33f, .33f,
 		.33f, .33f, .33f,
 		.66f,
+		nullptr);
+	
+	m_pScenePointedInstanceMaterial->init(
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f,
 		nullptr);
 
 	// OpenGL
@@ -123,6 +130,9 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pPointedInstanceMaterial;
 	m_pPointedInstanceMaterial = nullptr;
+	
+	delete m_pScenePointedInstanceMaterial;
+	m_pScenePointedInstanceMaterial = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1231,6 +1241,14 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 		return;
 	}
 
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	auto begin = std::chrono::steady_clock::now();
 
 	if (bTransparent)
@@ -1250,6 +1268,11 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	
 	m_pOGLProgram->_enableBlinnPhongModel(true);
 
+	const auto pPointedInstance = pModel == pController->GetModel() ?
+		m_pPointedInstance : m_pScenePointedInstance;
+	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ? 
+		m_pPointedInstanceMaterial : m_pScenePointedInstanceMaterial;
+
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -1265,7 +1288,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 			{
 				const _material* pMaterial =
 					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pInstance == pPointedInstance ? pPointedInstanceMaterial :
 					pConcFacesCohort->getMaterial();
 
 				if (bTransparent)
@@ -1501,12 +1524,25 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 		return;
 	}
 
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	auto begin = std::chrono::steady_clock::now();
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
+
+	const auto pPointedInstance = pModel == pController->GetModel() ?
+		m_pPointedInstance : m_pScenePointedInstance;
+	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ?
+		m_pPointedInstanceMaterial : m_pScenePointedInstanceMaterial;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1523,7 +1559,7 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 			{
 				const _material* pMaterial =
 					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+					pInstance == pPointedInstance ? pPointedInstanceMaterial :
 					pCohort->getMaterial();				
 				
 				m_pOGLProgram->_setAmbientColor(

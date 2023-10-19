@@ -79,6 +79,7 @@ private: // Members
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
+	_material* m_pScenePointedInstanceMaterial;
 
 #pragma endregion // Members
 
