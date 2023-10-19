@@ -1887,7 +1887,7 @@ struct _ioglRenderer
 };
 
 // ************************************************************************************************
-const float DEFAULT_TRANSLATION = -4.f;
+const float DEFAULT_TRANSLATION = -5.f;
 
 const float ZOOM_SPEED_MOUSE = 0.01f;
 const float ZOOM_SPEED_MOUSE_WHEEL = 0.005f;

@@ -1781,6 +1781,29 @@ CSceneRDFModel::CSceneRDFModel()
 
 	SetFormatSettings(m_iModel);
 
+	// Cube 
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(1.);
+		pAmbient.set_B(0.);
+		pAmbient.set_W(.35);
+
+		auto pColor = GEOM::Color::Create(m_iModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(m_iModel);
+		pMaterial.set_color(pColor);
+
+		auto pCube = GEOM::Cube::Create(m_iModel);
+		pCube.set_material(pMaterial);
+		pCube.set_length(1.5);
+
+		Translate(
+			(int64_t)pCube,
+			-.75, -.75, -.75);
+	}
+
 	LoadLabels();
 
 	LoadRDFModel();
@@ -1829,8 +1852,4 @@ void CSceneRDFModel::LoadLabels()
 	Translate(
 		Scale(iBottomLabelInstance, dScaleFactor),
 		0., 0., -.75);
-
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//TEST
-	SaveModelW(m_iModel, L"D:\\Temp\\labels.bin");
 }

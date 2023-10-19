@@ -1205,7 +1205,7 @@ void COpenGLRDFView::DrawSceneComponents()
 
 	DrawModel(pModel);
 
-	_drawNavigationView();
+	//_drawNavigationView();
 }
 
 // ------------------------------------------------------------------------------------------------
