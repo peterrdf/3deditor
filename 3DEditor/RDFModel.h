@@ -121,10 +121,13 @@ protected: // Methods
 
 	void Clean();
 
+	OwlInstance Translate(OwlInstance iInstance, double dX, double dY, double dZ);
+	OwlInstance Scale(OwlInstance iInstance, double dFactor);
+
 private: // Methods	
 
 	void GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard);
-	void BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry);
+	void BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry);	
 };
 
 // ************************************************************************************************
