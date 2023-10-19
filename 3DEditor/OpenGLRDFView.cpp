@@ -2730,6 +2730,84 @@ void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
+void COpenGLRDFView::PointSceneInstance(const CPoint& point)
+{
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	auto pModel = pController->GetSceneModel();
+	if (pModel == nullptr)
+	{
+		return;
+	}
+
+	if (m_pSceneSelectionFrameBuffer->isInitialized())
+	{
+		int iWidth = 0;
+		int iHeight = 0;
+
+#ifdef _LINUX
+		m_pOGLContext->SetCurrent(*m_pWnd);
+
+		const wxSize szClient = m_pWnd->GetClientSize();
+
+		iWidth = szClient.GetWidth();
+		iHeight = szClient.GetHeight();
+#else
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		iWidth = rcClient.Width();
+		iHeight = rcClient.Height();
+#endif // _LINUX
+
+		if ((point.x > (iWidth - 150)) && (point.x < iWidth) &&
+			(point.y > (iHeight - 150)) && (point.y < iHeight))
+		{
+			GLubyte arPixels[4];
+			memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+			double dX = (double)(point.x - (iWidth - 150)) * ((double)BUFFER_SIZE / (double)150.);
+			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)150.);
+
+			m_pSceneSelectionFrameBuffer->bind();
+
+			glReadPixels(
+				(GLint)dX,
+				(GLint)dY,
+				1, 1,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE,
+				arPixels);
+
+			m_pSceneSelectionFrameBuffer->unbind();
+
+			CRDFInstance* pPointedInstance = 0;
+			if (arPixels[3] != 0)
+			{
+				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
+				ASSERT(pPointedInstance != nullptr);
+			}
+
+			if (m_pScenePointedInstance != pPointedInstance)
+			{
+				m_pScenePointedInstance = pPointedInstance;
+
+				_redraw();
+			}
+		}
+	}
+}
+
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 {
@@ -2813,7 +2891,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			
 			if (m_pPointedInstance == nullptr)
 			{
-				//_pointSceneElement(point);
+				PointSceneInstance(point);
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 

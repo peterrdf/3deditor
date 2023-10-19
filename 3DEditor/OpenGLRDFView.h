@@ -206,14 +206,9 @@ private: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Selection support
 	void DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
 	void DrawFacesFrameBuffer(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
 	void DrawPointedFace(CRDFModel* pModel);
+	void PointSceneInstance(const CPoint& point);
 
 	// --------------------------------------------------------------------------------------------
 	// Handler
