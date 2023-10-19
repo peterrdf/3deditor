@@ -1449,7 +1449,10 @@ void CRDFModel::Clean()
 	m_iID = 1;
 }
 
-OwlInstance CRDFModel::Translate(OwlInstance iInstance, double dX, double dY, double dZ)
+OwlInstance CRDFModel::Translate(
+	OwlInstance iInstance, 
+	double dX, double dY, double dZ,
+	double d11, double d22, double d33)
 {
 	ASSERT(iInstance != 0);
 
@@ -1458,9 +1461,9 @@ OwlInstance CRDFModel::Translate(OwlInstance iInstance, double dX, double dY, do
 
 	vector<double> vecTransformationMatrix =
 	{
-		1., 0., 0.,
-		0., 1., 0.,
-		0., 0., 1.,
+		d11, 0., 0.,
+		0., d22, 0.,
+		0., 0., d33,
 		dX, dY, dZ,
 	};
 
@@ -1801,7 +1804,8 @@ CSceneRDFModel::CSceneRDFModel()
 
 		Translate(
 			(int64_t)pCube,
-			-.75, -.75, -.75);
+			-.75, -.75, -.75,
+			1., 1., 1.);
 	}
 
 	LoadLabels();
@@ -1847,9 +1851,11 @@ void CSceneRDFModel::LoadLabels()
 
 	Translate(
 		Scale(iTopLabelInstance, dScaleFactor),
-		0., 0., .751);
+		0., 0., .751,
+		1., 1., 1.);
 
 	iBottomLabelInstance = Translate(
 		Scale(iBottomLabelInstance, dScaleFactor),
-		0., 0., -.751);
+		0., 0., -.751,
+		-1., 1., 1.);
 }

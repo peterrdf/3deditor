@@ -121,7 +121,10 @@ protected: // Methods
 
 	void Clean();
 
-	OwlInstance Translate(OwlInstance iInstance, double dX, double dY, double dZ);
+	OwlInstance Translate(
+		OwlInstance iInstance, 
+		double dX, double dY, double dZ,
+		double d11, double d22, double d33);
 	OwlInstance Scale(OwlInstance iInstance, double dFactor);
 
 private: // Methods	
