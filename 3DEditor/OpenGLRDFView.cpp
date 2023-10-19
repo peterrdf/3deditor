@@ -2778,7 +2778,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			double dX = (double)(point.x - (iWidth - NVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
+			double dX = (double)((double)point.x - (double)(iWidth - NVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
 			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
 
 			m_pSceneSelectionFrameBuffer->bind();
