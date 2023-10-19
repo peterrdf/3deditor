@@ -72,6 +72,9 @@ private: // Members
 	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
 	int64_t m_iPointedFace;	
+
+	_oglSelectionFramebuffer* m_pSceneSelectionFrameBuffer;
+	CRDFInstance* m_pScenePointedInstance;
 	
 	// Materials
 	_material* m_pSelectedInstanceMaterial;

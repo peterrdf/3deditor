@@ -59,7 +59,9 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pPointedInstance(nullptr)
 	, m_pSelectedInstance(nullptr)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_iPointedFace(-1)	
+	, m_iPointedFace(-1)
+	, m_pSceneSelectionFrameBuffer(new _oglSelectionFramebuffer())
+	, m_pScenePointedInstance(nullptr)
 	, m_pSelectedInstanceMaterial(nullptr)
 	, m_pPointedInstanceMaterial(nullptr)
 {
@@ -105,6 +107,7 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;	
+	delete m_pSceneSelectionFrameBuffer;
 	
 	// PATCH: AMD 6700 XT - Access violation
 	if (!TEST_MODE)
@@ -459,7 +462,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			if (m_pSelectedInstance == nullptr)
 			{
-				_selectSceneElement();
+				//_selectSceneElement();
 			}
 		}
 	} // if (enEvent == meLBtnDown)
@@ -531,6 +534,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
+
+	m_pSceneSelectionFrameBuffer->encoding().clear();
+	m_pScenePointedInstance = nullptr;
 
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -1204,8 +1210,6 @@ void COpenGLRDFView::DrawSceneComponents()
 		false);
 
 	DrawModel(pModel);
-
-	//_drawNavigationView();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2806,7 +2810,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			
 			if (m_pPointedInstance == nullptr)
 			{
-				_pointSceneElement(point);
+				//_pointSceneElement(point);
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 
