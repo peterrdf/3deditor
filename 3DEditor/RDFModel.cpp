@@ -2016,6 +2016,4 @@ void CSceneRDFModel::LoadLabels()
 		.751, 0., 0.,
 		1., 1., 1.);
 	SetNameOfInstance(iInstance, "#right");
-
-	SaveModelW(m_iModel, L"D:\\Temp\\test.bin");
 }

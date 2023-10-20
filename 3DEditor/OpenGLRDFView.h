@@ -210,6 +210,7 @@ private: // Methods
 	void DrawFacesFrameBuffer(CRDFModel* pModel);
 	void DrawPointedFace(CRDFModel* pModel);
 	void PointSceneInstance(const CPoint& point);
+	bool SelectSceneInstance();
 
 	// --------------------------------------------------------------------------------------------
 	// Handler

@@ -1858,11 +1858,11 @@ enum class enumProjection : int
 enum class enumView : int64_t
 {
 	Front = 0,
-	Back,	
-	Left,
-	Right,
+	Back,
 	Top,
 	Bottom,
+	Left,
+	Right,	
 	Isometric,
 };
 

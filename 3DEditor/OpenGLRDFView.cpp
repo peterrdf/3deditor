@@ -478,7 +478,10 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			if (m_pSelectedInstance == nullptr)
 			{
-				//_selectSceneElement();
+				if (SelectSceneInstance())
+				{
+					_redraw();
+				}
 			}
 		}
 	} // if (enEvent == meLBtnDown)
@@ -2845,6 +2848,54 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 			}
 		}
 	}
+}
+
+bool COpenGLRDFView::SelectSceneInstance()
+{
+	if (m_pScenePointedInstance == nullptr)
+	{
+		return false;
+	}
+
+	wstring strInstanceName = m_pScenePointedInstance->GetName();
+	if (strInstanceName == L"#front")
+	{
+		_setView(enumView::Front); 
+		
+		return true;
+	}
+	else if (strInstanceName == L"#back")
+	{
+		_setView(enumView::Back);
+
+		return true;
+	}
+	else if (strInstanceName == L"#top")
+	{
+		_setView(enumView::Top);
+
+		return true;
+	}
+	else if (strInstanceName == L"#bottom")
+	{
+		_setView(enumView::Bottom);
+
+		return true;
+	}
+	else if (strInstanceName == L"#left")
+	{
+		_setView(enumView::Left);
+
+		return true;
+	}
+	else if (strInstanceName == L"#right")
+	{
+		_setView(enumView::Right);
+
+		return true;
+	}
+
+	return false;
 }
 
 // ------------------------------------------------------------------------------------------------
