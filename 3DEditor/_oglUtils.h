@@ -2729,9 +2729,9 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 315;
-					m_fYAngle = 45.f;
-					m_fZAngle = 0.f;
+					m_fXAngle = 45.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 315.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
@@ -2769,9 +2769,9 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 315;
-					m_fYAngle = 45.f;
-					m_fZAngle = 0.f;
+					m_fXAngle = 45.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 315.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
