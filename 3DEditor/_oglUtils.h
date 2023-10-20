@@ -2785,6 +2785,26 @@ public: // Methods
 			}
 			break;
 
+			case enumView::BackBottomRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 135.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
 			case enumView::Isometric:
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
