@@ -1850,43 +1850,49 @@ CSceneRDFModel::CSceneRDFModel()
 	auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
 	pBoundaryRepresentation.set_material(pMaterial);
 	pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
-	pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
-
-	// Top
-	Translate(
-		(int64_t)pBoundaryRepresentation,
-		0., 0., .75,
-		1., 1., -1.);
-
-	// Bottom
-	Translate(
-		(int64_t)pBoundaryRepresentation,
-		0., 0., -.75,
-		1, 1., 1.);
+	pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());	
 
 	// Front
-	Translate(
+	OwlInstance iInstance = Translate(
 		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
 		0., -.75, 0.,
 		1., -1., 1.);
+	SetNameOfInstance(iInstance, "#front");
 
 	// Back
-	Translate(
+	iInstance = Translate(
 		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
 		0., .75, 0.,
 		-1., 1., 1.);
+	SetNameOfInstance(iInstance, "#back");
+
+	// Top
+	iInstance = Translate(
+		(int64_t)pBoundaryRepresentation,
+		0., 0., .75,
+		1., 1., -1.);
+	SetNameOfInstance(iInstance, "#top");
+
+	// Bottom
+	iInstance = Translate(
+		(int64_t)pBoundaryRepresentation,
+		0., 0., -.75,
+		1, 1., 1.);
+	SetNameOfInstance(iInstance, "#bottom");
 
 	// Left
-	Translate(
+	iInstance = Translate(
 		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		-.75, 0., 0.,
 		1., -1., 1.);
+	SetNameOfInstance(iInstance, "#left");
 
 	// Right
-	Translate(
+	iInstance = Translate(
 		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		.75, 0., 0.,
 		-1., 1., 1.);
+	SetNameOfInstance(iInstance, "#right");
 
 	LoadLabels();
 
@@ -1967,41 +1973,49 @@ void CSceneRDFModel::LoadLabels()
 	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
 	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
 
-	double dScaleFactor = (1.5 * .9) / dMaxLength;
-
-	// Top
-	Translate(
-		Scale(iTopLabelInstance, dScaleFactor),
-		0., 0., .751,
-		1., 1., 1.);
-
-	// Bottom
-	Translate(
-		Scale(iBottomLabelInstance, dScaleFactor),
-		0., 0., -.751,
-		-1, 1., 1.);
+	double dScaleFactor = (1.5 * .9) / dMaxLength;	
 
 	// Front
-	Translate(
+	OwlInstance iInstance = Translate(
 		Rotate(Scale(iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., -.751, 0.,
 		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#front");
 
 	// Back
-	Translate(
+	iInstance = Translate(
 		Rotate(Scale(iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., .751, 0.,
 		-1., 1., 1.);
+	SetNameOfInstance(iInstance, "#back");
+
+	// Top
+	iInstance = Translate(
+		Scale(iTopLabelInstance, dScaleFactor),
+		0., 0., .751,
+		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#top");
+
+	// Bottom
+	iInstance = Translate(
+		Scale(iBottomLabelInstance, dScaleFactor),
+		0., 0., -.751,
+		-1, 1., 1.);
+	SetNameOfInstance(iInstance, "#bottom");
 
 	// Left
-	Translate(
+	iInstance = Translate(
 		Rotate(Scale(iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		-.751, 0., 0.,
 		1., -1., 1.);
+	SetNameOfInstance(iInstance, "#left");
 
 	// Right
-	Translate(
+	iInstance = Translate(
 		Rotate(Scale(iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		.751, 0., 0.,
 		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#right");
+
+	SaveModelW(m_iModel, L"D:\\Temp\\test.bin");
 }
