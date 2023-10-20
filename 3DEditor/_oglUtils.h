@@ -2689,7 +2689,7 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 235.f;
+					m_fXAngle = 225.f;
 					m_fYAngle = 0.f;
 					m_fZAngle = 45.f;
 				}
@@ -2709,7 +2709,7 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 235.f;
+					m_fXAngle = 225.f;
 					m_fYAngle = 45.f;
 					m_fZAngle = 0.f;
 				}
