@@ -2894,6 +2894,54 @@ bool COpenGLRDFView::SelectSceneInstance()
 
 		return true;
 	}
+	else if (strInstanceName == L"#front-top-left")
+	{
+		_setView(enumView::FrontTopLeft);
+
+		return true;
+	}
+	else if (strInstanceName == L"#front-top-right")
+	{
+		_setView(enumView::FrontTopRight);
+
+		return true;
+	}
+	else if (strInstanceName == L"#front-bottom-left")
+	{
+		_setView(enumView::FrontBottomLeft);
+
+		return true;
+	}
+	else if (strInstanceName == L"#front-bottom-right")
+	{
+		_setView(enumView::FrontBottomRight);
+
+		return true;
+	}
+	else if (strInstanceName == L"#back-top-left")
+	{
+		_setView(enumView::BackTopLeft);
+
+		return true;
+	}
+	else if (strInstanceName == L"#back-top-right")
+	{
+		_setView(enumView::BackTopRight);
+
+		return true;
+	}
+	else if (strInstanceName == L"#back-bottom-left")
+	{
+		_setView(enumView::BackBottomLeft);
+
+		return true;
+	}
+	else if (strInstanceName == L"#back-bottom-right")
+	{
+		_setView(enumView::BackBottomRight);
+
+		return true;
+	}
 
 	return false;
 }

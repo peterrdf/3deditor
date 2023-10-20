@@ -1862,7 +1862,15 @@ enum class enumView : int64_t
 	Top,
 	Bottom,
 	Left,
-	Right,	
+	Right,
+	FrontTopLeft,
+	FrontTopRight,
+	FrontBottomLeft,
+	FrontBottomRight,
+	BackTopLeft,
+	BackTopRight,
+	BackBottomLeft,
+	BackBottomRight,
 	Isometric,
 };
 
@@ -1976,7 +1984,7 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XYZ)
+		, m_enRotationMode(enumRotationMode::XY)
 		, m_fXAngle(0.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
@@ -2004,7 +2012,7 @@ public: // Methods
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
 	{
-		_setView(enumView::Isometric);
+		_setView(enumView::Top);
 	}	
 
 	virtual ~_oglRenderer()
@@ -2637,6 +2645,146 @@ public: // Methods
 			}
 			break;
 
+			case enumView::FrontTopLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontTopRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 315.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontBottomLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 235.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::FrontBottomRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 235.f;
+					m_fYAngle = 45.f;
+					m_fZAngle = 0.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackTopLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315;
+					m_fYAngle = 45.f;
+					m_fZAngle = 0.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackTopRight:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 45.f;
+					m_fYAngle = 0.f;
+					m_fZAngle = 45.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
+			case enumView::BackBottomLeft:
+			{
+				if (m_enRotationMode == enumRotationMode::XY)
+				{
+					m_fXAngle = 315;
+					m_fYAngle = 45.f;
+					m_fZAngle = 0.f;
+				}
+				else if (m_enRotationMode == enumRotationMode::XYZ)
+				{
+					ASSERT(FALSE);
+					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+				}
+				else
+				{
+					ASSERT(FALSE);
+				}
+			}
+			break;
+
 			case enumView::Isometric:
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
@@ -2654,7 +2802,7 @@ public: // Methods
 					ASSERT(FALSE);
 				}
 			}
-			break;
+			break;			
 
 			default:
 			{
