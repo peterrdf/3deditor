@@ -1822,29 +1822,71 @@ CSceneRDFModel::CSceneRDFModel()
 
 	SetFormatSettings(m_iModel);
 
-	// Cube 
+	// BoundaryRepresentation (Wall) 
+	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	pAmbient.set_R(0.);
+	pAmbient.set_G(1.);
+	pAmbient.set_B(0.);
+	pAmbient.set_W(.35);
+
+	auto pColor = GEOM::Color::Create(m_iModel);
+	pColor.set_ambient(pAmbient);
+
+	auto pMaterial = GEOM::Material::Create(m_iModel);
+	pMaterial.set_color(pColor);
+
+	vector<double> vecVertices =
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(1.);
-		pAmbient.set_B(0.);
-		pAmbient.set_W(.35);
+		-.75, -.75, 0, // 1 (Bottom/Left)
+		.75, -.75, 0,  // 2 (Bottom/Right)
+		.75, .75, 0,   // 3 (Top/Right)
+		-.75, .75, 0,  // 4 (Top/Left)
+	};
+	vector<int64_t> vecIndices = 
+	{
+		0, 1, 2, 3, -1,
+	};
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
+	pBoundaryRepresentation.set_material(pMaterial);
+	pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
+	pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	// Top
+	Translate(
+		(int64_t)pBoundaryRepresentation,
+		0., 0., .75,
+		1., 1., -1.);
 
-		auto pCube = GEOM::Cube::Create(m_iModel);
-		pCube.set_material(pMaterial);
-		pCube.set_length(1.5);
+	// Bottom
+	Translate(
+		(int64_t)pBoundaryRepresentation,
+		0., 0., -.75,
+		1, 1., 1.);
 
-		Translate(
-			(int64_t)pCube,
-			-.75, -.75, -.75,
-			1., 1., 1.);
-	}
+	// Front
+	Translate(
+		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+		0., -.75, 0.,
+		1., -1., 1.);
+
+	// Back
+	Translate(
+		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+		0., .75, 0.,
+		-1., 1., 1.);
+
+	// Left
+	Translate(
+		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		-.75, 0., 0.,
+		1., -1., 1.);
+
+	// Right
+	Translate(
+		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		.75, 0., 0.,
+		-1., 1., 1.);
 
 	LoadLabels();
 
