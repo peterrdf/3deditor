@@ -1946,30 +1946,30 @@ CSceneRDFModel::CSceneRDFModel()
 		// Back/Top/Left
 		iInstance = Translate(
 			(int64_t)pSphere,
-			-.75, .75, .75,
+			.75, .75, .75,
 			1., 1., 1.);
 		SetNameOfInstance(iInstance, "#back-top-left");
 
 		// Back/Top/Right
 		iInstance = Translate(
 			(int64_t)pSphere,
-			.75, .75, .75,
+			-.75, .75, .75,
 			1., 1., 1.);
 		SetNameOfInstance(iInstance, "#back-top-right");
 
 		// Back/Bottom/Left
 		iInstance = Translate(
 			(int64_t)pSphere,
-			-.75, .75, -.75,
+			.75, .75, -.75,
 			1., 1., 1.);
 		SetNameOfInstance(iInstance, "#back-bottom-left");
 
 		// Back/Bottom/Right
 		iInstance = Translate(
 			(int64_t)pSphere,
-			.75, .75, -.75,
+			-.75, .75, -.75,
 			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-right");
+		SetNameOfInstance(iInstance, "#back-bottom-right");		
 	}
 
 	LoadLabels();
