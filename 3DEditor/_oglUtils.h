@@ -1984,7 +1984,7 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XYZ)
+		, m_enRotationMode(enumRotationMode::XY)
 		, m_fXAngle(0.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
@@ -2012,7 +2012,7 @@ public: // Methods
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
 	{
-		_setView(enumView::Isometric);
+		_setView(enumView::Front);
 	}	
 
 	virtual ~_oglRenderer()
@@ -2707,7 +2707,7 @@ public: // Methods
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
 					m_fXAngle = 225.f;
-					m_fYAngle = 45.f;
+					m_fZAngle = 315.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
