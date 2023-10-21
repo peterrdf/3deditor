@@ -2012,7 +2012,7 @@ public: // Methods
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
 	{
-		_setView(enumView::Front);
+		_setView(enumView::Top);
 	}	
 
 	virtual ~_oglRenderer()
@@ -2632,7 +2632,7 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 180.f;
+					m_fYAngle = 180.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
