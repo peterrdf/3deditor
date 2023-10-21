@@ -1984,7 +1984,7 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XY)
+		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(0.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
@@ -2650,12 +2650,11 @@ public: // Methods
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
 					m_fXAngle = 315.f;
-					m_fYAngle = 45.f;
+					m_fZAngle = 45.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
 				}
 				else
 				{
@@ -2673,8 +2672,7 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
 				}
 				else
 				{
@@ -2692,8 +2690,7 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
 				}
 				else
 				{
@@ -2711,8 +2708,7 @@ public: // Methods
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
 				}
 				else
 				{
