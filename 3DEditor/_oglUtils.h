@@ -2739,13 +2739,12 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 45.f;
-					m_fZAngle = 45.f;
+					m_fXAngle = 315.f;
+					m_fZAngle = 135.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
 				}
 				else
 				{
