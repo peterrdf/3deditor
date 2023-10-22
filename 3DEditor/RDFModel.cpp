@@ -8,6 +8,7 @@
 
 #include "_dxf_parser.h"
 #include "gisengine.h"
+#include "ascii.h"
 
 #include <bitset>
 #include <algorithm>
@@ -235,6 +236,9 @@ int64_t CRDFModel::GetModel() const
 		pCylinder.set_length(6.);
 		pCylinder.set_segmentationParts(36);
 	}
+
+	// ASCII Chars
+	ascii::init(m_iModel);
 
 	LoadRDFModel();
 }
