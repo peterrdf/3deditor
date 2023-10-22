@@ -1984,7 +1984,7 @@ public: // Methods
 		, m_enProjection(enumProjection::Perspective)
 		, m_matModelView()
 		, m_oglBuffers()
-		, m_enRotationMode(enumRotationMode::XY)
+		, m_enRotationMode(enumRotationMode::XYZ)
 		, m_fXAngle(0.f)
 		, m_fYAngle(0.f)
 		, m_fZAngle(0.f)
@@ -2012,7 +2012,7 @@ public: // Methods
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
 	{
-		_setView(enumView::Top);
+		_setView(enumView::Isometric);
 	}	
 
 	virtual ~_oglRenderer()
@@ -2775,13 +2775,12 @@ public: // Methods
 			{
 				if (m_enRotationMode == enumRotationMode::XY)
 				{
-					m_fXAngle = 135.f;
-					m_fZAngle = 45.f;
+					m_fXAngle = 225.f;
+					m_fZAngle = 135.f;
 				}
 				else if (m_enRotationMode == enumRotationMode::XYZ)
 				{
-					ASSERT(FALSE);
-					m_rotation = _quaterniond::toQuaternion(0., glm::radians(-45.), glm::radians(-90.));
+					m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
 				}
 				else
 				{
