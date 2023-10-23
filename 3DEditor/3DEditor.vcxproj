@@ -251,6 +251,7 @@
     <ClInclude Include="Test.h" />
     <ClInclude Include="TestHtmlReport.h" />
     <ClInclude Include="TestManager.h" />
+    <ClInclude Include="TextBuilder.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="UndefinedRDFProperty.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="TestHtmlReport.cpp" />
     <ClCompile Include="TestManager.cpp" />
+    <ClCompile Include="TextBuilder.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
     <ClCompile Include="UndefinedRDFProperty.cpp" />

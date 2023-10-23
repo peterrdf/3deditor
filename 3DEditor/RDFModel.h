@@ -10,6 +10,7 @@
 #include "DoubleRDFProperty.h"
 #include "UndefinedRDFProperty.h"
 #include "RDFInstance.h"
+#include "TextBuilder.h"
 
 #include <map>
 
@@ -59,6 +60,9 @@ protected: // Members
 	// Support for textures
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;
+
+	// Support for text
+	CTextBuilder* m_pTextBuilder;
 
 public: // Methods
 

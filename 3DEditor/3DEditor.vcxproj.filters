@@ -182,6 +182,9 @@
     <ClInclude Include="ProgressDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -308,6 +311,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProgressDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

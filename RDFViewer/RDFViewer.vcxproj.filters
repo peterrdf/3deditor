@@ -65,6 +65,9 @@
     <ClInclude Include="..\stb\stb_image.h">
       <Filter>stb</Filter>
     </ClInclude>
+    <ClInclude Include="..\3DEditor\TextBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -149,6 +152,9 @@
       <Filter>stb</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3DEditor\TextBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
