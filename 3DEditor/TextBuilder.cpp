@@ -18,7 +18,7 @@ void CTextBuilder::Initialize(OwlModel iModel)
 	m_iModel = iModel;
 	ASSERT(m_iModel != 0);
 
-	ascii::init(m_iModel);
+	ascii::importChars(m_iModel);
 }
 
 OwlInstance CTextBuilder::BuildText(const string& strText, bool bCenter)
@@ -109,7 +109,7 @@ OwlInstance CTextBuilder::Translate(
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate111111111111111");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);

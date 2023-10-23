@@ -1486,7 +1486,7 @@ OwlInstance CRDFModel::Translate(
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate2222222222222");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -1516,7 +1516,7 @@ OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Scale");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -1550,7 +1550,7 @@ OwlInstance CRDFModel::Rotate(
 	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_32"), &matrix._32, 1);
 	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_33"), &matrix._33, 1);
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Rotate");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -2088,7 +2088,7 @@ void CSceneRDFModel::LoadLabels()
 		Scale(iTopLabelInstance, dScaleFactor),
 		0., 0., .751,
 		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#top");
+	SetNameOfInstance(iInstance, "#top-label");
 
 	// Bottom
 	/*iInstance = Translate(

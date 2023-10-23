@@ -2870,7 +2870,7 @@ bool COpenGLRDFView::SelectSceneInstance()
 
 		return true;
 	}
-	else if (strInstanceName == L"#top")
+	else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label"))
 	{
 		_setView(enumView::Top);
 
