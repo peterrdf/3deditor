@@ -1486,7 +1486,7 @@ OwlInstance CRDFModel::Translate(
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate2222222222222");
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -2013,54 +2013,54 @@ void CSceneRDFModel::LoadLabels()
 		dZmin, dZmax);
 
 	/* Bottom */
-	OwlInstance iBottomLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BOTTOM_LABEL);
+	/*OwlInstance iBottomLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BOTTOM_LABEL);
 	ASSERT(iBottomLabelInstance != 0);
 	
 	CRDFInstance::CalculateBBMinMax(
 		iBottomLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
-		dZmin, dZmax);
+		dZmin, dZmax);*/
 
 	/* Front */
-	OwlInstance iFrontLabelInstance = ImportModelA(m_iModel, (const unsigned char*)FRONT_LABEL);
+	/*OwlInstance iFrontLabelInstance = ImportModelA(m_iModel, (const unsigned char*)FRONT_LABEL);
 	ASSERT(iFrontLabelInstance != 0);
 
 	CRDFInstance::CalculateBBMinMax(
 		iFrontLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
-		dZmin, dZmax);
+		dZmin, dZmax);*/
 
 	/* Back */
-	OwlInstance iBackLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BACK_LABEL);
+	/*OwlInstance iBackLabelInstance = ImportModelA(m_iModel, (const unsigned char*)BACK_LABEL);
 	ASSERT(iBackLabelInstance != 0);
 
 	CRDFInstance::CalculateBBMinMax(
 		iBackLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
-		dZmin, dZmax);
+		dZmin, dZmax);*/
 
 	/* Left */
-	OwlInstance iLeftLabelInstance = ImportModelA(m_iModel, (const unsigned char*)LEFT_LABEL);
+	/*OwlInstance iLeftLabelInstance = ImportModelA(m_iModel, (const unsigned char*)LEFT_LABEL);
 	ASSERT(iLeftLabelInstance != 0);
 
 	CRDFInstance::CalculateBBMinMax(
 		iLeftLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
-		dZmin, dZmax);
+		dZmin, dZmax);*/
 
 	/* Right */
-	OwlInstance iRightLabelInstance = ImportModelA(m_iModel, (const unsigned char*)RIGHT_LABEL);
+	/*OwlInstance iRightLabelInstance = ImportModelA(m_iModel, (const unsigned char*)RIGHT_LABEL);
 	ASSERT(iRightLabelInstance != 0);
 
 	CRDFInstance::CalculateBBMinMax(
 		iRightLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
-		dZmin, dZmax);
+		dZmin, dZmax);*/
 
 	/* Scale Factor */
 	double dMaxLength = dXmax - dXmin;
@@ -2070,44 +2070,44 @@ void CSceneRDFModel::LoadLabels()
 	double dScaleFactor = (1.5 * .9) / dMaxLength;	
 
 	// Front
-	OwlInstance iInstance = Translate(
+	/*OwlInstance iInstance = Translate(
 		Rotate(Scale(iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., -.751, 0.,
 		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#front");
+	SetNameOfInstance(iInstance, "#front");*/
 
 	// Back
-	iInstance = Translate(
+	/*iInstance = Translate(
 		Rotate(Scale(iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
 		0., .751, 0.,
 		-1., 1., 1.);
-	SetNameOfInstance(iInstance, "#back");
+	SetNameOfInstance(iInstance, "#back");*/
 
 	// Top
-	iInstance = Translate(
+	OwlInstance iInstance = Translate(
 		Scale(iTopLabelInstance, dScaleFactor),
 		0., 0., .751,
 		1., 1., 1.);
 	SetNameOfInstance(iInstance, "#top");
 
 	// Bottom
-	iInstance = Translate(
+	/*iInstance = Translate(
 		Scale(iBottomLabelInstance, dScaleFactor),
 		0., 0., -.751,
 		-1, 1., 1.);
-	SetNameOfInstance(iInstance, "#bottom");
+	SetNameOfInstance(iInstance, "#bottom");*/
 
 	// Left
-	iInstance = Translate(
+	/*iInstance = Translate(
 		Rotate(Scale(iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		-.751, 0., 0.,
 		1., -1., 1.);
-	SetNameOfInstance(iInstance, "#left");
+	SetNameOfInstance(iInstance, "#left");*/
 
 	// Right
-	iInstance = Translate(
+	/*iInstance = Translate(
 		Rotate(Scale(iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		.751, 0., 0.,
 		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#right");
+	SetNameOfInstance(iInstance, "#right");*/
 }

@@ -109,7 +109,7 @@ OwlInstance CTextBuilder::Translate(
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate");
+	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"), "Translate111111111111111");
 	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
