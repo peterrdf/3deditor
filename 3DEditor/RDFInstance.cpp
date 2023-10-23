@@ -647,6 +647,10 @@ void CRDFInstance::Calculate()
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
+	// Apply the Transformation
+	_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
+	_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
+
 	// Apply vertex buffer offset
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(GetModel(), (double*)&vecVertexBufferOffset);
@@ -657,11 +661,7 @@ void CRDFInstance::Calculate()
 
 	m_pvecBBMax->x += vecVertexBufferOffset.x;
 	m_pvecBBMax->y += vecVertexBufferOffset.y;
-	m_pvecBBMax->z += vecVertexBufferOffset.z;
-
-	// Apply the Transformation
-	_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
-	_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
+	m_pvecBBMax->z += vecVertexBufferOffset.z;	
 
 	if (!GetBoundingBox(
 		m_iInstance,
