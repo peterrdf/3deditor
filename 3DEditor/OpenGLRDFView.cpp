@@ -2858,13 +2858,13 @@ bool COpenGLRDFView::SelectSceneInstance()
 	}
 
 	wstring strInstanceName = m_pScenePointedInstance->GetName();
-	if (strInstanceName == L"#front")
+	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label"))
 	{
 		_setView(enumView::Front); 
 		
 		return true;
 	}
-	else if (strInstanceName == L"#back")
+	else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label"))
 	{
 		_setView(enumView::Back);
 
@@ -2876,19 +2876,19 @@ bool COpenGLRDFView::SelectSceneInstance()
 
 		return true;
 	}
-	else if (strInstanceName == L"#bottom")
+	else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label"))
 	{
 		_setView(enumView::Bottom);
 
 		return true;
 	}
-	else if (strInstanceName == L"#left")
+	else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label"))
 	{
 		_setView(enumView::Left);
 
 		return true;
 	}
-	else if (strInstanceName == L"#right")
+	else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label"))
 	{
 		_setView(enumView::Right);
 
