@@ -16,8 +16,6 @@ using namespace std;
 
 	pDialog->m_pTask->Run();
 
-	::MessageBox(pDialog->GetSafeHwnd(), L"Done.", L"Information", MB_ICONINFORMATION | MB_OK);
-
 	::EnableWindow(pDialog->GetDlgItem(IDCANCEL)->GetSafeHwnd(), TRUE);
 
 	return 0;
