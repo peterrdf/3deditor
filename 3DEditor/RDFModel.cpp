@@ -473,6 +473,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	/* World */
 	m_fBoundingSphereDiameter = 0.f;
 
+	/* Translations */
 	m_fXTranslation = 0.f;
 	m_fYTranslation = 0.f;
 	m_fZTranslation = 0.f;
@@ -513,7 +514,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	{
 		::MessageBox(
 			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -580,7 +581,7 @@ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 	{
 		::MessageBox(
 			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -1303,7 +1304,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 	{
 		::MessageBox(
 			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Internal error.", L"Error", MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -1563,250 +1564,6 @@ OwlInstance CRDFModel::Rotate(
 void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard)
 {
 	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFModel::BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry)
-{
-	if (pOctant == nullptr)
-	{
-		return;
-	}
-
-	double dXmin = 0.;
-	double dXmax = 0.;
-	double dYmin = 0.;
-	double dYmax = 0.;
-	double dZmin = 0.;
-	double dZmax = 0.;
-
-	if (pOctant->getType() == _octant_type::Node)
-	{
-		auto pOctreeNode = dynamic_cast<_octree_node*>(pOctant);
-		ASSERT(pOctreeNode != nullptr);
-
-		auto vecOctants = pOctreeNode->getOctants();
-		for (size_t iOctant = 0; iOctant < vecOctants.size(); iOctant++)
-		{
-			BuildOctants(vecOctants[iOctant], vecOctantsGeometry);
-		}	
-
-		// Don't show nodes
-		return;
-
-		/*dXmin = pOctreeNode->getXmin();
-		dXmax = pOctreeNode->getXmax();
-		dYmin = pOctreeNode->getYmin();
-		dYmax = pOctreeNode->getYmax();
-		dZmin = pOctreeNode->getZmin();
-		dZmax = pOctreeNode->getZmax();*/
-	}			
-	else
-	{		
-		// Show octants with a point
-		auto pOctreePoint = dynamic_cast<_octree_point*>(pOctant);
-		ASSERT(pOctreePoint != nullptr);
-
-		dXmin = pOctreePoint->getXmin();
-		dXmax = pOctreePoint->getXmax();
-		dYmin = pOctreePoint->getYmin();
-		dYmax = pOctreePoint->getYmax();
-		dZmin = pOctreePoint->getZmin();
-		dZmax = pOctreePoint->getZmax();
-	}
-
-	_vector3d vecBoundingBoxMin = { dXmin, dYmin, dZmin };
-	_vector3d vecBoundingBoxMax = { dXmax, dYmax, dZmax };
-
-	vector<GEOM::GeometricItem> vecObjects;
-
-	// Bottom face
-	/*
-	Min1						Min2
-	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	|								|
-	|								|
-	|								|
-	|								|
-	|								|
-	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	Min4						Min3
-	*/
-
-	_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-	_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-	_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-	_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-
-	{
-		vector<double> vecCoordinates;
-		vecCoordinates.push_back(vecMin1.x);
-		vecCoordinates.push_back(vecMin1.y);
-		vecCoordinates.push_back(vecMin1.z);
-
-		vecCoordinates.push_back(vecMin2.x);
-		vecCoordinates.push_back(vecMin2.y);
-		vecCoordinates.push_back(vecMin2.z);
-
-		vecCoordinates.push_back(vecMin3.x);
-		vecCoordinates.push_back(vecMin3.y);
-		vecCoordinates.push_back(vecMin3.z);
-
-		vecCoordinates.push_back(vecMin4.x);
-		vecCoordinates.push_back(vecMin4.y);
-		vecCoordinates.push_back(vecMin4.z);
-
-		vecCoordinates.push_back(vecMin1.x);
-		vecCoordinates.push_back(vecMin1.y);
-		vecCoordinates.push_back(vecMin1.z);
-
-		auto pPolyLine3D = GEOM::PolyLine3D::Create(m_iModel);
-		pPolyLine3D.set_coordinates(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pPolyLine3D);
-	}
-
-	// Top face
-	/*
-	Max3						Max4
-	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	|								|
-	|								|
-	|								|
-	|								|
-	|								|
-	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	Max2						Max1
-	*/	
-
-	_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-	_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-
-	{
-		vector<double> vecCoordinates;
-
-		vecCoordinates.push_back(vecMax1.x);
-		vecCoordinates.push_back(vecMax1.y);
-		vecCoordinates.push_back(vecMax1.z);
-
-		vecCoordinates.push_back(vecMax2.x);
-		vecCoordinates.push_back(vecMax2.y);
-		vecCoordinates.push_back(vecMax2.z);
-
-		vecCoordinates.push_back(vecMax3.x);
-		vecCoordinates.push_back(vecMax3.y);
-		vecCoordinates.push_back(vecMax3.z);
-
-		vecCoordinates.push_back(vecMax4.x);
-		vecCoordinates.push_back(vecMax4.y);
-		vecCoordinates.push_back(vecMax4.z);
-
-		vecCoordinates.push_back(vecMax1.x);
-		vecCoordinates.push_back(vecMax1.y);
-		vecCoordinates.push_back(vecMax1.z);
-
-		auto pPolyLine3D = GEOM::PolyLine3D::Create(m_iModel);
-		pPolyLine3D.set_coordinates(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pPolyLine3D);
-	}
-
-	// Left face
-	/*
-	Max3						Max2	
-	|								|
-	|								|
-	|								|
-	|								|
-	|								|	
-	Min1						Min4
-	*/
-
-	{
-		vector<double> vecCoordinates;
-
-		vecCoordinates.push_back(vecMin1.x);
-		vecCoordinates.push_back(vecMin1.y);
-		vecCoordinates.push_back(vecMin1.z);
-
-		vecCoordinates.push_back(vecMax3.x);
-		vecCoordinates.push_back(vecMax3.y);
-		vecCoordinates.push_back(vecMax3.z);
-
-		auto pLine3D = GEOM::Line3D::Create(m_iModel);
-		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pLine3D);
-	}
-
-	{
-		vector<double> vecCoordinates;
-
-		vecCoordinates.push_back(vecMin4.x);
-		vecCoordinates.push_back(vecMin4.y);
-		vecCoordinates.push_back(vecMin4.z);
-
-		vecCoordinates.push_back(vecMax2.x);
-		vecCoordinates.push_back(vecMax2.y);
-		vecCoordinates.push_back(vecMax2.z);
-
-		auto pLine3D = GEOM::Line3D::Create(m_iModel);
-		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pLine3D);
-	}
-
-	// Right face
-	/*
-	Max1						Max4
-	|								|
-	|								|
-	|								|
-	|								|
-	|								|
-	Min3						Min2
-	*/
-
-	{
-		vector<double> vecCoordinates;
-
-		vecCoordinates.push_back(vecMin3.x);
-		vecCoordinates.push_back(vecMin3.y);
-		vecCoordinates.push_back(vecMin3.z);
-
-		vecCoordinates.push_back(vecMax1.x);
-		vecCoordinates.push_back(vecMax1.y);
-		vecCoordinates.push_back(vecMax1.z);
-
-		auto pLine3D = GEOM::Line3D::Create(m_iModel);
-		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pLine3D);
-	}
-
-	{
-		vector<double> vecCoordinates;
-
-		vecCoordinates.push_back(vecMin2.x);
-		vecCoordinates.push_back(vecMin2.y);
-		vecCoordinates.push_back(vecMin2.z);
-
-		vecCoordinates.push_back(vecMax4.x);
-		vecCoordinates.push_back(vecMax4.y);
-		vecCoordinates.push_back(vecMax4.z);
-
-		auto pLine3D = GEOM::Line3D::Create(m_iModel);
-		pLine3D.set_points(&vecCoordinates[0], vecCoordinates.size());
-
-		vecObjects.push_back(pLine3D);
-	}
-
-	auto pCollection = GEOM::Collection::Create(m_iModel);
-	pCollection.set_objects(&vecObjects[0], vecObjects.size());
-
-	vecOctantsGeometry.push_back(pCollection);
 }
 
 // ************************************************************************************************

@@ -137,7 +137,6 @@ protected: // Methods
 private: // Methods	
 
 	void GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard);
-	void BuildOctants(_octant* pOctant, vector<GEOM::GeometricItem>& vecOctantsGeometry);	
 };
 
 // ************************************************************************************************
