@@ -152,6 +152,7 @@ public: // Methods
 
 private: // Methods
 
+	void CreateCoordinateSystem();
 	void LoadLabels();
 };
 

@@ -2364,162 +2364,162 @@ public: // Methods
 
 	void _drawCoordinateSystem()
 	{
-		m_pOGLProgram->_enableBlinnPhongModel(false);		
-		m_pOGLProgram->_setTransparency(1.f);
+		//m_pOGLProgram->_enableBlinnPhongModel(false);		
+		//m_pOGLProgram->_setTransparency(1.f);
 
-		_oglUtils::checkForErrors();
+		//_oglUtils::checkForErrors();
 
-		bool bIsNew = false;
-		GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(COORDINATE_SYSTEM_VAO, bIsNew);
+		//bool bIsNew = false;
+		//GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(COORDINATE_SYSTEM_VAO, bIsNew);
 
-		if (iVAO == 0)
-		{
-			ASSERT(FALSE);
+		//if (iVAO == 0)
+		//{
+		//	ASSERT(FALSE);
 
-			return;
-		}
+		//	return;
+		//}
 
-		GLuint iVBO = 0;
+		//GLuint iVBO = 0;
 
-		if (bIsNew)
-		{
-			glBindVertexArray(iVAO);
+		//if (bIsNew)
+		//{
+		//	glBindVertexArray(iVAO);
 
-			iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_VBO, bIsNew);
-			if ((iVBO == 0) || !bIsNew)
-			{
-				ASSERT(FALSE);
+		//	iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_VBO, bIsNew);
+		//	if ((iVBO == 0) || !bIsNew)
+		//	{
+		//		ASSERT(FALSE);
 
-				return;
-			}			
+		//		return;
+		//	}			
 
-			float fBoundingSphereDiameter = m_fXmax - m_fXmin;
-			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
-			fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+		//	float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+		//	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+		//	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-			vector<float> vecVertices;
+		//	vector<float> vecVertices;
 
-			/* Origin */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* Origin */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* Nx, Ny, Nz */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
+		//	if (m_pOGLProgram->_getSupportsTexture())
+		//	{
+		//		/* Tx, Ty */
+		//		vecVertices.push_back(0.f);
+		//		vecVertices.push_back(0.f);
+		//	}
 
-			/* X */
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* X */
+		//	vecVertices.push_back(2 * fBoundingSphereDiameter);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* Nx, Ny, Nz */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
+		//	if (m_pOGLProgram->_getSupportsTexture())
+		//	{
+		//		/* Tx, Ty */
+		//		vecVertices.push_back(0.f);
+		//		vecVertices.push_back(0.f);
+		//	}
 
-			/* Y */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
-			vecVertices.push_back(0.f);
+		//	/* Y */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(2 * fBoundingSphereDiameter);
+		//	vecVertices.push_back(0.f);
 
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* Nx, Ny, Nz */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
+		//	if (m_pOGLProgram->_getSupportsTexture())
+		//	{
+		//		/* Tx, Ty */
+		//		vecVertices.push_back(0.f);
+		//		vecVertices.push_back(0.f);
+		//	}
 
-			/* Z */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(2 * fBoundingSphereDiameter);
+		//	/* Z */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(2 * fBoundingSphereDiameter);
 
-			/* Nx, Ny, Nz */
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
-			vecVertices.push_back(0.f);
+		//	/* Nx, Ny, Nz */
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
+		//	vecVertices.push_back(0.f);
 
-			if (m_pOGLProgram->_getSupportsTexture())
-			{
-				/* Tx, Ty */
-				vecVertices.push_back(0.f);
-				vecVertices.push_back(0.f);
-			}
+		//	if (m_pOGLProgram->_getSupportsTexture())
+		//	{
+		//		/* Tx, Ty */
+		//		vecVertices.push_back(0.f);
+		//		vecVertices.push_back(0.f);
+		//	}
 
-			glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-			m_oglBuffers.setVBOAttributes(m_pOGLProgram);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+		//	glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		//	m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+		//	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
-			GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_IBO, bIsNew);
-			if ((iIBO == 0) || !bIsNew)
-			{
-				ASSERT(FALSE);
+		//	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(COORDINATE_SYSTEM_IBO, bIsNew);
+		//	if ((iIBO == 0) || !bIsNew)
+		//	{
+		//		ASSERT(FALSE);
 
-				return;
-			}
+		//		return;
+		//	}
 
-			vector<unsigned int> vecIndices =
-			{
-				0, 1,
-				0, 2,
-				0, 3,
-			};
+		//	vector<unsigned int> vecIndices =
+		//	{
+		//		0, 1,
+		//		0, 2,
+		//		0, 3,
+		//	};
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+		//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+		//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
 
-			glBindVertexArray(0);
+		//	glBindVertexArray(0);
 
-			_oglUtils::checkForErrors();
-		} // if (bIsNew)
+		//	_oglUtils::checkForErrors();
+		//} // if (bIsNew)
 
-		glBindVertexArray(iVAO);
+		//glBindVertexArray(iVAO);
 
-		m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint)* 0),
-			0);
+		//m_pOGLProgram->_setAmbientColor(1.f, 0.f, 0.f);
+		//glDrawElementsBaseVertex(GL_LINES,
+		//	(GLsizei)2,
+		//	GL_UNSIGNED_INT,
+		//	(void*)(sizeof(GLuint)* 0),
+		//	0);
 
-		m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint) * 2),
-			0);
+		//m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
+		//glDrawElementsBaseVertex(GL_LINES,
+		//	(GLsizei)2,
+		//	GL_UNSIGNED_INT,
+		//	(void*)(sizeof(GLuint) * 2),
+		//	0);
 
-		m_pOGLProgram->_setAmbientColor(0.f, 0.f, 1.f);
-		glDrawElementsBaseVertex(GL_LINES,
-			(GLsizei)2,
-			GL_UNSIGNED_INT,
-			(void*)(sizeof(GLuint) * 4),
-			0);
+		//m_pOGLProgram->_setAmbientColor(0.f, 0.f, 1.f);
+		//glDrawElementsBaseVertex(GL_LINES,
+		//	(GLsizei)2,
+		//	GL_UNSIGNED_INT,
+		//	(void*)(sizeof(GLuint) * 4),
+		//	0);
 
-		glBindVertexArray(0);
+		//glBindVertexArray(0);
 
-		_oglUtils::checkForErrors();
+		//_oglUtils::checkForErrors();
 	}
 
 	enumProjection _getProjection() const { return m_enProjection; }

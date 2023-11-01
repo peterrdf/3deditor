@@ -1219,6 +1219,8 @@ void COpenGLRDFView::DrawScene()
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
+	DrawModel(pModel);
+
 	_prepare(
 		iWidth - NVIGATION_VIEW_LENGTH, 0,
 		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,

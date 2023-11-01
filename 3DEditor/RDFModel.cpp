@@ -1583,13 +1583,181 @@ CSceneRDFModel::CSceneRDFModel()
 
 	SetFormatSettings(m_iModel);
 
-	// Cube (BoundaryRepresentations)
+	//// Cube (BoundaryRepresentations)
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(1.);
+	//	pAmbient.set_B(0.);
+	//	pAmbient.set_W(.35);
+
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
+
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
+
+	//	vector<double> vecVertices =
+	//	{
+	//		-.75, -.75, 0, // 1 (Bottom/Left)
+	//		.75, -.75, 0,  // 2 (Bottom/Right)
+	//		.75, .75, 0,   // 3 (Top/Right)
+	//		-.75, .75, 0,  // 4 (Top/Left)
+	//	};
+	//	vector<int64_t> vecIndices =
+	//	{
+	//		0, 1, 2, 3, -1,
+	//	};
+
+	//	auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
+	//	pBoundaryRepresentation.set_material(pMaterial);
+	//	pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
+	//	pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
+
+	//	// Front
+	//	OwlInstance iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+	//		0., -.75, 0.,
+	//		1., -1., 1.);
+	//	SetNameOfInstance(iInstance, "#front");
+
+	//	// Back
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+	//		0., .75, 0.,
+	//		-1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back");
+
+	//	// Top
+	//	iInstance = Translate(
+	//		(int64_t)pBoundaryRepresentation,
+	//		0., 0., .75,
+	//		1., 1., -1.);
+	//	SetNameOfInstance(iInstance, "#top");
+
+	//	// Bottom
+	//	iInstance = Translate(
+	//		(int64_t)pBoundaryRepresentation,
+	//		0., 0., -.75,
+	//		1, 1., 1.);
+	//	SetNameOfInstance(iInstance, "#bottom");
+
+	//	// Left
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//		-.75, 0., 0.,
+	//		1., -1., 1.);
+	//	SetNameOfInstance(iInstance, "#left");
+
+	//	// Right
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//		.75, 0., 0.,
+	//		-1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#right");
+	//}
+
+	//// Sphere (BoundaryRepresentations)
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(1.);
+	//	pAmbient.set_W(1.);
+
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
+
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
+
+	//	auto pSphere = GEOM::Sphere::Create(m_iModel);
+	//	pSphere.set_material(pMaterial);
+	//	pSphere.set_radius(.1);
+	//	pSphere.set_segmentationParts(36);
+
+	//	// Front/Top/Left
+	//	OwlInstance iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, -.75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-top-left");
+
+	//	// Front/Top/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, -.75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-top-right");
+
+	//	// Front/Bottom/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, -.75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-bottom-left");
+
+	//	// Front/Bottom/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, -.75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-bottom-right");
+
+	//	// Back/Top/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, .75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-top-left");
+
+	//	// Back/Top/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, .75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-top-right");
+
+	//	// Back/Bottom/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, .75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-bottom-left");
+
+	//	// Back/Bottom/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, .75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-bottom-right");		
+	//}
+
+	CreateCoordinateSystem();
+
+	// ASCII Chars
+	//m_pTextBuilder->Initialize(m_iModel);
+
+	//LoadLabels();
+
+	LoadRDFModel();
+}
+
+void CSceneRDFModel::CreateCoordinateSystem()
+{
+	const double AXIS_LENGTH = 2.5;
+
+	// Coordinate System
+	vector<OwlInstance> vecInstances;
+
+	// Coordinate System/X (1 Line3D)
+	OwlInstance iXAxisMaterial = 0;
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(1.);
+		pAmbient.set_R(1.);
+		pAmbient.set_G(0.);
 		pAmbient.set_B(0.);
-		pAmbient.set_W(.35);
+		pAmbient.set_W(1.);
 
 		auto pColor = GEOM::Color::Create(m_iModel);
 		pColor.set_ambient(pAmbient);
@@ -1597,67 +1765,53 @@ CSceneRDFModel::CSceneRDFModel()
 		auto pMaterial = GEOM::Material::Create(m_iModel);
 		pMaterial.set_color(pColor);
 
-		vector<double> vecVertices =
+		iXAxisMaterial = (int64_t)pMaterial;
+
+		vector<double> vecPoints =
 		{
-			-.75, -.75, 0, // 1 (Bottom/Left)
-			.75, -.75, 0,  // 2 (Bottom/Right)
-			.75, .75, 0,   // 3 (Top/Right)
-			-.75, .75, 0,  // 4 (Top/Left)
-		};
-		vector<int64_t> vecIndices =
-		{
-			0, 1, 2, 3, -1,
+			-AXIS_LENGTH / 2., 0., 0.,
+			AXIS_LENGTH / 2., 0., 0.,
 		};
 
-		auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
-		pBoundaryRepresentation.set_material(pMaterial);
-		pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
-		pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
+		auto pXAxis = GEOM::Line3D::Create(m_iModel);
+		pXAxis.set_material(pMaterial);
+		pXAxis.set_points(vecPoints.data(), vecPoints.size());
 
-		// Front
-		OwlInstance iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
-			0., -.75, 0.,
-			1., -1., 1.);
-		SetNameOfInstance(iInstance, "#front");
-
-		// Back
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
-			0., .75, 0.,
-			-1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back");
-
-		// Top
-		iInstance = Translate(
-			(int64_t)pBoundaryRepresentation,
-			0., 0., .75,
-			1., 1., -1.);
-		SetNameOfInstance(iInstance, "#top");
-
-		// Bottom
-		iInstance = Translate(
-			(int64_t)pBoundaryRepresentation,
-			0., 0., -.75,
-			1, 1., 1.);
-		SetNameOfInstance(iInstance, "#bottom");
-
-		// Left
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-			-.75, 0., 0.,
-			1., -1., 1.);
-		SetNameOfInstance(iInstance, "#left");
-
-		// Right
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-			.75, 0., 0.,
-			-1., 1., 1.);
-		SetNameOfInstance(iInstance, "#right");
+		vecInstances.push_back((int64_t)pXAxis);
 	}
 
-	// Sphere (BoundaryRepresentations)
+	// Coordinate System/Y (Line3D)
+	OwlInstance iYAxisMaterial = 0;
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(1.);
+		pAmbient.set_B(0.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(m_iModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(m_iModel);
+		pMaterial.set_color(pColor);
+
+		iYAxisMaterial = (int64_t)pMaterial;
+
+		vector<double> vecPoints =
+		{
+			0., -AXIS_LENGTH / 2., 0.,
+			0., AXIS_LENGTH / 2., 0.,
+		};
+
+		auto pYAxis = GEOM::Line3D::Create(m_iModel);
+		pYAxis.set_material(pMaterial);
+		pYAxis.set_points(vecPoints.data(), vecPoints.size());
+
+		vecInstances.push_back((int64_t)pYAxis);
+	}
+
+	// Coordinate System/Z (Line3D)
+	OwlInstance iZAxisMaterial = 0;
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
@@ -1671,74 +1825,135 @@ CSceneRDFModel::CSceneRDFModel()
 		auto pMaterial = GEOM::Material::Create(m_iModel);
 		pMaterial.set_color(pColor);
 
-		auto pSphere = GEOM::Sphere::Create(m_iModel);
-		pSphere.set_material(pMaterial);
-		pSphere.set_radius(.1);
-		pSphere.set_segmentationParts(36);
+		iZAxisMaterial = (int64_t)pMaterial;
 
-		// Front/Top/Left
-		OwlInstance iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, -.75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-top-left");
+		vector<double> vecPoints =
+		{
+			0., 0., -AXIS_LENGTH / 2.,
+			0., 0., AXIS_LENGTH / 2.,
+		};
 
-		// Front/Top/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, -.75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-top-right");
+		auto pZAxis = GEOM::Line3D::Create(m_iModel);
+		pZAxis.set_material(pMaterial);
+		pZAxis.set_points(vecPoints.data(), vecPoints.size());
 
-		// Front/Bottom/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, -.75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-bottom-left");
-
-		// Front/Bottom/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, -.75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-bottom-right");
-
-		// Back/Top/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, .75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-top-left");
-
-		// Back/Top/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, .75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-top-right");
-
-		// Back/Bottom/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, .75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-left");
-
-		// Back/Bottom/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, .75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-right");		
+		vecInstances.push_back((int64_t)pZAxis);
 	}
 
-	// ASCII Chars
-	m_pTextBuilder->Initialize(m_iModel);
+	// Arrows (1 Cone => 6 Transformations)
+	{
+		const double ARROW_OFFSET = 2.5;
 
-	LoadLabels();
+		auto pArrow = GEOM::Cone::Create(m_iModel);
+		pArrow.set_height(AXIS_LENGTH / 15.);
+		pArrow.set_radius(.075);
 
-	LoadRDFModel();
+		// +/-X
+		{
+			// +X
+			OwlInstance iPlusXInstance = Translate(
+				Rotate((int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
+				ARROW_OFFSET / 2., 0., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(iPlusXInstance, "#(+X)");
+
+			SetObjectProperty(
+				iPlusXInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iXAxisMaterial,
+				1);
+
+			// -X
+			OwlInstance iMinusXInstance = Translate(
+				Rotate((int64_t)pArrow, 0., 2 * PI * 270. / 360., 0.),
+				-ARROW_OFFSET / 2., 0., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(iMinusXInstance, "#(-X)");
+
+			SetObjectProperty(
+				iMinusXInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iXAxisMaterial,
+				1);
+
+			vecInstances.push_back(iPlusXInstance);
+			vecInstances.push_back(iMinusXInstance);
+		}
+
+		// +/-Y
+		{
+			// +Y
+			OwlInstance iPlusYInstance = Translate(
+				Rotate((int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
+				0., ARROW_OFFSET / 2., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(iPlusYInstance, "#(+Y)");
+
+			SetObjectProperty(
+				iPlusYInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iYAxisMaterial,
+				1);
+
+			// -Y
+			OwlInstance iMinusYInstance = Translate(
+				Rotate((int64_t)pArrow, 2 * PI * 90. / 360., 0., 0.),
+				0., -ARROW_OFFSET / 2., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(iMinusYInstance, "#(-Y)");
+
+			SetObjectProperty(
+				iMinusYInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iYAxisMaterial,
+				1);
+
+			vecInstances.push_back(iPlusYInstance);
+			vecInstances.push_back(iMinusYInstance);
+		}
+
+		// +/-Z
+		{
+			// +Z
+			OwlInstance iPlusZInstance = Translate(
+				(int64_t)pArrow,
+				0., 0., ARROW_OFFSET / 2.,
+				1., 1., 1.);
+			SetNameOfInstance(iPlusZInstance, "#(+Z)");
+
+			SetObjectProperty(
+				iPlusZInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iZAxisMaterial,
+				1);
+
+			// -Z
+			OwlInstance iMinusZInstance = Translate(
+				Rotate((int64_t)pArrow, 2 * PI * 180. / 360., 0., 0.),
+				0., 0., -ARROW_OFFSET / 2.,
+				1., 1., 1.);
+			SetNameOfInstance(iMinusZInstance, "#(-Z)");
+
+			SetObjectProperty(
+				iMinusZInstance,
+				GetPropertyByName(m_iModel, "material"),
+				&iZAxisMaterial,
+				1);
+
+			vecInstances.push_back(iPlusZInstance);
+			vecInstances.push_back(iMinusZInstance);
+		}
+	}
+
+	/* Collection */
+	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"), "#Coordinate System#");
+	ASSERT(iCollectionInstance != 0);
+
+	SetObjectProperty(
+		iCollectionInstance,
+		GetPropertyByName(m_iModel, "objects"),
+		vecInstances.data(),
+		vecInstances.size());
 }
 
 void CSceneRDFModel::LoadLabels()
