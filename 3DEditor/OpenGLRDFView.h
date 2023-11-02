@@ -165,8 +165,16 @@ private: // Methods
 
 	void LoadModel(CRDFModel* pModel);
 
-	void DrawModel(CRDFModel* pModel);
-	void DrawScene();
+	void DrawMainModel(
+		CRDFModel* pMainModel,
+		CRDFModel* pSceneModel,
+		int iViewportX, int iViewportY,
+		int iViewportWidth, int iViewportHeight);
+	void DrawNavigatorModel(
+		CRDFModel* pNavigatorModel,
+		int iViewportX, int iViewportY,
+		int iViewportWidth, int iViewportHeight);
+	void DrawModel(CRDFModel* pModel);	
 
 	// --------------------------------------------------------------------------------------------
 	// Faces

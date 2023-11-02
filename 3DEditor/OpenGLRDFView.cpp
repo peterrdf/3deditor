@@ -388,34 +388,16 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}	
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	_prepare(
+	DrawMainModel(
+		pController->GetModel(),
+		pController->GetSceneModel(),
 		0, 0,
-		iWidth, iHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
+		iWidth, iHeight);
 
-	/* Model */
-	DrawModel(pModel);
-
-	/* Scene */
-	DrawScene();
+	DrawNavigatorModel(
+		pController->GetNavigatorModel(),
+		0, 0,
+		iWidth, iHeight);
 
 	/* End */
 #ifdef _LINUX
@@ -424,33 +406,33 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	SwapBuffers(*pDC);
 #endif // _LINUX
 
-	/* Restore */
-	_prepare(
-		0, 0,
-		iWidth, iHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
+	///* Restore */
+	//_prepare(
+	//	0, 0,
+	//	iWidth, iHeight,
+	//	fXmin, fXmax,
+	//	fYmin, fYmax,
+	//	fZmin, fZmax,
+	//	true,
+	//	true);
 
-	/* Selection support */
+	///* Selection support */
 
-	// Model
-	DrawInstancesFrameBuffer(pModel, m_pInstanceSelectionFrameBuffer);
-	DrawFacesFrameBuffer(pModel);
+	//// Model
+	//DrawInstancesFrameBuffer(pModel, m_pInstanceSelectionFrameBuffer);
+	//DrawFacesFrameBuffer(pModel);
 
-	// Scene
-	_prepare(
-		iWidth - NVIGATION_VIEW_LENGTH, 0,
-		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
+	//// Scene
+	//_prepare(
+	//	iWidth - NVIGATION_VIEW_LENGTH, 0,
+	//	NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
+	//	fXmin, fXmax,
+	//	fYmin, fYmax,
+	//	fZmin, fZmax,
+	//	false,
+	//	false);
 
-	DrawInstancesFrameBuffer(pController->GetSceneModel(), m_pSceneSelectionFrameBuffer);
+	//DrawInstancesFrameBuffer(pController->GetSceneModel(), m_pSceneSelectionFrameBuffer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -601,6 +583,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	LoadModel(pModel);
 	LoadModel(pController->GetSceneModel());
+	LoadModel(pController->GetNavigatorModel());
 	
 	_redraw();
 }
@@ -1143,6 +1126,72 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 	}
 }
 
+void COpenGLRDFView::DrawMainModel(
+	CRDFModel* pMainModel,
+	CRDFModel* pSceneModel,
+	int iViewportX, int iViewportY,
+	int iViewportWidth, int iViewportHeight)
+{
+	if (pMainModel == nullptr)
+	{
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pMainModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	_prepare(
+		iViewportX, iViewportY,
+		iViewportWidth, iViewportHeight,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	/* Model */
+	DrawModel(pMainModel);
+
+	/* Scene */
+	DrawModel(pSceneModel);
+}
+
+void COpenGLRDFView::DrawNavigatorModel(
+	CRDFModel* pNavigatorModel,
+	int /*iViewportX*/, int iViewportY,
+	int iViewportWidth, int /*iViewportHeight*/)
+{
+	if (pNavigatorModel == nullptr)
+	{
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	_prepare(
+		iViewportWidth - NVIGATION_VIEW_LENGTH, iViewportY,
+		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	/* Model */
+	DrawModel(pNavigatorModel);
+}
+
 void COpenGLRDFView::DrawModel(CRDFModel* pModel)
 {
 	m_pOGLProgram->_enableTexture(false);
@@ -1179,58 +1228,6 @@ void COpenGLRDFView::DrawModel(CRDFModel* pModel)
 
 	/* Bi-Normal vectors */
 	DrawBiNormalVectors(pModel);
-
-	/* Coordinate System */
-	_drawCoordinateSystem();
-}
-
-void COpenGLRDFView::DrawScene()
-{
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	int iWidth = rcClient.Width();
-	int iHeight = rcClient.Height();
-
-	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
-	{
-		return;
-	}
-
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		ASSERT(FALSE);
-
-		return;
-	}
-
-	auto pModel = pController->GetSceneModel();
-	if (pModel == nullptr)
-	{
-		return;
-	}	
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	DrawModel(pModel);
-
-	_prepare(
-		iWidth - NVIGATION_VIEW_LENGTH, 0,
-		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
-
-	DrawModel(pModel);
 }
 
 // ------------------------------------------------------------------------------------------------

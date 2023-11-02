@@ -1966,7 +1966,7 @@ void CNavigatorRDFModel::CreateNaigator()
 		SetNameOfInstance(iInstance, "#right");
 	}
 
-	// Sphere (BoundaryRepresentations)
+	// Sphere (Sphere)
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
