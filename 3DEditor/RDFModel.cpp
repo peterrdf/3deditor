@@ -1744,10 +1744,10 @@ CSceneRDFModel::CSceneRDFModel()
 	//	SetNameOfInstance(iInstance, "#back-bottom-right");		
 	//}
 
-	CreateCoordinateSystem();
-
 	// ASCII Chars
-	//m_pTextBuilder->Initialize(m_iModel);
+	m_pTextBuilder->Initialize(m_iModel);
+
+	CreateCoordinateSystem();
 
 	//LoadLabels();
 
@@ -1915,6 +1915,92 @@ void CSceneRDFModel::CreateCoordinateSystem()
 			vecInstances.push_back(iPlusZInstance);
 		}
 	}
+
+	/* Labels */
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	// X-axis
+	OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	ASSERT(iPlusXLabelInstance != 0);
+
+	CRDFInstance::CalculateBBMinMax(
+		iPlusXLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	// Y-axis
+	OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	ASSERT(iPlusYLabelInstance != 0);
+
+	CRDFInstance::CalculateBBMinMax(
+		iPlusYLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	// Z-axis
+	OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	ASSERT(iPlusZLabelInstance != 0);
+
+	CRDFInstance::CalculateBBMinMax(
+		iPlusZLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Scale Factor */
+	double dMaxLength = dXmax - dXmin;
+	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+
+	double dScaleFactor = ((AXIS_LENGTH / 2.) * .75) / dMaxLength;
+
+	/* Transform Labels */
+
+	// X-axis
+	OwlInstance iInstance = Translate(
+		Rotate(Scale(iPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
+		AXIS_LENGTH / 1.4, 0., 0.,
+		-1., 1., 1.);
+	
+	SetNameOfInstance(iInstance, "#X-axis");
+	SetObjectProperty(
+		iInstance,
+		GetPropertyByName(m_iModel, "material"),
+		&iXAxisMaterial,
+		1);
+
+	// Y-axis
+	iInstance = Translate(
+		Rotate(Scale(iPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		0., AXIS_LENGTH / 1.4, 0.,
+		-1., 1., 1.);
+
+	SetNameOfInstance(iInstance, "#Y-axis");
+	SetObjectProperty(
+		iInstance,
+		GetPropertyByName(m_iModel, "material"),
+		&iYAxisMaterial,
+		1);
+
+	// Z-axis
+	iInstance = Translate(
+		Rotate(Scale(iPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
+		0., 0., AXIS_LENGTH / 1.4,
+		1., 1., -1.);
+
+	SetNameOfInstance(iInstance, "#Z-axis");
+	SetObjectProperty(
+		iInstance,
+		GetPropertyByName(m_iModel, "material"),
+		&iZAxisMaterial,
+		1);
 
 	/* Collection */
 	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"), "#Coordinate System#");
