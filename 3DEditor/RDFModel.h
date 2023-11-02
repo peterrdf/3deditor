@@ -151,17 +151,33 @@ public: // Methods
 	CSceneRDFModel();
 	virtual ~CSceneRDFModel();
 
+	// CRDFModel
 	virtual void CreateDefaultModel() override;
-
 	virtual void ScaleAndCenter(bool /*bLoadingModel = false*/) override {};
 
 protected: // Methods
 
+	// CRDFModel
 	virtual void PostLoadDRFModel() override;
+
+	void CreateCoordinateSystem();
+};
+
+// ************************************************************************************************
+class CNavigatorRDFModel : public CSceneRDFModel
+{
+
+public: // Methods
+
+	CNavigatorRDFModel();
+	virtual ~CNavigatorRDFModel();
+
+	virtual void CreateDefaultModel() override;
+
+protected: // Methods
 
 private: // Methods
 
-	void CreateCoordinateSystem();
 	void LoadLabels();
 };
 
