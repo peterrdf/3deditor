@@ -2572,7 +2572,7 @@ void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
 		fYmin, fYmax,
 		fZmin, fZmax,
 		true,
-		true);
+		false);
 
 	DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
