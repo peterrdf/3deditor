@@ -178,6 +178,7 @@ protected: // Methods
 
 private: // Methods
 
-	void LoadLabels();
+	void CreateNaigator();
+	void CreateNaigatorLabels();
 };
 

@@ -10,6 +10,7 @@ BOOL TEST_MODE = FALSE;
 CRDFController::CRDFController()
 	: m_pModel(nullptr)
 	, m_pSceneModel(new CSceneRDFModel())
+	, m_pNavigatorModel(new CNavigatorRDFModel())
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
@@ -18,12 +19,14 @@ CRDFController::CRDFController()
 	, m_bScaleAndCenter(FALSE)
 {
 	m_pSceneModel->CreateDefaultModel();
+	m_pNavigatorModel->CreateDefaultModel();
 }
 
 // ------------------------------------------------------------------------------------------------
 CRDFController::~CRDFController()
 {
 	delete m_pSceneModel;
+	delete m_pNavigatorModel;
 }
 
 // ------------------------------------------------------------------------------------------------
