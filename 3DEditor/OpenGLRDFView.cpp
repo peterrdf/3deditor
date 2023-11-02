@@ -406,33 +406,19 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	SwapBuffers(*pDC);
 #endif // _LINUX
 
-	///* Restore */
-	//_prepare(
-	//	0, 0,
-	//	iWidth, iHeight,
-	//	fXmin, fXmax,
-	//	fYmin, fYmax,
-	//	fZmin, fZmax,
-	//	true,
-	//	true);
+	/* Selection */
 
-	///* Selection support */
+	DrawMainModelSelectionBuffers(
+		pController->GetModel(),
+		0, 0,
+		iWidth, iHeight,
+		m_pInstanceSelectionFrameBuffer);
 
-	//// Model
-	//DrawInstancesFrameBuffer(pModel, m_pInstanceSelectionFrameBuffer);
-	//DrawFacesFrameBuffer(pModel);
-
-	//// Scene
-	//_prepare(
-	//	iWidth - NVIGATION_VIEW_LENGTH, 0,
-	//	NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
-	//	fXmin, fXmax,
-	//	fYmin, fYmax,
-	//	fZmin, fZmax,
-	//	false,
-	//	false);
-
-	//DrawInstancesFrameBuffer(pController->GetSceneModel(), m_pSceneSelectionFrameBuffer);
+	/*DrawNavigatorModelSelectionBuffers(
+		pController->GetNavigatorModel(),
+		0, 0,
+		iWidth, iHeight,
+		m_pSceneSelectionFrameBuffer);*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2526,6 +2512,69 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFr
 	pInstanceSelectionFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
+}
+
+void COpenGLRDFView::DrawMainModelSelectionBuffers(
+	CRDFModel* pModel,
+	int iViewportX, int iViewportY,
+	int iViewportWidth, int iViewportHeight,
+	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
+{
+	if (pModel == nullptr)
+	{
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	_prepare(
+		iViewportX, iViewportY,
+		iViewportWidth, iViewportHeight,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	DrawInstancesFrameBuffer(pModel, pInstanceSelectionFrameBuffer);
+	DrawFacesFrameBuffer(pModel);
+}
+
+void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
+	CRDFModel* pNavigatorModel,
+	int /*iViewportX*/, int iViewportY,
+	int iViewportWidth, int /*iViewportHeight*/,
+	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
+{
+	if (pNavigatorModel == nullptr)
+	{
+		return;
+	}
+
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	_prepare(
+		iViewportWidth - NVIGATION_VIEW_LENGTH, iViewportY,
+		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
 
 // ------------------------------------------------------------------------------------------------

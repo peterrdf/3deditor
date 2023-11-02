@@ -214,6 +214,16 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
+	void DrawMainModelSelectionBuffers(
+		CRDFModel* pModel, 
+		int iViewportX, int iViewportY,
+		int iViewportWidth, int iViewportHeight,
+		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
+	void DrawNavigatorModelSelectionBuffers(
+		CRDFModel* pNavigatorModel,
+		int iViewportX, int iViewportY,
+		int iViewportWidth, int iViewportHeight,
+		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	void DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	void DrawFacesFrameBuffer(CRDFModel* pModel);
 	void DrawPointedFace(CRDFModel* pModel);
