@@ -466,7 +466,7 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
+/*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
 	ProgressStatus stat(L"Calculate scene sizes");
 

@@ -92,7 +92,7 @@ public: // Methods
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 
-	void ScaleAndCenter(bool bLoadingModel = false);
+	virtual void ScaleAndCenter(bool bLoadingModel = false);
 
 	float GetBoundingSphereDiameter() const;
 
@@ -149,6 +149,8 @@ public: // Methods
 	virtual ~CSceneRDFModel();
 
 	virtual void CreateDefaultModel() override;
+
+	virtual void ScaleAndCenter(bool /*bLoadingModel = false*/) override {};
 
 private: // Methods
 
