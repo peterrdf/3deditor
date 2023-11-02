@@ -73,6 +73,7 @@ public: // Methods
 	virtual ~CRDFModel();
 
 	int64_t GetModel() const;
+	void SetModelCenter(bool bValue) { m_bModelCenter = bValue; }
 	virtual void CreateDefaultModel();
 
 	const map<int64_t, CRDFClass *>& GetClasses() const;
