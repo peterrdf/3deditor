@@ -1241,7 +1241,7 @@ void CRDFModel::LoadRDFModel()
 
 /*virtual*/ void CRDFModel::PostLoadDRFModel()
 {
-	SetInstanceDefaultState();
+	SetInstancesDefaultState();
 
 	UpdateVertexBufferOffset();
 }
@@ -1785,7 +1785,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 		vector<double> vecPoints =
 		{
-			-AXIS_LENGTH / 2., 0., 0.,
+			0., 0., 0.,
 			AXIS_LENGTH / 2., 0., 0.,
 		};
 
@@ -1815,7 +1815,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 		vector<double> vecPoints =
 		{
-			0., -AXIS_LENGTH / 2., 0.,
+			0., 0., 0.,
 			0., AXIS_LENGTH / 2., 0.,
 		};
 
@@ -1845,7 +1845,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 		vector<double> vecPoints =
 		{
-			0., 0., -AXIS_LENGTH / 2.,
+			0., 0., 0.,
 			0., 0., AXIS_LENGTH / 2.,
 		};
 
@@ -1856,7 +1856,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 		vecInstances.push_back((int64_t)pZAxis);
 	}
 
-	// Arrows (1 Cone => 6 Transformations)
+	// Arrows (1 Cone => 3 Transformations)
 	{
 		const double ARROW_OFFSET = 2.5;
 
@@ -1864,9 +1864,8 @@ void CSceneRDFModel::CreateCoordinateSystem()
 		pArrow.set_height(AXIS_LENGTH / 15.);
 		pArrow.set_radius(.075);
 
-		// +/-X
+		// +X
 		{
-			// +X
 			OwlInstance iPlusXInstance = Translate(
 				Rotate((int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
 				ARROW_OFFSET / 2., 0., 0.,
@@ -1879,26 +1878,11 @@ void CSceneRDFModel::CreateCoordinateSystem()
 				&iXAxisMaterial,
 				1);
 
-			// -X
-			OwlInstance iMinusXInstance = Translate(
-				Rotate((int64_t)pArrow, 0., 2 * PI * 270. / 360., 0.),
-				-ARROW_OFFSET / 2., 0., 0.,
-				1., 1., 1.);
-			SetNameOfInstance(iMinusXInstance, "#(-X)");
-
-			SetObjectProperty(
-				iMinusXInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iXAxisMaterial,
-				1);
-
 			vecInstances.push_back(iPlusXInstance);
-			vecInstances.push_back(iMinusXInstance);
 		}
 
-		// +/-Y
+		// +Y
 		{
-			// +Y
 			OwlInstance iPlusYInstance = Translate(
 				Rotate((int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
 				0., ARROW_OFFSET / 2., 0.,
@@ -1911,26 +1895,11 @@ void CSceneRDFModel::CreateCoordinateSystem()
 				&iYAxisMaterial,
 				1);
 
-			// -Y
-			OwlInstance iMinusYInstance = Translate(
-				Rotate((int64_t)pArrow, 2 * PI * 90. / 360., 0., 0.),
-				0., -ARROW_OFFSET / 2., 0.,
-				1., 1., 1.);
-			SetNameOfInstance(iMinusYInstance, "#(-Y)");
-
-			SetObjectProperty(
-				iMinusYInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iYAxisMaterial,
-				1);
-
 			vecInstances.push_back(iPlusYInstance);
-			vecInstances.push_back(iMinusYInstance);
 		}
 
-		// +/-Z
+		// +Z
 		{
-			// +Z
 			OwlInstance iPlusZInstance = Translate(
 				(int64_t)pArrow,
 				0., 0., ARROW_OFFSET / 2.,
@@ -1943,21 +1912,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 				&iZAxisMaterial,
 				1);
 
-			// -Z
-			OwlInstance iMinusZInstance = Translate(
-				Rotate((int64_t)pArrow, 2 * PI * 180. / 360., 0., 0.),
-				0., 0., -ARROW_OFFSET / 2.,
-				1., 1., 1.);
-			SetNameOfInstance(iMinusZInstance, "#(-Z)");
-
-			SetObjectProperty(
-				iMinusZInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iZAxisMaterial,
-				1);
-
 			vecInstances.push_back(iPlusZInstance);
-			vecInstances.push_back(iMinusZInstance);
 		}
 	}
 
