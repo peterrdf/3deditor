@@ -227,8 +227,8 @@ private: // Methods
 	void DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	void DrawFacesFrameBuffer(CRDFModel* pModel);
 	void DrawPointedFace(CRDFModel* pModel);
-	void PointSceneInstance(const CPoint& point);
-	bool SelectSceneInstance();
+	void PointNavigatorInstance(const CPoint& point);
+	bool SelectNavigatorInstance();
 
 	// --------------------------------------------------------------------------------------------
 	// Handler

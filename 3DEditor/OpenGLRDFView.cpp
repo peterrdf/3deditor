@@ -414,11 +414,11 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		iWidth, iHeight,
 		m_pInstanceSelectionFrameBuffer);
 
-	/*DrawNavigatorModelSelectionBuffers(
+	DrawNavigatorModelSelectionBuffers(
 		pController->GetNavigatorModel(),
 		0, 0,
 		iWidth, iHeight,
-		m_pNavigatorSelectionFrameBuffer);*/
+		m_pNavigatorSelectionFrameBuffer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -446,7 +446,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 			if (m_pSelectedInstance == nullptr)
 			{
-				if (SelectSceneInstance())
+				if (SelectNavigatorInstance())
 				{
 					_redraw();
 				}
@@ -2820,7 +2820,7 @@ void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::PointSceneInstance(const CPoint& point)
+void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -2830,7 +2830,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 		return;
 	}
 
-	auto pModel = pController->GetSceneModel();
+	auto pModel = pController->GetNavigatorModel();
 	if (pModel == nullptr)
 	{
 		return;
@@ -2898,7 +2898,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 	}
 }
 
-bool COpenGLRDFView::SelectSceneInstance()
+bool COpenGLRDFView::SelectNavigatorInstance()
 {
 	if (m_pNavigatorPointedInstance == nullptr)
 	{
@@ -3077,7 +3077,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			
 			if (m_pPointedInstance == nullptr)
 			{
-				PointSceneInstance(point);
+				PointNavigatorInstance(point);
 			}
 		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
 
