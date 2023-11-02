@@ -63,11 +63,11 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_pSelectedInstance(nullptr)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
-	, m_pSceneSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pScenePointedInstance(nullptr)
+	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
+	, m_pNavigatorPointedInstance(nullptr)
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
-	, m_pScenePointedInstanceMaterial(new _material())
+	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
 	ASSERT(pWnd != nullptr);
 
@@ -95,7 +95,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 		.66f,
 		nullptr);
 	
-	m_pScenePointedInstanceMaterial->init(
+	m_pNavigatorPointedInstanceMaterial->init(
 		1.f, 0.f, 0.f,
 		1.f, 0.f, 0.f,
 		1.f, 0.f, 0.f,
@@ -117,7 +117,7 @@ COpenGLRDFView::~COpenGLRDFView()
 
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;	
-	delete m_pSceneSelectionFrameBuffer;
+	delete m_pNavigatorSelectionFrameBuffer;
 	
 	// PATCH: AMD 6700 XT - Access violation
 	if (!TEST_MODE)
@@ -131,8 +131,8 @@ COpenGLRDFView::~COpenGLRDFView()
 	delete m_pPointedInstanceMaterial;
 	m_pPointedInstanceMaterial = nullptr;
 	
-	delete m_pScenePointedInstanceMaterial;
-	m_pScenePointedInstanceMaterial = nullptr;
+	delete m_pNavigatorPointedInstanceMaterial;
+	m_pNavigatorPointedInstanceMaterial = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		pController->GetNavigatorModel(),
 		0, 0,
 		iWidth, iHeight,
-		m_pSceneSelectionFrameBuffer);*/
+		m_pNavigatorSelectionFrameBuffer);*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -522,8 +522,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 
-	m_pSceneSelectionFrameBuffer->encoding().clear();
-	m_pScenePointedInstance = nullptr;
+	m_pNavigatorSelectionFrameBuffer->encoding().clear();
+	m_pNavigatorPointedInstance = nullptr;
 
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -1257,9 +1257,9 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	m_pOGLProgram->_enableBlinnPhongModel(true);
 
 	const auto pPointedInstance = pModel == pController->GetModel() ?
-		m_pPointedInstance : m_pScenePointedInstance;
+		m_pPointedInstance : m_pNavigatorPointedInstance;
 	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ? 
-		m_pPointedInstanceMaterial : m_pScenePointedInstanceMaterial;
+		m_pPointedInstanceMaterial : m_pNavigatorPointedInstanceMaterial;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -1528,9 +1528,9 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 	m_pOGLProgram->_setTransparency(1.f);
 
 	const auto pPointedInstance = pModel == pController->GetModel() ?
-		m_pPointedInstance : m_pScenePointedInstance;
+		m_pPointedInstance : m_pNavigatorPointedInstance;
 	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ?
-		m_pPointedInstanceMaterial : m_pScenePointedInstanceMaterial;
+		m_pPointedInstanceMaterial : m_pNavigatorPointedInstanceMaterial;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
@@ -2836,7 +2836,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 		return;
 	}
 
-	if (m_pSceneSelectionFrameBuffer->isInitialized())
+	if (m_pNavigatorSelectionFrameBuffer->isInitialized())
 	{
 		int iWidth = 0;
 		int iHeight = 0;
@@ -2868,7 +2868,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 			double dX = (double)((double)point.x - (double)(iWidth - NVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
 			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
 
-			m_pSceneSelectionFrameBuffer->bind();
+			m_pNavigatorSelectionFrameBuffer->bind();
 
 			glReadPixels(
 				(GLint)dX,
@@ -2878,7 +2878,7 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 
-			m_pSceneSelectionFrameBuffer->unbind();
+			m_pNavigatorSelectionFrameBuffer->unbind();
 
 			CRDFInstance* pPointedInstance = 0;
 			if (arPixels[3] != 0)
@@ -2888,9 +2888,9 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 				ASSERT(pPointedInstance != nullptr);
 			}
 
-			if (m_pScenePointedInstance != pPointedInstance)
+			if (m_pNavigatorPointedInstance != pPointedInstance)
 			{
-				m_pScenePointedInstance = pPointedInstance;
+				m_pNavigatorPointedInstance = pPointedInstance;
 
 				_redraw();
 			}
@@ -2900,12 +2900,12 @@ void COpenGLRDFView::PointSceneInstance(const CPoint& point)
 
 bool COpenGLRDFView::SelectSceneInstance()
 {
-	if (m_pScenePointedInstance == nullptr)
+	if (m_pNavigatorPointedInstance == nullptr)
 	{
 		return false;
 	}
 
-	wstring strInstanceName = m_pScenePointedInstance->GetName();
+	wstring strInstanceName = m_pNavigatorPointedInstance->GetName();
 	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label"))
 	{
 		_setView(enumView::Front); 

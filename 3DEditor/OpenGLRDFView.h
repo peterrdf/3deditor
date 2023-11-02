@@ -73,13 +73,13 @@ private: // Members
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
 	int64_t m_iPointedFace;	
 
-	_oglSelectionFramebuffer* m_pSceneSelectionFrameBuffer;
-	CRDFInstance* m_pScenePointedInstance;
+	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
+	CRDFInstance* m_pNavigatorPointedInstance;
 	
 	// Materials
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
-	_material* m_pScenePointedInstanceMaterial;
+	_material* m_pNavigatorPointedInstanceMaterial;
 
 #pragma endregion // Members
 
