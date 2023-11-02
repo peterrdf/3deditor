@@ -1895,10 +1895,10 @@ void CNavigatorRDFModel::CreateNaigator()
 	// Cube (BoundaryRepresentations)
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(1.);
-		pAmbient.set_B(0.);
-		pAmbient.set_W(.35);
+		pAmbient.set_R(.1);
+		pAmbient.set_G(.1);
+		pAmbient.set_B(.1);
+		pAmbient.set_W(.05);
 
 		auto pColor = GEOM::Color::Create(m_iModel);
 		pColor.set_ambient(pAmbient);

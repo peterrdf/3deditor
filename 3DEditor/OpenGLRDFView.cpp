@@ -32,7 +32,7 @@ wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
 wchar_t TOOLTIP_INFORMATION[] = L"Information";
 
-int NVIGATION_VIEW_LENGTH = 150;
+int NAVIGATION_VIEW_LENGTH = 200;
 int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
@@ -1166,8 +1166,8 @@ void COpenGLRDFView::DrawNavigatorModel(
 	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
-		iViewportWidth - NVIGATION_VIEW_LENGTH, iViewportY,
-		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
+		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
+		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
@@ -2566,8 +2566,8 @@ void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
 	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	_prepare(
-		iViewportWidth - NVIGATION_VIEW_LENGTH, iViewportY,
-		NVIGATION_VIEW_LENGTH, NVIGATION_VIEW_LENGTH,
+		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
+		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax,
@@ -2859,14 +2859,14 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 		iHeight = rcClient.Height();
 #endif // _LINUX
 
-		if ((point.x > (iWidth - NVIGATION_VIEW_LENGTH)) && (point.x < iWidth) &&
-			(point.y > (iHeight - NVIGATION_VIEW_LENGTH)) && (point.y < iHeight))
+		if ((point.x > (iWidth - NAVIGATION_VIEW_LENGTH)) && (point.x < iWidth) &&
+			(point.y > (iHeight - NAVIGATION_VIEW_LENGTH)) && (point.y < iHeight))
 		{
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			double dX = (double)((double)point.x - (double)(iWidth - NVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
-			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)NVIGATION_VIEW_LENGTH);
+			double dX = (double)((double)point.x - (double)(iWidth - NAVIGATION_VIEW_LENGTH)) * ((double)BUFFER_SIZE / (double)NAVIGATION_VIEW_LENGTH);
+			double dY = ((double)(iHeight - (double)point.y)) * ((double)BUFFER_SIZE / (double)NAVIGATION_VIEW_LENGTH);
 
 			m_pNavigatorSelectionFrameBuffer->bind();
 
