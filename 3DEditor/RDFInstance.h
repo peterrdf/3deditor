@@ -140,7 +140,8 @@ public: // Methods
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax, 
-		float fScaleFactor,
+		bool bModelCenter,
+		float fScaleFactor,		
 		bool bScale);
 	
 	GLuint& VBO();

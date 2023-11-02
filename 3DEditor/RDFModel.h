@@ -57,6 +57,9 @@ protected: // Members
 	float m_fYTranslation;
 	float m_fZTranslation;
 
+	// Model (-1, 1) / Coordinate System (0, 2.)
+	bool m_bModelCenter;
+
 	// Support for textures
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;

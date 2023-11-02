@@ -517,6 +517,7 @@ void CRDFInstance::ScaleAndCenter(
 	float fXmin, float fXmax, 
 	float fYmin, float fYmax, 
 	float fZmin, float fZmax, 
+	bool bModelCenter,
 	float fScaleFactor,
 	bool bScale)
 {
@@ -534,10 +535,13 @@ void CRDFInstance::ScaleAndCenter(
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - fYmin;
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - fZmin;
 
-		// center
-		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		// center: Model/Coordinate System
+		if (bModelCenter)
+		{
+			m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+			m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+			m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
+		}
 
 		// [-1.0 -> 1.0]
 		if (bScale)
@@ -555,10 +559,13 @@ void CRDFInstance::ScaleAndCenter(
 	m_pvecBBMin->y = m_pvecBBMin->y - fYmin;
 	m_pvecBBMin->z = m_pvecBBMin->z - fZmin;
 
-	// center
-	m_pvecBBMin->x = m_pvecBBMin->x - ((fXmax - fXmin) / 2.0f);
-	m_pvecBBMin->y = m_pvecBBMin->y - ((fYmax - fYmin) / 2.0f);
-	m_pvecBBMin->z = m_pvecBBMin->z - ((fZmax - fZmin) / 2.0f);
+	// center: Model/Coordinate System
+	if (bModelCenter)
+	{
+		m_pvecBBMin->x = m_pvecBBMin->x - ((fXmax - fXmin) / 2.0f);
+		m_pvecBBMin->y = m_pvecBBMin->y - ((fYmax - fYmin) / 2.0f);
+		m_pvecBBMin->z = m_pvecBBMin->z - ((fZmax - fZmin) / 2.0f);
+	}	
 
 	// [-1.0 -> 1.0]
 	if (bScale)
@@ -577,10 +584,13 @@ void CRDFInstance::ScaleAndCenter(
 	m_pvecBBMax->y = m_pvecBBMax->y - fYmin;
 	m_pvecBBMax->z = m_pvecBBMax->z - fZmin;
 
-	// center
-	m_pvecBBMax->x = m_pvecBBMax->x - ((fXmax - fXmin) / 2.0f);
-	m_pvecBBMax->y = m_pvecBBMax->y - ((fYmax - fYmin) / 2.0f);
-	m_pvecBBMax->z = m_pvecBBMax->z - ((fZmax - fZmin) / 2.0f);
+	// center: Model/Coordinate System
+	if (bModelCenter)
+	{
+		m_pvecBBMax->x = m_pvecBBMax->x - ((fXmax - fXmin) / 2.0f);
+		m_pvecBBMax->y = m_pvecBBMax->y - ((fYmax - fYmin) / 2.0f);
+		m_pvecBBMax->z = m_pvecBBMax->z - ((fZmax - fZmin) / 2.0f);
+	}	
 
 	// [-1.0 -> 1.0]
 	if (bScale)

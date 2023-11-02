@@ -143,6 +143,7 @@ CRDFModel::CRDFModel()
 	, m_fXTranslation(0.f)
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
+	, m_bModelCenter(true)
 	, m_pDefaultTexture(nullptr)
 	, m_mapTextures()
 	, m_pTextBuilder(new CTextBuilder())
@@ -546,7 +547,8 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
-			m_fBoundingSphereDiameter,
+			m_bModelCenter,
+			m_bModelCenter ? m_fBoundingSphereDiameter : m_fBoundingSphereDiameter  * 2.,
 			true);
 	}
 
@@ -601,20 +603,23 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	/* Translations */
-	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-	m_fXTranslation -= m_fXmin;
-	m_fYTranslation -= m_fYmin;
-	m_fZTranslation -= m_fZmin;
+	if (m_bModelCenter)
+	{
+		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+		m_fXTranslation -= m_fXmin;
+		m_fYTranslation -= m_fYmin;
+		m_fZTranslation -= m_fZmin;
 
-	// center
-	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+		// center
+		m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+		m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+		m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
-	// [-1.0 -> 1.0]
-	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		// [-1.0 -> 1.0]
+		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	}	
 }
 
 // ------------------------------------------------------------------------------------------------
