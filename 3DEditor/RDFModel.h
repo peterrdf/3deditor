@@ -118,9 +118,12 @@ public: // Methods
 protected: // Methods
 
 	void SetFormatSettings(int64_t iModel);
+	virtual void PreLoadDRFModel() {}
 	void LoadRDFModel();
-	void UpdateVertexBufferOffset();
+	virtual void PostLoadDRFModel();
+	void SetInstancesDefaultState();
 	void SetInstanceDefaultStateRecursive(OwlInstance iInstance);
+	void UpdateVertexBufferOffset();
 	void LoadRDFInstances();
 
 	void Clean();
@@ -151,6 +154,10 @@ public: // Methods
 	virtual void CreateDefaultModel() override;
 
 	virtual void ScaleAndCenter(bool /*bLoadingModel = false*/) override {};
+
+protected: // Methods
+
+	virtual void PostLoadDRFModel() override;
 
 private: // Methods
 

@@ -1136,6 +1136,8 @@ void CRDFModel::LoadRDFModel()
 {
 	ProgressStatus(L"Loading RDF model schema");
 
+	PreLoadDRFModel();
+
 	// Load/Import Model
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
@@ -1231,14 +1233,20 @@ void CRDFModel::LoadRDFModel()
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
 
-	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	UpdateVertexBufferOffset();
+	PostLoadDRFModel();
 
 	// Instances
 	LoadRDFInstances();
 }
 
-void CRDFModel::UpdateVertexBufferOffset()
+/*virtual*/ void CRDFModel::PostLoadDRFModel()
+{
+	SetInstanceDefaultState();
+
+	UpdateVertexBufferOffset();
+}
+
+void CRDFModel::SetInstancesDefaultState()
 {
 	m_mapInstanceDefaultState.clear();
 
@@ -1268,10 +1276,47 @@ void CRDFModel::UpdateVertexBufferOffset()
 			if (strcmp(szClassName, "Nill") != 0)
 			{
 				SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
-			}			
+			}
 		}
 	}
+}
 
+void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
+{
+	ASSERT(iInstance != 0);
+
+	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
+	while (iProperty != 0)
+	{
+		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE)
+		{
+			int64_t iValuesCount = 0;
+			OwlInstance* piValues = nullptr;
+			GetObjectProperty(iInstance, iProperty, &piValues, &iValuesCount);
+
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+			{
+				if ((piValues[iValue] != 0) &&
+					!m_mapInstanceDefaultState.at(piValues[iValue]))
+				{
+					// Enable to avoid infinity recursion
+					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
+
+					if (!GetInstanceGeometryClass(piValues[iValue]) ||
+						!GetBoundingBox(piValues[iValue], nullptr, nullptr))
+					{
+						SetInstanceDefaultStateRecursive(piValues[iValue]);
+					}
+				}
+			}
+		}
+
+		iProperty = GetInstancePropertyByIterator(iInstance, iProperty);
+	}
+}
+
+void CRDFModel::UpdateVertexBufferOffset()
+{
 	/* Min/Max */
 	double dXmin = DBL_MAX;
 	double dXmax = -DBL_MAX;
@@ -1280,7 +1325,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 	double dZmin = DBL_MAX;
 	double dZmax = -DBL_MAX;
 
-	iInstance = GetInstancesByIterator(m_iModel, 0);
+	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
 	{
 		if (m_mapInstanceDefaultState.at(iInstance))
@@ -1323,40 +1368,6 @@ void CRDFModel::UpdateVertexBufferOffset()
 
 	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 	ClearedExternalBuffers(m_iModel);
-}
-
-void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
-{
-	ASSERT(iInstance != 0);
-
-	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
-	while (iProperty != 0)
-	{
-		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE)
-		{
-			int64_t iValuesCount = 0;
-			OwlInstance* piValues = nullptr;
-			GetObjectProperty(iInstance, iProperty, &piValues, &iValuesCount);
-
-			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-			{
-				if ((piValues[iValue] != 0) &&
-					!m_mapInstanceDefaultState.at(piValues[iValue]))
-				{
-					// Enable to avoid infinity recursion
-					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
-
-					if (!GetInstanceGeometryClass(piValues[iValue]) ||
-						!GetBoundingBox(piValues[iValue], nullptr, nullptr))
-					{
-						SetInstanceDefaultStateRecursive(piValues[iValue]);
-					}
-				}
-			}
-		}
-
-		iProperty = GetInstancePropertyByIterator(iInstance, iProperty);
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1741,6 +1752,11 @@ CSceneRDFModel::CSceneRDFModel()
 	//LoadLabels();
 
 	LoadRDFModel();
+}
+
+/*virtual*/ void CSceneRDFModel::PostLoadDRFModel() /*override*/
+{
+	SetInstancesDefaultState();
 }
 
 void CSceneRDFModel::CreateCoordinateSystem()
