@@ -394,10 +394,13 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		0, 0,
 		iWidth, iHeight);
 
-	DrawNavigatorModel(
-		pController->GetNavigatorModel(),
-		0, 0,
-		iWidth, iHeight);
+	if (m_bShowNavigator)
+	{
+		DrawNavigatorModel(
+			pController->GetNavigatorModel(),
+			0, 0,
+			iWidth, iHeight);
+	}
 
 	/* End */
 #ifdef _LINUX
@@ -414,11 +417,14 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		iWidth, iHeight,
 		m_pInstanceSelectionFrameBuffer);
 
-	DrawNavigatorModelSelectionBuffers(
-		pController->GetNavigatorModel(),
-		0, 0,
-		iWidth, iHeight,
-		m_pNavigatorSelectionFrameBuffer);
+	if (m_bShowNavigator)
+	{
+		DrawNavigatorModelSelectionBuffers(
+			pController->GetNavigatorModel(),
+			0, 0,
+			iWidth, iHeight,
+			m_pNavigatorSelectionFrameBuffer);
+	}	
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -795,6 +801,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case enumApplicationProperty::Contrast:
 		case enumApplicationProperty::Brightness:
 		case enumApplicationProperty::Gamma:
+		case enumApplicationProperty::ShowNavigator:
 		{
 			_redraw();
 		}

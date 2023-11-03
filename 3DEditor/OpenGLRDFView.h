@@ -59,6 +59,7 @@ private: // Members
 	BOOL m_bShowTangenVectors;
 	BOOL m_bShowBiNormalVectors;
 	BOOL m_bScaleVectors;
+	BOOL m_bShowNavigator;
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
@@ -120,6 +121,8 @@ public: // Methods
 	BOOL AreBiNormalVectorsShown() const;
 	void ScaleVectors(BOOL bShow);
 	BOOL AreVectorsScaled() const;
+	void ShowNavigator(BOOL bShow) { m_bShowNavigator = bShow; }
+	BOOL IsNavigatorShown() const { return m_bShowNavigator; }
 
 	void Reset();
 

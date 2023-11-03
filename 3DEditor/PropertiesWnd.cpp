@@ -1436,6 +1436,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
+				case enumApplicationProperty::ShowNavigator:
+				{
+					pOpenGLView->ShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
+				}
+				break;
+
 				case enumApplicationProperty::PointLightingLocation:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
@@ -2375,6 +2383,17 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
 		pProperty->AddOption(ROTATION_MODE_XY);
 		pProperty->AddOption(ROTATION_MODE_XYZ);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Navigator"),
+			pOpenGLView->IsNavigatorShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);
