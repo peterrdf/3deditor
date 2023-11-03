@@ -24,6 +24,7 @@ enum class enumApplicationProperty : int
 	ShowBoundingBoxes,
 	RotationMode,
 	ShowNavigator,
+	CenterModel,
 	PointLightingLocation,
 	AmbientLightWeighting,
 	SpecularLightWeighting,

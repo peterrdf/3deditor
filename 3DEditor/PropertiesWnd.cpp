@@ -1444,6 +1444,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
+				case enumApplicationProperty::CenterModel:
+				{
+					GetController()->SetCenterModel(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					GetController()->ScaleAndCenter();
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CenterModel);
+				}
+				break;
+
 				case enumApplicationProperty::PointLightingLocation:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
@@ -1729,7 +1738,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			CRDFModel * pModel = GetController()->GetModel();
+			auto pModel = GetController()->GetModel();
 			ASSERT(pModel != nullptr);
 
 			ASSERT(pData->GetInstance()->GetClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"));			
@@ -2392,6 +2401,17 @@ void CPropertiesWnd::LoadApplicationProperties()
 		auto pProperty = new CApplicationProperty(_T("Navigator"),
 			pOpenGLView->IsNavigatorShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Center Model"),
+			GetController()->GetCenterModel() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Center Model"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CenterModel));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);

@@ -517,7 +517,7 @@ void CRDFInstance::ScaleAndCenter(
 	float fXmin, float fXmax, 
 	float fYmin, float fYmax, 
 	float fZmin, float fZmax, 
-	bool bModelCenter,
+	bool bCenterModel,
 	float fScaleFactor,
 	bool bScale)
 {
@@ -536,7 +536,7 @@ void CRDFInstance::ScaleAndCenter(
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - fZmin;
 
 		// center: Model/Coordinate System
-		if (bModelCenter)
+		if (bCenterModel)
 		{
 			m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
 			m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
@@ -560,7 +560,7 @@ void CRDFInstance::ScaleAndCenter(
 	m_pvecBBMin->z = m_pvecBBMin->z - fZmin;
 
 	// center: Model/Coordinate System
-	if (bModelCenter)
+	if (bCenterModel)
 	{
 		m_pvecBBMin->x = m_pvecBBMin->x - ((fXmax - fXmin) / 2.0f);
 		m_pvecBBMin->y = m_pvecBBMin->y - ((fYmax - fYmin) / 2.0f);
@@ -585,7 +585,7 @@ void CRDFInstance::ScaleAndCenter(
 	m_pvecBBMax->z = m_pvecBBMax->z - fZmin;
 
 	// center: Model/Coordinate System
-	if (bModelCenter)
+	if (bCenterModel)
 	{
 		m_pvecBBMax->x = m_pvecBBMax->x - ((fXmax - fXmin) / 2.0f);
 		m_pvecBBMax->y = m_pvecBBMax->y - ((fYmax - fYmin) / 2.0f);

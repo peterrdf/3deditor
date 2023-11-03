@@ -143,7 +143,7 @@ CRDFModel::CRDFModel()
 	, m_fXTranslation(0.f)
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
-	, m_bModelCenter(true)
+	, m_bCenterModel(true)
 	, m_pDefaultTexture(nullptr)
 	, m_mapTextures()
 	, m_pTextBuilder(new CTextBuilder())
@@ -547,8 +547,8 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax, 
-			m_bModelCenter,
-			m_bModelCenter ? m_fBoundingSphereDiameter : m_fBoundingSphereDiameter  * 2.,
+			m_bCenterModel,
+			m_bCenterModel ? m_fBoundingSphereDiameter : m_fBoundingSphereDiameter  * 2.,
 			true);
 	}
 
@@ -603,7 +603,7 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	/* Translations */
-	if (m_bModelCenter)
+	if (m_bCenterModel)
 	{
 		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 		m_fXTranslation -= m_fXmin;

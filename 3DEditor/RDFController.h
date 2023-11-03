@@ -47,6 +47,7 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// UI properties
 	BOOL m_bScaleAndCenter;
+	BOOL m_bCenterModel;
 
 public: // Methods
 
@@ -60,7 +61,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFModel * GetModel() const { return m_pModel; }
+	CRDFModel* GetModel() const { return m_pModel; }
 	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
 	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }
 
@@ -157,6 +158,14 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// UI properties
 	void SetScaleAndCenter(BOOL bScaleAndCenter);
+
+	// --------------------------------------------------------------------------------------------
+	// UI properties
+	BOOL GetCenterModel() const;
+
+	// --------------------------------------------------------------------------------------------
+	// UI properties
+	void SetCenterModel(BOOL bValue);
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support

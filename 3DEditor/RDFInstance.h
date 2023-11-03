@@ -140,7 +140,7 @@ public: // Methods
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
 		float fZmin, float fZmax, 
-		bool bModelCenter,
+		bool bCenterModel,
 		float fScaleFactor,		
 		bool bScale);
 	

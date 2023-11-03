@@ -17,6 +17,7 @@ CRDFController::CRDFController()
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenter(FALSE)
+	, m_bCenterModel(TRUE)
 {
 	m_pSceneModel->CreateDefaultModel();
 	m_pNavigatorModel->CreateDefaultModel();
@@ -229,6 +230,23 @@ BOOL CRDFController::GetScaleAndCenter() const
 void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
 {
 	m_bScaleAndCenter = bScaleAndCenter;
+}
+
+// ------------------------------------------------------------------------------------------------
+BOOL CRDFController::GetCenterModel() const
+{
+	return m_bCenterModel;
+}
+
+// ------------------------------------------------------------------------------------------------
+void  CRDFController::SetCenterModel(BOOL bValue)
+{
+	m_bCenterModel = bValue;
+
+	if (m_pModel != nullptr)
+	{
+		m_pModel->SetCenterModel(m_bCenterModel);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

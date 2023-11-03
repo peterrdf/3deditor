@@ -825,6 +825,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		case enumApplicationProperty::Brightness:
 		case enumApplicationProperty::Gamma:
 		case enumApplicationProperty::ShowNavigator:
+		case enumApplicationProperty::CenterModel:
 		{
 			// Not supported
 		}

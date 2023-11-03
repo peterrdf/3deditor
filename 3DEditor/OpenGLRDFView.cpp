@@ -55,7 +55,8 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bShowNormalVectors(FALSE)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
-	, m_bScaleVectors(FALSE)	
+	, m_bScaleVectors(FALSE)
+	, m_bShowNavigator(TRUE)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
@@ -809,6 +810,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		case enumApplicationProperty::VisibleValuesCountLimit:
 		case enumApplicationProperty::ScalelAndCenter:
+		case enumApplicationProperty::CenterModel:
 		{
 			// Not supported
 		}

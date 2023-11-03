@@ -58,7 +58,7 @@ protected: // Members
 	float m_fZTranslation;
 
 	// Model (-1, 1) / Coordinate System (0, 2.)
-	bool m_bModelCenter;
+	bool m_bCenterModel;
 
 	// Support for textures
 	CTexture* m_pDefaultTexture;
@@ -73,7 +73,8 @@ public: // Methods
 	virtual ~CRDFModel();
 
 	int64_t GetModel() const;
-	void SetModelCenter(bool bValue) { m_bModelCenter = bValue; }
+	void SetCenterModel(bool bValue) { m_bCenterModel = bValue; }
+	bool GetCenterModel() { return m_bCenterModel; }
 	virtual void CreateDefaultModel();
 
 	const map<int64_t, CRDFClass *>& GetClasses() const;
