@@ -133,6 +133,10 @@ CRDFModel::CRDFModel()
 	, m_mapInstanceDefaultState()
 	, m_mapInstanceMetaData()
 	, m_iID(1)
+	, m_dVertexBuffersOffsetX(0.)
+	, m_dVertexBuffersOffsetY(0.)
+	, m_dVertexBuffersOffsetZ(0.)
+	, m_dOriginalBoundingSphereDiameter(2.)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
 	, m_fYmin(-1.f)
@@ -143,7 +147,6 @@ CRDFModel::CRDFModel()
 	, m_fXTranslation(0.f)
 	, m_fYTranslation(0.f)
 	, m_fZTranslation(0.f)
-	, m_bCenterModel(true)
 	, m_pDefaultTexture(nullptr)
 	, m_mapTextures()
 	, m_pTextBuilder(new CTextBuilder())
@@ -201,7 +204,7 @@ int64_t CRDFModel::GetModel() const
 
 	// Cone 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		/*auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(1.);
@@ -217,12 +220,12 @@ int64_t CRDFModel::GetModel() const
 		pCone.set_material(pMaterial);
 		pCone.set_radius(4.);
 		pCone.set_height(12.);
-		pCone.set_segmentationParts(36);
+		pCone.set_segmentationParts(36);*/
 	}	
 
 	// Cylinder 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		/*auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(1.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(0.);
@@ -238,7 +241,7 @@ int64_t CRDFModel::GetModel() const
 		pCylinder.set_material(pMaterial);
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
-		pCylinder.set_segmentationParts(36);
+		pCylinder.set_segmentationParts(36);*/
 	}	
 
 	// ASCII Chars
@@ -447,6 +450,18 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	} // for (; itRFDInstances != ...
 }
 
+void CRDFModel::GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
+{
+	dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
+	dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
+	dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
+}
+
+double CRDFModel::GetOriginalBoundingSphereDiameter() const
+{
+	return m_dOriginalBoundingSphereDiameter;
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
 {
@@ -456,6 +471,12 @@ void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, flo
 	fYmax = m_fYmax;
 	fZmin = m_fZmin;
 	fZmax = m_fZmax;
+}
+
+// ------------------------------------------------------------------------------------------------
+float CRDFModel::GetBoundingSphereDiameter() const
+{
+	return m_fBoundingSphereDiameter;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -497,7 +518,7 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 
 		if (!bLoadingModel)
 		{
-			itInstance->second->ResetScaleAndCenter();
+			itInstance->second->ResetVertexBuffers();
 		}
 		
 		itInstance->second->CalculateMinMax(
@@ -546,9 +567,8 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 		itInstance->second->ScaleAndCenter(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax, 
-			m_bCenterModel,
-			m_bCenterModel ? m_fBoundingSphereDiameter : m_fBoundingSphereDiameter  * 2.,
+			m_fZmin, m_fZmax,
+			m_fBoundingSphereDiameter,
 			true);
 	}
 
@@ -603,29 +623,20 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 
 	/* Translations */
-	if (m_bCenterModel)
-	{
-		// [0.0 -> X/Y/Zmin + X/Y/Zmax]
-		m_fXTranslation -= m_fXmin;
-		m_fYTranslation -= m_fYmin;
-		m_fZTranslation -= m_fZmin;
+	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
+	m_fXTranslation -= m_fXmin;
+	m_fYTranslation -= m_fYmin;
+	m_fZTranslation -= m_fZmin;
 
-		// center
-		m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
-		m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
-		m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
+	// center
+	m_fXTranslation -= ((m_fXmax - m_fXmin) / 2.0f);
+	m_fYTranslation -= ((m_fYmax - m_fYmin) / 2.0f);
+	m_fZTranslation -= ((m_fZmax - m_fZmin) / 2.0f);
 
-		// [-1.0 -> 1.0]
-		m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-		m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
-	}	
-}
-
-// ------------------------------------------------------------------------------------------------
-float CRDFModel::GetBoundingSphereDiameter() const
-{
-	return m_fBoundingSphereDiameter;
+	// [-1.0 -> 1.0]
+	m_fXTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fYTranslation /= (m_fBoundingSphereDiameter / 2.0f);
+	m_fZTranslation /= (m_fBoundingSphereDiameter / 2.0f);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1322,13 +1333,18 @@ void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
 
 void CRDFModel::UpdateVertexBufferOffset()
 {
-	/* Min/Max */
+	/* Min/Max/Offset */
+	m_dVertexBuffersOffsetX = 0.;
+	m_dVertexBuffersOffsetY = 0.;
+	m_dVertexBuffersOffsetZ = 0.;
+	m_dOriginalBoundingSphereDiameter = 2.;
+
 	double dXmin = DBL_MAX;
 	double dXmax = -DBL_MAX;
 	double dYmin = DBL_MAX;
 	double dYmax = -DBL_MAX;
 	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;
+	double dZmax = -DBL_MAX;	
 
 	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
 	while (iInstance != 0)
@@ -1359,17 +1375,25 @@ void CRDFModel::UpdateVertexBufferOffset()
 		return;
 	}
 
+	m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
+	m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
+	m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
+
+	m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
+
 	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-		-(dXmin + dXmax) / 2.,
-		-(dYmin + dYmax) / 2.,
-		-(dZmin + dZmax) / 2.);
+		m_dVertexBuffersOffsetX,
+		m_dVertexBuffersOffsetY,
+		m_dVertexBuffersOffsetZ);
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
 		m_iModel,
-		-(dXmin + dXmax) / 2.,
-		-(dYmin + dYmax) / 2.,
-		-(dZmin + dZmax) / 2.);
+		m_dVertexBuffersOffsetX,
+		m_dVertexBuffersOffsetY,
+		m_dVertexBuffersOffsetZ);
 
 	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 	ClearedExternalBuffers(m_iModel);
@@ -1589,6 +1613,21 @@ CSceneRDFModel::CSceneRDFModel()
 
 /*virtual*/ CSceneRDFModel::~CSceneRDFModel()
 {}
+
+void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
+{
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
+	{
+		if (!itInstance->second->getEnable())
+		{
+			continue;
+		}
+
+		itInstance->second->ResetVertexBuffers();
+		itInstance->second->Translate(fX, fY, fZ);
+	}
+}
 
 /*virtual*/ void CSceneRDFModel::CreateDefaultModel() /*override*/
 {

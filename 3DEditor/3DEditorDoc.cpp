@@ -83,10 +83,11 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	}
 
 	m_pModel = new CRDFModel();
-	m_pModel->SetCenterModel(GetCenterModel());
-	m_pModel->CreateDefaultModel();
+	m_pModel->CreateDefaultModel();	
 
 	SetModel(m_pModel);
+
+	m_pModel->PostLoad();	
 
 	return TRUE;
 }
@@ -189,10 +190,9 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 
 	m_pModel = new CRDFModel();
-	m_pModel->SetCenterModel(GetCenterModel());
 	m_pModel->Load(lpszPathName, true);
-	
-	SetModel(m_pModel);
+		
+	SetModel(m_pModel);	
 
 	m_pModel->PostLoad();
 

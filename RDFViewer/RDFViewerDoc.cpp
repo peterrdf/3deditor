@@ -52,10 +52,11 @@ BOOL CRDFViewerDoc::OnNewDocument()
 	}
 
 	m_pModel = new CRDFModel();
-	m_pModel->SetCenterModel(GetCenterModel());
 	m_pModel->CreateDefaultModel();	
 
 	SetModel(m_pModel);
+
+	m_pModel->PostLoad();
 
 	return TRUE;
 }
@@ -157,8 +158,7 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 
 	m_pModel = new CRDFModel();
-	m_pModel->SetCenterModel(GetCenterModel());
-	m_pModel->Load(lpszPathName, true);
+	m_pModel->Load(lpszPathName, true);	
 
 	SetModel(m_pModel);
 

@@ -321,7 +321,7 @@ bool CRDFInstance::getEnable() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFInstance::ResetScaleAndCenter()
+void CRDFInstance::ResetVertexBuffers()
 {
 	if (GetVerticesCount() == 0)
 	{
@@ -516,8 +516,7 @@ void CRDFInstance::CalculateMinMax(
 void CRDFInstance::ScaleAndCenter(
 	float fXmin, float fXmax, 
 	float fYmin, float fYmax, 
-	float fZmin, float fZmax, 
-	bool bCenterModel,
+	float fZmin, float fZmax,
 	float fScaleFactor,
 	bool bScale)
 {
@@ -526,7 +525,7 @@ void CRDFInstance::ScaleAndCenter(
 		return;
 	}	
 
-	/** Vertices */	
+	/* Vertices */	
 
 	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
@@ -535,13 +534,10 @@ void CRDFInstance::ScaleAndCenter(
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - fYmin;
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - fZmin;
 
-		// center: Model/Coordinate System
-		if (bCenterModel)
-		{
-			m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
-			m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
-			m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
-		}
+		// center
+		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] - ((fXmax - fXmin) / 2.0f);
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] - ((fYmax - fYmin) / 2.0f);
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] - ((fZmax - fZmin) / 2.0f);
 
 		// [-1.0 -> 1.0]
 		if (bScale)
@@ -552,20 +548,17 @@ void CRDFInstance::ScaleAndCenter(
 		}		
 	}
 
-	/** Bounding box - Min */	
+	/* Bounding box - Min */	
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_pvecBBMin->x = m_pvecBBMin->x - fXmin;
 	m_pvecBBMin->y = m_pvecBBMin->y - fYmin;
 	m_pvecBBMin->z = m_pvecBBMin->z - fZmin;
 
-	// center: Model/Coordinate System
-	if (bCenterModel)
-	{
-		m_pvecBBMin->x = m_pvecBBMin->x - ((fXmax - fXmin) / 2.0f);
-		m_pvecBBMin->y = m_pvecBBMin->y - ((fYmax - fYmin) / 2.0f);
-		m_pvecBBMin->z = m_pvecBBMin->z - ((fZmax - fZmin) / 2.0f);
-	}	
+	// center
+	m_pvecBBMin->x = m_pvecBBMin->x - ((fXmax - fXmin) / 2.0f);
+	m_pvecBBMin->y = m_pvecBBMin->y - ((fYmax - fYmin) / 2.0f);
+	m_pvecBBMin->z = m_pvecBBMin->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
 	if (bScale)
@@ -575,22 +568,17 @@ void CRDFInstance::ScaleAndCenter(
 		m_pvecBBMin->z = m_pvecBBMin->z / (fScaleFactor / 2.0f);
 	}	
 
-	/**
-	* Bounding box - Max
-	*/
+	/* Bounding box - Max */
 
 	// [0.0 -> X/Y/Zmin + X/Y/Zmax]
 	m_pvecBBMax->x = m_pvecBBMax->x - fXmin;
 	m_pvecBBMax->y = m_pvecBBMax->y - fYmin;
 	m_pvecBBMax->z = m_pvecBBMax->z - fZmin;
 
-	// center: Model/Coordinate System
-	if (bCenterModel)
-	{
-		m_pvecBBMax->x = m_pvecBBMax->x - ((fXmax - fXmin) / 2.0f);
-		m_pvecBBMax->y = m_pvecBBMax->y - ((fYmax - fYmin) / 2.0f);
-		m_pvecBBMax->z = m_pvecBBMax->z - ((fZmax - fZmin) / 2.0f);
-	}	
+	// center
+	m_pvecBBMax->x = m_pvecBBMax->x - ((fXmax - fXmin) / 2.0f);
+	m_pvecBBMax->y = m_pvecBBMax->y - ((fYmax - fYmin) / 2.0f);
+	m_pvecBBMax->z = m_pvecBBMax->z - ((fZmax - fZmin) / 2.0f);
 
 	// [-1.0 -> 1.0]
 	if (bScale)
@@ -599,6 +587,32 @@ void CRDFInstance::ScaleAndCenter(
 		m_pvecBBMax->y = m_pvecBBMax->y / (fScaleFactor / 2.0f);
 		m_pvecBBMax->z = m_pvecBBMax->z / (fScaleFactor / 2.0f);
 	}
+}
+
+void CRDFInstance::Translate(float fX, float fY, float fZ)
+{
+	if (GetVerticesCount() == 0)
+	{
+		return;
+	}
+
+	/* Vertices */
+	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
+	{
+		m_pVertices[(iVertex * VERTEX_LENGTH)] += fX;
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] += fY;
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] += fZ;
+	}
+
+	/* Bounding box - Min */
+	m_pvecBBMin->x += fX;
+	m_pvecBBMin->y += fY;
+	m_pvecBBMin->z += fZ;
+
+	/* Bounding box - Max */
+	m_pvecBBMax->x += fX;
+	m_pvecBBMax->y += fY;
+	m_pvecBBMax->z += fZ;
 }
 
 // ------------------------------------------------------------------------------------------------

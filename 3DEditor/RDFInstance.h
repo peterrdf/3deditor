@@ -123,7 +123,7 @@ public: // Methods
 	void setEnable(bool bEnable);
 	bool getEnable() const;
 	
-	void ResetScaleAndCenter();
+	void ResetVertexBuffers();
 
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 
@@ -139,10 +139,11 @@ public: // Methods
 	void ScaleAndCenter(
 		float fXmin, float fXmax, 
 		float fYmin, float fYmax, 
-		float fZmin, float fZmax, 
-		bool bCenterModel,
+		float fZmin, float fZmax,
 		float fScaleFactor,		
 		bool bScale);
+
+	void Translate(float fX, float fY, float fZ);
 	
 	GLuint& VBO();
 	GLsizei& VBOOffset();	

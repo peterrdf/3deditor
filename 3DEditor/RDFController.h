@@ -168,6 +168,10 @@ public: // Methods
 	void SetCenterModel(BOOL bValue);
 
 	// --------------------------------------------------------------------------------------------
+	// UI properties
+	void UpdateCoordinateSystem();
+
+	// --------------------------------------------------------------------------------------------
 	// Edit properties support
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 

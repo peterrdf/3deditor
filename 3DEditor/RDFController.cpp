@@ -40,6 +40,8 @@ void CRDFController::SetModel(CRDFModel * pModel)
 	m_pSelectedInstance = nullptr;
 	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 
+	UpdateCoordinateSystem();
+
 	m_bUpdatingModel = true;
 
 	auto itView = m_setViews.begin();
@@ -239,13 +241,45 @@ BOOL CRDFController::GetCenterModel() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void  CRDFController::SetCenterModel(BOOL bValue)
+void CRDFController::SetCenterModel(BOOL bValue)
 {
 	m_bCenterModel = bValue;
 
-	if (m_pModel != nullptr)
+	UpdateCoordinateSystem();
+}
+
+// ------------------------------------------------------------------------------------------------
+void CRDFController::UpdateCoordinateSystem()
+{
+	if (m_pModel == nullptr)
 	{
-		m_pModel->SetCenterModel(m_bCenterModel);
+		ASSERT(FALSE);
+
+		return;
+	}
+		
+	if (!m_bCenterModel)
+	{
+		/* Vertex Buffers Offset */
+		double dVertexBuffersOffsetX = 0.;
+		double dVertexBuffersOffsetY = 0.;
+		double dVertexBuffersOffsetZ = 0.;
+		m_pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
+
+		double dBoundingSphereDiameter = m_pModel->GetOriginalBoundingSphereDiameter();
+
+		dVertexBuffersOffsetX /= dBoundingSphereDiameter / 2.;
+		dVertexBuffersOffsetY /= dBoundingSphereDiameter / 2.;
+		dVertexBuffersOffsetZ /= dBoundingSphereDiameter / 2.;
+
+		m_pSceneModel->TranslateModel(
+			dVertexBuffersOffsetX,
+			dVertexBuffersOffsetY,
+			dVertexBuffersOffsetZ);
+	}
+	else
+	{
+		m_pSceneModel->TranslateModel(0.f, 0.f, 0.f);
 	}
 }
 

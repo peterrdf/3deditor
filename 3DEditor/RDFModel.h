@@ -41,6 +41,12 @@ protected: // Members
 	// ID (1-based index)
 	int64_t m_iID;
 
+	// Offset
+	double m_dVertexBuffersOffsetX;
+	double m_dVertexBuffersOffsetY;
+	double m_dVertexBuffersOffsetZ;
+	double m_dOriginalBoundingSphereDiameter;
+
 	// World's dimensions
 	float m_fXmin;
 	float m_fXmax;
@@ -57,9 +63,6 @@ protected: // Members
 	float m_fYTranslation;
 	float m_fZTranslation;
 
-	// Model (-1, 1) / Coordinate System (0, 2.)
-	bool m_bCenterModel;
-
 	// Support for textures
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;
@@ -73,8 +76,6 @@ public: // Methods
 	virtual ~CRDFModel();
 
 	int64_t GetModel() const;
-	void SetCenterModel(bool bValue) { m_bCenterModel = bValue; }
-	bool GetCenterModel() { return m_bCenterModel; }
 	virtual void CreateDefaultModel();
 
 	const map<int64_t, CRDFClass *>& GetClasses() const;
@@ -94,12 +95,13 @@ public: // Methods
 
 	void GetCompatibleInstances(CRDFInstance* pInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 
+	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
+	double GetOriginalBoundingSphereDiameter() const;
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	float GetBoundingSphereDiameter() const;
 	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 
-	virtual void ScaleAndCenter(bool bLoadingModel = false);
-
-	float GetBoundingSphereDiameter() const;
+	virtual void ScaleAndCenter(bool bLoadingModel = false);	
 
 	void ZoomToInstance(int64_t iInstance);
 	void ZoomOut();
@@ -155,6 +157,8 @@ public: // Methods
 
 	CSceneRDFModel();
 	virtual ~CSceneRDFModel();
+
+	void TranslateModel(float fX, float fY, float fZ);
 
 	// CRDFModel
 	virtual void CreateDefaultModel() override;
