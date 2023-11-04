@@ -246,6 +246,12 @@ void CRDFController::SetCenterModel(BOOL bValue)
 	m_bCenterModel = bValue;
 
 	UpdateCoordinateSystem();
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->OnWorldDimensionsChanged();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

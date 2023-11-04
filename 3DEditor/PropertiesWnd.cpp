@@ -1447,7 +1447,6 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::CenterModel:
 				{
 					GetController()->SetCenterModel(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-					GetController()->ScaleAndCenter();
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CenterModel);
 				}
