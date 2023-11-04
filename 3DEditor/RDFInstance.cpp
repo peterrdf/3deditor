@@ -589,6 +589,35 @@ void CRDFInstance::ScaleAndCenter(
 	}
 }
 
+void CRDFInstance::Scale(float fScaleFactor)
+{
+	if (GetVerticesCount() == 0)
+	{
+		return;
+	}
+
+	/* Vertices */
+
+	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
+	{
+		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
+		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] / fScaleFactor;
+	}
+
+	/* Bounding box - Min */
+
+	m_pvecBBMin->x = m_pvecBBMin->x / fScaleFactor;
+	m_pvecBBMin->y = m_pvecBBMin->y / fScaleFactor;
+	m_pvecBBMin->z = m_pvecBBMin->z / fScaleFactor;
+
+	/* Bounding box - Max */
+
+	m_pvecBBMax->x = m_pvecBBMax->x / fScaleFactor;
+	m_pvecBBMax->y = m_pvecBBMax->y / fScaleFactor;
+	m_pvecBBMax->z = m_pvecBBMax->z / fScaleFactor;
+}
+
 void CRDFInstance::Translate(float fX, float fY, float fZ)
 {
 	if (GetVerticesCount() == 0)

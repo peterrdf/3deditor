@@ -564,12 +564,7 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 			continue;
 		}
 
-		itInstance->second->ScaleAndCenter(
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax,
-			m_fBoundingSphereDiameter,
-			true);
+		itInstance->second->Scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */

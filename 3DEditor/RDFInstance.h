@@ -143,6 +143,8 @@ public: // Methods
 		float fScaleFactor,		
 		bool bScale);
 
+
+	void Scale(float fScaleFactor);
 	void Translate(float fX, float fY, float fZ);
 	
 	GLuint& VBO();
