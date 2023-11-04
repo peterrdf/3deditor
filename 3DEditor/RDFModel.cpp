@@ -204,7 +204,7 @@ int64_t CRDFModel::GetModel() const
 
 	// Cone 1
 	{
-		/*auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(1.);
@@ -220,12 +220,12 @@ int64_t CRDFModel::GetModel() const
 		pCone.set_material(pMaterial);
 		pCone.set_radius(4.);
 		pCone.set_height(12.);
-		pCone.set_segmentationParts(36);*/
+		pCone.set_segmentationParts(36);
 	}	
 
 	// Cylinder 1
 	{
-		/*auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(1.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(0.);
@@ -241,7 +241,7 @@ int64_t CRDFModel::GetModel() const
 		pCylinder.set_material(pMaterial);
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
-		pCylinder.set_segmentationParts(36);*/
+		pCylinder.set_segmentationParts(36);
 	}	
 
 	// ASCII Chars
