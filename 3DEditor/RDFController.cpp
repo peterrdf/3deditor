@@ -496,11 +496,17 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 {
 	m_pModel->ImportModel(szPath);
 
+	UpdateCoordinateSystem();
+
+	m_bUpdatingModel = true;
+
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->OnModelChanged();
 	}
+
+	m_bUpdatingModel = false;
 }
 
 // ------------------------------------------------------------------------------------------------
