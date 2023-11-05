@@ -242,10 +242,7 @@ int64_t CRDFModel::GetModel() const
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
 		pCylinder.set_segmentationParts(36);
-	}	
-
-	// ASCII Chars
-	m_pTextBuilder->Initialize(m_iModel);
+	}
 
 	LoadRDFModel();
 }
