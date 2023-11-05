@@ -803,7 +803,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case enumApplicationProperty::Contrast:
 		case enumApplicationProperty::Brightness:
 		case enumApplicationProperty::Gamma:
-		case enumApplicationProperty::ShowCoordinateSystem:
+		case enumApplicationProperty::ShowCoordinateSystem:		
 		case enumApplicationProperty::ShowNavigator:
 		{
 			_redraw();
@@ -812,7 +812,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		case enumApplicationProperty::VisibleValuesCountLimit:
 		case enumApplicationProperty::ScalelAndCenter:
-		case enumApplicationProperty::CenterModel:
+		case enumApplicationProperty::CoordinateSystemType:
 		{
 			// Not supported
 		}

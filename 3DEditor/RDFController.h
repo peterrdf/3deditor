@@ -47,7 +47,7 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// UI properties
 	BOOL m_bScaleAndCenter;
-	BOOL m_bCenterModel;
+	BOOL m_bModelCoordinateSystem;
 
 public: // Methods
 
@@ -161,11 +161,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	BOOL GetCenterModel() const;
+	BOOL GetModelCoordinateSystem() const;
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetCenterModel(BOOL bValue);
+	void SetModelCoordinateSystem(BOOL bValue);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties

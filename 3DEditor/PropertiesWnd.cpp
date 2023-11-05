@@ -1444,21 +1444,21 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
+				case enumApplicationProperty::CoordinateSystemType:
+				{
+					GetController()->SetModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
+				}
+				break;
+
 				case enumApplicationProperty::ShowNavigator:
 				{
 					pOpenGLView->ShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
 				}
-				break;
-
-				case enumApplicationProperty::CenterModel:
-				{
-					GetController()->SetCenterModel(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
-
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CenterModel);
-				}
-				break;
+				break;				
 
 				case enumApplicationProperty::PointLightingLocation:
 				{
@@ -2416,9 +2416,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Navigator"),
-			pOpenGLView->IsNavigatorShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
-			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
+		auto pProperty = new CApplicationProperty(_T("Model Coordinate System"),
+			GetController()->GetModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CoordinateSystemType));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
@@ -2427,15 +2427,15 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Center Model"),
-			GetController()->GetCenterModel() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Center Model"),
-			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CenterModel));
+		auto pProperty = new CApplicationProperty(_T("Navigator"),
+			pOpenGLView->IsNavigatorShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);
-	}
+	}	
 #pragma endregion
 
 #pragma region UI

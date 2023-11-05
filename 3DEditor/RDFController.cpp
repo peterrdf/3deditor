@@ -17,7 +17,7 @@ CRDFController::CRDFController()
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenter(FALSE)
-	, m_bCenterModel(TRUE)
+	, m_bModelCoordinateSystem(TRUE)
 {
 	m_pSceneModel->CreateDefaultModel();
 	m_pNavigatorModel->CreateDefaultModel();
@@ -235,15 +235,15 @@ void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL CRDFController::GetCenterModel() const
+BOOL CRDFController::GetModelCoordinateSystem() const
 {
-	return m_bCenterModel;
+	return m_bModelCoordinateSystem;
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetCenterModel(BOOL bValue)
+void CRDFController::SetModelCoordinateSystem(BOOL bValue)
 {
-	m_bCenterModel = bValue;
+	m_bModelCoordinateSystem = bValue;
 
 	UpdateCoordinateSystem();
 
@@ -264,7 +264,7 @@ void CRDFController::UpdateCoordinateSystem()
 		return;
 	}
 		
-	if (!m_bCenterModel)
+	if (!m_bModelCoordinateSystem)
 	{
 		/* Vertex Buffers Offset */
 		double dVertexBuffersOffsetX = 0.;
