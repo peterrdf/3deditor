@@ -59,6 +59,7 @@ private: // Members
 	BOOL m_bShowTangenVectors;
 	BOOL m_bShowBiNormalVectors;
 	BOOL m_bScaleVectors;
+	BOOL m_bShowCoordinateSystem;
 	BOOL m_bShowNavigator;
 
 	// Mouse
@@ -123,7 +124,8 @@ public: // Methods
 	BOOL AreVectorsScaled() const;
 	void ShowNavigator(BOOL bShow) { m_bShowNavigator = bShow; }
 	BOOL IsNavigatorShown() const { return m_bShowNavigator; }
-
+	void ShowCoordinateSystem(BOOL bShow) { m_bShowCoordinateSystem = bShow; }
+	BOOL IsCoordinateSystemShown() const { return m_bShowCoordinateSystem; }
 	void Reset();
 
 	// Test

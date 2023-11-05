@@ -23,6 +23,7 @@ enum class enumApplicationProperty : int
 	ScaleVectors,
 	ShowBoundingBoxes,
 	RotationMode,
+	ShowCoordinateSystem,
 	ShowNavigator,
 	CenterModel,
 	PointLightingLocation,

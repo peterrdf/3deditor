@@ -56,6 +56,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 	, m_bShowTangenVectors(FALSE)
 	, m_bShowBiNormalVectors(FALSE)
 	, m_bScaleVectors(FALSE)
+	, m_bShowCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
@@ -802,6 +803,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case enumApplicationProperty::Contrast:
 		case enumApplicationProperty::Brightness:
 		case enumApplicationProperty::Gamma:
+		case enumApplicationProperty::ShowCoordinateSystem:
 		case enumApplicationProperty::ShowNavigator:
 		{
 			_redraw();
@@ -1153,7 +1155,10 @@ void COpenGLRDFView::DrawMainModel(
 	DrawModel(pMainModel);
 
 	/* Scene */
-	DrawModel(pSceneModel);
+	if (m_bShowCoordinateSystem)
+	{
+		DrawModel(pSceneModel);
+	}
 }
 
 void COpenGLRDFView::DrawNavigatorModel(

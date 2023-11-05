@@ -1435,6 +1435,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 				}
 				break;
+				
+				case enumApplicationProperty::ShowCoordinateSystem:
+				{
+					pOpenGLView->ShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
+				}
+				break;
 
 				case enumApplicationProperty::ShowNavigator:
 				{
@@ -2391,6 +2399,17 @@ void CPropertiesWnd::LoadApplicationProperties()
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::RotationMode));
 		pProperty->AddOption(ROTATION_MODE_XY);
 		pProperty->AddOption(ROTATION_MODE_XYZ);
+		pProperty->AllowEdit(FALSE);
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	{
+		auto pProperty = new CApplicationProperty(_T("Show Coordinate System"),
+			pOpenGLView->IsNavigatorShown() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowCoordinateSystem));
+		pProperty->AddOption(TRUE_VALUE_PROPERTY);
+		pProperty->AddOption(FALSE_VALUE_PROPERTY);
 		pProperty->AllowEdit(FALSE);
 
 		pViewGroup->AddSubItem(pProperty);
