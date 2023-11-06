@@ -96,36 +96,36 @@ public: // Methods
 	virtual ~COpenGLRDFView();
 	
 	// UI
-	void ShowFaces(BOOL bValue);
-	BOOL AreFacesShown() const;
+	void SetShowFaces(BOOL bValue);
+	BOOL GetShowFaces(CRDFModel* pModel);
 	void SetCullFacesMode(LPCTSTR szMode);
-	LPCTSTR GetCullFacesMode() const;
-	void ShowFacesPolygons(BOOL bValue);
-	BOOL AreFacesPolygonsShown() const;
-	void ShowConceptualFacesPolygons(BOOL bValue);
-	BOOL AreConceptualFacesPolygonsShown() const;
-	void ShowLines(BOOL bValue);
-	BOOL AreLinesShown() const;
+	LPCTSTR GetCullFacesMode(CRDFModel* pModel) const;
+	void SetShowFacesPolygons(BOOL bValue);
+	BOOL GetShowFacesPolygons(CRDFModel* pModel) const;
+	void SetShowConceptualFacesPolygons(BOOL bValue);
+	BOOL GetShowConceptualFacesPolygons(CRDFModel* pModel) const;
+	void SetShowLines(BOOL bValue);
+	BOOL GetShowLines(CRDFModel* pModel) const;
 	void SetLineWidth(GLfloat fWidth);
 	GLfloat GetLineWidth() const;
-	void ShowPoints(BOOL bValue);
-	BOOL ArePointsShown() const;
+	void SetShowPoints(BOOL bValue);
+	BOOL GetShowPoints(CRDFModel* pModel) const;
 	void SetPointSize(GLfloat fSize);
 	GLfloat GetPointSize() const;
-	void ShowBoundingBoxes(BOOL bValue);
-	BOOL AreBoundingBoxesShown() const;
-	void ShowNormalVectors(BOOL bValue);
-	BOOL AreNormalVectorsShown() const;
-	void ShowTangentVectors(BOOL bValue);
-	BOOL AreTangentVectorsShown() const;
-	void ShowBiNormalVectors(BOOL bValue);
-	BOOL AreBiNormalVectorsShown() const;
-	void ScaleVectors(BOOL bValue);
-	BOOL AreVectorsScaled() const;	
-	void ShowCoordinateSystem(BOOL bValue);
-	BOOL IsCoordinateSystemShown() const { return m_bShowCoordinateSystem; }
-	void ShowNavigator(BOOL bValue);
-	BOOL IsNavigatorShown() const { return m_bShowNavigator; }
+	void SetShowBoundingBoxes(BOOL bValue);
+	BOOL GetShowBoundingBoxes(CRDFModel* pModel) const;
+	void SetShowNormalVectors(BOOL bValue);
+	BOOL GetShowNormalVectors(CRDFModel* pModel) const;
+	void SetShowTangentVectors(BOOL bValue);
+	BOOL GetShowTangentVectors(CRDFModel* pModel) const;
+	void SetShowBiNormalVectors(BOOL bValue);
+	BOOL GetShowBiNormalVectors(CRDFModel* pModel) const;
+	void SetScaleVectors(BOOL bValue);
+	BOOL GetScaleVectors(CRDFModel* pModel) const;
+	void SetShowCoordinateSystem(BOOL bValue);
+	BOOL GetShowCoordinateSystem() const;
+	void SetShowNavigator(BOOL bValue);
+	BOOL GetShowNavigator() const;
 	void LoadSettings();
 	void Reset();
 

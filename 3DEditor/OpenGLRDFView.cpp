@@ -138,7 +138,7 @@ COpenGLRDFView::~COpenGLRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFaces(BOOL bValue)
+void COpenGLRDFView::SetShowFaces(BOOL bValue)
 {
 	m_bShowFaces = bValue;
 
@@ -147,10 +147,14 @@ void COpenGLRDFView::ShowFaces(BOOL bValue)
 	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-// ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreFacesShown() const
+BOOL COpenGLRDFView::GetShowFaces(CRDFModel* pModel)
 {
-	return m_bShowFaces;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowFaces;
+	}
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -164,13 +168,18 @@ void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 }
 
 // ------------------------------------------------------------------------------------------------
-LPCTSTR COpenGLRDFView::GetCullFacesMode() const
+LPCTSTR COpenGLRDFView::GetCullFacesMode(CRDFModel* pModel) const
 {
-	return m_strCullFaces;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_strCullFaces;
+	}
+
+	return CULL_FACES_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFacesPolygons(BOOL bValue)
+void COpenGLRDFView::SetShowFacesPolygons(BOOL bValue)
 {
 	m_bShowFacesPolygons = bValue;
 
@@ -180,13 +189,18 @@ void COpenGLRDFView::ShowFacesPolygons(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreFacesPolygonsShown() const
+BOOL COpenGLRDFView::GetShowFacesPolygons(CRDFModel* pModel) const
 {
-	return m_bShowFacesPolygons;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowFacesPolygons;
+	}
+
+	return FALSE;	
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bValue)
+void COpenGLRDFView::SetShowConceptualFacesPolygons(BOOL bValue)
 {
 	m_bShowConceptualFacesPolygons = bValue;
 
@@ -196,13 +210,18 @@ void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreConceptualFacesPolygonsShown() const
+BOOL COpenGLRDFView::GetShowConceptualFacesPolygons(CRDFModel* pModel) const
 {
-	return m_bShowConceptualFacesPolygons;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowConceptualFacesPolygons;
+	}
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowLines(BOOL bValue)
+void COpenGLRDFView::SetShowLines(BOOL bValue)
 {
 	m_bShowLines = bValue;
 
@@ -212,9 +231,14 @@ void COpenGLRDFView::ShowLines(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreLinesShown() const
+BOOL COpenGLRDFView::GetShowLines(CRDFModel* pModel) const
 {
-	return m_bShowLines;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowLines;
+	}
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -230,7 +254,7 @@ GLfloat COpenGLRDFView::GetLineWidth() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowPoints(BOOL bValue)
+void COpenGLRDFView::SetShowPoints(BOOL bValue)
 {
 	m_bShowPoints = bValue;
 
@@ -240,9 +264,14 @@ void COpenGLRDFView::ShowPoints(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::ArePointsShown() const
+BOOL COpenGLRDFView::GetShowPoints(CRDFModel* pModel) const
 {
-	return m_bShowPoints;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowPoints;
+	}
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -258,7 +287,7 @@ GLfloat COpenGLRDFView::GetPointSize() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBoundingBoxes(BOOL bValue)
+void COpenGLRDFView::SetShowBoundingBoxes(BOOL bValue)
 {
 	m_bShowBoundingBoxes = bValue;
 
@@ -268,13 +297,18 @@ void COpenGLRDFView::ShowBoundingBoxes(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreBoundingBoxesShown() const
+BOOL COpenGLRDFView::GetShowBoundingBoxes(CRDFModel* pModel) const
 {
-	return m_bShowBoundingBoxes;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowBoundingBoxes;
+	}
+
+	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowNormalVectors(BOOL bValue)
+void COpenGLRDFView::SetShowNormalVectors(BOOL bValue)
 {
 	m_bShowNormalVectors = bValue;
 
@@ -284,13 +318,18 @@ void COpenGLRDFView::ShowNormalVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreNormalVectorsShown() const
+BOOL COpenGLRDFView::GetShowNormalVectors(CRDFModel* pModel) const
 {
-	return m_bShowNormalVectors;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowNormalVectors;
+	}
+
+	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowTangentVectors(BOOL bValue)
+void COpenGLRDFView::SetShowTangentVectors(BOOL bValue)
 {
 	m_bShowTangenVectors = bValue;
 
@@ -300,13 +339,18 @@ void COpenGLRDFView::ShowTangentVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreTangentVectorsShown() const
+BOOL COpenGLRDFView::GetShowTangentVectors(CRDFModel* pModel) const
 {
-	return m_bShowTangenVectors;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowTangenVectors;
+	}
+
+	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBiNormalVectors(BOOL bValue)
+void COpenGLRDFView::SetShowBiNormalVectors(BOOL bValue)
 {
 	m_bShowBiNormalVectors = bValue;
 
@@ -316,28 +360,38 @@ void COpenGLRDFView::ShowBiNormalVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreBiNormalVectorsShown() const
+BOOL COpenGLRDFView::GetShowBiNormalVectors(CRDFModel* pModel) const
 {
-	return m_bShowBiNormalVectors;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bShowBiNormalVectors;
+	}
+
+	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ScaleVectors(BOOL bShow)
+void COpenGLRDFView::SetScaleVectors(BOOL bValue)
 {
-	m_bScaleVectors = bShow;
+	m_bScaleVectors = bValue;
 
 	string strSettingName(typeid(this).raw_name());
 	strSettingName += NAMEOFVAR(m_bScaleVectors);
-	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bShow ? "TRUE" : "FALSE");
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::AreVectorsScaled() const
+BOOL COpenGLRDFView::GetScaleVectors(CRDFModel* pModel) const
 {
-	return m_bScaleVectors;
+	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	{
+		return m_bScaleVectors;
+	}
+
+	return FALSE;
 }
 
-void COpenGLRDFView::ShowCoordinateSystem(BOOL bValue) 
+void COpenGLRDFView::SetShowCoordinateSystem(BOOL bValue) 
 { 
 	m_bShowCoordinateSystem = bValue;
 
@@ -346,13 +400,23 @@ void COpenGLRDFView::ShowCoordinateSystem(BOOL bValue)
 	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-void COpenGLRDFView::ShowNavigator(BOOL bValue) 
+BOOL COpenGLRDFView::GetShowCoordinateSystem() const 
+{ 
+	return m_bShowCoordinateSystem;
+}
+
+void COpenGLRDFView::SetShowNavigator(BOOL bValue) 
 { 
 	m_bShowNavigator = bValue; 
 
 	string strSettingName(typeid(this).raw_name());
 	strSettingName += NAMEOFVAR(m_bShowNavigator);
 	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL COpenGLRDFView::GetShowNavigator() const 
+{ 
+	return m_bShowNavigator;
 }
 
 void COpenGLRDFView::LoadSettings()
@@ -1328,7 +1392,7 @@ void COpenGLRDFView::DrawMainModel(
 	DrawModel(pMainModel);
 
 	/* Scene */
-	if (m_bShowCoordinateSystem)
+	if (GetShowCoordinateSystem())
 	{
 		DrawModel(pSceneModel);
 	}
@@ -1406,12 +1470,12 @@ void COpenGLRDFView::DrawModel(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 {
-	if (!m_bShowFaces)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowFaces(pModel))
 	{
 		return;
 	}
@@ -1426,6 +1490,8 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 
 	auto begin = std::chrono::steady_clock::now();
 
+	CString strCullFaces = GetCullFacesMode(pModel);
+
 	if (bTransparent)
 	{
 		glEnable(GL_BLEND);
@@ -1434,10 +1500,10 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	}
 	else
 	{
-		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
 		{
 			glEnable(GL_CULL_FACE);
-			glCullFace(m_strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
+			glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
 		}
 	}
 	
@@ -1520,7 +1586,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	}
 	else
 	{
-		if ((m_strCullFaces == CULL_FACES_FRONT) || (m_strCullFaces == CULL_FACES_BACK))
+		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK))
 		{
 			glDisable(GL_CULL_FACE);
 		}
@@ -1535,12 +1601,12 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 {
-	if (!m_bShowFacesPolygons)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowFacesPolygons(pModel))
 	{
 		return;
 	}
@@ -1589,12 +1655,12 @@ void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 {
-	if (!m_bShowConceptualFacesPolygons)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowConceptualFacesPolygons(pModel))
 	{
 		return;
 	}
@@ -1639,12 +1705,12 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 {
-	if (!m_bShowLines)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowLines(pModel))
 	{
 		return;
 	}
@@ -1689,12 +1755,12 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 {
-	if (!m_bShowPoints)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowPoints(pModel))
 	{
 		return;
 	}
@@ -1765,15 +1831,15 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 {
-	if (!m_bShowBoundingBoxes)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowBoundingBoxes(pModel))
 	{
 		return;
-	}	
+	}
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -1939,12 +2005,12 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 {
-	if (!m_bShowNormalVectors)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowNormalVectors(pModel))
 	{
 		return;
 	}
@@ -1957,7 +2023,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -2161,12 +2227,12 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 {
-	if (!m_bShowTangenVectors)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowTangentVectors(pModel))
 	{
 		return;
 	}
@@ -2179,7 +2245,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -2383,12 +2449,12 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 {
-	if (!m_bShowBiNormalVectors)
+	if (pModel == nullptr)
 	{
 		return;
 	}
 
-	if (pModel == nullptr)
+	if (!GetShowBiNormalVectors(pModel))
 	{
 		return;
 	}
@@ -2401,7 +2467,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
-	const float SCALE_FACTOR = m_bScaleVectors ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
