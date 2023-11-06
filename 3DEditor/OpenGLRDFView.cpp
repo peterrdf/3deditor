@@ -138,9 +138,13 @@ COpenGLRDFView::~COpenGLRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFaces(BOOL bShow)
+void COpenGLRDFView::ShowFaces(BOOL bValue)
 {
-	m_bShowFaces = bShow;
+	m_bShowFaces = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowFaces);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -153,6 +157,10 @@ BOOL COpenGLRDFView::AreFacesShown() const
 void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 {
 	m_strCullFaces = szMode;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_strCullFaces);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, (LPCSTR)CW2A(szMode));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -162,9 +170,13 @@ LPCTSTR COpenGLRDFView::GetCullFacesMode() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowFacesPolygons(BOOL bShow)
+void COpenGLRDFView::ShowFacesPolygons(BOOL bValue)
 {
-	m_bShowFacesPolygons = bShow;
+	m_bShowFacesPolygons = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -174,9 +186,13 @@ BOOL COpenGLRDFView::AreFacesPolygonsShown() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bShow)
+void COpenGLRDFView::ShowConceptualFacesPolygons(BOOL bValue)
 {
-	m_bShowConceptualFacesPolygons = bShow;
+	m_bShowConceptualFacesPolygons = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -186,9 +202,13 @@ BOOL COpenGLRDFView::AreConceptualFacesPolygonsShown() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowLines(BOOL bShow)
+void COpenGLRDFView::ShowLines(BOOL bValue)
 {
-	m_bShowLines = bShow;
+	m_bShowLines = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowLines);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -210,9 +230,13 @@ GLfloat COpenGLRDFView::GetLineWidth() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowPoints(BOOL bShow)
+void COpenGLRDFView::ShowPoints(BOOL bValue)
 {
-	m_bShowPoints = bShow;
+	m_bShowPoints = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowPoints);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -234,9 +258,13 @@ GLfloat COpenGLRDFView::GetPointSize() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBoundingBoxes(BOOL bShow)
+void COpenGLRDFView::ShowBoundingBoxes(BOOL bValue)
 {
-	m_bShowBoundingBoxes = bShow;
+	m_bShowBoundingBoxes = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -246,9 +274,13 @@ BOOL COpenGLRDFView::AreBoundingBoxesShown() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowNormalVectors(BOOL bShow)
+void COpenGLRDFView::ShowNormalVectors(BOOL bValue)
 {
-	m_bShowNormalVectors = bShow;
+	m_bShowNormalVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -258,9 +290,13 @@ BOOL COpenGLRDFView::AreNormalVectorsShown() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowTangentVectors(BOOL bShow)
+void COpenGLRDFView::ShowTangentVectors(BOOL bValue)
 {
-	m_bShowTangenVectors = bShow;
+	m_bShowTangenVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -270,9 +306,13 @@ BOOL COpenGLRDFView::AreTangentVectorsShown() const
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::ShowBiNormalVectors(BOOL bShow)
+void COpenGLRDFView::ShowBiNormalVectors(BOOL bValue)
 {
-	m_bShowBiNormalVectors = bShow;
+	m_bShowBiNormalVectors = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -285,12 +325,141 @@ BOOL COpenGLRDFView::AreBiNormalVectorsShown() const
 void COpenGLRDFView::ScaleVectors(BOOL bShow)
 {
 	m_bScaleVectors = bShow;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bScaleVectors);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bShow ? "TRUE" : "FALSE");
 }
 
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::AreVectorsScaled() const
 {
 	return m_bScaleVectors;
+}
+
+void COpenGLRDFView::ShowCoordinateSystem(BOOL bValue) 
+{ 
+	m_bShowCoordinateSystem = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+void COpenGLRDFView::ShowNavigator(BOOL bValue) 
+{ 
+	m_bShowNavigator = bValue; 
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bShowNavigator);
+	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+void COpenGLRDFView::LoadSettings()
+{
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFaces);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowFaces = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}	
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_strCullFaces);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_strCullFaces = !strValue.empty() ? CA2W(strValue.c_str()) : CULL_FACES_NONE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowFacesPolygons = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowConceptualFacesPolygons = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowLines);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowLines = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowPoints);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowPoints = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowBoundingBoxes = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowTangenVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowBiNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bScaleVectors);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bScaleVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowCoordinateSystem = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNavigator);
+		string strValue = GetController()->GetSettingsStorage()->GetSetting(strSettingName);
+
+		m_bShowNavigator = !strValue.empty() ? strValue == "TRUE" : TRUE;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -320,6 +489,8 @@ BOOL COpenGLRDFView::AreVectorsScaled() const
 	m_bShowTangenVectors = FALSE;
 	m_bShowBiNormalVectors = FALSE;
 	m_bScaleVectors = FALSE;
+	m_bShowCoordinateSystem = TRUE;
+	m_bShowNavigator = TRUE;
 
 	_redraw();
 }
@@ -832,6 +1003,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	ASSERT(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
+
+	LoadSettings();
 }
 
 void COpenGLRDFView::LoadModel(CRDFModel* pModel)

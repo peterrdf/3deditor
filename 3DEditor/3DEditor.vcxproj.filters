@@ -185,6 +185,9 @@
     <ClInclude Include="TextBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

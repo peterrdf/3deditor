@@ -96,37 +96,39 @@ public: // Methods
 	virtual ~COpenGLRDFView();
 	
 	// UI
-	void ShowFaces(BOOL bShow);
+	void ShowFaces(BOOL bValue);
 	BOOL AreFacesShown() const;
 	void SetCullFacesMode(LPCTSTR szMode);
 	LPCTSTR GetCullFacesMode() const;
-	void ShowFacesPolygons(BOOL bShow);
+	void ShowFacesPolygons(BOOL bValue);
 	BOOL AreFacesPolygonsShown() const;
-	void ShowConceptualFacesPolygons(BOOL bShow);
+	void ShowConceptualFacesPolygons(BOOL bValue);
 	BOOL AreConceptualFacesPolygonsShown() const;
-	void ShowLines(BOOL bShow);
+	void ShowLines(BOOL bValue);
 	BOOL AreLinesShown() const;
 	void SetLineWidth(GLfloat fWidth);
 	GLfloat GetLineWidth() const;
-	void ShowPoints(BOOL bShow);
+	void ShowPoints(BOOL bValue);
 	BOOL ArePointsShown() const;
 	void SetPointSize(GLfloat fSize);
 	GLfloat GetPointSize() const;
-	void ShowBoundingBoxes(BOOL bShow);
+	void ShowBoundingBoxes(BOOL bValue);
 	BOOL AreBoundingBoxesShown() const;
-	void ShowNormalVectors(BOOL bShow);
+	void ShowNormalVectors(BOOL bValue);
 	BOOL AreNormalVectorsShown() const;
-	void ShowTangentVectors(BOOL bShow);
+	void ShowTangentVectors(BOOL bValue);
 	BOOL AreTangentVectorsShown() const;
-	void ShowBiNormalVectors(BOOL bShow);
+	void ShowBiNormalVectors(BOOL bValue);
 	BOOL AreBiNormalVectorsShown() const;
-	void ScaleVectors(BOOL bShow);
-	BOOL AreVectorsScaled() const;
-	void ShowNavigator(BOOL bShow) { m_bShowNavigator = bShow; }
-	BOOL IsNavigatorShown() const { return m_bShowNavigator; }
-	void ShowCoordinateSystem(BOOL bShow) { m_bShowCoordinateSystem = bShow; }
+	void ScaleVectors(BOOL bValue);
+	BOOL AreVectorsScaled() const;	
+	void ShowCoordinateSystem(BOOL bValue);
 	BOOL IsCoordinateSystemShown() const { return m_bShowCoordinateSystem; }
+	void ShowNavigator(BOOL bValue);
+	BOOL IsNavigatorShown() const { return m_bShowNavigator; }
+	void LoadSettings();
 	void Reset();
+
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);

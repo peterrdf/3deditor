@@ -11,6 +11,7 @@ CRDFController::CRDFController()
 	: m_pModel(nullptr)
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
+	, m_pSettingsStorage(new CSettingsStorage())
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
@@ -21,6 +22,7 @@ CRDFController::CRDFController()
 {
 	m_pSceneModel->CreateDefaultModel();
 	m_pNavigatorModel->CreateDefaultModel();
+	m_pSettingsStorage->LoadSettings();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -28,6 +30,9 @@ CRDFController::~CRDFController()
 {
 	delete m_pSceneModel;
 	delete m_pNavigatorModel;
+
+	m_pSettingsStorage->SaveSettings();
+	delete m_pSettingsStorage;
 }
 
 // ------------------------------------------------------------------------------------------------

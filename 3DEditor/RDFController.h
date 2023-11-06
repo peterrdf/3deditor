@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SettingsStorage.h"
+
 #include <set>
 #include <vector>
 using namespace std;
@@ -23,6 +25,8 @@ private: // Members
 	CRDFModel* m_pModel;
 	CSceneRDFModel* m_pSceneModel;
 	CNavigatorRDFModel* m_pNavigatorModel;
+
+	CSettingsStorage* m_pSettingsStorage;
 
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
@@ -64,6 +68,7 @@ public: // Methods
 	CRDFModel* GetModel() const { return m_pModel; }
 	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
 	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }
+	CSettingsStorage* GetSettingsStorage() const { return m_pSettingsStorage; }
 
 	// --------------------------------------------------------------------------------------------
 	// Setter
