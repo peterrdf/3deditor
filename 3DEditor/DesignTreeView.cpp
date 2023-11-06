@@ -56,6 +56,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
+	// Default mode
+	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
+
 	UpdateView();
 }
 

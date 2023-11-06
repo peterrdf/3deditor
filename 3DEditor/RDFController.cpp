@@ -29,9 +29,7 @@ CRDFController::CRDFController()
 CRDFController::~CRDFController()
 {
 	delete m_pSceneModel;
-	delete m_pNavigatorModel;
-
-	m_pSettingsStorage->SaveSettings();
+	delete m_pNavigatorModel;	
 	delete m_pSettingsStorage;
 }
 

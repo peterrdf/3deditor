@@ -110,6 +110,8 @@ public: // Methods
 		{
 			m_mapSettings.at(strName) = strValue;
 		}
+
+		SaveSettings();
 	}
 };
 
