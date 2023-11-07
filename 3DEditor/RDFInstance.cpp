@@ -65,22 +65,38 @@ void CRDFInstance::LoadName()
 	GetNameOfInstanceW(m_iInstance, &szName);
 
 #ifndef _LINUX
-	wchar_t szUniqueName[200];
+	if (szName == nullptr)
+	{
+		RdfProperty iTagProperty = GetPropertyByName(GetModel(), "tag");
+		if (iTagProperty != 0)
+		{
+			int64_t iCard = 0;
+			wchar_t** szValue = nullptr;
+			SetCharacterSerialization(GetModel(), 0, 0, false);
+			GetDatatypeProperty(m_iInstance, iTagProperty, (void**)&szValue, &iCard);
+			SetCharacterSerialization(GetModel(), 0, 0, true);
 
+			if (iCard == 1)
+			{
+				szName = szValue[0];
+			}
+		}
+	}
+
+	wchar_t szUniqueName[200];
+	
 	if (szName != nullptr)
 	{
 		m_strName = szName;
-
 		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
 	}
 	else
 	{
 		m_strName = szClassName;
-
 		swprintf(szUniqueName, 200, L"#%lld (%s)", m_iInstance, szClassName);
 	}
 
-	m_strUniqueName = szUniqueName;
+	m_strUniqueName = szUniqueName;	
 #else
 	m_strName = wxString(szName).wchar_str();
 
