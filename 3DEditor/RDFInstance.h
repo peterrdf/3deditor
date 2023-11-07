@@ -68,6 +68,7 @@ public: // Methods
 	virtual ~CRDFInstance();
 
 	void LoadName();
+	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName);
 
 	void Recalculate();
 

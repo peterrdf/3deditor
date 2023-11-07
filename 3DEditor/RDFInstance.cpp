@@ -53,58 +53,57 @@ CRDFInstance::~CRDFInstance()
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::LoadName()
 {
-	ASSERT(m_iInstance != 0);
+	BuildInstanceNames(GetModel(), m_iInstance, m_strName, m_strUniqueName);
+}
 
-	int64_t iClassInstance = GetInstanceClass(m_iInstance);
+/*static*/ void CRDFInstance::BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName)
+{
+	ASSERT(iModel != 0);
+	ASSERT(iInstance != 0);
+
+	int64_t iClassInstance = GetInstanceClass(iInstance);
 	ASSERT(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(iClassInstance, &szClassName);
 
 	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(m_iInstance, &szName);
+	GetNameOfInstanceW(iInstance, &szName);
 
-#ifndef _LINUX
 	if (szName == nullptr)
 	{
-		RdfProperty iTagProperty = GetPropertyByName(GetModel(), "tag");
+		RdfProperty iTagProperty = GetPropertyByName(iModel, "tag");
 		if (iTagProperty != 0)
 		{
+			SetCharacterSerialization(iModel, 0, 0, false);
+
 			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;
-			SetCharacterSerialization(GetModel(), 0, 0, false);
-			GetDatatypeProperty(m_iInstance, iTagProperty, (void**)&szValue, &iCard);
-			SetCharacterSerialization(GetModel(), 0, 0, true);
+			wchar_t** szValue = nullptr;			
+			GetDatatypeProperty(iInstance, iTagProperty, (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
 				szName = szValue[0];
 			}
+
+			SetCharacterSerialization(iModel, 0, 0, true);
 		}
-	}
+	} // if (szName == nullptr)
 
 	wchar_t szUniqueName[200];
-	
-	if (szName != nullptr)
+
+	if(szName != nullptr)
 	{
-		m_strName = szName;
+		strName = szName;
 		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
 	}
 	else
 	{
-		m_strName = szClassName;
-		swprintf(szUniqueName, 200, L"#%lld (%s)", m_iInstance, szClassName);
+		strName = szClassName;
+		swprintf(szUniqueName, 200, L"#%lld (%s)", iInstance, szClassName);
 	}
 
-	m_strUniqueName = szUniqueName;	
-#else
-	m_strName = wxString(szName).wchar_str();
-
-	wchar_t szUniqueName[200];
-	swprintf(szUniqueName, 200, L"%lld (%ls)", m_pInstance->GetInstance(), wxString(szClassName).wc_str());
-
-	m_strUniqueName = szUniqueName;
-#endif // _LINUX
+	strUniqueName = szUniqueName;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -939,10 +939,11 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 {
 	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
 	{
-		wchar_t* szName = nullptr;
-		GetNameOfInstanceW(pInstance->GetInstance(), &szName);
-
-		CString strMetaData = szName != nullptr ? szName : L"NA";
+		wstring strName;
+		wstring strUniqueName;
+		CRDFInstance::BuildInstanceNames(m_iModel, pInstance->GetInstance(), strName, strUniqueName);
+		
+		CString strMetaData = strUniqueName.c_str();
 
 		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->GetInstance(), 0);
 		while (iPropertyInstance != 0)
