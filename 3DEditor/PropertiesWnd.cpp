@@ -2456,9 +2456,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		// Scale and Center
 		{
-			auto pProperty = new CApplicationProperty(_T("Scale and Center all Geometry"), 
+			auto pProperty = new CApplicationProperty(_T("Scale and Center all Visible Geometry"), 
 				GetController()->GetScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
-				_T("Scale and Center all Geometry"), 
+				_T("Scale and Center all Visible Geometry"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScalelAndCenter));
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);

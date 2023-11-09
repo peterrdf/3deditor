@@ -17,7 +17,7 @@ CRDFController::CRDFController()
 	, m_pSelectedInstance(nullptr)
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
 	, m_iVisibleValuesCountLimit(10000)
-	, m_bScaleAndCenter(FALSE)
+	, m_bScaleAndCenter(TRUE)
 	, m_bModelCoordinateSystem(TRUE)
 {
 	m_pSceneModel->CreateDefaultModel();
@@ -521,6 +521,11 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancesEnabledStateChanged()
 {
+	if (m_bScaleAndCenter)
+	{
+		m_pModel->ScaleAndCenter();
+	}
+
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
