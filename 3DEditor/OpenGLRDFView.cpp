@@ -1416,6 +1416,10 @@ void COpenGLRDFView::DrawNavigatorModel(
 	float fZmax = 1.f;
 	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
+	// Always use Perspective Projection
+	enumProjection enProjection = m_enProjection;
+	m_enProjection = enumProjection::Perspective;
+
 	_prepare(
 		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
 		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
@@ -1427,6 +1431,9 @@ void COpenGLRDFView::DrawNavigatorModel(
 
 	/* Model */
 	DrawModel(pNavigatorModel);
+
+	// Restore
+	m_enProjection = enProjection;
 }
 
 void COpenGLRDFView::DrawModel(CRDFModel* pModel)
