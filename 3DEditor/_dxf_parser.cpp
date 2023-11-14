@@ -7,25 +7,24 @@
 static char VALUE_DELIMITER = '\n';
 
 // ------------------------------------------------------------------------------------------------
-static inline string& ltrim(string& s) 
+static inline void ltrim(std::string& s) 
 {
-	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
-
-	return s;
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+		return !std::isspace(ch); }));
 }
 
 // ------------------------------------------------------------------------------------------------
-static inline string& rtrim(string& s) 
+static inline void rtrim(std::string& s) 
 {
-	s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
-
-	return s;
+	s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+		return !std::isspace(ch); }).base(), s.end());
 }
 
 // ------------------------------------------------------------------------------------------------
-static inline string& trim(string& s) 
-{	
-	return ltrim(rtrim(s));
+static inline void trim(std::string& s) 
+{
+	rtrim(s);
+	ltrim(s);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -106,7 +105,7 @@ namespace _dxf
 		string line;
 		while (getline(m_dxfFile, line))
 		{
-			line = trim(line);
+			trim(line);
 			m_vecRows.push_back(line);
 		}
 
