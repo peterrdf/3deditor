@@ -1,25 +1,11 @@
 #include "stdafx.h"
 #include "conceptMesh.h"
+#include "_3DUtils.h"
 
 #include <string>
 
 // ------------------------------------------------------------------------------------------------
-#define PI 3.14159265
 #define EPSILON 1E-6
-
-// ------------------------------------------------------------------------------------------------
-_vector3f::_vector3f() {
-	x = 0;
-	y = 0;
-	z = 0;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3f::_vector3f(double x, double y, double z) {
-	this->x = x;
-	this->y = y;
-	this->z = z;
-}
 
 // ------------------------------------------------------------------------------------------------
 _octant::_octant(_octree* pTree, _octant_type type, double dXmin, double dXmax, double dYmin, double dYmax, double dZmin, double dZmax)

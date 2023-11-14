@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_oglUtils.h"
+#include "_3DUtils.h"
 
 #include <string>
 #include <vector>

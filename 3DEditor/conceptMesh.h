@@ -1,6 +1,8 @@
 #ifndef _CONCEPT_MESH_H_
 #define _CONCEPT_MESH_H_
 
+#include "_3DUtils.h"
+
 #include <vector>
 #include <set>
 #include <map>
@@ -243,77 +245,6 @@ protected: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	bool neighborsInCircumsphere(_octree_point* pPoint1, _octree_point* pPoint2, _octree_point* pPoint3, const _vector3f& vecCenter, double R) const;
-};
-
-// ------------------------------------------------------------------------------------------------
-// https://gist.github.com/zooty/f2222e0bc33e6845f068
-class _vector3f {
-private:
-	double x;
-	double y;
-	double z;
-
-public:
-	_vector3f();
-	_vector3f(double, double, double);
-
-	double getX() const { return x; }
-	double getY() const { return y; }
-	double getZ() const { return z; }
-
-	double length() {
-		return sqrt((x * x) + (y * y) + (z * z));
-	}
-
-	double length2() {
-		return pow(length(), 2.);
-	}
-
-	_vector3f normalized() {
-		double mag = length();
-
-		return _vector3f(x / mag, y / mag, z / mag);
-	}
-
-	_vector3f neg() {
-		return _vector3f(-x, -y, -z);
-	}
-
-	double dot(_vector3f other) {
-		return x * other.getX() + y * other.getY() + z * other.getZ();
-	}
-
-	_vector3f cross(_vector3f other) {
-		double x_ = y * other.getZ() - z * other.getY();
-		double y_ = z * other.getX() - x * other.getZ();
-		double z_ = x * other.getY() - y * other.getX();
-
-		return _vector3f(x_, y_, z_);
-	}
-
-	_vector3f operator + (const _vector3f& other) {
-		return _vector3f(x + other.x, y + other.y, z + other.z);
-	}
-
-	_vector3f operator - (const _vector3f& other) {
-		return _vector3f(x - other.x, y - other.y, z - other.z);
-	}
-
-	_vector3f operator * (const _vector3f& other) {
-		return _vector3f(x * other.x, y * other.y, z * other.z);
-	}
-
-	_vector3f operator * (double number) {
-		return _vector3f(x * number, y * number, z * number);
-	}
-
-	_vector3f operator / (const _vector3f& other) {
-		return _vector3f(x / other.x, y / other.y, z / other.z);
-	}
-
-	_vector3f operator / (double number) {
-		return _vector3f(x / number, y / number, z / number);
-	}
 };
 
 #endif // _CONCEPT_MESH_H_

@@ -1,7 +1,11 @@
 ﻿#include "stdafx.h"
+
+#include "../../include/engine.h"
 #include "_dxf_parser.h"
-#include "conceptMesh.h"
-#include "_geometry.h"
+#include "_3DUtils.h"
+
+#include <math.h>
+#include <assert.h>
 
 // ------------------------------------------------------------------------------------------------
 static char VALUE_DELIMITER = '\n';
@@ -28,6 +32,19 @@ static inline void trim(std::string& s)
 }
 
 // ------------------------------------------------------------------------------------------------
+static inline void _tokenize(string const& str, const char delim, vector<std::string>& out)
+{
+	size_t start;
+	size_t end = 0;
+
+	while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+	{
+		end = str.find(delim, start);
+		out.push_back(str.substr(start, end - start));
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 static inline double _vector3_normalize(double& dX, double& dY, double& dZ)
 {
 	double dSize = pow(dX, 2.) + pow(dY, 2.) + pow(dZ, 2.);
@@ -51,17 +68,29 @@ static inline double _vector3_normalize(double& dX, double& dY, double& dZ)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-static inline void _tokenize(string const& str, const char delim, vector<std::string>& out)
+static void _rotateMatrix(
+	int64_t iModel,
+	int64_t iMatrixInstance,
+	double	alpha,
+	double	beta,
+	double	gamma)
 {
-	size_t start;
-	size_t end = 0;
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
 
-	while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
-	{
-		end = str.find(delim, start);
-		out.push_back(str.substr(start, end - start));
-	}
+	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(iModel, "_33"), &matrix._33, 1);
 }
 
 namespace _dxf

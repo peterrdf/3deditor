@@ -92,7 +92,7 @@ void CRDFInstance::LoadName()
 
 	wchar_t szUniqueName[200];
 
-	if(szName != nullptr)
+	if (szName != nullptr)
 	{
 		strName = szName;
 		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
