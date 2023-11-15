@@ -88,11 +88,11 @@ public:
 		z = 0;
 	}
 
-	_vector3f(double, double, double)
+	_vector3f(double _x, double _y, double _z)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
+		x = _x;
+		y = _y;
+		z = _z;
 	}
 
 	double getX() const { return x; }
