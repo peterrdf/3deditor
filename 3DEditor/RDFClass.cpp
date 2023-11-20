@@ -27,9 +27,6 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	m_strName = wxString(szClassName).wchar_str();
 #endif // _LINUX
 
-	/*OwlClass iClassInstance = GetInstanceClass(m_iInstance);
-	ASSERT(iClassInstance != 0);*/
-
 	/*
 	* Parents
 	*/
