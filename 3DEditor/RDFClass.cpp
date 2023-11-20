@@ -27,13 +27,13 @@ CRDFClass::CRDFClass(int64_t iInstance)
 	m_strName = wxString(szClassName).wchar_str();
 #endif // _LINUX
 
-	OwlClass iClassInstance = GetInstanceClass(m_iInstance);
-	ASSERT(iClassInstance != 0);
+	/*OwlClass iClassInstance = GetInstanceClass(m_iInstance);
+	ASSERT(iClassInstance != 0);*/
 
 	/*
 	* Parents
 	*/
-	int64_t iParentClassInstance = GetClassParentsByIterator(iClassInstance, 0);
+	int64_t iParentClassInstance = GetClassParentsByIterator(m_iInstance, 0);
 	while (iParentClassInstance != 0)
 	{
 		m_vecParentClasses.push_back(iParentClassInstance);
@@ -44,7 +44,7 @@ CRDFClass::CRDFClass(int64_t iInstance)
 		char * szParentClassName = nullptr;
 		GetNameOfClass(iParentClassInstance, &szParentClassName);
 
-		iParentClassInstance = GetClassParentsByIterator(iClassInstance, iParentClassInstance);
+		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
 	}
 }
 
