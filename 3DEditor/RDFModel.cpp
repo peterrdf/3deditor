@@ -487,7 +487,11 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
-	ProgressStatus stat(L"Calculate scene sizes");
+	ProgressStatus stat(L"Calculate scene sizes...");
+	if (m_pProgressDialog != nullptr)
+	{
+		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Calculate scene sizes...");
+	}
 
 	/* World */
 	m_fBoundingSphereDiameter = 0.f;
@@ -1143,7 +1147,11 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::LoadRDFModel()
 {
-	ProgressStatus(L"Loading RDF model schema");
+	ProgressStatus(L"Loading RDF model schema...");
+	if (m_pProgressDialog != nullptr)
+	{
+		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Loading RDF model schema...");
+	}
 
 	PreLoadDRFModel();
 
@@ -1398,7 +1406,11 @@ void CRDFModel::LoadRDFInstances()
 	/*
 	* Default instances
 	*/
-	ProgressStatus prgs(L"Loading RDF instances");
+	ProgressStatus prgs(L"Loading RDF instances...");
+	if (m_pProgressDialog != nullptr)
+	{
+		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Loading RDF instances...");
+	}
 
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
 
