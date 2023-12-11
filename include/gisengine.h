@@ -22,7 +22,12 @@ typedef size_t(STDCALL* ReadDataCallback)(unsigned char* szData, size_t iSize);
 #ifdef __cplusplus
 extern "C" {
 #endif
-	void DECSPEC STDCALL SetGISOptions(const char* szRootFolder, bool bUseEmbeddedSchemas, const void* pLogCallback = nullptr, int iValidationLevel = 0);
+	/* 
+		0 - file format (duplicated Ids)
+		1 - Geometry/Materials
+	*/
+	void DECSPEC STDCALL SetGISOptions(const char* szRootFolder, bool bUseEmbeddedSchemas, const void* pLogCallback = nullptr, int iValidationLevel = 0); 
+	void DECSPEC STDCALL SetGISOptionsW(const wchar_t* szRootFolder, bool bUseEmbeddedSchemas, const void* pLogCallback = nullptr, int iValidationLevel = 0);
 
 	OwlInstance DECSPEC STDCALL ImportGISModel(OwlModel iModel, const char* szFile, OwlInstance* pSchemaInstance = nullptr);
 	OwlInstance DECSPEC STDCALL ImportGISModelW(OwlModel iModel, const wchar_t* szFile, OwlInstance* pSchemaInstance = nullptr);

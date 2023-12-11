@@ -853,10 +853,10 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 
 		fs::path pthExe = szAppPath;
 		auto pthRootFolder = pthExe.parent_path();
-		string strRootFolder = pthRootFolder.string();
-		strRootFolder += "\\";
+		wstring strRootFolder = pthRootFolder.wstring();
+		strRootFolder += L"\\";
 
-		SetGISOptions(strRootFolder.c_str(), true, LogCallbackImpl);
+		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
 
 		ImportGISModel(m_iModel, CW2A(szPath));
 	}
