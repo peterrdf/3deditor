@@ -39,6 +39,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 {
 	fs::path pthFile = lpszPathName;
 	if ((pthFile.extension() == ".jpg") ||
+		(pthFile.extension() == ".jpeg") ||
 		(pthFile.extension() == ".png") ||
 		(pthFile.extension() == ".bmp"))
 	{
