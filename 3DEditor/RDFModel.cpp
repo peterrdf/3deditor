@@ -82,6 +82,7 @@ public: // Methods
 		else if ((strExtension == L".GML") ||
 			(strExtension == L".CITYGML") ||
 			(strExtension == L".GMLZIP") ||
+			(strExtension == L".GMLZ") ||
 			(strExtension == L".XML") ||
 			(strExtension == L".JSON"))
 		{
