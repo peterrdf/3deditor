@@ -18,6 +18,8 @@
 
 #include "Generic.h"
 
+#include "gisengine.h"
+
 #ifdef _USE_BOOST
 #include <boost/chrono.hpp>
 
@@ -56,6 +58,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_ZOOM_TO, &CMy3DEditorDoc::OnUpdateInstancesZoomTo)
 	ON_COMMAND(ID_INSTANCES_SAVE, &CMy3DEditorDoc::OnInstancesSave)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMy3DEditorDoc::OnUpdateInstancesSave)
+	ON_COMMAND(ID_EXPORT_AS_CITYGML, &CMy3DEditorDoc::OnExportAsCitygml)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_CITYGML, &CMy3DEditorDoc::OnUpdateExportAsCitygml)
 END_MESSAGE_MAP()
 
 
@@ -350,4 +354,25 @@ void CMy3DEditorDoc::OnInstancesSave()
 void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetSelectedInstance() != nullptr);
+}
+
+void CMy3DEditorDoc::OnExportAsCitygml()
+{
+	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T(""), m_pModel->GetModelName().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	ExportModelAsCityGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+}
+
+void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_pModel != nullptr) &&
+		(m_pModel->GetModel() != 0) &&
+		CanExportModelAsCityGML(m_pModel->GetModel()));
 }

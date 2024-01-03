@@ -34,6 +34,10 @@ extern "C" {
 	OwlInstance DECSPEC STDCALL ImportGISModelA(OwlModel iModel, const unsigned char* szData, size_t iSize, OwlInstance* pSchemaInstance = nullptr);
 	OwlInstance DECSPEC STDCALL ImportGISModelS(OwlModel iModel, const void* pReadDataCallback, OwlInstance* pSchemaInstance = nullptr);
 
+	bool DECSPEC STDCALL CanExportModelAsCityGML(OwlModel iModel);
+	void DECSPEC STDCALL ExportModelAsCityGML(OwlModel iModel, const char* szFile);
+	void DECSPEC STDCALL ExportModelAsCityGMLW(OwlModel iModel, const wchar_t* szFile);
+
 	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);	
 #ifdef _DEBUG
 	void DECSPEC STDCALL BuildGISEmbeddedSchemaStorage(const char* szSourcesRootFolder);

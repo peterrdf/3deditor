@@ -29,7 +29,7 @@ class CRDFModel
 protected: // Members
 
 	wstring m_strModel;
-	int64_t m_iModel;
+	OwlModel m_iModel;
 
 	// Cache
 	map<int64_t, CRDFClass *> m_mapClasses;
@@ -75,7 +75,8 @@ public: // Methods
 	CRDFModel();
 	virtual ~CRDFModel();
 
-	int64_t GetModel() const;
+	OwlModel GetModel() const;
+	wstring GetModelName() const;
 	virtual void CreateDefaultModel();
 
 	const map<int64_t, CRDFClass *>& GetClasses() const;

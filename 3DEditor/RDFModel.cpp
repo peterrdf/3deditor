@@ -164,9 +164,16 @@ CRDFModel::~CRDFModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-int64_t CRDFModel::GetModel() const
+OwlModel CRDFModel::GetModel() const
 {
 	return m_iModel;
+}
+
+wstring CRDFModel::GetModelName() const
+{
+	fs::path pthModel = m_strModel;
+
+	return pthModel.wstring();
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -76,4 +76,6 @@ public:
 	afx_msg void OnUpdateInstancesZoomTo(CCmdUI* pCmdUI);
 	afx_msg void OnInstancesSave();
 	afx_msg void OnUpdateInstancesSave(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsCitygml();
+	afx_msg void OnUpdateExportAsCitygml(CCmdUI* pCmdUI);
 };
