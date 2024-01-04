@@ -367,12 +367,12 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 		return;
 	}
 
-	ExportModelAsCityGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+	SaveAsCityGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->GetModel() != 0) &&
-		CanExportModelAsCityGML(m_pModel->GetModel()));
+		IsCityGML(m_pModel->GetModel()));
 }
