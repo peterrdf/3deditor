@@ -358,8 +358,11 @@ void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
+	wstring strFileName = m_pModel->GetModelName();
+	strFileName += L".citygml";
+
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T(""), m_pModel->GetModelName().c_str(),
+	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
