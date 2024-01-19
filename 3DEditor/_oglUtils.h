@@ -2146,25 +2146,23 @@ public: // Methods
 		fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
 		// Zoom
-		m_fZoomMin = m_fZmin;
-		m_fZoomMin += (m_fZmax - m_fZmin) / 2.f;
-		m_fZoomMin = -m_fZoomMin;
-		m_fZoomMin -= fBoundingSphereDiameter * 2.f;
-		m_fZoomMax = m_fZoomMin + (fBoundingSphereDiameter * 2.f);
-		m_fZoomInterval = abs(m_fZoomMax - m_fZoomMin);
+		m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
+		m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
+		m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
+		m_fZoomInterval = m_fZoomMax - m_fZoomMin;
 
 		// Pan X
-		m_fPanXMin = fXmin;
-		m_fPanXMin += (fXmax - fXmin) / 2.f;
-		m_fPanXMin = -m_fPanXMin;
-		m_fPanXMax = m_fPanXMin + (fBoundingSphereDiameter * 2.f);
-		m_fPanXInterval = abs(m_fPanXMax - m_fPanXMin);
+		m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
+		m_fPanXMin -= fBoundingSphereDiameter * 1.25f;
+		m_fPanXMax = (m_fXmax - m_fXmin) / 2.f;
+		m_fPanXMax += fBoundingSphereDiameter * 1.25f;
+		m_fPanXInterval = m_fPanXMax - m_fPanXMin;
 
 		// Pan Y
-		m_fPanYMin = fXmin;
-		m_fPanYMin += (fXmax - fXmin) / 2.f;
-		m_fPanYMin = -m_fPanYMin;
-		m_fPanYMax = m_fPanYMin + (fBoundingSphereDiameter * 2.f);
+		m_fPanYMin = -(m_fYmax - m_fYmin) / 2.f;
+		m_fPanYMin -= fBoundingSphereDiameter * .75f;
+		m_fPanYMax = (m_fYmax - m_fYmin) / 2.f;
+		m_fPanYMax += fBoundingSphereDiameter * .75f;
 		m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
 
 		// Scale (Orthographic)
@@ -2881,9 +2879,29 @@ private: //  Methods
 
 	void _pan(float fX, float fY)
 	{
-		m_fXTranslation += fX;
-		m_fYTranslation += fY;
+		bool bRedraw = false;
 
-		_redraw();
+		float fNewXTranslation = m_fXTranslation + fX;
+		if ((fNewXTranslation < m_fPanXMax) &&
+			(fNewXTranslation > m_fPanXMin))
+		{
+			m_fXTranslation += fX;
+
+			bRedraw = true;
+		}
+
+		float fNewYTranslation = m_fYTranslation + fY;
+		if ((fNewYTranslation < m_fPanYMax) &&
+			(fNewYTranslation > m_fPanYMin))
+		{
+			m_fYTranslation += fY;
+
+			bRedraw = true;
+		}
+
+		if (bRedraw)
+		{
+			_redraw();
+		}
 	}
 };
