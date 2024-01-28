@@ -24,11 +24,11 @@ namespace fs = std::experimental::filesystem;
 CProgressDialog* m_pProgressDialog = nullptr;
 
 // ************************************************************************************************
-void STDCALL LogCallbackImpl(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
+void STDCALL LogCallbackImpl(enumLogEvent enLogEvent, const char* szEvent)
 {
 	ASSERT(m_pProgressDialog != nullptr);
 
-	m_pProgressDialog->Log(enLogEvent, szEvent);
+	m_pProgressDialog->Log((int)enLogEvent, szEvent);
 }
 
 // ************************************************************************************************
