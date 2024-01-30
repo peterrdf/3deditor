@@ -1141,16 +1141,18 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 // ------------------------------------------------------------------------------------------------
 void CRDFModel::SetFormatSettings(int64_t iModel)
 {
-	string strSettings = "111111000000001011000001110001";
+	string strSettings = "111111000000001111000001110001";
 
 	bitset<64> bitSettings(strSettings);
 	int64_t iSettings = bitSettings.to_ulong();
 
-	string strMask = "11111111111111111011011101110111";
+	string strMask = "11111111111111111111011101110111";
 	bitset <64> bitMask(strMask);
 	int64_t iMask = bitMask.to_ulong();
 
 	SetFormat(iModel, (int64_t)iSettings, (int64_t)iMask);
+
+	SetBehavior(iModel, 2048 + 4096, 2048 + 4096);
 }
 
 // ------------------------------------------------------------------------------------------------
