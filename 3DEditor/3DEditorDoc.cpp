@@ -60,6 +60,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_INSTANCES_SAVE, &CMy3DEditorDoc::OnUpdateInstancesSave)
 	ON_COMMAND(ID_EXPORT_AS_CITYGML, &CMy3DEditorDoc::OnExportAsCitygml)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_CITYGML, &CMy3DEditorDoc::OnUpdateExportAsCitygml)
+	ON_COMMAND(ID_EXPORT_AS_INFRAGML, &CMy3DEditorDoc::OnExportAsInfragml)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_INFRAGML, &CMy3DEditorDoc::OnUpdateExportAsInfragml)
 END_MESSAGE_MAP()
 
 
@@ -378,4 +380,28 @@ void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->GetModel() != 0) &&
 		IsCityGML(m_pModel->GetModel()));
+}
+
+void CMy3DEditorDoc::OnExportAsInfragml()
+{
+	wstring strFileName = m_pModel->GetModelName();
+	strFileName += L".bin.xml";
+
+	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	SaveAsInfraGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+}
+
+void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_pModel != nullptr) &&
+		(m_pModel->GetModel() != 0) &&
+		IsInfraGML(m_pModel->GetModel()));
 }

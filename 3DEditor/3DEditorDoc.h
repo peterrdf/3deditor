@@ -78,4 +78,6 @@ public:
 	afx_msg void OnUpdateInstancesSave(CCmdUI* pCmdUI);
 	afx_msg void OnExportAsCitygml();
 	afx_msg void OnUpdateExportAsCitygml(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsInfragml();
+	afx_msg void OnUpdateExportAsInfragml(CCmdUI* pCmdUI);
 };
