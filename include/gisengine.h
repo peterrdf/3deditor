@@ -48,6 +48,10 @@ extern "C" {
 	void DECSPEC STDCALL SaveAsCityGML(OwlModel iModel, const char* szFile);
 	void DECSPEC STDCALL SaveAsCityGMLW(OwlModel iModel, const wchar_t* szFile);
 
+	bool DECSPEC STDCALL IsInfraGML(OwlModel iModel);
+	void DECSPEC STDCALL SaveAsInfraGML(OwlModel iModel, const char* szFile);
+	void DECSPEC STDCALL SaveAsInfraGMLW(OwlModel iModel, const wchar_t* szFile);
+
 	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);	
 #ifdef _DEBUG
 	void DECSPEC STDCALL BuildGISEmbeddedSchemaStorage(const char* szSourcesRootFolder);
