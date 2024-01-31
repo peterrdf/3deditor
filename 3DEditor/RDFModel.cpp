@@ -544,9 +544,10 @@ void CRDFModel::GetWorldTranslations(float& fXTranslation, float& fYTranslation,
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
-		::MessageBox(
+		// TODO: new status bar for geometry
+		/*::MessageBox(
 			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
 		return;
 	}
@@ -1380,9 +1381,10 @@ void CRDFModel::UpdateVertexBufferOffset()
 		(dZmin == DBL_MAX) ||
 		(dZmax == -DBL_MAX))
 	{
-		::MessageBox(
+		// TODO: new status bar for geometry
+		/*::MessageBox(
 			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
 		return;
 	}
