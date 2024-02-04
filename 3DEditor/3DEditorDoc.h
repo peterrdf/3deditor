@@ -80,4 +80,6 @@ public:
 	afx_msg void OnUpdateExportAsCitygml(CCmdUI* pCmdUI);
 	afx_msg void OnExportAsInfragml();
 	afx_msg void OnUpdateExportAsInfragml(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsLandxml();
+	afx_msg void OnUpdateExportAsLandxml(CCmdUI* pCmdUI);
 };

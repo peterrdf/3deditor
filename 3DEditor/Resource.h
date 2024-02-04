@@ -159,13 +159,14 @@
 #define ID_FILE_EXPORT_AS               32832
 #define ID_EXPORT_AS_CITYGML            32834
 #define ID_EXPORT_AS_INFRAGML           32836
+#define ID_EXPORT_AS_LANDXML            32838
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        327
-#define _APS_NEXT_COMMAND_VALUE         32837
+#define _APS_NEXT_COMMAND_VALUE         32839
 #define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

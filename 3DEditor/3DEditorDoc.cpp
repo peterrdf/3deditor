@@ -62,6 +62,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_CITYGML, &CMy3DEditorDoc::OnUpdateExportAsCitygml)
 	ON_COMMAND(ID_EXPORT_AS_INFRAGML, &CMy3DEditorDoc::OnExportAsInfragml)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_INFRAGML, &CMy3DEditorDoc::OnUpdateExportAsInfragml)
+	ON_COMMAND(ID_EXPORT_AS_LANDXML, &CMy3DEditorDoc::OnExportAsLandxml)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_LANDXML, &CMy3DEditorDoc::OnUpdateExportAsLandxml)
 END_MESSAGE_MAP()
 
 
@@ -404,4 +406,28 @@ void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->GetModel() != 0) &&
 		IsInfraGML(m_pModel->GetModel()));
+}
+
+void CMy3DEditorDoc::OnExportAsLandxml()
+{
+	wstring strFileName = m_pModel->GetModelName();
+	strFileName += L".bin.xml";
+
+	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	SaveAsLandXMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+}
+
+void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_pModel != nullptr) &&
+		(m_pModel->GetModel() != 0) &&
+		isLandXML(m_pModel->GetModel()));
 }

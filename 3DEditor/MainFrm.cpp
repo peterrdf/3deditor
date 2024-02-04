@@ -242,6 +242,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_FILE_SAVE_AS);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_CITYGML);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_INFRAGML);
+	lstBasicCommands.AddTail(ID_EXPORT_AS_LANDXML);
 	lstBasicCommands.AddTail(ID_FILE_PRINT);
 	lstBasicCommands.AddTail(ID_APP_EXIT);
 	lstBasicCommands.AddTail(ID_EDIT_CUT);

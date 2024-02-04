@@ -1299,10 +1299,12 @@ void CRDFModel::SetInstancesDefaultState()
 		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
 			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr))
 		{
-			char* szClassName = nullptr;
-			GetNameOfClass(GetInstanceClass(itInstanceDefaultState.first), &szClassName);
+			OwlClass iNillClass = GetClassByName(m_iModel, "Nill");
 
-			if (strcmp(szClassName, "Nill") != 0)
+			OwlClass iInstanceClass = GetInstanceClass(itInstanceDefaultState.first);
+			ASSERT(iInstanceClass != 0);
+
+			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass))
 			{
 				SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
 			}
