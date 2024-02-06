@@ -3538,7 +3538,7 @@ void CPropertiesWnd::LoadBaseInformation()
 
 		swprintf(szBuffer, 100, L"%lld", iCount);
 
-		auto pProperty = new CMFCPropertyGridProperty(L"Number of lines", (_variant_t)szBuffer, L"Number of lines");
+		auto pProperty = new CMFCPropertyGridProperty(L"Number of points", (_variant_t)szBuffer, L"Number of points");
 		pProperty->AllowEdit(FALSE);
 
 		pInstanceGroup->AddSubItem(pProperty);
