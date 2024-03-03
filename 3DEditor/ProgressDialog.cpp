@@ -31,6 +31,14 @@ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
 	strEntry += "\r\n";
 
 	int iLength = m_edtProgress.GetWindowTextLength();
+	if (iLength > 2048)
+	{
+		m_edtProgress.SetSel(0, iLength);
+		m_edtProgress.ReplaceSel(L"...\r\n");
+
+		iLength = m_edtProgress.GetWindowTextLength();
+	}
+
 	m_edtProgress.SetSel(iLength, iLength);
 	m_edtProgress.ReplaceSel(CA2W(strEntry.c_str()));
 }
