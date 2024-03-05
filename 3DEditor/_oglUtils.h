@@ -2215,8 +2215,7 @@ public: // Methods
 			zNear = fBoundingSphereDiameter * .1;
 		}
 
-		GLdouble zFar = zNear + (fBoundingSphereDiameter * 30.);
-
+		GLdouble zFar = 100.;
 		GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 		GLdouble fW = fH * aspect;
 
