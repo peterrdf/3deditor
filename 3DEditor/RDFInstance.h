@@ -48,7 +48,7 @@ private: // Members
 	// Cohorts
 	vector<_cohort*> m_vecFacePolygonsCohorts;
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
-	vector<_cohort*> m_vecLinesCohorts;
+	vector<_facesCohort*> m_vecLinesCohorts;
 	vector<_facesCohort*> m_vecPointsCohorts;
 
 	vector<_cohort*> m_vecNormalVecsCohorts;
@@ -104,7 +104,7 @@ public: // Methods
 
 	vector<_cohort*>& facePolygonsCohorts();
 	vector<_cohort*>& concFacePolygonsCohorts();
-	vector<_cohort*>& linesCohorts();	
+	vector<_facesCohort*>& linesCohorts();
 	vector<_facesCohort*>& pointsCohorts();
 
 	vector<_facesCohort*>& concFacesCohorts();

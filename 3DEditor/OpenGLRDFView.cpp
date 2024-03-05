@@ -1722,10 +1722,17 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 		return;
 	}
 
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	auto begin = std::chrono::steady_clock::now();
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
-	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -1741,6 +1748,12 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 
 			for (auto pCohort : pInstance->linesCohorts())
 			{
+				const _material* pMaterial = pCohort->getMaterial();
+				m_pOGLProgram->_setAmbientColor(
+					pMaterial->getDiffuseColor().r(),
+					pMaterial->getDiffuseColor().g(),
+					pMaterial->getDiffuseColor().b());
+
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
@@ -1787,11 +1800,6 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	const auto pPointedInstance = pModel == pController->GetModel() ?
-		m_pPointedInstance : m_pNavigatorPointedInstance;
-	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ?
-		m_pPointedInstanceMaterial : m_pNavigatorPointedInstanceMaterial;
-
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -1805,11 +1813,7 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 
 			for (auto pCohort : pInstance->pointsCohorts())
 			{
-				const _material* pMaterial =
-					pInstance == m_pSelectedInstance ? m_pSelectedInstanceMaterial :
-					pInstance == pPointedInstance ? pPointedInstanceMaterial :
-					pCohort->getMaterial();				
-				
+				const _material* pMaterial = pCohort->getMaterial();
 				m_pOGLProgram->_setAmbientColor(
 					pMaterial->getDiffuseColor().r(),
 					pMaterial->getDiffuseColor().g(),

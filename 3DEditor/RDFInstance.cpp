@@ -252,7 +252,7 @@ vector<_cohort*>& CRDFInstance::concFacePolygonsCohorts()
 	return m_vecConcFacePolygonsCohorts;
 }
 
-vector<_cohort*>& CRDFInstance::linesCohorts()
+vector<_facesCohort*>& CRDFInstance::linesCohorts()
 {
 	return m_vecLinesCohorts;
 }
@@ -774,7 +774,8 @@ void CRDFInstance::Calculate()
 	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
 	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.	
 
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFace = 0; iConceptualFace < m_iConceptualFacesCount; iConceptualFace++)
@@ -891,6 +892,43 @@ void CRDFInstance::Calculate()
 
 		if (iIndicesCountLines > 0)
 		{
+			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
+			iIndexValue *= VERTEX_LENGTH;
+
+			float fColor = *(m_pVertices + iIndexValue + 8);
+			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
+			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
+
+			fColor = *(m_pVertices + iIndexValue + 9);
+			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertices + iIndexValue + 10);
+			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			fColor = *(m_pVertices + iIndexValue + 11);
+			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
+
+			/*
+			* Material
+			*/
+			_material material(
+				iAmbientColor,
+				iDiffuseColor,
+				iEmissiveColor,
+				iSpecularColor,
+				fTransparency,
+				!strTexture.empty() ? strTexture.c_str() : nullptr);
+
+			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
+			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
+			{
+				mapMaterial2ConcFaceLines[material] = vector<_face>{ _face(iConceptualFace, iStartIndexLines, iIndicesCountLines) };
+			}
+			else
+			{
+				itMaterial2ConcFaceLines->second.push_back(_face(iConceptualFace, iStartIndexLines, iIndicesCountLines));
+			}
+
 			m_vecLines.push_back(_primitives(iStartIndexLines, iIndicesCountLines));
 		}
 
@@ -1239,56 +1277,110 @@ void CRDFInstance::Calculate()
 	/*
 	* Group the lines
 	*/
-	if (!m_vecLines.empty())
+	auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.begin();
+	for (; itMaterial2ConcFaceLines != mapMaterial2ConcFaceLines.end(); itMaterial2ConcFaceLines++)
 	{
-		/*
-		* Use the last cohort (if any)
-		*/
-		auto pCohort = linesCohorts().empty() ? nullptr : linesCohorts()[linesCohorts().size() - 1];
+		_facesCohort* pCohort = nullptr;
 
-		/*
-		* Create the cohort
-		*/
-		if (pCohort == nullptr)
+		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaceLines->second.size(); iConcFace++)
 		{
-			pCohort = new _cohort();
-			linesCohorts().push_back(pCohort);
-		}
+			_face& concFace = itMaterial2ConcFaceLines->second[iConcFace];
 
-		for (size_t iFace = 0; iFace < m_vecLines.size(); iFace++)
-		{
-			int_t iStartIndex = m_vecLines[iFace].startIndex();
-			int_t iIndicesCount = m_vecLines[iFace].indicesCount();
+			int_t iStartIndex = concFace.startIndex();
+			int_t iIndicesCount = concFace.indicesCount();
+
+			/*
+			* Split the conceptual face - isolated case
+			*/
+			if (iIndicesCount > _oglUtils::getIndicesCountLimit())
+			{
+				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					linesCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+
+					iIndicesCount -= _oglUtils::getIndicesCountLimit();
+					iStartIndex += _oglUtils::getIndicesCountLimit();
+				}
+
+				if (iIndicesCount > 0)
+				{
+					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+					for (int_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex++)
+					{
+						pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
+					}
+
+					linesCohorts().push_back(pNewCohort);
+
+					/*
+					* Update Conceptual face start index
+					*/
+					concFace.startIndex() = 0;
+
+					// Conceptual faces
+					pNewCohort->faces().push_back(concFace);
+				}
+
+				continue;
+			} // if (iIndicesCountTriangles > _oglUtils::GetIndicesCountLimit())	
+
+			/*
+			* Create material
+			*/
+			if (pCohort == nullptr)
+			{
+				pCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+
+				linesCohorts().push_back(pCohort);
+			}
 
 			/*
 			* Check the limit
 			*/
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _cohort();
+				pCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+
 				linesCohorts().push_back(pCohort);
 			}
 
+			/*
+			* Update Conceptual face start index
+			*/
+			concFace.startIndex() = pCohort->indices().size();
+
+			/*
+			* Add the indices
+			*/
 			for (int_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
-				if (m_pIndexBuffer->data()[iIndex] < 0)
-				{
-					continue;
-				}
-
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-			} // for (int_t iIndex = ...
-		} // for (size_t iFace = ...
+			}
 
-#ifdef _DEBUG
-		for (size_t iCohort = 0; iCohort < linesCohorts().size(); iCohort++)
-		{
-			ASSERT(linesCohorts()[iCohort]->indices().size() <= _oglUtils::getIndicesCountLimit());
-		}
-#endif
-	} // if (!m_vecLines.empty())		
+			// Conceptual faces
+			pCohort->faces().push_back(concFace);
+		} // for (size_t iConcFace = ...
+	} // for (; itMaterial2ConceptualFaces != ...
 
 	/*
 	* Group the points
