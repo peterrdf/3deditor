@@ -1155,26 +1155,13 @@ void CRDFInstance::Calculate()
 				facePolygonsCohorts().push_back(pCohort);
 			}
 
-			int_t iPreviousIndex = -1;
 			for (int_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
-				iIndex++)
+				iIndex += 2)
 			{
-				if (m_pIndexBuffer->data()[iIndex] < 0)
-				{
-					iPreviousIndex = -1;
-
-					continue;
-				}
-
-				if (iPreviousIndex != -1)
-				{
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-				} // if (iPreviousIndex != -1)
-
-				iPreviousIndex = iIndex;
-			} // for (int_t iIndex = ...				
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+			} // for (int_t iIndex = ...			
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
