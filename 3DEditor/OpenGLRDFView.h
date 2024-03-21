@@ -205,6 +205,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
+	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
 	void DrawBoundingBoxes(CRDFModel* pModel);
 
 	// --------------------------------------------------------------------------------------------

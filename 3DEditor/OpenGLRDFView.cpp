@@ -1840,6 +1840,23 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 }
 
 // ------------------------------------------------------------------------------------------------
+void COpenGLRDFView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
+{
+	// Transformation
+	_transform(&vecBBVertex, pBBTransformation, &vecBBVertex);
+
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	vecBBVertex.x += vecVertexBufferOffset.x;
+	vecBBVertex.y += vecVertexBufferOffset.y;
+	vecBBVertex.z += vecVertexBufferOffset.z;
+
+	// Scale: [-1, +1]
+	vecBBVertex.x /= dScaleFactor;
+	vecBBVertex.y /= dScaleFactor;
+	vecBBVertex.z /= dScaleFactor;
+}
+
+// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 {
 	if (pModel == nullptr)
@@ -1932,7 +1949,7 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		itInstance != mapInstances.end(); 
 		itInstance++)
 	{
-		CRDFInstance* pInstance = itInstance->second;
+		auto pInstance = itInstance->second;
 
 		if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
 		{
@@ -1949,6 +1966,11 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		_vector3d vecBoundingBoxMin = { pInstance->getBBMin()->x, pInstance->getBBMin()->y, pInstance->getBBMin()->z };
 		_vector3d vecBoundingBoxMax = { pInstance->getBBMax()->x, pInstance->getBBMax()->y, pInstance->getBBMax()->z };
 
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(pInstance->GetModel(), (double*)&vecVertexBufferOffset);	
+
+		double dScaleFactor = (double)pModel->GetOriginalBoundingSphereDiameter() / 2.;
+
 		// Bottom face
 		/*
 		Min1						Min2
@@ -1962,17 +1984,17 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		Min4						Min3
 		*/
 
-		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-		_transform(&vecMin1, pInstance->getBBTransformation(), &vecMin1);
+		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };	
+		TransformBBVertex(vecMin1, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);		
 
 		_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-		_transform(&vecMin2, pInstance->getBBTransformation(), &vecMin2);
+		TransformBBVertex(vecMin2, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-		_transform(&vecMin3, pInstance->getBBTransformation(), &vecMin3);
+		TransformBBVertex(vecMin3, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-		_transform(&vecMin4, pInstance->getBBTransformation(), &vecMin4);
+		TransformBBVertex(vecMin4, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		// Top face
 		/*
@@ -1988,16 +2010,16 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		*/
 
 		_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-		_transform(&vecMax1, pInstance->getBBTransformation(), &vecMax1);
+		TransformBBVertex(vecMax1, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-		_transform(&vecMax2, pInstance->getBBTransformation(), &vecMax2);
+		TransformBBVertex(vecMax2, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-		_transform(&vecMax3, pInstance->getBBTransformation(), &vecMax3);
+		TransformBBVertex(vecMax3, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-		_transform(&vecMax4, pInstance->getBBTransformation(), &vecMax4);
+		TransformBBVertex(vecMax4, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 		vector<float> vecVertices = 

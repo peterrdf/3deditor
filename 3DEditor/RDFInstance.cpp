@@ -353,22 +353,6 @@ void CRDFInstance::ResetVertexBuffers()
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
-
-	// Apply vertex buffer offset
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(GetModel(), (double*)&vecVertexBufferOffset);
-
-	m_pvecBBMin->x += vecVertexBufferOffset.x;
-	m_pvecBBMin->y += vecVertexBufferOffset.y;
-	m_pvecBBMin->z += vecVertexBufferOffset.z;
-
-	m_pvecBBMax->x += vecVertexBufferOffset.x;
-	m_pvecBBMax->y += vecVertexBufferOffset.y;
-	m_pvecBBMax->z += vecVertexBufferOffset.z;
-
-	// Apply the Transformation
-	//_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
-	//_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -620,20 +604,6 @@ void CRDFInstance::Scale(float fScaleFactor)
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices[(iVertex * VERTEX_LENGTH) + 2] / fScaleFactor;
 	}
-
-	/* Bounding box - Min */
-	m_pvecBBMin->x = m_pvecBBMin->x / fScaleFactor;
-	m_pvecBBMin->y = m_pvecBBMin->y / fScaleFactor;
-	m_pvecBBMin->z = m_pvecBBMin->z / fScaleFactor;
-
-	/* Bounding box - Max */
-	m_pvecBBMax->x = m_pvecBBMax->x / fScaleFactor;
-	m_pvecBBMax->y = m_pvecBBMax->y / fScaleFactor;
-	m_pvecBBMax->z = m_pvecBBMax->z / fScaleFactor;
-
-	m_pmtxBBTransformation->_41 /= fScaleFactor;
-	m_pmtxBBTransformation->_42 /= fScaleFactor;
-	m_pmtxBBTransformation->_43 /= fScaleFactor;
 }
 
 void CRDFInstance::Translate(float fX, float fY, float fZ)
@@ -721,22 +691,6 @@ void CRDFInstance::Calculate()
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
-
-	// Apply the Transformation
-	//_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
-	//_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
-
-	// Apply vertex buffer offset
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(GetModel(), (double*)&vecVertexBufferOffset);
-
-	m_pvecBBMin->x += vecVertexBufferOffset.x;
-	m_pvecBBMin->y += vecVertexBufferOffset.y;
-	m_pvecBBMin->z += vecVertexBufferOffset.z;
-
-	m_pvecBBMax->x += vecVertexBufferOffset.x;
-	m_pvecBBMax->y += vecVertexBufferOffset.y;
-	m_pvecBBMax->z += vecVertexBufferOffset.z;
 
 	if (!GetBoundingBox(
 		m_iInstance,
