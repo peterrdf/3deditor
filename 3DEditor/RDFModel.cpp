@@ -212,7 +212,7 @@ wstring CRDFModel::GetModelName() const
 	}
 
 	// Cone 1
-	/*{
+	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(0.);
@@ -230,10 +230,10 @@ wstring CRDFModel::GetModelName() const
 		pCone.set_radius(4.);
 		pCone.set_height(12.);
 		pCone.set_segmentationParts(36);
-	}	*/
+	}
 
 	// Cylinder 1
-	/*{
+	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
 		pAmbient.set_R(1.);
 		pAmbient.set_G(0.);
@@ -251,7 +251,7 @@ wstring CRDFModel::GetModelName() const
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
 		pCylinder.set_segmentationParts(36);
-	}*/
+	}
 
 	LoadRDFModel();
 }

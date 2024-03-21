@@ -138,14 +138,6 @@ public: // Methods
 		double& dYmin, double& dYmax,
 		double& dZmin, double& dZmax);
 
-	void ScaleAndCenter(
-		float fXmin, float fXmax, 
-		float fYmin, float fYmax, 
-		float fZmin, float fZmax,
-		float fScaleFactor,		
-		bool bScale);
-
-
 	void Scale(float fScaleFactor);
 	void Translate(float fX, float fY, float fZ);
 	
