@@ -1939,7 +1939,9 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 			continue;
 		}
 
-		if ((pInstance->getBBMin() == nullptr) || (pInstance->getBBMax() == nullptr))
+		if ((pInstance->getBBTransformation() == nullptr) ||
+			(pInstance->getBBMin() == nullptr) || 
+			(pInstance->getBBMax() == nullptr))
 		{
 			continue;
 		}
@@ -1961,9 +1963,16 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		*/
 
 		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		_transform(&vecMin1, pInstance->getBBTransformation(), &vecMin1);
+
 		_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		_transform(&vecMin2, pInstance->getBBTransformation(), &vecMin2);
+
 		_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		_transform(&vecMin3, pInstance->getBBTransformation(), &vecMin3);
+
 		_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		_transform(&vecMin4, pInstance->getBBTransformation(), &vecMin4);
 
 		// Top face
 		/*
@@ -1979,9 +1988,16 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		*/
 
 		_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		_transform(&vecMax1, pInstance->getBBTransformation(), &vecMax1);
+
 		_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		_transform(&vecMax2, pInstance->getBBTransformation(), &vecMax2);
+
 		_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		_transform(&vecMax3, pInstance->getBBTransformation(), &vecMax3);
+
 		_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		_transform(&vecMax4, pInstance->getBBTransformation(), &vecMax4);
 
 		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 		vector<float> vecVertices = 

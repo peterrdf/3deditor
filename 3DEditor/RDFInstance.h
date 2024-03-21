@@ -29,11 +29,12 @@ private: // Members
 	// BB
 	_matrix* m_pmtxOriginalBBTransformation;
 	_vector3d* m_pvecOriginalBBMin;
-	_vector3d* m_pvecOriginalBBMax;	
+	_vector3d* m_pvecOriginalBBMax;
+	_matrix* m_pmtxBBTransformation;
+	_vector3d* m_pvecBBMin;
+	_vector3d* m_pvecBBMax;
 	_vector3d* m_pvecAABBMin;
 	_vector3d* m_pvecAABBMax;
-	_vector3d* m_pvecBBMin;
-	_vector3d* m_pvecBBMax;	
 	
 	// Primitives
 	vector<_primitives> m_vecTriangles;
@@ -112,13 +113,12 @@ public: // Methods
 	vector<_cohort*>& normalVecsCohorts();	
 	vector<_cohort*>& biNormalVecsCohorts();
 	vector<_cohort*>& tangentVecsCohorts();
-	
-	_vector3d* getBBMin() const;
-	_vector3d* getBBMax() const;
 
 	_vector3d* getOriginalBBMin() const;
 	_vector3d* getOriginalBBMax() const;
-
+	_matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
+	_vector3d* getBBMin() const;
+	_vector3d* getBBMax() const;
 	_vector3d* getAABBMin() const;
 	_vector3d* getAABBMax() const;
 	

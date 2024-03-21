@@ -17,10 +17,11 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable)
 	, m_pmtxOriginalBBTransformation(nullptr)
 	, m_pvecOriginalBBMin(nullptr)
 	, m_pvecOriginalBBMax(nullptr)
-	, m_pvecAABBMin(nullptr)
-	, m_pvecAABBMax(nullptr)
+	, m_pmtxBBTransformation(nullptr)
 	, m_pvecBBMin(nullptr)
-	, m_pvecBBMax(nullptr)	
+	, m_pvecBBMax(nullptr)
+	, m_pvecAABBMin(nullptr)
+	, m_pvecAABBMax(nullptr)	
 	, m_vecTriangles()
 	, m_vecFacePolygons()
 	, m_vecConcFacePolygons()
@@ -349,6 +350,7 @@ void CRDFInstance::ResetVertexBuffers()
 	memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
 	// Bounding box
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
@@ -365,8 +367,8 @@ void CRDFInstance::ResetVertexBuffers()
 	m_pvecBBMax->z += vecVertexBufferOffset.z;
 
 	// Apply the Transformation
-	_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
-	_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
+	//_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
+	//_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -612,7 +614,6 @@ void CRDFInstance::Scale(float fScaleFactor)
 	}
 
 	/* Vertices */
-
 	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
@@ -621,16 +622,18 @@ void CRDFInstance::Scale(float fScaleFactor)
 	}
 
 	/* Bounding box - Min */
-
 	m_pvecBBMin->x = m_pvecBBMin->x / fScaleFactor;
 	m_pvecBBMin->y = m_pvecBBMin->y / fScaleFactor;
 	m_pvecBBMin->z = m_pvecBBMin->z / fScaleFactor;
 
 	/* Bounding box - Max */
-
 	m_pvecBBMax->x = m_pvecBBMax->x / fScaleFactor;
 	m_pvecBBMax->y = m_pvecBBMax->y / fScaleFactor;
 	m_pvecBBMax->z = m_pvecBBMax->z / fScaleFactor;
+
+	m_pmtxBBTransformation->_41 /= fScaleFactor;
+	m_pmtxBBTransformation->_42 /= fScaleFactor;
+	m_pmtxBBTransformation->_43 /= fScaleFactor;
 }
 
 void CRDFInstance::Translate(float fX, float fY, float fZ)
@@ -694,11 +697,8 @@ void CRDFInstance::Calculate()
 	ASSERT(m_pvecOriginalBBMax == nullptr);
 	m_pvecOriginalBBMax = new _vector3d();
 
-	ASSERT(m_pvecAABBMin == nullptr);
-	m_pvecAABBMin = new _vector3d();
-
-	ASSERT(m_pvecAABBMax == nullptr);
-	m_pvecAABBMax = new _vector3d();
+	ASSERT(m_pmtxBBTransformation == nullptr);
+	m_pmtxBBTransformation = new _matrix();
 
 	ASSERT(m_pvecBBMin == nullptr);
 	m_pvecBBMin = new _vector3d();
@@ -706,18 +706,25 @@ void CRDFInstance::Calculate()
 	ASSERT(m_pvecBBMax == nullptr);
 	m_pvecBBMax = new _vector3d();
 
+	ASSERT(m_pvecAABBMin == nullptr);
+	m_pvecAABBMin = new _vector3d();
+
+	ASSERT(m_pvecAABBMax == nullptr);
+	m_pvecAABBMax = new _vector3d();
+
 	GetBoundingBox(
 		m_iInstance,
 		(double*)m_pmtxOriginalBBTransformation,
 		(double*)m_pvecOriginalBBMin,
 		(double*)m_pvecOriginalBBMax);
 
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
 	// Apply the Transformation
-	_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
-	_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
+	//_transform(m_pvecBBMin, m_pmtxOriginalBBTransformation, m_pvecBBMin);
+	//_transform(m_pvecBBMax, m_pmtxOriginalBBTransformation, m_pvecBBMax);
 
 	// Apply vertex buffer offset
 	_vector3d vecVertexBufferOffset;
@@ -1497,19 +1504,22 @@ void CRDFInstance::Clean()
 	m_pvecOriginalBBMin = nullptr;
 
 	delete m_pvecOriginalBBMax;
-	m_pvecOriginalBBMax = nullptr;	
+	m_pvecOriginalBBMax = nullptr;
+
+	delete m_pmtxBBTransformation;
+	m_pmtxBBTransformation = nullptr;
+
+	delete m_pvecBBMin;
+	m_pvecBBMin = nullptr;
+
+	delete m_pvecBBMax;
+	m_pvecBBMax = nullptr;
 
 	delete m_pvecAABBMin;
 	m_pvecAABBMin = nullptr;
 
 	delete m_pvecAABBMax;
 	m_pvecAABBMax = nullptr;
-
-	delete m_pvecBBMin;
-	m_pvecBBMin = nullptr;
-
-	delete m_pvecBBMax;
-	m_pvecBBMax = nullptr;	
 
 	m_vecTriangles.clear();
 	m_vecFacePolygons.clear();
