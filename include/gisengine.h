@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/engine.h"
+#include "engine.h"
 
 // ************************************************************************************************
 #ifdef _WINDOWS
@@ -55,6 +55,8 @@ extern "C" {
 	bool DECSPEC STDCALL isLandXML(OwlModel iModel);
 	void DECSPEC STDCALL SaveAsLandXML(OwlModel iModel, const char* szFile);
 	void DECSPEC STDCALL SaveAsLandXMLW(OwlModel iModel, const wchar_t* szFile);
+
+	bool DECSPEC STDCALL IsCityJSON(OwlModel iModel);
 
 	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);	
 #ifdef _DEBUG
