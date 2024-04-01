@@ -51,7 +51,7 @@ typedef		int64_t										ConceptualFace;
 
 #define		OBJECTPROPERTY_TYPE							1
 #define		OBJECTTYPEPROPERTY_TYPE						1
-#define		DATATYPEPROPERTY_TYPE_BOOLEAN 				2
+#define		DATATYPEPROPERTY_TYPE_BOOLEAN				2
 #define		DATATYPEPROPERTY_TYPE_STRING				3		//	DATATYPEPROPERTY_TYPE_CHAR
 #define		DATATYPEPROPERTY_TYPE_INTEGER				4
 #define		DATATYPEPROPERTY_TYPE_DOUBLE				5
@@ -1793,6 +1793,254 @@ OwlInstance		DECL STDC	CopyInstanceNetwork(
 								);
 
 //
+//		EncodeBase64                                            (http://rdf.bg/gkdoc/CP64/EncodeBase64.html)
+//				char					* output							IN / OUT
+//				const unsigned char		* input								IN
+//				int64_t					size								IN
+//				bool					terminator							IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to encode any data input array into a BASE64 string.
+//
+//	The output string has to be allocated by the host. The return value defines the length of the string size in bytes.
+//
+//	Terminator adds a 0 element to the end of the BASE64 generated string, it will NOT increase the length.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	EncodeBase64(
+									char					* output,
+									const unsigned char		* input,
+									int64_t					size,
+									bool					terminator
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	EncodeBase64(
+								char					* output,
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	return	EncodeBase64(
+					output,
+					input,
+					size,
+					false								//	terminator
+				);
+}
+
+//
+//
+static	inline	char	* EncodeBase64(
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
+
+	EncodeBase64(
+			output,
+			input,
+			size,
+			true								//	terminator
+		);
+
+	return  output;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		EncodeBase64W                                           (http://rdf.bg/gkdoc/CP64/EncodeBase64W.html)
+//				wchar_t					* output							IN / OUT
+//				const unsigned char		* input								IN
+//				int64_t					size								IN
+//				bool					terminator							IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to encode any data input array into a BASE64 string.
+//
+//	The output string has to be allocated by the host. The return value defines the length of the string size in bytes.
+//
+//	Terminator adds a 0 element to the end of the BASE64 generated string, it will NOT increase the length.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	EncodeBase64W(
+									wchar_t					* output,
+									const unsigned char		* input,
+									int64_t					size,
+									bool					terminator
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	EncodeBase64W(
+								wchar_t					* output,
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	return	EncodeBase64W(
+					output,
+					input,
+					size,
+					false								//	terminator
+				);
+}
+
+//
+//
+static	inline	wchar_t	* EncodeBase64W(
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
+
+	EncodeBase64W(
+			output,
+			input,
+			size,
+			true								//	terminator
+		);
+
+	return  output;
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		DecodeBase64                                            (http://rdf.bg/gkdoc/CP64/DecodeBase64.html)
+//				unsigned char			* output							IN / OUT
+//				const char				* input								IN
+//				int64_t					size								IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to decode a BASE64 string into any data output array.
+//
+//	The BASE64 string is measured by the (non-zero) size given or by the terminator.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	DecodeBase64(
+									unsigned char			* output,
+									const char				* input,
+									int64_t					size
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	DecodeBase64(
+								unsigned char			* output,
+								char					* input,
+								int64_t					size
+							)
+{
+	return	DecodeBase64(
+					output,
+					(const char*) input,
+					size
+				);
+}
+
+//
+//
+static	inline	int64_t	DecodeBase64(
+								unsigned char			* output,
+								const char				* input
+							)
+{
+	return	DecodeBase64(
+					output,
+					input,
+					0									//	size
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
+//		DecodeBase64W                                           (http://rdf.bg/gkdoc/CP64/DecodeBase64W.html)
+//				unsigned char			* output							IN / OUT
+//				const wchar_t			* input								IN
+//				int64_t					size								IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to decode a BASE64 string into any data output array.
+//
+//	The BASE64 string is measured by the (non-zero) size given or by the terminator.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	DecodeBase64W(
+									unsigned char			* output,
+									const wchar_t			* input,
+									int64_t					size
+								);
+
+#ifdef __cplusplus
+	}
+#endif
+
+//
+//
+static	inline	int64_t	DecodeBase64W(
+								unsigned char			* output,
+								wchar_t					* input,
+								int64_t					size
+							)
+{
+	return	DecodeBase64W(
+					output,
+					(const wchar_t*) input,
+					size
+				);
+}
+
+//
+//
+static	inline	int64_t	DecodeBase64W(
+								unsigned char			* output,
+								const wchar_t			* input
+							)
+{
+	return	DecodeBase64W(
+					output,
+					input,
+					0									//	size
+				);
+}
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+//
 //		CopyModel                                               (http://rdf.bg/gkdoc/CP64/CopyModel.html)
 //				OwlModel				sourceModel							IN
 //				OwlModel				targetModel							IN
@@ -1899,7 +2147,7 @@ static	inline	OwlClass	CreateClass(
 {
 	return	CreateClass(
 					model,
-					(const char*) nullptr					//	name
+					(const char*) nullptr				//	name
 				);
 }
 
@@ -1954,7 +2202,7 @@ static	inline	OwlClass	CreateClassW(
 {
 	return	CreateClassW(
 					model,
-					(const wchar_t*) nullptr				//	name
+					(const wchar_t*) nullptr			//	name
 				);
 }
 
@@ -2094,7 +2342,7 @@ int64_t			DECL STDC	SetClassParent(
 //
 //	When unset: it removes parentOwlClass from immediate parents and returns 1, 
 //	or retunrs 0 if parentOwlClass is not immediate parent
-// 
+//
 //	This call has the same behavior as SetClassParent, however needs to be
 //	used in case classes are exchanged as a successive series of integers.
 //
@@ -3669,12 +3917,12 @@ RdfPropertyType	DECL STDC	GetPropertyTypeEx(
 //			0	Vertex does not contain second 2D texture info
 //			1	Vertex does contain second 2D texture info => if set, bit 6 will also be set
 //
-//		0	The property is not defined yet
-//		1	The property is an Object Type Property
-//		2	The property is an Data Type Property of type Boolean
-//		3	The property is an Data Type Property of type Char
-//		4	The property is an Data Type Property of type Integer
-//		5	The property is an Data Type Property of type Double
+//	Error return codes:
+//		0	successful
+//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
+//		3	an instance has a non-zero cardinality for the property to be deleted
+//		4	undefined error
 //
 int64_t			DECL STDC	RemoveProperty(
 									RdfProperty				rdfProperty
@@ -3693,7 +3941,7 @@ int64_t			DECL STDC	RemoveProperty(
 //	The return value represents a bit set defining findings during the removal, if a clean removal with no side effects was possible the return value is 0. In all other cases 
 //	the following bits represent the findings during removal:
 //		bit 0:
-//			0	Iunput as expected
+//			0	Input as expected
 //			1	Encountered an issue on input value, i.e. property was not recognized as property
 //		bit 1:
 //			0	No 'child' properties found
@@ -3711,13 +3959,12 @@ int64_t			DECL STDC	RemoveProperty(
 //			0	Vertex does not contain second 2D texture info
 //			1	Vertex does contain second 2D texture info => if set, bit 6 will also be set
 //
-//		0	The property is not defined yet
-//		1	The property is an Object Type Property
-//		2	The property is an Data Type Property of type Boolean
-//		3	The property is an Data Type Property of type Char
-//		4	The property is an Data Type Property of type Integer
-//		5	The property is an Data Type Property of type Double
-//
+//	Error return codes:
+//		0	successful
+//		1	argument model or rdfProperty is incorrect (not a proper handle to an active model)
+//		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
+//		3	an instance has a non-zero cardinality for the property to be deleted
+//		4	undefined error
 //
 //	This call has the same behavior as RemoveProperty, however needs to be
 //	used in case properties are exchanged as a successive series of integers.
@@ -5281,6 +5528,20 @@ static	inline	int64_t	CalculateInstance(
 					owlInstance,
 					vertexBufferSize,
 					indexBufferSize,
+					nullptr								//	transformationBufferSize
+				);
+}
+
+//
+//
+static	inline	int64_t	CalculateInstance(
+								OwlInstance				owlInstance
+							)
+{
+	return	CalculateInstance(
+					owlInstance,
+					nullptr,							//	vertexBufferSize
+					nullptr,							//	indexBufferSize
 					nullptr								//	transformationBufferSize
 				);
 }
@@ -7526,7 +7787,7 @@ int64_t			DECL STDC	SetDataTypeProperty(
 //		GetDataTypeProperty                                     (http://rdf.bg/gkdoc/CP64/GetDataTypeProperty___.html)
 //				OwlInstance				owlInstance							IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
-//				const void				** values							IN
+//				const void				** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
