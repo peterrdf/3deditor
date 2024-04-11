@@ -631,7 +631,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 		0, 0,
 		iWidth, iHeight);
 
-	if (m_bShowNavigator)
+	if (m_bShowNavigator && !TEST_MODE)
 	{
 		DrawNavigatorModel(
 			pController->GetNavigatorModel(),
@@ -648,19 +648,22 @@ void COpenGLRDFView::Draw(CDC* pDC)
 
 	/* Selection */
 
-	DrawMainModelSelectionBuffers(
-		pController->GetModel(),
-		0, 0,
-		iWidth, iHeight,
-		m_pInstanceSelectionFrameBuffer);
-
-	if (m_bShowNavigator)
+	if (!TEST_MODE)
 	{
-		DrawNavigatorModelSelectionBuffers(
-			pController->GetNavigatorModel(),
+		DrawMainModelSelectionBuffers(
+			pController->GetModel(),
 			0, 0,
 			iWidth, iHeight,
-			m_pNavigatorSelectionFrameBuffer);
+			m_pInstanceSelectionFrameBuffer);
+
+		if (m_bShowNavigator)
+		{
+			DrawNavigatorModelSelectionBuffers(
+				pController->GetNavigatorModel(),
+				0, 0,
+				iWidth, iHeight,
+				m_pNavigatorSelectionFrameBuffer);
+		}
 	}	
 }
 
@@ -1392,7 +1395,7 @@ void COpenGLRDFView::DrawMainModel(
 	DrawModel(pMainModel);
 
 	/* Scene */
-	if (GetShowCoordinateSystem())
+	if (GetShowCoordinateSystem() && !TEST_MODE)
 	{
 		DrawModel(pSceneModel);
 	}

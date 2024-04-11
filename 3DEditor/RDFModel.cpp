@@ -21,6 +21,9 @@ using namespace std;
 namespace fs = std::experimental::filesystem;
 
 // ************************************************************************************************
+extern BOOL TEST_MODE;
+
+// ************************************************************************************************
 CProgressDialog* m_pProgressDialog = nullptr;
 
 // ************************************************************************************************
@@ -58,7 +61,10 @@ public: // Methods
 
 	virtual void Run() override
 	{
-		ASSERT(m_pProgressDialog != nullptr);
+		if (!TEST_MODE)
+		{
+			ASSERT(m_pProgressDialog != nullptr);
+		}		
 
 		CString strLog;
 		if (m_bLoading)
@@ -70,7 +76,10 @@ public: // Methods
 			strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
 		}		
 
-		m_pProgressDialog->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+		if (!TEST_MODE)
+		{
+			m_pProgressDialog->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+		}
 
 		CString strExtension = PathFindExtension(m_szPath);
 		strExtension.MakeUpper();
@@ -115,12 +124,22 @@ public: // Methods
 			CString strError;
 			strError.Format(L"Failed to open '%s'.", m_szPath);
 
-			m_pProgressDialog->Log(2/*enumLogEvent::error*/, CW2A(strError));
-			::MessageBox(m_pProgressDialog->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+			if (!TEST_MODE)
+			{
+				m_pProgressDialog->Log(2/*enumLogEvent::error*/, CW2A(strError));
+				::MessageBox(m_pProgressDialog->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+			}
+			else
+			{
+				TRACE(L"\nError: %s", (LPCTSTR)strError);
+			}		
 		}
 		else
 		{
-			m_pProgressDialog->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+			if (!TEST_MODE)
+			{
+				m_pProgressDialog->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+			}		
 		}
 	}
 };
@@ -811,11 +830,18 @@ void CRDFModel::Load(const wchar_t * szPath, bool bLoading)
 	}	
 
 	CLoadTask loadTask(this, szPath, bLoading);
-	CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
+	if (!TEST_MODE)
+	{
+		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 
-	m_pProgressDialog = &dlgProgress;
-	dlgProgress.DoModal();
-	m_pProgressDialog = nullptr;
+		m_pProgressDialog = &dlgProgress;
+		dlgProgress.DoModal();
+		m_pProgressDialog = nullptr;
+	}
+	else
+	{
+		loadTask.Run();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
