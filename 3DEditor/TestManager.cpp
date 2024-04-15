@@ -69,9 +69,8 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 	swprintf(szRevision, 1024, L"%lld", iRevision);
 
 	CString strTestsDir = m_strInputDataDir;
-	strTestsDir += L"\\Tests-";
+	strTestsDir += L"\\Tests-engine-rev.";
 	strTestsDir += szRevision;
-	//strTestsDir += CTime::GetCurrentTime().Format(_T("%Y-%m-%d-%H-%M-%S"));
 
 	if (!CreateDirectory((LPCTSTR)strTestsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS))
 	{
