@@ -1517,7 +1517,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 		}
 	}
 	
-	m_pOGLProgram->_enableBlinnPhongModel(true);
+	m_pOGLProgram->_enableBlinnPhongModel(TEST_MODE ? false : true);
 
 	const auto pPointedInstance = pModel == pController->GetModel() ?
 		m_pPointedInstance : m_pNavigatorPointedInstance;
