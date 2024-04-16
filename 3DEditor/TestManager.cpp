@@ -133,7 +133,21 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		int iTestIndex = 0;
 		CString strTestFilePath;
 		CString strScreenshotFileName;
-		CString strScreenshotFilePath;		
+		CString strScreenshotFilePath;
+
+		// .bin file
+		{
+			CString strBinFilePath;
+			strBinFilePath.Format(L"%s\\data.bin", (LPCTSTR)stTestDir);
+			if (!CopyFile(strInputFilePath, strBinFilePath, TRUE))
+			{
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the .bin file.", L"Error", MB_ICONERROR | MB_OK);
+
+				m_pController->EndTestMode();
+
+				return;
+			}
+		}
 
 		// Test 1	
 		{
