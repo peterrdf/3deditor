@@ -1,6 +1,5 @@
 #pragma once
 
-#include "conceptMesh.h"
 #include "Texture.h"
 #include "RDFClass.h"
 #include "ObjectRDFProperty.h"
@@ -13,9 +12,9 @@
 #include "TextBuilder.h"
 
 #include <map>
-
 using namespace std;
 
+// ************************************************************************************************
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
 // ************************************************************************************************
@@ -32,9 +31,9 @@ protected: // Members
 	OwlModel m_iModel;
 
 	// Cache
-	map<int64_t, CRDFClass *> m_mapClasses;
-	map<int64_t, CRDFProperty *> m_mapProperties;
-	map<int64_t, CRDFInstance *> m_mapInstances;
+	map<int64_t, CRDFClass*> m_mapClasses;
+	map<int64_t, CRDFProperty*> m_mapProperties;
+	map<int64_t, CRDFInstance*> m_mapInstances;
 	map<OwlInstance, bool> m_mapInstanceDefaultState; 
 	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
@@ -75,7 +74,7 @@ public: // Methods
 	CRDFModel();
 	virtual ~CRDFModel();
 
-	OwlModel GetModel() const;
+	OwlModel GetInstance() const { return m_iModel; }
 	wstring GetModelName() const;
 	virtual void CreateDefaultModel();
 

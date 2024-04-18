@@ -51,7 +51,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 			continue;
 		}
 
-		if (pInstance->GetModel() == pModel->GetModel())
+		if (pInstance->GetModel() == pModel->GetInstance())
 		{
 			vecModel.push_back(pInstance);
 		}		

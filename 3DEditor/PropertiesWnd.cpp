@@ -1748,14 +1748,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pModel = GetController()->GetModel();
 			ASSERT(pModel != nullptr);
 
-			ASSERT(pData->GetInstance()->GetClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"));			
+			ASSERT(pData->GetInstance()->GetClassInstance() == GetClassByName(pModel->GetInstance(), "ColorComponent"));
 
 			auto& mapProperties = pModel->GetProperties();
 
 			/*
 			* R
 			*/
-			int64_t iRProperty = GetPropertyByName(pModel->GetModel(), "R");
+			int64_t iRProperty = GetPropertyByName(pModel->GetInstance(), "R");
 
 			double dR = GetRValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->GetInstance(), iRProperty, &dR, 1);
@@ -1771,7 +1771,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* G
 			*/
-			int64_t iGProperty = GetPropertyByName(pModel->GetModel(), "G");
+			int64_t iGProperty = GetPropertyByName(pModel->GetInstance(), "G");
 
 			double dG = GetGValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->GetInstance(), iGProperty, &dG, 1);
@@ -1787,7 +1787,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* B
 			*/
-			int64_t iBProperty = GetPropertyByName(pModel->GetModel(), "B");
+			int64_t iBProperty = GetPropertyByName(pModel->GetInstance(), "B");
 
 			double dB = GetBValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->GetInstance(), iBProperty, &dB, 1);
@@ -2757,12 +2757,12 @@ void CPropertiesWnd::LoadInstanceProperties()
 		/*
 		* ColorComponent
 		*/
-		if (pInstance->GetClassInstance() == GetClassByName(pModel->GetModel(), "ColorComponent"))
+		if (pInstance->GetClassInstance() == GetClassByName(pModel->GetInstance(), "ColorComponent"))
 		{
 			/*
 			* R
 			*/
-			int64_t iRProperty = GetPropertyByName(pModel->GetModel(), "R");
+			int64_t iRProperty = GetPropertyByName(pModel->GetInstance(), "R");
 
 			int64_t iCard = 0;
 			double * pdRValue = nullptr;
@@ -2772,7 +2772,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 			/*
 			* G
 			*/
-			int64_t iGProperty = GetPropertyByName(pModel->GetModel(), "G");
+			int64_t iGProperty = GetPropertyByName(pModel->GetInstance(), "G");
 
 			iCard = 0;
 			double * pdGValue = nullptr;
@@ -2781,7 +2781,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 			/*
 			* B
 			*/
-			int64_t iBProperty = GetPropertyByName(pModel->GetModel(), "B");
+			int64_t iBProperty = GetPropertyByName(pModel->GetInstance(), "B");
 
 			iCard = 0;
 			double * pdBValue = nullptr;

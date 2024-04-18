@@ -1530,7 +1530,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1635,7 +1635,7 @@ void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 		{
 			CRDFInstance* pInstance = itInstance;
 
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1687,7 +1687,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1744,7 +1744,7 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1809,7 +1809,7 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1954,7 +1954,7 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 	{
 		auto pInstance = itInstance->second;
 
-		if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+		if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 		{
 			continue;
 		}
@@ -2137,7 +2137,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 		{
 			CRDFInstance* pInstance = itInstance->second;
 
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2184,7 +2184,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
+		if (m_pSelectedInstance->GetModel() == pModel->GetInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
 			ASSERT(!vecTriangles.empty());
@@ -2359,7 +2359,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 		{
 			CRDFInstance* pInstance = itInstance->second;
 
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2406,7 +2406,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
+		if (m_pSelectedInstance->GetModel() == pModel->GetInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
 			ASSERT(!vecTriangles.empty());
@@ -2581,7 +2581,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 		{
 			CRDFInstance* pInstance = itInstance->second;
 
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2628,7 +2628,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 	} // if (m_pSelectedInstance == nullptr)
 	else
 	{
-		if (m_pSelectedInstance->GetModel() == pModel->GetModel())
+		if (m_pSelectedInstance->GetModel() == pModel->GetInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
 			ASSERT(!vecTriangles.empty());
@@ -2781,7 +2781,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFr
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->GetModel() != pModel->GetModel()) || !pInstance->getEnable())
+			if ((pInstance->GetModel() != pModel->GetInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -2895,7 +2895,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 		return;
 	}
 	
-	if ((m_pSelectedInstance->GetModel() != pModel->GetModel()) || !m_pSelectedInstance->getEnable())
+	if ((m_pSelectedInstance->GetModel() != pModel->GetInstance()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}
@@ -3053,7 +3053,7 @@ void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
 		return;
 	}
 
-	if ((m_pSelectedInstance->GetModel() != pModel->GetModel()) || !m_pSelectedInstance->getEnable())
+	if ((m_pSelectedInstance->GetModel() != pModel->GetInstance()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}

@@ -374,14 +374,14 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 		return;
 	}
 
-	SaveAsCityGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+	SaveAsCityGMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetModel() != 0) &&
-		IsCityGML(m_pModel->GetModel()));
+		(m_pModel->GetInstance() != 0) &&
+		IsCityGML(m_pModel->GetInstance()));
 }
 
 void CMy3DEditorDoc::OnExportAsInfragml()
@@ -398,14 +398,14 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 		return;
 	}
 
-	SaveAsInfraGMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+	SaveAsInfraGMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetModel() != 0) &&
-		IsInfraGML(m_pModel->GetModel()));
+		(m_pModel->GetInstance() != 0) &&
+		IsInfraGML(m_pModel->GetInstance()));
 }
 
 void CMy3DEditorDoc::OnExportAsLandxml()
@@ -422,12 +422,12 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 		return;
 	}
 
-	SaveAsLandXMLW(m_pModel->GetModel(), dlgFile.GetPathName().GetString());
+	SaveAsLandXMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetModel() != 0) &&
-		isLandXML(m_pModel->GetModel()));
+		(m_pModel->GetInstance() != 0) &&
+		isLandXML(m_pModel->GetInstance()));
 }
