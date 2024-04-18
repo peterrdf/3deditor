@@ -1644,7 +1644,7 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iIBO)] = iIBO;
 
-		int_t iIndicesCount = 0;
+		int64_t iIndicesCount = 0;
 		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
 
 		if ((pIndices == nullptr) || (iIndicesCount == 0))
@@ -1683,7 +1683,7 @@ public: // Methods
 			return 0;
 		}
 
-		int_t iVerticesCount = 0;
+		int64_t iVerticesCount = 0;
 		float* pVertices = getVertices(vecInstances, pProgram->_getSupportsTexture(), iVerticesCount);
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
@@ -1767,7 +1767,7 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int_t& iVerticesCount)
+	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
 	{
 		const int64_t _VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
@@ -1779,7 +1779,7 @@ public: // Methods
 
 		float* pVertices = new float[iVerticesCount * _VERTEX_LENGTH];
 
-		int_t iOffset = 0;
+		int64_t iOffset = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
 			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
