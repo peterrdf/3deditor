@@ -2,6 +2,7 @@
 
 #include <string>
 
+// ************************************************************************************************
 class _color
 {
 
@@ -40,21 +41,6 @@ public: // Methods
 
 		m_fB = (float)(iColor & (255 * 256)) / 256;
 		m_fB /= 255.f;
-	}
-
-	float r() const
-	{
-		return m_fR;
-	}
-
-	float g() const
-	{
-		return m_fG;
-	}
-
-	float b() const
-	{
-		return m_fB;
 	}
 
 	bool operator == (const _color& c) const
@@ -131,8 +117,13 @@ public: // Methods
 
 		return false;
 	}
+
+	float r() const { return m_fR; }
+	float g() const { return m_fG; }
+	float b() const { return m_fB; }
 };
 
+// ************************************************************************************************
 class _material
 {
 
@@ -214,48 +205,21 @@ public: // Methods
 		m_strTexture = (szTexture != nullptr ? szTexture : L"");
 	}
 
-	const _color& getAmbientColor() const
-	{
-		return m_clrAmbient;
-	}
-
-	const _color& getDiffuseColor() const
-	{
-		return m_clrDiffuse;
-	}
-
-	const _color& getEmissiveColor() const
-	{
-		return m_clrEmissive;
-	}
-
-	const _color& getSpecularColor() const
-	{
-		return m_clrSpecular;
-	}
-
-	float getA() const
-	{
-		return m_fA;
-	}	
-
-	const std::wstring& texture() const
-	{
-		return m_strTexture;
-	}
-
-	bool hasTexture() const
-	{
-		return !m_strTexture.empty();
-	}
+	const _color& getAmbientColor() const { return m_clrAmbient; }
+	const _color& getDiffuseColor() const { return m_clrDiffuse; }
+	const _color& getEmissiveColor() const { return m_clrEmissive; } 
+	const _color& getSpecularColor() const { return m_clrSpecular; }
+	float getA() const { return m_fA; }
+	const std::wstring& texture() const { return m_strTexture; }
+	bool hasTexture() const { return !m_strTexture.empty(); }
 };
 
+// ************************************************************************************************
 class _materialsComparator
 {
 
-public:
+public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	bool operator()(const _material& left, const _material& right) const
 	{
 		if (left.hasTexture() || right.hasTexture())
