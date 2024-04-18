@@ -9,6 +9,7 @@
 #include <vector>
 using namespace std;
 
+// ************************************************************************************************
 class _primitives
 {
 
@@ -22,24 +23,16 @@ public: // Methods
 	_primitives(int64_t iStartIndex, int64_t iIndicesCount)
 		: m_iStartIndex(iStartIndex)
 		, m_iIndicesCount(iIndicesCount)
-	{
-	}
+	{}
 
 	virtual ~_primitives()
-	{
-	}
+	{}
 
-	int64_t& startIndex()
-	{
-		return m_iStartIndex;
-	}
-
-	int64_t& indicesCount()
-	{
-		return m_iIndicesCount;
-	}
+	int64_t& startIndex() { return m_iStartIndex; }
+	int64_t& indicesCount() { return m_iIndicesCount; }
 };
 
+// ************************************************************************************************
 class _cohort
 {
 
@@ -56,27 +49,10 @@ public: // Methods
 		: m_vecIndices()
 		, m_iIBO(0)
 		, m_iIBOOffset(0)
-	{
-	}
+	{}
 
 	virtual ~_cohort()
-	{
-	}
-
-	vector<GLuint>& indices()
-	{
-		return m_vecIndices;
-	}
-
-	GLuint& ibo()
-	{
-		return m_iIBO;
-	}
-
-	GLsizei& iboOffset()
-	{
-		return m_iIBOOffset;
-	}
+	{}	
 
 	static unsigned int* merge(const vector<_cohort*>& vecCohorts, int64_t& iIndicesCount)
 	{
@@ -115,8 +91,13 @@ public: // Methods
 
 		vecCohorts.clear();
 	}
+
+	vector<GLuint>& indices() { return m_vecIndices; }
+	GLuint& ibo() { return m_iIBO; }
+	GLsizei& iboOffset() { return m_iIBOOffset; }
 };
 
+// ************************************************************************************************
 class _face : public _primitives
 {
 
@@ -129,19 +110,15 @@ public: // Methods
 	_face(int64_t iIndex, int64_t iStartIndex, int64_t iIndicesCount)
 		: _primitives(iStartIndex, iIndicesCount)
 		, m_iIndex(iIndex)
-	{
-	}
+	{}
 
 	virtual ~_face()
-	{
-	}
+	{}
 
-	int64_t getIndex() const
-	{
-		return m_iIndex;
-	}
+	int64_t getIndex() const { return m_iIndex; }
 };
 
+// ************************************************************************************************
 class _facesCohort : public _cohort
 {
 
@@ -156,26 +133,19 @@ public: // Methods
 		: _cohort()
 		, m_vecFaces()
 		, m_material(material)
-	{
-	}
+	{}
 
 	virtual ~_facesCohort()
-	{
-	}
+	{}
 
-	vector<_face>& faces()
-	{
-		return m_vecFaces;
-	}
-
-	const _material* getMaterial() const
-	{
-		return &m_material;
-	}
+	vector<_face>& faces() { return m_vecFaces; }
+	const _material* getMaterial() const { return &m_material; }
 };
 
+// ************************************************************************************************
 typedef map<_material, vector<_face>, _materialsComparator> MATERIALS;
 
+// ************************************************************************************************
 template<class T>
 class _buffer
 {
@@ -190,25 +160,18 @@ public: // Methods
 	_buffer()
 		: m_pData(nullptr)
 		, m_iSize(0)
-	{
-	}
+	{}
 
 	virtual ~_buffer()
 	{
 		delete[] m_pData;
 	}
 
-	T*& data()
-	{
-		return m_pData;
-	}
-
-	int64_t& size()
-	{
-		return m_iSize;
-	}
+	T*& data() { return m_pData; }
+	int64_t& size() { return m_iSize; }
 };
 
+// ************************************************************************************************
 template<class V>
 class _vertexBuffer : public _buffer<V>
 {
@@ -229,18 +192,16 @@ public: // Methods
 	}
 
 	virtual ~_vertexBuffer()
-	{
-	}
+	{}
 
-	int64_t& vertexLength()
-	{
-		return m_iVertexLength;
-	}
+	int64_t& vertexLength() { return m_iVertexLength; }
 };
 
+// ************************************************************************************************
 typedef _vertexBuffer<float> _vertices_f;
 typedef _vertexBuffer<double> _vertices_d;
 
+// ************************************************************************************************
 template<class I>
 class _indexBuffer : public _buffer<I>
 {
@@ -256,9 +217,9 @@ public: // Methods
 	}
 
 	virtual ~_indexBuffer()
-	{
-	}
+	{}
 };
 
+// ************************************************************************************************
 typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;

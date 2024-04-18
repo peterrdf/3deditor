@@ -521,7 +521,7 @@ void CRDFInstance::Scale(float fScaleFactor)
 	}
 
 	/* Vertices */
-	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
+	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		m_pVertices[(iVertex * VERTEX_LENGTH)] = m_pVertices[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
@@ -537,7 +537,7 @@ void CRDFInstance::Translate(float fX, float fY, float fZ)
 	}
 
 	/* Vertices */
-	for (int_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
+	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
 		m_pVertices[(iVertex * VERTEX_LENGTH)] += fX;
 		m_pVertices[(iVertex * VERTEX_LENGTH) + 1] += fY;
@@ -871,8 +871,8 @@ void CRDFInstance::Calculate()
 		{
 			_face& concFace = itMaterial2ConcFaces->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -882,7 +882,7 @@ void CRDFInstance::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -906,7 +906,7 @@ void CRDFInstance::Calculate()
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -955,7 +955,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -988,8 +988,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndex = m_vecFacePolygons[iFace].startIndex();
-			int_t iIndicesCount = m_vecFacePolygons[iFace].indicesCount();
+			int64_t iStartIndex = m_vecFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = m_vecFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1001,13 +1001,13 @@ void CRDFInstance::Calculate()
 					pCohort = new _cohort();
 					facePolygonsCohorts().push_back(pCohort);
 
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-					} // for (int_t iIndex = ...
+					}
 
 					iIndicesCount -= _oglUtils::getIndicesCountLimit() / 2;
 					iStartIndex += _oglUtils::getIndicesCountLimit() / 2;
@@ -1018,13 +1018,13 @@ void CRDFInstance::Calculate()
 					pCohort = new _cohort();
 					facePolygonsCohorts().push_back(pCohort);
 
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-					} // for (int_t iIndex = ...
+					}
 				}
 
 				continue;
@@ -1039,13 +1039,13 @@ void CRDFInstance::Calculate()
 				facePolygonsCohorts().push_back(pCohort);
 			}
 
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex += 2)
 			{
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-			} // for (int_t iIndex = ...			
+			}			
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
@@ -1077,8 +1077,8 @@ void CRDFInstance::Calculate()
 
 		for (size_t iFace = 0; iFace < m_vecConcFacePolygons.size(); iFace++)
 		{
-			int_t iStartIndex = m_vecConcFacePolygons[iFace].startIndex();
-			int_t iIndicesCount = m_vecConcFacePolygons[iFace].indicesCount();
+			int64_t iStartIndex = m_vecConcFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = m_vecConcFacePolygons[iFace].indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1090,13 +1090,13 @@ void CRDFInstance::Calculate()
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit() / 2;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-					} // for (int_t iIndex = ...
+					}
 
 					iIndicesCount -= _oglUtils::getIndicesCountLimit() / 2;
 					iStartIndex += _oglUtils::getIndicesCountLimit() / 2;
@@ -1107,13 +1107,13 @@ void CRDFInstance::Calculate()
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-					} // for (int_t iIndex = ...
+					}
 				}
 
 				continue;
@@ -1128,13 +1128,13 @@ void CRDFInstance::Calculate()
 				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex += 2)
 			{
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
-			} // for (int_t iIndex = ...
+			}
 		} // for (size_t iFace = ...
 
 #ifdef _DEBUG
@@ -1157,8 +1157,8 @@ void CRDFInstance::Calculate()
 		{
 			_face& concFace = itMaterial2ConcFaceLines->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1168,7 +1168,7 @@ void CRDFInstance::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -1192,7 +1192,7 @@ void CRDFInstance::Calculate()
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -1241,7 +1241,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
@@ -1265,8 +1265,8 @@ void CRDFInstance::Calculate()
 		{
 			_face& concFace = itMaterial2ConcFacePoints->second[iConcFace];
 
-			int_t iStartIndex = concFace.startIndex();
-			int_t iIndicesCount = concFace.indicesCount();
+			int64_t iStartIndex = concFace.startIndex();
+			int64_t iIndicesCount = concFace.indicesCount();
 
 			/*
 			* Split the conceptual face - isolated case
@@ -1276,7 +1276,7 @@ void CRDFInstance::Calculate()
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
 					{
@@ -1300,7 +1300,7 @@ void CRDFInstance::Calculate()
 				if (iIndicesCount > 0)
 				{
 					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
-					for (int_t iIndex = iStartIndex;
+					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
 					{
@@ -1349,7 +1349,7 @@ void CRDFInstance::Calculate()
 			/*
 			* Add the indices
 			*/
-			for (int_t iIndex = iStartIndex;
+			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
 				iIndex++)
 			{
