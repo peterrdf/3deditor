@@ -633,8 +633,7 @@ public: // Methods
 	}
 
 	virtual ~_oglBlinnPhongProgram(void)
-	{
-	}
+	{}
 
 	bool _getSupportsTexture() const
 	{
@@ -1874,6 +1873,7 @@ enum class enumView : int64_t
 	Isometric,
 };
 
+// ************************************************************************************************
 enum class enumRotationMode : int
 {
 	XY = 0, // Standard
@@ -2016,8 +2016,7 @@ public: // Methods
 	}	
 
 	virtual ~_oglRenderer()
-	{
-	}
+	{}
 
 	// _ioglRenderer
 	virtual _oglProgram* _getOGLProgram() const override { return m_pOGLProgram; }
