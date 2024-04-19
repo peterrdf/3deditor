@@ -146,7 +146,7 @@ public: // Methods
 
 // ************************************************************************************************
 CRDFModel::CRDFModel()
-	: m_strModel(L"")
+	: m_strPath(L"")
 	, m_iModel(0)
 	, m_mapClasses()
 	, m_mapProperties()
@@ -180,13 +180,6 @@ CRDFModel::~CRDFModel()
 	delete m_pTextBuilder;
 
 	Clean();
-}
-
-wstring CRDFModel::GetModelName() const
-{
-	fs::path pthModel = m_strModel;
-
-	return pthModel.wstring();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -270,22 +263,16 @@ wstring CRDFModel::GetModelName() const
 }
 
 // ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFClass *> & CRDFModel::GetClasses() const
-{
-	return m_mapClasses;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestors) const
 {
 	ASSERT(iClassInstance != 0);
 
-	map<int64_t, CRDFClass *>::const_iterator itClass = m_mapClasses.find(iClassInstance);
+	const auto& itClass = m_mapClasses.find(iClassInstance);
 	ASSERT(itClass != m_mapClasses.end());
 
-	CRDFClass * pClass = itClass->second;
+	auto pClass = itClass->second;
 
-	const vector<int64_t> & vecParentClasses = pClass->getParentClasses();
+	const auto& vecParentClasses = pClass->getParentClasses();
 	if (vecParentClasses.empty())
 	{
 		return;
@@ -299,17 +286,6 @@ void CRDFModel::GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecA
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFProperty *>& CRDFModel::GetProperties()
-{
-	return m_mapProperties;
-}
-
-// ------------------------------------------------------------------------------------------------
-const map<int64_t, CRDFInstance *>& CRDFModel::GetInstances() const
-{
-	return m_mapInstances;
-}
 // ------------------------------------------------------------------------------------------------
 CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 {
@@ -820,7 +796,7 @@ void CRDFModel::Load(const wchar_t * szPath, bool bLoading)
 	{
 		Clean();
 
-		m_strModel = szPath;
+		m_strPath = szPath;
 	}	
 
 	CLoadTask loadTask(this, szPath, bLoading);
@@ -915,14 +891,14 @@ void CRDFModel::PostLoad()
 
 CTexture* CRDFModel::GetTexture(const wstring& strTexture)
 {
-	if (!m_strModel.empty())
+	if (!m_strPath.empty())
 	{
 		if (m_mapTextures.find(strTexture) != m_mapTextures.end())
 		{
 			return m_mapTextures.at(strTexture);
 		}
 
-		fs::path pthFile = m_strModel;
+		fs::path pthFile = m_strPath;
 		fs::path pthTexture = pthFile.parent_path();
 		pthTexture.append(strTexture);
 
@@ -1201,7 +1177,7 @@ void CRDFModel::LoadRDFModel()
 	} // while (iClassInstance != 0)
 
 	// Load/Import Model
-	int64_t iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
+	RdfProperty iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
 	while (iPropertyInstance != 0)
 	{
 		auto itProperty = m_mapProperties.find(iPropertyInstance);

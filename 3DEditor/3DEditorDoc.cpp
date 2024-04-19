@@ -362,7 +362,7 @@ void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
-	wstring strFileName = m_pModel->GetModelName();
+	wstring strFileName = m_pModel->GetPath();
 	strFileName += L".bin.citygml";
 
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
@@ -386,7 +386,7 @@ void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsInfragml()
 {
-	wstring strFileName = m_pModel->GetModelName();
+	wstring strFileName = m_pModel->GetPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
@@ -410,7 +410,7 @@ void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsLandxml()
 {
-	wstring strFileName = m_pModel->GetModelName();
+	wstring strFileName = m_pModel->GetPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");

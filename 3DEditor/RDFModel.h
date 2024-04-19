@@ -27,13 +27,13 @@ class CRDFModel
 
 protected: // Members
 
-	wstring m_strModel;
+	wstring m_strPath;
 	OwlModel m_iModel;
 
 	// Cache
-	map<int64_t, CRDFClass*> m_mapClasses;
-	map<int64_t, CRDFProperty*> m_mapProperties;
-	map<int64_t, CRDFInstance*> m_mapInstances;
+	map<OwlClass, CRDFClass*> m_mapClasses;
+	map<RdfProperty, CRDFProperty*> m_mapProperties;
+	map<OwlInstance, CRDFInstance*> m_mapInstances;
 	map<OwlInstance, bool> m_mapInstanceDefaultState; 
 	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
@@ -72,16 +72,11 @@ protected: // Members
 public: // Methods
 
 	CRDFModel();
-	virtual ~CRDFModel();
-
-	OwlModel GetInstance() const { return m_iModel; }
-	wstring GetModelName() const;
+	virtual ~CRDFModel();	
+	
 	virtual void CreateDefaultModel();
-
-	const map<int64_t, CRDFClass *>& GetClasses() const;
-	void GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestors) const;
-	const map<int64_t, CRDFProperty *>& GetProperties();
-	const map<int64_t, CRDFInstance *>& GetInstances() const;
+	
+	void GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestors) const;	
 	CRDFInstance* GetInstanceByID(int64_t iID);
 	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
 	CRDFInstance* CreateNewInstance(int64_t iClassInstance);
@@ -121,6 +116,13 @@ public: // Methods
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
 	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix = L"");
+
+	wstring GetPath() const { return m_strPath; }
+	OwlModel GetInstance() const { return m_iModel; }
+
+	const map<OwlClass, CRDFClass*>& GetClasses() const { return m_mapClasses; }
+	const map<RdfProperty, CRDFProperty*>& GetProperties() const { return m_mapProperties; }
+	const map<OwlInstance, CRDFInstance*>& GetInstances() const { return m_mapInstances; }
 
 protected: // Methods
 
