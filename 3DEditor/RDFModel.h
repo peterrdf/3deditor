@@ -57,11 +57,6 @@ protected: // Members
 	// World's bounding sphere diameter
 	float m_fBoundingSphereDiameter;
 
-	// World's translations - center
-	float m_fXTranslation;
-	float m_fYTranslation;
-	float m_fZTranslation;
-
 	// Support for textures
 	CTexture* m_pDefaultTexture;
 	map<wstring, CTexture*> m_mapTextures;
@@ -89,12 +84,11 @@ public: // Methods
 	void ImportModel(const wchar_t* szPath);
 
 	void GetCompatibleInstances(CRDFInstance* pInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
-
+	
 	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
 	double GetOriginalBoundingSphereDiameter() const;
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float GetBoundingSphereDiameter() const;
-	void GetWorldTranslations(float& fXTranslation, float& fYTranslation, float& fZTranslation) const;
 
 	virtual void ScaleAndCenter(bool bLoadingModel = false);	
 
