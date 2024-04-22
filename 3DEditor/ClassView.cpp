@@ -330,7 +330,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 			wstring strNameAndType = pProperty->GetName();
 			strNameAndType += L" : ";
 
-			switch (pProperty->getType())
+			switch (pProperty->GetType())
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
@@ -383,7 +383,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 
 			HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
 
-			switch (pProperty->getType())
+			switch (pProperty->GetType())
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
@@ -392,7 +392,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 					CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
 					ASSERT(pObjectRDFProperty != nullptr);
 
-					auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
+					auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
 					for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 					{
 						auto itRestrictionRDFClass = mapClasses.find(vecRestrictions[iRestriction]);
@@ -527,7 +527,7 @@ void CClassView::PropertiesAlphabeticalView()
 		wstring strNameAndType = pProperty->GetName();
 		strNameAndType += L" : ";
 
-		switch (pProperty->getType())
+		switch (pProperty->GetType())
 		{
 			case OBJECTPROPERTY_TYPE:
 			{
@@ -579,7 +579,7 @@ void CClassView::PropertiesAlphabeticalView()
 		} // switch (pProperty->getType())
 
 		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hRoot);
-		switch (pProperty->getType())
+		switch (pProperty->GetType())
 		{
 			case OBJECTPROPERTY_TYPE:
 			{
@@ -588,7 +588,7 @@ void CClassView::PropertiesAlphabeticalView()
 				auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
 				ASSERT(pObjectRDFProperty != nullptr);
 
-				auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
+				auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
 				ASSERT(!vecRestrictions.empty());
 
 				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)

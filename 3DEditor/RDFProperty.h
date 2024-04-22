@@ -15,21 +15,21 @@ private: // Members
 
 protected: // Members
 
-	int64_t m_iType;
+	int m_iType;
 
 public: // Methods
 
 	CRDFProperty(RdfProperty iInstance);
 	virtual ~CRDFProperty();	
 
-	wstring getTypeAsString() const;
-	wstring getRange() const;
-	wstring getCardinality(OwlInstance iInstance) const;
+	wstring GetTypeAsString() const;
+	wstring GetRange() const;
+	wstring GetCardinality(OwlInstance iInstance) const;
 	void GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const;
 
 	RdfProperty GetInstance() const { return m_iInstance; }
 	const wchar_t* GetName() const { return m_szName; }
-	int64_t getType() const { return m_iType; }
+	int GetType() const { return m_iType; }
 };
 
 // ************************************************************************************************
@@ -105,7 +105,7 @@ public: // Methods
 	CObjectRDFProperty(RdfProperty iInstance);
 	virtual ~CObjectRDFProperty();
 
-	const vector<int64_t>& getRestrictions() const { return m_vecRestrictions; }
+	const vector<int64_t>& GetRestrictions() const { return m_vecRestrictions; }
 };
 
 // ************************************************************************************************

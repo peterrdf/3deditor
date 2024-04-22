@@ -173,7 +173,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		iMinCard = 0;
 	}
 
-	switch (pData->GetProperty()->getType())
+	switch (pData->GetProperty()->GetType())
 	{
 	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
@@ -266,7 +266,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	int64_t iMaxCard = 0;
 	pData->GetProperty()->GetRestrictions(pData->GetInstance()->GetInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->getType())
+	switch (pData->GetProperty()->GetType())
 	{
 	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
@@ -676,7 +676,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	int64_t iMaxCard = 0;
 	pData->GetProperty()->GetRestrictions(pData->GetInstance()->GetInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->getType())
+	switch (pData->GetProperty()->GetType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
@@ -839,7 +839,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	int64_t iMaxCard = 0;
 	pData->GetProperty()->GetRestrictions(pData->GetInstance()->GetInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->getType())
+	switch (pData->GetProperty()->GetType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
@@ -1820,7 +1820,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		auto pData = (CRDFInstancePropertyData *)pProperty->GetData();
 		ASSERT(pData != nullptr);
 
-		switch(pData->GetProperty()->getType())
+		switch(pData->GetProperty()->GetType())
 		{
 			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
@@ -2822,7 +2822,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	/*
 	* range
 	*/
-	if (pProperty->getType() == OBJECTPROPERTY_TYPE)
+	if (pProperty->GetType() == OBJECTPROPERTY_TYPE)
 	{
 		ASSERT(GetController() != nullptr);
 
@@ -2831,7 +2831,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 
 		wstring strRange;
 
-		auto vecRestrictions = pObjectRDFProperty->getRestrictions();
+		auto vecRestrictions = pObjectRDFProperty->GetRestrictions();
 		for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 		{
 			char * szClassName = nullptr;
@@ -2852,7 +2852,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	} // if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	else
 	{
-		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRange().c_str(), pProperty->GetName());
+		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->GetRange().c_str(), pProperty->GetName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
@@ -2872,7 +2872,7 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
-	switch (pProperty->getType())
+	switch (pProperty->GetType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
@@ -2883,7 +2883,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2902,7 +2902,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2923,7 +2923,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2942,7 +2942,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2961,7 +2961,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2980,7 +2980,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2999,7 +2999,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -3036,7 +3036,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
-	switch (pProperty->getType())
+	switch (pProperty->GetType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{	
@@ -4103,7 +4103,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	auto pCardinalityProperty = (CAddRDFInstanceProperty*)pPropertyGroup->GetSubItem(1);
 
-	wstring strCardinality = pProperty->getCardinality(pInstance->GetInstance());
+	wstring strCardinality = pProperty->GetCardinality(pInstance->GetInstance());
 
 	pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
 	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());

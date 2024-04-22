@@ -15,11 +15,11 @@ CRDFProperty::CRDFProperty(RdfProperty iInstance)
 /*virtual*/ CRDFProperty::~CRDFProperty()
 {}
 
-wstring CRDFProperty::getTypeAsString() const
+wstring CRDFProperty::GetTypeAsString() const
 {
 	wstring strType = L"unknown";
 
-	switch (getType())
+	switch (GetType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{
@@ -73,11 +73,11 @@ wstring CRDFProperty::getTypeAsString() const
 	return strType;
 }
 
-wstring CRDFProperty::getRange() const
+wstring CRDFProperty::GetRange() const
 {
 	wstring strRange = L"unknown";
 
-	switch (getType())
+	switch (GetType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{
@@ -131,13 +131,13 @@ wstring CRDFProperty::getRange() const
 	return strRange;
 }
 
-wstring CRDFProperty::getCardinality(OwlInstance iInstance) const
+wstring CRDFProperty::GetCardinality(OwlInstance iInstance) const
 {
 	ASSERT(iInstance != 0);
 
 	int64_t iCard = 0;
 
-	switch (getType())
+	switch (GetType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{

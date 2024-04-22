@@ -471,7 +471,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	int64_t iClassInstance = GetInstanceClass(pInstance->GetInstance());
 	ASSERT(iClassInstance != 0);
 
-	auto& vecRestrictions = pObjectRDFProperty->getRestrictions();
+	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
 	ASSERT(!vecRestrictions.empty());
 
 	auto& mapRFDInstances = GetInstances();
@@ -885,7 +885,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 
 	/* value */
 	wchar_t szBuffer[1000];
-	switch (pProperty->getType())
+	switch (pProperty->GetType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{

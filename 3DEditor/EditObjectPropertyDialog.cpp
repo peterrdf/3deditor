@@ -96,7 +96,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pProperty);
 	ASSERT(pObjectRDFProperty != nullptr);
 
-	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->getRestrictions();
+	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->GetRestrictions();
 	ASSERT(!vecRestrictions.empty());
 
 	/*
