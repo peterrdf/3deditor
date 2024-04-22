@@ -12,14 +12,11 @@ private: // Members
 
 	RdfProperty m_iInstance;
 	wchar_t* m_szName;
-
-protected: // Members
-
-	int m_iType;
+	int m_iType;	
 
 public: // Methods
 
-	CRDFProperty(RdfProperty iInstance);
+	CRDFProperty(RdfProperty iInstance, int iType);
 	virtual ~CRDFProperty();	
 
 	wstring GetTypeAsString() const;
