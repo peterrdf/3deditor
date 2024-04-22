@@ -2,12 +2,7 @@
 
 #include "Texture.h"
 #include "RDFClass.h"
-#include "ObjectRDFProperty.h"
-#include "BoolRDFProperty.h"
-#include "StringRDFProperty.h"
-#include "IntRDFProperty.h"
-#include "DoubleRDFProperty.h"
-#include "UndefinedRDFProperty.h"
+#include "RDFProperty.h"
 #include "RDFInstance.h"
 #include "TextBuilder.h"
 

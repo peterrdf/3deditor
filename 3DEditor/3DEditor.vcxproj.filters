@@ -62,21 +62,6 @@
     <ClInclude Include="RDFProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntRDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DoubleRDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringRDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectRDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoolRDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFPropertyRestriction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -113,9 +98,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Octree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CUniqueVerticesCheck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,9 +114,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UndefinedRDFProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestManager.h">
@@ -223,21 +202,6 @@
     <ClCompile Include="RDFProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IntRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DoubleRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StringRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoolRDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RDFPropertyRestriction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -278,9 +242,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SelectInstanceDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UndefinedRDFProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestManager.cpp">

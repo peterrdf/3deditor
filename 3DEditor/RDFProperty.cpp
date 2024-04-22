@@ -1,19 +1,14 @@
 #include "stdafx.h"
 #include "RDFProperty.h"
 
-#ifdef _LINUX
-#include<wx/string.h>
-#endif // _LINUX
-
 // ************************************************************************************************
-CRDFProperty::CRDFProperty(RdfProperty iPropertyInstance)
-	: m_iInstance(iPropertyInstance)
+CRDFProperty::CRDFProperty(RdfProperty iInstance)
+	: m_iInstance(iInstance)
 	, m_szName(nullptr)
 	, m_iType(-1)
 {
 	ASSERT(m_iInstance != 0);
 
-	char* szPropertyName = nullptr;
 	GetNameOfPropertyW(m_iInstance, &m_szName);
 }
 
@@ -239,3 +234,93 @@ void CRDFProperty::GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int
 	GetClassPropertyAggregatedCardinalityRestriction(iClassInstance, m_iInstance, &iMinCard, &iMaxCard);
 }
 
+// ************************************************************************************************
+CDoubleRDFProperty::CDoubleRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_DOUBLE;
+}
+
+/*virtual*/ CDoubleRDFProperty::~CDoubleRDFProperty()
+{}
+
+// ************************************************************************************************
+CIntRDFProperty::CIntRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_INTEGER;
+}
+
+CIntRDFProperty::~CIntRDFProperty()
+{}
+
+// ************************************************************************************************
+CBoolRDFProperty::CBoolRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_BOOLEAN;
+}
+
+/*virtual*/ CBoolRDFProperty::~CBoolRDFProperty()
+{}
+
+// ************************************************************************************************
+CStringRDFProperty::CStringRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_STRING;
+}
+
+CStringRDFProperty::~CStringRDFProperty()
+{}
+
+// ************************************************************************************************
+CCharArrayRDFProperty::CCharArrayRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_CHAR_ARRAY;
+}
+
+// ************************************************************************************************
+CCharArrayRDFProperty::~CCharArrayRDFProperty()
+{
+}
+
+// ************************************************************************************************
+CWCharArrayRDFProperty::CWCharArrayRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY;
+}
+
+CWCharArrayRDFProperty::~CWCharArrayRDFProperty()
+{}
+
+// ************************************************************************************************
+CObjectRDFProperty::CObjectRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+	, m_vecRestrictions()
+{
+	m_iType = OBJECTPROPERTY_TYPE;
+
+	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), 0);
+	while (iRestrictionsClassInstance != 0)
+	{
+		m_vecRestrictions.push_back(iRestrictionsClassInstance);
+
+		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), iRestrictionsClassInstance);
+	}
+}
+
+CObjectRDFProperty::~CObjectRDFProperty()
+{}
+
+// ************************************************************************************************
+CUndefinedRDFProperty::CUndefinedRDFProperty(RdfProperty iInstance)
+	: CRDFProperty(iInstance)
+{
+	m_iType = 0;
+}
+
+CUndefinedRDFProperty::~CUndefinedRDFProperty()
+{}

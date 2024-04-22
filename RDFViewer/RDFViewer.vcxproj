@@ -199,7 +199,6 @@
     <ClInclude Include="..\3DEditor\conceptMesh.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\TextBuilder.h" />
-    <ClInclude Include="..\3DEditor\UndefinedRDFProperty.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
     <ClInclude Include="..\stb\stb_image.h" />
     <ClInclude Include="InstancesDialog.h" />
@@ -213,12 +212,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\3DEditor\BoolRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
     <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp" />
-    <ClCompile Include="..\3DEditor\DoubleRDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\IntRDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\ObjectRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp" />
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp" />
@@ -229,10 +224,8 @@
     <ClCompile Include="..\3DEditor\RDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp" />
     <ClCompile Include="..\3DEditor\RDFView.cpp" />
-    <ClCompile Include="..\3DEditor\StringRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\TextBuilder.cpp" />
     <ClCompile Include="..\3DEditor\Texture.cpp" />
-    <ClCompile Include="..\3DEditor\UndefinedRDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\_dxf_parser.cpp" />
     <ClCompile Include="..\stb\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

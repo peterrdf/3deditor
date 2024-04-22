@@ -212,23 +212,18 @@
     <ClInclude Include="3DEditor.h" />
     <ClInclude Include="3DEditorDoc.h" />
     <ClInclude Include="3DEditorView.h" />
-    <ClInclude Include="BoolRDFProperty.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="ClassViewConsts.h" />
     <ClInclude Include="conceptMesh.h" />
     <ClInclude Include="ProgressDialog.h" />
     <ClInclude Include="RenameDialog.h" />
     <ClInclude Include="CUniqueVerticesCheck.h" />
-    <ClInclude Include="DoubleRDFProperty.h" />
     <ClInclude Include="EditObjectPropertyDialog.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="DesignTreeViewConsts.h" />
     <ClInclude Include="Generic.h" />
-    <ClInclude Include="IntRDFProperty.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="NewInstanceDialog.h" />
-    <ClInclude Include="ObjectRDFProperty.h" />
-    <ClInclude Include="Octree.h" />
     <ClInclude Include="OpenGLRDFView.h" />
     <ClInclude Include="ProgressIndicator.h" />
     <ClInclude Include="PropertiesWnd.h" />
@@ -247,7 +242,6 @@
     <ClInclude Include="SelectInstanceDialog.h" />
     <ClInclude Include="SettingsStorage.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StringRDFProperty.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="TestHtmlReport.h" />
@@ -255,7 +249,6 @@
     <ClInclude Include="TextBuilder.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TreeCtrlEx.h" />
-    <ClInclude Include="UndefinedRDFProperty.h" />
     <ClInclude Include="UniqueVerticesCheckE0.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="_dxf_parser.h" />
@@ -271,19 +264,15 @@
     <ClCompile Include="3DEditor.cpp" />
     <ClCompile Include="3DEditorDoc.cpp" />
     <ClCompile Include="3DEditorView.cpp" />
-    <ClCompile Include="BoolRDFProperty.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="conceptMesh.cpp" />
     <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="RenameDialog.cpp" />
     <ClCompile Include="CUniqueVerticesCheck.cpp" />
-    <ClCompile Include="DoubleRDFProperty.cpp" />
     <ClCompile Include="EditObjectPropertyDialog.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
-    <ClCompile Include="IntRDFProperty.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="NewInstanceDialog.cpp" />
-    <ClCompile Include="ObjectRDFProperty.cpp" />
     <ClCompile Include="OpenGLRDFView.cpp" />
     <ClCompile Include="ProgressIndicator.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
@@ -305,14 +294,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StringRDFProperty.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="TestHtmlReport.cpp" />
     <ClCompile Include="TestManager.cpp" />
     <ClCompile Include="TextBuilder.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
-    <ClCompile Include="UndefinedRDFProperty.cpp" />
     <ClCompile Include="UniqueVerticesCheckE0.cpp" />
     <ClCompile Include="_dxf_parser.cpp" />
   </ItemGroup>
