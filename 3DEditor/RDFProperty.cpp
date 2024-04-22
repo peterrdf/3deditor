@@ -5,63 +5,21 @@
 #include<wx/string.h>
 #endif // _LINUX
 
-// ------------------------------------------------------------------------------------------------
-CRDFProperty::CRDFProperty(int64_t iInstance)
-	: m_iInstance(iInstance)
-	, m_strName(L"")
+// ************************************************************************************************
+CRDFProperty::CRDFProperty(RdfProperty iPropertyInstance)
+	: m_iInstance(iPropertyInstance)
+	, m_szName(nullptr)
 	, m_iType(-1)
 {
 	ASSERT(m_iInstance != 0);
 
-	/*
-	* Name
-	*/
-	char * szPropertyName = nullptr;
-	GetNameOfProperty(m_iInstance, &szPropertyName);
-
-#ifndef _LINUX
-	m_strName = CA2W(szPropertyName);
-
-	/*
-	* Parents
-	*/
-	int64_t iParentClassInstance = GetClassParentsByIterator(GetInstanceClass(m_iInstance), 0);
-	while (iParentClassInstance != 0)
-	{
-		char* szParentClassName = nullptr;
-		GetNameOfClass(iParentClassInstance, &szParentClassName);
-
-		iParentClassInstance = GetClassParentsByIterator(GetInstanceClass(m_iInstance), iParentClassInstance);
-	}
-#endif // _LINUX
+	char* szPropertyName = nullptr;
+	GetNameOfPropertyW(m_iInstance, &m_szName);
 }
 
-// ------------------------------------------------------------------------------------------------
-CRDFProperty::~CRDFProperty()
-{
-}
+/*virtual*/ CRDFProperty::~CRDFProperty()
+{}
 
-// ------------------------------------------------------------------------------------------------
-// Getter
-int64_t CRDFProperty::GetInstance() const
-{
-	return m_iInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-// Getter
-const wchar_t * CRDFProperty::GetName() const
-{
-	return m_strName.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFProperty::getType() const
-{
-	return m_iType;
-}
-
-// ------------------------------------------------------------------------------------------------
 wstring CRDFProperty::getTypeAsString() const
 {
 	wstring strType = L"unknown";
@@ -112,7 +70,7 @@ wstring CRDFProperty::getTypeAsString() const
 
 		default:
 		{
-			ASSERT(false);
+			ASSERT(FALSE); // Not supported!
 		}
 		break;
 	} // switch (getType())
@@ -120,188 +78,164 @@ wstring CRDFProperty::getTypeAsString() const
 	return strType;
 }
 
-// ------------------------------------------------------------------------------------------------
 wstring CRDFProperty::getRange() const
 {
 	wstring strRange = L"unknown";
 
 	switch (getType())
 	{
-	case OBJECTPROPERTY_TYPE:
-	{
-		strRange = L"xsd:object";
-	}
-	break;
+		case OBJECTPROPERTY_TYPE:
+		{
+			strRange = L"xsd:object";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_BOOLEAN:
-	{
-		strRange = L"xsd:boolean";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			strRange = L"xsd:boolean";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_STRING:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_STRING:
+		{
+			strRange = L"xsd:string";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+		{
+			strRange = L"xsd:string";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+		{
+			strRange = L"xsd:string";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_DOUBLE:
-	{
-		strRange = L"xsd:double";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			strRange = L"xsd:double";
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_INTEGER:
-	{
-		strRange = L"xsd:integer";
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			strRange = L"xsd:integer";
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false);
-	}
-	break;
+		default:
+		{
+			ASSERT(FALSE); // Not supported!
+		}
+		break;
 	} // switch (getType())
 
 	return strRange;
 }
 
-// ------------------------------------------------------------------------------------------------
-wstring CRDFProperty::getCardinality(int64_t iInstance) const
+wstring CRDFProperty::getCardinality(OwlInstance iInstance) const
 {
 	ASSERT(iInstance != 0);
-
-	wchar_t szBuffer[100];
 
 	int64_t iCard = 0;
 
 	switch (getType())
 	{
-	case OBJECTPROPERTY_TYPE:
-	{
-		int64_t * piInstances = nullptr;
-		GetObjectProperty(iInstance, GetInstance(), &piInstances, &iCard);
-	}
-	break;
+		case OBJECTPROPERTY_TYPE:
+		{
+			int64_t* piInstances = nullptr;
+			GetObjectProperty(iInstance, GetInstance(), &piInstances, &iCard);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_BOOLEAN:
-	{
-		bool* pbValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&pbValue, &iCard);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			bool* pbValue = nullptr;
+			GetDatatypeProperty(iInstance, GetInstance(), (void**)&pbValue, &iCard);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_STRING:
-	{
-		wchar_t ** szValue = nullptr;
-		SetCharacterSerialization(GetModel(iInstance), 0, 0, false);
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-		SetCharacterSerialization(GetModel(iInstance), 0, 0, true);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_STRING:
+		{
+			wchar_t** szValue = nullptr;
+			SetCharacterSerialization(GetModel(iInstance), 0, 0, false);
+			GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+			SetCharacterSerialization(GetModel(iInstance), 0, 0, true);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-	{
-		char ** szValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+		{
+			char** szValue = nullptr;
+			GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-	{
-		wchar_t ** szValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+		{
+			wchar_t** szValue = nullptr;
+			GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_DOUBLE:
-	{
-		double * pdValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void **)&pdValue, &iCard);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			double* pdValue = nullptr;
+			GetDatatypeProperty(iInstance, GetInstance(), (void **)&pdValue, &iCard);
+		}
+		break;
 
-	case DATATYPEPROPERTY_TYPE_INTEGER:
-	{
-		int64_t * piValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void **)&piValue, &iCard);
-	}
-	break;
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			int64_t* piValue = nullptr;
+			GetDatatypeProperty(iInstance, GetInstance(), (void **)&piValue, &iCard);
+		}
+		break;
 
-	default:
-	{
-		ASSERT(false);
-	}
-	break;
+		default:
+		{
+			ASSERT(false);
+		}
+		break;
 	} // switch (getType())
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
 	GetRestrictions(iInstance, iMinCard, iMaxCard);
 
+	wchar_t szBuffer[256];
+
 	if ((iMinCard == -1) && (iMaxCard == -1))
 	{
-		swprintf(szBuffer, 100, L"%lld of [0 - infinity>", iCard);
+		swprintf(szBuffer, 256, L"%lld of [0 - infinity>", iCard);
 	}
 	else
 	{
 		if (iMaxCard == -1)
 		{
-			swprintf(szBuffer, 100, L"%lld of [%lld - infinity>", iCard, iMinCard);
+			swprintf(szBuffer, 256, L"%lld of [%lld - infinity>", iCard, iMinCard);
 		}
 		else
 		{
-			swprintf(szBuffer, 100, L"%lld of [%lld - %lld]", iCard, iMinCard, iMaxCard);
+			swprintf(szBuffer, 256, L"%lld of [%lld - %lld]", iCard, iMinCard, iMaxCard);
 		}
 	}
 
 	return szBuffer;
 }
 
-void CRDFProperty::GetClassPropertyCardinalityRestrictionNested_(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard) const
-{
-	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
-#if 0
-	int64_t	minCard = 0, maxCard = -1;
-	GetClassPropertyCardinalityRestriction(iRDFClass, iRDFProperty, &minCard, &maxCard);
-	if ((*pMinCard) < minCard) {
-		(*pMinCard) = minCard;
-	}
-	if (maxCard > 0 && ((*pMaxCard) > maxCard || (*pMaxCard) < 0)) {
-		(*pMaxCard) = maxCard;
-	}
-
-	int64_t	iRDFClassParent = GetClassParentsByIterator(iRDFClass, 0);
-	while (iRDFClassParent) {
-		GetClassPropertyCardinalityRestrictionNested_(iRDFClassParent, iRDFProperty, pMinCard, pMaxCard);
-		iRDFClassParent = GetClassParentsByIterator(iRDFClass, iRDFClassParent);
-	}
-#endif
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFProperty::GetRestrictions(int64_t iInstance, int64_t& iMinCard, int64_t& iMaxCard) const
+void CRDFProperty::GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const
 {
 	ASSERT(iInstance != 0);
 
-	int64_t iClassInstance = GetInstanceClass(iInstance);
+	OwlClass iClassInstance = GetInstanceClass(iInstance);
 	ASSERT(iClassInstance != 0);
 
 	iMinCard = -1;
 	iMaxCard = -1;
-	GetClassPropertyCardinalityRestrictionNested_(iClassInstance, (int64_t) GetInstance(), &iMinCard, &iMaxCard);
+	GetClassPropertyAggregatedCardinalityRestriction(iClassInstance, m_iInstance, &iMinCard, &iMaxCard);
 }
 

@@ -93,9 +93,7 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	m_pModel = new CRDFModel();
 	m_pModel->CreateDefaultModel();	
 
-	SetModel(m_pModel);
-
-	m_pModel->PostLoad();	
+	SetModel(m_pModel);	
 
 	return TRUE;
 }
@@ -200,9 +198,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_pModel = new CRDFModel();
 	m_pModel->Load(lpszPathName, true);
 		
-	SetModel(m_pModel);	
-
-	m_pModel->PostLoad();
+	SetModel(m_pModel);
 
 	// Title
 	CString strTitle = AfxGetAppName();

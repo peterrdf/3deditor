@@ -21,20 +21,19 @@ class CRDFModel
 
 protected: // Members
 
+	// Model
 	wstring m_strPath;
 	OwlModel m_iModel;
-
-	// Cache
 	map<OwlClass, CRDFClass*> m_mapClasses;
 	map<RdfProperty, CRDFProperty*> m_mapProperties;
+	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, CRDFInstance*> m_mapInstances;
+
+	// Cache
 	map<OwlInstance, bool> m_mapInstanceDefaultState; 
 	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
-	// ID (1-based index)
-	int64_t m_iID;
-
-	// Offset
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	double m_dVertexBuffersOffsetX;
 	double m_dVertexBuffersOffsetY;
 	double m_dVertexBuffersOffsetZ;
@@ -47,8 +46,6 @@ protected: // Members
 	float m_fYmax;
 	float m_fZmin;
 	float m_fZmax;
-
-	// World's bounding sphere diameter
 	float m_fBoundingSphereDiameter;
 
 	// Support for textures
@@ -64,18 +61,21 @@ public: // Methods
 	virtual ~CRDFModel();	
 	
 	virtual void CreateDefaultModel();
+	void Load(const wchar_t* szPath, bool bLoading);
+	void LoadDXF(const wchar_t* szPath);
+	void LoadGISModel(const wchar_t* szPath);
+	void ImportModel(const wchar_t* szPath);
+	void Save(const wchar_t* szPath);
 	
-	void GetClassAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestors) const;	
+	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
 	CRDFInstance* GetInstanceByID(int64_t iID);
 	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
-	CRDFInstance* CreateNewInstance(int64_t iClassInstance);
 
+	CRDFInstance* CreateNewInstance(int64_t iClassInstance);
 	CRDFInstance* AddNewInstance(int64_t pThing);
 	bool DeleteInstance(CRDFInstance* pInstance);
 
-	void AddMeasurements(CRDFInstance* pInstance);
-
-	void ImportModel(const wchar_t* szPath);
+	void AddMeasurements(CRDFInstance* pInstance);	
 
 	void GetCompatibleInstances(CRDFInstance* pInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 	
@@ -92,12 +92,9 @@ public: // Methods
 	void OnInstanceNameEdited(CRDFInstance* pInstance);
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
-	void Save(const wchar_t * szPath);
+	
 
-	void Load(const wchar_t* szPath, bool bLoading);	
-	void LoadDXF(const wchar_t* szPath);
-	void LoadGISModel(const wchar_t* szPath);
-	void PostLoad();
+	
 
 	CTexture* GetTexture(const wstring& strTexture);
 	CTexture* GetDefaultTexture();

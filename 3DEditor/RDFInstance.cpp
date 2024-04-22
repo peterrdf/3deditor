@@ -4,8 +4,8 @@
 
 #include <memory>
 
-// ------------------------------------------------------------------------------------------------
-CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable)
+// ************************************************************************************************
+CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	: m_iID(iID)
 	, m_iInstance(iInstance)
 	, m_strName(L"NA")
@@ -40,71 +40,61 @@ CRDFInstance::CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {	
-	LoadName();
+	UpdateName();
 
 	Calculate();
 }
 
-// ------------------------------------------------------------------------------------------------
 CRDFInstance::~CRDFInstance()
 {
 	Clean();
 }
 
-// ------------------------------------------------------------------------------------------------
-void CRDFInstance::LoadName()
+void CRDFInstance::UpdateName()
 {
-	BuildInstanceNames(GetModel(), m_iInstance, m_strName, m_strUniqueName);
-}
-
-/*static*/ void CRDFInstance::BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName)
-{
-	ASSERT(iModel != 0);
-	ASSERT(iInstance != 0);
-
-	int64_t iClassInstance = GetInstanceClass(iInstance);
+	OwlClass iClassInstance = GetInstanceClass(m_iInstance);
 	ASSERT(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(iClassInstance, &szClassName);
 
 	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(iInstance, &szName);
+	GetNameOfInstanceW(m_iInstance, &szName);
 
 	if (szName == nullptr)
 	{
-		RdfProperty iTagProperty = GetPropertyByName(iModel, "tag");
+		RdfProperty iTagProperty = GetPropertyByName(GetModel(), "tag");
 		if (iTagProperty != 0)
 		{
-			SetCharacterSerialization(iModel, 0, 0, false);
+			SetCharacterSerialization(GetModel(), 0, 0, false);
 
 			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;			
-			GetDatatypeProperty(iInstance, iTagProperty, (void**)&szValue, &iCard);
+			wchar_t** szValue = nullptr;
+			GetDatatypeProperty(m_iInstance, iTagProperty, (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
 				szName = szValue[0];
 			}
 
-			SetCharacterSerialization(iModel, 0, 0, true);
+			SetCharacterSerialization(GetModel(), 0, 0, true);
 		}
 	} // if (szName == nullptr)
 
-	wchar_t szUniqueName[200];
+	wchar_t szUniqueName[512];
 
 	if (szName != nullptr)
 	{
-		strName = szName;
-		swprintf(szUniqueName, 200, L"%s (%s)", szName, szClassName);
+		m_strName = szName;
+		swprintf(szUniqueName, 512, L"%s (%s)", szName, szClassName);
 	}
 	else
 	{
-		strName = szClassName;
-		swprintf(szUniqueName, 200, L"#%lld (%s)", iInstance, szClassName);
+		m_strName = szClassName;
+		swprintf(szUniqueName, 512, L"#%lld (%s)", m_iInstance, szClassName);
 	}
 
-	strUniqueName = szUniqueName;
+	m_strUniqueName = szUniqueName;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -121,48 +111,6 @@ void CRDFInstance::Recalculate()
 	Clean();
 
 	Calculate();
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::GetID() const
-{
-	return m_iID;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::GetModel() const
-{
-	int64_t iModel = ::GetModel(m_iInstance);
-	ASSERT(iModel != 0);
-
-	return iModel;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::GetInstance() const
-{
-	return m_iInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-int64_t CRDFInstance::GetClassInstance() const
-{
-	int64_t iClassInstance = GetInstanceClass(m_iInstance);
-	ASSERT(iClassInstance != 0);
-
-	return iClassInstance;
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CRDFInstance::GetName() const
-{
-	return m_strName.c_str();
-}
-
-// ------------------------------------------------------------------------------------------------
-const wchar_t* CRDFInstance::GetUniqueName() const
-{
-	return m_strUniqueName.c_str();
 }
 
 // ------------------------------------------------------------------------------------------------

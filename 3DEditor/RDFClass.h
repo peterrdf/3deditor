@@ -6,72 +6,32 @@
 #include <vector>
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
-// Class
+// ************************************************************************************************
 class CRDFClass
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Instance
-	int64_t m_iInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// Name
-	wstring m_strName;
-
-	// --------------------------------------------------------------------------------------------
-	// Parents
-	vector<int64_t> m_vecParentClasses;
-
-	// --------------------------------------------------------------------------------------------
-	// Parents
-	vector<int64_t> m_vecAncestorClasses;
-
-	// --------------------------------------------------------------------------------------------
-	// Parents
-	vector<CRDFPropertyRestriction *> m_vecPropertyRestrictions;
+	OwlClass m_iInstance;
+	wchar_t* m_szName;
+	vector<OwlClass> m_vecParentClasses;
+	vector<OwlClass> m_vecAncestorClasses;
+	vector<CRDFPropertyRestriction*> m_vecPropertyRestrictions;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CRDFClass(int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
+	CRDFClass(OwlClass iInstance);
 	virtual ~CRDFClass();
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	int64_t GetInstance() const;
+	void AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction);
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const wchar_t * GetName() const;
+	static void GetAncestors(OwlClass iClassInstance, vector<OwlClass>& vecAncestorClasses);
+	static wstring GetAncestors(OwlClass iClassInstance);
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<int64_t> & getParentClasses();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<int64_t> & getAncestorClasses();
-
-	// --------------------------------------------------------------------------------------------
-	// Adds an RDF Property
-	void AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const vector<CRDFPropertyRestriction *> & getPropertyRestrictions();
-
-public: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	static void GetAncestors(int64_t iClassInstance, vector<int64_t> & vecAncestorClasses);
-	static wstring GetAncestors(int64_t iClassInstance);
+	OwlClass GetInstance() const { return m_iInstance; }
+	const wchar_t* GetName() const { return m_szName; }
+	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
+	const vector<OwlClass> & getAncestorClasses() const { return m_vecAncestorClasses; }
+	const vector<CRDFPropertyRestriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
 };
 

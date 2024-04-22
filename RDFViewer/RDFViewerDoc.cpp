@@ -56,8 +56,6 @@ BOOL CRDFViewerDoc::OnNewDocument()
 
 	SetModel(m_pModel);
 
-	m_pModel->PostLoad();
-
 	return TRUE;
 }
 
@@ -161,8 +159,6 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_pModel->Load(lpszPathName, true);	
 
 	SetModel(m_pModel);
-
-	m_pModel->PostLoad();
 
 	// Title
 	CString strTitle = AfxGetAppName();

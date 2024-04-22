@@ -341,7 +341,7 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 		szName);
 
 	// Update cache
-	pInstance->LoadName();
+	pInstance->UpdateName();
 	m_pModel->OnInstanceNameEdited(pInstance);
 
 	// Notify

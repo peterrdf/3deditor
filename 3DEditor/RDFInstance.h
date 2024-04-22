@@ -18,9 +18,8 @@ class CRDFInstance
 
 private: // Members
 
-	int64_t m_iID; // ID (1-based index)	
-	int64_t m_iInstance; // RDF Instance
-
+	int64_t m_iID; // ID (1-based index)
+	OwlInstance m_iInstance;	
 	wstring m_strName;
 	wstring m_strUniqueName;
 
@@ -70,23 +69,19 @@ private: // Members
 
 public: // Methods
 
-	CRDFInstance(int64_t iID, int64_t iInstance, bool bEnable);
+	CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable);
 	virtual ~CRDFInstance();
 
-	void LoadName();
-	static void BuildInstanceNames(OwlModel iModel, OwlInstance iInstance, wstring& strName, wstring& strUniqueName);
+	void UpdateName();
 
 	void Recalculate();
 
-	int64_t GetID() const;
-
-	int64_t GetModel() const;
-
-	int64_t GetInstance() const;
-	int64_t GetClassInstance() const;
-
-	const wchar_t* GetName() const;
-	const wchar_t* GetUniqueName() const;
+	int64_t GetID() const { return m_iID; }
+	OwlInstance GetInstance() const { return m_iInstance; }
+	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
+	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
+	const wchar_t* GetName() const { return m_strName.c_str(); }
+	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }
 	
 	bool IsReferenced() const;
 	bool HasGeometry() const;
