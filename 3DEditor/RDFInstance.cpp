@@ -113,31 +113,6 @@ void CRDFInstance::Recalculate()
 	Calculate();
 }
 
-const vector<_primitives>& CRDFInstance::getTriangles() const
-{
-	return m_vecTriangles;
-}
-
-const vector<_primitives>& CRDFInstance::getLines() const
-{
-	return m_vecLines;
-}
-
-const vector<_primitives>& CRDFInstance::getPoints() const
-{
-	return m_vecPoints;
-}
-
-const vector<_primitives>& CRDFInstance::getFacePolygons() const
-{
-	return m_vecFacePolygons;
-}
-
-const vector<_primitives>& CRDFInstance::getConcFacePolygons() const
-{
-	return m_vecConcFacePolygons;
-}
-
 vector<_facesCohort*>& CRDFInstance::concFacesCohorts()
 {
 	return m_vecConcFacesCohorts;

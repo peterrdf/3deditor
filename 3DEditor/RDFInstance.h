@@ -93,11 +93,11 @@ public: // Methods
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
-	const vector<_primitives>& getTriangles() const;
-	const vector<_primitives>& getLines() const;
-	const vector<_primitives>& getPoints() const;
-	const vector<_primitives>& getFacePolygons() const;
-	const vector<_primitives>& getConcFacePolygons() const;	
+	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
+	const vector<_primitives>& getLines() const { return m_vecLines; }
+	const vector<_primitives>& getPoints() const { return m_vecPoints; }
+	const vector<_primitives>& getFacePolygons() const { return m_vecFacePolygons; }
+	const vector<_primitives>& getConcFacePolygons() const { return m_vecConcFacePolygons; }
 
 	vector<_cohort*>& facePolygonsCohorts();
 	vector<_cohort*>& concFacePolygonsCohorts();
