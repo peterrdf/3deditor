@@ -113,54 +113,6 @@ void CRDFInstance::Recalculate()
 	Calculate();
 }
 
-// ------------------------------------------------------------------------------------------------
-bool CRDFInstance::IsReferenced() const
-{
-	return GetInstanceInverseReferencesByIterator(m_iInstance, 0);
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CRDFInstance::HasGeometry() const
-{
-	return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0);
-}
-
-// ------------------------------------------------------------------------------------------------
-int32_t * CRDFInstance::GetIndices() const
-{
-	return m_pIndexBuffer->data();
-}
-
-int64_t CRDFInstance::GetIndicesCount() const
-{
-	return m_pIndexBuffer->size();
-}
-
-float * CRDFInstance::GetVertices() const
-{
-	return m_pVertices;
-}
-
-float* CRDFInstance::GetOriginalVertices() const
-{
-	return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr;
-}
-
-int64_t CRDFInstance::GetVerticesCount() const
-{
-	return m_pOriginalVertexBuffer->size();
-}
-
-int64_t CRDFInstance::GetVertexLength() const 
-{ 
-	return VERTEX_LENGTH; 
-}
-
-int64_t CRDFInstance::GetConceptualFacesCount() const
-{
-	return m_iConceptualFacesCount;
-}
-
 const vector<_primitives>& CRDFInstance::getTriangles() const
 {
 	return m_vecTriangles;

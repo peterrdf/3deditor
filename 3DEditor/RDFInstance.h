@@ -81,20 +81,17 @@ public: // Methods
 	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
 	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
 	const wchar_t* GetName() const { return m_strName.c_str(); }
-	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }
+	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }	
+	bool IsReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
 	
-	bool IsReferenced() const;
-	bool HasGeometry() const;
-	
-	int32_t* GetIndices() const;
-	int64_t GetIndicesCount() const;	
-
-	float* GetVertices() const;
-	float* GetOriginalVertices() const;	
-	int64_t GetVerticesCount() const;
-	int64_t GetVertexLength() const;
-
-	int64_t GetConceptualFacesCount() const;
+	int32_t* GetIndices() const { return m_pIndexBuffer->data(); }
+	int64_t GetIndicesCount() const { return m_pIndexBuffer->size(); }
+	float* GetVertices() const { return m_pVertices; }
+	float* GetOriginalVertices() const { return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr; }
+	int64_t GetVerticesCount() const { return m_pOriginalVertexBuffer->size(); }
+	uint64_t GetVertexLength() const { return SetFormat(GetModel(), 0, 0) / sizeof(float); }
+	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
+	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
 	const vector<_primitives>& getTriangles() const;
 	const vector<_primitives>& getLines() const;
