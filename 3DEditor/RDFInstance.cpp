@@ -6,46 +6,23 @@
 
 // ************************************************************************************************
 CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
-	: m_iID(iID)
-	, m_iInstance(iInstance)
+	: _instance(iID, iInstance, bEnable)	
 	, m_strName(L"NA")
 	, m_strUniqueName(L"")
 	, m_pOriginalVertexBuffer(nullptr)
 	, m_pVertices(nullptr)	
 	, m_pIndexBuffer(nullptr)
-	, m_iConceptualFacesCount(0)
-	, m_pmtxOriginalBBTransformation(nullptr)
-	, m_pvecOriginalBBMin(nullptr)
-	, m_pvecOriginalBBMax(nullptr)
-	, m_pmtxBBTransformation(nullptr)
-	, m_pvecBBMin(nullptr)
-	, m_pvecBBMax(nullptr)
-	, m_pvecAABBMin(nullptr)
-	, m_pvecAABBMax(nullptr)	
-	, m_vecTriangles()
-	, m_vecFacePolygons()
-	, m_vecConcFacePolygons()
-	, m_vecLines()
-	, m_vecPoints()	
-	, m_vecConcFacesCohorts()
-	, m_vecFacePolygonsCohorts()
-	, m_vecConcFacePolygonsCohorts()
-	, m_vecLinesCohorts()
-	, m_vecPointsCohorts()
-	, m_vecNormalVecsCohorts()
-	, m_vecBiNormalVecsCohorts()
-	, m_vecTangentVecsCohorts()
-	, m_bNeedsRefresh(false)
-	, m_bEnable(bEnable)	
+	, m_iConceptualFacesCount(0)	
+	, m_bNeedsRefresh(false)	
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
-{	
+{
 	UpdateName();
 
 	Calculate();
 }
 
-CRDFInstance::~CRDFInstance()
+/*virtual*/ CRDFInstance::~CRDFInstance()
 {
 	Clean();
 }
@@ -1042,7 +1019,6 @@ void CRDFInstance::Calculate()
 	} // for (; itMaterial2ConceptualFaces != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFInstance::Clean()
 {
 	delete m_pOriginalVertexBuffer;
@@ -1051,45 +1027,8 @@ void CRDFInstance::Clean()
 	delete[] m_pVertices;
 	m_pVertices = nullptr;
 
-	delete m_pIndexBuffer;
+	delete[] m_pIndexBuffer;
 	m_pIndexBuffer = nullptr;
 
-	delete m_pmtxOriginalBBTransformation;
-	m_pmtxOriginalBBTransformation = nullptr;
-
-	delete m_pvecOriginalBBMin;
-	m_pvecOriginalBBMin = nullptr;
-
-	delete m_pvecOriginalBBMax;
-	m_pvecOriginalBBMax = nullptr;
-
-	delete m_pmtxBBTransformation;
-	m_pmtxBBTransformation = nullptr;
-
-	delete m_pvecBBMin;
-	m_pvecBBMin = nullptr;
-
-	delete m_pvecBBMax;
-	m_pvecBBMax = nullptr;
-
-	delete m_pvecAABBMin;
-	m_pvecAABBMin = nullptr;
-
-	delete m_pvecAABBMax;
-	m_pvecAABBMax = nullptr;
-
-	m_vecTriangles.clear();
-	m_vecFacePolygons.clear();
-	m_vecConcFacePolygons.clear();
-	m_vecLines.clear();
-	m_vecPoints.clear();	
-
-	_cohort::clear(m_vecConcFacesCohorts);
-	_cohort::clear(m_vecFacePolygonsCohorts);
-	_cohort::clear(m_vecConcFacePolygonsCohorts);
-	_cohort::clear(m_vecLinesCohorts);
-	_cohort::clear(m_vecPointsCohorts);		
-	_cohort::clear(m_vecNormalVecsCohorts);
-	_cohort::clear(m_vecBiNormalVecsCohorts);
-	_cohort::clear(m_vecTangentVecsCohorts);
+	_instance::clean();
 }

@@ -1,12 +1,16 @@
 #pragma once
 
+#include "engine.h"
+
 #include "glew.h"
 #include "wglew.h"
 
+#include "_3DUtils.h"
 #include "_material.h"
 
-#include <map>
+#include <string>
 #include <vector>
+#include <map>
 using namespace std;
 
 // ************************************************************************************************
@@ -223,3 +227,154 @@ public: // Methods
 // ************************************************************************************************
 typedef _indexBuffer<int32_t> _indices_i32;
 typedef _indexBuffer<int64_t> _indices_i64;
+
+// ************************************************************************************************
+class _instance
+{
+
+protected: // Members
+
+	// Metadata
+	int64_t m_iID; // ID (1-based index)
+	OwlInstance m_iInstance;	
+	bool m_bEnable; // Show/Hide
+
+	// BB
+	_matrix* m_pmtxOriginalBBTransformation;
+	_vector3d* m_pvecOriginalBBMin;
+	_vector3d* m_pvecOriginalBBMax;
+	_matrix* m_pmtxBBTransformation;
+	_vector3d* m_pvecBBMin;
+	_vector3d* m_pvecBBMax;
+	_vector3d* m_pvecAABBMin;
+	_vector3d* m_pvecAABBMax;
+
+	// Primitives (Cache)
+	vector<_primitives> m_vecTriangles;
+	vector<_primitives> m_vecFacePolygons;
+	vector<_primitives> m_vecConcFacePolygons;
+	vector<_primitives> m_vecLines;
+	vector<_primitives> m_vecPoints;
+
+	// Cohorts (Cache)
+	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
+	vector<_cohort*> m_vecFacePolygonsCohorts;
+	vector<_cohort*> m_vecConcFacePolygonsCohorts;
+	vector<_cohortWithMaterial*> m_vecLinesCohorts;
+	vector<_cohortWithMaterial*> m_vecPointsCohorts;
+
+	// Vectors (Cache)
+	vector<_cohort*> m_vecNormalVecsCohorts;
+	vector<_cohort*> m_vecBiNormalVecsCohorts;
+	vector<_cohort*> m_vecTangentVecsCohorts;
+
+public: // Methods
+
+	_instance(int64_t iID, OwlInstance iInstance, bool bEnable)
+		: m_iID(iID)
+		, m_iInstance(iInstance)
+		, m_bEnable(bEnable)
+		, m_pmtxOriginalBBTransformation(nullptr)
+		, m_pvecOriginalBBMin(nullptr)
+		, m_pvecOriginalBBMax(nullptr)
+		, m_pmtxBBTransformation(nullptr)
+		, m_pvecBBMin(nullptr)
+		, m_pvecBBMax(nullptr)
+		, m_pvecAABBMin(nullptr)
+		, m_pvecAABBMax(nullptr)
+		, m_vecTriangles()
+		, m_vecFacePolygons()
+		, m_vecConcFacePolygons()
+		, m_vecLines()
+		, m_vecPoints()
+		, m_vecConcFacesCohorts()
+		, m_vecFacePolygonsCohorts()
+		, m_vecConcFacePolygonsCohorts()
+		, m_vecLinesCohorts()
+		, m_vecPointsCohorts()
+		, m_vecNormalVecsCohorts()
+		, m_vecBiNormalVecsCohorts()
+		, m_vecTangentVecsCohorts()
+	{}
+
+	virtual ~_instance()
+	{}
+
+	// Metadata
+	int64_t GetID() const { return m_iID; }
+	OwlInstance GetInstance() const { return m_iInstance; }
+	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
+	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
+
+	// BB
+	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
+	_vector3d* getOriginalBBMax() const { return m_pvecOriginalBBMax; }
+	_matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
+	_vector3d* getBBMin() const { return m_pvecBBMin; }
+	_vector3d* getBBMax() const { return m_pvecBBMax; }
+	_vector3d* getAABBMin() const { return m_pvecAABBMin; }
+	_vector3d* getAABBMax() const { return m_pvecAABBMax; }
+
+	// Primitives
+	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
+	const vector<_primitives>& getLines() const { return m_vecLines; }
+	const vector<_primitives>& getPoints() const { return m_vecPoints; }
+	const vector<_primitives>& getFacePolygons() const { return m_vecFacePolygons; }
+	const vector<_primitives>& getConcFacePolygons() const { return m_vecConcFacePolygons; }
+
+	// Cohorts
+	vector<_cohortWithMaterial*>& concFacesCohorts() { return m_vecConcFacesCohorts; }
+	vector<_cohort*>& facePolygonsCohorts() { return m_vecFacePolygonsCohorts; }
+	vector<_cohort*>& concFacePolygonsCohorts() { return m_vecConcFacePolygonsCohorts; }
+	vector<_cohortWithMaterial*>& linesCohorts() { return m_vecLinesCohorts; }
+	vector<_cohortWithMaterial*>& pointsCohorts() { return m_vecPointsCohorts; }
+
+	// Vectors
+	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }
+	vector<_cohort*>& biNormalVecsCohorts() { return m_vecBiNormalVecsCohorts; }
+	vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
+
+protected: // Methods
+
+	void clean()
+	{
+		delete m_pmtxOriginalBBTransformation;
+		m_pmtxOriginalBBTransformation = nullptr;
+
+		delete m_pvecOriginalBBMin;
+		m_pvecOriginalBBMin = nullptr;
+
+		delete m_pvecOriginalBBMax;
+		m_pvecOriginalBBMax = nullptr;
+
+		delete m_pmtxBBTransformation;
+		m_pmtxBBTransformation = nullptr;
+
+		delete m_pvecBBMin;
+		m_pvecBBMin = nullptr;
+
+		delete m_pvecBBMax;
+		m_pvecBBMax = nullptr;
+
+		delete m_pvecAABBMin;
+		m_pvecAABBMin = nullptr;
+
+		delete m_pvecAABBMax;
+		m_pvecAABBMax = nullptr;
+
+		m_vecTriangles.clear();
+		m_vecFacePolygons.clear();
+		m_vecConcFacePolygons.clear();
+		m_vecLines.clear();
+		m_vecPoints.clear();
+
+		_cohort::clear(m_vecConcFacesCohorts);
+		_cohort::clear(m_vecFacePolygonsCohorts);
+		_cohort::clear(m_vecConcFacePolygonsCohorts);
+		_cohort::clear(m_vecLinesCohorts);
+		_cohort::clear(m_vecPointsCohorts);
+		_cohort::clear(m_vecNormalVecsCohorts);
+		_cohort::clear(m_vecBiNormalVecsCohorts);
+		_cohort::clear(m_vecTangentVecsCohorts);
+	}
+};
