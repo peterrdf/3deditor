@@ -63,7 +63,7 @@ struct SORT_RDFINSTANCES
 {
 	bool operator()(const CRDFInstance* a, const CRDFInstance* b) const
 	{
-		return wcscmp(a->GetName(), b->GetName()) < 0;
+		return wcscmp(a->getName(), b->getName()) < 0;
 	}
 };
 

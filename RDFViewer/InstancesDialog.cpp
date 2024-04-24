@@ -46,12 +46,12 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	{
 		CRDFInstance * pInstance = itRFDInstances->second;
 
-		if (pInstance->IsReferenced())
+		if (pInstance->isReferenced())
 		{
 			continue;
 		}
 
-		if (pInstance->GetModel() == pModel->GetInstance())
+		if (pInstance->getModel() == pModel->GetInstance())
 		{
 			vecModel.push_back(pInstance);
 		}		
@@ -64,7 +64,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
-		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->GetUniqueName());
+		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
 
 		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
 
@@ -313,7 +313,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				vector<CRDFInstance *> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
-					if (vecSelectedInstances[iInstance]->IsReferenced())
+					if (vecSelectedInstances[iInstance]->isReferenced())
 					{
 						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -360,7 +360,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				vector<CRDFInstance *> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
-					if (vecSelectedInstances[iInstance]->IsReferenced())
+					if (vecSelectedInstances[iInstance]->isReferenced())
 					{
 						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -422,7 +422,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(vecSelectedInstances[0]->GetInstance());
+				GetController()->ZoomToInstance(vecSelectedInstances[0]->getInstance());
 			}
 			break;
 
@@ -437,7 +437,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (vecSelectedInstances[0]->GetModel() != itRFDInstances->second->GetModel())
+					if (vecSelectedInstances[0]->getModel() != itRFDInstances->second->getModel())
 					{
 						continue;
 					}
@@ -461,12 +461,12 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (vecSelectedInstances[0]->GetModel() != itRFDInstances->second->GetModel())
+					if (vecSelectedInstances[0]->getModel() != itRFDInstances->second->getModel())
 					{
 						continue;
 					}
 
-					if (!itRFDInstances->second->IsReferenced())
+					if (!itRFDInstances->second->isReferenced())
 					{
 						itRFDInstances->second->setEnable(true);
 					}					
@@ -486,7 +486,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_REMOVE:
 			{
-				if (vecSelectedInstances[0]->IsReferenced())
+				if (vecSelectedInstances[0]->isReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -527,7 +527,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 		case ID_INSTANCES_REMOVE:
 		{
-			if (vecSelectedInstances[0]->IsReferenced())
+			if (vecSelectedInstances[0]->isReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 

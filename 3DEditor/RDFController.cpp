@@ -128,7 +128,7 @@ void CRDFController::ScaleAndCenter()
 void CRDFController::Save(CRDFInstance* pInstance)
 {
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), pInstance->GetUniqueName(),
+	CFileDialog dlgFile(FALSE, _T("bin"), pInstance->getUniqueName(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK)
@@ -136,7 +136,7 @@ void CRDFController::Save(CRDFInstance* pInstance)
 		return;
 	}
 
-	SaveInstanceTreeW(pInstance->GetInstance(), dlgFile.GetPathName());
+	SaveInstanceTreeW(pInstance->getInstance(), dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 {
 	// Rename
 	SetNameOfInstanceW(
-		pInstance->GetInstance(),
+		pInstance->getInstance(),
 		szName);
 
 	// Update cache
@@ -376,7 +376,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 	}
 
-	int64_t iInstance = pInstance->GetInstance();
+	int64_t iInstance = pInstance->getInstance();
 
 	bool bResult = m_pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
@@ -415,7 +415,7 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 
 bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance)
 {
-	int64_t iInstance = pInstance->GetInstance();
+	int64_t iInstance = pInstance->getInstance();
 
 	//
 	//	find all child instances

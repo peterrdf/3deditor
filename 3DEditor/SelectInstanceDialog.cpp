@@ -69,7 +69,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 
 	int64_t* piInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->GetInstance(), m_pObjectRDFProperty->GetInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getInstance(), m_pObjectRDFProperty->GetInstance(), &piInstances, &iCard);
 
 	ASSERT(iCard > 0);
 	ASSERT((m_iCard >= 0) && (m_iCard < iCard));
@@ -93,9 +93,9 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
 		ASSERT(itInstanceValue != mapInstances.end());
 
-		CString strInstanceUniqueName = itInstanceValue->second->GetUniqueName();
-		if ((m_pInstance->GetInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
-			IsUsedRecursively(m_pInstance->GetInstance(), itInstanceValue->second->GetInstance()))
+		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();
+		if ((m_pInstance->getInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
+			IsUsedRecursively(m_pInstance->getInstance(), itInstanceValue->second->getInstance()))
 		{
 			strInstanceUniqueName += USED_SUFFIX;
 		}

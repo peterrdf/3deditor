@@ -242,12 +242,12 @@ protected: // Members
 	bool m_bEnable;
 
 	// Geometry
-	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices: [-1, 1]
+	_vertices_f* m_pVertexBuffer; // Vertices
 	_indices_i32* m_pIndexBuffer; // Indices
 	int64_t m_iConceptualFacesCount; // Conceptual faces	
 	bool m_bNeedsRefresh; // The data (geometry) is out of date
 
-	// BB
+	// BB/AABB
 	_matrix* m_pmtxOriginalBBTransformation;
 	_vector3d* m_pvecOriginalBBMin;
 	_vector3d* m_pvecOriginalBBMax;
@@ -315,22 +315,22 @@ public: // Methods
 	{}
 
 	// Metadata
-	int64_t GetID() const { return m_iID; }
-	OwlInstance GetInstance() const { return m_iInstance; }
-	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
-	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
-	bool IsReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
+	int64_t getID() const { return m_iID; }
+	OwlInstance getInstance() const { return m_iInstance; }
+	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
+	OwlModel getModel() const { return ::GetModel(m_iInstance); }
+	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
 	bool getEnable() const { return m_bEnable; }
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
-	const wchar_t* GetName() const { return m_strName.c_str(); }
-	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }
+	const wchar_t* getName() const { return m_strName.c_str(); }
+	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 
 	// Geometry
 	int32_t* GetIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
 	int64_t GetIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
 	float* GetVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
 	int64_t GetVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
+	uint64_t GetVertexLength() const { return SetFormat(getModel()) / sizeof(float); }
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool HasGeometry() const { return (GetVerticesCount() > 0) && (GetIndicesCount() > 0); }
 

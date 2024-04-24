@@ -69,7 +69,7 @@ int32_t CUniqueVerticesCheckE0::Check(CRDFInstance * pInstance, int32_t iVertexL
 	fill(m_vecVerticesConvertor.begin(), m_vecVerticesConvertor.end(), -1);
 
 	output << "****************************************************************************************************\n";
-	output << "Instance: " << pInstance->GetName() << "\n";
+	output << "Instance: " << pInstance->getName() << "\n";
 
 	/*
 	* X distribution

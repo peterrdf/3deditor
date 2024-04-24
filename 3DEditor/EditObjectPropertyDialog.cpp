@@ -83,7 +83,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 	int64_t * piInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->GetInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
 	ASSERT(pModel != nullptr);
@@ -116,7 +116,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->GetModel() != m_pInstance->GetModel())
+		if (itRFDInstances->second->getModel() != m_pInstance->getModel())
 		{
 			continue;
 		}
@@ -124,9 +124,9 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Check this instance
 		*/
-		if (find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->GetClassInstance()) != vecRestrictions.end())
+		if (find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
 		{
-			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->GetUniqueName());
+			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 			continue;
@@ -137,7 +137,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 
 		vector<int64_t> vecAncestorClasses;
-		CRDFClass::GetAncestors(itRFDInstances->second->GetClassInstance(), vecAncestorClasses);
+		CRDFClass::GetAncestors(itRFDInstances->second->getClassInstance(), vecAncestorClasses);
 
 		if (vecAncestorClasses.empty())
 		{
@@ -148,7 +148,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->GetUniqueName());
+				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 				m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 				break;
@@ -172,7 +172,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Ancestors
 	*/
-	int64_t	iClassInstance = GetClassesByIterator(m_pInstance->GetModel(), 0);
+	int64_t	iClassInstance = GetClassesByIterator(m_pInstance->getModel(), 0);
 	while (iClassInstance != 0)
 	{
 		vector<int64_t> vecAncestorClasses;
@@ -191,7 +191,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 			} // for (size_t iAncestorClass = ...
 		} // if (!vecAncestorClasses.empty())
 
-		iClassInstance = GetClassesByIterator(m_pInstance->GetModel(), iClassInstance);
+		iClassInstance = GetClassesByIterator(m_pInstance->getModel(), iClassInstance);
 	} // while (iClassInstance != 0)
 
 	for (set<int64_t>::iterator itClass = setClasses.begin(); itClass != setClasses.end(); itClass++)
@@ -251,7 +251,7 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 		CString strClassName;
 		m_cmbNewInstance.GetLBText(m_cmbNewInstance.GetCurSel(), strClassName);
 
-		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->GetModel(), CW2A((LPCTSTR)strClassName));
+		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->getModel(), CW2A((LPCTSTR)strClassName));
 		ASSERT(m_iNewInstanceRDFClass != 0);
 	}
 	break;

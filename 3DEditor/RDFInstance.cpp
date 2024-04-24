@@ -46,10 +46,10 @@ void CRDFInstance::UpdateName()
 
 	if (szName == nullptr)
 	{
-		RdfProperty iTagProperty = GetPropertyByName(GetModel(), "tag");
+		RdfProperty iTagProperty = GetPropertyByName(getModel(), "tag");
 		if (iTagProperty != 0)
 		{
-			SetCharacterSerialization(GetModel(), 0, 0, false);
+			SetCharacterSerialization(getModel(), 0, 0, false);
 
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
@@ -60,7 +60,7 @@ void CRDFInstance::UpdateName()
 				szName = szValue[0];
 			}
 
-			SetCharacterSerialization(GetModel(), 0, 0, true);
+			SetCharacterSerialization(getModel(), 0, 0, true);
 		}
 	} // if (szName == nullptr)
 
@@ -378,7 +378,7 @@ void CRDFInstance::Calculate()
 	}
 
 	// Retrieves the vertices
-	m_pOriginalVertexBuffer->vertexLength() = SetFormat(GetModel(), 0, 0) / sizeof(float);
+	m_pOriginalVertexBuffer->vertexLength() = SetFormat(getModel(), 0, 0) / sizeof(float);
 
 	m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
 	memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
@@ -431,7 +431,7 @@ void CRDFInstance::Calculate()
 			int64_t iCard = 0;
 			GetObjectProperty(
 				iMaterialInstance,
-				GetPropertyByName(GetModel(), "textures"),
+				GetPropertyByName(getModel(), "textures"),
 				&piInstances,
 				&iCard);
 
@@ -441,7 +441,7 @@ void CRDFInstance::Calculate()
 				char** szValue = nullptr;
 				GetDatatypeProperty(
 					piInstances[0],
-					GetPropertyByName(GetModel(), "name"),
+					GetPropertyByName(getModel(), "name"),
 					(void**)&szValue,
 					&iCard);
 

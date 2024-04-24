@@ -389,7 +389,7 @@ CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->GetID() == iID)
+		if (itInstance->second->getID() == iID)
 		{
 			return itInstance->second;
 		}
@@ -445,9 +445,9 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
 	ASSERT(pInstance != nullptr);
 
-	bool bResult = RemoveInstance(pInstance->GetInstance()) == 0 ? true : false;
+	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
 
-	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->GetInstance());
+	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->getInstance());
 	ASSERT(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
@@ -468,7 +468,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	ASSERT(pInstance != nullptr);
 	ASSERT(pObjectRDFProperty != nullptr);
 
-	int64_t iClassInstance = GetInstanceClass(pInstance->GetInstance());
+	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
 	ASSERT(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
@@ -490,7 +490,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->GetModel() != pInstance->GetModel())
+		if (itRFDInstances->second->getModel() != pInstance->getModel())
 		{
 			continue;
 		}
@@ -498,9 +498,9 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Check this instance
 		*/
-		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->GetClassInstance()) != vecRestrictions.end())
+		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
 		{
-			vecCompatibleInstances.push_back(itRFDInstances->second->GetInstance());
+			vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
 
 			continue;
 		}
@@ -521,7 +521,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				vecCompatibleInstances.push_back(itRFDInstances->second->GetInstance());
+				vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
 
 				break;
 			}
@@ -783,7 +783,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->GetModel() != m_iModel)
+		if (itInstance->second->getModel() != m_iModel)
 		{
 			continue;
 		}
@@ -851,9 +851,9 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 {
 	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
 	{		
-		CString strMetaData = pInstance->GetUniqueName();
+		CString strMetaData = pInstance->getUniqueName();
 
-		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->GetInstance(), 0);
+		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
 		while (iPropertyInstance != 0)
 		{
 			auto itProperty = m_mapProperties.find(iPropertyInstance);
@@ -861,7 +861,7 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 
 			GetPropertyMetaData(pInstance, itProperty->second, strMetaData);
 
-			iPropertyInstance = GetInstancePropertyByIterator(pInstance->GetInstance(), iPropertyInstance);
+			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
 		} // while (iPropertyInstance != 0)
 
 		if (strMetaData.GetLength() >= 256)
@@ -891,7 +891,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->GetInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			if ((iCard == 1) && (pProperty->GetName() == CString(L"$semantics")))
 			{
@@ -920,7 +920,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);			
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);			
 
 			if (iCard == 1)
 			{
@@ -938,9 +938,9 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			SetCharacterSerialization(pInstance->GetModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
-			SetCharacterSerialization(pInstance->GetModel(), 0, 0, true);
+			SetCharacterSerialization(pInstance->getModel(), 0, 0, false);
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			SetCharacterSerialization(pInstance->getModel(), 0, 0, true);
 
 			if (iCard == 1)
 			{
@@ -957,7 +957,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -974,7 +974,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -991,7 +991,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			double* pdValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1009,7 +1009,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pInstance->GetInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
 
 			if (iCard == 1)
 			{

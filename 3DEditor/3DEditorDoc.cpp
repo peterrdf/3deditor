@@ -336,7 +336,7 @@ void CMy3DEditorDoc::OnInstancesZoomTo()
 	auto pInstance = GetSelectedInstance();
 	ASSERT((pInstance != nullptr) && pInstance->getEnable() && pInstance->HasGeometry());
 
-	ZoomToInstance(pInstance->GetInstance());
+	ZoomToInstance(pInstance->getInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
