@@ -73,10 +73,14 @@ public: // Methods
 	CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable);
 	virtual ~CRDFInstance();
 
+	// Rename
 	void UpdateName();
 
+	// Geometry
 	void Recalculate();
+	void ResetVertexBuffers();
 
+	// Metadata
 	int64_t GetID() const { return m_iID; }
 	OwlInstance GetInstance() const { return m_iInstance; }
 	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
@@ -85,6 +89,7 @@ public: // Methods
 	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }	
 	bool IsReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
 	
+	// Geometry
 	int32_t* GetIndices() const { return m_pIndexBuffer->data(); }
 	int64_t GetIndicesCount() const { return m_pIndexBuffer->size(); }
 	float* GetVertices() const { return m_pVertices; }
@@ -94,6 +99,7 @@ public: // Methods
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
+	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
 	_vector3d* getOriginalBBMax() const { return m_pvecOriginalBBMax; }
 	_matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
@@ -102,26 +108,28 @@ public: // Methods
 	_vector3d* getAABBMin() const { return m_pvecAABBMin; }
 	_vector3d* getAABBMax() const { return m_pvecAABBMax; }
 
+	// Primitives
 	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
 	const vector<_primitives>& getLines() const { return m_vecLines; }
 	const vector<_primitives>& getPoints() const { return m_vecPoints; }
 	const vector<_primitives>& getFacePolygons() const { return m_vecFacePolygons; }
 	const vector<_primitives>& getConcFacePolygons() const { return m_vecConcFacePolygons; }
 
+	// Cohorts
 	vector<_facesCohort*>& concFacesCohorts() { return m_vecConcFacesCohorts; }
 	vector<_cohort*>& facePolygonsCohorts() { return m_vecFacePolygonsCohorts; }
 	vector<_cohort*>& concFacePolygonsCohorts() { return m_vecConcFacePolygonsCohorts; }
 	vector<_facesCohort*>& linesCohorts() { return m_vecLinesCohorts; }
 	vector<_facesCohort*>& pointsCohorts() { return m_vecPointsCohorts; }	
 	
+	// Vectors
 	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }
 	vector<_cohort*>& biNormalVecsCohorts() { return m_vecBiNormalVecsCohorts; }
 	vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
 	
+	// UI
 	void setEnable(bool bEnable);
 	bool getEnable() const { return m_bEnable; }
-	
-	void ResetVertexBuffers();
 
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 
@@ -137,19 +145,19 @@ public: // Methods
 	void Scale(float fScaleFactor);
 	void Translate(float fX, float fY, float fZ);
 	
-	GLuint& VBO();
-	GLsizei& VBOOffset();	
+	GLuint& VBO() { return m_iVBO; }
+	GLsizei& VBOOffset() { return m_iVBOOffset; }
 
 private: // Methods
 
 	void Calculate();
-
 	void Clean();
 };
 
+// ************************************************************************************************
 struct SORT_RDFINSTANCES
 {
-	bool operator()(const CRDFInstance * a, const CRDFInstance * b) const
+	bool operator()(const CRDFInstance* a, const CRDFInstance* b) const
 	{
 		return wcscmp(a->GetName(), b->GetName()) < 0;
 	}
