@@ -95,7 +95,7 @@ public: // Methods
 	float* GetVertices() const { return m_pVertices; }
 	float* GetOriginalVertices() const { return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr; }
 	int64_t GetVerticesCount() const { return m_pOriginalVertexBuffer->size(); }
-	uint64_t GetVertexLength() const { return SetFormat(GetModel(), 0, 0) / sizeof(float); }
+	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
