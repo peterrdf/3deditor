@@ -103,11 +103,10 @@ void CRDFInstance::ResetVertexBuffers()
 	}
 
 	// Vertices
-	delete m_pVertexBuffer;
-	m_pVertexBuffer = new _vertices_f();
-	m_pVertexBuffer->size() = m_pOriginalVertexBuffer->size();
-	m_pVertexBuffer->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
-	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
+	ASSERT(m_pVertexBuffer != nullptr);
+	ASSERT(m_pOriginalVertexBuffer != nullptr);
+	ASSERT(m_pVertexBuffer->size() == m_pOriginalVertexBuffer->size());
+	ASSERT(m_pVertexBuffer->vertexLength() == m_pOriginalVertexBuffer->vertexLength());
 	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
 	// Bounding box
