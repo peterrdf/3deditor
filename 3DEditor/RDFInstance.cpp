@@ -27,6 +27,18 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	Clean();
 }
 
+/*virtual*/ void CRDFInstance::setEnable(bool bEnable) /*override*/
+{
+	m_bEnable = bEnable;
+
+	if (m_bEnable && m_bNeedsRefresh)
+	{
+		m_bNeedsRefresh = false;
+
+		Recalculate();
+	}
+}
+
 void CRDFInstance::UpdateName()
 {
 	OwlClass iClassInstance = GetInstanceClass(m_iInstance);
@@ -105,18 +117,6 @@ void CRDFInstance::ResetVertexBuffers()
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
-}
-
-void CRDFInstance::setEnable(bool bEnable)
-{
-	m_bEnable = bEnable;
-
-	if (m_bEnable && m_bNeedsRefresh)
-	{
-		m_bNeedsRefresh = false;
-
-		Recalculate();
-	}
 }
 
 void CRDFInstance::CalculateMinMax(

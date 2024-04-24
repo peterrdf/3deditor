@@ -32,6 +32,9 @@ public: // Methods
 	CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable);
 	virtual ~CRDFInstance();
 
+	// _instance
+	virtual void setEnable(bool bEnable) override;
+
 	// Rename
 	void UpdateName();
 
@@ -52,11 +55,7 @@ public: // Methods
 	int64_t GetVerticesCount() const { return m_pOriginalVertexBuffer->size(); }
 	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
-	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
-
-	// UI
-	void setEnable(bool bEnable);
-	bool getEnable() const { return m_bEnable; }
+	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }	
 
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 

@@ -236,8 +236,8 @@ protected: // Members
 
 	// Metadata
 	int64_t m_iID; // ID (1-based index)
-	OwlInstance m_iInstance;	
-	bool m_bEnable; // Show/Hide
+	OwlInstance m_iInstance;
+	bool m_bEnable; // Default state
 
 	// BB
 	_matrix* m_pmtxOriginalBBTransformation;
@@ -305,6 +305,8 @@ public: // Methods
 	OwlInstance GetInstance() const { return m_iInstance; }
 	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
 	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
+	bool getEnable() const { return m_bEnable; }
+	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
 
 	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
