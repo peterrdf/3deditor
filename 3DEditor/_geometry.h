@@ -242,8 +242,8 @@ protected: // Members
 	bool m_bEnable;
 
 	// Geometry
-	_vertices_f* m_pVertices; // Scaled & Centered Vertices: [-1, 1]
-	_indices_i32* m_pIndexBuffer; // Indices	
+	_vertices_f* m_pVertexBuffer; // Scaled & Centered Vertices: [-1, 1]
+	_indices_i32* m_pIndexBuffer; // Indices
 	int64_t m_iConceptualFacesCount; // Conceptual faces	
 	bool m_bNeedsRefresh; // The data (geometry) is out of date
 
@@ -284,7 +284,7 @@ public: // Methods
 		, m_strName(L"NA")
 		, m_strUniqueName(L"")
 		, m_bEnable(bEnable)
-		, m_pVertices(nullptr)
+		, m_pVertexBuffer(nullptr)
 		, m_pIndexBuffer(nullptr)
 		, m_iConceptualFacesCount(0)
 		, m_bNeedsRefresh(false)
@@ -326,13 +326,13 @@ public: // Methods
 	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }
 
 	// Geometry
-	int32_t* GetIndices() const { return m_pIndexBuffer->data(); }
-	int64_t GetIndicesCount() const { return m_pIndexBuffer->size(); }
-	float* GetVertices() const { return m_pVertices != nullptr ? m_pVertices->data() : nullptr; }
-	int64_t GetVerticesCount() const { return m_pVertices != nullptr ? m_pVertices->size() : 0; }
+	int32_t* GetIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
+	int64_t GetIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
+	float* GetVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
+	int64_t GetVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
 	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
-	bool HasGeometry() const { return (m_pVertices->size() > 0) && (m_pIndexBuffer->size() > 0); }
+	bool HasGeometry() const { return (GetVerticesCount() > 0) && (GetIndicesCount() > 0); }
 
 	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
@@ -366,8 +366,8 @@ protected: // Methods
 
 	void clean()
 	{
-		delete m_pVertices;
-		m_pVertices = nullptr;
+		delete m_pVertexBuffer;
+		m_pVertexBuffer = nullptr;
 
 		delete m_pIndexBuffer;
 		m_pIndexBuffer = nullptr;

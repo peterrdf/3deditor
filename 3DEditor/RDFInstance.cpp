@@ -97,23 +97,23 @@ void CRDFInstance::Recalculate()
 
 void CRDFInstance::ResetVertexBuffers()
 {
-	//if (GetVerticesCount() == 0)
-	//{
-	//	return;
-	//}
+	if (GetVerticesCount() == 0)
+	{
+		return;
+	}
 
-	//// Vertices
-	//delete m_pVertices;
-	//m_pVertices = new _vertices_f();
-	//m_pVertices->size() = m_pOriginalVertexBuffer->size();
-	//m_pVertices->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
-	//m_pVertices->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
-	//memcpy(m_pVertices, m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	// Vertices
+	delete m_pVertexBuffer;
+	m_pVertexBuffer = new _vertices_f();
+	m_pVertexBuffer->size() = m_pOriginalVertexBuffer->size();
+	m_pVertexBuffer->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
+	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
+	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
-	//// Bounding box
-	//memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
-	//memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
-	//memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+	// Bounding box
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
+	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
+	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 }
 
 void CRDFInstance::CalculateMinMax(
@@ -283,9 +283,9 @@ void CRDFInstance::Scale(float fScaleFactor)
 	/* Vertices */
 	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH)] = m_pVertices->data()[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 1] = m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 2] = m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 2] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] / fScaleFactor;
 	}
 }
 
@@ -299,9 +299,9 @@ void CRDFInstance::Translate(float fX, float fY, float fZ)
 	/* Vertices */
 	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
 	{
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH)] += fX;
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 1] += fY;
-		m_pVertices->data()[(iVertex * VERTEX_LENGTH) + 2] += fZ;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] += fX;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] += fY;
+		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] += fZ;
 	}
 
 	/* Bounding box - Min */
@@ -320,7 +320,7 @@ void CRDFInstance::Calculate()
 	ASSERT(m_pOriginalVertexBuffer == nullptr);
 	m_pOriginalVertexBuffer = new _vertices_f();
 
-	ASSERT(m_pVertices == nullptr);
+	ASSERT(m_pVertexBuffer == nullptr);
 
 	ASSERT(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
@@ -392,11 +392,11 @@ void CRDFInstance::Calculate()
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 
-	m_pVertices = new _vertices_f();
-	m_pVertices->size() = m_pOriginalVertexBuffer->size();
-	m_pVertices->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
-	m_pVertices->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
-	memcpy(m_pVertices->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	m_pVertexBuffer = new _vertices_f();
+	m_pVertexBuffer->size() = m_pOriginalVertexBuffer->size();
+	m_pVertexBuffer->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
+	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
+	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
 
 	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
@@ -468,17 +468,17 @@ void CRDFInstance::Calculate()
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(m_pVertices->data() + iIndexValue + 8);
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(m_pVertices->data() + iIndexValue + 9);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 10);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 11);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			/*
@@ -520,17 +520,17 @@ void CRDFInstance::Calculate()
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(m_pVertices->data() + iIndexValue + 8);
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(m_pVertices->data() + iIndexValue + 9);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 10);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 11);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			// Material
@@ -560,17 +560,17 @@ void CRDFInstance::Calculate()
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexPoints);
 			iIndexValue *= VERTEX_LENGTH;
 
-			float fColor = *(m_pVertices->data() + iIndexValue + 8);
+			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
 			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
 			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
 
-			fColor = *(m_pVertices->data() + iIndexValue + 9);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
 			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 10);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
 			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
-			fColor = *(m_pVertices->data() + iIndexValue + 11);
+			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
 			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
 
 			_material material(
