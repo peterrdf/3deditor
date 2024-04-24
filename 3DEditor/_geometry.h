@@ -119,7 +119,7 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class _facesCohort : public _cohort
+class _cohortWithMaterial : public _cohort
 {
 
 private: // Members
@@ -129,13 +129,13 @@ private: // Members
 
 public: // Methods
 
-	_facesCohort(const _material& material)
+	_cohortWithMaterial(const _material& material)
 		: _cohort()
 		, m_vecFaces()
 		, m_material(material)
 	{}
 
-	virtual ~_facesCohort()
+	virtual ~_cohortWithMaterial()
 	{}
 
 	vector<_face>& faces() { return m_vecFaces; }

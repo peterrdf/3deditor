@@ -47,11 +47,11 @@ private: // Members
 	vector<_primitives> m_vecPoints;
 	
 	// Cohorts
-	vector<_facesCohort*> m_vecConcFacesCohorts;
+	vector<_cohortWithMaterial*> m_vecConcFacesCohorts;
 	vector<_cohort*> m_vecFacePolygonsCohorts;
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
-	vector<_facesCohort*> m_vecLinesCohorts;
-	vector<_facesCohort*> m_vecPointsCohorts;
+	vector<_cohortWithMaterial*> m_vecLinesCohorts;
+	vector<_cohortWithMaterial*> m_vecPointsCohorts;
 
 	// Vectors
 	vector<_cohort*> m_vecNormalVecsCohorts;
@@ -116,11 +116,11 @@ public: // Methods
 	const vector<_primitives>& getConcFacePolygons() const { return m_vecConcFacePolygons; }
 
 	// Cohorts
-	vector<_facesCohort*>& concFacesCohorts() { return m_vecConcFacesCohorts; }
+	vector<_cohortWithMaterial*>& concFacesCohorts() { return m_vecConcFacesCohorts; }
 	vector<_cohort*>& facePolygonsCohorts() { return m_vecFacePolygonsCohorts; }
 	vector<_cohort*>& concFacePolygonsCohorts() { return m_vecConcFacePolygonsCohorts; }
-	vector<_facesCohort*>& linesCohorts() { return m_vecLinesCohorts; }
-	vector<_facesCohort*>& pointsCohorts() { return m_vecPointsCohorts; }	
+	vector<_cohortWithMaterial*>& linesCohorts() { return m_vecLinesCohorts; }
+	vector<_cohortWithMaterial*>& pointsCohorts() { return m_vecPointsCohorts; }	
 	
 	// Vectors
 	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }

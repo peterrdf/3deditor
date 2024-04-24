@@ -623,7 +623,7 @@ void CRDFInstance::Calculate()
 	auto itMaterial2ConcFaces = mapMaterial2ConcFaces.begin();
 	for (; itMaterial2ConcFaces != mapMaterial2ConcFaces.end(); itMaterial2ConcFaces++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaces->second.size(); iConcFace++)
 		{
@@ -637,7 +637,7 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -659,7 +659,7 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaces->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -682,7 +682,7 @@ void CRDFInstance::Calculate()
 			// Create material
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				concFacesCohorts().push_back(pCohort);
 			}
@@ -690,7 +690,7 @@ void CRDFInstance::Calculate()
 			// Check the limit
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaces->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaces->first);
 
 				concFacesCohorts().push_back(pCohort);
 			}
@@ -861,7 +861,7 @@ void CRDFInstance::Calculate()
 	auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.begin();
 	for (; itMaterial2ConcFaceLines != mapMaterial2ConcFaceLines.end(); itMaterial2ConcFaceLines++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFaceLines->second.size(); iConcFace++)
 		{
@@ -875,7 +875,7 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -897,7 +897,7 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -920,7 +920,7 @@ void CRDFInstance::Calculate()
 			// Create material
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
 
 				linesCohorts().push_back(pCohort);
 			}
@@ -928,7 +928,7 @@ void CRDFInstance::Calculate()
 			// Check the limit
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFaceLines->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFaceLines->first);
 
 				linesCohorts().push_back(pCohort);
 			}
@@ -953,7 +953,7 @@ void CRDFInstance::Calculate()
 	auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.begin();
 	for (; itMaterial2ConcFacePoints != mapMaterial2ConcFacePoints.end(); itMaterial2ConcFacePoints++)
 	{
-		_facesCohort* pCohort = nullptr;
+		_cohortWithMaterial* pCohort = nullptr;
 
 		for (size_t iConcFace = 0; iConcFace < itMaterial2ConcFacePoints->second.size(); iConcFace++)
 		{
@@ -967,7 +967,7 @@ void CRDFInstance::Calculate()
 			{
 				while (iIndicesCount > _oglUtils::getIndicesCountLimit())
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + _oglUtils::getIndicesCountLimit();
 						iIndex++)
@@ -989,7 +989,7 @@ void CRDFInstance::Calculate()
 
 				if (iIndicesCount > 0)
 				{
-					auto pNewCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+					auto pNewCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
 						iIndex++)
@@ -1012,7 +1012,7 @@ void CRDFInstance::Calculate()
 			// Create material
 			if (pCohort == nullptr)
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				pointsCohorts().push_back(pCohort);
 			}
@@ -1020,7 +1020,7 @@ void CRDFInstance::Calculate()
 			// Check the limit
 			if (pCohort->indices().size() + iIndicesCount > _oglUtils::getIndicesCountLimit())
 			{
-				pCohort = new _facesCohort(itMaterial2ConcFacePoints->first);
+				pCohort = new _cohortWithMaterial(itMaterial2ConcFacePoints->first);
 
 				pointsCohorts().push_back(pCohort);
 			}
