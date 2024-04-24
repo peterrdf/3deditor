@@ -35,8 +35,8 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	, m_vecNormalVecsCohorts()
 	, m_vecBiNormalVecsCohorts()
 	, m_vecTangentVecsCohorts()
-	, m_bEnable(bEnable)
 	, m_bNeedsRefresh(false)
+	, m_bEnable(bEnable)	
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {	
@@ -113,85 +113,6 @@ void CRDFInstance::Recalculate()
 	Calculate();
 }
 
-vector<_facesCohort*>& CRDFInstance::concFacesCohorts()
-{
-	return m_vecConcFacesCohorts;
-}
-
-vector<_cohort*>& CRDFInstance::facePolygonsCohorts()
-{
-	return m_vecFacePolygonsCohorts;
-}
-
-vector<_cohort*>& CRDFInstance::concFacePolygonsCohorts()
-{
-	return m_vecConcFacePolygonsCohorts;
-}
-
-vector<_facesCohort*>& CRDFInstance::linesCohorts()
-{
-	return m_vecLinesCohorts;
-}
-
-vector<_facesCohort*>& CRDFInstance::pointsCohorts()
-{
-	return m_vecPointsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CRDFInstance::normalVecsCohorts()
-{
-	return m_vecNormalVecsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CRDFInstance::biNormalVecsCohorts()
-{
-	return m_vecBiNormalVecsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-vector<_cohort*>& CRDFInstance::tangentVecsCohorts()
-{
-	return m_vecTangentVecsCohorts;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d * CRDFInstance::getBBMin() const
-{
-	return m_pvecBBMin;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d* CRDFInstance::getBBMax() const
-{
-	return m_pvecBBMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d* CRDFInstance::getOriginalBBMin() const
-{
-	return m_pvecOriginalBBMin;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d* CRDFInstance::getOriginalBBMax() const
-{
-	return m_pvecOriginalBBMax;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d* CRDFInstance::getAABBMin() const
-{
-	return m_pvecAABBMin;
-}
-
-// ------------------------------------------------------------------------------------------------
-_vector3d* CRDFInstance::getAABBMax() const
-{
-	return m_pvecAABBMax;
-}
-
 // ------------------------------------------------------------------------------------------------
 void CRDFInstance::setEnable(bool bEnable)
 {
@@ -203,12 +124,6 @@ void CRDFInstance::setEnable(bool bEnable)
 
 		Recalculate();
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-bool CRDFInstance::getEnable() const
-{
-	return m_bEnable;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -24,8 +24,8 @@ private: // Members
 	wstring m_strUniqueName;
 
 	// Geometry
-	_vertices_f* m_pOriginalVertexBuffer;
-	float * m_pVertices; // Scaled & Centered Vertices - [-1, 1]
+	_vertices_f* m_pOriginalVertexBuffer; // Vertices
+	float* m_pVertices; // Scaled & Centered Vertices - [-1, 1]
 	_indices_i32* m_pIndexBuffer; // Indices	
 	int64_t m_iConceptualFacesCount; // Conceptual faces
 
@@ -46,22 +46,23 @@ private: // Members
 	vector<_primitives> m_vecLines;	
 	vector<_primitives> m_vecPoints;
 	
-	// Materials
-	vector<_facesCohort*> m_vecConcFacesCohorts;
-	
 	// Cohorts
+	vector<_facesCohort*> m_vecConcFacesCohorts;
 	vector<_cohort*> m_vecFacePolygonsCohorts;
 	vector<_cohort*> m_vecConcFacePolygonsCohorts;
 	vector<_facesCohort*> m_vecLinesCohorts;
 	vector<_facesCohort*> m_vecPointsCohorts;
 
+	// Vectors
 	vector<_cohort*> m_vecNormalVecsCohorts;
 	vector<_cohort*> m_vecBiNormalVecsCohorts;
 	vector<_cohort*> m_vecTangentVecsCohorts;
 
-	bool m_bEnable; // UI
-
-	bool m_bNeedsRefresh; // The data (geometry) is out of date
+	// The data (geometry) is out of date
+	bool m_bNeedsRefresh; 
+	
+	// UI
+	bool m_bEnable; 
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -93,33 +94,32 @@ public: // Methods
 	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
+	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
+	_vector3d* getOriginalBBMax() const { return m_pvecOriginalBBMax; }
+	_matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
+	_vector3d* getBBMin() const { return m_pvecBBMin; }
+	_vector3d* getBBMax() const { return m_pvecBBMax; }
+	_vector3d* getAABBMin() const { return m_pvecAABBMin; }
+	_vector3d* getAABBMax() const { return m_pvecAABBMax; }
+
 	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
 	const vector<_primitives>& getLines() const { return m_vecLines; }
 	const vector<_primitives>& getPoints() const { return m_vecPoints; }
 	const vector<_primitives>& getFacePolygons() const { return m_vecFacePolygons; }
 	const vector<_primitives>& getConcFacePolygons() const { return m_vecConcFacePolygons; }
 
-	vector<_cohort*>& facePolygonsCohorts();
-	vector<_cohort*>& concFacePolygonsCohorts();
-	vector<_facesCohort*>& linesCohorts();
-	vector<_facesCohort*>& pointsCohorts();
-
-	vector<_facesCohort*>& concFacesCohorts();
+	vector<_facesCohort*>& concFacesCohorts() { return m_vecConcFacesCohorts; }
+	vector<_cohort*>& facePolygonsCohorts() { return m_vecFacePolygonsCohorts; }
+	vector<_cohort*>& concFacePolygonsCohorts() { return m_vecConcFacePolygonsCohorts; }
+	vector<_facesCohort*>& linesCohorts() { return m_vecLinesCohorts; }
+	vector<_facesCohort*>& pointsCohorts() { return m_vecPointsCohorts; }	
 	
-	vector<_cohort*>& normalVecsCohorts();	
-	vector<_cohort*>& biNormalVecsCohorts();
-	vector<_cohort*>& tangentVecsCohorts();
-
-	_vector3d* getOriginalBBMin() const;
-	_vector3d* getOriginalBBMax() const;
-	_matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
-	_vector3d* getBBMin() const;
-	_vector3d* getBBMax() const;
-	_vector3d* getAABBMin() const;
-	_vector3d* getAABBMax() const;
+	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }
+	vector<_cohort*>& biNormalVecsCohorts() { return m_vecBiNormalVecsCohorts; }
+	vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
 	
 	void setEnable(bool bEnable);
-	bool getEnable() const;
+	bool getEnable() const { return m_bEnable; }
 	
 	void ResetVertexBuffers();
 
