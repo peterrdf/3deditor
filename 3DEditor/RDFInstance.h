@@ -9,19 +9,9 @@
 class CRDFInstance : public _instance
 {
 
-private: // Members
-	
-	wstring m_strName;
-	wstring m_strUniqueName;
+private: // Members	
 
-	// Geometry
-	_vertices_f* m_pOriginalVertexBuffer; // Vertices
-	float* m_pVertices; // Scaled & Centered Vertices - [-1, 1]
-	_indices_i32* m_pIndexBuffer; // Indices	
-	int64_t m_iConceptualFacesCount; // Conceptual faces
-
-	// The data (geometry) is out of date
-	bool m_bNeedsRefresh;	
+	_vertices_f* m_pOriginalVertexBuffer; // Vertices	
 
 	// VBO (OpenGL)
 	GLuint m_iVBO;
@@ -35,27 +25,15 @@ public: // Methods
 	// _instance
 	virtual void setEnable(bool bEnable) override;
 
-	// Rename
+	// Name/Unique Name
 	void UpdateName();
 
-	// Geometry
+	// Refresh
 	void Recalculate();
 	void ResetVertexBuffers();
 
-	// Metadata	
-	const wchar_t* GetName() const { return m_strName.c_str(); }
-	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }	
-	bool IsReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
-	
-	// Geometry
-	int32_t* GetIndices() const { return m_pIndexBuffer->data(); }
-	int64_t GetIndicesCount() const { return m_pIndexBuffer->size(); }
-	float* GetVertices() const { return m_pVertices; }
-	float* GetOriginalVertices() const { return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr; }
-	int64_t GetVerticesCount() const { return m_pOriginalVertexBuffer->size(); }
-	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
-	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
-	bool HasGeometry() const { return (m_pOriginalVertexBuffer->size() > 0) && (m_pIndexBuffer->size() > 0); }	
+	// Geometry	
+	float* GetOriginalVertices() const { return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr; }	
 
 	void CalculateMinMax(
 		float& fXmin, float& fXmax, 
@@ -74,7 +52,7 @@ public: // Methods
 	GLuint& VBO() { return m_iVBO; }
 	GLsizei& VBOOffset() { return m_iVBOOffset; }
 
-private: // Methods
+protected: // Methods
 
 	void Calculate();
 	void Clean();

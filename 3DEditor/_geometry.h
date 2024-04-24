@@ -237,7 +237,15 @@ protected: // Members
 	// Metadata
 	int64_t m_iID; // ID (1-based index)
 	OwlInstance m_iInstance;
-	bool m_bEnable; // Default state
+	wstring m_strName;
+	wstring m_strUniqueName;
+	bool m_bEnable;
+
+	// Geometry
+	_vertices_f* m_pVertices; // Scaled & Centered Vertices: [-1, 1]
+	_indices_i32* m_pIndexBuffer; // Indices	
+	int64_t m_iConceptualFacesCount; // Conceptual faces	
+	bool m_bNeedsRefresh; // The data (geometry) is out of date
 
 	// BB
 	_matrix* m_pmtxOriginalBBTransformation;
@@ -273,7 +281,13 @@ public: // Methods
 	_instance(int64_t iID, OwlInstance iInstance, bool bEnable)
 		: m_iID(iID)
 		, m_iInstance(iInstance)
+		, m_strName(L"NA")
+		, m_strUniqueName(L"")
 		, m_bEnable(bEnable)
+		, m_pVertices(nullptr)
+		, m_pIndexBuffer(nullptr)
+		, m_iConceptualFacesCount(0)
+		, m_bNeedsRefresh(false)
 		, m_pmtxOriginalBBTransformation(nullptr)
 		, m_pvecOriginalBBMin(nullptr)
 		, m_pvecOriginalBBMax(nullptr)
@@ -305,8 +319,20 @@ public: // Methods
 	OwlInstance GetInstance() const { return m_iInstance; }
 	OwlClass GetClassInstance() const { return GetInstanceClass(m_iInstance); }
 	OwlModel GetModel() const { return ::GetModel(m_iInstance); }
+	bool IsReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
 	bool getEnable() const { return m_bEnable; }
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
+	const wchar_t* GetName() const { return m_strName.c_str(); }
+	const wchar_t* GetUniqueName() const { return m_strUniqueName.c_str(); }
+
+	// Geometry
+	int32_t* GetIndices() const { return m_pIndexBuffer->data(); }
+	int64_t GetIndicesCount() const { return m_pIndexBuffer->size(); }
+	float* GetVertices() const { return m_pVertices != nullptr ? m_pVertices->data() : nullptr; }
+	int64_t GetVerticesCount() const { return m_pVertices != nullptr ? m_pVertices->size() : 0; }
+	uint64_t GetVertexLength() const { return SetFormat(GetModel()) / sizeof(float); }
+	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
+	bool HasGeometry() const { return (m_pVertices->size() > 0) && (m_pIndexBuffer->size() > 0); }
 
 	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
@@ -340,6 +366,12 @@ protected: // Methods
 
 	void clean()
 	{
+		delete m_pVertices;
+		m_pVertices = nullptr;
+
+		delete m_pIndexBuffer;
+		m_pIndexBuffer = nullptr;
+
 		delete m_pmtxOriginalBBTransformation;
 		m_pmtxOriginalBBTransformation = nullptr;
 
