@@ -90,10 +90,7 @@ void CRDFInstance::LoadOriginalData()
 
 	// Vertices
 	ASSERT(m_pVertexBuffer != nullptr);
-	ASSERT(m_pOriginalVertexBuffer != nullptr);
-	ASSERT(m_pVertexBuffer->size() == m_pOriginalVertexBuffer->size());
-	ASSERT(m_pVertexBuffer->getVertexLength() == m_pOriginalVertexBuffer->getVertexLength());
-	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertexBuffer->copyFrom(m_pOriginalVertexBuffer);	
 
 	// Bounding box
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));

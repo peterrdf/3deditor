@@ -198,6 +198,15 @@ public: // Methods
 	virtual ~_vertexBuffer()
 	{}
 
+	void copyFrom(_vertexBuffer* pSource)
+	{
+		ASSERT(pSource != nullptr);
+		ASSERT(size() == pSource->size());
+		ASSERT(getVertexLength() == pSource->getVertexLength());
+
+		memcpy(data(), pSource->data(), size() * getVertexLength() * sizeof(V));
+	}
+
 	int64_t getVertexLength() { return m_iVertexLength; }
 };
 
