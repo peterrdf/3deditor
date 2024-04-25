@@ -60,7 +60,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	/*
 	* Model
 	*/
-	sort(vecModel.begin(), vecModel.end(), SORT_RDFINSTANCES());	
+	sort(vecModel.begin(), vecModel.end(), _sort_instances());
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{

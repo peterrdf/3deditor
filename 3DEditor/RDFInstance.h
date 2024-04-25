@@ -41,13 +41,3 @@ protected: // Methods
 	void Calculate();
 	void Clean();
 };
-
-// ************************************************************************************************
-struct SORT_RDFINSTANCES
-{
-	bool operator()(const CRDFInstance* a, const CRDFInstance* b) const
-	{
-		return wcscmp(a->getName(), b->getName()) < 0;
-	}
-};
-

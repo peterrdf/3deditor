@@ -607,3 +607,13 @@ protected: // Methods
 		_cohort::clear(m_vecTangentVecsCohorts);
 	}
 };
+
+
+// ************************************************************************************************
+struct _sort_instances
+{
+	bool operator()(const _instance* i1, const _instance* i2) const
+	{
+		return wcscmp(i1->getName(), i2->getName()) < 0;
+	}
+};
