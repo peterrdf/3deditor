@@ -245,8 +245,7 @@ protected: // Members
 	_vertices_f* m_pVertexBuffer; // Vertices
 	_indices_i32* m_pIndexBuffer; // Indices
 	int64_t m_iConceptualFacesCount; // Conceptual faces	
-	bool m_bNeedsRefresh; // The data (geometry) is out of date
-
+	
 	// BB/AABB
 	_matrix* m_pmtxOriginalBBTransformation;
 	_vector3d* m_pvecOriginalBBMin;
@@ -286,8 +285,7 @@ public: // Methods
 		, m_bEnable(bEnable)
 		, m_pVertexBuffer(nullptr)
 		, m_pIndexBuffer(nullptr)
-		, m_iConceptualFacesCount(0)
-		, m_bNeedsRefresh(false)
+		, m_iConceptualFacesCount(0)		
 		, m_pmtxOriginalBBTransformation(nullptr)
 		, m_pvecOriginalBBMin(nullptr)
 		, m_pvecOriginalBBMax(nullptr)

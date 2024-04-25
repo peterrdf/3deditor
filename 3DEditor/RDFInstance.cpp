@@ -7,7 +7,8 @@
 // ************************************************************************************************
 CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	: _instance(iID, iInstance, bEnable)	
-	, m_pOriginalVertexBuffer(nullptr)	
+	, m_pOriginalVertexBuffer(nullptr)
+	, m_bNeedsRefresh(false)
 	, m_iVBO(0)
 	, m_iVBOOffset(0)
 {
@@ -80,22 +81,7 @@ void CRDFInstance::UpdateName()
 	m_strUniqueName = szUniqueName;
 }
 
-void CRDFInstance::Recalculate()
-{	
-	if (!m_bEnable)
-	{
-		// Reloading on demand
-		m_bNeedsRefresh = true;
-
-		return;
-	}
-
-	Clean();
-
-	Calculate();
-}
-
-void CRDFInstance::ResetVertexBuffers()
+void CRDFInstance::LoadOriginalData()
 {
 	if (getVerticesCount() == 0)
 	{
@@ -113,6 +99,21 @@ void CRDFInstance::ResetVertexBuffers()
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+}
+
+void CRDFInstance::Recalculate()
+{	
+	if (!m_bEnable)
+	{
+		// Reloading on demand
+		m_bNeedsRefresh = true;
+
+		return;
+	}
+
+	Clean();
+
+	Calculate();
 }
 
 void CRDFInstance::Calculate()

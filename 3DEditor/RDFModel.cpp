@@ -585,7 +585,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 
 		if (!bLoadingModel)
 		{
-			itInstance->second->ResetVertexBuffers();
+			itInstance->second->LoadOriginalData();
 		}
 		
 		itInstance->second->calculateMinMax(
@@ -1533,7 +1533,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 			continue;
 		}
 
-		itInstance->second->ResetVertexBuffers();
+		itInstance->second->LoadOriginalData();
 		itInstance->second->translate(fX, fY, fZ);
 	}
 }
