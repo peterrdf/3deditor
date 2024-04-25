@@ -193,6 +193,7 @@ public: // Methods
 			is_same<V, float>::value ||
 			is_same<V, double>::value,
 			"V must be float or double type.");
+		ASSERT(iVertexLength >= 3);
 	}
 
 	virtual ~_vertexBuffer()
