@@ -92,8 +92,8 @@ void CRDFInstance::LoadOriginalData()
 	ASSERT(m_pVertexBuffer != nullptr);
 	ASSERT(m_pOriginalVertexBuffer != nullptr);
 	ASSERT(m_pVertexBuffer->size() == m_pOriginalVertexBuffer->size());
-	ASSERT(m_pVertexBuffer->vertexLength() == m_pOriginalVertexBuffer->vertexLength());
-	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	ASSERT(m_pVertexBuffer->getVertexLength() == m_pOriginalVertexBuffer->getVertexLength());
+	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
 
 	// Bounding box
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
@@ -119,7 +119,7 @@ void CRDFInstance::Recalculate()
 void CRDFInstance::Calculate()
 {
 	ASSERT(m_pOriginalVertexBuffer == nullptr);
-	m_pOriginalVertexBuffer = new _vertices_f();
+	m_pOriginalVertexBuffer = new _vertices_f(getVertexLength());
 
 	ASSERT(m_pVertexBuffer == nullptr);
 
@@ -180,10 +180,8 @@ void CRDFInstance::Calculate()
 	}
 
 	// Retrieves the vertices
-	m_pOriginalVertexBuffer->vertexLength() = SetFormat(getModel(), 0, 0) / sizeof(float);
-
-	m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
-	memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
+	memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->data());
 
@@ -193,11 +191,10 @@ void CRDFInstance::Calculate()
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 
-	m_pVertexBuffer = new _vertices_f();
+	m_pVertexBuffer = new _vertices_f(getVertexLength());
 	m_pVertexBuffer->size() = m_pOriginalVertexBuffer->size();
-	m_pVertexBuffer->vertexLength() = m_pOriginalVertexBuffer->vertexLength();
-	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength()];
-	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->vertexLength() * sizeof(float));
+	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
+	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
 
 	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.

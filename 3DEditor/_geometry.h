@@ -186,8 +186,8 @@ private: // Members
 
 public: // Methods
 
-	_vertexBuffer()
-		: m_iVertexLength(0)
+	_vertexBuffer(int64_t iVertexLength)
+		: m_iVertexLength(iVertexLength)
 	{
 		static_assert(
 			is_same<V, float>::value ||
@@ -198,7 +198,7 @@ public: // Methods
 	virtual ~_vertexBuffer()
 	{}
 
-	int64_t& vertexLength() { return m_iVertexLength; }
+	int64_t getVertexLength() { return m_iVertexLength; }
 };
 
 // ************************************************************************************************
@@ -607,7 +607,6 @@ protected: // Methods
 		_cohort::clear(m_vecTangentVecsCohorts);
 	}
 };
-
 
 // ************************************************************************************************
 struct _sort_instances
