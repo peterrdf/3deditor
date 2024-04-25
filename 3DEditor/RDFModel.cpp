@@ -424,7 +424,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 	ASSERT(iInstance != 0);
 
 	auto pInstance = new CRDFInstance(m_iID++, iInstance, true);
-	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[iInstance] = pInstance;
 
@@ -434,7 +434,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 {
 	auto pInstance = new CRDFInstance(m_iID++, pThing, true);
-	pInstance->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[pThing] = pInstance;
 
@@ -447,7 +447,7 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 
 	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
 
-	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.find(pInstance->getInstance());
+	auto itInstance = m_mapInstances.find(pInstance->getInstance());
 	ASSERT(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
@@ -588,7 +588,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			itInstance->second->ResetVertexBuffers();
 		}
 		
-		itInstance->second->CalculateMinMax(
+		itInstance->second->calculateMinMax(
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax);
@@ -651,7 +651,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			continue;
 		}
 
-		itInstance->second->CalculateMinMax(
+		itInstance->second->calculateMinMax(
 			m_fXmin, m_fXmax,
 			m_fYmin, m_fYmax,
 			m_fZmin, m_fZmax);
@@ -700,7 +700,7 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	m_mapInstances[iInstance]->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	m_mapInstances[iInstance]->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -741,7 +741,7 @@ void CRDFModel::ZoomOut()
 			continue;
 		}
 
-		itInstance->second->CalculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+		itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -1258,7 +1258,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 	{
 		if (m_mapInstanceDefaultState.at(iInstance))
 		{
-			CRDFInstance::CalculateBBMinMax(
+			CRDFInstance::calculateBBMinMax(
 				iInstance,
 				dXmin, dXmax,
 				dYmin, dYmax,
@@ -1729,7 +1729,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 	OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
 	ASSERT(iPlusXLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iPlusXLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -1739,7 +1739,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 	OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
 	ASSERT(iPlusYLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iPlusYLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -1749,7 +1749,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 	OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
 	ASSERT(iPlusZLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iPlusZLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2009,7 +2009,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iTopLabelInstance = m_pTextBuilder->BuildText("top", true);
 	ASSERT(iTopLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iTopLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2019,7 +2019,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
 	ASSERT(iBottomLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iBottomLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2029,7 +2029,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
 	ASSERT(iFrontLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iFrontLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2039,7 +2039,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iBackLabelInstance = m_pTextBuilder->BuildText("back", true);
 	ASSERT(iBackLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iBackLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2049,7 +2049,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
 	ASSERT(iLeftLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iLeftLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
@@ -2059,7 +2059,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 	OwlInstance iRightLabelInstance = m_pTextBuilder->BuildText("right", true);
 	ASSERT(iRightLabelInstance != 0);
 
-	CRDFInstance::CalculateBBMinMax(
+	CRDFInstance::calculateBBMinMax(
 		iRightLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,

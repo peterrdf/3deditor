@@ -34,17 +34,6 @@ public: // Methods
 
 	// Geometry	
 	float* GetOriginalVertices() const { return m_pOriginalVertexBuffer != nullptr ? m_pOriginalVertexBuffer->data() : nullptr; }	
-
-	void CalculateMinMax(
-		float& fXmin, float& fXmax, 
-		float& fYmin, float& fYmax, 
-		float& fZmin, float& fZmax);
-
-	static void CalculateBBMinMax(
-		OwlInstance iInstance,
-		double& dXmin, double& dXmax,
-		double& dYmin, double& dYmax,
-		double& dZmin, double& dZmax);
 	
 	GLuint& VBO() { return m_iVBO; }
 	GLsizei& VBOOffset() { return m_iVBOOffset; }
