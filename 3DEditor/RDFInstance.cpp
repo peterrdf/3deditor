@@ -218,11 +218,22 @@ void CRDFInstance::Calculate()
 			&iStartIndexFacePolygons, &iIndicesCountFacePolygons,
 			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
 
-		// Check for Texture
+		// Material
+		uint32_t iAmbientColor = 0;
+		uint32_t iDiffuseColor = 0;
+		uint32_t iEmissiveColor = 0;
+		uint32_t iSpecularColor = 0;
+		float fTransparency = 1.;
 		wstring strTexture;
 		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(conceptualFace);
 		if (iMaterialInstance != 0)
 		{
+			iAmbientColor = GetMaterialColorAmbient(iMaterialInstance);
+			iDiffuseColor = GetMaterialColorDiffuse(iMaterialInstance);
+			iEmissiveColor = GetMaterialColorEmissive(iMaterialInstance);
+			iSpecularColor = GetMaterialColorSpecular(iMaterialInstance);
+			fTransparency = (float)COLOR_GET_W(iAmbientColor);
+
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
 			GetObjectProperty(
@@ -255,38 +266,16 @@ void CRDFInstance::Calculate()
 			} // if (iCard == 1)
 		} // if (iMaterialInstance != 0)
 
+		_material material(
+			iAmbientColor,
+			iDiffuseColor,
+			iEmissiveColor,
+			iSpecularColor,
+			fTransparency,
+			!strTexture.empty() ? strTexture.c_str() : nullptr);
+
 		if (iIndicesCountTriangles > 0)
 		{
-			/*
-			* Material
-			*/
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
-			iIndexValue *= VERTEX_LENGTH;
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			/*
-			* Material
-			*/
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
-
 			MATERIALS::iterator itMaterial2ConcFaces = mapMaterial2ConcFaces.find(material);
 			if (itMaterial2ConcFaces == mapMaterial2ConcFaces.end())
 			{
@@ -312,31 +301,6 @@ void CRDFInstance::Calculate()
 
 		if (iIndicesCountLines > 0)
 		{
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
-			iIndexValue *= VERTEX_LENGTH;
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			// Material
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
-
 			auto itMaterial2ConcFaceLines = mapMaterial2ConcFaceLines.find(material);
 			if (itMaterial2ConcFaceLines == mapMaterial2ConcFaceLines.end())
 			{
@@ -352,30 +316,6 @@ void CRDFInstance::Calculate()
 
 		if (iIndicesCountPoints > 0)
 		{
-			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexPoints);
-			iIndexValue *= VERTEX_LENGTH;
-
-			float fColor = *(m_pVertexBuffer->data() + iIndexValue + 8);
-			unsigned int iAmbientColor = *(reinterpret_cast<unsigned int*>(&fColor));
-			float fTransparency = (float)(iAmbientColor & (255)) / (float)255;
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 9);
-			unsigned int iDiffuseColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 10);
-			unsigned int iEmissiveColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			fColor = *(m_pVertexBuffer->data() + iIndexValue + 11);
-			unsigned int iSpecularColor = *(reinterpret_cast<unsigned int*>(&fColor));
-
-			_material material(
-				iAmbientColor,
-				iDiffuseColor,
-				iEmissiveColor,
-				iSpecularColor,
-				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
-
 			auto itMaterial2ConcFacePoints = mapMaterial2ConcFacePoints.find(material);
 			if (itMaterial2ConcFacePoints == mapMaterial2ConcFacePoints.end())
 			{
