@@ -61,6 +61,7 @@ public: // Methods
 	void LoadGISModel(const wchar_t* szPath);
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
+	uint64_t GetVertexLength() const { return SetFormat(GetInstance()) / sizeof(float); }
 	
 	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
 	CRDFInstance* GetInstanceByID(int64_t iID);

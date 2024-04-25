@@ -1,24 +1,17 @@
 #pragma once
 
-// ------------------------------------------------------------------------------------------------
-/*
-// X, Y, Z, Nx, Ny, Nz, Tx, Ty, Ambient, Diffuse, Emissive, Specular, Tnx, Tny, Tnz, Bnx, Bny, Bnz
-// (Tx, Ty - bit 6; Normal vectors - bit 5, Diffuse, Emissive, Specular - bit 25, 26 & 27, Tangent vectors - bit 28, Binormal vectors - bit 29)
-*/
-#define VERTEX_LENGTH  18
-
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // X, Y, Z, Nx, Ny, Nz, Tx, Ty
 #define GEOMETRY_VBO_VERTEX_LENGTH  8
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // X, Y, Z
 #define VECTORS_VBO_VERTEX_LENGTH  3
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 static bool SaveScreenshot(unsigned char* arPixels, unsigned int iWidth, unsigned int iHeight, const wchar_t* szFilePath)
 {
 	static unsigned char header[54] = {
@@ -45,7 +38,7 @@ static bool SaveScreenshot(unsigned char* arPixels, unsigned int iWidth, unsigne
 	return true;
 }
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 static TCHAR SUPPORTED_FILES[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\

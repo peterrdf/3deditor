@@ -116,6 +116,8 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 	float fYmax = FLT_MIN;
 	float fZmax = FLT_MIN;
 
+	const auto VERTEX_LENGTH = pInstance->getVertexLength();
+
 	for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 	{
 		fXmin = fmin(fXmin, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 0]);

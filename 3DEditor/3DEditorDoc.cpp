@@ -249,12 +249,14 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 	output << "*** Unique vertices check ***\n";
 	output << "****************************************************************************************************\n\n";
 
+	const auto VERTEX_LENGTH = m_pModel->GetVertexLength();
+
 	auto& mapInstances = m_pModel->GetInstances();
 
-	map<int64_t, CRDFInstance *>::const_iterator itInstance = mapInstances.begin();
+	auto itInstance = mapInstances.begin();
 	for (; itInstance != mapInstances.end(); itInstance++)
 	{
-		CRDFInstance * pInstance = itInstance->second;
+		auto pInstance = itInstance->second;
 		if (!pInstance->hasGeometry())
 		{
 			continue;

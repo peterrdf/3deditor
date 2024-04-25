@@ -2075,6 +2075,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
+	const auto VERTEX_LENGTH = pModel->GetVertexLength();
 	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
@@ -2297,6 +2298,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
+	const auto VERTEX_LENGTH = pModel->GetVertexLength();
 	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
@@ -2519,6 +2521,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 	float fZmax = 1.f;
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
+	const auto VERTEX_LENGTH = pModel->GetVertexLength();
 	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
