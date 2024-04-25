@@ -312,7 +312,55 @@ public: // Methods
 	{}
 
 	virtual ~_instance()
-	{}
+	{
+		clean();
+	}
+
+	void scale(float fScaleFactor)
+	{
+		if (getVerticesCount() == 0)
+		{
+			return;
+		}
+
+		const auto iVertexLength = getVertexLength();
+
+		/* Vertices */
+		for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
+		{
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] / fScaleFactor;
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] / fScaleFactor;
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] = m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] / fScaleFactor;
+		}
+	}
+
+	void translate(float fX, float fY, float fZ)
+	{
+		if (getVerticesCount() == 0)
+		{
+			return;
+		}
+
+		const auto iVertexLength = getVertexLength();
+
+		/* Vertices */
+		for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++)
+		{
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 0] += fX;
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 1] += fY;
+			m_pVertexBuffer->data()[(iVertex * iVertexLength) + 2] += fZ;
+		}
+
+		/* BB - Min */
+		m_pvecBBMin->x += fX;
+		m_pvecBBMin->y += fY;
+		m_pvecBBMin->z += fZ;
+
+		/* BB - Max */
+		m_pvecBBMax->x += fX;
+		m_pvecBBMax->y += fY;
+		m_pvecBBMax->z += fZ;
+	}
 
 	// Metadata
 	int64_t getID() const { return m_iID; }

@@ -45,9 +45,6 @@ public: // Methods
 		double& dXmin, double& dXmax,
 		double& dYmin, double& dYmax,
 		double& dZmin, double& dZmax);
-
-	void Scale(float fScaleFactor);
-	void Translate(float fX, float fY, float fZ);
 	
 	GLuint& VBO() { return m_iVBO; }
 	GLsizei& VBOOffset() { return m_iVBOOffset; }

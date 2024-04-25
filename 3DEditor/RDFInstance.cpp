@@ -272,48 +272,6 @@ void CRDFInstance::CalculateMinMax(
 	}
 }
 
-void CRDFInstance::Scale(float fScaleFactor)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	/* Vertices */
-	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
-	{
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] / fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] / fScaleFactor;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] = m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] / fScaleFactor;
-	}
-}
-
-void CRDFInstance::Translate(float fX, float fY, float fZ)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	/* Vertices */
-	for (int64_t iVertex = 0; iVertex < m_pOriginalVertexBuffer->size(); iVertex++)
-	{
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH)] += fX;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] += fY;
-		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] += fZ;
-	}
-
-	/* Bounding box - Min */
-	m_pvecBBMin->x += fX;
-	m_pvecBBMin->y += fY;
-	m_pvecBBMin->z += fZ;
-
-	/* Bounding box - Max */
-	m_pvecBBMax->x += fX;
-	m_pvecBBMax->y += fY;
-	m_pvecBBMax->z += fZ;
-}
-
 void CRDFInstance::Calculate()
 {
 	ASSERT(m_pOriginalVertexBuffer == nullptr);

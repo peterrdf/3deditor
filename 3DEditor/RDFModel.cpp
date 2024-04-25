@@ -632,7 +632,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			continue;
 		}
 
-		itInstance->second->Scale(m_fBoundingSphereDiameter / 2.f);
+		itInstance->second->scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -1534,7 +1534,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 		}
 
 		itInstance->second->ResetVertexBuffers();
-		itInstance->second->Translate(fX, fY, fZ);
+		itInstance->second->translate(fX, fY, fZ);
 	}
 }
 
