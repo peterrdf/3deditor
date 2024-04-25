@@ -2184,7 +2184,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	/*
 	* Instances with a geometry
 	*/
-	if (pInstance->HasGeometry())
+	if (pInstance->hasGeometry())
 	{
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));

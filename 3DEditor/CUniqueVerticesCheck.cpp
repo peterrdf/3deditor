@@ -53,7 +53,7 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 {
 	ASSERT(pInstance != nullptr);
 
-	if (pInstance->GetVerticesCount() == 0)
+	if (pInstance->getVerticesCount() == 0)
 	{
 		return 0;
 	}
@@ -116,15 +116,15 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 	float fYmax = FLT_MIN;
 	float fZmax = FLT_MIN;
 
-	for (int64_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
+	for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 	{
-		fXmin = fmin(fXmin, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 0]);
-		fYmin = fmin(fYmin, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 1]);
-		fZmin = fmin(fZmin, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 2]);
+		fXmin = fmin(fXmin, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 0]);
+		fYmin = fmin(fYmin, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 1]);
+		fZmin = fmin(fZmin, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 2]);
 
-		fXmax = fmax(fXmax, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 0]);
-		fYmax = fmax(fYmax, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 1]);
-		fZmax = fmax(fZmax, pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 2]);
+		fXmax = fmax(fXmax, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 0]);
+		fYmax = fmax(fYmax, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 1]);
+		fZmax = fmax(fZmax, pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 2]);
 	} // for (int64_t iVertex = ...
 
 	float fXDistance = fXmax != fXmin ? (fXmax - fXmin) : 1.f;
@@ -137,10 +137,10 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 	* Create X bins
 	*/
 
-	for (int64_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
+	for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 	{
 		// X
-		float fX = pInstance->GetVertices()[(iVertex * VERTEX_LENGTH) + 0];
+		float fX = pInstance->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
 
 		// X => [0, 1]
 		fX = (fX - fXmin) / fXDistance;
@@ -178,7 +178,7 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 			for (size_t iVertex = 0; iVertex < m_vecXBinsIndices[iXBin]->size(); iVertex++)
 			{
 				// Y					
-				float fY = pInstance->GetVertices()[(m_vecXBinsIndices[iXBin]->at(iVertex) * VERTEX_LENGTH) + 1];
+				float fY = pInstance->getVertices()[(m_vecXBinsIndices[iXBin]->at(iVertex) * VERTEX_LENGTH) + 1];
 
 				// Y => [0, 1]
 				fY = (fY - fYmin) / fYDistance;
@@ -214,7 +214,7 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 					for (size_t iVertex = 0; iVertex < m_vecYBinsIndices[iYBin]->size(); iVertex++)
 					{
 						// Z					
-						float fZ = pInstance->GetVertices()[(m_vecYBinsIndices[iYBin]->at(iVertex) * VERTEX_LENGTH) + 2];
+						float fZ = pInstance->getVertices()[(m_vecYBinsIndices[iYBin]->at(iVertex) * VERTEX_LENGTH) + 2];
 
 						// Z => [0, 1]
 						fZ = (fZ - fZmin) / fZDistance;
@@ -245,9 +245,9 @@ int32_t CUniqueVerticesCheck::Check(CRDFInstance * pInstance, wofstream & output
 							output << "Duplicates:\n";
 							for (size_t iVertex = 0; iVertex < m_vecZBinsIndices[iZBin]->size(); iVertex++)
 							{
-								float fX = pInstance->GetVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 0];
-								float fY = pInstance->GetVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 1];
-								float fZ = pInstance->GetVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 2];
+								float fX = pInstance->getVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 0];
+								float fY = pInstance->getVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 1];
+								float fZ = pInstance->getVertices()[(m_vecZBinsIndices[iZBin]->at(iVertex) * VERTEX_LENGTH) + 2];
 
 								output << "Vertex: " << m_vecZBinsIndices[iZBin]->at(iVertex) << "(" << fX << ", " << fY << ", " << fZ << ")" << "\n";
 							} // for (size_t iVertex = ...			

@@ -1732,7 +1732,7 @@ public: // Methods
 			pInstance->VBO() = iVBO;
 			pInstance->VBOOffset() = iVBOOffset;
 
-			iVBOOffset += (GLsizei)pInstance->GetVerticesCount();
+			iVBOOffset += (GLsizei)pInstance->getVerticesCount();
 		}
 
 		glBindVertexArray(0);
@@ -1773,7 +1773,7 @@ public: // Methods
 		iVerticesCount = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
 		{
-			iVerticesCount += vecInstances[i]->GetVerticesCount();
+			iVerticesCount += vecInstances[i]->getVerticesCount();
 		}
 
 		float* pVertices = new float[iVerticesCount * _VERTEX_LENGTH];
@@ -1784,11 +1784,11 @@ public: // Methods
 			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
-				vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH * sizeof(float));
+				vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH * sizeof(float));
 
 			delete[] pSrcVertices;
 
-			iOffset += vecInstances[i]->GetVerticesCount() * _VERTEX_LENGTH;
+			iOffset += vecInstances[i]->getVerticesCount() * _VERTEX_LENGTH;
 		}
 
 		return pVertices;
@@ -1797,29 +1797,29 @@ public: // Methods
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
 	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
 	{
-		const int64_t _SRC_VERTEX_LENGTH = pInstance->GetVertexLength();
+		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
 		const int64_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
-		float* pVertices = new float[pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH];
-		memset(pVertices, 0, pInstance->GetVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
 
-		for (int64_t iVertex = 0; iVertex < pInstance->GetVerticesCount(); iVertex++)
+		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 		{
 			// X, Y, Z
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
 
 			// Nx, Ny, Nz
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
 
 			// Tx, Ty
 			if (bSupportsTexture)
 			{
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->GetVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
 			}
 		}
 

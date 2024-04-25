@@ -257,7 +257,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		bool bIsGeometryInstanceSelected = false;		
 		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 		{
-			if (vecSelectedInstances[iInstance]->HasGeometry())
+			if (vecSelectedInstances[iInstance]->hasGeometry())
 			{
 				bIsGeometryInstanceSelected = true;
 
@@ -393,7 +393,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		/*
 		* Instances with a geometry
 		*/
-		if (vecSelectedInstances[0]->HasGeometry())
+		if (vecSelectedInstances[0]->hasGeometry())
 		{
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));

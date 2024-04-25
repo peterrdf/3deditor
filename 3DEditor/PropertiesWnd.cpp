@@ -3420,7 +3420,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Vertices
 	*/
 	{	
-		swprintf(szBuffer, 100, L"%lld", pInstance->GetVerticesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getVerticesCount());
 
 		auto pItem = new CMFCPropertyGridProperty(L"Number of vertices", (_variant_t)szBuffer, L"Number of vertices");
 		pItem->AllowEdit(FALSE);
@@ -3432,7 +3432,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Indices
 	*/
 	{	
-		swprintf(szBuffer, 100, L"%lld", pInstance->GetIndicesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getIndicesCount());
 
 		auto pItem = new CMFCPropertyGridProperty(L"Number of indices", (_variant_t)szBuffer, L"Number of indices");
 		pItem->AllowEdit(FALSE);
@@ -3444,7 +3444,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Conceptual faces
 	*/
 	{
-		swprintf(szBuffer, 100, L"%lld", pInstance->GetConceptualFacesCount());
+		swprintf(szBuffer, 100, L"%lld", pInstance->getConceptualFacesCount());
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Number of conceptual faces", (_variant_t)szBuffer, L"Number of conceptual faces");
 		pProperty->AllowEdit(FALSE);
@@ -3649,7 +3649,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Geometry - Number of conceptual faces
 	*/
 	{
-		int64_t iConceptualFacesCount = pInstance->GetConceptualFacesCount();
+		int64_t iConceptualFacesCount = pInstance->getConceptualFacesCount();
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%lld", iConceptualFacesCount);

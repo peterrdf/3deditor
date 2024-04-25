@@ -255,7 +255,7 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 	for (; itInstance != mapInstances.end(); itInstance++)
 	{
 		CRDFInstance * pInstance = itInstance->second;
-		if (!pInstance->HasGeometry())
+		if (!pInstance->hasGeometry())
 		{
 			continue;
 		}
@@ -334,7 +334,7 @@ void CMy3DEditorDoc::OnViewZoomOut()
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
 	auto pInstance = GetSelectedInstance();
-	ASSERT((pInstance != nullptr) && pInstance->getEnable() && pInstance->HasGeometry());
+	ASSERT((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
 	ZoomToInstance(pInstance->getInstance());
 }
@@ -342,7 +342,7 @@ void CMy3DEditorDoc::OnInstancesZoomTo()
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
 	auto pInstance = GetSelectedInstance();
-	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->HasGeometry());
+	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()

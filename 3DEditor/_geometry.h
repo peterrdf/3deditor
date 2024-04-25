@@ -326,13 +326,13 @@ public: // Methods
 	const wchar_t* getUniqueName() const { return m_strUniqueName.c_str(); }
 
 	// Geometry
-	int32_t* GetIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
-	int64_t GetIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
-	float* GetVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
-	int64_t GetVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-	uint64_t GetVertexLength() const { return SetFormat(getModel()) / sizeof(float); }
-	int64_t GetConceptualFacesCount() const { return m_iConceptualFacesCount; }
-	bool HasGeometry() const { return (GetVerticesCount() > 0) && (GetIndicesCount() > 0); }
+	int32_t* getIndices() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->data() : nullptr; }
+	int64_t getIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
+	float* getVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
+	int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
+	uint64_t getVertexLength() const { return SetFormat(getModel()) / sizeof(float); }
+	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
+	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
 	// BB
 	_vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
