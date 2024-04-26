@@ -12,11 +12,7 @@ class CRDFInstance : public _instance
 private: // Members	
 
 	_vertices_f* m_pOriginalVertexBuffer; // Vertices
-	bool m_bNeedsRefresh; // The data (geometry) is out of date
-
-	// VBO (OpenGL)
-	GLuint m_iVBO;
-	GLsizei m_iVBOOffset;
+	bool m_bNeedsRefresh; // The data (geometry) is out of date	
 
 public: // Methods
 
@@ -31,10 +27,7 @@ public: // Methods
 
 	// Refresh
 	void LoadOriginalData();
-	void Recalculate();	
-	
-	GLuint& VBO() { return m_iVBO; }
-	GLsizei& VBOOffset() { return m_iVBOOffset; }
+	void Recalculate();
 
 protected: // Methods
 

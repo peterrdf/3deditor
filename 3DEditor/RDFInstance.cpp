@@ -8,9 +8,7 @@
 CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	: _instance(iID, iInstance, bEnable)	
 	, m_pOriginalVertexBuffer(nullptr)
-	, m_bNeedsRefresh(false)
-	, m_iVBO(0)
-	, m_iVBOOffset(0)
+	, m_bNeedsRefresh(false)	
 {
 	UpdateName();
 

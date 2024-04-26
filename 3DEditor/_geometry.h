@@ -285,6 +285,10 @@ protected: // Members
 	vector<_cohort*> m_vecBiNormalVecsCohorts;
 	vector<_cohort*> m_vecTangentVecsCohorts;
 
+	// VBO (OpenGL)
+	GLuint m_iVBO;
+	GLsizei m_iVBOOffset;
+
 public: // Methods
 
 	_instance(int64_t iID, OwlInstance iInstance, bool bEnable)
@@ -317,6 +321,8 @@ public: // Methods
 		, m_vecNormalVecsCohorts()
 		, m_vecBiNormalVecsCohorts()
 		, m_vecTangentVecsCohorts()
+		, m_iVBO(0)
+		, m_iVBOOffset(0)
 	{}
 
 	virtual ~_instance()
@@ -566,6 +572,10 @@ public: // Methods
 	vector<_cohort*>& normalVecsCohorts() { return m_vecNormalVecsCohorts; }
 	vector<_cohort*>& biNormalVecsCohorts() { return m_vecBiNormalVecsCohorts; }
 	vector<_cohort*>& tangentVecsCohorts() { return m_vecTangentVecsCohorts; }
+
+	// VBO (OpenGL)
+	GLuint& VBO() { return m_iVBO; }
+	GLsizei& VBOOffset() { return m_iVBOOffset; }
 
 protected: // Methods
 
