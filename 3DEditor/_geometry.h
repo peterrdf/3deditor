@@ -619,7 +619,7 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-struct _sort_instances
+struct _instancesComparator
 {
 	bool operator()(const _instance* i1, const _instance* i2) const
 	{

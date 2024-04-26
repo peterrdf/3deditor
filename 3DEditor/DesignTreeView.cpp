@@ -1305,7 +1305,7 @@ void CDesignTreeView::InstancesAlphabeticalView()
 	/*
 	* Model
 	*/
-	sort(vecModel.begin(), vecModel.end(), _sort_instances());
+	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
@@ -1375,7 +1375,7 @@ void CDesignTreeView::InstancesGroupByClassView()
 		HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
 
 		vector<CRDFInstance *> vecInstances = itModel->second;
-		sort(vecInstances.begin(), vecInstances.end(), _sort_instances());
+		sort(vecInstances.begin(), vecInstances.end(), _instancesComparator());
 
 		for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 		{
@@ -1434,7 +1434,7 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 	/*
 	* Model
 	*/
-	sort(vecModel.begin(), vecModel.end(), _sort_instances());
+	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
