@@ -1133,7 +1133,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		/**
 		* VBO - Conceptual faces, polygons, etc.
 		*/
-		if (((int_t)iVerticesCount + pInstance->getVerticesCount()) > (int_t)VERTICES_MAX_COUNT)
+		if (((int64_t)iVerticesCount + pInstance->getVerticesCount()) > (int64_t)VERTICES_MAX_COUNT)
 		{
 			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
@@ -1151,7 +1151,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
 		{
-			if ((int_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int64_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
 				{
@@ -1173,7 +1173,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
 		{
-			if ((int_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int64_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
 				{
@@ -1195,7 +1195,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		for (size_t iFacePolygonsCohort = 0; iFacePolygonsCohort < pInstance->facePolygonsCohorts().size(); iFacePolygonsCohort++)
 		{
-			if ((int_t)(iFacePolygonsIndicesCount + pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int64_t)(iFacePolygonsIndicesCount + pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
 				{
@@ -1217,7 +1217,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
 		{
-			if ((int_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int64_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
 				{
@@ -1239,7 +1239,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
 		{
-			if ((int_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+			if ((int64_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
 			{
 				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
 				{
