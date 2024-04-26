@@ -17,7 +17,7 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 
 /*virtual*/ CRDFInstance::~CRDFInstance()
 {
-	Clean();
+	clean();
 }
 
 /*virtual*/ void CRDFInstance::setEnable(bool bEnable) /*override*/
@@ -106,7 +106,7 @@ void CRDFInstance::Recalculate()
 		return;
 	}
 
-	Clean();
+	clean();
 
 	Calculate();
 }
@@ -751,7 +751,7 @@ void CRDFInstance::Calculate()
 	} // for (; itMaterial2ConceptualFaces != ...
 }
 
-void CRDFInstance::Clean()
+/*virtual*/ void CRDFInstance::clean() /*override*/
 {
 	_instance::clean();
 

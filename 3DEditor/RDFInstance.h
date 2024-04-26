@@ -31,6 +31,8 @@ public: // Methods
 
 protected: // Methods
 
-	void Calculate();
-	void Clean();
+	// _instance
+	virtual void clean() override;
+
+	void Calculate();	
 };

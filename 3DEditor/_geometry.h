@@ -579,7 +579,7 @@ public: // Methods
 
 protected: // Methods
 
-	void clean()
+	virtual void clean()
 	{
 		delete m_pVertexBuffer;
 		m_pVertexBuffer = nullptr;
