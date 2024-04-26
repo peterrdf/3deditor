@@ -7030,8 +7030,12 @@ static	inline	uint32_t	GetColorOfComponent(
 				(const void**) &values,
 				&card
 			);
-		assert(card == 1);
-		rgbwValues[i] = (card == 1) ? values[0] : 0.;
+		if (i == 3) {
+			rgbwValues[i] = (card == 1) ? values[0] : 1.;
+		}
+		else {
+			rgbwValues[i] = (card == 1) ? values[0] : 0.;
+		}
 	}
 
 	return	COLOR_ARR_RGBW(rgbwValues);
