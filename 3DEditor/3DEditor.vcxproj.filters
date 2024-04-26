@@ -368,5 +368,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
+    <None Include="..\stb\.editorconfig" />
   </ItemGroup>
 </Project>

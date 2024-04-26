@@ -30,3 +30,17 @@
 /x64/Debug/RDFViewer.exp
 /x64/Release/RDFViewer.lib
 /x64/Release/RDFViewer.exp
+/3DEditor/Win32
+/Debug/Test3DEditor.pdb
+/Debug/RDFViewer.pdb
+/Test3DEditor/Debug
+/Test3DEditor/Release
+/Win32/Debug/3DEditor.pdb
+/Win32/Release/3DEditor.pdb
+/Release
+/RDFViewer/Debug
+/Win32/Debug/Test3DEditor.pdb
+/Win32/Debug/RDFViewer.pdb
+/Win32/Release/Test3DEditor.pdb
+/Win32/Release/RDFViewer.pdb
+/RDFViewer/Release

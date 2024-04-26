@@ -14,9 +14,6 @@
 
 #ifndef _LINUX
 
-//#include "log.hpp"
-
-
 #include "targetver.h"
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit

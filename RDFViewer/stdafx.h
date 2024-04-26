@@ -12,8 +12,6 @@
 #pragma warning (disable : 4512)	// assignment operator could not be generated
 #pragma warning (disable : 4714)	// marked as __forceinline not inlined
 
-#include "log.hpp"
-
 #include "targetver.h"
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
