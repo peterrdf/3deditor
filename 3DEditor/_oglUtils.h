@@ -1664,8 +1664,8 @@ public: // Methods
 		GLsizei iIBOOffset = 0;
 		for (auto pCohort : vecCohorts)
 		{
-			pCohort->ibo() = iIBO;
-			pCohort->iboOffset() = iIBOOffset;
+			pCohort->IBO() = iIBO;
+			pCohort->IBOOffset() = iIBOOffset;
 
 			iIBOOffset += (GLsizei)pCohort->indices().size();
 		}

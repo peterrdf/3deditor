@@ -1573,11 +1573,11 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 					m_pOGLProgram->_setMaterial(pMaterial);
 				}
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
 					pInstance->VBOOffset());
 
 				if (pMaterial->hasTexture())
@@ -1644,11 +1644,11 @@ void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 			{
 				_cohort* pCohort = pInstance->facePolygonsCohorts()[iCohort];
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto itInstance ...
@@ -1694,11 +1694,11 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 
 			for (auto pCohort : pInstance->concFacePolygonsCohorts())
 			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto itInstance ...
@@ -1757,11 +1757,11 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 					pMaterial->getDiffuseColor().g(),
 					pMaterial->getDiffuseColor().b());
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_LINES,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto pInstance ...
@@ -1822,11 +1822,11 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 					pMaterial->getDiffuseColor().g(),
 					pMaterial->getDiffuseColor().b());
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 				glDrawElementsBaseVertex(GL_POINTS,
 					(GLsizei)pCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			} // for (auto pCohort ...		
 		} // for (auto pInstance ...
@@ -2805,11 +2805,11 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFr
 
 			for (auto pConcFacesCohort : pInstance->concFacesCohorts())
 			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->ibo());
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
 				glDrawElementsBaseVertex(GL_TRIANGLES,
 					(GLsizei)pConcFacesCohort->indices().size(),
 					GL_UNSIGNED_INT,
-					(void*)(sizeof(GLuint) * pConcFacesCohort->iboOffset()),
+					(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
 					pInstance->VBOOffset());
 			}
 		} // for (auto pInstance ...

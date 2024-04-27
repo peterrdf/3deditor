@@ -97,8 +97,8 @@ public: // Methods
 	}
 
 	vector<GLuint>& indices() { return m_vecIndices; }
-	GLuint& ibo() { return m_iIBO; }
-	GLsizei& iboOffset() { return m_iIBOOffset; }
+	GLuint& IBO() { return m_iIBO; }
+	GLsizei& IBOOffset() { return m_iIBOOffset; }
 };
 
 // ************************************************************************************************
