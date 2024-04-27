@@ -1643,7 +1643,7 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iIBO)] = iIBO;
 
-		int64_t iIndicesCount = 0;
+		uint32_t iIndicesCount = 0;
 		unsigned int* pIndices = _cohort::merge(vecCohorts, iIndicesCount);
 
 		if ((pIndices == nullptr) || (iIndicesCount == 0))

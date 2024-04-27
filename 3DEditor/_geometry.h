@@ -58,17 +58,17 @@ public: // Methods
 	virtual ~_cohort()
 	{}	
 
-	static unsigned int* merge(const vector<_cohort*>& vecCohorts, int64_t& iIndicesCount)
+	static unsigned int* merge(const vector<_cohort*>& vecCohorts, uint32_t& iIndicesCount)
 	{
 		iIndicesCount = 0;
 		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
 		{
-			iIndicesCount += vecCohorts[iCohort]->indices().size();
+			iIndicesCount += (uint32_t)vecCohorts[iCohort]->indices().size();
 		}
 
 		unsigned int* pIndices = new unsigned int[iIndicesCount];
 
-		int64_t iOffset = 0;
+		uint32_t iOffset = 0;
 		for (size_t iCohort = 0; iCohort < vecCohorts.size(); iCohort++)
 		{
 			if (vecCohorts[iCohort]->indices().size() == 0)
@@ -79,7 +79,7 @@ public: // Methods
 			memcpy((unsigned int*)pIndices + iOffset, vecCohorts[iCohort]->indices().data(),
 				vecCohorts[iCohort]->indices().size() * sizeof(unsigned int));
 
-			iOffset += vecCohorts[iCohort]->indices().size();
+			iOffset += (uint32_t)vecCohorts[iCohort]->indices().size();
 		}
 
 		return pIndices;
@@ -182,11 +182,11 @@ class _vertexBuffer : public _buffer<V>
 
 private: // Members
 
-	int64_t m_iVertexLength;
+	uint32_t m_iVertexLength;
 
 public: // Methods
 
-	_vertexBuffer(int64_t iVertexLength)
+	_vertexBuffer(uint32_t iVertexLength)
 		: m_iVertexLength(iVertexLength)
 	{
 		static_assert(
@@ -205,10 +205,10 @@ public: // Methods
 		ASSERT(size() == pSource->size());
 		ASSERT(getVertexLength() == pSource->getVertexLength());
 
-		memcpy(data(), pSource->data(), size() * getVertexLength() * sizeof(V));
+		memcpy(data(), pSource->data(), (uint32_t)size() * getVertexLength() * (uint32_t)sizeof(V));
 	}
 
-	int64_t getVertexLength() { return m_iVertexLength; }
+	uint32_t getVertexLength() { return m_iVertexLength; }
 };
 
 // ************************************************************************************************
@@ -541,7 +541,7 @@ public: // Methods
 	int64_t getIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
 	float* getVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
 	int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-	uint64_t getVertexLength() const { return SetFormat(getModel()) / sizeof(float); }
+	uint32_t getVertexLength() const { return (uint32_t)SetFormat(getModel()) / sizeof(float); }
 	int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
 	bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 

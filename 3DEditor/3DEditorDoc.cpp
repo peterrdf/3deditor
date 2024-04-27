@@ -14,7 +14,6 @@
 #include <propkey.h>
 
 #include "CUniqueVerticesCheck.h"
-#include "UniqueVerticesCheckE0.h"
 
 #include "Generic.h"
 
@@ -222,77 +221,79 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 {	
-	TCHAR szFilters[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	ASSERT(FALSE); // TODO
 
-	CFileDialog dlgFile(FALSE, _T("txt"), _T(" Report - Check for unique vertices"),
-		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
-		return;
-	}
-
-#ifdef _USE_BOOST
-	high_resolution_clock::time_point tpStart = high_resolution_clock::now();
-#endif
-
-	// Binning algorithm
-	//CUniqueVerticesCheck * pUniqueVerticesCheck = new CUniqueVerticesCheck();
-
-	// Exact match - Epsilon = 0
-	CUniqueVerticesCheckE0 * pUniqueVerticesCheckE0 = new CUniqueVerticesCheckE0();
-
-	CString strReportFile = dlgFile.GetPathName();
-
-	wofstream output((LPCTSTR)strReportFile);
-	output << "****************************************************************************************************\n";
-	output << "*** Unique vertices check ***\n";
-	output << "****************************************************************************************************\n\n";
-
-	const auto VERTEX_LENGTH = m_pModel->GetVertexLength();
-
-	auto& mapInstances = m_pModel->GetInstances();
-
-	auto itInstance = mapInstances.begin();
-	for (; itInstance != mapInstances.end(); itInstance++)
-	{
-		auto pInstance = itInstance->second;
-		if (!pInstance->hasGeometry())
-		{
-			continue;
-		}
-
-		// Binning algorithm
-		/*int32_t iDuplicatesCount1 =  pUniqueVerticesCheck->Check(pInstance, output);*/
-
-		// Exact match - Epsilon = 0
-		/*int32_t iDuplicatesCount2 = */pUniqueVerticesCheckE0->Check(pInstance, VERTEX_LENGTH, output);
-
-		/*if (iDuplicatesCount2 > 0)
-		{
-			tuple<float *, int64_t, int32_t *> tpUniqueVertices = pUniqueVerticesCheck->RemoveDuplicates(pInstance, VERTEX_LENGTH);
-			pInstance->UpdateVertices(get<0>(tpUniqueVertices), get<1>(tpUniqueVertices), get<2>(tpUniqueVertices));
-		}*/
-
-		/*if (iDuplicatesCount1 != iDuplicatesCount2)
-		{
-			output << "ERROR!\n";
-		}*/
-	} // for (; itInstance != ...
-
-#ifdef _USE_BOOST
-	high_resolution_clock::time_point tpEnd = high_resolution_clock::now();
-	duration<float> duration = tpEnd - tpStart;
-
-	output << "\n****************************************************************************************************\n";	
-	output << "Unique vertices check is done in " << duration << "." << "\n";
-	output << "****************************************************************************************************\n";
-#endif
-
-	output.close();
-
-	//delete pUniqueVerticesCheck;
-	delete pUniqueVerticesCheckE0;
+//	TCHAR szFilters[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+//
+//	CFileDialog dlgFile(FALSE, _T("txt"), _T(" Report - Check for unique vertices"),
+//		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+//
+//	if (dlgFile.DoModal() != IDOK)
+//	{
+//		return;
+//	}
+//
+//#ifdef _USE_BOOST
+//	high_resolution_clock::time_point tpStart = high_resolution_clock::now();
+//#endif
+//
+//	// Binning algorithm
+//	//CUniqueVerticesCheck * pUniqueVerticesCheck = new CUniqueVerticesCheck();
+//
+//	// Exact match - Epsilon = 0
+//	CUniqueVerticesCheckE0 * pUniqueVerticesCheckE0 = new CUniqueVerticesCheckE0();
+//
+//	CString strReportFile = dlgFile.GetPathName();
+//
+//	wofstream output((LPCTSTR)strReportFile);
+//	output << "****************************************************************************************************\n";
+//	output << "*** Unique vertices check ***\n";
+//	output << "****************************************************************************************************\n\n";
+//
+//	const auto VERTEX_LENGTH = m_pModel->GetVertexLength();
+//
+//	auto& mapInstances = m_pModel->GetInstances();
+//
+//	auto itInstance = mapInstances.begin();
+//	for (; itInstance != mapInstances.end(); itInstance++)
+//	{
+//		auto pInstance = itInstance->second;
+//		if (!pInstance->hasGeometry())
+//		{
+//			continue;
+//		}
+//
+//		// Binning algorithm
+//		/*int32_t iDuplicatesCount1 =  pUniqueVerticesCheck->Check(pInstance, output);*/
+//
+//		// Exact match - Epsilon = 0
+//		/*int32_t iDuplicatesCount2 = */pUniqueVerticesCheckE0->Check(pInstance, VERTEX_LENGTH, output);
+//
+//		/*if (iDuplicatesCount2 > 0)
+//		{
+//			tuple<float *, int64_t, int32_t *> tpUniqueVertices = pUniqueVerticesCheck->RemoveDuplicates(pInstance, VERTEX_LENGTH);
+//			pInstance->UpdateVertices(get<0>(tpUniqueVertices), get<1>(tpUniqueVertices), get<2>(tpUniqueVertices));
+//		}*/
+//
+//		/*if (iDuplicatesCount1 != iDuplicatesCount2)
+//		{
+//			output << "ERROR!\n";
+//		}*/
+//	} // for (; itInstance != ...
+//
+//#ifdef _USE_BOOST
+//	high_resolution_clock::time_point tpEnd = high_resolution_clock::now();
+//	duration<float> duration = tpEnd - tpStart;
+//
+//	output << "\n****************************************************************************************************\n";	
+//	output << "Unique vertices check is done in " << duration << "." << "\n";
+//	output << "****************************************************************************************************\n";
+//#endif
+//
+//	output.close();
+//
+//	//delete pUniqueVerticesCheck;
+//	delete pUniqueVerticesCheckE0;
 }
 
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()

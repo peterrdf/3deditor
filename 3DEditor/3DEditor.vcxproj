@@ -254,7 +254,6 @@
     <ClInclude Include="TextBuilder.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TreeCtrlEx.h" />
-    <ClInclude Include="UniqueVerticesCheckE0.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="_dxf_parser.h" />
     <ClInclude Include="_geometry.h" />
@@ -307,7 +306,6 @@
     <ClCompile Include="TextBuilder.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TreeCtrlEx.cpp" />
-    <ClCompile Include="UniqueVerticesCheckE0.cpp" />
     <ClCompile Include="_dxf_parser.cpp" />
   </ItemGroup>
   <ItemGroup>

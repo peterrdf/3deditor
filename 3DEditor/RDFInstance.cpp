@@ -175,21 +175,21 @@ void CRDFInstance::Calculate()
 	}
 
 	// Retrieves the vertices
-	m_pOriginalVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
-	memset(m_pOriginalVertexBuffer->data(), 0, m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
+	m_pOriginalVertexBuffer->data() = new float[(uint32_t)m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
+	memset(m_pOriginalVertexBuffer->data(), 0, (uint32_t)m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
 
 	UpdateInstanceVertexBuffer(m_iInstance, m_pOriginalVertexBuffer->data());
 
 	// Retrieves the indices
-	m_pIndexBuffer->data() = new int32_t[m_pIndexBuffer->size()];
-	memset(m_pIndexBuffer->data(), 0, m_pIndexBuffer->size() * sizeof(int32_t));
+	m_pIndexBuffer->data() = new int32_t[(uint32_t)m_pIndexBuffer->size()];
+	memset(m_pIndexBuffer->data(), 0, (uint32_t)m_pIndexBuffer->size() * sizeof(int32_t));
 
 	UpdateInstanceIndexBuffer(m_iInstance, m_pIndexBuffer->data());
 
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
 	m_pVertexBuffer->size() = m_pOriginalVertexBuffer->size();
-	m_pVertexBuffer->data() = new float[m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
-	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
+	m_pVertexBuffer->data() = new float[(uint32_t)m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength()];
+	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), (uint32_t)m_pOriginalVertexBuffer->size() * m_pOriginalVertexBuffer->getVertexLength() * sizeof(float));
 
 	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
 	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
