@@ -112,9 +112,6 @@
     <ClCompile Include="InstancesDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3DEditor\conceptMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

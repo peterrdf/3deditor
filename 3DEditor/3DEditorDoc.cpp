@@ -13,8 +13,6 @@
 
 #include <propkey.h>
 
-#include "CUniqueVerticesCheck.h"
-
 #include "Generic.h"
 
 #include "gisengine.h"

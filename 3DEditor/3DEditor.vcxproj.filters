@@ -98,9 +98,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CUniqueVerticesCheck.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DesignTreeViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -230,9 +227,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CUniqueVerticesCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SelectInstanceDialog.cpp">

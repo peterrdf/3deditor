@@ -224,7 +224,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
-    <ClCompile Include="..\3DEditor\CUniqueVerticesCheck.cpp" />
     <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp" />
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp" />

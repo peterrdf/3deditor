@@ -222,7 +222,6 @@
     <ClInclude Include="conceptMesh.h" />
     <ClInclude Include="ProgressDialog.h" />
     <ClInclude Include="RenameDialog.h" />
-    <ClInclude Include="CUniqueVerticesCheck.h" />
     <ClInclude Include="EditObjectPropertyDialog.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="DesignTreeViewConsts.h" />
@@ -274,7 +273,6 @@
     <ClCompile Include="conceptMesh.cpp" />
     <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="RenameDialog.cpp" />
-    <ClCompile Include="CUniqueVerticesCheck.cpp" />
     <ClCompile Include="EditObjectPropertyDialog.cpp" />
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
