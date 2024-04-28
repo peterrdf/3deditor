@@ -10,10 +10,11 @@ using namespace std;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
+// ************************************************************************************************
 #define NAMEOFVAR(variable) ((decltype(&variable))nullptr, #variable)
 
 // ************************************************************************************************
-class CSettingsStorage
+class _settings_storage
 {
 
 private: // Members
@@ -23,28 +24,23 @@ private: // Members
 
 public: // Methods
 
-	CSettingsStorage()
+	_settings_storage()
 		: m_strSettingsFile(L"")
 		, m_mapSettings()
-	{
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-
-		m_strSettingsFile = pthRootFolder.wstring();
-		m_strSettingsFile += L"\\3DEditor.settings";
-	}
-
-	virtual ~CSettingsStorage()
 	{}
 
-	void LoadSettings()
+	virtual ~_settings_storage()
+	{}
+
+	void loadSettings(const wstring& strSettingsFile)
 	{
+		m_strSettingsFile = strSettingsFile;
+
 		ifstream streamSettings(m_strSettingsFile.c_str());
 		if (!streamSettings)
 		{
+			ASSERT(FALSE);
+
 			return;
 		}
 
@@ -67,10 +63,10 @@ public: // Methods
 			}
 
 			m_mapSettings[strName] = strValue;
-		} // while (getline(streamSettings, ...
+		}
 	}
 
-	void SaveSettings()
+	void saveSettings()
 	{
 		ofstream streamSettings(m_strSettingsFile.c_str());
 		if (!streamSettings)
@@ -88,7 +84,7 @@ public: // Methods
 		streamSettings.close();
 	}
 
-	string GetSetting(const string& strName) const
+	string getSetting(const string& strName) const
 	{
 		auto itSetting = m_mapSettings.find(strName);
 		if (itSetting == m_mapSettings.end())
@@ -99,7 +95,7 @@ public: // Methods
 		return m_mapSettings.at(strName);
 	}
 
-	void SetSetting(const string& strName, const string& strValue)
+	void setSetting(const string& strName, const string& strValue)
 	{
 		auto itSetting = m_mapSettings.find(strName);
 		if (itSetting == m_mapSettings.end())
@@ -111,7 +107,7 @@ public: // Methods
 			m_mapSettings.at(strName) = strValue;
 		}
 
-		SaveSettings();
+		saveSettings();
 	}
 };
 

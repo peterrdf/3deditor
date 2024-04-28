@@ -11,7 +11,7 @@ CRDFController::CRDFController()
 	: m_pModel(nullptr)
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
-	, m_pSettingsStorage(new CSettingsStorage())
+	, m_pSettingsStorage(new _settings_storage())
 	, m_bUpdatingModel(false)
 	, m_setViews()
 	, m_pSelectedInstance(nullptr)
@@ -22,7 +22,17 @@ CRDFController::CRDFController()
 {
 	m_pSceneModel->CreateDefaultModel();
 	m_pNavigatorModel->CreateDefaultModel();
-	m_pSettingsStorage->LoadSettings();
+
+	wchar_t szAppPath[_MAX_PATH];
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+	fs::path pthExe = szAppPath;
+	auto pthRootFolder = pthExe.parent_path();
+
+	wstring strSettingsFile = pthRootFolder.wstring();
+	strSettingsFile += L"\\3DEditor.settings";
+
+	m_pSettingsStorage->loadSettings(strSettingsFile);
 }
 
 // ------------------------------------------------------------------------------------------------

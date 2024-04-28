@@ -158,7 +158,7 @@
     <ClInclude Include="TextBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SettingsStorage.h">
+    <ClInclude Include="_settings_storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="_mvc.h">
