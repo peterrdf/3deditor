@@ -146,8 +146,7 @@ public: // Methods
 
 // ************************************************************************************************
 CRDFModel::CRDFModel()
-	: m_strPath(L"")
-	, m_iModel(0)
+	: _model()	
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_iID(1)

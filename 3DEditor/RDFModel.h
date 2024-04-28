@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_mvc.h"
 #include "Texture.h"
 #include "RDFClass.h"
 #include "RDFProperty.h"
@@ -10,15 +11,13 @@
 using namespace std;
 
 // ************************************************************************************************
-class CRDFModel
+class CRDFModel : public _model
 {
 	friend class CLoadTask;
 
 protected: // Members
 
-	// Model
-	wstring m_strPath;
-	OwlModel m_iModel;
+	// Model	
 	map<OwlClass, CRDFClass*> m_mapClasses;
 	map<RdfProperty, CRDFProperty*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
@@ -61,8 +60,7 @@ public: // Methods
 	void LoadGISModel(const wchar_t* szPath);
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
-	uint64_t GetVertexLength() const { return SetFormat(GetInstance()) / sizeof(float); }
-	
+		
 	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
 	CRDFInstance* GetInstanceByID(int64_t iID);
 	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
@@ -88,18 +86,11 @@ public: // Methods
 	void OnInstanceNameEdited(CRDFInstance* pInstance);
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
 
-	
-
-	
-
 	CTexture* GetTexture(const wstring& strTexture);
 	CTexture* GetDefaultTexture();
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
 	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix = L"");
-
-	wstring GetPath() const { return m_strPath; }
-	OwlModel GetInstance() const { return m_iModel; }
 
 	const map<OwlClass, CRDFClass*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, CRDFProperty*>& GetProperties() const { return m_mapProperties; }

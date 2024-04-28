@@ -359,7 +359,7 @@ void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
-	wstring strFileName = m_pModel->GetPath();
+	wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.citygml";
 
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
@@ -371,19 +371,19 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 		return;
 	}
 
-	SaveAsCityGMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
+	SaveAsCityGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetInstance() != 0) &&
-		IsCityGML(m_pModel->GetInstance()));
+		(m_pModel->getInstance() != 0) &&
+		IsCityGML(m_pModel->getInstance()));
 }
 
 void CMy3DEditorDoc::OnExportAsInfragml()
 {
-	wstring strFileName = m_pModel->GetPath();
+	wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
@@ -395,19 +395,19 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 		return;
 	}
 
-	SaveAsInfraGMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
+	SaveAsInfraGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetInstance() != 0) &&
-		IsInfraGML(m_pModel->GetInstance()));
+		(m_pModel->getInstance() != 0) &&
+		IsInfraGML(m_pModel->getInstance()));
 }
 
 void CMy3DEditorDoc::OnExportAsLandxml()
 {
-	wstring strFileName = m_pModel->GetPath();
+	wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
@@ -419,12 +419,12 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 		return;
 	}
 
-	SaveAsLandXMLW(m_pModel->GetInstance(), dlgFile.GetPathName().GetString());
+	SaveAsLandXMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->GetInstance() != 0) &&
-		isLandXML(m_pModel->GetInstance()));
+		(m_pModel->getInstance() != 0) &&
+		isLandXML(m_pModel->getInstance()));
 }

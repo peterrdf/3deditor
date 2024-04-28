@@ -95,7 +95,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		HTREEITEM hModel = m_treeCtrl.GetChildItem(nullptr);
 		ASSERT(hModel != nullptr);
 
-		UpdateRootItemsUnreferencedItemsView(pModel->GetInstance(), hModel);
+		UpdateRootItemsUnreferencedItemsView(pModel->getInstance(), hModel);
 	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
 
 	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getInstance());
@@ -312,9 +312,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			wchar_t ** szValue = nullptr;
-			SetCharacterSerialization(pModel->GetInstance(), 0, 0, false);
+			SetCharacterSerialization(pModel->getInstance(), 0, 0, false);
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
-			SetCharacterSerialization(pModel->GetInstance(), 0, 0, true);
+			SetCharacterSerialization(pModel->getInstance(), 0, 0, true);
 
 			ASSERT(iCard >= 0);
 
@@ -1292,7 +1292,7 @@ void CDesignTreeView::InstancesAlphabeticalView()
 	{
 		auto pInstance = itRFDInstances->second;
 
-		if (pInstance->getModel() == pModel->GetInstance())
+		if (pInstance->getModel() == pModel->getInstance())
 		{
 			vecModel.push_back(pInstance);
 		}
@@ -1343,7 +1343,7 @@ void CDesignTreeView::InstancesGroupByClassView()
 
 		wstring strName = CA2W(szName);
 
-		if (pInstance->getModel() == pModel->GetInstance())
+		if (pInstance->getModel() == pModel->getInstance())
 		{
 			auto itModel = mapModel.find(strName);
 			if (itModel == mapModel.end())
@@ -1419,7 +1419,7 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 			continue;
 		}
 
-		if (pInstance->getModel() == pModel->GetInstance())
+		if (pInstance->getModel() == pModel->getInstance())
 		{
 			vecModel.push_back(pInstance);
 		}
@@ -1666,9 +1666,9 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 		{
 			int64_t iCard = 0;
 			wchar_t ** szValue = nullptr;
-			SetCharacterSerialization(pModel->GetInstance(), 0, 0, false);
+			SetCharacterSerialization(pModel->getInstance(), 0, 0, false);
 			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
-			SetCharacterSerialization(pModel->GetInstance(), 0, 0, true);
+			SetCharacterSerialization(pModel->getInstance(), 0, 0, true);
 
 			/*
 			* owl:cardinality

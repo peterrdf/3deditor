@@ -257,6 +257,7 @@
     <ClInclude Include="_dxf_parser.h" />
     <ClInclude Include="_geometry.h" />
     <ClInclude Include="_material.h" />
+    <ClInclude Include="_mvc.h" />
     <ClInclude Include="_oglUtils.h" />
   </ItemGroup>
   <ItemGroup>
