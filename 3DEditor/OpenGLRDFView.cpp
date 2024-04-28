@@ -42,9 +42,7 @@ COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
 COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
 #endif // _LINUX
 	: _oglRenderer()
-	, CRDFView()	
-	, m_bShowCoordinateSystem(TRUE)
-	, m_bShowNavigator(TRUE)
+	, CRDFView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
@@ -134,7 +132,7 @@ void COpenGLRDFView::SetShowFaces(BOOL bValue)
 	GetController()->GetSettingsStorage()->SetSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL COpenGLRDFView::GetShowFaces(CRDFModel* pModel)
+BOOL COpenGLRDFView::GetShowFaces(_model* pModel)
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -155,7 +153,7 @@ void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 }
 
 // ------------------------------------------------------------------------------------------------
-LPCTSTR COpenGLRDFView::GetCullFacesMode(CRDFModel* pModel) const
+LPCTSTR COpenGLRDFView::GetCullFacesMode(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -176,7 +174,7 @@ void COpenGLRDFView::SetShowFacesPolygons(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowFacesPolygons(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowFacesPolygons(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -197,7 +195,7 @@ void COpenGLRDFView::SetShowConceptualFacesPolygons(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowConceptualFacesPolygons(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowConceptualFacesPolygons(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -218,7 +216,7 @@ void COpenGLRDFView::SetShowLines(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowLines(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowLines(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -251,7 +249,7 @@ void COpenGLRDFView::SetShowPoints(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowPoints(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowPoints(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -284,7 +282,7 @@ void COpenGLRDFView::SetShowBoundingBoxes(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowBoundingBoxes(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowBoundingBoxes(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -305,7 +303,7 @@ void COpenGLRDFView::SetShowNormalVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowNormalVectors(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowNormalVectors(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -326,7 +324,7 @@ void COpenGLRDFView::SetShowTangentVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowTangentVectors(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowTangentVectors(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{
@@ -347,7 +345,7 @@ void COpenGLRDFView::SetShowBiNormalVectors(BOOL bValue)
 }
 
 // ------------------------------------------------------------------------------------------------
-BOOL COpenGLRDFView::GetShowBiNormalVectors(CRDFModel* pModel) const
+BOOL COpenGLRDFView::GetShowBiNormalVectors(_model* pModel) const
 {
 	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
 	{

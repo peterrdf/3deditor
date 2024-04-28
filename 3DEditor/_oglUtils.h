@@ -2006,6 +2006,8 @@ protected: // Members
 	BOOL m_bShowTangenVectors;
 	BOOL m_bShowBiNormalVectors;
 	BOOL m_bScaleVectors;
+	BOOL m_bShowCoordinateSystem;
+	BOOL m_bShowNavigator;
 
 public: // Methods
 
@@ -2059,6 +2061,8 @@ public: // Methods
 		, m_bShowTangenVectors(FALSE)
 		, m_bShowBiNormalVectors(FALSE)
 		, m_bScaleVectors(FALSE)
+		, m_bShowCoordinateSystem(TRUE)
+		, m_bShowNavigator(TRUE)
 	{
 		_setView(enumView::Isometric);
 	}	

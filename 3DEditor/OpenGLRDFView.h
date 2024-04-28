@@ -26,11 +26,7 @@ class COpenGLRDFView
 
 #pragma region Members
 
-private: // Members
-
-	// UI	
-	BOOL m_bShowCoordinateSystem;
-	BOOL m_bShowNavigator;
+private: // Members	
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
@@ -67,29 +63,29 @@ public: // Methods
 	
 	// UI
 	void SetShowFaces(BOOL bValue);
-	BOOL GetShowFaces(CRDFModel* pModel);
+	BOOL GetShowFaces(_model* pModel);
 	void SetCullFacesMode(LPCTSTR szMode);
-	LPCTSTR GetCullFacesMode(CRDFModel* pModel) const;
+	LPCTSTR GetCullFacesMode(_model* pModel) const;
 	void SetShowFacesPolygons(BOOL bValue);
-	BOOL GetShowFacesPolygons(CRDFModel* pModel) const;
+	BOOL GetShowFacesPolygons(_model* pModel) const;
 	void SetShowConceptualFacesPolygons(BOOL bValue);
-	BOOL GetShowConceptualFacesPolygons(CRDFModel* pModel) const;
+	BOOL GetShowConceptualFacesPolygons(_model* pModel) const;
 	void SetShowLines(BOOL bValue);
-	BOOL GetShowLines(CRDFModel* pModel) const;
+	BOOL GetShowLines(_model* pModel) const;
 	void SetLineWidth(GLfloat fWidth);
 	GLfloat GetLineWidth() const;
 	void SetShowPoints(BOOL bValue);
-	BOOL GetShowPoints(CRDFModel* pModel) const;
+	BOOL GetShowPoints(_model* pModel) const;
 	void SetPointSize(GLfloat fSize);
 	GLfloat GetPointSize() const;
 	void SetShowBoundingBoxes(BOOL bValue);
-	BOOL GetShowBoundingBoxes(CRDFModel* pModel) const;
+	BOOL GetShowBoundingBoxes(_model* pModel) const;
 	void SetShowNormalVectors(BOOL bValue);
-	BOOL GetShowNormalVectors(CRDFModel* pModel) const;
+	BOOL GetShowNormalVectors(_model* pModel) const;
 	void SetShowTangentVectors(BOOL bValue);
-	BOOL GetShowTangentVectors(CRDFModel* pModel) const;
+	BOOL GetShowTangentVectors(_model* pModel) const;
 	void SetShowBiNormalVectors(BOOL bValue);
-	BOOL GetShowBiNormalVectors(CRDFModel* pModel) const;
+	BOOL GetShowBiNormalVectors(_model* pModel) const;
 	void SetScaleVectors(BOOL bValue);
 	BOOL GetScaleVectors(CRDFModel* pModel) const;
 	void SetShowCoordinateSystem(BOOL bValue);
