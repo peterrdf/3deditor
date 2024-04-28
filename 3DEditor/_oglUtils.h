@@ -1912,15 +1912,34 @@ const wchar_t COORDINATE_SYSTEM_VBO[] = L"COORDINATE_SYSTEM_VBO";
 const wchar_t COORDINATE_SYSTEM_IBO[] = L"COORDINATE_SYSTEM_IBO";
 
 // ************************************************************************************************
+enum class enumMouseEvent : int
+{
+	Move = 0,
+	LBtnDown,
+	LBtnUp,
+	MBtnDown,
+	MBtnUp,
+	RBtnDown,
+	RBtnUp,
+};
+
+// ************************************************************************************************
+#define CULL_FACES_NONE L"<none>"
+#define CULL_FACES_FRONT L"Front"
+#define CULL_FACES_BACK L"Back"
+
+// ************************************************************************************************
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {
 
 protected: // Members
 
+	// MFC
 	CWnd* m_pWnd;
 	CMFCToolTipCtrl m_toolTipCtrl;
 
+	// OpenGL
 	_oglContext* m_pOGLContext;
 	_oglBlinnPhongProgram* m_pOGLProgram;
 	_oglShader* m_pVertexShader;
@@ -1928,17 +1947,18 @@ protected: // Members
 	enumProjection m_enProjection;
 	glm::mat4 m_matModelView;	
 
+	// Cache
 	_oglBuffers<Instance> m_oglBuffers;
 
 	// Rotation
 	enumRotationMode m_enRotationMode;
 
-	// degrees
+	// 2D Rotation
 	float m_fXAngle;
 	float m_fYAngle;
 	float m_fZAngle;
 
-	// radians
+	// 3D Rotation
 	_quaterniond m_rotation;
 
 	// World
@@ -1963,7 +1983,6 @@ protected: // Members
 	// Translation
 	float m_fXTranslation; // Perspective & Orthographic
 	float m_fYTranslation; // Perspective & Orthographic
-
 	float m_fZTranslation; // Perspective
 
 	// Orthographic
@@ -1971,6 +1990,21 @@ protected: // Members
 	float m_fScaleFactorMin;
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
+
+	// UI
+	BOOL m_bShowFaces;
+	CString m_strCullFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+	BOOL m_bShowBoundingBoxes;
+	BOOL m_bShowNormalVectors;
+	BOOL m_bShowTangenVectors;
+	BOOL m_bShowBiNormalVectors;
+	BOOL m_bScaleVectors;
 
 public: // Methods
 
@@ -2011,6 +2045,19 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
+		, m_bShowFaces(TRUE)
+		, m_strCullFaces(CULL_FACES_NONE)
+		, m_bShowFacesPolygons(FALSE)
+		, m_bShowConceptualFacesPolygons(TRUE)
+		, m_bShowLines(TRUE)
+		, m_fLineWidth(1.f)
+		, m_bShowPoints(TRUE)
+		, m_fPointSize(1.f)
+		, m_bShowBoundingBoxes(FALSE)
+		, m_bShowNormalVectors(FALSE)
+		, m_bShowTangenVectors(FALSE)
+		, m_bShowBiNormalVectors(FALSE)
+		, m_bScaleVectors(FALSE)
 	{
 		_setView(enumView::Isometric);
 	}	
@@ -2806,7 +2853,10 @@ public: // Methods
 			}
 			break;
 		} // switch (nChar)
-	}	
+	}
+
+	// UI
+	
 
 private: //  Methods
 

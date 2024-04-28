@@ -19,23 +19,6 @@
 #endif
 
 // ------------------------------------------------------------------------------------------------
-enum class enumMouseEvent : int
-{
-	Move = 0,
-	LBtnDown,
-	LBtnUp,
-	MBtnDown,
-	MBtnUp,
-	RBtnDown,
-	RBtnUp,
-};
-
-// ------------------------------------------------------------------------------------------------
-#define CULL_FACES_NONE L"<none>"
-#define CULL_FACES_FRONT L"Front"
-#define CULL_FACES_BACK L"Back"
-
-// ------------------------------------------------------------------------------------------------
 class COpenGLRDFView 
 	: public _oglRenderer<CRDFInstance>
 	, public CRDFView
@@ -45,20 +28,7 @@ class COpenGLRDFView
 
 private: // Members
 
-	// UI
-	BOOL m_bShowFaces;
-	CString m_strCullFaces;
-	BOOL m_bShowFacesPolygons;
-	BOOL m_bShowConceptualFacesPolygons;
-	BOOL m_bShowLines;
-	GLfloat m_fLineWidth;
-	BOOL m_bShowPoints;
-	GLfloat m_fPointSize;
-	BOOL m_bShowBoundingBoxes;
-	BOOL m_bShowNormalVectors;
-	BOOL m_bShowTangenVectors;
-	BOOL m_bShowBiNormalVectors;
-	BOOL m_bScaleVectors;
+	// UI	
 	BOOL m_bShowCoordinateSystem;
 	BOOL m_bShowNavigator;
 
