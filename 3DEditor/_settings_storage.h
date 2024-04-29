@@ -39,8 +39,6 @@ public: // Methods
 		ifstream streamSettings(m_strSettingsFile.c_str());
 		if (!streamSettings)
 		{
-			ASSERT(FALSE);
-
 			return;
 		}
 

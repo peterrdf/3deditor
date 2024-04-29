@@ -30,17 +30,20 @@ public: // Methods
 };
 
 // ************************************************************************************************
+template <class Model>
 class _controller
 {
 
 protected: // Members
 
+	Model* m_pModel;
 	_settings_storage* m_pSettingsStorage;
 
 public: // Methods
 
 	_controller()
-		: m_pSettingsStorage(new _settings_storage())
+		: m_pModel(nullptr)
+		, m_pSettingsStorage(new _settings_storage())
 	{}
 
 	virtual ~_controller()

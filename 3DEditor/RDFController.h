@@ -17,7 +17,7 @@ class CRDFProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-class CRDFController : public _controller
+class CRDFController : public _controller<CRDFModel>
 {
 
 private: // Members
@@ -53,12 +53,7 @@ private: // Members
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFController();
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CRDFController();
 
 	// --------------------------------------------------------------------------------------------
