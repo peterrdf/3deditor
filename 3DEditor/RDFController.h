@@ -22,7 +22,6 @@ class CRDFController : public _controller<CRDFModel>
 
 private: // Members
 
-	CRDFModel* m_pModel;
 	CSceneRDFModel* m_pSceneModel;
 	CNavigatorRDFModel* m_pNavigatorModel;	
 
@@ -58,7 +57,6 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFModel* GetModel() const { return m_pModel; }
 	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
 	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }	
 

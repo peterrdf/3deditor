@@ -41,7 +41,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	CRDFModel * pModel = m_pController->GetModel();
+	CRDFModel * pModel = m_pController->getModel();
 	ASSERT(pModel != nullptr);
 
 	auto& mapClasses = pModel->GetClasses();

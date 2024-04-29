@@ -134,7 +134,7 @@ void COpenGLRDFView::SetShowFaces(BOOL bValue)
 
 BOOL COpenGLRDFView::GetShowFaces(_model* pModel)
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowFaces;
 	}
@@ -155,7 +155,7 @@ void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
 // ------------------------------------------------------------------------------------------------
 LPCTSTR COpenGLRDFView::GetCullFacesMode(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_strCullFaces;
 	}
@@ -176,7 +176,7 @@ void COpenGLRDFView::SetShowFacesPolygons(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowFacesPolygons;
 	}
@@ -197,7 +197,7 @@ void COpenGLRDFView::SetShowConceptualFacesPolygons(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowConceptualFacesPolygons(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowConceptualFacesPolygons;
 	}
@@ -218,7 +218,7 @@ void COpenGLRDFView::SetShowLines(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowLines(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowLines;
 	}
@@ -251,7 +251,7 @@ void COpenGLRDFView::SetShowPoints(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowPoints(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowPoints;
 	}
@@ -284,7 +284,7 @@ void COpenGLRDFView::SetShowBoundingBoxes(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowBoundingBoxes(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowBoundingBoxes;
 	}
@@ -305,7 +305,7 @@ void COpenGLRDFView::SetShowNormalVectors(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowNormalVectors;
 	}
@@ -326,7 +326,7 @@ void COpenGLRDFView::SetShowTangentVectors(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowTangentVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowTangenVectors;
 	}
@@ -347,7 +347,7 @@ void COpenGLRDFView::SetShowBiNormalVectors(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetShowBiNormalVectors(_model* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bShowBiNormalVectors;
 	}
@@ -368,7 +368,7 @@ void COpenGLRDFView::SetScaleVectors(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 BOOL COpenGLRDFView::GetScaleVectors(CRDFModel* pModel) const
 {
-	if ((pModel == nullptr) || (pModel == GetController()->GetModel()))
+	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
 	{
 		return m_bScaleVectors;
 	}
@@ -611,7 +611,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	}
 
 	DrawMainModel(
-		pController->GetModel(),
+		pController->getModel(),
 		pController->GetSceneModel(),
 		0, 0,
 		iWidth, iHeight);
@@ -636,7 +636,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	if (!TEST_MODE)
 	{
 		DrawMainModelSelectionBuffers(
-			pController->GetModel(),
+			pController->getModel(),
 			0, 0,
 			iWidth, iHeight,
 			m_pInstanceSelectionFrameBuffer);
@@ -764,7 +764,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -814,7 +814,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	auto pController = GetController();
 	ASSERT(pController != nullptr);
 
-	CRDFModel * pModel = pController->GetModel();
+	CRDFModel * pModel = pController->getModel();
 	ASSERT(pModel != nullptr);
 
 	float fXmin = -1.f;
@@ -1504,9 +1504,9 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	
 	m_pOGLProgram->_enableBlinnPhongModel(TEST_MODE ? false : true);
 
-	const auto pPointedInstance = pModel == pController->GetModel() ?
+	const auto pPointedInstance = pModel == pController->getModel() ?
 		m_pPointedInstance : m_pNavigatorPointedInstance;
-	const auto pPointedInstanceMaterial = pModel == pController->GetModel() ? 
+	const auto pPointedInstanceMaterial = pModel == pController->getModel() ? 
 		m_pPointedInstanceMaterial : m_pNavigatorPointedInstanceMaterial;
 
 	for (auto itCohort : m_oglBuffers.instancesCohorts())
@@ -3298,7 +3298,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 		return;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	if (pModel == nullptr)
 	{
 		return;

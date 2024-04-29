@@ -76,7 +76,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	UNUSED(iCard);
 	ASSERT(piInstances != nullptr);
 
-	CRDFModel* pModel = m_pController->GetModel();
+	CRDFModel* pModel = m_pController->getModel();
 	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();

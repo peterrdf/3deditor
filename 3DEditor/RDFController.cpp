@@ -8,8 +8,7 @@ BOOL TEST_MODE = FALSE;
 
 // ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
-	: _controller()
-	, m_pModel(nullptr)
+	: _controller()	
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
 	, m_bUpdatingModel(false)

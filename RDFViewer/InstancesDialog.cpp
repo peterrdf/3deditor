@@ -34,7 +34,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_lcInstances.DeleteAllItems();
 	m_mapInstance2Item.clear();	
 
-	CRDFModel * pModel = GetController()->GetModel();
+	CRDFModel * pModel = GetController()->getModel();
 	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
@@ -413,7 +413,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			ASSERT(GetController() != nullptr);
 
-			CRDFModel * pModel = GetController()->GetModel();
+			CRDFModel * pModel = GetController()->getModel();
 			ASSERT(pModel != nullptr);
 
 			auto& mapInstances = pModel->GetInstances();

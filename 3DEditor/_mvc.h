@@ -51,6 +51,7 @@ public: // Methods
 		delete m_pSettingsStorage;
 	}
 
+	Model* getModel() const { return m_pModel; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 

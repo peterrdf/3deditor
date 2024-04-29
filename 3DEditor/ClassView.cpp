@@ -150,7 +150,7 @@ CRDFModel* CClassView::GetModel() const
 		return nullptr;
 	}
 
-	auto pModel = pController->GetModel();
+	auto pModel = pController->getModel();
 	ASSERT(pModel != nullptr);
 
 	return pModel;

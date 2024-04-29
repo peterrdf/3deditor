@@ -1745,7 +1745,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			auto pModel = GetController()->GetModel();
+			auto pModel = GetController()->getModel();
 			ASSERT(pModel != nullptr);
 
 			ASSERT(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"));
@@ -2739,7 +2739,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 	auto pInstance = GetController()->GetSelectedInstance();
 	if (pInstance != nullptr)
 	{
-		auto pModel = GetController()->GetModel();
+		auto pModel = GetController()->getModel();
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);
@@ -3041,7 +3041,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			ASSERT(GetController() != nullptr);
 
-			CRDFModel * pModel = GetController()->GetModel();
+			CRDFModel * pModel = GetController()->getModel();
 			ASSERT(pModel != nullptr);
 
 			auto& mapInstances = pModel->GetInstances();
