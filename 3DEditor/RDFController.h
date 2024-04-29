@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_settings_storage.h"
+#include "_mvc.h"
 
 #include <set>
 #include <vector>
@@ -17,16 +17,14 @@ class CRDFProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-class CRDFController
+class CRDFController : public _controller
 {
 
 private: // Members
 
 	CRDFModel* m_pModel;
 	CSceneRDFModel* m_pSceneModel;
-	CNavigatorRDFModel* m_pNavigatorModel;
-
-	_settings_storage* m_pSettingsStorage;
+	CNavigatorRDFModel* m_pNavigatorModel;	
 
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
@@ -67,8 +65,7 @@ public: // Methods
 	// Getter
 	CRDFModel* GetModel() const { return m_pModel; }
 	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
-	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }
-	_settings_storage* GetSettingsStorage() const { return m_pSettingsStorage; }
+	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }	
 
 	// --------------------------------------------------------------------------------------------
 	// Setter
