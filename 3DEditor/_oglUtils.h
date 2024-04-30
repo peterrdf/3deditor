@@ -1719,10 +1719,10 @@ public: // Methods
 
 		m_mapBuffers[to_wstring(iVBO)] = iVBO;
 
-		const int64_t VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
+		const size_t VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * iVerticesCount * VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (size_t)iVerticesCount * VERTEX_LENGTH, pVertices, GL_STATIC_DRAW);
 		delete[] pVertices;
 
 		setVBOAttributes(pProgram);
@@ -1769,7 +1769,7 @@ public: // Methods
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
 	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
 	{
-		const int64_t VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
+		const size_t VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
 		iVerticesCount = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
@@ -1777,7 +1777,7 @@ public: // Methods
 			iVerticesCount += vecInstances[i]->getVerticesCount();
 		}
 
-		float* pVertices = new float[iVerticesCount * VERTEX_LENGTH];
+		float* pVertices = new float[(size_t)iVerticesCount * VERTEX_LENGTH];
 
 		int64_t iOffset = 0;
 		for (size_t i = 0; i < vecInstances.size(); i++)
@@ -1785,7 +1785,7 @@ public: // Methods
 			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
-				vecInstances[i]->getVerticesCount() * VERTEX_LENGTH * sizeof(float));
+				(size_t)vecInstances[i]->getVerticesCount() * VERTEX_LENGTH * sizeof(float));
 
 			delete[] pSrcVertices;
 
@@ -1798,11 +1798,11 @@ public: // Methods
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
 	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
 	{
-		const int64_t _SRC_VERTEX_LENGTH = pInstance->getVertexLength();
-		const int64_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
+		const size_t _SRC_VERTEX_LENGTH = (size_t)pInstance->getVertexLength();
+		const size_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
-		float* pVertices = new float[pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
-		memset(pVertices, 0, pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+		float* pVertices = new float[(size_t)pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, (size_t)pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
 
 		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
 		{
