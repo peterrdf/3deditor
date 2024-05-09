@@ -6,7 +6,7 @@
 
 // ************************************************************************************************
 CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
-	: _instance(iID, iInstance, bEnable)	
+	: _geometry(iID, iInstance, bEnable)
 	, m_pOriginalVertexBuffer(nullptr)
 	, m_bNeedsRefresh(false)	
 {
@@ -22,7 +22,7 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 
 /*virtual*/ void CRDFInstance::setEnable(bool bEnable) /*override*/
 {
-	_instance::setEnable(bEnable);
+	_geometry::setEnable(bEnable);
 
 	if (m_bEnable && m_bNeedsRefresh)
 	{
@@ -193,9 +193,10 @@ void CRDFInstance::Calculate()
 	m_pVertexBuffer->data() = new float[(uint32_t)m_pOriginalVertexBuffer->size() * VERTEX_LENGTH];
 	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), (uint32_t)m_pOriginalVertexBuffer->size() * VERTEX_LENGTH * sizeof(float));
 
-	MATERIALS mapMaterial2ConcFaces; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFaceLines; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
-	MATERIALS mapMaterial2ConcFacePoints; // MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.	
+	// MATERIAL : FACE INDEX, START INDEX, INIDCES COUNT, etc.
+	MATERIALS mapMaterial2ConcFaces;
+	MATERIALS mapMaterial2ConcFaceLines;
+	MATERIALS mapMaterial2ConcFacePoints;
 
 	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
 	for (int64_t iConceptualFace = 0; iConceptualFace < m_iConceptualFacesCount; iConceptualFace++)
@@ -817,7 +818,7 @@ void CRDFInstance::Calculate()
 
 /*virtual*/ void CRDFInstance::clean() /*override*/
 {
-	_instance::clean();
+	_geometry::clean();
 
 	delete m_pOriginalVertexBuffer;
 	m_pOriginalVertexBuffer = nullptr;

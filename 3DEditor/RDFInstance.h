@@ -6,7 +6,7 @@
 #define EMPTY_INSTANCE L"---<EMPTY>---"
 
 // ************************************************************************************************
-class CRDFInstance : public _instance
+class CRDFInstance : public _geometry
 {
 
 private: // Members	

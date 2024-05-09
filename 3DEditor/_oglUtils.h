@@ -1930,6 +1930,10 @@ enum class enumMouseEvent : int
 #define CULL_FACES_BACK L"Back"
 
 // ************************************************************************************************
+// X, Y, Z, Nx, Ny, Nz
+#define GEOMETRY_VBO_VERTEX_LENGTH  6
+
+// ************************************************************************************************
 template <class Instance>
 class _oglRenderer : public _ioglRenderer
 {

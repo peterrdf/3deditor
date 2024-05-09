@@ -11,6 +11,14 @@
 using namespace std;
 
 // ************************************************************************************************
+static TCHAR SUPPORTED_FILES[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|\
+CityGML Files (*.gml;*citygml)|\
+*.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
+CityJSON Files (*.city.json)|*.city.json|\
+Autocad DXF Files (*.dxf)|*.dxf|\
+All Files (*.*)|*.*||");
+
+// ************************************************************************************************
 class CRDFModel : public _model
 {
 	friend class CLoadTask;
