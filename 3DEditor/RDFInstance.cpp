@@ -195,7 +195,7 @@ void CRDFInstance::Calculate()
 		int64_t iStartIndexConceptualFacePolygons = 0;
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 
-		ConceptualFace conceptualFace = GetConceptualFace(
+		ConceptualFace iConceptualFace = GetConceptualFace(
 			m_iInstance, 
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
@@ -206,7 +206,7 @@ void CRDFInstance::Calculate()
 
 		// Texture
 		wstring strTexture;
-		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(conceptualFace);
+		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
 		if (iMaterialInstance != 0)
 		{
 			int64_t* piInstances = nullptr;
@@ -337,7 +337,7 @@ void CRDFInstance::Calculate()
 
 			addPoints(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints, material, mapMaterial2ConcFacePoints);
 		}
-	} // for (int64_t iConceptualFace = ...
+	} // for (int64_t iConceptualFaceIndex = ...
 
 	// Build the cohorts
 	buildConcFacesCohorts(mapMaterial2ConcFaces, _oglUtils::getIndicesCountLimit());
