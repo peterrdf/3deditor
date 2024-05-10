@@ -796,6 +796,46 @@ protected: // Methods
 		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
 	}
 
+	wstring getConcFaceTexture(ConceptualFace iConceptualFace)
+	{
+		wstring strTexture;
+
+		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
+		if (iMaterialInstance != 0)
+		{
+			int64_t* piInstances = nullptr;
+			int64_t iCard = 0;
+			GetObjectProperty(
+				iMaterialInstance,
+				GetPropertyByName(getModel(), "textures"),
+				&piInstances,
+				&iCard);
+
+			if (iCard == 1)
+			{
+				iCard = 0;
+				char** szValue = nullptr;
+				GetDatatypeProperty(
+					piInstances[0],
+					GetPropertyByName(getModel(), "name"),
+					(void**)&szValue,
+					&iCard);
+
+				if (iCard == 1)
+				{
+					strTexture = CA2W(szValue[0]);
+				}
+
+				if (strTexture.empty())
+				{
+					strTexture = L"default";
+				}
+			} // if (iCard == 1)
+		} // if (iMaterialInstance != 0)
+
+		return strTexture;
+	}
+
 	void addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, int64_t iIndicesCount, _material& material, MATERIALS& mapMaterials)
 	{
 		auto itMaterial = mapMaterials.find(material);

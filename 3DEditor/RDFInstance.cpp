@@ -204,42 +204,7 @@ void CRDFInstance::Calculate()
 			&iStartIndexFacePolygons, &iIndicesCountFacePolygons,
 			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
 
-		// Texture
-		wstring strTexture;
-		OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
-		if (iMaterialInstance != 0)
-		{
-			int64_t* piInstances = nullptr;
-			int64_t iCard = 0;
-			GetObjectProperty(
-				iMaterialInstance,
-				GetPropertyByName(getModel(), "textures"),
-				&piInstances,
-				&iCard);
-
-			if (iCard == 1)
-			{
-				iCard = 0;
-				char** szValue = nullptr;
-				GetDatatypeProperty(
-					piInstances[0],
-					GetPropertyByName(getModel(), "name"),
-					(void**)&szValue,
-					&iCard);
-
-				ASSERT(iCard >= 0);
-
-				if (iCard == 1)
-				{
-					strTexture = CA2W(szValue[0]);
-				}
-
-				if (strTexture.empty())
-				{
-					strTexture = L"default";
-				}
-			} // if (iCard == 1)
-		} // if (iMaterialInstance != 0)
+		wstring strTexture = getConcFaceTexture(iConceptualFace);	
 
 		if (iIndicesCountTriangles > 0)
 		{
