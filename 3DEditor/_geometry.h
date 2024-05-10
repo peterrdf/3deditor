@@ -51,7 +51,7 @@ static void _matrix4x3Identity(_matrix4x3* pM)
 	pM->_11 = pM->_22 = pM->_33 = 1.;
 }
 
-static double _matrix4x3Determinant(_matrix4x3* pM)
+static double _matrixDeterminant(_matrix4x3* pM)
 {
 	double a = pM->_11 * pM->_22;
 	double b = pM->_12 * pM->_23;
@@ -727,6 +727,7 @@ protected: // Methods
 		mask += FORMAT_EXPORT_LINES;
 		mask += FORMAT_EXPORT_POINTS;
 		mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
 
 		uint64_t setting = 0;
 		setting += FORMAT_VERTEX_NORMAL;
@@ -734,7 +735,10 @@ protected: // Methods
 		setting += FORMAT_EXPORT_LINES;
 		setting += FORMAT_EXPORT_POINTS;
 		setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+		setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+
 		SetFormat(getModel(), setting, mask);
+		SetBehavior(getModel(), 2048 + 4096, 2048 + 4096);
 	}
 
 	bool calculate(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
@@ -766,6 +770,11 @@ protected: // Methods
 		m_vecTriangles.push_back(_primitives(iStartIndex, iIndicesCount));
 
 		addMaterial(iConceptualFaceIndex, iStartIndex, iIndicesCount, material, mapMaterials);
+	}
+
+	void addFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
+	{
+		m_vecFacePolygons.push_back(_primitives(iStartIndex, iIndicesCount));
 	}
 
 	void addConcFacePolygons(int64_t iStartIndex, int64_t iIndicesCount)
@@ -894,6 +903,82 @@ protected: // Methods
 		} // for (; itMaterial != ...
 	}
 
+	void buildFacePolygonsCohorts(GLsizei iIndicesCountLimit)
+	{
+		if (m_vecFacePolygons.empty())
+		{
+			return;
+		}
+
+		// Use the last cohort (if any)
+		_cohort* pCohort = facePolygonsCohorts().empty() ? nullptr : facePolygonsCohorts()[facePolygonsCohorts().size() - 1];
+
+		// Create the cohort
+		if (pCohort == nullptr)
+		{
+			pCohort = new _cohort();
+			facePolygonsCohorts().push_back(pCohort);
+		}
+
+		for (size_t iFace = 0; iFace < m_vecFacePolygons.size(); iFace++)
+		{
+			int64_t iStartIndex = m_vecFacePolygons[iFace].startIndex();
+			int64_t iIndicesCount = m_vecFacePolygons[iFace].indicesCount();
+
+			// Split the conceptual face - isolated case
+			if (iIndicesCount > iIndicesCountLimit / 2)
+			{
+				while (iIndicesCount > iIndicesCountLimit / 2)
+				{
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
+
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCountLimit / 2;
+						iIndex += 2)
+					{
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
+
+					iIndicesCount -= iIndicesCountLimit / 2;
+					iStartIndex += iIndicesCountLimit / 2;
+				} // while (iIndicesCount > iIndicesCountLimit / 2)
+
+				if (iIndicesCount > 0)
+				{
+					pCohort = new _cohort();
+					facePolygonsCohorts().push_back(pCohort);
+
+					for (int64_t iIndex = iStartIndex;
+						iIndex < iStartIndex + iIndicesCount;
+						iIndex += 2)
+					{
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
+				}
+
+				continue;
+			} // if (iIndicesCount > iIndicesCountLimit / 2)
+
+			// Check the limit
+			if ((pCohort->indices().size() + (iIndicesCount * 2)) > iIndicesCountLimit)
+			{
+				pCohort = new _cohort();
+				facePolygonsCohorts().push_back(pCohort);
+			}
+
+			for (int64_t iIndex = iStartIndex;
+				iIndex < iStartIndex + iIndicesCount;
+				iIndex += 2)
+			{
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+			}
+		} // for (size_t iFace = ...
+	}
+
 	void buildConcFacePolygonsCohorts(GLsizei iIndicesCountLimit)
 	{
 		if (m_vecConcFacePolygons.empty())
@@ -924,26 +1009,13 @@ protected: // Methods
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCountLimit / 2;
-						iIndex++)
+						iIndex += 2)
 					{
-						if (m_pIndexBuffer->data()[iIndex] < 0)
-						{
-							iPreviousIndex = -1;
-
-							continue;
-						}
-
-						if (iPreviousIndex != -1)
-						{
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-						} // if (iPreviousIndex != -1)
-
-						iPreviousIndex = iIndex;
-					} // for (int64_t iIndex = ...
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
 
 					iIndicesCount -= iIndicesCountLimit / 2;
 					iStartIndex += iIndicesCountLimit / 2;
@@ -954,26 +1026,13 @@ protected: // Methods
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
-					int64_t iPreviousIndex = -1;
 					for (int64_t iIndex = iStartIndex;
 						iIndex < iStartIndex + iIndicesCount;
-						iIndex++)
+						iIndex += 2)
 					{
-						if (m_pIndexBuffer->data()[iIndex] < 0)
-						{
-							iPreviousIndex = -1;
-
-							continue;
-						}
-
-						if (iPreviousIndex != -1)
-						{
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-							pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-						} // if (iPreviousIndex != -1)
-
-						iPreviousIndex = iIndex;
-					} // for (int64_t iIndex = ...
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+					}
 				}
 
 				continue;
@@ -986,26 +1045,13 @@ protected: // Methods
 				concFacePolygonsCohorts().push_back(pCohort);
 			}
 
-			int64_t iPreviousIndex = -1;
 			for (int64_t iIndex = iStartIndex;
 				iIndex < iStartIndex + iIndicesCount;
-				iIndex++)
+				iIndex += 2)
 			{
-				if (m_pIndexBuffer->data()[iIndex] < 0)
-				{
-					iPreviousIndex = -1;
-
-					continue;
-				}
-
-				if (iPreviousIndex != -1)
-				{
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iPreviousIndex]);
-					pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
-				} // if (iPreviousIndex != -1)
-
-				iPreviousIndex = iIndex;
-			} // for (int64_t iIndex = ...
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
+				pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
+			}
 		} // for (size_t iFace = ...
 	}
 
