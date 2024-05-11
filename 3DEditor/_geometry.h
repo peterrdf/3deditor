@@ -849,7 +849,7 @@ protected: // Methods
 		}
 	}
 
-	void buildConcFacesCohorts(MATERIALS& mapMaterials, GLsizei iIndicesCountLimit)
+	void buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT)
 	{
 		auto itMaterial = mapMaterials.begin();
 		for (; itMaterial != mapMaterials.end(); itMaterial++)
@@ -864,13 +864,13 @@ protected: // Methods
 				int64_t iIndicesCount = concFace.indicesCount();
 
 				// Split the conceptual face - isolated case
-				if (iIndicesCount > iIndicesCountLimit)
+				if (iIndicesCount > INDICES_COUNT_LIMIT)
 				{
-					while (iIndicesCount > iIndicesCountLimit)
+					while (iIndicesCount > INDICES_COUNT_LIMIT)
 					{
 						auto pNewCohort = new _cohortWithMaterial(itMaterial->first);
 						for (int64_t iIndex = iStartIndex;
-							iIndex < iStartIndex + iIndicesCountLimit;
+							iIndex < iStartIndex + INDICES_COUNT_LIMIT;
 							iIndex++)
 						{
 							pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
@@ -884,8 +884,8 @@ protected: // Methods
 						// Conceptual faces
 						pNewCohort->faces().push_back(concFace);
 
-						iIndicesCount -= iIndicesCountLimit;
-						iStartIndex += iIndicesCountLimit;
+						iIndicesCount -= INDICES_COUNT_LIMIT;
+						iStartIndex += INDICES_COUNT_LIMIT;
 					}
 
 					if (iIndicesCount > 0)
@@ -908,7 +908,7 @@ protected: // Methods
 					}
 
 					continue;
-				} // if (iIndicesCount > iIndicesCountLimit)	
+				} // if (iIndicesCount > INDICES_COUNT_LIMIT)	
 
 				// Create cohort
 				if (pCohort == nullptr)
@@ -919,7 +919,7 @@ protected: // Methods
 				}
 
 				// Check the limit
-				if (pCohort->indices().size() + iIndicesCount > iIndicesCountLimit)
+				if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT)
 				{
 					pCohort = new _cohortWithMaterial(itMaterial->first);
 
@@ -943,7 +943,7 @@ protected: // Methods
 		} // for (; itMaterial != ...
 	}
 
-	void buildFacePolygonsCohorts(GLsizei iIndicesCountLimit)
+	void buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
 	{
 		if (m_vecFacePolygons.empty())
 		{
@@ -966,24 +966,24 @@ protected: // Methods
 			int64_t iIndicesCount = m_vecFacePolygons[iFace].indicesCount();
 
 			// Split the conceptual face - isolated case
-			if (iIndicesCount > iIndicesCountLimit / 2)
+			if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 			{
-				while (iIndicesCount > iIndicesCountLimit / 2)
+				while (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 				{
 					pCohort = new _cohort();
 					facePolygonsCohorts().push_back(pCohort);
 
 					for (int64_t iIndex = iStartIndex;
-						iIndex < iStartIndex + iIndicesCountLimit / 2;
+						iIndex < iStartIndex + INDICES_COUNT_LIMIT / 2;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
 					}
 
-					iIndicesCount -= iIndicesCountLimit / 2;
-					iStartIndex += iIndicesCountLimit / 2;
-				} // while (iIndicesCount > iIndicesCountLimit / 2)
+					iIndicesCount -= INDICES_COUNT_LIMIT / 2;
+					iStartIndex += INDICES_COUNT_LIMIT / 2;
+				} // while (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
 				if (iIndicesCount > 0)
 				{
@@ -1000,10 +1000,10 @@ protected: // Methods
 				}
 
 				continue;
-			} // if (iIndicesCount > iIndicesCountLimit / 2)
+			} // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
 			// Check the limit
-			if ((pCohort->indices().size() + (iIndicesCount * 2)) > iIndicesCountLimit)
+			if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT)
 			{
 				pCohort = new _cohort();
 				facePolygonsCohorts().push_back(pCohort);
@@ -1019,7 +1019,7 @@ protected: // Methods
 		} // for (size_t iFace = ...
 	}
 
-	void buildConcFacePolygonsCohorts(GLsizei iIndicesCountLimit)
+	void buildConcFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
 	{
 		if (m_vecConcFacePolygons.empty())
 		{
@@ -1042,24 +1042,24 @@ protected: // Methods
 			int64_t iIndicesCount = m_vecConcFacePolygons[iFace].indicesCount();
 
 			// Split the conceptual face - isolated case
-			if (iIndicesCount > iIndicesCountLimit / 2)
+			if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 			{
-				while (iIndicesCount > iIndicesCountLimit / 2)
+				while (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 				{
 					pCohort = new _cohort();
 					concFacePolygonsCohorts().push_back(pCohort);
 
 					for (int64_t iIndex = iStartIndex;
-						iIndex < iStartIndex + iIndicesCountLimit / 2;
+						iIndex < iStartIndex + INDICES_COUNT_LIMIT / 2;
 						iIndex += 2)
 					{
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 0]);
 						pCohort->indices().push_back(m_pIndexBuffer->data()[iIndex + 1]);
 					}
 
-					iIndicesCount -= iIndicesCountLimit / 2;
-					iStartIndex += iIndicesCountLimit / 2;
-				} // while (iIndicesCount > iIndicesCountLimit / 2)
+					iIndicesCount -= INDICES_COUNT_LIMIT / 2;
+					iStartIndex += INDICES_COUNT_LIMIT / 2;
+				} // while (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
 				if (iIndicesCount > 0)
 				{
@@ -1076,10 +1076,10 @@ protected: // Methods
 				}
 
 				continue;
-			} // if (iIndicesCount > iIndicesCountLimit / 2)
+			} // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
 			// Check the limit
-			if ((pCohort->indices().size() + (iIndicesCount * 2)) > iIndicesCountLimit)
+			if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT)
 			{
 				pCohort = new _cohort();
 				concFacePolygonsCohorts().push_back(pCohort);
@@ -1095,7 +1095,7 @@ protected: // Methods
 		} // for (size_t iFace = ...
 	}
 
-	void buildLinesCohorts(MATERIALS& mapMaterials, GLsizei iIndicesCountLimit)
+	void buildLinesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT)
 	{
 		auto itMaterial = mapMaterials.begin();
 		for (; itMaterial != mapMaterials.end(); itMaterial++)
@@ -1110,13 +1110,13 @@ protected: // Methods
 				int64_t iIndicesCount = concFace.indicesCount();
 
 				// Split the conceptual face - isolated case
-				if (iIndicesCount > iIndicesCountLimit)
+				if (iIndicesCount > INDICES_COUNT_LIMIT)
 				{
-					while (iIndicesCount > iIndicesCountLimit)
+					while (iIndicesCount > INDICES_COUNT_LIMIT)
 					{
 						auto pNewCohort = new _cohortWithMaterial(itMaterial->first);
 						for (int64_t iIndex = iStartIndex;
-							iIndex < iStartIndex + iIndicesCountLimit;
+							iIndex < iStartIndex + INDICES_COUNT_LIMIT;
 							iIndex++)
 						{
 							pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
@@ -1130,8 +1130,8 @@ protected: // Methods
 						// Conceptual faces
 						pNewCohort->faces().push_back(concFace);
 
-						iIndicesCount -= iIndicesCountLimit;
-						iStartIndex += iIndicesCountLimit;
+						iIndicesCount -= INDICES_COUNT_LIMIT;
+						iStartIndex += INDICES_COUNT_LIMIT;
 					}
 
 					if (iIndicesCount > 0)
@@ -1154,7 +1154,7 @@ protected: // Methods
 					}
 
 					continue;
-				} // if (iIndicesCountTriangles > iIndicesCountLimit)	
+				} // if (iIndicesCountTriangles > INDICES_COUNT_LIMIT)	
 
 				// Create cohort
 				if (pCohort == nullptr)
@@ -1165,7 +1165,7 @@ protected: // Methods
 				}
 
 				// Check the limit
-				if (pCohort->indices().size() + iIndicesCount > iIndicesCountLimit)
+				if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT)
 				{
 					pCohort = new _cohortWithMaterial(itMaterial->first);
 
@@ -1189,7 +1189,7 @@ protected: // Methods
 		} // for (; itMaterial != ...
 	}
 
-	void buildPointsCohorts(MATERIALS& mapMaterials, GLsizei iIndicesCountLimit)
+	void buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT)
 	{
 		auto itMaterial = mapMaterials.begin();
 		for (; itMaterial != mapMaterials.end(); itMaterial++)
@@ -1204,13 +1204,13 @@ protected: // Methods
 				int64_t iIndicesCount = concFace.indicesCount();
 
 				// Split the conceptual face - isolated case
-				if (iIndicesCount > iIndicesCountLimit)
+				if (iIndicesCount > INDICES_COUNT_LIMIT)
 				{
-					while (iIndicesCount > iIndicesCountLimit)
+					while (iIndicesCount > INDICES_COUNT_LIMIT)
 					{
 						auto pNewCohort = new _cohortWithMaterial(itMaterial->first);
 						for (int64_t iIndex = iStartIndex;
-							iIndex < iStartIndex + iIndicesCountLimit;
+							iIndex < iStartIndex + INDICES_COUNT_LIMIT;
 							iIndex++)
 						{
 							pNewCohort->indices().push_back(m_pIndexBuffer->data()[iIndex]);
@@ -1224,8 +1224,8 @@ protected: // Methods
 						// Conceptual faces
 						pNewCohort->faces().push_back(concFace);
 
-						iIndicesCount -= iIndicesCountLimit;
-						iStartIndex += iIndicesCountLimit;
+						iIndicesCount -= INDICES_COUNT_LIMIT;
+						iStartIndex += INDICES_COUNT_LIMIT;
 					}
 
 					if (iIndicesCount > 0)
@@ -1248,7 +1248,7 @@ protected: // Methods
 					}
 
 					continue;
-				} // if (iIndicesCountTriangles > iIndicesCountLimit)	
+				} // if (iIndicesCountTriangles > INDICES_COUNT_LIMIT)	
 
 				// Create cohort
 				if (pCohort == nullptr)
@@ -1259,7 +1259,7 @@ protected: // Methods
 				}
 
 				// Check the limit
-				if (pCohort->indices().size() + iIndicesCount > iIndicesCountLimit)
+				if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT)
 				{
 					pCohort = new _cohortWithMaterial(itMaterial->first);
 
