@@ -17,7 +17,7 @@ class CRDFProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-class CRDFController : public _controller<CRDFModel>
+class CRDFController : public _controller
 {
 
 private: // Members
@@ -63,6 +63,7 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Setter
 	void SetModel(CRDFModel * pModel);
+	CRDFModel* GetModel();
 
 	// --------------------------------------------------------------------------------------------
 	// Support for notifications

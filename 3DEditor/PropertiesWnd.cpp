@@ -1332,7 +1332,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::CullFaces:
 				{
-					pOpenGLView->SetCullFacesMode(strValue);
+					pOpenGLView->setCullFacesMode(strValue);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
@@ -1745,7 +1745,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
 			ASSERT(pData != nullptr);
 
-			auto pModel = GetController()->getModel();
+			auto pModel = GetController()->GetModel();
 			ASSERT(pModel != nullptr);
 
 			ASSERT(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"));
@@ -2244,7 +2244,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 	
 	{
-		CString strCullFacesMode = pOpenGLView->GetCullFacesMode(nullptr);
+		CString strCullFacesMode = pOpenGLView->getCullFacesMode(nullptr);
 
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"), 
@@ -2739,7 +2739,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 	auto pInstance = GetController()->GetSelectedInstance();
 	if (pInstance != nullptr)
 	{
-		auto pModel = GetController()->getModel();
+		auto pModel = GetController()->GetModel();
 		if (pModel == nullptr)
 		{
 			ASSERT(FALSE);
@@ -3041,7 +3041,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			ASSERT(GetController() != nullptr);
 
-			CRDFModel * pModel = GetController()->getModel();
+			CRDFModel * pModel = GetController()->GetModel();
 			ASSERT(pModel != nullptr);
 
 			auto& mapInstances = pModel->GetInstances();

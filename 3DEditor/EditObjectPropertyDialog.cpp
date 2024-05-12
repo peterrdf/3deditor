@@ -85,7 +85,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
 
-	CRDFModel * pModel = m_pController->getModel();
+	CRDFModel * pModel = m_pController->GetModel();
 	ASSERT(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();

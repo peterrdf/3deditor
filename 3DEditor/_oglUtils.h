@@ -1984,6 +1984,7 @@ public: // Methods
 
 		string strSettingName(typeid(this).raw_name());
 		strSettingName += NAMEOFVAR(m_bShowFaces);
+
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
@@ -1997,10 +1998,151 @@ public: // Methods
 		return TRUE;
 	}
 
+	void setCullFacesMode(LPCTSTR szMode)
+	{
+		m_strCullFaces = szMode;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_strCullFaces);
+
+		saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
+	}
+
+	LPCTSTR getCullFacesMode(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_strCullFaces;
+		}
+
+		return CULL_FACES_NONE;
+	}
+
 protected: // Methods
 
+	virtual _controller* getController() const PURE;
 	virtual _model* getModel() const PURE;
 	virtual void saveSetting(const string& strName, const string& strValue) PURE;
+	virtual string loadSetting(const string& strName) PURE;
+	virtual void loadSettings()
+	{
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowFaces);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowFaces = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_strCullFaces);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_strCullFaces = !strValue.empty() ? CA2W(strValue.c_str()) : CULL_FACES_NONE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowFacesPolygons = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowConceptualFacesPolygons = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowLines);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowLines = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowPoints);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowPoints = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowBoundingBoxes = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowTangenVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowBiNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bScaleVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowCoordinateSystem = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+
+		{
+			string strSettingName(typeid(this).raw_name());
+			strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+			string strValue = loadSetting(strSettingName);
+
+			m_bShowNavigator = !strValue.empty() ? strValue == "TRUE" : TRUE;
+		}
+	}
 };
 
 // ************************************************************************************************
@@ -2069,7 +2211,6 @@ protected: // Members
 	float m_fScaleFactorInterval;
 
 	// UI
-	BOOL m_bShowFaces;
 	CString m_strCullFaces;
 	BOOL m_bShowFacesPolygons;
 	BOOL m_bShowConceptualFacesPolygons;
@@ -2124,7 +2265,6 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
-		, m_bShowFaces(TRUE)
 		, m_strCullFaces(CULL_FACES_NONE)
 		, m_bShowFacesPolygons(FALSE)
 		, m_bShowConceptualFacesPolygons(TRUE)

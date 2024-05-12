@@ -30,13 +30,12 @@ public: // Methods
 };
 
 // ************************************************************************************************
-template <class Model>
 class _controller
 {
 
 protected: // Members
 
-	Model* m_pModel;
+	_model* m_pModel;
 	_settings_storage* m_pSettingsStorage;
 
 public: // Methods
@@ -51,7 +50,7 @@ public: // Methods
 		delete m_pSettingsStorage;
 	}
 
-	Model* getModel() const { return m_pModel; }
+	_model* getModel() const { return m_pModel; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 

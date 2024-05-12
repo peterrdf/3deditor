@@ -1000,7 +1000,7 @@ CRDFModel* CDesignTreeView::GetModel() const
 		return nullptr;
 	}
 
-	return pController->getModel();
+	return pController->GetModel();
 }
 
 void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem)

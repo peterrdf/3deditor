@@ -122,6 +122,11 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_pNavigatorPointedInstanceMaterial = nullptr;
 }
 
+/*virtual*/ _controller* COpenGLRDFView::getController() const /*override*/
+{
+	return GetController();
+}
+
 /*virtual*/ _model* COpenGLRDFView::getModel() const /*override*/
 {
 	return GetController()->getModel();
@@ -132,26 +137,11 @@ COpenGLRDFView::~COpenGLRDFView()
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetCullFacesMode(LPCTSTR szMode)
+/*virtual*/ string COpenGLRDFView::loadSetting(const string& strName) /*override*/
 {
-	m_strCullFaces = szMode;
-
-	string strSettingName(typeid(this).raw_name());
-	strSettingName += NAMEOFVAR(m_strCullFaces);
-	GetController()->getSettingsStorage()->setSetting(strSettingName, (LPCSTR)CW2A(szMode));
+	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
-// ------------------------------------------------------------------------------------------------
-LPCTSTR COpenGLRDFView::GetCullFacesMode(_model* pModel) const
-{
-	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
-	{
-		return m_strCullFaces;
-	}
-
-	return CULL_FACES_NONE;
-}
 
 // ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::SetShowFacesPolygons(BOOL bValue)
@@ -394,113 +384,6 @@ BOOL COpenGLRDFView::GetShowNavigator() const
 	return m_bShowNavigator;
 }
 
-void COpenGLRDFView::LoadSettings()
-{
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowFaces);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowFaces = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}	
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_strCullFaces);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_strCullFaces = !strValue.empty() ? CA2W(strValue.c_str()) : CULL_FACES_NONE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowFacesPolygons = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowConceptualFacesPolygons = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowLines);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowLines = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowPoints);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowPoints = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowBoundingBoxes = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowTangenVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowBiNormalVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bScaleVectors);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bScaleVectors = !strValue.empty() ? strValue == "TRUE" : FALSE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowCoordinateSystem = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}
-
-	{
-		string strSettingName(typeid(this).raw_name());
-		strSettingName += NAMEOFVAR(m_bShowNavigator);
-		string strValue = GetController()->getSettingsStorage()->getSetting(strSettingName);
-
-		m_bShowNavigator = !strValue.empty() ? strValue == "TRUE" : TRUE;
-	}
-}
-
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::Reset()
 {
@@ -601,7 +484,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	}
 
 	DrawMainModel(
-		pController->getModel(),
+		pController->GetModel(),
 		pController->GetSceneModel(),
 		0, 0,
 		iWidth, iHeight);
@@ -626,7 +509,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	if (!TEST_MODE)
 	{
 		DrawMainModelSelectionBuffers(
-			pController->getModel(),
+			pController->GetModel(),
 			0, 0,
 			iWidth, iHeight,
 			m_pInstanceSelectionFrameBuffer);
@@ -754,7 +637,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	auto pModel = pController->getModel();
+	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
@@ -804,7 +687,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	auto pController = GetController();
 	ASSERT(pController != nullptr);
 
-	CRDFModel * pModel = pController->getModel();
+	CRDFModel * pModel = pController->GetModel();
 	ASSERT(pModel != nullptr);
 
 	float fXmin = -1.f;
@@ -1046,7 +929,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	GetController()->RegisterView(this);
 
-	LoadSettings();
+	loadSettings();
 }
 
 void COpenGLRDFView::LoadModel(CRDFModel* pModel)
@@ -1475,7 +1358,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 
 	auto begin = std::chrono::steady_clock::now();
 
-	CString strCullFaces = GetCullFacesMode(pModel);
+	CString strCullFaces = getCullFacesMode(pModel);
 
 	if (bTransparent)
 	{
@@ -3288,7 +3171,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 		return;
 	}
 
-	auto pModel = pController->getModel();
+	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
 		return;

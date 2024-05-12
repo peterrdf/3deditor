@@ -62,12 +62,12 @@ public: // Methods
 	virtual ~COpenGLRDFView();
 
 	// _oglRendererSettings
+	virtual _controller* getController() const override;
 	virtual _model* getModel() const override;
 	virtual void saveSetting(const string& strName, const string& strValue) override;
+	virtual string loadSetting(const string& strName) override;
 	
 	// UI
-	void SetCullFacesMode(LPCTSTR szMode);
-	LPCTSTR GetCullFacesMode(_model* pModel) const;
 	void SetShowFacesPolygons(BOOL bValue);
 	BOOL GetShowFacesPolygons(_model* pModel) const;
 	void SetShowConceptualFacesPolygons(BOOL bValue);
@@ -94,9 +94,7 @@ public: // Methods
 	BOOL GetShowCoordinateSystem() const;
 	void SetShowNavigator(BOOL bValue);
 	BOOL GetShowNavigator() const;
-	void LoadSettings();
 	void Reset();
-
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);

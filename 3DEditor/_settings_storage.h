@@ -32,6 +32,50 @@ public: // Methods
 	virtual ~_settings_storage()
 	{}
 
+	void setSetting(const string& strName, const string& strValue)
+	{
+		auto itSetting = m_mapSettings.find(strName);
+		if (itSetting == m_mapSettings.end())
+		{
+			m_mapSettings[strName] = strValue;
+		}
+		else
+		{
+			m_mapSettings.at(strName) = strValue;
+		}
+
+		saveSettings();
+	}
+
+	string getSetting(const string& strName) const
+	{
+		auto itSetting = m_mapSettings.find(strName);
+		if (itSetting == m_mapSettings.end())
+		{
+			return "";
+		}
+
+		return m_mapSettings.at(strName);
+	}
+
+	void saveSettings()
+	{
+		ofstream streamSettings(m_strSettingsFile.c_str());
+		if (!streamSettings)
+		{
+			ASSERT(FALSE);
+
+			return;
+		}
+
+		for (auto itSetting : m_mapSettings)
+		{
+			streamSettings << itSetting.first.c_str() << "\t" << itSetting.second.c_str() << "\n";
+		}
+
+		streamSettings.close();
+	}
+
 	void loadSettings(const wstring& strSettingsFile)
 	{
 		m_strSettingsFile = strSettingsFile;
@@ -62,50 +106,6 @@ public: // Methods
 
 			m_mapSettings[strName] = strValue;
 		}
-	}
-
-	void saveSettings()
-	{
-		ofstream streamSettings(m_strSettingsFile.c_str());
-		if (!streamSettings)
-		{
-			ASSERT(FALSE);
-
-			return;
-		}
-
-		for (auto itSetting : m_mapSettings)
-		{
-			streamSettings << itSetting.first.c_str() << "\t" << itSetting.second.c_str() << "\n";
-		}
-
-		streamSettings.close();
-	}
-
-	string getSetting(const string& strName) const
-	{
-		auto itSetting = m_mapSettings.find(strName);
-		if (itSetting == m_mapSettings.end())
-		{
-			return "";
-		}
-
-		return m_mapSettings.at(strName);
-	}
-
-	void setSetting(const string& strName, const string& strValue)
-	{
-		auto itSetting = m_mapSettings.find(strName);
-		if (itSetting == m_mapSettings.end())
-		{
-			m_mapSettings[strName] = strValue;
-		}
-		else
-		{
-			m_mapSettings.at(strName) = strValue;
-		}
-
-		saveSettings();
 	}
 };
 

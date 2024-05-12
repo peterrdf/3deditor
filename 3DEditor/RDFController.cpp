@@ -64,6 +64,11 @@ void CRDFController::SetModel(CRDFModel * pModel)
 	m_bUpdatingModel = false;
 }
 
+CRDFModel* CRDFController::GetModel()
+{
+	return dynamic_cast<CRDFModel*>(getModel());
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFController::RegisterView(CRDFView * pView)
 {
@@ -97,9 +102,10 @@ const set<CRDFView *> & CRDFController::GetViews()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ZoomToInstance(int64_t iInstance)
 {
-	ASSERT(m_pModel != nullptr);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
 
-	m_pModel->ZoomToInstance(iInstance);
+	pModel->ZoomToInstance(iInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -111,7 +117,10 @@ void CRDFController::ZoomToInstance(int64_t iInstance)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ZoomOut()
 {
-	m_pModel->ZoomOut();
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	pModel->ZoomOut();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -123,7 +132,10 @@ void CRDFController::ZoomOut()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ScaleAndCenter()
 {
-	m_pModel->ScaleAndCenter();
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	pModel->ScaleAndCenter();
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -268,7 +280,10 @@ void CRDFController::SetModelCoordinateSystem(BOOL bValue)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::UpdateCoordinateSystem()
 {
-	if (m_pModel == nullptr)
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
 	{
 		ASSERT(FALSE);
 
@@ -281,9 +296,9 @@ void CRDFController::UpdateCoordinateSystem()
 		double dVertexBuffersOffsetX = 0.;
 		double dVertexBuffersOffsetY = 0.;
 		double dVertexBuffersOffsetZ = 0.;
-		m_pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
+		pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
 
-		double dBoundingSphereDiameter = m_pModel->GetOriginalBoundingSphereDiameter();
+		double dBoundingSphereDiameter = pModel->GetOriginalBoundingSphereDiameter();
 
 		dVertexBuffersOffsetX /= dBoundingSphereDiameter / 2.;
 		dVertexBuffersOffsetY /= dBoundingSphereDiameter / 2.;
@@ -303,11 +318,21 @@ void CRDFController::UpdateCoordinateSystem()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
-	m_pModel->OnInstancePropertyEdited(pInstance, pProperty);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	pModel->OnInstancePropertyEdited(pInstance, pProperty);
 
 	if (m_bScaleAndCenter)
 	{
-		m_pModel->ScaleAndCenter();
+		pModel->ScaleAndCenter();
 	}
 
 	auto itView = m_setViews.begin();
@@ -329,7 +354,17 @@ void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplica
 
 CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {
-	auto pNewRDFInstance = m_pModel->CreateNewInstance(iClassInstance);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return nullptr;
+	}
+
+	auto pNewRDFInstance = pModel->CreateNewInstance(iClassInstance);
 	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
@@ -343,6 +378,16 @@ CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCla
 
 void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName)
 {
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	// Rename
 	SetNameOfInstanceW(
 		pInstance->getInstance(),
@@ -350,7 +395,7 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 
 	// Update cache
 	pInstance->UpdateName();
-	m_pModel->OnInstanceNameEdited(pInstance);
+	pModel->OnInstanceNameEdited(pInstance);
 
 	// Notify
 	auto itView = m_setViews.begin();
@@ -363,7 +408,17 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 // ------------------------------------------------------------------------------------------------
 CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing)
 {
-	auto pNewRDFInstance = m_pModel->AddNewInstance(pThing);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return nullptr;
+	}
+
+	auto pNewRDFInstance = pModel->AddNewInstance(pThing);
 	ASSERT(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
@@ -378,6 +433,16 @@ CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::I
 // ------------------------------------------------------------------------------------------------
 bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance)
 {
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return nullptr;
+	}
+
 	if (m_pSelectedInstance == pInstance)
 	{
 		m_pSelectedInstance = nullptr;
@@ -386,7 +451,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 
 	int64_t iInstance = pInstance->getInstance();
 
-	bool bResult = m_pModel->DeleteInstance(pInstance);
+	bool bResult = pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
 
 	auto itView = m_setViews.begin();
@@ -423,6 +488,16 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 
 bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance)
 {
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return false;
+	}
+
 	int64_t iInstance = pInstance->getInstance();
 
 	//
@@ -458,11 +533,11 @@ bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance
 		ASSERT(i == childCnt);
 	}
 
-	bool bResult = m_pModel->DeleteInstance(pInstance);
+	bool bResult = pModel->DeleteInstance(pInstance);
 	ASSERT(bResult);
 
 	for (int64_t i = 0; i < childCnt; i++) {
-		auto pChildInstance = m_pModel->GetInstanceByIInstance(childInstanceArray[i]);
+		auto pChildInstance = pModel->GetInstanceByIInstance(childInstanceArray[i]);
 		if (pChildInstance) {
 			DeleteInstanceTreeRecursive(pSender, pChildInstance);
 		}
@@ -474,6 +549,16 @@ bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance
 // ------------------------------------------------------------------------------------------------
 bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> vecInstances)
 {
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return false;
+	}
+
 	bool bResult = true;
 	for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
 	{
@@ -483,7 +568,7 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 			m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 		}
 
-		bResult &= m_pModel->DeleteInstance(vecInstances[iInstance]);
+		bResult &= pModel->DeleteInstance(vecInstances[iInstance]);
 		ASSERT(bResult);
 	}
 
@@ -499,7 +584,17 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 // ------------------------------------------------------------------------------------------------
 void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstance)
 {
-	m_pModel->AddMeasurements(pInstance);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	pModel->AddMeasurements(pInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -511,7 +606,17 @@ void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstanc
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 {
-	m_pModel->ImportModel(szPath);
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	pModel->ImportModel(szPath);
 
 	UpdateCoordinateSystem();
 
@@ -529,9 +634,19 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancesEnabledStateChanged()
 {
+	auto pModel = GetModel();
+	ASSERT(pModel != nullptr);
+
+	if (pModel == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
 	if (m_bScaleAndCenter)
 	{
-		m_pModel->ScaleAndCenter();
+		pModel->ScaleAndCenter();
 	}
 
 	auto itView = m_setViews.begin();
