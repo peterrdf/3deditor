@@ -2018,6 +2018,236 @@ public: // Methods
 		return CULL_FACES_NONE;
 	}
 
+	void setShowFacesPolygons(BOOL bValue)
+	{
+		m_bShowFacesPolygons = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFacesPolygons);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowFacesPolygons(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowFacesPolygons;
+		}
+
+		return FALSE;
+	}
+
+	void SetShowConceptualFacesPolygons(BOOL bValue)
+	{
+		m_bShowConceptualFacesPolygons = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowConceptualFacesPolygons);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowConceptualFacesPolygons(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowConceptualFacesPolygons;
+		}
+
+		return TRUE;
+	}
+
+	void SetShowLines(BOOL bValue)
+	{
+		m_bShowLines = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowLines);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowLines(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowLines;
+		}
+
+		return TRUE;
+	}
+
+	void SetLineWidth(GLfloat fWidth)
+	{
+		m_fLineWidth = fWidth;
+	}
+
+	GLfloat GetLineWidth() const
+	{
+		return m_fLineWidth;
+	}
+
+	void SetShowPoints(BOOL bValue)
+	{
+		m_bShowPoints = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowPoints);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowPoints(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowPoints;
+		}
+
+		return TRUE;
+	}
+
+	void SetPointSize(GLfloat fSize)
+	{
+		m_fPointSize = fSize;
+	}
+
+	GLfloat GetPointSize() const
+	{
+		return m_fPointSize;
+	}
+
+	void SetShowBoundingBoxes(BOOL bValue)
+	{
+		m_bShowBoundingBoxes = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBoundingBoxes);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowBoundingBoxes(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowBoundingBoxes;
+		}
+
+		return FALSE;
+	}
+
+	void SetShowNormalVectors(BOOL bValue)
+	{
+		m_bShowNormalVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNormalVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowNormalVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowNormalVectors;
+		}
+
+		return FALSE;
+	}
+
+	void SetShowTangentVectors(BOOL bValue)
+	{
+		m_bShowTangenVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowTangenVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowTangentVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowTangenVectors;
+		}
+
+		return FALSE;
+	}
+
+	void SetShowBiNormalVectors(BOOL bValue)
+	{
+		m_bShowBiNormalVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowBiNormalVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowBiNormalVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bShowBiNormalVectors;
+		}
+
+		return FALSE;
+	}
+
+	void SetScaleVectors(BOOL bValue)
+	{
+		m_bScaleVectors = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bScaleVectors);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetScaleVectors(_model* pModel) const
+	{
+		if ((pModel == nullptr) || (pModel == getController()->getModel()))
+		{
+			return m_bScaleVectors;
+		}
+
+		return FALSE;
+	}
+
+	void SetShowCoordinateSystem(BOOL bValue)
+	{
+		m_bShowCoordinateSystem = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowCoordinateSystem);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowCoordinateSystem() const
+	{
+		return m_bShowCoordinateSystem;
+	}
+
+	void SetShowNavigator(BOOL bValue)
+	{
+		m_bShowNavigator = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowNavigator);
+
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL GetShowNavigator() const
+	{
+		return m_bShowNavigator;
+	}
+
 protected: // Methods
 
 	virtual _controller* getController() const PURE;

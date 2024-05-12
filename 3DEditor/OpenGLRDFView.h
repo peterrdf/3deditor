@@ -68,32 +68,6 @@ public: // Methods
 	virtual string loadSetting(const string& strName) override;
 	
 	// UI
-	void SetShowFacesPolygons(BOOL bValue);
-	BOOL GetShowFacesPolygons(_model* pModel) const;
-	void SetShowConceptualFacesPolygons(BOOL bValue);
-	BOOL GetShowConceptualFacesPolygons(_model* pModel) const;
-	void SetShowLines(BOOL bValue);
-	BOOL GetShowLines(_model* pModel) const;
-	void SetLineWidth(GLfloat fWidth);
-	GLfloat GetLineWidth() const;
-	void SetShowPoints(BOOL bValue);
-	BOOL GetShowPoints(_model* pModel) const;
-	void SetPointSize(GLfloat fSize);
-	GLfloat GetPointSize() const;
-	void SetShowBoundingBoxes(BOOL bValue);
-	BOOL GetShowBoundingBoxes(_model* pModel) const;
-	void SetShowNormalVectors(BOOL bValue);
-	BOOL GetShowNormalVectors(_model* pModel) const;
-	void SetShowTangentVectors(BOOL bValue);
-	BOOL GetShowTangentVectors(_model* pModel) const;
-	void SetShowBiNormalVectors(BOOL bValue);
-	BOOL GetShowBiNormalVectors(_model* pModel) const;
-	void SetScaleVectors(BOOL bValue);
-	BOOL GetScaleVectors(CRDFModel* pModel) const;
-	void SetShowCoordinateSystem(BOOL bValue);
-	BOOL GetShowCoordinateSystem() const;
-	void SetShowNavigator(BOOL bValue);
-	BOOL GetShowNavigator() const;
 	void Reset();
 
 	// Test

@@ -454,7 +454,7 @@ void CMy3DEditorView::OnShowFacesWireframes()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetShowFacesPolygons(!m_pOpenGLView->GetShowFacesPolygons(nullptr));
+		m_pOpenGLView->setShowFacesPolygons(!m_pOpenGLView->getShowFacesPolygons(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFacesWireframes);
 	}
@@ -463,7 +463,7 @@ void CMy3DEditorView::OnShowFacesWireframes()
 void CMy3DEditorView::OnUpdateShowFacesWireframes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->GetShowFacesPolygons(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFacesPolygons(nullptr));
 }
 
 void CMy3DEditorView::OnShowConcFacesWireframes()
