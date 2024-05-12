@@ -122,24 +122,14 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_pNavigatorPointedInstanceMaterial = nullptr;
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetShowFaces(BOOL bValue)
+/*virtual*/ _model* COpenGLRDFView::getModel() const /*override*/
 {
-	m_bShowFaces = bValue;
-
-	string strSettingName(typeid(this).raw_name());
-	strSettingName += NAMEOFVAR(m_bShowFaces);
-	GetController()->getSettingsStorage()->setSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	return GetController()->getModel();
 }
 
-BOOL COpenGLRDFView::GetShowFaces(_model* pModel)
+/*virtual*/ void COpenGLRDFView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
-	if ((pModel == nullptr) || (pModel == GetController()->getModel()))
-	{
-		return m_bShowFaces;
-	}
-
-	return TRUE;
+	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1470,7 +1460,7 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 		return;
 	}
 
-	if (!GetShowFaces(pModel))
+	if (!getShowFaces(pModel))
 	{
 		return;
 	}

@@ -60,10 +60,12 @@ public: // Methods
 #endif //_LINUX
 	
 	virtual ~COpenGLRDFView();
+
+	// _oglRendererSettings
+	virtual _model* getModel() const override;
+	virtual void saveSetting(const string& strName, const string& strValue) override;
 	
 	// UI
-	void SetShowFaces(BOOL bValue);
-	BOOL GetShowFaces(_model* pModel);
 	void SetCullFacesMode(LPCTSTR szMode);
 	LPCTSTR GetCullFacesMode(_model* pModel) const;
 	void SetShowFacesPolygons(BOOL bValue);

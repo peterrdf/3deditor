@@ -1934,8 +1934,80 @@ enum class enumMouseEvent : int
 #define GEOMETRY_VBO_VERTEX_LENGTH  6
 
 // ************************************************************************************************
+class _oglRendererSettings
+{
+
+protected: // Members
+
+	BOOL m_bShowFaces;
+	CString m_strCullFaces;
+	BOOL m_bShowFacesPolygons;
+	BOOL m_bShowConceptualFacesPolygons;
+	BOOL m_bShowLines;
+	GLfloat m_fLineWidth;
+	BOOL m_bShowPoints;
+	GLfloat m_fPointSize;
+	BOOL m_bShowBoundingBoxes;
+	BOOL m_bShowNormalVectors;
+	BOOL m_bShowTangenVectors;
+	BOOL m_bShowBiNormalVectors;
+	BOOL m_bScaleVectors;
+	BOOL m_bShowCoordinateSystem;
+	BOOL m_bShowNavigator;
+
+public: // Methods
+
+	_oglRendererSettings()
+		: m_bShowFaces(TRUE)
+		, m_strCullFaces(CULL_FACES_NONE)
+		, m_bShowFacesPolygons(FALSE)
+		, m_bShowConceptualFacesPolygons(TRUE)
+		, m_bShowLines(TRUE)
+		, m_fLineWidth(1.f)
+		, m_bShowPoints(TRUE)
+		, m_fPointSize(1.f)
+		, m_bShowBoundingBoxes(FALSE)
+		, m_bShowNormalVectors(FALSE)
+		, m_bShowTangenVectors(FALSE)
+		, m_bShowBiNormalVectors(FALSE)
+		, m_bScaleVectors(FALSE)
+		, m_bShowCoordinateSystem(TRUE)
+		, m_bShowNavigator(TRUE)
+	{}
+
+	virtual ~_oglRendererSettings()
+	{}
+
+	void setShowFaces(BOOL bValue)
+	{
+		m_bShowFaces = bValue;
+
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bShowFaces);
+		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+	}
+
+	BOOL getShowFaces(_model* pModel)
+	{
+		if ((pModel == nullptr) || (pModel == getModel()))
+		{
+			return m_bShowFaces;
+		}
+
+		return TRUE;
+	}
+
+protected: // Methods
+
+	virtual _model* getModel() const PURE;
+	virtual void saveSetting(const string& strName, const string& strValue) PURE;
+};
+
+// ************************************************************************************************
 template <class Instance>
-class _oglRenderer : public _ioglRenderer
+class _oglRenderer 
+	: public _ioglRenderer
+	, public _oglRendererSettings
 {
 
 protected: // Members

@@ -1324,7 +1324,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			{
 				case enumApplicationProperty::ShowFaces:
 				{
-					pOpenGLView->SetShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
@@ -2234,7 +2234,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"), 
-			pOpenGLView->GetShowFaces(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			pOpenGLView->getShowFaces(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);

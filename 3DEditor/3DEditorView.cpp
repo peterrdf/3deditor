@@ -438,7 +438,7 @@ void CMy3DEditorView::OnShowFaces()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->SetShowFaces(!m_pOpenGLView->GetShowFaces(nullptr));
+		m_pOpenGLView->setShowFaces(!m_pOpenGLView->getShowFaces(nullptr));
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFaces);
 	}
@@ -447,7 +447,7 @@ void CMy3DEditorView::OnShowFaces()
 void CMy3DEditorView::OnUpdateShowFaces(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->GetShowFaces(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFaces(nullptr));
 }
 
 void CMy3DEditorView::OnShowFacesWireframes()
