@@ -129,7 +129,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		m_pController->LoadModel((LPCTSTR)strInputFilePath);
 
-		m_pOpenGLView->Reset();
+		m_pOpenGLView->_reset();
 
 		int iTestIndex = 0;
 		CString strTestFilePath;

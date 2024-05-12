@@ -3306,7 +3306,7 @@ public: // Methods
 		} // switch (nChar)
 	}
 
-	void Reset()
+	void _reset()
 	{
 		// Rotation
 		m_fXAngle = 0.f;
