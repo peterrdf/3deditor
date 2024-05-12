@@ -978,7 +978,7 @@ void COpenGLRDFView::DrawMainModel(
 	DrawModel(pMainModel);
 
 	/* Scene */
-	if (GetShowCoordinateSystem() && !TEST_MODE)
+	if (getShowCoordinateSystem() && !TEST_MODE)
 	{
 		DrawModel(pSceneModel);
 	}
@@ -1253,7 +1253,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowConceptualFacesPolygons(pModel))
+	if (!getShowConceptualFacesPolygons(pModel))
 	{
 		return;
 	}
@@ -1303,7 +1303,7 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowLines(pModel))
+	if (!getShowLines(pModel))
 	{
 		return;
 	}
@@ -1366,7 +1366,7 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowPoints(pModel))
+	if (!getShowPoints(pModel))
 	{
 		return;
 	}
@@ -1450,7 +1450,7 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowBoundingBoxes(pModel))
+	if (!getShowBoundingBoxes(pModel))
 	{
 		return;
 	}
@@ -1645,7 +1645,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowNormalVectors(pModel))
+	if (!getShowNormalVectors(pModel))
 	{
 		return;
 	}
@@ -1659,7 +1659,7 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
-	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -1868,7 +1868,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowTangentVectors(pModel))
+	if (!getShowTangentVectors(pModel))
 	{
 		return;
 	}
@@ -1882,7 +1882,7 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
-	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
@@ -2091,7 +2091,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 		return;
 	}
 
-	if (!GetShowBiNormalVectors(pModel))
+	if (!getShowBiNormalVectors(pModel))
 	{
 		return;
 	}
@@ -2105,7 +2105,7 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
-	const float SCALE_FACTOR = GetScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
+	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);

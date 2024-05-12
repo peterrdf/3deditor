@@ -2271,7 +2271,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
-			pOpenGLView->GetShowConceptualFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOpenGLView->getShowConceptualFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Conceptual faces wireframes"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2282,7 +2282,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->GetShowLines(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Lines"), pOpenGLView->getShowLines(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2305,7 +2305,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	//}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->GetShowPoints(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Points"), pOpenGLView->getShowPoints(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2335,7 +2335,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Normal vectors
 		*/
 		{
-			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->GetShowNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOpenGLView->getShowNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Normal vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2346,7 +2346,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->GetShowTangentVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOpenGLView->getShowTangentVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Tangent vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowTangenVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2357,7 +2357,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->GetShowBiNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOpenGLView->getShowBiNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Bi-normal vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBiNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2368,7 +2368,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->GetScaleVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Scale"), pOpenGLView->getScaleVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Scale"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScaleVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2381,7 +2381,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
-			pOpenGLView->GetShowBoundingBoxes(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOpenGLView->getShowBoundingBoxes(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Bounding boxes"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2406,7 +2406,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Show Coordinate System"),
-			pOpenGLView->GetShowCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
+			pOpenGLView->getShowCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Show Coordinate System"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowCoordinateSystem));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2428,7 +2428,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Navigator"),
-			pOpenGLView->GetShowNavigator() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
+			pOpenGLView->getShowNavigator() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Navigator"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNavigator));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);

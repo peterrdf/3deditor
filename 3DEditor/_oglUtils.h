@@ -2048,7 +2048,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowConceptualFacesPolygons(_model* pModel) const
+	BOOL getShowConceptualFacesPolygons(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2068,7 +2068,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowLines(_model* pModel) const
+	BOOL getShowLines(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2083,7 +2083,7 @@ public: // Methods
 		m_fLineWidth = fWidth;
 	}
 
-	GLfloat GetLineWidth() const
+	GLfloat getLineWidth() const
 	{
 		return m_fLineWidth;
 	}
@@ -2098,7 +2098,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowPoints(_model* pModel) const
+	BOOL getShowPoints(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2113,7 +2113,7 @@ public: // Methods
 		m_fPointSize = fSize;
 	}
 
-	GLfloat GetPointSize() const
+	GLfloat getPointSize() const
 	{
 		return m_fPointSize;
 	}
@@ -2128,7 +2128,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowBoundingBoxes(_model* pModel) const
+	BOOL getShowBoundingBoxes(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2148,7 +2148,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowNormalVectors(_model* pModel) const
+	BOOL getShowNormalVectors(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2168,7 +2168,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowTangentVectors(_model* pModel) const
+	BOOL getShowTangentVectors(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2188,7 +2188,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowBiNormalVectors(_model* pModel) const
+	BOOL getShowBiNormalVectors(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2208,7 +2208,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetScaleVectors(_model* pModel) const
+	BOOL getScaleVectors(_model* pModel) const
 	{
 		if ((pModel == nullptr) || (pModel == getController()->getModel()))
 		{
@@ -2228,7 +2228,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowCoordinateSystem() const
+	BOOL getShowCoordinateSystem() const
 	{
 		return m_bShowCoordinateSystem;
 	}
@@ -2243,7 +2243,7 @@ public: // Methods
 		saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 	}
 
-	BOOL GetShowNavigator() const
+	BOOL getShowNavigator() const
 	{
 		return m_bShowNavigator;
 	}
