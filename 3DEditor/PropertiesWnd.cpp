@@ -1348,7 +1348,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowConceptualFacesWireframes:
 				{
-					pOpenGLView->SetShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
@@ -1356,7 +1356,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowLines:
 				{
-					pOpenGLView->SetShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
@@ -1364,7 +1364,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowPoints:
 				{
-					pOpenGLView->SetShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
@@ -1372,7 +1372,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowNormalVectors:
 				{
-					pOpenGLView->SetShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNormalVectors);
 				}
@@ -1380,7 +1380,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowTangenVectors:
 				{
-					pOpenGLView->SetShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowTangenVectors);
 				}
@@ -1388,7 +1388,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowBiNormalVectors:
 				{
-					pOpenGLView->SetShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBiNormalVectors);
 				}
@@ -1396,7 +1396,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ScaleVectors:
 				{
-					pOpenGLView->SetScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ScaleVectors);
 				}
@@ -1404,7 +1404,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowBoundingBoxes:
 				{
-					pOpenGLView->SetShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBoundingBoxes);
 				}
@@ -1438,7 +1438,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				
 				case enumApplicationProperty::ShowCoordinateSystem:
 				{
-					pOpenGLView->SetShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
 				}
@@ -1454,7 +1454,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::ShowNavigator:
 				{
-					pOpenGLView->SetShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOpenGLView->setShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
 				}

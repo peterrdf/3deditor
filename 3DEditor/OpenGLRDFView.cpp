@@ -143,39 +143,6 @@ COpenGLRDFView::~COpenGLRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::Reset()
-{
-	// Rotation
-	m_fXAngle = 0.f;
-	m_fYAngle = 0.f;
-	m_fZAngle = 0.f;
-	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
-
-	// Translation
-	m_fXTranslation = 0.f;
-	m_fYTranslation = 0.f;
-	m_fZTranslation = -5.f;
-	m_fScaleFactor = 2.f;
-
-	// UI
-	m_bShowFaces = TRUE;
-	m_strCullFaces = CULL_FACES_NONE;
-	m_bShowFacesPolygons = FALSE;
-	m_bShowConceptualFacesPolygons = TRUE;
-	m_bShowLines = TRUE;
-	m_bShowPoints = TRUE;
-	m_bShowBoundingBoxes = FALSE;
-	m_bShowNormalVectors = FALSE;
-	m_bShowTangenVectors = FALSE;
-	m_bShowBiNormalVectors = FALSE;
-	m_bScaleVectors = FALSE;
-	m_bShowCoordinateSystem = TRUE;
-	m_bShowNavigator = TRUE;
-
-	_redraw();
-}
-
-// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
 	m_fXAngle = fX;

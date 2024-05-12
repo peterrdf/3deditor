@@ -66,9 +66,6 @@ public: // Methods
 	virtual _model* getModel() const override;
 	virtual void saveSetting(const string& strName, const string& strValue) override;
 	virtual string loadSetting(const string& strName) override;
-	
-	// UI
-	void Reset();
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);

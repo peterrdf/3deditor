@@ -2038,7 +2038,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetShowConceptualFacesPolygons(BOOL bValue)
+	void setShowConceptualFacesPolygons(BOOL bValue)
 	{
 		m_bShowConceptualFacesPolygons = bValue;
 
@@ -2058,7 +2058,7 @@ public: // Methods
 		return TRUE;
 	}
 
-	void SetShowLines(BOOL bValue)
+	void setShowLines(BOOL bValue)
 	{
 		m_bShowLines = bValue;
 
@@ -2078,7 +2078,7 @@ public: // Methods
 		return TRUE;
 	}
 
-	void SetLineWidth(GLfloat fWidth)
+	void setLineWidth(GLfloat fWidth)
 	{
 		m_fLineWidth = fWidth;
 	}
@@ -2088,7 +2088,7 @@ public: // Methods
 		return m_fLineWidth;
 	}
 
-	void SetShowPoints(BOOL bValue)
+	void setShowPoints(BOOL bValue)
 	{
 		m_bShowPoints = bValue;
 
@@ -2108,7 +2108,7 @@ public: // Methods
 		return TRUE;
 	}
 
-	void SetPointSize(GLfloat fSize)
+	void setPointSize(GLfloat fSize)
 	{
 		m_fPointSize = fSize;
 	}
@@ -2118,7 +2118,7 @@ public: // Methods
 		return m_fPointSize;
 	}
 
-	void SetShowBoundingBoxes(BOOL bValue)
+	void setShowBoundingBoxes(BOOL bValue)
 	{
 		m_bShowBoundingBoxes = bValue;
 
@@ -2138,7 +2138,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetShowNormalVectors(BOOL bValue)
+	void setShowNormalVectors(BOOL bValue)
 	{
 		m_bShowNormalVectors = bValue;
 
@@ -2158,7 +2158,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetShowTangentVectors(BOOL bValue)
+	void setShowTangentVectors(BOOL bValue)
 	{
 		m_bShowTangenVectors = bValue;
 
@@ -2178,7 +2178,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetShowBiNormalVectors(BOOL bValue)
+	void setShowBiNormalVectors(BOOL bValue)
 	{
 		m_bShowBiNormalVectors = bValue;
 
@@ -2198,7 +2198,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetScaleVectors(BOOL bValue)
+	void setScaleVectors(BOOL bValue)
 	{
 		m_bScaleVectors = bValue;
 
@@ -2218,7 +2218,7 @@ public: // Methods
 		return FALSE;
 	}
 
-	void SetShowCoordinateSystem(BOOL bValue)
+	void setShowCoordinateSystem(BOOL bValue)
 	{
 		m_bShowCoordinateSystem = bValue;
 
@@ -2233,7 +2233,7 @@ public: // Methods
 		return m_bShowCoordinateSystem;
 	}
 
-	void SetShowNavigator(BOOL bValue)
+	void setShowNavigator(BOOL bValue)
 	{
 		m_bShowNavigator = bValue;
 
@@ -3306,8 +3306,37 @@ public: // Methods
 		} // switch (nChar)
 	}
 
-	// UI
-	
+	void Reset()
+	{
+		// Rotation
+		m_fXAngle = 0.f;
+		m_fYAngle = 0.f;
+		m_fZAngle = 0.f;
+		m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+		// Translation
+		m_fXTranslation = 0.f;
+		m_fYTranslation = 0.f;
+		m_fZTranslation = -5.f;
+		m_fScaleFactor = 2.f;
+
+		// UI
+		m_bShowFaces = TRUE;
+		m_strCullFaces = CULL_FACES_NONE;
+		m_bShowFacesPolygons = FALSE;
+		m_bShowConceptualFacesPolygons = TRUE;
+		m_bShowLines = TRUE;
+		m_bShowPoints = TRUE;
+		m_bShowBoundingBoxes = FALSE;
+		m_bShowNormalVectors = FALSE;
+		m_bShowTangenVectors = FALSE;
+		m_bShowBiNormalVectors = FALSE;
+		m_bScaleVectors = FALSE;
+		m_bShowCoordinateSystem = TRUE;
+		m_bShowNavigator = TRUE;
+
+		_redraw();
+	}	
 
 private: //  Methods
 
