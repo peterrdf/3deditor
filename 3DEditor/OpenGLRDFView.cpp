@@ -1022,47 +1022,47 @@ void COpenGLRDFView::DrawNavigatorModel(
 	m_enProjection = enProjection;
 }
 
-void COpenGLRDFView::DrawModel(CRDFModel* pModel)
+void COpenGLRDFView::DrawModel(_model* pM)
 {
 	m_pOGLProgram->_enableTexture(false);
 
 	/* Non-transparent faces */
-	DrawFaces(pModel, false);
+	DrawFaces(pM, false);
 
 	/* Transparent faces */
-	DrawFaces(pModel, true);
+	DrawFaces(pM, true);
 
 	/* Pointed face */
-	DrawPointedFace(pModel);
+	DrawPointedFace(pM);
 
 	/* Faces polygons */
-	DrawFacesPolygons(pModel);
+	DrawFacesPolygons(pM);
 
 	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons(pModel);
+	DrawConceptualFacesPolygons(pM);
 
 	/* Lines */
-	DrawLines(pModel);
+	DrawLines(pM);
 
 	/* Points */
-	DrawPoints(pModel);
+	DrawPoints(pM);
 
 	/* Bounding boxes */
-	DrawBoundingBoxes(pModel);
+	DrawBoundingBoxes(pM);
 
 	/* Normal vectors */
-	DrawNormalVectors(pModel);
+	DrawNormalVectors(pM);
 
 	/* Tangent vectors */
-	DrawTangentVectors(pModel);
+	DrawTangentVectors(pM);
 
 	/* Bi-Normal vectors */
-	DrawBiNormalVectors(pModel);
+	DrawBiNormalVectors(pM);
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
+void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1191,15 +1191,14 @@ void COpenGLRDFView::DrawFaces(CRDFModel* pModel, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
+void COpenGLRDFView::DrawFacesPolygons(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	if (!getShowFacesPolygons(pModel))
+	if (!getShowFacesPolygons(pM))
 	{
 		return;
 	}
@@ -1218,7 +1217,7 @@ void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 		{
 			CRDFInstance* pInstance = itInstance;
 
-			if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
+			if ((pInstance->getModel() != pM->getInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1245,15 +1244,14 @@ void COpenGLRDFView::DrawFacesPolygons(CRDFModel* pModel)
 	TRACE(L"\n*** DrawFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
+void COpenGLRDFView::DrawConceptualFacesPolygons(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	if (!getShowConceptualFacesPolygons(pModel))
+	if (!getShowConceptualFacesPolygons(pM))
 	{
 		return;
 	}
@@ -1270,7 +1268,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
+			if ((pInstance->getModel() != pM->getInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1295,15 +1293,14 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(CRDFModel* pModel)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawLines(CRDFModel* pModel)
+void COpenGLRDFView::DrawLines(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	if (!getShowLines(pModel))
+	if (!getShowLines(pM))
 	{
 		return;
 	}
@@ -1327,7 +1324,7 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
+			if ((pInstance->getModel() != pM->getInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1358,15 +1355,14 @@ void COpenGLRDFView::DrawLines(CRDFModel* pModel)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
+void COpenGLRDFView::DrawPoints(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
 
-	if (!getShowPoints(pModel))
+	if (!getShowPoints(pM))
 	{
 		return;
 	}
@@ -1392,7 +1388,7 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 
 		for (auto pInstance : itCohort.second)
 		{
-			if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
+			if ((pInstance->getModel() != pM->getInstance()) || !pInstance->getEnable())
 			{
 				continue;
 			}
@@ -1425,7 +1421,6 @@ void COpenGLRDFView::DrawPoints(CRDFModel* pModel)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-// ------------------------------------------------------------------------------------------------
 void COpenGLRDFView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
 {
 	// Transformation
@@ -1442,9 +1437,9 @@ void COpenGLRDFView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pB
 	vecBBVertex.z /= dScaleFactor;
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
+void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1637,9 +1632,9 @@ void COpenGLRDFView::DrawBoundingBoxes(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
+void COpenGLRDFView::DrawNormalVectors(_model* pM)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -1860,9 +1855,9 @@ void COpenGLRDFView::DrawNormalVectors(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
+void COpenGLRDFView::DrawTangentVectors(_model* pM)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -2083,9 +2078,9 @@ void COpenGLRDFView::DrawTangentVectors(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
+void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -2306,10 +2301,15 @@ void COpenGLRDFView::DrawBiNormalVectors(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
+void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
 {
-	if ((pModel == nullptr) || (pInstanceSelectionFrameBuffer == nullptr))
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
+	if (pModel == nullptr)
+	{
+		return;
+	}
+
+	if (pInstanceSelectionFrameBuffer == nullptr)
 	{
 		return;
 	}
@@ -2406,11 +2406,12 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFr
 }
 
 void COpenGLRDFView::DrawMainModelSelectionBuffers(
-	CRDFModel* pModel,
+	_model* pM,
 	int iViewportX, int iViewportY,
 	int iViewportWidth, int iViewportHeight,
 	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
 {
+	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
 	{
 		return;
@@ -2438,11 +2439,12 @@ void COpenGLRDFView::DrawMainModelSelectionBuffers(
 }
 
 void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
-	CRDFModel* pNavigatorModel,
+	_model* pM,
 	int /*iViewportX*/, int iViewportY,
 	int iViewportWidth, int /*iViewportHeight*/,
 	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
 {
+	auto pNavigatorModel = dynamic_cast<CRDFModel*>(pM);
 	if (pNavigatorModel == nullptr)
 	{
 		return;
@@ -2468,10 +2470,9 @@ void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
 	DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
+void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
@@ -2481,7 +2482,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 		return;
 	}
 	
-	if ((m_pSelectedInstance->getModel() != pModel->getInstance()) || !m_pSelectedInstance->getEnable())
+	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}
@@ -2626,10 +2627,9 @@ void COpenGLRDFView::DrawFacesFrameBuffer(CRDFModel* pModel)
 	_oglUtils::checkForErrors();
 }
 
-// ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
+void COpenGLRDFView::DrawPointedFace(_model* pM)
 {
-	if (pModel == nullptr)
+	if (pM == nullptr)
 	{
 		return;
 	}
@@ -2639,7 +2639,7 @@ void COpenGLRDFView::DrawPointedFace(CRDFModel* pModel)
 		return;
 	}
 
-	if ((m_pSelectedInstance->getModel() != pModel->getInstance()) || !m_pSelectedInstance->getEnable())
+	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
 	{
 		return;
 	}

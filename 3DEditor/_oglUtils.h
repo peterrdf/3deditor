@@ -2440,22 +2440,6 @@ protected: // Members
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
 
-	// UI
-	CString m_strCullFaces;
-	BOOL m_bShowFacesPolygons;
-	BOOL m_bShowConceptualFacesPolygons;
-	BOOL m_bShowLines;
-	GLfloat m_fLineWidth;
-	BOOL m_bShowPoints;
-	GLfloat m_fPointSize;
-	BOOL m_bShowBoundingBoxes;
-	BOOL m_bShowNormalVectors;
-	BOOL m_bShowTangenVectors;
-	BOOL m_bShowBiNormalVectors;
-	BOOL m_bScaleVectors;
-	BOOL m_bShowCoordinateSystem;
-	BOOL m_bShowNavigator;
-
 public: // Methods
 
 	_oglRenderer()
@@ -2495,20 +2479,6 @@ public: // Methods
 		, m_fScaleFactorMin(0.f)
 		, m_fScaleFactorMax(2.f)
 		, m_fScaleFactorInterval(2.f)
-		, m_strCullFaces(CULL_FACES_NONE)
-		, m_bShowFacesPolygons(FALSE)
-		, m_bShowConceptualFacesPolygons(TRUE)
-		, m_bShowLines(TRUE)
-		, m_fLineWidth(1.f)
-		, m_bShowPoints(TRUE)
-		, m_fPointSize(1.f)
-		, m_bShowBoundingBoxes(FALSE)
-		, m_bShowNormalVectors(FALSE)
-		, m_bShowTangenVectors(FALSE)
-		, m_bShowBiNormalVectors(FALSE)
-		, m_bScaleVectors(FALSE)
-		, m_bShowCoordinateSystem(TRUE)
-		, m_bShowNavigator(TRUE)
 	{
 		_setView(enumView::Isometric);
 	}	

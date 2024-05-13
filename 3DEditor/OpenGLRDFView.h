@@ -118,60 +118,34 @@ private: // Methods
 		CRDFModel* pNavigatorModel,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight);
-	void DrawModel(CRDFModel* pModel);	
-
-	// --------------------------------------------------------------------------------------------
-	// Faces
-	void DrawFaces(CRDFModel* pModel, bool bTransparent);
-
-	// --------------------------------------------------------------------------------------------
-	// Faces polygons
-	void DrawFacesPolygons(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Conceptual faces polygons
-	void DrawConceptualFacesPolygons(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Lines
-	void DrawLines(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Points
-	void DrawPoints(CRDFModel* pModel);
+	void DrawModel(_model* pModel);
+	void DrawFaces(_model* pM, bool bTransparent);
+	void DrawFacesPolygons(_model* pModel);
+	void DrawConceptualFacesPolygons(_model* pModel);
+	void DrawLines(_model* pModel);
+	void DrawPoints(_model* pModel);
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
-	void DrawBoundingBoxes(CRDFModel* pModel);
 
-	// --------------------------------------------------------------------------------------------
-	// Normal vectors
-	void DrawNormalVectors(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Tangent vectors
-	void DrawTangentVectors(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Bi-normal vectors
-	void DrawBiNormalVectors(CRDFModel* pModel);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
+	void DrawBoundingBoxes(_model* pM);
+	void DrawNormalVectors(_model* pM);
+	void DrawTangentVectors(_model* pM);
+	void DrawBiNormalVectors(_model* pM);
 	void DrawMainModelSelectionBuffers(
-		CRDFModel* pModel, 
+		_model* pM,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight,
 		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	void DrawNavigatorModelSelectionBuffers(
-		CRDFModel* pNavigatorModel,
+		_model* pM,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight,
 		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawInstancesFrameBuffer(CRDFModel* pModel, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawFacesFrameBuffer(CRDFModel* pModel);
-	void DrawPointedFace(CRDFModel* pModel);
+	void DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
+	void DrawFacesFrameBuffer(_model* pM);
+	void DrawPointedFace(_model* pM);
 	void PointNavigatorInstance(const CPoint& point);
 	bool SelectNavigatorInstance();
 
