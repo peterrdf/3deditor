@@ -718,7 +718,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 		*/
 		if (((int64_t)iVerticesCount + pInstance->getVerticesCount()) > (int64_t)VERTICES_MAX_COUNT)
 		{
-			if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+			if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 			{
 				assert(false);
 
@@ -854,7 +854,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 	*/
 	if (iVerticesCount > 0)
 	{
-		if (m_oglBuffers.createInstancesCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
+		if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
 		{
 			assert(false);
 
@@ -1107,7 +1107,7 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 	const auto pPointedInstanceMaterial = pModel == pController->getModel() ? 
 		m_pPointedInstanceMaterial : m_pNavigatorPointedInstanceMaterial;
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1209,7 +1209,7 @@ void COpenGLRDFView::DrawFacesPolygons(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1262,7 +1262,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(_model* pM)
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1318,7 +1318,7 @@ void COpenGLRDFView::DrawLines(_model* pM)
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -1382,7 +1382,7 @@ void COpenGLRDFView::DrawPoints(_model* pM)
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 
@@ -2361,7 +2361,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuff
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_oglBuffers.instancesCohorts())
+	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
 

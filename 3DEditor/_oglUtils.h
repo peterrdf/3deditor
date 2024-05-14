@@ -1504,45 +1504,32 @@ class _oglBuffers
 
 private: // Members
 
-	map<GLuint, vector<_geometry*>> m_mapInstancesCohorts;
+	map<GLuint, vector<_geometry*>> m_mapCohorts;
 	map<wstring, GLuint> m_mapVAOs;
 	map<wstring, GLuint> m_mapBuffers;
 
 public: // Methods
 
 	_oglBuffers()
-		: m_mapInstancesCohorts()
+		: m_mapCohorts()
 		, m_mapVAOs()
 		, m_mapBuffers()
-	{
-	}
+	{}
 
 	virtual ~_oglBuffers()
-	{
-	}
+	{}
 
-	map<GLuint, vector<_geometry*>>& instancesCohorts()
-	{
-		return m_mapInstancesCohorts;
-	}
+	map<GLuint, vector<_geometry*>>& cohorts() { return m_mapCohorts; }
+	map<wstring, GLuint>& VAOs() { return m_mapVAOs; }
+	map<wstring, GLuint>& buffers() { return m_mapBuffers; }
 
-	map<wstring, GLuint>& VAOs()
+	GLuint findVAO(_geometry* pTargetGeometry)
 	{
-		return m_mapVAOs;
-	}
-
-	map<wstring, GLuint>& buffers()
-	{
-		return m_mapBuffers;
-	}
-
-	GLuint findVAO(_geometry* pInstance)
-	{
-		for (auto itCohort : m_mapInstancesCohorts)
+		for (auto itCohort : m_mapCohorts)
 		{
-			for (auto itInstance : itCohort.second)
+			for (auto pGeometry : itCohort.second)
 			{
-				if (pInstance == itInstance)
+				if (pGeometry == pTargetGeometry)
 				{
 					return itCohort.first;
 				}
@@ -1673,9 +1660,9 @@ public: // Methods
 		return iIndicesCount;
 	}
 
-	int64_t createInstancesCohort(const vector<_geometry*>& vecInstances, _oglBlinnPhongProgram* pProgram)
+	int64_t createCohort(const vector<_geometry*>& vecGeometries, _oglBlinnPhongProgram* pProgram)
 	{
-		if (vecInstances.empty() || (pProgram == nullptr))
+		if (vecGeometries.empty() || (pProgram == nullptr))
 		{
 			ASSERT(FALSE);
 
@@ -1683,7 +1670,7 @@ public: // Methods
 		}
 
 		int64_t iVerticesCount = 0;
-		float* pVertices = getVertices(vecInstances, pProgram->_getSupportsTexture(), iVerticesCount);
+		float* pVertices = getVertices(vecGeometries, pProgram->_getSupportsTexture(), iVerticesCount);
 
 		if ((pVertices == nullptr) || (iVerticesCount == 0))
 		{
@@ -1727,19 +1714,19 @@ public: // Methods
 		setVBOAttributes(pProgram);
 
 		GLsizei iVBOOffset = 0;
-		for (auto pInstance : vecInstances)
+		for (auto pGeometry : vecGeometries)
 		{
-			pInstance->VBO() = iVBO;
-			pInstance->VBOOffset() = iVBOOffset;
+			pGeometry->VBO() = iVBO;
+			pGeometry->VBOOffset() = iVBOOffset;
 
-			iVBOOffset += (GLsizei)pInstance->getVerticesCount();
+			iVBOOffset += (GLsizei)pGeometry->getVerticesCount();
 		}
 
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 
-		m_mapInstancesCohorts[iVAO] = vecInstances;
+		m_mapCohorts[iVAO] = vecGeometries;
 
 		return iVerticesCount;
 	}
@@ -1766,60 +1753,60 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(const vector<_geometry*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
+	static float* getVertices(const vector<_geometry*>& vecGeometries, bool bSupportsTexture, int64_t& iVerticesCount)
 	{
 		const size_t VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
 		iVerticesCount = 0;
-		for (size_t i = 0; i < vecInstances.size(); i++)
+		for (size_t i = 0; i < vecGeometries.size(); i++)
 		{
-			iVerticesCount += vecInstances[i]->getVerticesCount();
+			iVerticesCount += vecGeometries[i]->getVerticesCount();
 		}
 
 		float* pVertices = new float[(size_t)iVerticesCount * VERTEX_LENGTH];
 
 		int64_t iOffset = 0;
-		for (size_t i = 0; i < vecInstances.size(); i++)
+		for (size_t i = 0; i < vecGeometries.size(); i++)
 		{
-			float* pSrcVertices = getVertices(vecInstances[i], bSupportsTexture);
+			float* pSrcVertices = getVertices(vecGeometries[i], bSupportsTexture);
 
 			memcpy((float*)pVertices + iOffset, pSrcVertices,
-				(size_t)vecInstances[i]->getVerticesCount() * VERTEX_LENGTH * sizeof(float));
+				(size_t)vecGeometries[i]->getVerticesCount() * VERTEX_LENGTH * sizeof(float));
 
 			delete[] pSrcVertices;
 
-			iOffset += vecInstances[i]->getVerticesCount() * VERTEX_LENGTH;
+			iOffset += vecGeometries[i]->getVerticesCount() * VERTEX_LENGTH;
 		}
 
 		return pVertices;
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(_geometry* pInstance, bool bSupportsTexture)
+	static float* getVertices(_geometry* pGeometry, bool bSupportsTexture)
 	{
-		const size_t _SRC_VERTEX_LENGTH = (size_t)pInstance->getVertexLength();
+		const size_t _SRC_VERTEX_LENGTH = (size_t)pGeometry->getVertexLength();
 		const size_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
-		float* pVertices = new float[(size_t)pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH];
-		memset(pVertices, 0, (size_t)pInstance->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
+		float* pVertices = new float[(size_t)pGeometry->getVerticesCount() * _DEST_VERTEX_LENGTH];
+		memset(pVertices, 0, (size_t)pGeometry->getVerticesCount() * _DEST_VERTEX_LENGTH * sizeof(float));
 
-		for (int64_t iVertex = 0; iVertex < pInstance->getVerticesCount(); iVertex++)
+		for (int64_t iVertex = 0; iVertex < pGeometry->getVerticesCount(); iVertex++)
 		{
 			// X, Y, Z
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 0] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 0];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 1] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 1];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 2] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 2];
 
 			// Nx, Ny, Nz
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
-			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 3] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 3];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 4] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 4];
+			pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 5] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 5];
 
 			// Tx, Ty
 			if (bSupportsTexture)
 			{
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
-				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pInstance->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 6] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 6];
+				pVertices[(iVertex * _DEST_VERTEX_LENGTH) + 7] = pGeometry->getVertices()[(iVertex * _SRC_VERTEX_LENGTH) + 7];
 			}
 		}
 
@@ -1828,7 +1815,7 @@ public: // Methods
 
 	void clear()
 	{
-		m_mapInstancesCohorts.clear();
+		m_mapCohorts.clear();
 
 		for (auto itVAO = m_mapVAOs.begin(); itVAO != m_mapVAOs.end(); itVAO++)
 		{
