@@ -1311,10 +1311,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			return 0;
 		}
 
-		auto ioglRender = dynamic_cast<_ioglRenderer*>(pOGLRenderer);
-		ASSERT(ioglRender != nullptr);
-
-		auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
+		auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
 		ASSERT(pBlinnPhongProgram != nullptr);
 
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
@@ -2475,10 +2472,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 #pragma endregion
 
 #pragma region OpenGL
-	auto ioglRender = dynamic_cast<_ioglRenderer*>(pOGLRenderer);
-	ASSERT(ioglRender != nullptr);
-
-	auto pBlinnPhongProgram = ioglRender->_getOGLProgramAs<_oglBlinnPhongProgram>();
+	auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
 	if (pBlinnPhongProgram != nullptr)
 	{
 		auto pOpenGL = new CMFCPropertyGridProperty(_T("OpenGL"));
