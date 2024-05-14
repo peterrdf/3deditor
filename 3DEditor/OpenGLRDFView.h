@@ -20,7 +20,7 @@
 
 // ------------------------------------------------------------------------------------------------
 class COpenGLRDFView 
-	: public _oglRenderer<CRDFInstance>
+	: public _oglRenderer
 	, public CRDFView
 {
 

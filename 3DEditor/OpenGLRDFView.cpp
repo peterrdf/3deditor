@@ -676,7 +676,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 
 	// VBO
 	GLuint iVerticesCount = 0;
-	vector<CRDFInstance*> vecInstancesCohort;
+	vector<_geometry*> vecInstancesCohort;
 
 	// IBO - Conceptual faces
 	GLuint iConcFacesIndicesCount = 0;
@@ -1215,7 +1215,7 @@ void COpenGLRDFView::DrawFacesPolygons(_model* pM)
 
 		for (auto itInstance : itCohort.second)
 		{
-			CRDFInstance* pInstance = itInstance;
+			_geometry* pInstance = itInstance;
 
 			if ((pInstance->getModel() != pM->getInstance()) || !pInstance->getEnable())
 			{

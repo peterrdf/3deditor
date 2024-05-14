@@ -1499,13 +1499,12 @@ public: // Methods
 };
 
 // ************************************************************************************************
-template <class Instance>
 class _oglBuffers
 {
 
 private: // Members
 
-	map<GLuint, vector<Instance*>> m_mapInstancesCohorts;
+	map<GLuint, vector<_geometry*>> m_mapInstancesCohorts;
 	map<wstring, GLuint> m_mapVAOs;
 	map<wstring, GLuint> m_mapBuffers;
 
@@ -1522,7 +1521,7 @@ public: // Methods
 	{
 	}
 
-	map<GLuint, vector<Instance*>>& instancesCohorts()
+	map<GLuint, vector<_geometry*>>& instancesCohorts()
 	{
 		return m_mapInstancesCohorts;
 	}
@@ -1537,7 +1536,7 @@ public: // Methods
 		return m_mapBuffers;
 	}
 
-	GLuint findVAO(Instance* pInstance)
+	GLuint findVAO(_geometry* pInstance)
 	{
 		for (auto itCohort : m_mapInstancesCohorts)
 		{
@@ -1674,7 +1673,7 @@ public: // Methods
 		return iIndicesCount;
 	}
 
-	int64_t createInstancesCohort(const vector<Instance*>& vecInstances, _oglBlinnPhongProgram* pProgram)
+	int64_t createInstancesCohort(const vector<_geometry*>& vecInstances, _oglBlinnPhongProgram* pProgram)
 	{
 		if (vecInstances.empty() || (pProgram == nullptr))
 		{
@@ -1767,7 +1766,7 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(const vector<Instance*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
+	static float* getVertices(const vector<_geometry*>& vecInstances, bool bSupportsTexture, int64_t& iVerticesCount)
 	{
 		const size_t VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
 
@@ -1796,7 +1795,7 @@ public: // Methods
 	}
 
 	// X, Y, Z, Nx, Ny, Nz, [Tx, Ty]
-	static float* getVertices(Instance* pInstance, bool bSupportsTexture)
+	static float* getVertices(_geometry* pInstance, bool bSupportsTexture)
 	{
 		const size_t _SRC_VERTEX_LENGTH = (size_t)pInstance->getVertexLength();
 		const size_t _DEST_VERTEX_LENGTH = 6 + (bSupportsTexture ? 2 : 0);
@@ -2376,7 +2375,6 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-template <class Instance>
 class _oglRenderer 
 	: public _ioglRenderer
 	, public _oglRendererSettings
@@ -2397,7 +2395,7 @@ protected: // Members
 	glm::mat4 m_matModelView;	
 
 	// Cache
-	_oglBuffers<Instance> m_oglBuffers;
+	_oglBuffers m_oglBuffers;
 
 	// Rotation
 	enumRotationMode m_enRotationMode;
