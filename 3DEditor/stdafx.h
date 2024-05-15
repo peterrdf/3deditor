@@ -12,8 +12,6 @@
 #pragma warning (disable : 4512)	// assignment operator could not be generated
 #pragma warning (disable : 4714)	// marked as __forceinline not inlined
 
-#ifndef _LINUX
-
 #include "targetver.h"
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
@@ -23,11 +21,7 @@
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
-
-
 #include <afxdisp.h>        // MFC Automation classes
-
-
 
 #ifndef _AFX_NO_OLE_SUPPORT
 #include <afxdtctl.h>           // MFC support for Internet Explorer 4 Common Controls
@@ -50,8 +44,6 @@
 
 #include "..\glew-2.2.0\include\GL\glew.h"
 #include "..\glew-2.2.0\include\GL\wglew.h"
-
-#endif // _LINUX
 
 #include <GL/gl.h>
 #include <GL/glu.h>

@@ -3,20 +3,9 @@
 
 #include "Generic.h"
 #include "RDFView.h"
-#ifdef _LINUX
-#include <wx/wx.h>
-#include <wx/glcanvas.h>
-#else
 #include "_oglUtils.h"
-#endif // _LINUX
 #include "RDFInstance.h"
 #include "RDFModel.h"
-
-#ifdef _LINUX
-#define MK_LBUTTON 1
-#define MK_MBUTTON 2
-#define MK_RBUTTON 4
-#endif
 
 // ------------------------------------------------------------------------------------------------
 class COpenGLRDFView 
@@ -53,12 +42,7 @@ private: // Members
 
 public: // Methods
 	
-#ifdef _LINUX
-    COpenGLRDFView(wxGLCanvas * pWnd);
-#else
-	COpenGLRDFView(CWnd * pWnd);
-#endif //_LINUX
-	
+	COpenGLRDFView(CWnd* pWnd);	
 	virtual ~COpenGLRDFView();
 
 	// _oglRendererSettings
@@ -74,11 +58,7 @@ public: // Methods
 	void GetTranslation(float& fX, float& fY, float& fZ);
 	
 	// Draw
-#ifdef _LINUX
-    void Draw(wxPaintDC * pDC);
-#else
 	void Draw(CDC* pDC);
-#endif // _LINUX	
 
 	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
