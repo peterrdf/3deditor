@@ -8,12 +8,6 @@
 
 #include "Resource.h"
 
-#ifdef _LINUX
-#include <cfloat>
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif // _LINUX
-
 // ------------------------------------------------------------------------------------------------
 extern BOOL TEST_MODE;
 
@@ -36,11 +30,7 @@ int NAVIGATION_VIEW_LENGTH = 200;
 int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
-#ifdef _LINUX
-COpenGLRDFView::COpenGLRDFView(wxGLCanvas * pWnd)
-#else
-COpenGLRDFView::COpenGLRDFView(CWnd * pWnd)
-#endif // _LINUX
+COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	: _oglRenderer()
 	, CRDFView()
 	, m_ptStartMousePosition(-1, -1)
@@ -183,11 +173,7 @@ void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
 }
 
 // ------------------------------------------------------------------------------------------------
-#ifdef _LINUX
-void COpenGLRDFView::Draw(wxPaintDC * pDC)
-#else
 void COpenGLRDFView::Draw(CDC* pDC)
-#endif // _LINUX
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -223,11 +209,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	}
 
 	/* End */
-#ifdef _LINUX
-	m_pWnd->SwapBuffers();
-#else
 	SwapBuffers(*pDC);
-#endif // _LINUX
 
 	/* Selection */
 
@@ -334,12 +316,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CWaitCursor waitCursor;	
 
-#ifdef _LINUX
-    m_pOGLContext->SetCurrent(*m_pWnd);
-#else
-    BOOL bResult = m_pOGLContext->makeCurrent();
+	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
-#endif // _LINUX
 
 	// OpenGL buffers
 	m_oglBuffers.clear();
@@ -2493,18 +2471,11 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	int iWidth = 0;
 	int iHeight = 0;
 
-#ifdef _LINUX
-	const wxSize szClient = m_pWnd->GetClientSize();
-
-	iWidth = szClient.GetWidth();
-	iHeight = szClient.GetHeight();
-#else
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
 	iWidth = rcClient.Width();
 	iHeight = rcClient.Height();
-#endif // _LINUX
 
 	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
 	{
@@ -2732,14 +2703,6 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 		int iWidth = 0;
 		int iHeight = 0;
 
-#ifdef _LINUX
-		m_pOGLContext->SetCurrent(*m_pWnd);
-
-		const wxSize szClient = m_pWnd->GetClientSize();
-
-		iWidth = szClient.GetWidth();
-		iHeight = szClient.GetHeight();
-#else
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
 
@@ -2748,7 +2711,6 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 
 		iWidth = rcClient.Width();
 		iHeight = rcClient.Height();
-#endif // _LINUX
 
 		if ((point.x > (iWidth - NAVIGATION_VIEW_LENGTH)) && (point.x < iWidth) &&
 			(point.y > (iHeight - NAVIGATION_VIEW_LENGTH)) && (point.y < iHeight))
@@ -2915,14 +2877,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			int iWidth = 0;
 			int iHeight = 0;
 
-#ifdef _LINUX
-			m_pOGLContext->SetCurrent(*m_pWnd);
-
-			const wxSize szClient = m_pWnd->GetClientSize();
-
-			iWidth = szClient.GetWidth();
-			iHeight = szClient.GetHeight();
-#else
 			BOOL bResult = m_pOGLContext->makeCurrent();
 			VERIFY(bResult);
 
@@ -2931,7 +2885,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 			iWidth = rcClient.Width();
 			iHeight = rcClient.Height();
-#endif // _LINUX
 
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
@@ -2982,14 +2935,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			int iWidth = 0;
 			int iHeight = 0;
 
-#ifdef _LINUX
-			m_pOGLContext->SetCurrent(*m_pWnd);
-
-			const wxSize szClient = m_pWnd->GetClientSize();
-
-			iWidth = szClient.GetWidth();
-			iHeight = szClient.GetHeight();
-#else
 			BOOL bResult = m_pOGLContext->makeCurrent();
 			VERIFY(bResult);
 
@@ -2998,7 +2943,6 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 			iWidth = rcClient.Width();
 			iHeight = rcClient.Height();
-#endif // _LINUX
 
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
@@ -3119,11 +3063,7 @@ void COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLfloat & fX, GLflo
 
 	GLdouble dX, dY, dZ;
 	GLint iResult = gluUnProject(fWinX, fWinY, fWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
-#ifdef _LINUX
-    ASSERT(iResult == GL_TRUE);
-#else
-    VERIFY(iResult == GL_TRUE);
-#endif // _LINUX
+	VERIFY(iResult == GL_TRUE);
 
 	fX = (GLfloat)dX;
 	fY = (GLfloat)dY;
@@ -3142,11 +3082,7 @@ void COpenGLRDFView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLd
 	glGetIntegerv(GL_VIEWPORT, arViewport);
 
 	GLint iResult = gluProject(dInX, dInY, dInZ, arModelView, arProjection, arViewport, &dOutX, &dOutY, &dOutZ);
-#ifdef _LINUX
-    ASSERT(iResult == GL_TRUE);
-#else
-    VERIFY(iResult == GL_TRUE);
-#endif // _LINUX
+	VERIFY(iResult == GL_TRUE);
 }
 
 // ------------------------------------------------------------------------------------------------
