@@ -10,18 +10,10 @@
 #endif
 
 #include "3DEditorDoc.h"
-
-#include <propkey.h>
-
 #include "Generic.h"
-
 #include "gisengine.h"
 
-#ifdef _USE_BOOST
-#include <boost/chrono.hpp>
-
-using namespace boost::chrono;
-#endif // _USE_BOOST
+#include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -231,9 +223,6 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 //		return;
 //	}
 //
-//#ifdef _USE_BOOST
-//	high_resolution_clock::time_point tpStart = high_resolution_clock::now();
-//#endif
 //
 //	// Binning algorithm
 //	//CUniqueVerticesCheck * pUniqueVerticesCheck = new CUniqueVerticesCheck();
@@ -279,14 +268,6 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 //		}*/
 //	} // for (; itInstance != ...
 //
-//#ifdef _USE_BOOST
-//	high_resolution_clock::time_point tpEnd = high_resolution_clock::now();
-//	duration<float> duration = tpEnd - tpStart;
-//
-//	output << "\n****************************************************************************************************\n";	
-//	output << "Unique vertices check is done in " << duration << "." << "\n";
-//	output << "****************************************************************************************************\n";
-//#endif
 //
 //	output.close();
 //
