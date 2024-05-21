@@ -2450,7 +2450,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
+			GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);
 		}
 		break;
 
