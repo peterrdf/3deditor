@@ -79,6 +79,7 @@ public: // Methods
 	void loadSettings(const wstring& strSettingsFile)
 	{
 		m_strSettingsFile = strSettingsFile;
+		m_mapSettings.clear();
 
 		ifstream streamSettings(m_strSettingsFile.c_str());
 		if (!streamSettings)
