@@ -667,7 +667,7 @@ public: // Methods
 	OwlInstance getInstance() const { return m_iInstance; }
 	OwlClass getClassInstance() const { return GetInstanceClass(m_iInstance); }
 	virtual OwlModel getModel() const { return ::GetModel(m_iInstance); }
-	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0); }
+	bool isReferenced() const { return GetInstanceInverseReferencesByIterator(m_iInstance, 0) != 0; }
 	bool getEnable() const { return m_bEnable; }
 	virtual void setEnable(bool bEnable) { m_bEnable = bEnable; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
