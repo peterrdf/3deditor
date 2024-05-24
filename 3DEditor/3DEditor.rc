@@ -579,8 +579,7 @@ BEGIN
         MENUITEM "Enable",                      ID_INSTANCES_ENABLE
         MENUITEM "Disable All But This",        ID_INSTANCES_DISABLE_ALL_BUT_THIS
         MENUITEM "Enable All",                  ID_INSTANCES_ENABLE_ALL
-        MENUITEM "Enable All Unreferenced",     ID_INSTANCES_ENABLE_ALL_UNREFERENCED
-        MENUITEM "Enable All Referenced",       ID_INSTANCES_ENABLE_ALL_REFERENCED
+        MENUITEM "Reset",                       ID_INSTANCES_ENABLE_RESET
         MENUITEM SEPARATOR
         MENUITEM "Remove",                      ID_INSTANCES_REMOVE
         MENUITEM "Remove Tree",                 ID_INSTANCES_REMOVE_TREE
@@ -608,8 +607,7 @@ BEGIN
     POPUP "Instances"
     BEGIN
         MENUITEM "Enable All",                  ID_INSTANCES_ENABLE_ALL
-        MENUITEM "Enable All Unreferenced",     ID_INSTANCES_ENABLE_ALL_UNREFERENCED
-        MENUITEM "Enable All Referenced",       ID_INSTANCES_ENABLE_ALL_REFERENCED
+        MENUITEM "Reset",                       ID_INSTANCES_ENABLE_RESET
         MENUITEM SEPARATOR
         MENUITEM "Remove",                      ID_INSTANCES_REMOVE
         MENUITEM "Remove Tree",                 ID_INSTANCES_REMOVE_TREE

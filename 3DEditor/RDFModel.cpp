@@ -255,16 +255,6 @@ CRDFModel::~CRDFModel()
 	LoadRDFModel();
 }
 
-void CRDFModel::ImportModel(const wchar_t* szPath)
-{
-	Load(szPath, false);
-}
-
-void CRDFModel::Save(const wchar_t* szPath)
-{
-	SaveModelW(m_iModel, szPath);
-}
-
 void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 {
 	if (bLoading)
@@ -356,6 +346,30 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	}
 
 	LoadRDFModel();
+}
+
+void CRDFModel::ImportModel(const wchar_t* szPath)
+{
+	Load(szPath, false);
+}
+
+void CRDFModel::Save(const wchar_t* szPath)
+{
+	SaveModelW(m_iModel, szPath);
+}
+
+void CRDFModel::ResetInstancesDefaultState()
+{
+	GetInstancesDefaultState();
+
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++)
+	{
+		if (m_mapInstanceDefaultState.find(itInstance->second->getInstance()) != m_mapInstanceDefaultState.end())
+		{
+			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getInstance()));
+		}
+	}
 }
 
 void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const
@@ -456,7 +470,6 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 	return bResult;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
 {	
 	ASSERT(FALSE); // TODO: PENDING REFACTORING!
@@ -1161,12 +1174,11 @@ void CRDFModel::LoadRDFModel()
 
 /*virtual*/ void CRDFModel::PostLoadDRFModel()
 {
-	SetInstancesDefaultState();
-
+	GetInstancesDefaultState();
 	UpdateVertexBufferOffset();
 }
 
-void CRDFModel::SetInstancesDefaultState()
+void CRDFModel::GetInstancesDefaultState()
 {
 	m_mapInstanceDefaultState.clear();
 
@@ -1197,13 +1209,13 @@ void CRDFModel::SetInstancesDefaultState()
 
 			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass))
 			{
-				SetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
+				GetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
 			}
 		}
 	}
 }
 
-void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
+void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
 {
 	ASSERT(iInstance != 0);
 
@@ -1227,7 +1239,7 @@ void CRDFModel::SetInstanceDefaultStateRecursive(OwlInstance iInstance)
 					if (!GetInstanceGeometryClass(piValues[iValue]) ||
 						!GetBoundingBox(piValues[iValue], nullptr, nullptr))
 					{
-						SetInstanceDefaultStateRecursive(piValues[iValue]);
+						GetInstanceDefaultStateRecursive(piValues[iValue]);
 					}
 				}
 			}
@@ -1556,7 +1568,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 
 /*virtual*/ void CSceneRDFModel::PostLoadDRFModel() /*override*/
 {
-	SetInstancesDefaultState();
+	GetInstancesDefaultState();
 }
 
 void CSceneRDFModel::CreateCoordinateSystem()

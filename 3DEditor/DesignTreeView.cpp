@@ -2270,8 +2270,17 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				GetController()->OnInstancesEnabledStateChanged();
 			}
 			break;
+
+			case ID_INSTANCES_ENABLE_RESET:
+			{
+				pModel->ResetInstancesDefaultState();
+
+				GetController()->OnInstancesEnabledStateChanged();
+			}
+			break;
 			 
-			case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
+			// OBSOLETE
+			/*case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
 			{
 				auto itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
@@ -2281,9 +2290,10 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 				GetController()->OnInstancesEnabledStateChanged();
 			}
-			break;
+			break;*/
 
-			case ID_INSTANCES_ENABLE_ALL_REFERENCED:
+			// OBSOLETE
+			/*case ID_INSTANCES_ENABLE_ALL_REFERENCED:
 			{
 				auto itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
@@ -2293,7 +2303,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 				GetController()->OnInstancesEnabledStateChanged();
 			}
-			break;
+			break;*/
 
 			case ID_INSTANCES_ENABLE:
 			{
@@ -2404,7 +2414,16 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 		break;
 
-		case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
+		case ID_INSTANCES_ENABLE_RESET:
+		{
+			pModel->ResetInstancesDefaultState();
+
+			GetController()->OnInstancesEnabledStateChanged();
+		}
+		break;
+
+		// OBSOLETE
+		/*case ID_INSTANCES_ENABLE_ALL_UNREFERENCED:
 		{
 			auto itRFDInstances = mapInstances.begin();
 			for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
@@ -2414,9 +2433,10 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			GetController()->OnInstancesEnabledStateChanged();
 		}
-		break;
+		break;*/
 
-		case ID_INSTANCES_ENABLE_ALL_REFERENCED:
+		// OBSOLETE
+		/*case ID_INSTANCES_ENABLE_ALL_REFERENCED:
 		{
 			auto itRFDInstances = mapInstances.begin();
 			for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
@@ -2426,7 +2446,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			GetController()->OnInstancesEnabledStateChanged();
 		}
-		break;
+		break;*/
 
 		case ID_INSTANCES_REMOVE:
 		{

@@ -68,6 +68,7 @@ public: // Methods
 	void LoadGISModel(const wchar_t* szPath);
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
+	void ResetInstancesDefaultState();
 		
 	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
 	CRDFInstance* GetInstanceByID(int64_t iID);
@@ -110,8 +111,8 @@ protected: // Methods
 	virtual void PreLoadDRFModel() {}
 	void LoadRDFModel();
 	virtual void PostLoadDRFModel();
-	void SetInstancesDefaultState();
-	void SetInstanceDefaultStateRecursive(OwlInstance iInstance);
+	void GetInstancesDefaultState();
+	void GetInstanceDefaultStateRecursive(OwlInstance iInstance);
 	void UpdateVertexBufferOffset();
 	void LoadRDFInstances();
 
