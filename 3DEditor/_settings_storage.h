@@ -63,7 +63,7 @@ public: // Methods
 		ofstream streamSettings(m_strSettingsFile.c_str());
 		if (!streamSettings)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -100,7 +100,7 @@ public: // Methods
 
 			if (m_mapSettings.find(strName) != m_mapSettings.end())
 			{
-				ASSERT(FALSE);
+				assert(false);
 
 				continue;
 			}

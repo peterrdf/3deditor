@@ -34,7 +34,7 @@ BOOL CTreeCtrlEx::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	BOOL bRes = CTreeCtrl::OnNotify(wParam, lParam, pResult);
 
 	NMHDR* pNMHDR = (NMHDR*)lParam;
-	ASSERT(pNMHDR != nullptr);
+	assert(pNMHDR != nullptr);
 
 	if (pNMHDR && pNMHDR->code == TTN_SHOW && GetToolTips() != nullptr)
 	{

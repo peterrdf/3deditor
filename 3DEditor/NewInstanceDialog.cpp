@@ -16,7 +16,7 @@ CNewInstanceDialog::CNewInstanceDialog(CRDFController * pController, CWnd* pPare
 	, m_pController(pController)
 	, m_pNewInstanceRDFClass(nullptr)
 {
-	ASSERT(m_pController != nullptr);
+	assert(m_pController != nullptr);
 }
 
 CNewInstanceDialog::~CNewInstanceDialog()
@@ -42,7 +42,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	CRDFModel * pModel = m_pController->GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	auto& mapClasses = pModel->GetClasses();
 
@@ -61,7 +61,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 
 void CNewInstanceDialog::OnOK()
 {
-	ASSERT(m_cmbClasses.GetCurSel() != CB_ERR);
+	assert(m_cmbClasses.GetCurSel() != CB_ERR);
 
 	m_pNewInstanceRDFClass = (CRDFClass *)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
 

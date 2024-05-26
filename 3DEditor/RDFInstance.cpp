@@ -35,7 +35,7 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 void CRDFInstance::UpdateName()
 {
 	OwlClass iClassInstance = GetInstanceClass(m_iInstance);
-	ASSERT(iClassInstance != 0);
+	assert(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(iClassInstance, &szClassName);
@@ -87,7 +87,7 @@ void CRDFInstance::LoadOriginalData()
 	}
 
 	// Vertices
-	ASSERT(m_pVertexBuffer != nullptr);
+	assert(m_pVertexBuffer != nullptr);
 	m_pVertexBuffer->copyFrom(m_pOriginalVertexBuffer);	
 
 	// Bounding box
@@ -115,38 +115,38 @@ void CRDFInstance::Calculate()
 {
 	const auto VERTEX_LENGTH = getVertexLength();
 
-	ASSERT(m_pOriginalVertexBuffer == nullptr);
+	assert(m_pOriginalVertexBuffer == nullptr);
 	m_pOriginalVertexBuffer = new _vertices_f(VERTEX_LENGTH);
 
-	ASSERT(m_pVertexBuffer == nullptr);
+	assert(m_pVertexBuffer == nullptr);
 
-	ASSERT(m_pIndexBuffer == nullptr);
+	assert(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
 	/* BBs/AABBs */
 
-	ASSERT(m_pmtxOriginalBBTransformation == nullptr);
+	assert(m_pmtxOriginalBBTransformation == nullptr);
 	m_pmtxOriginalBBTransformation = new _matrix();
 
-	ASSERT(m_pvecOriginalBBMin == nullptr);
+	assert(m_pvecOriginalBBMin == nullptr);
 	m_pvecOriginalBBMin = new _vector3d();
 
-	ASSERT(m_pvecOriginalBBMax == nullptr);
+	assert(m_pvecOriginalBBMax == nullptr);
 	m_pvecOriginalBBMax = new _vector3d();
 
-	ASSERT(m_pmtxBBTransformation == nullptr);
+	assert(m_pmtxBBTransformation == nullptr);
 	m_pmtxBBTransformation = new _matrix();
 
-	ASSERT(m_pvecBBMin == nullptr);
+	assert(m_pvecBBMin == nullptr);
 	m_pvecBBMin = new _vector3d();
 
-	ASSERT(m_pvecBBMax == nullptr);
+	assert(m_pvecBBMax == nullptr);
 	m_pvecBBMax = new _vector3d();
 
-	ASSERT(m_pvecAABBMin == nullptr);
+	assert(m_pvecAABBMin == nullptr);
 	m_pvecAABBMin = new _vector3d();
 
-	ASSERT(m_pvecAABBMax == nullptr);
+	assert(m_pvecAABBMax == nullptr);
 	m_pvecAABBMax = new _vector3d();
 
 	GetBoundingBox(

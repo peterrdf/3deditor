@@ -163,7 +163,7 @@ BOOL CMy3DEditorApp::InitInstance()
 			}
 			else if (iArgument > 3)
 			{
-				ASSERT(FALSE); // unsupported!
+				assert(false); // unsupported!
 			}
 
 			strToken = stCommandLine.Tokenize(_T("#"), iTokenPos);
@@ -254,10 +254,10 @@ void CMy3DEditorApp::PreLoadState()
 	BOOL bNameValid;
 	CString strName;
 	bNameValid = strName.LoadString(IDS_EDIT_MENU);
-	ASSERT(bNameValid);
+	assert(bNameValid);
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
 	bNameValid = strName.LoadString(IDS_EXPLORER);
-	ASSERT(bNameValid);
+	assert(bNameValid);
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
 
 	GetContextMenuManager()->AddMenu(L"Instances", IDR_POPUP_INSTANCES);	

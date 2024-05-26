@@ -84,7 +84,7 @@ bool CTexture::LoadFile(LPCTSTR lpszPathName)
 		return true;
 	} // if (pData != nullptr)
 
-	ASSERT(FALSE); // Unknown file type
+	assert(false); // Unknown file type
 
 	return false;
 }

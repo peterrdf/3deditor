@@ -26,9 +26,9 @@ CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFIn
 	, m_strInstanceUniqueName(L"")
 	, m_strOldInstanceUniqueName(EMPTY_INSTANCE)
 {
-	ASSERT(m_pController != nullptr);
-	ASSERT(m_pInstance != nullptr);
-	ASSERT(m_pObjectRDFProperty != nullptr);
+	assert(m_pController != nullptr);
+	assert(m_pInstance != nullptr);
+	assert(m_pObjectRDFProperty != nullptr);
 }
 
 CSelectInstanceDialog::~CSelectInstanceDialog()
@@ -71,13 +71,13 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getInstance(), m_pObjectRDFProperty->GetInstance(), &piInstances, &iCard);
 
-	ASSERT(iCard > 0);
-	ASSERT((m_iCard >= 0) && (m_iCard < iCard));
+	assert(iCard > 0);
+	assert((m_iCard >= 0) && (m_iCard < iCard));
 	UNUSED(iCard);
-	ASSERT(piInstances != nullptr);
+	assert(piInstances != nullptr);
 
 	CRDFModel* pModel = m_pController->GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -91,7 +91,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
 	{
 		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
-		ASSERT(itInstanceValue != mapInstances.end());
+		assert(itInstanceValue != mapInstances.end());
 
 		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();
 		if ((m_pInstance->getInstance() != vecCompatibleInstances[iCompatibleInstance]) &&

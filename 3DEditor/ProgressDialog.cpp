@@ -12,7 +12,7 @@ using namespace std;
 /*static*/ UINT CProgressDialog::ThreadProc(LPVOID pParam)
 {
 	auto pDialog = (CProgressDialog*)pParam;
-	ASSERT(pDialog != nullptr);
+	assert(pDialog != nullptr);
 
 	pDialog->m_pTask->Run();
 
@@ -52,7 +52,7 @@ CProgressDialog::CProgressDialog(CWnd* pParent, CTask* pTask)
 	, m_pThread(nullptr)
 	, m_pTask(pTask)
 {
-	ASSERT(m_pTask != nullptr);
+	assert(m_pTask != nullptr);
 }
 
 CProgressDialog::~CProgressDialog()

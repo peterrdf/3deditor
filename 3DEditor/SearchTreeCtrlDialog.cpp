@@ -15,7 +15,7 @@ const int MAX_SEARCH_DEPTH = 20;
 // ************************************************************************************************
 void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 {
-	ASSERT(hItem != nullptr);
+	assert(hItem != nullptr);
 
 	// Unselect
 	if (m_hSearchResult != nullptr)
@@ -31,17 +31,17 @@ void CSearchTreeCtrlDialog::SelectItem(HTREEITEM hItem)
 
 void CSearchTreeCtrlDialog::UnselectItem(HTREEITEM hItem)
 {
-	ASSERT(hItem != nullptr);
+	assert(hItem != nullptr);
 
 	GetTreeView()->SetItemState(hItem, 0, TVIS_SELECTED);
 }
 
 HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 {
-	ASSERT(hParent != nullptr);
+	assert(hParent != nullptr);
 
 	m_iSearchDepth++;
-	ASSERT(m_iSearchDepth <= MAX_SEARCH_DEPTH);
+	assert(m_iSearchDepth <= MAX_SEARCH_DEPTH);
 	
 	m_pSite->LoadChildrenIfNeeded(hParent);
 
@@ -66,14 +66,14 @@ HTREEITEM CSearchTreeCtrlDialog::SearchChildren(HTREEITEM hParent)
 	} // while (hChild != nullptr)
 
 	m_iSearchDepth--;
-	ASSERT(m_iSearchDepth > 0);
+	assert(m_iSearchDepth > 0);
 
 	return nullptr;
 }
 
 HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 {
-	ASSERT(hItem != nullptr);
+	assert(hItem != nullptr);
 
 	HTREEITEM hSibling = GetTreeView()->GetNextSiblingItem(hItem);
 	while (hSibling != nullptr)
@@ -100,7 +100,7 @@ HTREEITEM CSearchTreeCtrlDialog::SearchSiblings(HTREEITEM hItem)
 
 HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 {
-	ASSERT(hItem != nullptr);
+	assert(hItem != nullptr);
 
 	HTREEITEM hParent = GetTreeView()->GetParentItem(hItem);
 	if (hParent == nullptr)
@@ -109,7 +109,7 @@ HTREEITEM CSearchTreeCtrlDialog::SearchParents(HTREEITEM hItem)
 	}
 
 	m_iSearchDepth--;
-	ASSERT(m_iSearchDepth >= 0);
+	assert(m_iSearchDepth >= 0);
 
 	HTREEITEM hSearchResult = SearchSiblings(hParent);
 	if (hSearchResult != nullptr)
@@ -137,7 +137,7 @@ CSearchTreeCtrlDialog::CSearchTreeCtrlDialog(CSearchTreeCtrlDialogSite* pSite)
 	, m_iSearchDepth(0)
 	, m_strSearchText(_T(""))
 {
-	ASSERT(m_pSite != nullptr);
+	assert(m_pSite != nullptr);
 }
 
 CSearchTreeCtrlDialog::~CSearchTreeCtrlDialog()
@@ -250,7 +250,7 @@ BOOL CSearchTreeCtrlDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	auto vecSearchFilters = m_pSite->GetSearchFilters();
-	ASSERT(!vecSearchFilters.empty());
+	assert(!vecSearchFilters.empty());
 
 	for (auto strSearchFilter : vecSearchFilters)
 	{
@@ -269,7 +269,7 @@ BOOL CSearchTreeCtrlDialog::OnInitDialog()
 void CSearchTreeCtrlDialog::OnSelchangeComboSearchFilter()
 {
 	auto vecSearchFilters = m_pSite->GetSearchFilters();
-	ASSERT(!vecSearchFilters.empty());
+	assert(!vecSearchFilters.empty());
 
 	SetWindowText(m_pSite->GetSearchFilterType(vecSearchFilters[m_cmbSearchFilter.GetCurSel()]));
 }

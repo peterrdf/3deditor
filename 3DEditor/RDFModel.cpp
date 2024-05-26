@@ -29,7 +29,7 @@ CProgressDialog* m_pProgressDialog = nullptr;
 // ************************************************************************************************
 void STDCALL LogCallbackImpl(enumLogEvent enLogEvent, const char* szEvent)
 {
-	ASSERT(m_pProgressDialog != nullptr);
+	assert(m_pProgressDialog != nullptr);
 
 	m_pProgressDialog->Log((int)enLogEvent, szEvent);
 }
@@ -52,8 +52,8 @@ public: // Methods
 		, m_szPath(szPath)
 		, m_bLoading(bLoading)
 	{
-		ASSERT(m_pModel != nullptr);
-		ASSERT(szPath != nullptr);
+		assert(m_pModel != nullptr);
+		assert(szPath != nullptr);
 	}
 
 	virtual ~CLoadTask()
@@ -63,7 +63,7 @@ public: // Methods
 	{
 		if (!TEST_MODE)
 		{
-			ASSERT(m_pProgressDialog != nullptr);
+			assert(m_pProgressDialog != nullptr);
 		}		
 
 		CString strLog;
@@ -111,7 +111,7 @@ public: // Methods
 			}
 			else
 			{
-				ASSERT(m_pModel->m_iModel != 0);
+				assert(m_pModel->m_iModel != 0);
 
 				ImportModelW(m_pModel->m_iModel, m_szPath);
 
@@ -181,7 +181,7 @@ CRDFModel::~CRDFModel()
 	Clean();
 	
 	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);	
+	assert(m_iModel != 0);	
 
 	SetFormatSettings(m_iModel);
 
@@ -284,7 +284,7 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	if (m_iModel == 0)
 	{
 		m_iModel = CreateModel();
-		ASSERT(m_iModel != 0);
+		assert(m_iModel != 0);
 
 		SetFormatSettings(m_iModel);
 	}
@@ -311,7 +311,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	if (m_iModel == 0)
 	{
 		m_iModel = CreateModel();
-		ASSERT(m_iModel != 0);
+		assert(m_iModel != 0);
 
 		SetFormatSettings(m_iModel);
 	}
@@ -374,10 +374,10 @@ void CRDFModel::ResetInstancesDefaultState()
 
 void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const
 {
-	ASSERT(iClassInstance != 0);
+	assert(iClassInstance != 0);
 
 	const auto& itClass = m_mapClasses.find(iClassInstance);
-	ASSERT(itClass != m_mapClasses.end());
+	assert(itClass != m_mapClasses.end());
 
 	auto pClass = itClass->second;
 
@@ -397,7 +397,7 @@ void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & ve
 
 CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 {
-	ASSERT(iID != 0);
+	assert(iID != 0);
 
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
@@ -408,14 +408,14 @@ CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 		}
 	}
 
-	ASSERT(false);
+	assert(false);
 
 	return nullptr;
 }
 
 CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
@@ -431,10 +431,10 @@ CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 
 CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 {
-	ASSERT(iClassInstance != 0);
+	assert(iClassInstance != 0);
 
 	int64_t iInstance = CreateInstance(iClassInstance);
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	auto pInstance = new CRDFInstance(m_iID++, iInstance, true);
 	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
@@ -456,12 +456,12 @@ CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 
 bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
-	ASSERT(pInstance != nullptr);
+	assert(pInstance != nullptr);
 
 	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
 
 	auto itInstance = m_mapInstances.find(pInstance->getInstance());
-	ASSERT(itInstance != m_mapInstances.end());
+	assert(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
 
@@ -472,19 +472,19 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 
 void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
 {	
-	ASSERT(FALSE); // TODO: PENDING REFACTORING!
+	assert(false); // TODO: PENDING REFACTORING!
 }
 
 void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
-	ASSERT(pInstance != nullptr);
-	ASSERT(pObjectRDFProperty != nullptr);
+	assert(pInstance != nullptr);
+	assert(pObjectRDFProperty != nullptr);
 
 	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
-	ASSERT(iClassInstance != 0);
+	assert(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-	ASSERT(!vecRestrictions.empty());
+	assert(!vecRestrictions.empty());
 
 	auto& mapRFDInstances = GetInstances();
 
@@ -702,8 +702,8 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 {
 	m_fBoundingSphereDiameter = 0.f;
 
-	ASSERT(iInstance != 0);
-	ASSERT(m_mapInstances.find(iInstance) != m_mapInstances.end());
+	assert(iInstance != 0);
+	assert(m_mapInstances.find(iInstance) != m_mapInstances.end());
 
 	m_fXmin = FLT_MAX;
 	m_fXmax = -FLT_MAX;
@@ -842,7 +842,7 @@ CTexture * CRDFModel::GetDefaultTexture()
 		strDefaultTexture.MakeLower();
 
 		int iLastSlash = strDefaultTexture.ReverseFind(L'\\');
-		ASSERT(iLastSlash != -1);
+		assert(iLastSlash != -1);
 
 		strDefaultTexture = strDefaultTexture.Left(iLastSlash + 1);
 		strDefaultTexture += L"texture.jpg";
@@ -869,7 +869,7 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 		while (iPropertyInstance != 0)
 		{
 			auto itProperty = m_mapProperties.find(iPropertyInstance);
-			ASSERT(itProperty != m_mapProperties.end());
+			assert(itProperty != m_mapProperties.end());
 
 			GetPropertyMetaData(pInstance, itProperty->second, strMetaData);
 
@@ -908,13 +908,13 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			if ((iCard == 1) && (pProperty->GetName() == CString(L"$semantics")))
 			{
 				auto itInstance = m_mapInstances.find(piInstances[0]);
-				ASSERT(itInstance != m_mapInstances.end());
+				assert(itInstance != m_mapInstances.end());
 
 				int64_t iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], 0);
 				while (iPropertyInstance != 0)
 				{
 					auto itProperty = m_mapProperties.find(iPropertyInstance);
-					ASSERT(itProperty != m_mapProperties.end());
+					assert(itProperty != m_mapProperties.end());
 
 					GetPropertyMetaData(itInstance->second, itProperty->second, strMetaData, L" - ");
 
@@ -1037,7 +1037,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 
 		default:
 		{
-			ASSERT(FALSE); // unknown property
+			assert(false); // unknown property
 
 			strMetaData += L"NA";
 		}
@@ -1143,7 +1143,7 @@ void CRDFModel::LoadRDFModel()
 				break;
 
 				default:
-					ASSERT(FALSE); // Not supported!
+					assert(false); // Not supported!
 					break;
 			} // switch (iPropertyType)
 
@@ -1205,7 +1205,7 @@ void CRDFModel::GetInstancesDefaultState()
 			OwlClass iNillClass = GetClassByName(m_iModel, "Nill");
 
 			OwlClass iInstanceClass = GetInstanceClass(itInstanceDefaultState.first);
-			ASSERT(iInstanceClass != 0);
+			assert(iInstanceClass != 0);
 
 			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass))
 			{
@@ -1217,7 +1217,7 @@ void CRDFModel::GetInstancesDefaultState()
 
 void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
 	while (iProperty != 0)
@@ -1429,10 +1429,10 @@ OwlInstance CRDFModel::Translate(
 	double dX, double dY, double dZ,
 	double d11, double d22, double d33)
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
-	ASSERT(iMatrixInstance != 0);
+	assert(iMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
 	{
@@ -1449,7 +1449,7 @@ OwlInstance CRDFModel::Translate(
 		vecTransformationMatrix.size());
 
 	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
-	ASSERT(iTransformationInstance != 0);
+	assert(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
@@ -1459,10 +1459,10 @@ OwlInstance CRDFModel::Translate(
 
 OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
-	ASSERT(iMatrixInstance != 0);
+	assert(iMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
 	{
@@ -1479,7 +1479,7 @@ OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 		vecTransformationMatrix.size());
 
 	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
-	ASSERT(iTransformationInstance != 0);
+	assert(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
@@ -1491,10 +1491,10 @@ OwlInstance CRDFModel::Rotate(
 	OwlInstance iInstance,
 	double alpha, double beta, double gamma)
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
-	ASSERT(iMatrixInstance != 0);
+	assert(iMatrixInstance != 0);
 
 	_matrix matrix;
 	memset(&matrix, 0, sizeof(_matrix));
@@ -1513,7 +1513,7 @@ OwlInstance CRDFModel::Rotate(
 	SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_33"), &matrix._33, 1);
 
 	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
-	ASSERT(iTransformationInstance != 0);
+	assert(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
@@ -1554,7 +1554,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 	Clean();
 
 	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
+	assert(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
 
@@ -1738,7 +1738,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 	// X-axis
 	OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
-	ASSERT(iPlusXLabelInstance != 0);
+	assert(iPlusXLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iPlusXLabelInstance,
@@ -1748,7 +1748,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 	// Y-axis
 	OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
-	ASSERT(iPlusYLabelInstance != 0);
+	assert(iPlusYLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iPlusYLabelInstance,
@@ -1758,7 +1758,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 	// Z-axis
 	OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
-	ASSERT(iPlusZLabelInstance != 0);
+	assert(iPlusZLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iPlusZLabelInstance,
@@ -1816,7 +1816,7 @@ void CSceneRDFModel::CreateCoordinateSystem()
 
 	/* Collection */
 	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"), "#Coordinate System#");
-	ASSERT(iCollectionInstance != 0);
+	assert(iCollectionInstance != 0);
 
 	SetObjectProperty(
 		iCollectionInstance,
@@ -1838,7 +1838,7 @@ CNavigatorRDFModel::CNavigatorRDFModel()
 	Clean();
 
 	m_iModel = CreateModel();
-	ASSERT(m_iModel != 0);
+	assert(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
 
@@ -2018,7 +2018,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Top */
 	OwlInstance iTopLabelInstance = m_pTextBuilder->BuildText("top", true);
-	ASSERT(iTopLabelInstance != 0);
+	assert(iTopLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iTopLabelInstance,
@@ -2028,7 +2028,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Bottom */
 	OwlInstance iBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
-	ASSERT(iBottomLabelInstance != 0);
+	assert(iBottomLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iBottomLabelInstance,
@@ -2038,7 +2038,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Front */
 	OwlInstance iFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
-	ASSERT(iFrontLabelInstance != 0);
+	assert(iFrontLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iFrontLabelInstance,
@@ -2048,7 +2048,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Back */
 	OwlInstance iBackLabelInstance = m_pTextBuilder->BuildText("back", true);
-	ASSERT(iBackLabelInstance != 0);
+	assert(iBackLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iBackLabelInstance,
@@ -2058,7 +2058,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Left */
 	OwlInstance iLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
-	ASSERT(iLeftLabelInstance != 0);
+	assert(iLeftLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iLeftLabelInstance,
@@ -2068,7 +2068,7 @@ void CNavigatorRDFModel::CreateNaigatorLabels()
 
 	/* Right */
 	OwlInstance iRightLabelInstance = m_pTextBuilder->BuildText("right", true);
-	ASSERT(iRightLabelInstance != 0);
+	assert(iRightLabelInstance != 0);
 
 	CRDFInstance::calculateBBMinMax(
 		iRightLabelInstance,

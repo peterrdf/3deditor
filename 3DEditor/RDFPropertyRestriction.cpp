@@ -7,7 +7,7 @@ CRDFPropertyRestriction::CRDFPropertyRestriction(int64_t iPropertyInstance, int6
 	, m_iMinCard(iMinCard)
 	, m_iMaxCard(iMaxCard)
 {
-	ASSERT(m_iPropertyInstance != 0);
+	assert(m_iPropertyInstance != 0);
 }
 
 // ------------------------------------------------------------------------------------------------

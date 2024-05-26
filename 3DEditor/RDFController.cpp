@@ -44,7 +44,7 @@ CRDFController::~CRDFController()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::SetModel(CRDFModel * pModel)
 {
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	m_pModel = pModel;
 
@@ -72,8 +72,8 @@ CRDFModel* CRDFController::GetModel()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::RegisterView(CRDFView * pView)
 {
-	ASSERT(pView != nullptr);
-	ASSERT(m_setViews.find(pView) == m_setViews.end());
+	assert(pView != nullptr);
+	assert(m_setViews.find(pView) == m_setViews.end());
 
 	m_setViews.insert(pView);
 }
@@ -81,8 +81,8 @@ void CRDFController::RegisterView(CRDFView * pView)
 // ------------------------------------------------------------------------------------------------
 void CRDFController::UnRegisterView(CRDFView * pView)
 {
-	ASSERT(pView != nullptr);
-	ASSERT(m_setViews.find(pView) != m_setViews.end());
+	assert(pView != nullptr);
+	assert(m_setViews.find(pView) != m_setViews.end());
 
 	m_setViews.erase(pView);
 }
@@ -96,14 +96,14 @@ const set<CRDFView *> & CRDFController::GetViews()
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFController::LoadModel(LPCTSTR /*szFileName*/)
 {
-	ASSERT(FALSE);
+	assert(false);
 }
 
 // ------------------------------------------------------------------------------------------------
 void CRDFController::ZoomToInstance(int64_t iInstance)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	pModel->ZoomToInstance(iInstance);
 
@@ -118,7 +118,7 @@ void CRDFController::ZoomToInstance(int64_t iInstance)
 void CRDFController::ZoomOut()
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	pModel->ZoomOut();
 
@@ -133,7 +133,7 @@ void CRDFController::ZoomOut()
 void CRDFController::ScaleAndCenter()
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	pModel->ScaleAndCenter();
 
@@ -281,11 +281,11 @@ void CRDFController::SetModelCoordinateSystem(BOOL bValue)
 void CRDFController::UpdateCoordinateSystem()
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -319,11 +319,11 @@ void CRDFController::UpdateCoordinateSystem()
 void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -355,17 +355,17 @@ void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplica
 CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return nullptr;
 	}
 
 	auto pNewRDFInstance = pModel->CreateNewInstance(iClassInstance);
-	ASSERT(pNewRDFInstance != nullptr);
+	assert(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -379,11 +379,11 @@ CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iCla
 void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -409,17 +409,17 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return nullptr;
 	}
 
 	auto pNewRDFInstance = pModel->AddNewInstance(pThing);
-	ASSERT(pNewRDFInstance != nullptr);
+	assert(pNewRDFInstance != nullptr);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -434,11 +434,11 @@ CRDFInstance* CRDFController::OnOctreeInstanceCreated(CRDFView* pSender, GEOM::I
 bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return nullptr;
 	}
@@ -452,7 +452,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 	int64_t iInstance = pInstance->getInstance();
 
 	bool bResult = pModel->DeleteInstance(pInstance);
-	ASSERT(bResult);
+	assert(bResult);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -489,11 +489,11 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -530,11 +530,11 @@ bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance
 			}
 			iProperty = GetInstancePropertyByIterator(iInstance, iProperty);
 		}
-		ASSERT(i == childCnt);
+		assert(i == childCnt);
 	}
 
 	bool bResult = pModel->DeleteInstance(pInstance);
-	ASSERT(bResult);
+	assert(bResult);
 
 	for (int64_t i = 0; i < childCnt; i++) {
 		auto pChildInstance = pModel->GetInstanceByIInstance(childInstanceArray[i]);
@@ -550,11 +550,11 @@ bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance
 bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> vecInstances)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -569,7 +569,7 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 		}
 
 		bResult &= pModel->DeleteInstance(vecInstances[iInstance]);
-		ASSERT(bResult);
+		assert(bResult);
 	}
 
 	auto itView = m_setViews.begin();
@@ -585,11 +585,11 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstance)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -607,11 +607,11 @@ void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstanc
 void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -635,11 +635,11 @@ void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
 void CRDFController::OnInstancesEnabledStateChanged()
 {
 	auto pModel = GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}

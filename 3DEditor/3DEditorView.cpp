@@ -166,7 +166,7 @@ void CMy3DEditorView::Dump(CDumpContext& dc) const
 
 CMy3DEditorDoc* CMy3DEditorView::GetDocument() const // non-debug version is inline
 {
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CMy3DEditorDoc)));
+	assert(m_pDocument->IsKindOf(RUNTIME_CLASS(CMy3DEditorDoc)));
 	return (CMy3DEditorDoc*)m_pDocument;
 }
 #endif //_DEBUG

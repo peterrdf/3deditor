@@ -211,7 +211,7 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 {	
-	ASSERT(FALSE); // TODO
+	assert(false); // TODO
 
 //	TCHAR szFilters[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
 //
@@ -316,7 +316,7 @@ void CMy3DEditorDoc::OnViewZoomOut()
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
 	auto pInstance = GetSelectedInstance();
-	ASSERT((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
+	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
 	ZoomToInstance(pInstance->getInstance());
 }
@@ -329,7 +329,7 @@ void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnInstancesSave()
 {
-	ASSERT(GetSelectedInstance() != nullptr);
+	assert(GetSelectedInstance() != nullptr);
 	Save(GetSelectedInstance());
 }
 

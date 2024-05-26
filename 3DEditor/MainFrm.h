@@ -114,8 +114,8 @@ public: // Methods
 		: m_pMainFrame(pMainFrame)
 		, m_pView(pView)
 	{
-		ASSERT(m_pMainFrame != nullptr);
-		ASSERT(m_pView != nullptr);
+		assert(m_pMainFrame != nullptr);
+		assert(m_pView != nullptr);
 	}
 
 	// --------------------------------------------------------------------------------------------

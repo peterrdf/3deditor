@@ -17,12 +17,12 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 	, m_strTestsDir(_T(""))
 	, m_strTestReportDir(_T(""))
 {
-	ASSERT(m_pController != nullptr);
+	assert(m_pController != nullptr);
 
 	m_pOpenGLView = (COpenGLRDFView*)(m_pController->GetView<COpenGLRDFView>());
-	ASSERT(m_pOpenGLView != nullptr);
+	assert(m_pOpenGLView != nullptr);
 
-	ASSERT(!m_strInputDataDir.IsEmpty());
+	assert(!m_strInputDataDir.IsEmpty());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 // ------------------------------------------------------------------------------------------------
 /*static*/ void CTestManager::FindFiles(const wchar_t* szFolder, const wchar_t* szWildcard, CStringList& lsFiles)
 {
-	ASSERT(szFolder != nullptr);
-	ASSERT(szWildcard != nullptr);
+	assert(szFolder != nullptr);
+	assert(szWildcard != nullptr);
 
 	CString strFolder = szFolder;
 

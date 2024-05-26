@@ -28,7 +28,7 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 	default:
 	{
-		ASSERT(false);
+		assert(false);
 	}
 	break;
 	} // switch (m_iMode)
@@ -47,9 +47,9 @@ CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pControlle
 	, m_iNewInstanceRDFClass(0)
 	, m_iMode(0)
 {
-	ASSERT(m_pController != nullptr);
-	ASSERT(m_pInstance != nullptr);
-	ASSERT(m_pProperty != nullptr);
+	assert(m_pController != nullptr);
+	assert(m_pInstance != nullptr);
+	assert(m_pProperty != nullptr);
 }
 
 CEditObjectPropertyDialog::~CEditObjectPropertyDialog()
@@ -86,7 +86,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	GetObjectProperty(m_pInstance->getInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	auto& mapInstances = pModel->GetInstances();
 
@@ -94,10 +94,10 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	* Restrictions
 	*/
 	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pProperty);
-	ASSERT(pObjectRDFProperty != nullptr);
+	assert(pObjectRDFProperty != nullptr);
 
 	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->GetRestrictions();
-	ASSERT(!vecRestrictions.empty());
+	assert(!vecRestrictions.empty());
 
 	/*
 	* Populate Existing instance combo
@@ -238,7 +238,7 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 	{
 	case 0: // Existing instance
 	{
-		ASSERT(m_cmbExistingInstance.GetCurSel() != CB_ERR);
+		assert(m_cmbExistingInstance.GetCurSel() != CB_ERR);
 
 		m_pExisitngRDFInstance = (CRDFInstance *)m_cmbExistingInstance.GetItemDataPtr(m_cmbExistingInstance.GetCurSel());
 	}
@@ -246,19 +246,19 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 
 	case 1: // New instance
 	{
-		ASSERT(m_cmbNewInstance.GetCurSel() != CB_ERR);
+		assert(m_cmbNewInstance.GetCurSel() != CB_ERR);
 
 		CString strClassName;
 		m_cmbNewInstance.GetLBText(m_cmbNewInstance.GetCurSel(), strClassName);
 
 		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->getModel(), CW2A((LPCTSTR)strClassName));
-		ASSERT(m_iNewInstanceRDFClass != 0);
+		assert(m_iNewInstanceRDFClass != 0);
 	}
 	break;
 
 	default:
 	{
-		ASSERT(false);
+		assert(false);
 	}
 	break;
 	} // switch (m_iMode)

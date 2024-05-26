@@ -13,7 +13,7 @@ CTest::CTest(COpenGLRDFView* pOpenGLView)
 	, m_strRevision(L"")
 	, m_strScreenshotFileName(L"")
 {
-	ASSERT(m_pOpenGLView != nullptr);
+	assert(m_pOpenGLView != nullptr);
 
 	char* szTimeStamp = nullptr;
 	int64_t iRevision = ::GetRevision(&szTimeStamp);
@@ -94,7 +94,7 @@ bool CTest::Load(const wchar_t* szTestFilePath)
 
 	if (strVersion != L"1")
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}

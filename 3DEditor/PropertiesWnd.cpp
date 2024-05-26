@@ -95,8 +95,8 @@ CRDFInstanceData::CRDFInstanceData(CRDFController * pController, CRDFInstance * 
 	: m_pController(pController)
 	, m_pInstance(pInstance)
 {
-	ASSERT(m_pController != nullptr);
-	ASSERT(m_pInstance != nullptr);
+	assert(m_pController != nullptr);
+	assert(m_pInstance != nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ CRDFInstancePropertyData::CRDFInstancePropertyData(CRDFController * pController,
 	, m_pProperty(pProperty)
 	, m_iCard(iCard)
 {
-	ASSERT(m_pProperty != nullptr);
+	assert(m_pProperty != nullptr);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ int64_t CRDFInstancePropertyData::GetCard() const
 
 void CRDFInstancePropertyData::SetCard(int64_t iCard)
 {
-	ASSERT(iCard >= 0);
+	assert(iCard >= 0);
 
 	m_iCard = iCard;
 }
@@ -154,10 +154,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CRDFInstanceProperty::HasButton() const
 {
-	ASSERT(GetData() != NULL);
+	assert(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-	ASSERT(pData != nullptr);
+	assert(pData != nullptr);
 
 	BOOL bHasButton = FALSE;
 
@@ -235,7 +235,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		int64_t * piValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
-		ASSERT(iCard > 0);
+		assert(iCard > 0);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case DATATYPEPROPERTY_TYPE_INTEGER:
@@ -243,7 +243,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 	default:
 	{
-		ASSERT(false); // unexpected
+		assert(false); // unexpected
 	}
 	break;
 	} // switch (pData->GetProperty()->getType())
@@ -254,10 +254,10 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFInstanceProperty::OnClickButton(CPoint /*point*/)
 {
-	ASSERT(GetData() != NULL);
+	assert(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-	ASSERT(pData != nullptr);
+	assert(pData != nullptr);
 
 	/*
 	* Read the restrictions
@@ -285,8 +285,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
 		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
 
-		ASSERT(iCard > 0);
-		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+		assert(iCard > 0);
+		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 		/*
 		* Remove a value
@@ -320,14 +320,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
 		* Update the values
 		*/
 		auto pProperty = GetParent();
-		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+		assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -343,8 +343,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		char** szValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
-		ASSERT(iCard > 0);
-		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+		assert(iCard > 0);
+		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 		/*
 		* Remove a value
@@ -376,14 +376,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
 		* Update the values
 		*/
 		auto pProperty = GetParent();
-		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+		assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -399,8 +399,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		wchar_t ** szValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
-		ASSERT(iCard > 0);
-		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+		assert(iCard > 0);
+		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 		/*
 		* Remove a value
@@ -432,14 +432,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
 		* Update the values
 		*/
 		auto pProperty = GetParent();
-		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+		assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -455,8 +455,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		double * pdValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);		
 
-		ASSERT(iCard > 0);
-		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+		assert(iCard > 0);
+		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 		/*
 		* Remove a value
@@ -471,14 +471,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());		
 
 		/*
 		* Update the values
 		*/
 		auto pProperty = GetParent();
-		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+		assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -494,8 +494,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		int64_t * piValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
-		ASSERT(iCard > 0);
-		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+		assert(iCard > 0);
+		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 		/*
 		* Remove a value
@@ -510,14 +510,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
 		* Update the values
 		*/
 		auto pProperty = GetParent();
-		ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+		assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 		auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 		m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -526,7 +526,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 	default:
 	{
-		ASSERT(false); // unexpected
+		assert(false); // unexpected
 	}
 	break;
 	} // switch (pData->GetProperty()->getType())
@@ -590,7 +590,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFInstanceProperty::EnableSpinControlInt64()
 {
-	ASSERT(m_varValue.vt == VT_I8);
+	assert(m_varValue.vt == VT_I8);
 
 	// Cheat the base class
 	m_varValue.vt = VT_I4;
@@ -616,7 +616,7 @@ CRDFInstanceObjectProperty::CRDFInstanceObjectProperty(const CString & strName, 
 // ------------------------------------------------------------------------------------------------
 void CRDFInstanceObjectProperty::AddValue(const wstring & strValue, int64_t iInstance)
 {
-	ASSERT(m_mapValues.find(strValue) == m_mapValues.end());
+	assert(m_mapValues.find(strValue) == m_mapValues.end());
 
 	m_mapValues[strValue] = iInstance;
 }
@@ -626,7 +626,7 @@ void CRDFInstanceObjectProperty::AddValue(const wstring & strValue, int64_t iIns
 int64_t CRDFInstanceObjectProperty::GetInstance(const wstring & strValue) const
 {
 	map<wstring, int64_t>::const_iterator itValues = m_mapValues.find(strValue);
-	ASSERT(itValues != m_mapValues.end());
+	assert(itValues != m_mapValues.end());
 
 	return itValues->second;
 }
@@ -665,10 +665,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CAddRDFInstanceProperty::HasButton() const
 {
-	ASSERT(GetData() != NULL);
+	assert(GetData() != NULL);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-	ASSERT(pData != nullptr);
+	assert(pData != nullptr);
 
 	BOOL bHasButton = FALSE;
 
@@ -813,7 +813,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	default:
 	{
-		ASSERT(false); // unexpected
+		assert(false); // unexpected
 	}
 	break;
 	} // switch (pData->GetProperty()->getType())
@@ -824,7 +824,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CAddRDFInstanceProperty::OnClickButton(CPoint /*point*/)
 {
-	ASSERT(GetData() != NULL);
+	assert(GetData() != NULL);
 
 	/*
 	* Select the property
@@ -833,7 +833,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_pWndList->SetCurSel(pPropertyGroup);
 
 	CRDFInstancePropertyData * pData = (CRDFInstancePropertyData *)GetData();
-	ASSERT(pData != nullptr);
+	assert(pData != nullptr);
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
@@ -856,7 +856,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		int64_t iCard = 0;
 		GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
 		/*
 		* Add a value
@@ -871,7 +871,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 		case 0: // Existing instance
 		{
-			ASSERT(dlgEditObjectProperty.m_pExisitngRDFInstance != nullptr);
+			assert(dlgEditObjectProperty.m_pExisitngRDFInstance != nullptr);
 
 			vecValues.push_back(dlgEditObjectProperty.m_pExisitngRDFInstance->getInstance());
 		}
@@ -879,10 +879,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		case 1: // New instance
 		{
-			ASSERT(dlgEditObjectProperty.m_iNewInstanceRDFClass != 0);
+			assert(dlgEditObjectProperty.m_iNewInstanceRDFClass != 0);
 
 			CRDFInstance * pNewRDFInstance = pData->GetController()->CreateNewInstance((CPropertiesWnd *)m_pWndList->GetParent(), dlgEditObjectProperty.m_iNewInstanceRDFClass);
-			ASSERT(pNewRDFInstance != nullptr);
+			assert(pNewRDFInstance != nullptr);
 
 			vecValues.push_back(pNewRDFInstance->getInstance());
 		}
@@ -890,7 +890,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 		} // switch (dlgEditObjectProperty.m_iMode)
@@ -900,7 +900,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -919,7 +919,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		bool* pbValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
 		/*
 		* Add a value
@@ -946,7 +946,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -967,8 +967,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void **)&szValue, &iCard);
 		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-		ASSERT(iMaxCard == 1);
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
+		assert(iMaxCard == 1);
 
 		wchar_t** szNewValues = (wchar_t**)new size_t[iCard + 1];
 		if (iCard > 0)
@@ -999,7 +999,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -1018,8 +1018,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		char** szValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void**)&szValue, &iCard);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-		ASSERT(iMaxCard == 1);
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
+		assert(iMaxCard == 1);
 
 		char** szNewValues = (char**)new size_t[iCard + 1];
 		if (iCard > 0)
@@ -1048,7 +1048,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -1067,8 +1067,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		wchar_t** szValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void**)&szValue, &iCard);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
-		ASSERT(iMaxCard == 1);
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
+		assert(iMaxCard == 1);
 
 		wchar_t** szNewValues = (wchar_t**)new size_t[iCard + 1];
 		if (iCard > 0)
@@ -1097,7 +1097,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -1116,7 +1116,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		double * pdValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);		
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
 		/*
 		* Add a value
@@ -1134,7 +1134,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -1153,7 +1153,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		int64_t * piValue = nullptr;
 		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
-		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
+		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
 		/*
 		* Add a value
@@ -1171,7 +1171,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Notify
 		*/
-		ASSERT(pData->GetController() != nullptr);
+		assert(pData->GetController() != nullptr);
 		pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 		/*
@@ -1183,7 +1183,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	default:
 	{
-		ASSERT(false); // unexpected
+		assert(false); // unexpected
 	}
 	break;
 	} // switch (pData->GetProperty()->getType())
@@ -1295,7 +1295,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return 0;
 	}
@@ -1306,13 +1306,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		auto pOGLRenderer = GetController()->GetView<_oglRenderer>();
 		if (pOGLRenderer == nullptr)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return 0;
 		}
 
 		auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
-		ASSERT(pBlinnPhongProgram != nullptr);
+		assert(pBlinnPhongProgram != nullptr);
 
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
@@ -1320,7 +1320,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			CString strValue = pApplicationProperty->GetValue();
 
 			auto pData = (CApplicationPropertyData*)pApplicationProperty->GetData();
-			ASSERT(pData != nullptr);
+			assert(pData != nullptr);
 
 			switch (pData->GetType())
 			{
@@ -1465,11 +1465,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::PointLightingLocation:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
-					ASSERT(pProperty != nullptr);
-					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
-					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+					assert(pProperty != nullptr);
+					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					assert(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
 						GetData())->GetType() == enumApplicationProperty::PointLightingLocation);
-					ASSERT(pProperty->GetSubItemsCount() == 3);
+					assert(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
 					auto pY = pProperty->GetSubItem(1);
@@ -1488,11 +1488,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::AmbientLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
-					ASSERT(pProperty != nullptr);
-					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
-					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+					assert(pProperty != nullptr);
+					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					assert(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
 						GetData())->GetType() == enumApplicationProperty::AmbientLightWeighting);
-					ASSERT(pProperty->GetSubItemsCount() == 3);
+					assert(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
 					auto pY = pProperty->GetSubItem(1);
@@ -1511,11 +1511,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::DiffuseLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
-					ASSERT(pProperty != nullptr);
-					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
-					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+					assert(pProperty != nullptr);
+					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					assert(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
 						GetData())->GetType() == enumApplicationProperty::DiffuseLightWeighting);
-					ASSERT(pProperty->GetSubItemsCount() == 3);
+					assert(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
 					auto pY = pProperty->GetSubItem(1);
@@ -1534,11 +1534,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::SpecularLightWeighting:
 				{
 					auto pProperty = pApplicationProperty->GetParent();
-					ASSERT(pProperty != nullptr);
-					ASSERT(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
-					ASSERT(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
+					assert(pProperty != nullptr);
+					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
+					assert(((CApplicationPropertyData*)dynamic_cast<CApplicationProperty*>(pProperty)->
 						GetData())->GetType() == enumApplicationProperty::SpecularLightWeighting);
-					ASSERT(pProperty->GetSubItemsCount() == 3);
+					assert(pProperty->GetSubItemsCount() == 3);
 
 					auto pX = pProperty->GetSubItem(0);
 					auto pY = pProperty->GetSubItem(1);
@@ -1595,7 +1595,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				break;
 
 				default:
-					ASSERT(false);
+					assert(false);
 					break;
 			} // switch (pData->GetType())
 
@@ -1605,12 +1605,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		auto pColorApplicationProperty = dynamic_cast<CColorApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pColorApplicationProperty != nullptr)
 		{
-			ASSERT(FALSE); // DISABLED
+			assert(false); // DISABLED
 
 			return 0;
 		} // if (pColorApplicationProperty != nullptr)
 
-		ASSERT(false); // unexpected!
+		assert(false); // unexpected!
 
 		return 0;
 	} // if (m_wndObjectCombo.GetCurSel() == 0)
@@ -1630,13 +1630,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			CString strValue = pObjectProperty->GetValue();
 
 			auto pData = (CRDFInstancePropertyData *)pObjectProperty->GetData();
-			ASSERT(pData != nullptr);
+			assert(pData != nullptr);
 
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
 			GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
 
-			ASSERT(iCard > 0);
+			assert(iCard > 0);
 
 			vector<int64_t> vecValues;
 			vecValues.assign(piInstances, piInstances + iCard);
@@ -1650,7 +1650,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				int64_t iMaxCard = 0;
 				pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);				
 
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
 				/*
 				* Remove a value
@@ -1662,14 +1662,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				/*
 				* Notify
 				*/
-				ASSERT(pData->GetController() != nullptr);
+				assert(pData->GetController() != nullptr);
 				pData->GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 				/*
 				* Delete this item
 				*/
 				auto pProperty = pObjectProperty->GetParent();
-				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
+				assert(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
 				PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
@@ -1679,13 +1679,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				if (strValue == SELECT_OBJECT_PROPERTY_COMMAND)
 				{
 					auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pData->GetProperty());
-					ASSERT(pObjectRDFProperty != nullptr);
+					assert(pObjectRDFProperty != nullptr);
 
-					ASSERT(pData->GetController() != nullptr);
+					assert(pData->GetController() != nullptr);
 					CSelectInstanceDialog dlgSelectInstanceDialog(GetController(), pData->GetInstance(), pObjectRDFProperty, pData->GetCard());
 					if (dlgSelectInstanceDialog.DoModal() == IDOK)
 					{
-						ASSERT(dlgSelectInstanceDialog.m_iInstance != -1);						
+						assert(dlgSelectInstanceDialog.m_iInstance != -1);						
 
 						/*
 						* Update the value
@@ -1697,13 +1697,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						/*
 						* Notify
 						*/
-						ASSERT(pData->GetController() != nullptr);
+						assert(pData->GetController() != nullptr);
 						GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 
 						/*
 						* Value
 						*/
-						ASSERT(!dlgSelectInstanceDialog.m_strInstanceUniqueName.IsEmpty());
+						assert(!dlgSelectInstanceDialog.m_strInstanceUniqueName.IsEmpty());
 
 						pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.m_strInstanceUniqueName);
 					}
@@ -1712,7 +1712,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						/*
 						* Value
 						*/
-						ASSERT(!dlgSelectInstanceDialog.m_strOldInstanceUniqueName.IsEmpty());
+						assert(!dlgSelectInstanceDialog.m_strOldInstanceUniqueName.IsEmpty());
 
 						pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.m_strOldInstanceUniqueName);
 					}
@@ -1730,7 +1730,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					/*
 					* Notify
 					*/
-					ASSERT(pData->GetController() != nullptr);
+					assert(pData->GetController() != nullptr);
 					GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 				}				
 			} // else if (strValue == REMOVE_OBJECT_PROPERTY_COMMAND)
@@ -1745,12 +1745,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		if (pColorSelectorProperty != nullptr)
 		{	
 			auto pData = (CRDFInstancePropertyData *)pColorSelectorProperty->GetData();
-			ASSERT(pData != nullptr);
+			assert(pData != nullptr);
 
 			auto pModel = GetController()->GetModel();
-			ASSERT(pModel != nullptr);
+			assert(pModel != nullptr);
 
-			ASSERT(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"));
+			assert(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"));
 
 			auto& mapProperties = pModel->GetProperties();
 
@@ -1763,7 +1763,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iRProperty, &dR, 1);
 
 			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iRProperty);
-			ASSERT(itProperty != mapProperties.end());
+			assert(itProperty != mapProperties.end());
 
 			/*
 			* Notify
@@ -1779,7 +1779,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iGProperty, &dG, 1);
 
 			itProperty = mapProperties.find(iGProperty);
-			ASSERT(itProperty != mapProperties.end());
+			assert(itProperty != mapProperties.end());
 
 			/*
 			* Notify
@@ -1795,7 +1795,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			SetDatatypeProperty(pData->GetInstance()->getInstance(), iBProperty, &dB, 1);
 
 			itProperty = mapProperties.find(iBProperty);
-			ASSERT(itProperty != mapProperties.end());
+			assert(itProperty != mapProperties.end());
 
 			/*
 			* Notify
@@ -1820,7 +1820,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		CString strValue = pProperty->GetValue();
 
 		auto pData = (CRDFInstancePropertyData *)pProperty->GetData();
-		ASSERT(pData != nullptr);
+		assert(pData != nullptr);
 
 		switch(pData->GetProperty()->GetType())
 		{
@@ -1833,7 +1833,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				bool* pbValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
 
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				vector<bool> vecValues;
 				vecValues.assign(pbValue, pbValue + iCard);
@@ -1856,7 +1856,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				delete[] pbNewValues;
 				pbNewValues = nullptr;
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
@@ -1873,7 +1873,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
 				SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
 
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				wchar_t** szNewValues = (wchar_t**)new size_t[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++)
@@ -1899,7 +1899,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete [] szNewValues;
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
@@ -1914,7 +1914,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				char** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				char** szNewValues = (char**)new size_t[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++)
@@ -1938,7 +1938,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
@@ -1953,7 +1953,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				wchar_t** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				wchar_t** szNewValues = (wchar_t**)new size_t[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++)
@@ -1977,7 +1977,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
@@ -1992,7 +1992,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				double* pdValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 			
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				vector<double> vecValues;
 				vecValues.assign(pdValue, pdValue + iCard);
@@ -2006,7 +2006,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
@@ -2021,7 +2021,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				int64_t * piValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
-				ASSERT(iCard > 0);
+				assert(iCard > 0);
 
 				vector<int64_t> vecValues;
 				vecValues.assign(piValue, piValue + iCard);
@@ -2034,7 +2034,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 
 				GetController()->OnInstancePropertyEdited(pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
@@ -2042,7 +2042,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			default:
 			{
-				ASSERT(false); // unknown type
+				assert(false); // unknown type
 			}
 			break;
 		} // switch(pData->GetProperty()->getType())
@@ -2050,7 +2050,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		return 0;
 	} // if (m_wndObjectCombo.GetCurSel() == 1)
 
-	ASSERT(false); // unknown property
+	assert(false); // unknown property
 	
 	return 0;
 }
@@ -2109,7 +2109,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 	GetController()->RegisterView(this);
 
 	CRect rectDummy;
@@ -2218,7 +2218,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2226,7 +2226,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	auto pOGLRenderer = GetController()->GetView<_oglRenderer>();
 	if (pOGLRenderer == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2706,7 +2706,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 	if (GetController() == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2741,7 +2741,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		auto pModel = GetController()->GetModel();
 		if (pModel == nullptr)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -2797,7 +2797,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		while (iPropertyInstance != 0)
 		{
 			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
-			ASSERT(itProperty != mapProperties.end());
+			assert(itProperty != mapProperties.end());
 
 			CRDFProperty * pProperty = itProperty->second;
 
@@ -2823,10 +2823,10 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	*/
 	if (pProperty->GetType() == OBJECTPROPERTY_TYPE)
 	{
-		ASSERT(GetController() != nullptr);
+		assert(GetController() != nullptr);
 
 		CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-		ASSERT(pObjectRDFProperty != nullptr);
+		assert(pObjectRDFProperty != nullptr);
 
 		wstring strRange;
 
@@ -3010,7 +3010,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 
 	default:
 	{
-		ASSERT(false); // unknown property
+		assert(false); // unknown property
 	}
 	break;
 	} // switch (pProperty->getType())
@@ -3038,10 +3038,10 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				iMinCard = 0;
 			}
 
-			ASSERT(GetController() != nullptr);
+			assert(GetController() != nullptr);
 
 			CRDFModel * pModel = GetController()->GetModel();
-			ASSERT(pModel != nullptr);
+			assert(pModel != nullptr);
 
 			auto& mapInstances = pModel->GetInstances();
 
@@ -3050,7 +3050,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 			*/
 			// Moved in CSelectInstanceDialog
 			//CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-			//ASSERT(pObjectRDFProperty != nullptr);
+			//assert(pObjectRDFProperty != nullptr);
 
 			// Moved in CSelectInstanceDialog
 			//vector<int64_t> vecCompatibleInstances;
@@ -3064,7 +3064,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				if (piInstances[iValue] != 0)
 				{
 					map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(piInstances[iValue]);
-					ASSERT(itInstanceValue != mapInstances.end());
+					assert(itInstanceValue != mapInstances.end());
 
 					pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)itInstanceValue->second->getUniqueName(), pProperty->GetName(),
 						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
@@ -3318,7 +3318,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 	default:
 	{
-		ASSERT(false); // unknown property
+		assert(false); // unknown property
 	}
 	break;
 	} // switch (pProperty->getType())
@@ -3337,7 +3337,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 
 	auto pInstance = GetController()->GetSelectedInstance();
 	if (pInstance == nullptr)
@@ -3573,7 +3573,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
 
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 
 	CRDFInstance * pInstance = GetController()->GetSelectedInstance();
 	if (pInstance == nullptr)
@@ -4042,7 +4042,7 @@ void CPropertiesWnd::OnViewModeChanged()
 
 		default:
 		{
-			ASSERT(false); // unknown mode
+			assert(false); // unknown mode
 		}
 		break;
 	}
@@ -4050,11 +4050,11 @@ void CPropertiesWnd::OnViewModeChanged()
 
 LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lParam*/)
 {
-	ASSERT(wParam != 0);	
+	assert(wParam != 0);	
 
 	auto pValueProperty = (CMFCPropertyGridProperty*)wParam;
 	auto pValueData = (CRDFInstancePropertyData*)pValueProperty->GetData();
-	ASSERT(pValueData != nullptr);
+	assert(pValueData != nullptr);
 
 	auto pInstance = pValueData->GetInstance();
 	auto pProperty = pValueData->GetProperty();
@@ -4137,7 +4137,7 @@ void CPropertiesWnd::SetPropListFont()
 
 void CPropertiesWnd::OnDestroy()
 {
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 	GetController()->UnRegisterView(this);
 
 	__super::OnDestroy();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine.h"
 #include "_settings_storage.h"
 
 #include <string>

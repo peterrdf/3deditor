@@ -46,7 +46,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	, m_pPointedInstanceMaterial(new _material())
 	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
-	ASSERT(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	_initialize(
 		pWnd,
@@ -189,7 +189,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -251,7 +251,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 				_redraw();
 
-				ASSERT(GetController() != nullptr);
+				assert(GetController() != nullptr);
 				GetController()->SelectInstance(this, m_pSelectedInstance);
 			} // if (m_pSelectedInstance != ...
 
@@ -294,7 +294,7 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 		break;
 
 		default:
-			ASSERT(FALSE);
+			assert(false);
 			break;
 	} // switch (enEvent)
 }
@@ -335,7 +335,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -343,7 +343,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	auto pModel = pController->GetModel();
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -388,10 +388,10 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	* Center
 	*/
 	auto pController = GetController();
-	ASSERT(pController != nullptr);
+	assert(pController != nullptr);
 
 	CRDFModel * pModel = pController->GetModel();
-	ASSERT(pModel != nullptr);
+	assert(pModel != nullptr);
 
 	float fXmin = -1.f;
 	float fXmax = 1.f;
@@ -507,7 +507,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (GetController() == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -533,7 +533,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnInstancePropertySelected() /*override*/
 {
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 
 	pair<CRDFInstance *, CRDFProperty *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 
@@ -619,7 +619,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		default:
 		{
-			ASSERT(FALSE); // Internal error!
+			assert(false); // Internal error!
 		}
 		break;
 	} // switch (enApplicationProperty)
@@ -628,7 +628,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void COpenGLRDFView::OnControllerChanged()
 {
-	ASSERT(GetController() != nullptr);
+	assert(GetController() != nullptr);
 
 	GetController()->RegisterView(this);
 
@@ -639,7 +639,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 {
 	if (pModel == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1054,7 +1054,7 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1286,7 +1286,7 @@ void COpenGLRDFView::DrawLines(_model* pM)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1348,7 +1348,7 @@ void COpenGLRDFView::DrawPoints(_model* pM)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1439,7 +1439,7 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}	
@@ -1453,7 +1453,7 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1464,7 +1464,7 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1497,7 +1497,7 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
 		if (iVBO == 0)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1645,7 +1645,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1659,7 +1659,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1676,7 +1676,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 		iVBO = m_oglBuffers.getBuffer(NORMAL_VECS_VBO);
 		if (iVBO == 0)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1744,7 +1744,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 		if (m_pSelectedInstance->getModel() == pModel->getInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
-			ASSERT(!vecTriangles.empty());
+			assert(!vecTriangles.empty());
 
 			if (m_iPointedFace == -1)
 			{
@@ -1783,7 +1783,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 			} // if (m_iPointedFace == -1)
 			else
 			{
-				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+				assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
@@ -1868,7 +1868,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -1882,7 +1882,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(TANGENT_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1899,7 +1899,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 		iVBO = m_oglBuffers.getBuffer(TANGENT_VECS_VBO);
 		if (iVBO == 0)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1967,7 +1967,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 		if (m_pSelectedInstance->getModel() == pModel->getInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
-			ASSERT(!vecTriangles.empty());
+			assert(!vecTriangles.empty());
 
 			if (m_iPointedFace == -1)
 			{
@@ -2006,7 +2006,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 			} // if (m_iPointedFace == -1)
 			else
 			{
-				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+				assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
@@ -2091,7 +2091,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2105,7 +2105,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BINORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -2122,7 +2122,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 		iVBO = m_oglBuffers.getBuffer(BINORMAL_VECS_VBO);
 		if (iVBO == 0)
 		{
-			ASSERT(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -2190,7 +2190,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 		if (m_pSelectedInstance->getModel() == pModel->getInstance())
 		{
 			auto& vecTriangles = m_pSelectedInstance->getTriangles();
-			ASSERT(!vecTriangles.empty());
+			assert(!vecTriangles.empty());
 
 			if (m_iPointedFace == -1)
 			{
@@ -2229,7 +2229,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 			} // if (m_iPointedFace == -1)
 			else
 			{
-				ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+				assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
@@ -2357,7 +2357,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuff
 			}
 
 			auto itSelectionColor = pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
-			ASSERT(itSelectionColor != pInstanceSelectionFrameBuffer->encoding().end());
+			assert(itSelectionColor != pInstanceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
@@ -2493,7 +2493,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	if (m_pFaceSelectionFrameBuffer->encoding().empty())
 	{
 		auto& vecTriangles = m_pSelectedInstance->getTriangles();
-		ASSERT(!vecTriangles.empty());
+		assert(!vecTriangles.empty());
 
 		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
 		{
@@ -2527,7 +2527,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2536,7 +2536,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 
 	if (iIBO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2556,7 +2556,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	auto& vecTriangles = m_pSelectedInstance->getTriangles();
-	ASSERT(!vecTriangles.empty());
+	assert(!vecTriangles.empty());
 
 	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
 	{
@@ -2573,7 +2573,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 		if (!vecIndices.empty())
 		{
 			auto itSelectionColor = m_pFaceSelectionFrameBuffer->encoding().find(iTriangle);
-			ASSERT(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
+			assert(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
 
 			m_pOGLProgram->_setAmbientColor(
 				itSelectionColor->second.r(),
@@ -2625,8 +2625,8 @@ void COpenGLRDFView::DrawPointedFace(_model* pM)
 	*/
 	auto& vecTriangles = m_pSelectedInstance->getTriangles();
 
-	ASSERT(!vecTriangles.empty());
-	ASSERT((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+	assert(!vecTriangles.empty());
+	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 	m_pOGLProgram->_enableBlinnPhongModel(false);
 	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
@@ -2637,7 +2637,7 @@ void COpenGLRDFView::DrawPointedFace(_model* pM)
 	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
 	if (iVAO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2647,7 +2647,7 @@ void COpenGLRDFView::DrawPointedFace(_model* pM)
 
 	if (iIBO == 0)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2687,7 +2687,7 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2738,7 +2738,7 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 			{
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
-				ASSERT(pPointedInstance != nullptr);
+				assert(pPointedInstance != nullptr);
 			}
 
 			if (m_pNavigatorPointedInstance != pPointedInstance)
@@ -2853,7 +2853,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 	auto pController = GetController();
 	if (pController == nullptr)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return;
 	}
@@ -2909,7 +2909,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			{
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
-				ASSERT(pPointedInstance != nullptr);
+				assert(pPointedInstance != nullptr);
 			}
 
 			if (m_pPointedInstance != pPointedInstance)
@@ -2966,7 +2966,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			if (arPixels[3] != 0)
 			{
 				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				ASSERT(m_pFaceSelectionFrameBuffer->encoding().find(iPointedFace) != m_pFaceSelectionFrameBuffer->encoding().end());
+				assert(m_pFaceSelectionFrameBuffer->encoding().find(iPointedFace) != m_pFaceSelectionFrameBuffer->encoding().end());
 			}
 
 			if (m_iPointedFace != iPointedFace)

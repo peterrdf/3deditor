@@ -13,6 +13,8 @@
 #include <map>
 using namespace std;
 
+#include <atlbase.h>
+
 // ************************************************************************************************
 struct _vector3
 {
@@ -44,7 +46,7 @@ static void	_matrix4x3Transform(const _vector3* pIn, const _matrix4x3* pM, _vect
 
 static void _matrix4x3Identity(_matrix4x3* pM)
 {
-	ASSERT(pM != nullptr);
+	assert(pM != nullptr);
 
 	memset(pM, 0, sizeof(_matrix4x3));
 
@@ -73,7 +75,7 @@ static double _matrixDeterminant(_matrix4x3* pM)
 
 static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _matrix4x3* pM2)
 {
-	ASSERT((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
+	assert((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
 
 	_matrix4x3 pTmp;
 	pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31;
@@ -120,7 +122,7 @@ struct _matrix16x16
 
 static void _matrix16x16Identity(_matrix16x16* pM)
 {
-	ASSERT(pM != nullptr);
+	assert(pM != nullptr);
 
 	memset(pM, 0, sizeof(_matrix16x16));
 
@@ -331,7 +333,7 @@ public: // Methods
 			is_same<V, float>::value ||
 			is_same<V, double>::value,
 			"V must be float or double type.");
-		ASSERT(iVertexLength >= 3);
+		assert(iVertexLength >= 3);
 	}
 
 	virtual ~_vertexBuffer()
@@ -339,11 +341,11 @@ public: // Methods
 
 	void copyFrom(_vertexBuffer* pSource)
 	{
-		ASSERT(pSource != nullptr);
-		ASSERT(size() == pSource->size());
-		ASSERT(getVertexLength() == pSource->getVertexLength());
+		assert(pSource != nullptr);
+		assert(_buffer<V>::size() == pSource->size());
+		assert(getVertexLength() == pSource->getVertexLength());
 
-		memcpy(data(), pSource->data(), (uint32_t)size() * getVertexLength() * (uint32_t)sizeof(V));
+		memcpy(_buffer<V>::data(), pSource->data(), (uint32_t)_buffer<V>::size() * getVertexLength() * (uint32_t)sizeof(V));
 	}
 
 	uint32_t getVertexLength() { return m_iVertexLength; }
@@ -519,7 +521,7 @@ public: // Methods
 		double& dYmin, double& dYmax,
 		double& dZmin, double& dZmax)
 	{
-		ASSERT(iInstance != 0);
+		assert(iInstance != 0);
 
 		_vector3d vecOriginalBBMin;
 		_vector3d vecOriginalBBMax;
@@ -743,8 +745,8 @@ protected: // Methods
 
 	bool calculate(_vertices_f* pVertexBuffer, _indices_i32* pIndexBuffer)
 	{
-		ASSERT(pVertexBuffer != nullptr);
-		ASSERT(pIndexBuffer != nullptr);
+		assert(pVertexBuffer != nullptr);
+		assert(pIndexBuffer != nullptr);
 
 		CalculateInstance(m_iInstance, &pVertexBuffer->size(), &pIndexBuffer->size(), nullptr);
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))

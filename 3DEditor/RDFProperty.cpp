@@ -7,7 +7,7 @@ CRDFProperty::CRDFProperty(RdfProperty iInstance, int iType)
 	, m_szName(nullptr)
 	, m_iType(iType)
 {
-	ASSERT(m_iInstance != 0);
+	assert(m_iInstance != 0);
 
 	GetNameOfPropertyW(m_iInstance, &m_szName);
 }
@@ -65,7 +65,7 @@ wstring CRDFProperty::GetTypeAsString() const
 
 		default:
 		{
-			ASSERT(FALSE); // Not supported!
+			assert(false); // Not supported!
 		}
 		break;
 	} // switch (getType())
@@ -123,7 +123,7 @@ wstring CRDFProperty::GetRange() const
 
 		default:
 		{
-			ASSERT(FALSE); // Not supported!
+			assert(false); // Not supported!
 		}
 		break;
 	} // switch (getType())
@@ -133,7 +133,7 @@ wstring CRDFProperty::GetRange() const
 
 wstring CRDFProperty::GetCardinality(OwlInstance iInstance) const
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	int64_t iCard = 0;
 
@@ -192,7 +192,7 @@ wstring CRDFProperty::GetCardinality(OwlInstance iInstance) const
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 	} // switch (getType())
@@ -224,10 +224,10 @@ wstring CRDFProperty::GetCardinality(OwlInstance iInstance) const
 
 void CRDFProperty::GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const
 {
-	ASSERT(iInstance != 0);
+	assert(iInstance != 0);
 
 	OwlClass iClassInstance = GetInstanceClass(iInstance);
-	ASSERT(iClassInstance != 0);
+	assert(iClassInstance != 0);
 
 	iMinCard = -1;
 	iMaxCard = -1;

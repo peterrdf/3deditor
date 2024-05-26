@@ -23,7 +23,7 @@ bool CTestHtmlReport::Initialize(const wchar_t* szDir)
 	m_htmlReport.open(strReportFilePath);
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE); 
+		assert(false); 
 
 		return false;
 	}
@@ -36,7 +36,7 @@ bool CTestHtmlReport::BeginTest(const wchar_t* szInputFile)
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -54,7 +54,7 @@ bool CTestHtmlReport::WriteInfo(const wchar_t* szMessage)
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -71,7 +71,7 @@ bool CTestHtmlReport::WriteImage(const wchar_t* szFilePath)
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -88,7 +88,7 @@ bool CTestHtmlReport::WriteError(const wchar_t* szMessage)
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -105,7 +105,7 @@ bool CTestHtmlReport::EndTest()
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -120,7 +120,7 @@ bool CTestHtmlReport::End()
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -133,7 +133,7 @@ bool CTestHtmlReport::WriteHeader()
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}
@@ -177,7 +177,7 @@ bool CTestHtmlReport::WriteFooter()
 {
 	if (!m_htmlReport)
 	{
-		ASSERT(FALSE);
+		assert(false);
 
 		return false;
 	}

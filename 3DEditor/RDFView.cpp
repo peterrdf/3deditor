@@ -16,7 +16,7 @@ CRDFView::~CRDFView()
 // ------------------------------------------------------------------------------------------------
 void CRDFView::SetController(CRDFController * pController)
 {
-	ASSERT(pController != nullptr);
+	assert(pController != nullptr);
 
 	m_pController = pController;
 

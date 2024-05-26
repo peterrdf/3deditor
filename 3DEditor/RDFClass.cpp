@@ -9,7 +9,7 @@ CRDFClass::CRDFClass(OwlClass iInstance)
 	, m_vecAncestorClasses()
 	, m_vecPropertyRestrictions()
 {
-	ASSERT(m_iInstance != 0);
+	assert(m_iInstance != 0);
 
 	GetNameOfClassW(m_iInstance, &m_szName);
 
@@ -38,7 +38,7 @@ CRDFClass::~CRDFClass()
 
 void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
 {
-	ASSERT(pPropertyRestriction != nullptr);
+	assert(pPropertyRestriction != nullptr);
 
 	char* szPropertyName = nullptr;
 	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
