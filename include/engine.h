@@ -2114,7 +2114,7 @@ OwlModel		DECL STDC	IsModel(
 //		-	when the name is already used for an instance or property;
 //		-	if the model input is zero or not a model handle.
 //
-//	Giving the class a name is optional, if a name is not given it will recieve an automatically generated name,
+//	Giving the class a name is optional, if a name is not given it will receive an automatically generated name,
 //	it's automatically generated name can change between sessions.
 //
 OwlClass		DECL STDC	CreateClass(
