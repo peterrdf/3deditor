@@ -44,6 +44,8 @@ extern "C" {
 	OwlInstance DECSPEC STDCALL ImportGISModelA(OwlModel iModel, const unsigned char* szData, size_t iSize, OwlInstance* pSchemaInstance = nullptr);
 	OwlInstance DECSPEC STDCALL ImportGISModelS(OwlModel iModel, ReadDataCallback pReadDataCallback, OwlInstance* pSchemaInstance = nullptr);
 
+	bool DECSPEC STDCALL IsGML(OwlModel iModel);
+
 	bool DECSPEC STDCALL IsCityGML(OwlModel iModel);
 	void DECSPEC STDCALL SaveAsCityGML(OwlModel iModel, const char* szFile);
 	void DECSPEC STDCALL SaveAsCityGMLW(OwlModel iModel, const wchar_t* szFile);
@@ -52,7 +54,7 @@ extern "C" {
 	void DECSPEC STDCALL SaveAsInfraGML(OwlModel iModel, const char* szFile);
 	void DECSPEC STDCALL SaveAsInfraGMLW(OwlModel iModel, const wchar_t* szFile);
 
-	bool DECSPEC STDCALL isLandXML(OwlModel iModel);
+	bool DECSPEC STDCALL IsLandXML(OwlModel iModel);
 	void DECSPEC STDCALL SaveAsLandXML(OwlModel iModel, const char* szFile);
 	void DECSPEC STDCALL SaveAsLandXMLW(OwlModel iModel, const wchar_t* szFile);
 

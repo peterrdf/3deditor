@@ -407,5 +407,5 @@ void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->getInstance() != 0) &&
-		isLandXML(m_pModel->getInstance()));
+		IsLandXML(m_pModel->getInstance()));
 }
