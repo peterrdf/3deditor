@@ -8,7 +8,8 @@
 CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	: _geometry(iID, iInstance, bEnable)
 	, m_pOriginalVertexBuffer(nullptr)
-	, m_bNeedsRefresh(false)	
+	, m_bNeedsRefresh(false)
+	, m_bDesignTreeConsistency(true)
 {
 	UpdateName();
 
@@ -113,6 +114,8 @@ void CRDFInstance::Recalculate()
 
 void CRDFInstance::Calculate()
 {
+	m_bDesignTreeConsistency = CheckInstanceConsistency(getInstance(), FLAGBIT(0)) == 0;
+
 	const auto VERTEX_LENGTH = getVertexLength();
 
 	assert(m_pOriginalVertexBuffer == nullptr);

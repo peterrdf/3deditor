@@ -13,6 +13,7 @@ private: // Members
 
 	_vertices_f* m_pOriginalVertexBuffer; // Vertices
 	bool m_bNeedsRefresh; // The data (geometry) is out of date	
+	bool m_bDesignTreeConsistency;
 
 public: // Methods
 
@@ -21,6 +22,8 @@ public: // Methods
 
 	// _instance
 	virtual void setEnable(bool bEnable) override;
+
+	bool getDesignTreeConsistency() const { return m_bDesignTreeConsistency; }
 
 	// Name/Unique Name
 	void UpdateName();
