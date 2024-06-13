@@ -2072,7 +2072,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_treeCtrl.SetItemStateProvider(this);
 
 	// Load view images:
-	m_images.Create(IDB_CLASS_VIEW, 16, 0, RGB(255, 0, 0));
+	m_images.Create(IDB_CLASS_VIEW, 16, 0, RGB(0, 0, 0));
 	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
 	m_toolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_SORT_INSTANCES);
@@ -2632,7 +2632,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 	nFlags |= (theApp.m_bHiColorIcons) ? ILC_COLOR24 : ILC_COLOR4;
 
 	m_images.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
-	m_images.Add(&bmp, RGB(255, 0, 0));
+	m_images.Add(&bmp, RGB(0, 0, 0));
 
 	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 

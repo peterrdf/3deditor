@@ -1,7 +1,8 @@
 
 #pragma once
 
-#define IMAGE_MODEL    0
+#define IMAGE_MODEL 0
 #define IMAGE_INSTANCE 1
 #define IMAGE_PROPERTY 3
-#define IMAGE_VALUE    5
+#define IMAGE_VALUE 5
+#define IMAGE_INSTANCE_CHECK_FAILED 7

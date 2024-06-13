@@ -907,7 +907,7 @@ void CClassView::OnChangeVisualStyle()
 	nFlags |= (theApp.m_bHiColorIcons) ? ILC_COLOR24 : ILC_COLOR4;
 
 	m_images.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
-	m_images.Add(&bmp, RGB(255, 0, 0));
+	m_images.Add(&bmp, RGB(0, 0, 0));
 
 	m_treeCtrl.SetImageList(&m_images, TVSIL_NORMAL);
 
