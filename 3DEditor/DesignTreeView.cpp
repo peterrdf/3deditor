@@ -89,11 +89,29 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
+	/* Check Design Tree Consistency */
+	if (pInstance->getEnable())
+	{
+		int iImage = pInstance->getDesignTreeConsistency() ? IMAGE_INSTANCE : IMAGE_INSTANCE_CHECK_FAILED;
+
+		auto itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
+		if (itInstance2Item != m_mapInstance2Item.end())
+		{
+
+			for (size_t iItem = 0; iItem < itInstance2Item->second->items().size(); iItem++)
+			{
+				m_treeCtrl.SetItemImage(itInstance2Item->second->items()[iItem], iImage, iImage);
+			}
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
+	}	
+
 	auto& mapInstances = pModel->GetInstances();
 
-	/*
-	* Update non-referenced item
-	*/
+	/* Update non-referenced item */
 	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && 
 		(pProperty->GetType() == OBJECTPROPERTY_TYPE))
 	{
@@ -126,6 +144,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 
+	/* Property */
 	wchar_t szBuffer[512];
 	switch (pPropertyItem->GetProperty()->GetType())
 	{
@@ -204,7 +223,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				{
 					if (piInstances[iInstance] != 0)
 					{
-						map<int64_t, CRDFInstance *>::const_iterator itInstance = mapInstances.find(piInstances[iInstance]);
+						const auto& itInstance = mapInstances.find(piInstances[iInstance]);
 						assert(itInstance != mapInstances.end());
 
 						AddInstance(hProperty, itInstance->second);					
