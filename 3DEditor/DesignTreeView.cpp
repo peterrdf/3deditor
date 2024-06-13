@@ -72,15 +72,19 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	SelectInstance(GetController()->GetSelectedInstance(), TRUE);
 }
 
-/*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty)
+/*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
 {
-	assert(pInstance != nullptr);
-	assert(pProperty != nullptr);
+	if ((pInstance == nullptr) || (pProperty == nullptr))
+	{
+		ASSERT(FALSE);
+		
+		return;
+	}
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -90,12 +94,18 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	/*
 	* Update non-referenced item
 	*/
-	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && (pProperty->GetType() == OBJECTPROPERTY_TYPE))
+	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && 
+		(pProperty->GetType() == OBJECTPROPERTY_TYPE))
 	{
-		HTREEITEM hModel = m_treeCtrl.GetChildItem(nullptr);
-		assert(hModel != nullptr);
-
-		UpdateRootItemsUnreferencedItemsView(pModel->getInstance(), hModel);
+		HTREEITEM hModel = m_treeCtrl.GetChildItem(NULL);
+		if (hModel != nullptr)
+		{
+			UpdateRootItemsUnreferencedItemsView(pModel->getInstance(), hModel);
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
 	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
 
 	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getInstance());
@@ -108,18 +118,20 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
 	assert(itPropertyItem != itInstance2Properties->second.end());
 
-	CRDFPropertyItem * pPropertyItem = itPropertyItem->second;
-	assert(pPropertyItem != nullptr);
+	auto pPropertyItem = itPropertyItem->second;
+	if ((pPropertyItem == nullptr) || pPropertyItem->items().empty())
+	{
+		ASSERT(false);
+		
+		return;
+	}
 
-	assert(pPropertyItem->items().size() > 0);	
-
-	wchar_t szBuffer[100];
-
+	wchar_t szBuffer[512];
 	switch (pPropertyItem->GetProperty()->GetType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{
-			int64_t * piInstances = nullptr;
+			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
 			GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
@@ -1886,11 +1898,11 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 	HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
 	while (hItem != nullptr)
 	{
-		CRDFItem * pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
+		auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
 		assert(pItem != nullptr);
 		assert(pItem->getType() == enumItemType::Instance);
 
-		CRDFInstanceItem * pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
+		auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 		assert(pInstanceItem != nullptr);
 
 		if (pInstanceItem->GetInstance()->isReferenced())
@@ -1926,7 +1938,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 	/*
 	* Add the missing items without references
 	*/
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+	auto itRFDInstances = mapInstances.begin();
 	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 	{
 		CRDFInstance * pInstance = itRFDInstances->second;
