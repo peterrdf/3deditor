@@ -940,7 +940,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		assert(iImage == iSelectedImage);
 
-		if (iImage == IMAGE_INSTANCE)
+		if ((iImage == IMAGE_INSTANCE) || (iImage == IMAGE_INSTANCE_CHECK_FAILED))
 		{
 			return strItemText.Find(strTextLower, 0) != -1;
 		}
@@ -1445,7 +1445,7 @@ void CDesignTreeView::InstancesUnreferencedItemsView()
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance* pInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -1455,7 +1455,8 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance * pInstance)
 	tvInsertStruct.hInsertAfter = TVI_LAST;
 	tvInsertStruct.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 	tvInsertStruct.item.pszText = (LPWSTR)pInstance->getUniqueName();
-	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = IMAGE_INSTANCE;
+	tvInsertStruct.item.iImage = tvInsertStruct.item.iSelectedImage = 
+		pInstance->getDesignTreeConsistency() ? IMAGE_INSTANCE : IMAGE_INSTANCE_CHECK_FAILED;
 	tvInsertStruct.item.lParam = NULL;
 	tvInsertStruct.item.cChildren = 1;
 
