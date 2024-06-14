@@ -12,8 +12,7 @@ class CRDFInstance : public _geometry
 private: // Members	
 
 	_vertices_f* m_pOriginalVertexBuffer; // Vertices
-	bool m_bNeedsRefresh; // The data (geometry) is out of date	
-	bool m_bDesignTreeConsistency;
+	bool m_bNeedsRefresh; // The data (geometry) is out of date
 
 public: // Methods
 
@@ -23,7 +22,7 @@ public: // Methods
 	// _instance
 	virtual void setEnable(bool bEnable) override;
 
-	bool getDesignTreeConsistency() const { return m_bDesignTreeConsistency; }
+	bool getDesignTreeConsistency() const { return CheckInstanceConsistency(getInstance(), FLAGBIT(0)) == 0; }
 
 	// Name/Unique Name
 	void UpdateName();

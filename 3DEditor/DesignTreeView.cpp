@@ -90,24 +90,20 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	/* Check Design Tree Consistency */
-	if (pInstance->getEnable())
+	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
+	if (itInstance2Item != m_mapInstance2Item.end())
 	{
-		int iImage = pInstance->getDesignTreeConsistency() ? IMAGE_INSTANCE : IMAGE_INSTANCE_CHECK_FAILED;
+		int iInstanceImage = pInstance->getDesignTreeConsistency() ? IMAGE_INSTANCE : IMAGE_INSTANCE_CHECK_FAILED;
 
-		auto itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
-		if (itInstance2Item != m_mapInstance2Item.end())
+		for (size_t iItem = 0; iItem < itInstance2Item->second->items().size(); iItem++)
 		{
-
-			for (size_t iItem = 0; iItem < itInstance2Item->second->items().size(); iItem++)
-			{
-				m_treeCtrl.SetItemImage(itInstance2Item->second->items()[iItem], iImage, iImage);
-			}
+			m_treeCtrl.SetItemImage(itInstance2Item->second->items()[iItem], iInstanceImage, iInstanceImage);
 		}
-		else
-		{
-			ASSERT(FALSE);
-		}
-	}	
+	}
+	else
+	{
+		ASSERT(FALSE);
+	}
 
 	auto& mapInstances = pModel->GetInstances();
 
