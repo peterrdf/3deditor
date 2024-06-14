@@ -78,8 +78,8 @@ private: // Methods
 
 	void SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem);
 	
-	void GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath);
-	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants);
+	void GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants);
+	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
 	void RemoveInstanceItemData(CRDFInstance* pInstance, HTREEITEM hInstance);
 	void RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);

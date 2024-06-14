@@ -93,13 +93,29 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getInstance());
 	if (itInstance2Item != m_mapInstance2Item.end())
 	{
-		int iInstanceImage = pInstance->getDesignTreeConsistency() ? IMAGE_INSTANCE : IMAGE_INSTANCE_CHECK_FAILED;
+		int iInstanceImage = pInstance->getDesignTreeConsistency() ? 
+			IMAGE_INSTANCE : 
+			IMAGE_INSTANCE_CHECK_FAILED;
 
 		for (size_t iItem = 0; iItem < itInstance2Item->second->items().size(); iItem++)
 		{
 			m_treeCtrl.SetItemImage(itInstance2Item->second->items()[iItem], iInstanceImage, iInstanceImage);
-		}
-	}
+
+			vector<HTREEITEM> vecAscendants;
+			GetAscendants(itInstance2Item->second->items()[iItem], vecAscendants);
+
+			for (auto hAscendant : vecAscendants)
+			{
+				auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hAscendant);
+
+				int iAscendantImage = pItem->GetInstance()->getDesignTreeConsistency() ?
+					IMAGE_INSTANCE : 
+					IMAGE_INSTANCE_CHECK_FAILED;
+
+				m_treeCtrl.SetItemImage(hAscendant, iAscendantImage, iAscendantImage);
+			}
+		} // for (size_t iItem = ...
+	} // if (itInstance2Item != ...
 	else
 	{
 		ASSERT(FALSE);
@@ -1121,7 +1137,7 @@ void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeIt
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
 }
 
-void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CRDFProperty*>>& vecPath)
+void CDesignTreeView::GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants)
 {
 	if (hItem == nullptr)
 	{
@@ -1129,37 +1145,12 @@ void CDesignTreeView::GetItemPath(HTREEITEM hItem, vector<pair<CRDFInstance*, CR
 	}
 
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
-	if (pItem != nullptr)
+	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance))
 	{
-		switch (pItem->getType())
-		{
-			case enumItemType::Instance:
-			{
-				auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
-				assert(pInstanceItem != nullptr);
+		vecAscendants.push_back(hItem);
+	}
 
-				vecPath.insert(vecPath.begin(), pair<CRDFInstance*, CRDFProperty *>(pInstanceItem->GetInstance(), nullptr));
-			}
-			break;
-
-			case enumItemType::Property:
-			{
-				auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
-				assert(pPropertyItem != nullptr);
-
-				vecPath.insert(vecPath.begin(), pair<CRDFInstance*, CRDFProperty*>(pPropertyItem->GetInstance(), pPropertyItem->GetProperty()));
-			}
-			break;
-
-			default:
-			{
-				assert(false); // Internal error!
-			}
-			break;
-		}
-	} // if (pItem != nullptr)
-
-	GetItemPath(m_treeCtrl.GetParentItem(hItem), vecPath);
+	GetAscendants(m_treeCtrl.GetParentItem(hItem), vecAscendants);
 }
 
 void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
