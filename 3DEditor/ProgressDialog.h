@@ -15,8 +15,25 @@ public: // Methods
 };
 
 // ************************************************************************************************
+class CProgress
+{
+
+public: // Methods
+
+	CProgress()
+	{}
+
+	virtual ~CProgress()
+	{}
+
+	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) PURE;
+};
+
+// ************************************************************************************************
 // CProgressDialog dialog
-class CProgressDialog : public CDialogEx
+class CProgressDialog
+	: public CDialogEx
+	, CProgress
 {
 	DECLARE_DYNAMIC(CProgressDialog)
 
@@ -25,13 +42,14 @@ private: // Members
 	CWinThread* m_pThread;
 	CTask* m_pTask;
 
-private: // Methods
-
-	static UINT ThreadProc(LPVOID pParam);	
-
 public: // Methods
 
-	void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent);
+	// CProgress
+	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) override;
+
+private: // Methods
+
+	static UINT ThreadProc(LPVOID pParam);
 
 public:
 	CProgressDialog(CWnd* pParent, CTask* pTask);   // standard constructor

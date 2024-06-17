@@ -9,19 +9,7 @@
 #include <string>
 using namespace std;
 
-/*static*/ UINT CProgressDialog::ThreadProc(LPVOID pParam)
-{
-	auto pDialog = (CProgressDialog*)pParam;
-	assert(pDialog != nullptr);
-
-	pDialog->m_pTask->Run();
-
-	::EnableWindow(pDialog->GetDlgItem(IDCANCEL)->GetSafeHwnd(), TRUE);
-
-	return 0;
-}
-
-void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
+/*virtual*/ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) /*override*/
 {
 	string strEntry =
 		enLogEvent == 0/*enumLogEvent::info*/ ? "Information: " :
@@ -41,6 +29,18 @@ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
 
 	m_edtProgress.SetSel(iLength, iLength);
 	m_edtProgress.ReplaceSel(CA2W(strEntry.c_str()));
+}
+
+/*static*/ UINT CProgressDialog::ThreadProc(LPVOID pParam)
+{
+	auto pDialog = (CProgressDialog*)pParam;
+	assert(pDialog != nullptr);
+
+	pDialog->m_pTask->Run();
+
+	::EnableWindow(pDialog->GetDlgItem(IDCANCEL)->GetSafeHwnd(), TRUE);
+
+	return 0;
 }
 
 // CProgressDialog dialog
