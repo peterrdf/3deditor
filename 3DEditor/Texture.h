@@ -1,8 +1,8 @@
 #pragma once
 
 #include <fstream>
-#include <GL/gl.h>
 
+#include "_geometry.h"
 #include "./../stb/stb_image.h"
 
 // ************************************************************************************************
