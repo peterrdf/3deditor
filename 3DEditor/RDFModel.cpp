@@ -4,10 +4,14 @@
 #include "Generic.h"
 #include "ProgressIndicator.h"
 #include "ProgressDialog.h"
-#include "gisengine.h"
 
-#include "_dxf_parser.h"
+#ifdef _GIS_SUPPORT
 #include "gisengine.h"
+#endif
+#ifdef _DXF_SUPPORT
+#include "_dxf_parser.h"
+#endif
+
 #include "ascii.h"
 
 #include <bitset>
@@ -27,12 +31,14 @@ extern BOOL TEST_MODE;
 CProgressDialog* m_pProgressDialog = nullptr;
 
 // ************************************************************************************************
+#ifdef _GIS_SUPPORT
 void STDCALL LogCallbackImpl(enumLogEvent enLogEvent, const char* szEvent)
 {
 	assert(m_pProgressDialog != nullptr);
 
 	m_pProgressDialog->Log((int)enLogEvent, szEvent);
 }
+#endif
 
 // ************************************************************************************************
 class CLoadTask : public CTask
@@ -84,10 +90,13 @@ public: // Methods
 		CString strExtension = PathFindExtension(m_szPath);
 		strExtension.MakeUpper();
 
+#ifdef _DXF_SUPPORT
 		if (strExtension == L".DXF")
 		{
 			m_pModel->LoadDXF(m_szPath);
 		}
+#endif
+#ifdef _GIS_SUPPORT
 		else if ((strExtension == L".GML") ||
 			(strExtension == L".CITYGML") ||
 			(strExtension == L".GMLZIP") ||
@@ -98,6 +107,7 @@ public: // Methods
 			m_pModel->LoadGISModel(m_szPath);
 		}
 		else
+#endif		
 		{
 			if (m_bLoading)
 			{
@@ -280,6 +290,7 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	}
 }
 
+#ifdef _DXF_SUPPORT
 void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
 	if (m_iModel == 0)
@@ -306,7 +317,9 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 
 	LoadRDFModel();
 }
+#endif
 
+#ifdef _GIS_SUPPORT
 void CRDFModel::LoadGISModel(const wchar_t* szPath)
 {
 	if (m_iModel == 0)
@@ -348,6 +361,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 
 	LoadRDFModel();
 }
+#endif // _GIS_SUPPORT
 
 void CRDFModel::ImportModel(const wchar_t* szPath)
 {

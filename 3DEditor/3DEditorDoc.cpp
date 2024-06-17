@@ -11,7 +11,9 @@
 
 #include "3DEditorDoc.h"
 #include "Generic.h"
+#ifdef _GIS_SUPPORT
 #include "gisengine.h"
+#endif
 
 #include <propkey.h>
 
@@ -352,14 +354,20 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 		return;
 	}
 
+#ifdef _GIS_SUPPORT
 	SaveAsCityGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+#endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
+#ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->getInstance() != 0) &&
 		IsCityGML(m_pModel->getInstance()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
 
 void CMy3DEditorDoc::OnExportAsInfragml()
@@ -376,14 +384,20 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 		return;
 	}
 
+#ifdef _GIS_SUPPORT
 	SaveAsInfraGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+#endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
+#ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->getInstance() != 0) &&
 		IsInfraGML(m_pModel->getInstance()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
 
 void CMy3DEditorDoc::OnExportAsLandxml()
@@ -400,12 +414,18 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 		return;
 	}
 
+#ifdef _GIS_SUPPORT
 	SaveAsLandXMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+#endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
+#ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
 		(m_pModel->getInstance() != 0) &&
 		IsLandXML(m_pModel->getInstance()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
