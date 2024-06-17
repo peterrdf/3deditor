@@ -2,13 +2,14 @@
 //
 
 #include "stdafx.h"
-#include "3DEditor.h"
+#include "resource.h"
 #include "ProgressDialog.h"
 #include "afxdialogex.h"
 
 #include <string>
 using namespace std;
 
+#ifdef _PROGRESS_UI_SUPPORT
 /*virtual*/ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) /*override*/
 {
 	string strEntry = CreateLogEntry(enLogEvent, szEvent);
@@ -80,3 +81,4 @@ BOOL CProgressDialog::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
+#endif // _PROGRESS_UI_SUPPORT

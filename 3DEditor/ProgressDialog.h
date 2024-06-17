@@ -46,7 +46,7 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-// CProgressDialog dialog
+#ifdef _PROGRESS_UI_SUPPORT
 class CProgressDialog
 	: public CDialogEx
 	, public CProgress
@@ -85,3 +85,4 @@ private:
 public:
 	virtual BOOL OnInitDialog();
 };
+#endif //  _PROGRESS_UI_SUPPORT

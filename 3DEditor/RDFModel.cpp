@@ -67,24 +67,25 @@ public: // Methods
 
 	virtual void Run() override
 	{
-		if (!TEST_MODE)
+		if (m_pProgress != nullptr)
 		{
-			assert(m_pProgress != nullptr);
-		}		
+			CString strLog;
+			if (m_bLoading)
+			{
+				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
+			}
+			else
+			{
+				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
+			}		
 
-		CString strLog;
-		if (m_bLoading)
-		{
-			strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
-		}
-		else
-		{
-			strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
-		}		
-
-		if (!TEST_MODE)
-		{
-			m_pProgress->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+			if (!TEST_MODE)
+			{
+				if (m_pProgress != nullptr)
+				{
+					m_pProgress->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+				}				
+			}
 		}
 
 		CString strExtension = PathFindExtension(m_szPath);
@@ -136,7 +137,11 @@ public: // Methods
 
 			if (!TEST_MODE)
 			{
-				m_pProgress->Log(2/*enumLogEvent::error*/, CW2A(strError));
+				if (m_pProgress != nullptr)
+				{
+					m_pProgress->Log(2/*enumLogEvent::error*/, CW2A(strError));
+				}
+
 				::MessageBox(
 					::AfxGetMainWnd()->GetSafeHwnd(), 
 					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -150,7 +155,10 @@ public: // Methods
 		{
 			if (!TEST_MODE)
 			{
-				m_pProgress->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+				if (m_pProgress != nullptr)
+				{
+					m_pProgress->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+				}
 			}		
 		}
 	}
@@ -280,6 +288,7 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	}
 
 	CLoadTask loadTask(this, szPath, bLoading);
+#ifdef _PROGRESS_UI_SUPPORT
 	if (!TEST_MODE)
 	{
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
@@ -289,6 +298,7 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 		m_pProgress = nullptr;
 	}
 	else
+#endif
 	{
 		loadTask.Run();
 	}
