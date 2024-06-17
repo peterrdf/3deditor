@@ -181,10 +181,6 @@ public: // Methods
 	void RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName);
 
 	// --------------------------------------------------------------------------------------------
-	// Factory
-	CRDFInstance* OnOctreeInstanceCreated(CRDFView* pSender, GEOM::Instance pThing);
-
-	// --------------------------------------------------------------------------------------------
 	// Removes an instance
 	bool DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance);
 
