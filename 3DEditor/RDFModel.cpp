@@ -139,7 +139,7 @@ public: // Methods
 				m_pProgress->Log(2/*enumLogEvent::error*/, CW2A(strError));
 				::MessageBox(
 					::AfxGetMainWnd()->GetSafeHwnd(), 
-					strError, L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
+					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 			}
 			else
 			{
@@ -314,7 +314,7 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	{
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(ex.what()), L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
+			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -352,7 +352,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	{
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(err.what()), L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
+			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -360,7 +360,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	{
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Unknown error.", L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
+			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 	}
 
 	LoadRDFModel();
@@ -697,7 +697,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 	{
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(), 
-			_T("Internal error."), _T("Error"), MB_APPLMODAL | MB_ICONERROR | MB_OK);
+			_T("Internal error."), _T("Error"), MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
