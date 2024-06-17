@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+using namespace std;
+
 // ************************************************************************************************
 class CTask
 {
@@ -27,13 +30,26 @@ public: // Methods
 	{}
 
 	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) PURE;
+
+protected: // Methods
+
+	string CreateLogEntry(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
+	{
+		string strEntry =
+			enLogEvent == 0/*enumLogEvent::info*/ ? "Information: " :
+			enLogEvent == 1/*enumLogEvent::warning*/ ? "Warning: " :
+			enLogEvent == 2/*enumLogEvent::error*/ ? "Error: " : "Unknown: ";
+		strEntry += szEvent;
+
+		return strEntry;
+	}
 };
 
 // ************************************************************************************************
 // CProgressDialog dialog
 class CProgressDialog
 	: public CDialogEx
-	, CProgress
+	, public CProgress
 {
 	DECLARE_DYNAMIC(CProgressDialog)
 

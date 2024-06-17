@@ -28,15 +28,15 @@ namespace fs = std::experimental::filesystem;
 extern BOOL TEST_MODE;
 
 // ************************************************************************************************
-CProgressDialog* m_pProgressDialog = nullptr;
+CProgress* m_pProgress = nullptr;
 
 // ************************************************************************************************
 #ifdef _GIS_SUPPORT
 void STDCALL LogCallbackImpl(enumLogEvent enLogEvent, const char* szEvent)
 {
-	assert(m_pProgressDialog != nullptr);
+	assert(m_pProgress != nullptr);
 
-	m_pProgressDialog->Log((int)enLogEvent, szEvent);
+	m_pProgress->Log((int)enLogEvent, szEvent);
 }
 #endif
 
@@ -69,7 +69,7 @@ public: // Methods
 	{
 		if (!TEST_MODE)
 		{
-			assert(m_pProgressDialog != nullptr);
+			assert(m_pProgress != nullptr);
 		}		
 
 		CString strLog;
@@ -84,7 +84,7 @@ public: // Methods
 
 		if (!TEST_MODE)
 		{
-			m_pProgressDialog->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+			m_pProgress->Log(0/*enumLogEvent::info*/, CW2A(strLog));
 		}
 
 		CString strExtension = PathFindExtension(m_szPath);
@@ -136,8 +136,10 @@ public: // Methods
 
 			if (!TEST_MODE)
 			{
-				m_pProgressDialog->Log(2/*enumLogEvent::error*/, CW2A(strError));
-				::MessageBox(m_pProgressDialog->GetSafeHwnd(), strError, L"Error", MB_ICONERROR | MB_OK);
+				m_pProgress->Log(2/*enumLogEvent::error*/, CW2A(strError));
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(), 
+					strError, L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
 			}
 			else
 			{
@@ -148,7 +150,7 @@ public: // Methods
 		{
 			if (!TEST_MODE)
 			{
-				m_pProgressDialog->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+				m_pProgress->Log(0/*enumLogEvent::info*/, "*** Done. ***");
 			}		
 		}
 	}
@@ -282,9 +284,9 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	{
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 
-		m_pProgressDialog = &dlgProgress;
+		m_pProgress = &dlgProgress;
 		dlgProgress.DoModal();
-		m_pProgressDialog = nullptr;
+		m_pProgress = nullptr;
 	}
 	else
 	{
@@ -311,8 +313,8 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 	catch (const std::runtime_error& ex)
 	{
 		::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(ex.what()), L"Error", MB_ICONERROR | MB_OK);
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(ex.what()), L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -349,16 +351,16 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	catch (const std::runtime_error& err)
 	{
 		::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(err.what()), L"Error", MB_ICONERROR | MB_OK);
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(err.what()), L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
 	catch (...)
 	{
 		::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Unknown error.", L"Error", MB_ICONERROR | MB_OK);
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Unknown error.", L"Error", MB_APPLMODAL | MB_ICONERROR | MB_OK);
 	}
 
 	LoadRDFModel();
@@ -588,9 +590,9 @@ float CRDFModel::GetBoundingSphereDiameter() const
 /*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
 	ProgressStatus stat(L"Calculate scene sizes...");
-	if (m_pProgressDialog != nullptr)
+	if (m_pProgress != nullptr)
 	{
-		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Calculate scene sizes...");
+		m_pProgress->Log(0/*enumLogEvent::info*/, "Calculate scene sizes...");
 	}
 
 	/* World */
@@ -632,7 +634,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 	{
 		// TODO: new status bar for geometry
 		/*::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
 			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
 		return;
@@ -694,8 +696,8 @@ float CRDFModel::GetBoundingSphereDiameter() const
 		(m_fZmax == -FLT_MAX))
 	{
 		::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);
+			::AfxGetMainWnd()->GetSafeHwnd(), 
+			_T("Internal error."), _T("Error"), MB_APPLMODAL | MB_ICONERROR | MB_OK);
 
 		return;
 	}
@@ -1081,9 +1083,9 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 void CRDFModel::LoadRDFModel()
 {
 	ProgressStatus(L"Loading RDF model schema...");
-	if (m_pProgressDialog != nullptr)
+	if (m_pProgress != nullptr)
 	{
-		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Loading RDF model schema...");
+		m_pProgress->Log(0/*enumLogEvent::info*/, "Loading RDF model schema...");
 	}
 
 	PreLoadDRFModel();
@@ -1305,7 +1307,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 	{
 		// TODO: new status bar for geometry
 		/*::MessageBox(
-			m_pProgressDialog != nullptr ? m_pProgressDialog->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
+			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
 			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
 		return;
@@ -1341,9 +1343,9 @@ void CRDFModel::LoadRDFInstances()
 	* Default instances
 	*/
 	ProgressStatus prgs(L"Loading RDF instances...");
-	if (m_pProgressDialog != nullptr)
+	if (m_pProgress != nullptr)
 	{
-		m_pProgressDialog->Log(0/*enumLogEvent::info*/, "Loading RDF instances...");
+		m_pProgress->Log(0/*enumLogEvent::info*/, "Loading RDF instances...");
 	}
 
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);

@@ -11,11 +11,7 @@ using namespace std;
 
 /*virtual*/ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) /*override*/
 {
-	string strEntry =
-		enLogEvent == 0/*enumLogEvent::info*/ ? "Information: " :
-		enLogEvent == 1/*enumLogEvent::warning*/ ? "Warning: " :
-		enLogEvent == 2/*enumLogEvent::error*/ ? "Error: " : "Unknown: ";
-	strEntry += szEvent;
+	string strEntry = CreateLogEntry(enLogEvent, szEvent);
 	strEntry += "\r\n";
 
 	int iLength = m_edtProgress.GetWindowTextLength();
