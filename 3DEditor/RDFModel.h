@@ -25,7 +25,8 @@ class CRDFModel : public _model
 
 protected: // Members
 
-	// Model	
+	// Model
+	bool m_bExternalModel;
 	map<OwlClass, CRDFClass*> m_mapClasses;
 	map<RdfProperty, CRDFProperty*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
@@ -64,6 +65,7 @@ public: // Methods
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
+	void Load(OwlInstance iInstance);
 #ifdef _DXF_SUPPORT
 	void LoadDXF(const wchar_t* szPath);
 #endif

@@ -166,7 +166,8 @@ public: // Methods
 
 // ************************************************************************************************
 CRDFModel::CRDFModel()
-	: _model()	
+	: _model()
+	, m_bExternalModel(false)
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_iID(1)
@@ -300,6 +301,125 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	{
 		loadTask.Run();
 	}
+}
+
+void CRDFModel::Load(OwlInstance iInstance)
+{
+	ASSERT(iInstance);
+
+	Clean();
+
+	m_strPath = L"";
+
+	m_iModel = GetModel(iInstance);
+	ASSERT(m_iModel != 0);
+
+	m_bExternalModel = true;
+
+	PreLoadDRFModel();
+
+	// Load/Import Model
+	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
+	while (iClassInstance != 0)
+	{
+		auto itClass = m_mapClasses.find(iClassInstance);
+		if (itClass == m_mapClasses.end())
+		{
+			m_mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
+		}
+
+		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
+	} // while (iClassInstance != 0)
+
+	// Load/Import Model
+	RdfProperty iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
+	while (iPropertyInstance != 0)
+	{
+		auto itProperty = m_mapProperties.find(iPropertyInstance);
+		if (itProperty == m_mapProperties.end())
+		{
+			int64_t iPropertyType = GetPropertyType(iPropertyInstance);
+			switch (iPropertyType)
+			{
+			case OBJECTPROPERTY_TYPE:
+			{
+				m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_BOOLEAN:
+			{
+				m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_STRING:
+			{
+				m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+			{
+				m_mapProperties[iPropertyInstance] = new CCharArrayRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+			{
+				m_mapProperties[iPropertyInstance] = new CWCharArrayRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_INTEGER:
+			{
+				m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case DATATYPEPROPERTY_TYPE_DOUBLE:
+			{
+				m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			case 0:
+			{
+				m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+			}
+			break;
+
+			default:
+				assert(false); // Not supported!
+				break;
+			} // switch (iPropertyType)
+
+			auto itClasses = m_mapClasses.begin();
+			for (; itClasses != m_mapClasses.end(); itClasses++)
+			{
+				int64_t	iMinCard = -1;
+				int64_t iMaxCard = -1;
+				GetClassPropertyCardinalityRestrictionNested(itClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
+
+				if ((iMinCard == -1) && (iMaxCard == -1))
+				{
+					continue;
+				}
+
+				itClasses->second->AddPropertyRestriction(new CRDFPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
+			} // for (; itClasses != ...
+		} // if (itProperty == m_mapProperties.end())
+
+		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
+	} // while (iPropertyInstance != 0)
+
+	PostLoadDRFModel();
+
+	SetFormatSettings(m_iModel);
+
+	m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance, true);
+
+	ScaleAndCenter(true);
 }
 
 #ifdef _DXF_SUPPORT
@@ -1398,11 +1518,20 @@ void CRDFModel::Clean()
 	/*
 	* Model
 	*/
-	if (m_iModel != 0)
+	if (!m_bExternalModel)
 	{
-		CloseModel(m_iModel);
-		m_iModel = 0;
+		if (m_iModel != 0)
+		{
+			CloseModel(m_iModel);
+			m_iModel = 0;
+		}
 	}
+	else
+	{
+		m_iModel = 0;
+
+		m_bExternalModel = false;
+	}	
 
 	/*
 	* RDF Classes
