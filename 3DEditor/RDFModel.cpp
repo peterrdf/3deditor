@@ -205,7 +205,6 @@ CRDFModel::~CRDFModel()
 
 	SetFormatSettings(m_iModel);
 
-#ifdef _GEOM_SUPPORT
 	// Cube 1
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
@@ -273,7 +272,6 @@ CRDFModel::~CRDFModel()
 		pCylinder.set_length(6.);
 		pCylinder.set_segmentationParts(36);
 	}
-#endif // _GEOM_SUPPORT
 
 	LoadRDFModel();
 }
@@ -1602,7 +1600,6 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 
 void CSceneRDFModel::CreateCoordinateSystem()
 {
-#ifdef _GEOM_SUPPORT
 	const double AXIS_LENGTH = 2.5;
 
 	// Coordinate System
@@ -1853,7 +1850,6 @@ void CSceneRDFModel::CreateCoordinateSystem()
 		GetPropertyByName(m_iModel, "objects"),
 		vecInstances.data(),
 		vecInstances.size());
-#endif // _GEOM_SUPPORT
 }
 
 // ************************************************************************************************
@@ -1887,7 +1883,6 @@ CNavigatorRDFModel::CNavigatorRDFModel()
 
 void CNavigatorRDFModel::CreateNaigator()
 {
-#ifdef _GEOM_SUPPORT
 	// Cube (BoundaryRepresentations)
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
@@ -2037,7 +2032,6 @@ void CNavigatorRDFModel::CreateNaigator()
 			1., 1., 1.);
 		SetNameOfInstance(iInstance, "#back-bottom-right");		
 	}
-#endif // _GEOM_SUPPORT
 }
 
 void CNavigatorRDFModel::CreateNaigatorLabels()
