@@ -318,6 +318,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 	PreLoadDRFModel();
 
+#ifdef _TOOLTIPS_SUPPORT
 	// Load/Import Model
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
 	while (iClassInstance != 0)
@@ -412,6 +413,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
 	} // while (iPropertyInstance != 0)
+#endif // _TOOLTIPS_SUPPORT
 
 	PostLoadDRFModel();
 

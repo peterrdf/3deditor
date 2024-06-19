@@ -2980,7 +2980,9 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 	if (m_pPointedInstance != nullptr)
 	{		
+#ifdef _TOOLTIPS_SUPPORT
 		_showTooltip(TOOLTIP_INFORMATION, pModel->GetInstanceMetaData(m_pPointedInstance));
+#endif
 	}
 	else
 	{
