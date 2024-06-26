@@ -3052,6 +3052,7 @@ public: // Methods
 
 	void _redraw() { m_pWnd->RedrawWindow(); }
 
+#ifdef _TOOLTIPS_SUPPORT
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 	{
 		assert(m_toolTipCtrl.GetToolCount() <= 1);
@@ -3102,6 +3103,7 @@ public: // Methods
 			m_toolTipCtrl.DelTool(m_pWnd, 0);
 		}
 	}
+#endif _TOOLTIPS_SUPPORT
 
 	_oglProgram* _getOGLProgram() const { return m_pOGLProgram; }
 	template<class Program>

@@ -16,7 +16,7 @@ CTextBuilder::CTextBuilder()
 void CTextBuilder::Initialize(OwlModel iModel)
 {
 	m_iModel = iModel;
-	assert(m_iModel != 0);
+	ASSERT(m_iModel != 0);
 
 	ascii::importChars(m_iModel);
 }
@@ -29,23 +29,23 @@ OwlInstance CTextBuilder::BuildText(const string& strText, bool bCenter)
 	for (size_t iCharIndex = 0; iCharIndex < strText.size(); iCharIndex++)
 	{
 		OwlInstance iCharInstance = ascii::getCharInstance(strText.at(iCharIndex));
-		assert(iCharInstance != 0);
+		ASSERT(iCharInstance != 0);
 
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
 		GetDatatypeProperty(iCharInstance, GetPropertyByName(m_iModel, "ttf:advance:x"), (void**)&piValue, &iCard);
-		assert(iCard == 1);
+		ASSERT(iCard == 1);
 
 		if (iCharIndex > 0)
 		{
 			OwlInstance iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
-			assert(iMatrixInstance != 0);
+			ASSERT(iMatrixInstance != 0);
 
 			double d41 = DOUBLE_FROM_26_6(iOffsetX);
 			SetDatatypeProperty(iMatrixInstance, GetPropertyByName(m_iModel, "_41"), &d41, 1);
 
 			OwlInstance iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
-			assert(iTransformationInstance != 0);
+			ASSERT(iTransformationInstance != 0);
 
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iCharInstance, 1);
 			SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
@@ -61,7 +61,7 @@ OwlInstance CTextBuilder::BuildText(const string& strText, bool bCenter)
 	} // for (size_t iCharIndex = ...
 
 	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"));
-	assert(iCollectionInstance != 0);
+	ASSERT(iCollectionInstance != 0);
 
 	SetObjectProperty(
 		iCollectionInstance, 
@@ -90,10 +90,10 @@ OwlInstance CTextBuilder::Translate(
 	OwlInstance iInstance,
 	double dX, double dY, double dZ)
 {
-	assert(iInstance != 0);
+	ASSERT(iInstance != 0);
 
 	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
-	assert(iMatrixInstance != 0);
+	ASSERT(iMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
 	{
@@ -110,7 +110,7 @@ OwlInstance CTextBuilder::Translate(
 		vecTransformationMatrix.size());
 
 	int64_t iTransformationInstance = CreateInstance(GetClassByName(m_iModel, "Transformation"));
-	assert(iTransformationInstance != 0);
+	ASSERT(iTransformationInstance != 0);
 
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);

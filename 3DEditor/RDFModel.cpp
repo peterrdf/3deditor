@@ -825,10 +825,12 @@ float CRDFModel::GetBoundingSphereDiameter() const
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX))
 	{
+		// TODO: new status bar for geometry
+		/*
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(), 
 			_T("Internal error."), _T("Error"), MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-
+			*/
 		return;
 	}
 
