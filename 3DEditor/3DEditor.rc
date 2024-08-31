@@ -731,10 +731,11 @@ END
 // 312
 //
 
-IDR_TEXTFILE_VERTEX_SHADER2 312                     "res\\vertex_shader2.txt"
-
+IDR_TEXTFILE_VERTEX_SHADER2   312                     "res\\vertex_shader2.txt"
 IDR_TEXTFILE_FRAGMENT_SHADER2 312                     "res\\fragment_shader2.txt"
 
+IDR_TEXTFILE_VERTEX_SHADER3   312                     "res\\Shader.vert"
+IDR_TEXTFILE_FRAGMENT_SHADER3 312                     "res\\Shader.frag"
 
 /////////////////////////////////////////////////////////////////////////////
 //

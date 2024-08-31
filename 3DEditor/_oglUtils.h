@@ -788,9 +788,15 @@ public: // Methods
 
 		_setUniform3f(
 			m_iMaterialDiffuseColor,
+#ifdef _BLINN_PHONG_SHADERS
 			pMaterial->getDiffuseColor().r() / 2.f,
 			pMaterial->getDiffuseColor().g() / 2.f,
 			pMaterial->getDiffuseColor().b() / 2.f);
+#else
+			pMaterial->getDiffuseColor().r(),
+			pMaterial->getDiffuseColor().g(),
+			pMaterial->getDiffuseColor().b());
+#endif
 	}
 
 	void _setSpecularColor(const _material* pMaterial)
@@ -799,9 +805,15 @@ public: // Methods
 
 		_setUniform3f(
 			m_iMaterialSpecularColor,
+#ifdef _BLINN_PHONG_SHADERS
 			pMaterial->getSpecularColor().r() / 2.f,
 			pMaterial->getSpecularColor().g() / 2.f,
 			pMaterial->getSpecularColor().b() / 2.f);
+#else
+			pMaterial->getSpecularColor().r(),
+			pMaterial->getSpecularColor().g(),
+			pMaterial->getSpecularColor().b());
+#endif
 	}
 
 	void _setEmissiveColor(const _material* pMaterial)
@@ -965,6 +977,244 @@ public: // Methods
 			_getID(),
 			m_iSampler,
 			iSampler);
+	}
+};
+
+// ************************************************************************************************
+class _oglPerPixelProgram : public _oglProgram
+{
+
+#pragma region Members
+
+private: // Members
+
+	bool m_bSupportsTexture;
+
+	/* Vertex Shader */
+
+	// Attributes
+	GLint m_iVertexPosition;
+	GLint m_iVertexNormal;
+
+	// Uniforms
+	GLint m_iProjectionMatrix;
+	GLint m_iModelViewMatrix;
+	GLint m_iNormalMatrix;
+	GLint m_iDiffuseMaterial;
+	GLint m_iEnableLighting;
+
+	/* Fragment Shader */
+
+	// Uniforms
+	GLint m_iLightPosition;
+	GLint m_iAmbientMaterial;
+	GLint m_iSpecularMaterial;
+	GLint m_iTransparency;
+	GLint m_iShininess;
+
+#pragma endregion 
+
+public: // Methods
+
+	_oglPerPixelProgram(bool bSupportsTexture)
+		: _oglProgram()
+		, m_bSupportsTexture(bSupportsTexture)
+		, m_iVertexPosition(-1)
+		, m_iVertexNormal(-1)		
+		, m_iProjectionMatrix(-1)
+		, m_iModelViewMatrix(-1)
+		, m_iNormalMatrix(-1)
+		, m_iDiffuseMaterial(-1)
+		, m_iEnableLighting(-1)
+		, m_iLightPosition(-1)
+		, m_iAmbientMaterial(-1)
+		, m_iSpecularMaterial(-1)
+		, m_iTransparency(-1)
+		, m_iShininess(-1)
+	{}
+
+	virtual ~_oglPerPixelProgram(void)
+	{}	
+
+	virtual bool _link() override
+	{
+		if (!_oglProgram::_link())
+		{
+			assert(false);
+
+			return false;
+		}
+
+		/* Vertex Shader */
+		m_iVertexPosition = glGetAttribLocation(_getID(), "Position");
+		assert(m_iVertexPosition >= 0);
+
+		m_iVertexNormal = glGetAttribLocation(_getID(), "Normal");
+		assert(m_iVertexNormal >= 0);
+
+		m_iProjectionMatrix = glGetUniformLocation(_getID(), "ProjectionMatrix");
+		assert(m_iProjectionMatrix >= 0);
+
+		m_iModelViewMatrix = glGetUniformLocation(_getID(), "ModelViewMatrix");
+		assert(m_iModelViewMatrix >= 0);
+
+		m_iNormalMatrix = glGetUniformLocation(_getID(), "NormalMatrix");
+		assert(m_iNormalMatrix >= 0);
+
+		m_iDiffuseMaterial = glGetUniformLocation(_getID(), "DiffuseMaterial");
+		assert(m_iDiffuseMaterial >= 0);
+
+		m_iEnableLighting = glGetUniformLocation(_getID(), "EnableLighting");
+		assert(m_iEnableLighting >= 0);
+
+		/* Fragment Shader */
+		m_iLightPosition = glGetUniformLocation(_getID(), "LightPosition");
+		assert(m_iLightPosition >= 0);
+
+		m_iAmbientMaterial = glGetUniformLocation(_getID(), "AmbientMaterial");
+		assert(m_iAmbientMaterial >= 0);
+
+		m_iSpecularMaterial = glGetUniformLocation(_getID(), "SpecularMaterial");
+		assert(m_iSpecularMaterial >= 0);
+
+		m_iTransparency = glGetUniformLocation(_getID(), "Transparency");
+		assert(m_iTransparency >= 0);
+
+		m_iShininess = glGetUniformLocation(_getID(), "Shininess");
+		assert(m_iShininess >= 0);
+
+		if (m_bSupportsTexture)
+		{
+			assert(false); // #todo
+		}
+
+		return true;
+	}
+
+	/* Vertex Shader */
+	GLint _getVertexPosition() const { return m_iVertexPosition; }
+	GLint _getVertexNormal() const { return m_iVertexNormal; }
+
+	void _setProjectionMatrix(glm::mat4& matProjection) const
+	{
+		glProgramUniformMatrix4fv(
+			_getID(),
+			m_iProjectionMatrix,
+			1,
+			false,
+			value_ptr(matProjection));
+	}
+
+	void _setModelViewMatrix(glm::mat4& matModelView) const
+	{
+		glProgramUniformMatrix4fv(
+			_getID(),
+			m_iModelViewMatrix,
+			1,
+			false,
+			value_ptr(matModelView));
+	}
+
+	void _setNormalMatrix(glm::mat4& matModelView) const
+	{
+		glm::mat3 matNormal = matModelView;
+		glProgramUniformMatrix3fv(
+			_getID(),
+			m_iNormalMatrix,
+			1,
+			false,
+			value_ptr(matNormal));
+	}
+
+	void _setDiffuseColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setUniform3f(
+			m_iDiffuseMaterial,
+			pMaterial->getDiffuseColor().r(),
+			pMaterial->getDiffuseColor().g(),
+			pMaterial->getDiffuseColor().b());
+	}
+
+	void _enableLighting(bool bEnable)
+	{
+		_setUniform1f(
+			m_iEnableLighting,
+			bEnable ? 1.f : 0.f);
+	}
+
+	/* Fragment Shader */
+	glm::vec3 _getLightPosition() const { return _getUniform3f(m_iLightPosition); }
+	void _setLightPosition(const glm::vec3& value)
+	{
+		_setUniform3f(
+			m_iLightPosition,
+			value);
+	}
+
+	void _setAmbientColor(float fR, float fG, float fB)
+	{
+		_setUniform3f(
+			m_iAmbientMaterial,
+			fR,
+			fG,
+			fB);
+	}
+
+	void _setAmbientColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setAmbientColor(
+			pMaterial->getAmbientColor().r(),
+			pMaterial->getAmbientColor().g(),
+			pMaterial->getAmbientColor().b());
+	}
+
+	void _setSpecularColor(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setUniform3f(
+			m_iSpecularMaterial,
+#ifdef _BLINN_PHONG_SHADERS
+			pMaterial->getSpecularColor().r() / 2.f,
+			pMaterial->getSpecularColor().g() / 2.f,
+			pMaterial->getSpecularColor().b() / 2.f);
+#else
+			pMaterial->getSpecularColor().r(),
+			pMaterial->getSpecularColor().g(),
+			pMaterial->getSpecularColor().b());
+#endif
+	}
+
+	void _setTransparency(float fA)
+	{
+		_setUniform1f(
+			m_iTransparency,
+			fA);
+	}
+
+	float _getMaterialShininess() const { return _getUniform1f(m_iShininess); }
+	void _setMaterialShininess(float fValue) const
+	{
+		_setUniform1f(
+			m_iShininess,
+			fValue);
+	}
+
+	bool _getSupportsTexture() const { return m_bSupportsTexture; }
+	GLint _getTextureCoord() const { assert(false); return -1; } // #todo
+
+	void _setMaterial(const _material* pMaterial)
+	{
+		assert(pMaterial != nullptr);
+
+		_setAmbientColor(pMaterial);
+		_setTransparency(pMaterial->getA());
+		_setDiffuseColor(pMaterial);
+		_setSpecularColor(pMaterial);
 	}
 };
 
@@ -1655,7 +1905,11 @@ public: // Methods
 		return iIndicesCount;
 	}
 
+#ifdef _BLINN_PHONG_SHADERS
 	int64_t createCohort(const vector<_geometry*>& vecGeometries, _oglBlinnPhongProgram* pProgram)
+#else
+	int64_t createCohort(const vector<_geometry*>& vecGeometries, _oglPerPixelProgram* pProgram)
+#endif
 	{
 		if (vecGeometries.empty() || (pProgram == nullptr))
 		{
@@ -1726,7 +1980,11 @@ public: // Methods
 		return iVerticesCount;
 	}
 
+#ifdef _BLINN_PHONG_SHADERS
 	void setVBOAttributes(_oglBlinnPhongProgram* pProgram) const
+#else
+	void setVBOAttributes(_oglPerPixelProgram* pProgram) const
+#endif
 	{
 		const int64_t VERTEX_LENGTH = 6 + (pProgram->_getSupportsTexture() ? 2 : 0);
 
@@ -2696,7 +2954,11 @@ protected: // Members
 
 	// OpenGL
 	_oglContext* m_pOGLContext;
+#ifdef _BLINN_PHONG_SHADERS
 	_oglBlinnPhongProgram* m_pOGLProgram;
+#else
+	_oglPerPixelProgram* m_pOGLProgram;
+#endif
 	_oglShader* m_pVertexShader;
 	_oglShader* m_pFragmentShader;	
 	glm::mat4 m_matModelView;	
@@ -2794,7 +3056,11 @@ public: // Methods
 		m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 		m_pOGLContext->makeCurrent();
 
+#ifdef _BLINN_PHONG_SHADERS
 		m_pOGLProgram = new _oglBlinnPhongProgram(bSupportsTexture);
+#else
+		m_pOGLProgram = new _oglPerPixelProgram(bSupportsTexture);
+#endif
 		m_pVertexShader = new _oglShader(GL_VERTEX_SHADER);
 		m_pFragmentShader = new _oglShader(GL_FRAGMENT_SHADER);
 
@@ -3038,9 +3304,8 @@ public: // Methods
 		}
 
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-		m_pOGLProgram->_setModelViewMatrix(m_matModelView);
-
-		// Normal Matrix
+		m_pOGLProgram->_setModelViewMatrix(m_matModelView);		
+#ifdef _BLINN_PHONG_SHADERS
 		glm::mat4 matNormal = m_matModelView;
 		matNormal = glm::inverse(matNormal);
 		matNormal = glm::transpose(matNormal);
@@ -3048,11 +3313,16 @@ public: // Methods
 
 		// Model
 		m_pOGLProgram->_enableBlinnPhongModel(true);
+#else
+		m_pOGLProgram->_setNormalMatrix(m_matModelView);
+
+		// Model
+		m_pOGLProgram->_enableLighting(true);
+#endif
 	}
 
 	void _redraw() { m_pWnd->RedrawWindow(); }
 
-#ifdef _TOOLTIPS_SUPPORT
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 	{
 		assert(m_toolTipCtrl.GetToolCount() <= 1);
@@ -3103,7 +3373,6 @@ public: // Methods
 			m_toolTipCtrl.DelTool(m_pWnd, 0);
 		}
 	}
-#endif _TOOLTIPS_SUPPORT
 
 	_oglProgram* _getOGLProgram() const { return m_pOGLProgram; }
 	template<class Program>

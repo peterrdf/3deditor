@@ -51,10 +51,15 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	_initialize(
 		pWnd,
 		TEST_MODE ? 1 : 16,
-		IDR_TEXTFILE_VERTEX_SHADER2, 
-		IDR_TEXTFILE_FRAGMENT_SHADER2, 
+#ifdef _BLINN_PHONG_SHADERS
+		IDR_TEXTFILE_VERTEX_SHADER2,
+		IDR_TEXTFILE_FRAGMENT_SHADER2,
+#else
+		IDR_TEXTFILE_VERTEX_SHADER3,
+		IDR_TEXTFILE_FRAGMENT_SHADER3,
+#endif
 		TEXTFILE,
-		true);
+		false);// true); //#todo
 	
 	m_pSelectedInstanceMaterial->init(
 		1.f, 0.f, 0.f,
@@ -80,11 +85,12 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 		1.f,
 		nullptr);
 
-	// OpenGL
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_setAmbientLightWeighting(
 		0.4f,
 		0.4f,
 		0.4f);
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1002,7 +1008,8 @@ void COpenGLRDFView::DrawNavigatorModel(
 
 void COpenGLRDFView::DrawModel(_model* pM)
 {
-	m_pOGLProgram->_enableTexture(false);
+	//#todo
+	//m_pOGLProgram->_enableTexture(false);
 
 	/* Non-transparent faces */
 	DrawFaces(pM, false);
@@ -1078,7 +1085,11 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 		}
 	}
 	
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(TEST_MODE ? false : true);
+#else
+	m_pOGLProgram->_enableLighting(TEST_MODE ? false : true);
+#endif
 
 	const auto pPointedInstance = pModel == pController->getModel() ?
 		m_pPointedInstance : m_pNavigatorPointedInstance;
@@ -1120,14 +1131,15 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 				
 				if (pMaterial->hasTexture())
 				{
-					auto pOGLTexture = pModel->GetTexture(pMaterial->texture());
-
+					//#todo
+					/*auto pOGLTexture = pModel->GetTexture(pMaterial->texture());
+					
 					m_pOGLProgram->_enableTexture(true);
 
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, pOGLTexture->getOGLName());
 
-					m_pOGLProgram->_setSampler(0);
+					m_pOGLProgram->_setSampler(0);*/
 				}
 				else
 				{			
@@ -1143,7 +1155,8 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 
 				if (pMaterial->hasTexture())
 				{
-					m_pOGLProgram->_enableTexture(false);
+					//#todo
+					//m_pOGLProgram->_enableTexture(false);
 				}
 			} // for (auto pConcFacesCohort ...
 		} // for (auto pInstance ...
@@ -1183,7 +1196,11 @@ void COpenGLRDFView::DrawFacesPolygons(_model* pM)
 
 	auto begin = std::chrono::steady_clock::now();
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -1236,7 +1253,11 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(_model* pM)
 
 	auto begin = std::chrono::steady_clock::now();
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -1293,7 +1314,11 @@ void COpenGLRDFView::DrawLines(_model* pM)
 
 	auto begin = std::chrono::steady_clock::now();
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.cohorts())
@@ -1357,7 +1382,11 @@ void COpenGLRDFView::DrawPoints(_model* pM)
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.cohorts())
@@ -1428,7 +1457,11 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 		return;
 	}
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -1634,7 +1667,11 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
 	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -1857,7 +1894,11 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
 	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -2080,7 +2121,11 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 	const auto VERTEX_LENGTH = pModel->getVertexLength();
 	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
@@ -2336,7 +2381,11 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuff
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	for (auto itCohort : m_oglBuffers.cohorts())
@@ -2519,7 +2568,11 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setTransparency(1.f);
 
 	_oglUtils::checkForErrors();	
@@ -2628,7 +2681,11 @@ void COpenGLRDFView::DrawPointedFace(_model* pM)
 	assert(!vecTriangles.empty());
 	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
+#ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
 	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 

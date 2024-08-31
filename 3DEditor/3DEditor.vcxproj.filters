@@ -360,5 +360,7 @@
     </None>
     <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
     <None Include="..\stb\.editorconfig" />
+    <None Include="res\Shader.frag" />
+    <None Include="res\Shader.vert" />
   </ItemGroup>
 </Project>
