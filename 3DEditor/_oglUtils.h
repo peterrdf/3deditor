@@ -995,6 +995,7 @@ private: // Members
 	// Attributes
 	GLint m_iVertexPosition;
 	GLint m_iVertexNormal;
+	GLint m_iUV;
 
 	// Uniforms
 	GLint m_iProjectionMatrix;
@@ -1002,6 +1003,7 @@ private: // Members
 	GLint m_iNormalMatrix;
 	GLint m_iDiffuseMaterial;
 	GLint m_iEnableLighting;
+	GLint m_iEnableTexture;
 
 	/* Fragment Shader */
 
@@ -1011,6 +1013,7 @@ private: // Members
 	GLint m_iSpecularMaterial;
 	GLint m_iTransparency;
 	GLint m_iShininess;
+	GLuint m_iSampler;
 
 #pragma endregion 
 
@@ -1020,12 +1023,14 @@ public: // Methods
 		: _oglProgram()
 		, m_bSupportsTexture(bSupportsTexture)
 		, m_iVertexPosition(-1)
-		, m_iVertexNormal(-1)		
+		, m_iVertexNormal(-1)
+		, m_iUV(-1)
 		, m_iProjectionMatrix(-1)
 		, m_iModelViewMatrix(-1)
 		, m_iNormalMatrix(-1)
 		, m_iDiffuseMaterial(-1)
 		, m_iEnableLighting(-1)
+		, m_iEnableTexture(-1)
 		, m_iLightPosition(-1)
 		, m_iAmbientMaterial(-1)
 		, m_iSpecularMaterial(-1)
@@ -1052,6 +1057,9 @@ public: // Methods
 		m_iVertexNormal = glGetAttribLocation(_getID(), "Normal");
 		assert(m_iVertexNormal >= 0);
 
+		m_iUV = glGetAttribLocation(_getID(), "UV");
+		assert(m_iUV >= 0);
+
 		m_iProjectionMatrix = glGetUniformLocation(_getID(), "ProjectionMatrix");
 		assert(m_iProjectionMatrix >= 0);
 
@@ -1066,6 +1074,12 @@ public: // Methods
 
 		m_iEnableLighting = glGetUniformLocation(_getID(), "EnableLighting");
 		assert(m_iEnableLighting >= 0);
+
+		if (m_bSupportsTexture)
+		{
+			m_iEnableTexture = glGetUniformLocation(_getID(), "EnableTexture");
+			assert(m_iEnableTexture >= 0);
+		}
 
 		/* Fragment Shader */
 		m_iLightPosition = glGetUniformLocation(_getID(), "LightPosition");
@@ -1085,7 +1099,8 @@ public: // Methods
 
 		if (m_bSupportsTexture)
 		{
-			assert(false); // #todo
+			m_iSampler = glGetUniformLocation(_getID(), "Sampler");
+			assert(m_iSampler >= 0);
 		}
 
 		return true;
@@ -1094,6 +1109,7 @@ public: // Methods
 	/* Vertex Shader */
 	GLint _getVertexPosition() const { return m_iVertexPosition; }
 	GLint _getVertexNormal() const { return m_iVertexNormal; }
+	GLint _getUV() const { return m_iUV; }
 
 	void _setProjectionMatrix(glm::mat4& matProjection) const
 	{
@@ -1141,6 +1157,13 @@ public: // Methods
 	{
 		_setUniform1f(
 			m_iEnableLighting,
+			bEnable ? 1.f : 0.f);
+	}
+
+	void _enableTexture(bool bEnable)
+	{
+		_setUniform1f(
+			m_iEnableTexture,
 			bEnable ? 1.f : 0.f);
 	}
 
@@ -1204,8 +1227,17 @@ public: // Methods
 			fValue);
 	}
 
+	void _setSampler(int iSampler) const
+	{
+		assert(m_bSupportsTexture);
+
+		glProgramUniform1i(
+			_getID(),
+			m_iSampler,
+			iSampler);
+	}
+
 	bool _getSupportsTexture() const { return m_bSupportsTexture; }
-	GLint _getTextureCoord() const { assert(false); return -1; } // #todo
 
 	void _setMaterial(const _material* pMaterial)
 	{
@@ -1992,14 +2024,28 @@ public: // Methods
 		glVertexAttribPointer(pProgram->_getVertexNormal(), 3, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 3));
 		if (pProgram->_getSupportsTexture())
 		{
-			glVertexAttribPointer(pProgram->_getTextureCoord(), 2, GL_FLOAT, false, (GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), (void*)(sizeof(GLfloat) * 6));
+			glVertexAttribPointer(
+#ifdef _BLINN_PHONG_SHADERS
+				pProgram->_getTextureCoord(),
+#else
+				pProgram->_getUV(),
+#endif
+				2, 
+				GL_FLOAT, 
+				false, 
+				(GLsizei)(sizeof(GLfloat) * VERTEX_LENGTH), 
+				(void*)(sizeof(GLfloat) * 6));
 		}
 
 		glEnableVertexAttribArray(pProgram->_getVertexPosition());
 		glEnableVertexAttribArray(pProgram->_getVertexNormal());
 		if (pProgram->_getSupportsTexture())
 		{
+#ifdef _BLINN_PHONG_SHADERS
 			glEnableVertexAttribArray(pProgram->_getTextureCoord());
+#else
+			glEnableVertexAttribArray(pProgram->_getUV());
+#endif			
 		}
 
 		_oglUtils::checkForErrors();

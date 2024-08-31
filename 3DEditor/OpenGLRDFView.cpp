@@ -59,7 +59,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 		IDR_TEXTFILE_FRAGMENT_SHADER3,
 #endif
 		TEXTFILE,
-		false);// true); //#todo
+		true);
 	
 	m_pSelectedInstanceMaterial->init(
 		1.f, 0.f, 0.f,
@@ -1008,8 +1008,7 @@ void COpenGLRDFView::DrawNavigatorModel(
 
 void COpenGLRDFView::DrawModel(_model* pM)
 {
-	//#todo
-	//m_pOGLProgram->_enableTexture(false);
+	m_pOGLProgram->_enableTexture(false);
 
 	/* Non-transparent faces */
 	DrawFaces(pM, false);
@@ -1131,15 +1130,14 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 				
 				if (pMaterial->hasTexture())
 				{
-					//#todo
-					/*auto pOGLTexture = pModel->GetTexture(pMaterial->texture());
+					auto pOGLTexture = pModel->GetTexture(pMaterial->texture());
 					
 					m_pOGLProgram->_enableTexture(true);
 
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, pOGLTexture->getOGLName());
 
-					m_pOGLProgram->_setSampler(0);*/
+					m_pOGLProgram->_setSampler(0);
 				}
 				else
 				{			
@@ -1155,8 +1153,7 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 
 				if (pMaterial->hasTexture())
 				{
-					//#todo
-					//m_pOGLProgram->_enableTexture(false);
+					m_pOGLProgram->_enableTexture(false);
 				}
 			} // for (auto pConcFacesCohort ...
 		} // for (auto pInstance ...
