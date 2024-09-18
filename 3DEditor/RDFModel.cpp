@@ -1056,26 +1056,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			int64_t iCard = 0;
 			GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
-			if ((iCard == 1) && (pProperty->GetName() == CString(L"$semantics")))
-			{
-				auto itInstance = m_mapInstances.find(piInstances[0]);
-				assert(itInstance != m_mapInstances.end());
-
-				int64_t iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], 0);
-				while (iPropertyInstance != 0)
-				{
-					auto itProperty = m_mapProperties.find(iPropertyInstance);
-					assert(itProperty != m_mapProperties.end());
-
-					GetPropertyMetaData(itInstance->second, itProperty->second, strMetaData, L" - ");
-
-					iPropertyInstance = GetInstancePropertyByIterator(piInstances[0], iPropertyInstance);
-				} // while (iPropertyInstance != 0)
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-			}
+			strMetaData += iCard > 0 ? L"[...]" : L"[]";
 		}
 		break;
 
