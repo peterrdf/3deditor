@@ -1022,7 +1022,15 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 			auto itProperty = m_mapProperties.find(iPropertyInstance);
 			assert(itProperty != m_mapProperties.end());
 
-			GetPropertyMetaData(pInstance, itProperty->second, strMetaData);
+			CString strPropertyMetaData;
+			bool bMultiValue = false;
+			GetPropertyMetaData(pInstance, itProperty->second, strPropertyMetaData, L"", bMultiValue);
+
+			if (!bMultiValue)
+			{
+				strMetaData += L"\n";
+				strMetaData += strPropertyMetaData;
+			}
 
 			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
 		} // while (iPropertyInstance != 0)
@@ -1039,12 +1047,13 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 	return m_mapInstanceMetaData.at(pInstance);
 }
 
-void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix/* = L""*/)
+void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
 {
-	strMetaData += L"\n";
-	strMetaData += strPrefix;
+	strMetaData = strPrefix;
 	strMetaData += pProperty->GetName() != nullptr ? pProperty->GetName() : L"NA";
 	strMetaData += L": ";
+
+	bMultiValue = false;
 
 	/* value */
 	wchar_t szBuffer[1000];
@@ -1057,6 +1066,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+			bMultiValue = true;
 		}
 		break;
 
@@ -1074,6 +1085,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1093,6 +1106,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1110,6 +1125,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1127,6 +1144,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1145,6 +1164,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1163,6 +1184,8 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 			else
 			{
 				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+
+				bMultiValue = true;
 			}
 		}
 		break;
@@ -1170,8 +1193,6 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		default:
 		{
 			assert(false); // unknown property
-
-			strMetaData += L"NA";
 		}
 		break;
 	} // switch (pProperty->getType())

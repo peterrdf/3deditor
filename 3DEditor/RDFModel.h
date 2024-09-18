@@ -105,7 +105,7 @@ public: // Methods
 	CTexture* GetDefaultTexture();
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix = L"");
+	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
 	const map<OwlClass, CRDFClass*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, CRDFProperty*>& GetProperties() const { return m_mapProperties; }
