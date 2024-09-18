@@ -251,8 +251,8 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 			if (m_pSelectedInstance != m_pPointedInstance)
 			{
 				m_pSelectedInstance = m_pPointedInstance;
-				m_iPointedFace = -1;
 
+				m_iPointedFace = -1;
 				m_pFaceSelectionFrameBuffer->encoding().clear();
 
 				_redraw();
@@ -332,8 +332,8 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_pPointedInstance = nullptr;
 	m_pSelectedInstance = nullptr;
 
-	m_pFaceSelectionFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
+	m_pFaceSelectionFrameBuffer->encoding().clear();
 
 	m_pNavigatorSelectionFrameBuffer->encoding().clear();
 	m_pNavigatorPointedInstance = nullptr;
@@ -526,10 +526,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (m_pSelectedInstance != pSelectedInstance)
 	{
-		m_iPointedFace = -1;
-
 		m_pSelectedInstance = pSelectedInstance;
 
+		m_iPointedFace = -1;
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 		_redraw();
@@ -552,10 +551,9 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (m_pSelectedInstance != pSelectedInstance)
 	{
-		m_iPointedFace = -1;
-
 		m_pSelectedInstance = pSelectedInstance;
 
+		m_iPointedFace = -1;
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 		_redraw();
