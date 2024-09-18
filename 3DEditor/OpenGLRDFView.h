@@ -135,7 +135,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Screen -> Open GL coordinates
-	void GetOGLPos(int iX, int iY, float fDepth, GLfloat & fX, GLfloat & fY, GLfloat & fZ) const;
+	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ) const;
 
 	// --------------------------------------------------------------------------------------------
 	// Wrapper for gluProject

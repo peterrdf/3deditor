@@ -3092,36 +3092,41 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 // ------------------------------------------------------------------------------------------------
 // http://nehe.gamedev.net/article/using_gluunproject/16013/
-void COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLfloat & fX, GLfloat & fY, GLfloat & fZ) const
+bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ) const
 {
-	GLint arViewport[4];
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 	GLdouble arModelView[16];
 	GLdouble arProjection[16];
-	GLfloat fWinX, fWinY, fWinZ;
+	GLdouble dWinX, dWinY, dWinZ;
 
 	glGetDoublev(GL_MODELVIEW_MATRIX, arModelView);
 	glGetDoublev(GL_PROJECTION_MATRIX, arProjection);
-	glGetIntegerv(GL_VIEWPORT, arViewport);
 
-	fWinX = (float)iX;
-	fWinY = (float)arViewport[3] - (float)iY;
+	dWinX = (double)iX;
+	dWinY = (double)arViewport[3] - (double)iY - 1;
 
 	if (fDepth == -FLT_MAX)
 	{
-		glReadPixels(iX, int(fWinY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+		float fWinZ = 0.f;
+		glReadPixels(iX, (int)dWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+
+		dWinZ = fWinZ;
+
+		_oglUtils::checkForErrors();
 	}
 	else
 	{
-		fWinZ = fDepth;
+		dWinZ = fDepth;
 	}
 
-	GLdouble dX, dY, dZ;
-	GLint iResult = gluUnProject(fWinX, fWinY, fWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
-	VERIFY(iResult == GL_TRUE);
+	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
 
-	fX = (GLfloat)dX;
-	fY = (GLfloat)dY;
-	fZ = (GLfloat)dZ;
+	_oglUtils::checkForErrors();
+
+	return iResult == GL_TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
