@@ -1309,10 +1309,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			assert(false);
 
 			return 0;
-		}
-
-		auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
-		assert(pBlinnPhongProgram != nullptr);
+		}		
 
 		auto pApplicationProperty = dynamic_cast<CApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
 		if (pApplicationProperty != nullptr)
@@ -1464,6 +1461,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::PointLightingLocation:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					assert(pProperty != nullptr);
 					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -1487,6 +1487,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::AmbientLightWeighting:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					assert(pProperty != nullptr);
 					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -1510,6 +1513,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::DiffuseLightWeighting:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					assert(pProperty != nullptr);
 					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -1533,6 +1539,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::SpecularLightWeighting:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					auto pProperty = pApplicationProperty->GetParent();
 					assert(pProperty != nullptr);
 					assert(dynamic_cast<CApplicationProperty*>(pProperty) != nullptr);
@@ -1556,6 +1565,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::MaterialShininess:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
@@ -1566,6 +1578,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::Contrast:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setContrast(fValue);
@@ -1576,6 +1591,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::Brightness:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setBrightness(fValue);
@@ -1586,6 +1604,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::Gamma:
 				{
+					auto pBlinnPhongProgram = pOGLRenderer->_getOGLProgramAs<_oglBlinnPhongProgram>();
+					assert(pBlinnPhongProgram != nullptr);
+
 					float fValue = (float)_wtof((LPCTSTR)strValue);
 
 					pBlinnPhongProgram->_setGamma(fValue);
