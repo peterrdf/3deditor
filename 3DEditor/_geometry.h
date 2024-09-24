@@ -737,8 +737,6 @@ protected: // Methods
 		assert(pIndexBuffer != nullptr);
 		
 		int64_t iOwlInstance = calculateInstance(&pVertexBuffer->size(), &pIndexBuffer->size());
-		assert(iOwlInstance != 0);
-
 		if ((pVertexBuffer->size() == 0) || (pIndexBuffer->size() == 0))
 		{
 			return false;
@@ -759,6 +757,11 @@ protected: // Methods
 
 	virtual int64_t calculateInstance(int64_t* piVertexBufferSize, int64_t* piIndexBufferSize)
 	{
+		assert(piVertexBufferSize != nullptr);
+		assert(piIndexBufferSize != nullptr);
+
+		*piVertexBufferSize = *piIndexBufferSize = 0;
+
 		CalculateInstance(m_iInstance, piVertexBufferSize, piIndexBufferSize, nullptr);
 
 		return m_iInstance;
