@@ -36,9 +36,9 @@ protected: // Methods
 	string CreateLogEntry(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
 	{
 		string strEntry =
-			enLogEvent == 0/*enumLogEvent::info*/ ? "Information: " :
-			enLogEvent == 1/*enumLogEvent::warning*/ ? "Warning: " :
-			enLogEvent == 2/*enumLogEvent::error*/ ? "Error: " : "Unknown: ";
+			enLogEvent == 0/*info*/ ? "Information: " :
+			enLogEvent == 1/*warning*/ ? "Warning: " :
+			enLogEvent == 2/*error*/ ? "Error: " : "Unknown: ";
 		strEntry += szEvent;
 
 		return strEntry;

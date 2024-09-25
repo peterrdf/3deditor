@@ -32,11 +32,11 @@ CProgress* m_pProgress = nullptr;
 
 // ************************************************************************************************
 #ifdef _GIS_SUPPORT
-void STDCALL LogCallbackImpl(enumLogEvent enLogEvent, const char* szEvent)
+void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 {
 	assert(m_pProgress != nullptr);
 
-	m_pProgress->Log((int)enLogEvent, szEvent);
+	m_pProgress->Log((int)iEvent, szEvent);
 }
 #endif
 
@@ -83,7 +83,7 @@ public: // Methods
 			{
 				if (m_pProgress != nullptr)
 				{
-					m_pProgress->Log(0/*enumLogEvent::info*/, CW2A(strLog));
+					m_pProgress->Log(0/*info*/, CW2A(strLog));
 				}				
 			}
 		}
@@ -139,7 +139,7 @@ public: // Methods
 			{
 				if (m_pProgress != nullptr)
 				{
-					m_pProgress->Log(2/*enumLogEvent::error*/, CW2A(strError));
+					m_pProgress->Log(2/*error*/, CW2A(strError));
 				}
 
 				::MessageBox(
@@ -157,7 +157,7 @@ public: // Methods
 			{
 				if (m_pProgress != nullptr)
 				{
-					m_pProgress->Log(0/*enumLogEvent::info*/, "*** Done. ***");
+					m_pProgress->Log(0/*info*/, "*** Done. ***");
 				}
 			}		
 		}
@@ -722,7 +722,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 	ProgressStatus stat(L"Calculate scene sizes...");
 	if (m_pProgress != nullptr)
 	{
-		m_pProgress->Log(0/*enumLogEvent::info*/, "Calculate scene sizes...");
+		m_pProgress->Log(0/*info*/, "Calculate scene sizes...");
 	}
 
 	/* World */
@@ -1219,7 +1219,7 @@ void CRDFModel::LoadRDFModel()
 	ProgressStatus(L"Loading RDF model schema...");
 	if (m_pProgress != nullptr)
 	{
-		m_pProgress->Log(0/*enumLogEvent::info*/, "Loading RDF model schema...");
+		m_pProgress->Log(0/*info*/, "Loading RDF model schema...");
 	}
 
 	PreLoadDRFModel();
@@ -1479,7 +1479,7 @@ void CRDFModel::LoadRDFInstances()
 	ProgressStatus prgs(L"Loading RDF instances...");
 	if (m_pProgress != nullptr)
 	{
-		m_pProgress->Log(0/*enumLogEvent::info*/, "Loading RDF instances...");
+		m_pProgress->Log(0/*info*/, "Loading RDF instances...");
 	}
 
 	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
