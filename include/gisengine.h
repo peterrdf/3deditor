@@ -23,8 +23,14 @@ typedef size_t(STDCALL* ReadDataCallback)(unsigned char* szData, size_t iSize);
 extern "C" {
 #endif
 	/* 
-		0 - file format (duplicated Ids)
-		1 - Geometry/Materials
+		Validation:
+			0 - file format (duplicated Ids)
+			1 - Geometry/Materials
+
+		Log:
+			info = 0,
+			warning = 1,
+			error = 2,
 	*/
 	void DECSPEC STDCALL SetGISOptions(const char* szRootFolder, bool bUseEmbeddedSchemas, void* pLogCallback = nullptr, int iValidationLevel = 0);
 	void DECSPEC STDCALL SetGISOptionsW(const wchar_t* szRootFolder, bool bUseEmbeddedSchemas, void* pLogCallback = nullptr, int iValidationLevel = 0);
