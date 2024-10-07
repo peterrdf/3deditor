@@ -14,7 +14,7 @@ using namespace std;
 static TCHAR SUPPORTED_FILES[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
-CityJSON Files (*.city.json)|*.city.json|\
+CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
 Autocad DXF Files (*.dxf)|*.dxf|\
 All Files (*.*)|*.*||");
 
