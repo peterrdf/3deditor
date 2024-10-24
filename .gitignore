@@ -18,10 +18,7 @@
 /RDFViewer/x64/Release
 /Test3DEditor/x64/Release
 /x64/Release/Test3DEditor.pdb
-/x64/Release/Test3DEditor.exe
 /x64/Release/RDFViewer.pdb
-/x64/Release/RDFViewer.exe
-/x64/Release/3DEditor.*
 /Test3DEditor/Test3DEditor.vcxproj.user
 /3DEditor/3DEditor.aps
 /RDFViewer/RDFViewer.aps
@@ -44,11 +41,10 @@
 /Win32/Release/Test3DEditor.pdb
 /Win32/Release/RDFViewer.pdb
 /RDFViewer/Release
-/Win32/Release/Test3DEditor.exe
-/Win32/Release/RDFViewer.exe
-/Win32/Release/3DEditor.exe
 /Win32/Debug/Test3DEditor.exe
 /Win32/Debug/RDFViewer.exe
 /Win32/Debug/3DEditor.exe
 /Win32/Debug/3DEditor.settings
 /Win32/Release/3DEditor.settings
+/x64/Release/3DEditor.settings
+/x64/Release/3DEditor.pdb
