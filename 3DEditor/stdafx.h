@@ -48,5 +48,5 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "..\include\geom.h"
+#include "..\engine\include\geom.h"
 
