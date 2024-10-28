@@ -3033,7 +3033,20 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 #ifdef _TOOLTIPS_SUPPORT
 	if (m_pPointedInstance != nullptr)
 	{
-		_showTooltip(TOOLTIP_INFORMATION, pModel->GetInstanceMetaData(m_pPointedInstance));
+		CString strInstanceMetaData = L"* Properties *";
+		strInstanceMetaData += L"\n";
+		strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
+
+		if (m_iPointedFace != -1)
+		{
+			strInstanceMetaData += L"\n\n";
+			strInstanceMetaData += L"* Geometry *";
+			strInstanceMetaData += L"\n";
+			strInstanceMetaData += L"Conceptual Face: ";
+			strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
+		}		
+
+		_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
 	}
 	else
 	{
