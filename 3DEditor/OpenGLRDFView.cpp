@@ -33,6 +33,8 @@ int MIN_VIEW_PORT_LENGTH = 100;
 COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	: _oglRenderer()
 	, CRDFView()
+	, m_pModelViewMatrix(nullptr)
+	, m_pProjectionMatrix(nullptr)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
@@ -47,6 +49,11 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
 	assert(pWnd != nullptr);
+
+	m_pModelViewMatrix = new GLfloat[16];
+	memset(m_pModelViewMatrix, 0, 16 *sizeof(float));
+	m_pProjectionMatrix = new GLfloat[16];
+	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
 
 	_initialize(
 		pWnd,
@@ -107,6 +114,9 @@ COpenGLRDFView::~COpenGLRDFView()
 	{
 		_destroy();
 	}
+
+	delete[] m_pModelViewMatrix;
+	delete[] m_pProjectionMatrix;
 
 	delete m_pSelectedInstanceMaterial;
 	m_pSelectedInstanceMaterial = nullptr;
@@ -955,6 +965,12 @@ void COpenGLRDFView::DrawMainModel(
 		fZmin, fZmax,
 		true,
 		true);
+
+	/* Store Matrices */
+	memset(m_pModelViewMatrix, 0, 16 * sizeof(float));	
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), m_pModelViewMatrix);
+	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), m_pProjectionMatrix);
 
 	/* Model */
 	DrawModel(pMainModel);
@@ -3037,6 +3053,20 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 		strInstanceMetaData += L"\n";
 		strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
 
+		GLdouble dX = 0.;
+		GLdouble dY = 0.;
+		GLdouble dZ = 0.;
+		if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+		{
+			strInstanceMetaData += L"\n";
+			strInstanceMetaData += L"X/Y/Z: ";
+			strInstanceMetaData += to_wstring(dX).c_str();
+			strInstanceMetaData += L", ";
+			strInstanceMetaData += to_wstring(dY).c_str();
+			strInstanceMetaData += L", ";
+			strInstanceMetaData += to_wstring(dZ).c_str();
+		}
+
 		if (m_iPointedFace != -1)
 		{
 			strInstanceMetaData += L"\n\n";
@@ -3044,7 +3074,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			strInstanceMetaData += L"\n";
 			strInstanceMetaData += L"Conceptual Face: ";
 			strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
-		}		
+		}
 
 		_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
 	}
@@ -3111,16 +3141,19 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 	m_pWnd->GetClientRect(&rcClient);
 
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
+
 	GLdouble arModelView[16];
 	GLdouble arProjection[16];
-	GLdouble dWinX, dWinY, dWinZ;
+	for (int i = 0; i < 16; i++)
+	{
+		arModelView[i] = m_pModelViewMatrix[i];
+		arProjection[i] = m_pProjectionMatrix[i];
+	}
 
-	glGetDoublev(GL_MODELVIEW_MATRIX, arModelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, arProjection);
+	GLdouble dWinX = (double)iX;
+	GLdouble dWinY = (double)arViewport[3] - (double)iY;
 
-	dWinX = (double)iX;
-	dWinY = (double)arViewport[3] - (double)iY - 1;
-
+	double dWinZ = 0.;
 	if (fDepth == -FLT_MAX)
 	{
 		float fWinZ = 0.f;

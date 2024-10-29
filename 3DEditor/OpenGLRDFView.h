@@ -17,6 +17,10 @@ class COpenGLRDFView
 
 private: // Members	
 
+	// Main Model
+	GLfloat* m_pModelViewMatrix;
+	GLfloat* m_pProjectionMatrix;
+
 	// Mouse
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
