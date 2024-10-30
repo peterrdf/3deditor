@@ -126,7 +126,7 @@ private: // Methods
 	void DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	void DrawFacesFrameBuffer(_model* pM);
 	void DrawPointedFace(_model* pM);
-	int64_t GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
+	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 	void PointNavigatorInstance(const CPoint& point);
 	bool SelectNavigatorInstance();
 

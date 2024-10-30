@@ -2734,26 +2734,26 @@ void CRDFOpenGLView::DrawPointedFace(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-int64_t CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
+pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
 {
 	if (pM == nullptr)
 	{
-		return -1;
+		return pair<int64_t, int64_t>(-1, -1);
 	}
 
 	if (m_pSelectedInstance == nullptr)
 	{
-		return -1;
+		return pair<int64_t, int64_t>(-1, -1);
 	}
 
 	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
 	{
-		return -1;
+		return pair<int64_t, int64_t>(-1, -1);
 	}
 
 	if (m_iPointedFace == -1)
 	{
-		return -1;
+		return pair<int64_t, int64_t>(-1, -1);
 	}
 
 	const auto VERTEX_LENGTH = pM->getVertexLength();
@@ -2773,6 +2773,7 @@ int64_t CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float f
 	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecConcFacePolygons.size()));
 
 	int64_t iVertexIndex = -1;
+	int64_t iConcFaceVertexIndex = -1;
 	double dMinDistance = DBL_MAX;
 
 	auto pConceptulFacePolygon = const_cast<_primitives*>(&vecConcFacePolygons[m_iPointedFace]);
@@ -2782,19 +2783,20 @@ int64_t CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float f
 		iIndex < pConceptulFacePolygon->startIndex() + pConceptulFacePolygon->indicesCount();
 		iIndex++, iZeroBasedIndex++)
 	{
-		fVertexX = pVertices[(pIndices[iIndex] * GEOMETRY_VBO_VERTEX_LENGTH) + 0];
-		fVertexY = pVertices[(pIndices[iIndex] * GEOMETRY_VBO_VERTEX_LENGTH) + 1];
-		fVertexZ = pVertices[(pIndices[iIndex] * GEOMETRY_VBO_VERTEX_LENGTH) + 2];
+		fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
+		fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
+		fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
 
 		double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
 		if (dMinDistance > dDistance)
 		{
-			iVertexIndex = iZeroBasedIndex;
+			iConcFaceVertexIndex = iZeroBasedIndex;
+			iVertexIndex = pIndices[iIndex];			
 			dMinDistance = dDistance;
 		}
 	}
 
-	return iVertexIndex;
+	return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
 }
 
 void CRDFOpenGLView::PointNavigatorInstance(const CPoint& point)
@@ -3121,27 +3123,30 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			strInstanceMetaData += to_wstring(dWorldY).c_str();
 			strInstanceMetaData += L", ";
 			strInstanceMetaData += to_wstring(dWorldZ).c_str();
-		}
 
-		if (m_iPointedFace != -1)
-		{
-			strInstanceMetaData += L"\n\n";
-			strInstanceMetaData += L"* Geometry *";
-			strInstanceMetaData += L"\n";
-			strInstanceMetaData += L"Conceptual Face: ";
-			strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
-
-			float fVertexX = 0.f;
-			float fVertexY = 0.f;
-			float fVertexZ = 0.f;
-			int64_t iVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
-			if (iVertexIndex != -1)
+			if (m_iPointedFace != -1)
 			{
+				strInstanceMetaData += L"\n\n";
+				strInstanceMetaData += L"* Geometry *";
 				strInstanceMetaData += L"\n";
-				strInstanceMetaData += L"Nearest Vertex: ";
-				strInstanceMetaData += to_wstring(iVertexIndex).c_str();
-			}
-		}
+				strInstanceMetaData += L"Conceptual Face: ";
+				strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
+
+				float fVertexX = 0.f;
+				float fVertexY = 0.f;
+				float fVertexZ = 0.f;
+				pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
+				if (prVertexIndex.first != -1)
+				{
+					strInstanceMetaData += L"\n";
+					strInstanceMetaData += L"Nearest Vertex: ";
+					strInstanceMetaData += to_wstring(prVertexIndex.first).c_str();
+					strInstanceMetaData += L" (";
+					strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
+					strInstanceMetaData += L")";
+				}
+			} // if (m_iPointedFace != -1)
+		} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
 
 		_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
 	}
