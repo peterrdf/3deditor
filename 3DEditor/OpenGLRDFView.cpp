@@ -3206,6 +3206,11 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 		dWinZ = fDepth;
 	}
 
+	if (dWinZ >= 1.)
+	{
+		return false;
+	}
+
 	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
 
 	_vector3d vecVertexBufferOffset;
