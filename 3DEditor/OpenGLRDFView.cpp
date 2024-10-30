@@ -3135,10 +3135,48 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 // ------------------------------------------------------------------------------------------------
 // http://nehe.gamedev.net/article/using_gluunproject/16013/
-bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ) const
+bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		return false;
+	}
+
+	auto pMainModel = pController->GetModel();
+	if (pMainModel == nullptr)
+	{
+		return false;
+	}
+	
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pMainModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
+
+	_prepare(
+		0, 0,
+		rcClient.Width(), rcClient.Height(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	/* Store Matrices */
+	memset(m_pModelViewMatrix, 0, 16 * sizeof(float));
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), m_pModelViewMatrix);
+	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), m_pProjectionMatrix);
+
+	/* Model */
+	DrawModel(pMainModel);
 
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 
@@ -3169,6 +3207,15 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 	}
 
 	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
+
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pMainModel->getInstance(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = pMainModel->GetOriginalBoundingSphereDiameter() / 2.;
+
+	dX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+	dY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+	dZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
 	_oglUtils::checkForErrors();
 
