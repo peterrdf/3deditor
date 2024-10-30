@@ -33,8 +33,6 @@ int MIN_VIEW_PORT_LENGTH = 100;
 COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	: _oglRenderer()
 	, CRDFView()
-	, m_pModelViewMatrix(nullptr)
-	, m_pProjectionMatrix(nullptr)
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
 	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())	
@@ -49,11 +47,6 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
 	assert(pWnd != nullptr);
-
-	m_pModelViewMatrix = new GLfloat[16];
-	memset(m_pModelViewMatrix, 0, 16 *sizeof(float));
-	m_pProjectionMatrix = new GLfloat[16];
-	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
 
 	_initialize(
 		pWnd,
@@ -114,9 +107,6 @@ COpenGLRDFView::~COpenGLRDFView()
 	{
 		_destroy();
 	}
-
-	delete[] m_pModelViewMatrix;
-	delete[] m_pProjectionMatrix;
 
 	delete m_pSelectedInstanceMaterial;
 	m_pSelectedInstanceMaterial = nullptr;
@@ -965,12 +955,6 @@ void COpenGLRDFView::DrawMainModel(
 		fZmin, fZmax,
 		true,
 		true);
-
-	/* Store Matrices */
-	memset(m_pModelViewMatrix, 0, 16 * sizeof(float));	
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), m_pModelViewMatrix);
-	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), m_pProjectionMatrix);
 
 	/* Model */
 	DrawModel(pMainModel);
@@ -3170,12 +3154,13 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 		true);
 
 	/* Store Matrices */
-	memset(m_pModelViewMatrix, 0, 16 * sizeof(float));
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), m_pModelViewMatrix);
-	memset(m_pProjectionMatrix, 0, 16 * sizeof(float));
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), m_pProjectionMatrix);
+	GLfloat arModelViewMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
 
-	/* Model */
+	GLfloat arProjectionMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
+
+	/* Model - Restore Z buffer */
 	DrawModel(pMainModel);
 
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
@@ -3184,8 +3169,8 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 	GLdouble arProjection[16];
 	for (int i = 0; i < 16; i++)
 	{
-		arModelView[i] = m_pModelViewMatrix[i];
-		arProjection[i] = m_pProjectionMatrix[i];
+		arModelView[i] = arModelViewMatrix[i];
+		arProjection[i] = arProjectionMatrix[i];
 	}
 
 	GLdouble dWinX = (double)iX;

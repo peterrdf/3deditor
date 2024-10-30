@@ -15,11 +15,7 @@ class COpenGLRDFView
 
 #pragma region Members
 
-private: // Members	
-
-	// Main Model
-	GLfloat* m_pModelViewMatrix;
-	GLfloat* m_pProjectionMatrix;
+private: // Members
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
