@@ -228,7 +228,7 @@
     <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="NewInstanceDialog.h" />
-    <ClInclude Include="OpenGLRDFView.h" />
+    <ClInclude Include="RDFOpenGLView.h" />
     <ClInclude Include="ProgressIndicator.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RDFClass.h" />
@@ -278,7 +278,7 @@
     <ClCompile Include="DesignTreeView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="NewInstanceDialog.cpp" />
-    <ClCompile Include="OpenGLRDFView.cpp" />
+    <ClCompile Include="RDFOpenGLView.cpp" />
     <ClCompile Include="ProgressIndicator.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="RDFClass.cpp" />

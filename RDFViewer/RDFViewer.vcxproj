@@ -224,13 +224,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
-    <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp" />
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp" />
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp" />
     <ClCompile Include="..\3DEditor\RDFClass.cpp" />
     <ClCompile Include="..\3DEditor\RDFController.cpp" />
     <ClCompile Include="..\3DEditor\RDFInstance.cpp" />
     <ClCompile Include="..\3DEditor\RDFModel.cpp" />
+    <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />
     <ClCompile Include="..\3DEditor\RDFProperty.cpp" />
     <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp" />
     <ClCompile Include="..\3DEditor\RDFView.cpp" />

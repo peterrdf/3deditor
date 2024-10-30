@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 
 class CMy3DEditorView : public CView
 {
 
 private: // Members
 
-	COpenGLRDFView* m_pOpenGLView;
+	CRDFOpenGLView* m_pOpenGLView;
 
 private: // Methods
 

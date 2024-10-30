@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 #include "RDFController.h"
 #include "TestHtmlReport.h"
 
@@ -14,7 +14,7 @@ private: // Members
 	CRDFController* m_pController;
 
 	// --------------------------------------------------------------------------------------------
-	COpenGLRDFView* m_pOpenGLView;
+	CRDFOpenGLView* m_pOpenGLView;
 
 	// --------------------------------------------------------------------------------------------
 	CString m_strInputDataDir;

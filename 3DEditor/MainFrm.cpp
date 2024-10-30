@@ -7,7 +7,7 @@
 
 #include "MainFrm.h"
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 
 #include "TestManager.h"
 

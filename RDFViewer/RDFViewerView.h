@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 #include "InstancesDialog.h"
 
 class CRDFViewerView : public CView
@@ -14,7 +14,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// OpenGL View
-	COpenGLRDFView * m_pOpenGLView;
+	CRDFOpenGLView* m_pOpenGLView;
 
 	// --------------------------------------------------------------------------------------------
 	// Instances UI

@@ -8,7 +8,7 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
-CTest::CTest(COpenGLRDFView* pOpenGLView)
+CTest::CTest(CRDFOpenGLView* pOpenGLView)
 	: m_pOpenGLView(pOpenGLView)
 	, m_strRevision(L"")
 	, m_strScreenshotFileName(L"")

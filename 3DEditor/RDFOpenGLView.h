@@ -8,7 +8,7 @@
 #include "RDFModel.h"
 
 // ------------------------------------------------------------------------------------------------
-class COpenGLRDFView 
+class CRDFOpenGLView 
 	: public _oglRenderer
 	, public CRDFView
 {
@@ -42,8 +42,8 @@ private: // Members
 
 public: // Methods
 	
-	COpenGLRDFView(CWnd* pWnd);	
-	virtual ~COpenGLRDFView();
+	CRDFOpenGLView(CWnd* pWnd);	
+	virtual ~CRDFOpenGLView();
 
 	// _oglRendererSettings
 	virtual _controller* getController() const override;

@@ -106,9 +106,6 @@
     <ClCompile Include="..\3DEditor\RDFView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\OpenGLRDFView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InstancesDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -131,6 +128,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\TextBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

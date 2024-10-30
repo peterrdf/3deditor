@@ -143,7 +143,7 @@ int CRDFViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!pDoc)
 		return -1;
 
-	m_pOpenGLView = new COpenGLRDFView(this);
+	m_pOpenGLView = new CRDFOpenGLView(this);
 	m_pOpenGLView->SetController(pDoc);
 
 	m_pInstancesDialog = new CInstancesDialog();

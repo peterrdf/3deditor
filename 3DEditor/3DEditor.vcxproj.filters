@@ -77,7 +77,7 @@
     <ClInclude Include="RDFInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLRDFView.h">
+    <ClInclude Include="RDFOpenGLView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RDFItem.h">
@@ -211,7 +211,7 @@
     <ClCompile Include="RDFInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLRDFView.cpp">
+    <ClCompile Include="RDFOpenGLView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFItem.cpp">

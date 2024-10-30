@@ -5,7 +5,7 @@
 #include "Resource.h"
 #include "MainFrm.h"
 #include "3DEditor.h"
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 #include "RDFClass.h"
 #include "RDFModel.h"
 #include "EditObjectPropertyDialog.h"

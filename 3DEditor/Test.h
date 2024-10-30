@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 
 // ------------------------------------------------------------------------------------------------
 class CTest
@@ -12,7 +12,7 @@ private: // Members
 	const int VERSION = 1;
 
 	// --------------------------------------------------------------------------------------------
-	COpenGLRDFView* m_pOpenGLView;
+	CRDFOpenGLView* m_pOpenGLView;
 
 	// --------------------------------------------------------------------------------------------
 	wstring m_strRevision;
@@ -23,7 +23,7 @@ private: // Members
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
-	CTest(COpenGLRDFView* pOpenGLView);
+	CTest(CRDFOpenGLView* pOpenGLView);
 
 	// --------------------------------------------------------------------------------------------
 	virtual ~CTest();

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "OpenGLRDFView.h"
+#include "RDFOpenGLView.h"
 #include "RDFController.h"
 #include "ProgressIndicator.h"
 
@@ -30,7 +30,7 @@ int NAVIGATION_VIEW_LENGTH = 200;
 int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
-COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
+CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglRenderer()
 	, CRDFView()
 	, m_ptStartMousePosition(-1, -1)
@@ -94,7 +94,7 @@ COpenGLRDFView::COpenGLRDFView(CWnd* pWnd)
 }
 
 // ------------------------------------------------------------------------------------------------
-COpenGLRDFView::~COpenGLRDFView()
+CRDFOpenGLView::~CRDFOpenGLView()
 {
 	GetController()->UnRegisterView(this);	
 
@@ -118,28 +118,28 @@ COpenGLRDFView::~COpenGLRDFView()
 	m_pNavigatorPointedInstanceMaterial = nullptr;
 }
 
-/*virtual*/ _controller* COpenGLRDFView::getController() const /*override*/
+/*virtual*/ _controller* CRDFOpenGLView::getController() const /*override*/
 {
 	return GetController();
 }
 
-/*virtual*/ _model* COpenGLRDFView::getModel() const /*override*/
+/*virtual*/ _model* CRDFOpenGLView::getModel() const /*override*/
 {
 	return GetController()->getModel();
 }
 
-/*virtual*/ void COpenGLRDFView::saveSetting(const string& strName, const string& strValue) /*override*/
+/*virtual*/ void CRDFOpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
 {
 	GetController()->getSettingsStorage()->setSetting(strName, strValue);
 }
 
-/*virtual*/ string COpenGLRDFView::loadSetting(const string& strName) /*override*/
+/*virtual*/ string CRDFOpenGLView::loadSetting(const string& strName) /*override*/
 {
 	return GetController()->getSettingsStorage()->getSetting(strName);
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
+void CRDFOpenGLView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
 	m_fXAngle = fX;
 	m_fYAngle = fY;
@@ -151,14 +151,14 @@ void COpenGLRDFView::SetRotation(float fX, float fY, BOOL bRedraw)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::GetRotation(float& fX, float& fY)
+void CRDFOpenGLView::GetRotation(float& fX, float& fY)
 {
 	fX = m_fXAngle;
 	fY = m_fYAngle;
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
+void CRDFOpenGLView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
 {
 	m_fXTranslation = fX;
 	m_fYTranslation = fY;
@@ -171,7 +171,7 @@ void COpenGLRDFView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
+void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
 {
 	fX = m_fXTranslation;
 	fY = m_fYTranslation;
@@ -179,7 +179,7 @@ void COpenGLRDFView::GetTranslation(float& fX, float& fY, float& fZ)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::Draw(CDC* pDC)
+void CRDFOpenGLView::Draw(CDC* pDC)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -239,7 +239,7 @@ void COpenGLRDFView::Draw(CDC* pDC)
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
+void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
 	if (enEvent == enumMouseEvent::LBtnUp)
 	{
@@ -306,19 +306,19 @@ void COpenGLRDFView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+void CRDFOpenGLView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	_onMouseWheel(nFlags, zDelta, pt);
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	_onKeyUp(nChar, nRepCnt, nFlags);
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnModelChanged() /*override*/
+/*virtual*/ void CRDFOpenGLView::OnModelChanged() /*override*/
 {
 	CWaitCursor waitCursor;	
 
@@ -388,7 +388,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnWorldDimensionsChanged() /*override*/
+/*virtual*/ void CRDFOpenGLView::OnWorldDimensionsChanged() /*override*/
 {
 	/*
 	* Center
@@ -434,7 +434,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
 {
 	/*
 	* Reload model
@@ -448,7 +448,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -462,7 +462,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -476,7 +476,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
 {
 	/*
 	* Reload model
@@ -490,7 +490,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
 {
 	/*
 	* Reload model
@@ -504,7 +504,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstanceSelected(CRDFView* pSender) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstanceSelected(CRDFView* pSender) /*override*/
 {
 	if (pSender == this)
 	{
@@ -536,7 +536,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancePropertySelected() /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstancePropertySelected() /*override*/
 {
 	assert(GetController() != nullptr);
 
@@ -561,7 +561,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnInstancesEnabledStateChanged() /*override*/
+/*virtual*/ void CRDFOpenGLView::OnInstancesEnabledStateChanged() /*override*/
 {
 	/*
 	* Reload model
@@ -575,7 +575,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+/*virtual*/ void CRDFOpenGLView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
 {
 	if (pSender == this)
 	{
@@ -630,7 +630,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void COpenGLRDFView::OnControllerChanged()
+/*virtual*/ void CRDFOpenGLView::OnControllerChanged()
 {
 	assert(GetController() != nullptr);
 
@@ -639,7 +639,7 @@ void COpenGLRDFView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	loadSettings();
 }
 
-void COpenGLRDFView::LoadModel(CRDFModel* pModel)
+void CRDFOpenGLView::LoadModel(CRDFModel* pModel)
 {
 	if (pModel == nullptr)
 	{
@@ -928,7 +928,7 @@ void COpenGLRDFView::LoadModel(CRDFModel* pModel)
 	}
 }
 
-void COpenGLRDFView::DrawMainModel(
+void CRDFOpenGLView::DrawMainModel(
 	CRDFModel* pMainModel,
 	CRDFModel* pSceneModel,
 	int iViewportX, int iViewportY,
@@ -966,7 +966,7 @@ void COpenGLRDFView::DrawMainModel(
 	}
 }
 
-void COpenGLRDFView::DrawNavigatorModel(
+void CRDFOpenGLView::DrawNavigatorModel(
 	CRDFModel* pNavigatorModel,
 	int /*iViewportX*/, int iViewportY,
 	int iViewportWidth, int /*iViewportHeight*/)
@@ -1004,7 +1004,7 @@ void COpenGLRDFView::DrawNavigatorModel(
 	m_enProjection = enProjection;
 }
 
-void COpenGLRDFView::DrawModel(_model* pM)
+void CRDFOpenGLView::DrawModel(_model* pM)
 {
 	m_pOGLProgram->_enableTexture(false);
 
@@ -1042,7 +1042,7 @@ void COpenGLRDFView::DrawModel(_model* pM)
 	DrawBiNormalVectors(pM);
 }
 
-void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
+void CRDFOpenGLView::DrawFaces(_model* pM, bool bTransparent)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -1177,7 +1177,7 @@ void COpenGLRDFView::DrawFaces(_model* pM, bool bTransparent)
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void COpenGLRDFView::DrawFacesPolygons(_model* pM)
+void CRDFOpenGLView::DrawFacesPolygons(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -1234,7 +1234,7 @@ void COpenGLRDFView::DrawFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLRDFView::DrawConceptualFacesPolygons(_model* pM)
+void CRDFOpenGLView::DrawConceptualFacesPolygons(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -1287,7 +1287,7 @@ void COpenGLRDFView::DrawConceptualFacesPolygons(_model* pM)
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void COpenGLRDFView::DrawLines(_model* pM)
+void CRDFOpenGLView::DrawLines(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -1353,7 +1353,7 @@ void COpenGLRDFView::DrawLines(_model* pM)
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 }
 
-void COpenGLRDFView::DrawPoints(_model* pM)
+void CRDFOpenGLView::DrawPoints(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -1423,7 +1423,7 @@ void COpenGLRDFView::DrawPoints(_model* pM)
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());	
 }
 
-void COpenGLRDFView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
+void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
 {
 	// Transformation
 	_transform(&vecBBVertex, pBBTransformation, &vecBBVertex);
@@ -1439,7 +1439,7 @@ void COpenGLRDFView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pB
 	vecBBVertex.z /= dScaleFactor;
 }
 
-void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
+void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -1638,7 +1638,7 @@ void COpenGLRDFView::DrawBoundingBoxes(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawNormalVectors(_model* pM)
+void CRDFOpenGLView::DrawNormalVectors(_model* pM)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -1865,7 +1865,7 @@ void COpenGLRDFView::DrawNormalVectors(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawTangentVectors(_model* pM)
+void CRDFOpenGLView::DrawTangentVectors(_model* pM)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -2092,7 +2092,7 @@ void COpenGLRDFView::DrawTangentVectors(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
+void CRDFOpenGLView::DrawBiNormalVectors(_model* pM)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -2319,7 +2319,7 @@ void COpenGLRDFView::DrawBiNormalVectors(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
+void CRDFOpenGLView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
 {
 	auto pModel = dynamic_cast<CRDFModel*>(pM);
 	if (pModel == nullptr)
@@ -2427,7 +2427,7 @@ void COpenGLRDFView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuff
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawMainModelSelectionBuffers(
+void CRDFOpenGLView::DrawMainModelSelectionBuffers(
 	_model* pM,
 	int iViewportX, int iViewportY,
 	int iViewportWidth, int iViewportHeight,
@@ -2460,7 +2460,7 @@ void COpenGLRDFView::DrawMainModelSelectionBuffers(
 	DrawFacesFrameBuffer(pModel);
 }
 
-void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
+void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 	_model* pM,
 	int /*iViewportX*/, int iViewportY,
 	int iViewportWidth, int /*iViewportHeight*/,
@@ -2492,7 +2492,7 @@ void COpenGLRDFView::DrawNavigatorModelSelectionBuffers(
 	DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
 
-void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
+void CRDFOpenGLView::DrawFacesFrameBuffer(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -2646,7 +2646,7 @@ void COpenGLRDFView::DrawFacesFrameBuffer(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::DrawPointedFace(_model* pM)
+void CRDFOpenGLView::DrawPointedFace(_model* pM)
 {
 	if (pM == nullptr)
 	{
@@ -2734,7 +2734,7 @@ void COpenGLRDFView::DrawPointedFace(_model* pM)
 	_oglUtils::checkForErrors();
 }
 
-void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
+void CRDFOpenGLView::PointNavigatorInstance(const CPoint& point)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -2803,7 +2803,7 @@ void COpenGLRDFView::PointNavigatorInstance(const CPoint& point)
 	}
 }
 
-bool COpenGLRDFView::SelectNavigatorInstance()
+bool CRDFOpenGLView::SelectNavigatorInstance()
 {
 	if (m_pNavigatorPointedInstance == nullptr)
 	{
@@ -2900,7 +2900,7 @@ bool COpenGLRDFView::SelectNavigatorInstance()
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
+void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -3119,7 +3119,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 // ------------------------------------------------------------------------------------------------
 // http://nehe.gamedev.net/article/using_gluunproject/16013/
-bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+bool CRDFOpenGLView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
 	auto pController = GetController();
 	if (pController == nullptr)
@@ -3213,7 +3213,7 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 }
 
 // ------------------------------------------------------------------------------------------------
-void COpenGLRDFView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble & dOutX, GLdouble & dOutY, GLdouble & dOutZ) const
+void CRDFOpenGLView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble & dOutX, GLdouble & dOutY, GLdouble & dOutZ) const
 {
 	GLint arViewport[4];
 	GLdouble arModelView[16];
@@ -3229,7 +3229,7 @@ void COpenGLRDFView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLd
 
 // ------------------------------------------------------------------------------------------------
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-void COpenGLRDFView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)
+void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -3255,7 +3255,7 @@ void COpenGLRDFView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWid
 
 // ------------------------------------------------------------------------------------------------
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-bool COpenGLRDFView::SaveScreenshot(const wchar_t* szFilePath)
+bool CRDFOpenGLView::SaveScreenshot(const wchar_t* szFilePath)
 {
 	unsigned char* arPixels;
 	unsigned int iWidth;
