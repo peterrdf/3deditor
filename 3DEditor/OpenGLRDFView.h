@@ -15,7 +15,7 @@ class COpenGLRDFView
 
 #pragma region Members
 
-private: // Members	
+private: // Members
 
 	// Mouse
 	CPoint m_ptStartMousePosition;
@@ -135,7 +135,7 @@ private: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Screen -> Open GL coordinates
-	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ) const;
+	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
 
 	// --------------------------------------------------------------------------------------------
 	// Wrapper for gluProject

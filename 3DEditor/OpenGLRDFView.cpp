@@ -3037,6 +3037,20 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 		strInstanceMetaData += L"\n";
 		strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
 
+		GLdouble dX = 0.;
+		GLdouble dY = 0.;
+		GLdouble dZ = 0.;
+		if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+		{
+			strInstanceMetaData += L"\n";
+			strInstanceMetaData += L"X/Y/Z: ";
+			strInstanceMetaData += to_wstring(dX).c_str();
+			strInstanceMetaData += L", ";
+			strInstanceMetaData += to_wstring(dY).c_str();
+			strInstanceMetaData += L", ";
+			strInstanceMetaData += to_wstring(dZ).c_str();
+		}
+
 		if (m_iPointedFace != -1)
 		{
 			strInstanceMetaData += L"\n\n";
@@ -3044,7 +3058,7 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			strInstanceMetaData += L"\n";
 			strInstanceMetaData += L"Conceptual Face: ";
 			strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
-		}		
+		}
 
 		_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
 	}
@@ -3105,22 +3119,64 @@ void COpenGLRDFView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 // ------------------------------------------------------------------------------------------------
 // http://nehe.gamedev.net/article/using_gluunproject/16013/
-bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ) const
+bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		return false;
+	}
+
+	auto pMainModel = pController->GetModel();
+	if (pMainModel == nullptr)
+	{
+		return false;
+	}
+	
+	float fXmin = -1.f;
+	float fXmax = 1.f;
+	float fYmin = -1.f;
+	float fYmax = 1.f;
+	float fZmin = -1.f;
+	float fZmax = 1.f;
+	pMainModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
+	_prepare(
+		0, 0,
+		rcClient.Width(), rcClient.Height(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		true,
+		true);
+
+	/* Store Matrices */
+	GLfloat arModelViewMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
+
+	GLfloat arProjectionMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
+
+	/* Model - Restore Z buffer */
+	DrawModel(pMainModel);
+
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
+
 	GLdouble arModelView[16];
 	GLdouble arProjection[16];
-	GLdouble dWinX, dWinY, dWinZ;
+	for (int i = 0; i < 16; i++)
+	{
+		arModelView[i] = arModelViewMatrix[i];
+		arProjection[i] = arProjectionMatrix[i];
+	}
 
-	glGetDoublev(GL_MODELVIEW_MATRIX, arModelView);
-	glGetDoublev(GL_PROJECTION_MATRIX, arProjection);
+	GLdouble dWinX = (double)iX;
+	GLdouble dWinY = (double)arViewport[3] - (double)iY;
 
-	dWinX = (double)iX;
-	dWinY = (double)arViewport[3] - (double)iY - 1;
-
+	double dWinZ = 0.;
 	if (fDepth == -FLT_MAX)
 	{
 		float fWinZ = 0.f;
@@ -3135,7 +3191,21 @@ bool COpenGLRDFView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 		dWinZ = fDepth;
 	}
 
+	if (dWinZ >= 1.)
+	{
+		return false;
+	}
+
 	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
+
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pMainModel->getInstance(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = pMainModel->GetOriginalBoundingSphereDiameter() / 2.;
+
+	dX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+	dY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+	dZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
 	_oglUtils::checkForErrors();
 
