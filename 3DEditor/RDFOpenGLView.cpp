@@ -45,6 +45,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
 	, m_pNavigatorPointedInstanceMaterial(new _material())
+	, m_tmShowTooltip(clock())
 {
 	assert(pWnd != nullptr);
 
@@ -3098,58 +3099,64 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 #ifdef _TOOLTIPS_SUPPORT
 	if (m_pPointedInstance != nullptr)
 	{
-		CString strInstanceMetaData = L"* Properties *";
-		strInstanceMetaData += L"\n";
-		strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
-
-		GLdouble dX = 0.;
-		GLdouble dY = 0.;
-		GLdouble dZ = 0.;
-		if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+		clock_t timeSpan = clock() - m_tmShowTooltip;
+		if (timeSpan >= 200)
 		{
-			_vector3d vecVertexBufferOffset;
-			GetVertexBufferOffset(pModel->getInstance(), (double*)&vecVertexBufferOffset);
-
-			auto dScaleFactor = pModel->GetOriginalBoundingSphereDiameter() / 2.;
-
-			GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-			GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-			GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-
+			CString strInstanceMetaData = L"* Properties *";
 			strInstanceMetaData += L"\n";
-			strInstanceMetaData += L"X/Y/Z: ";
-			strInstanceMetaData += to_wstring(dWorldX).c_str();
-			strInstanceMetaData += L", ";
-			strInstanceMetaData += to_wstring(dWorldY).c_str();
-			strInstanceMetaData += L", ";
-			strInstanceMetaData += to_wstring(dWorldZ).c_str();
+			strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
 
-			if (m_iPointedFace != -1)
+			GLdouble dX = 0.;
+			GLdouble dY = 0.;
+			GLdouble dZ = 0.;
+			if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
 			{
-				strInstanceMetaData += L"\n\n";
-				strInstanceMetaData += L"* Geometry *";
+				_vector3d vecVertexBufferOffset;
+				GetVertexBufferOffset(pModel->getInstance(), (double*)&vecVertexBufferOffset);
+
+				auto dScaleFactor = pModel->GetOriginalBoundingSphereDiameter() / 2.;
+
+				GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+				GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+				GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+
 				strInstanceMetaData += L"\n";
-				strInstanceMetaData += L"Conceptual Face: ";
-				strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
+				strInstanceMetaData += L"X/Y/Z: ";
+				strInstanceMetaData += to_wstring(dWorldX).c_str();
+				strInstanceMetaData += L", ";
+				strInstanceMetaData += to_wstring(dWorldY).c_str();
+				strInstanceMetaData += L", ";
+				strInstanceMetaData += to_wstring(dWorldZ).c_str();
 
-				float fVertexX = 0.f;
-				float fVertexY = 0.f;
-				float fVertexZ = 0.f;
-				pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
-				if (prVertexIndex.first != -1)
+				if (m_iPointedFace != -1)
 				{
+					strInstanceMetaData += L"\n\n";
+					strInstanceMetaData += L"* Geometry *";
 					strInstanceMetaData += L"\n";
-					strInstanceMetaData += L"Nearest Vertex: ";
-					strInstanceMetaData += to_wstring(prVertexIndex.first).c_str();
-					strInstanceMetaData += L" (";
-					strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
-					strInstanceMetaData += L")";
-				}
-			} // if (m_iPointedFace != -1)
-		} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+					strInstanceMetaData += L"Conceptual Face: ";
+					strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
 
-		_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
-	}
+					float fVertexX = 0.f;
+					float fVertexY = 0.f;
+					float fVertexZ = 0.f;
+					pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
+					if (prVertexIndex.first != -1)
+					{
+						strInstanceMetaData += L"\n";
+						strInstanceMetaData += L"Nearest Vertex: ";
+						strInstanceMetaData += to_wstring(prVertexIndex.first).c_str();
+						strInstanceMetaData += L" (";
+						strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
+						strInstanceMetaData += L")";
+					}
+				} // if (m_iPointedFace != -1)
+			} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+
+			m_tmShowTooltip = clock();
+
+			_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
+		} // if (timeSpan >= ...
+	} // if (m_pPointedInstance != nullptr)
 	else
 	{
 		_hideTooltip();

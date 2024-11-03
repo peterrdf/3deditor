@@ -6,6 +6,7 @@
 #include "_oglUtils.h"
 #include "RDFInstance.h"
 #include "RDFModel.h"
+#include <ctime>
 
 // ------------------------------------------------------------------------------------------------
 class CRDFOpenGLView 
@@ -37,6 +38,9 @@ private: // Members
 	_material* m_pSelectedInstanceMaterial;
 	_material* m_pPointedInstanceMaterial;
 	_material* m_pNavigatorPointedInstanceMaterial;
+
+	// Tooltip
+	clock_t m_tmShowTooltip;
 
 #pragma endregion // Members
 
