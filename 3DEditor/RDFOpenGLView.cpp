@@ -2750,8 +2750,8 @@ void CRDFOpenGLView::DrawPointedFace(_model* pM)
 			
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_PROGRAM_POINT_SIZE);
-		}
-	}
+		} // if (m_iNearestVertex != -1)
+	} // if (!vecIndices.empty())
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
