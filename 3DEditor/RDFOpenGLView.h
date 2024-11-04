@@ -29,7 +29,8 @@ private: // Members
 
 	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
-	int64_t m_iPointedFace;	
+	int64_t m_iPointedFace;
+	int64_t m_iNearestVertex;
 
 	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
 	CRDFInstance* m_pNavigatorPointedInstance;

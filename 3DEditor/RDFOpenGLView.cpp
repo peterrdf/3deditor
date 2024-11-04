@@ -40,6 +40,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pSelectedInstance(nullptr)
 	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
+	, m_iNearestVertex(-1)
 	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pNavigatorPointedInstance(nullptr)
 	, m_pSelectedInstanceMaterial(new _material())
@@ -254,6 +255,7 @@ void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 				m_pSelectedInstance = m_pPointedInstance;
 
 				m_iPointedFace = -1;
+				m_iNearestVertex = -1;
 				m_pFaceSelectionFrameBuffer->encoding().clear();
 
 				_redraw();
@@ -334,6 +336,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	m_pSelectedInstance = nullptr;
 
 	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
 	m_pFaceSelectionFrameBuffer->encoding().clear();
 
 	m_pNavigatorSelectionFrameBuffer->encoding().clear();
@@ -530,6 +533,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		m_pSelectedInstance = pSelectedInstance;
 
 		m_iPointedFace = -1;
+		m_iNearestVertex = -1;
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 		_redraw();
@@ -555,6 +559,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		m_pSelectedInstance = pSelectedInstance;
 
 		m_iPointedFace = -1;
+		m_iNearestVertex = -1;
 		m_pFaceSelectionFrameBuffer->encoding().clear();
 
 		_redraw();
@@ -2721,12 +2726,31 @@ void CRDFOpenGLView::DrawPointedFace(_model* pM)
 	if (!vecIndices.empty())
 	{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)vecIndices.size(),
 			GL_UNSIGNED_INT,
 			(void*)(sizeof(GLuint) * 0),
 			m_pSelectedInstance->VBOOffset());
+
+		if (m_iNearestVertex != -1)
+		{
+			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
+
+			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_PROGRAM_POINT_SIZE);			
+
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+			glDrawElementsBaseVertex(GL_POINTS,
+				(GLsizei)vecIndices.size(),
+				GL_UNSIGNED_INT,
+				(void*)(sizeof(GLuint) * 0),
+				m_pSelectedInstance->VBOOffset());
+			
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_PROGRAM_POINT_SIZE);
+		}
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -3090,6 +3114,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 			if (m_iPointedFace != iPointedFace)
 			{
 				m_iPointedFace = iPointedFace;
+				m_iNearestVertex = -1;
 
 				_redraw();
 			}
@@ -3148,6 +3173,10 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 						strInstanceMetaData += L" (";
 						strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
 						strInstanceMetaData += L")";
+
+						m_iNearestVertex = prVertexIndex.second;
+
+						_redraw();
 					}
 				} // if (m_iPointedFace != -1)
 			} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
