@@ -177,7 +177,7 @@ static	inline	int64_t	GetRevision(
 							)
 {
 	return	GetRevision(
-					(const char**) 0      				//	timeStamp
+					(const char**) nullptr				//	timeStamp
 				);
 }
 
@@ -219,7 +219,7 @@ static	inline	int64_t	GetRevisionW(
 							)
 {
 	return	GetRevisionW(
-					(const wchar_t**) 0      			//	timeStamp
+					(const wchar_t**) nullptr			//	timeStamp
 				);
 }
 
@@ -283,8 +283,8 @@ static	inline	int64_t	GetEnvironment(
 							)
 {
 	return	GetEnvironment(
-					(const char**) 0      ,				//	environmentVariables
-					(const char**) 0      				//	developmentVariables
+					(const char**) nullptr,				//	environmentVariables
+					(const char**) nullptr				//	developmentVariables
 				);
 }
 
@@ -336,8 +336,8 @@ static	inline	int64_t	GetEnvironmentW(
 							)
 {
 	return	GetEnvironmentW(
-					(const wchar_t**) 0      ,			//	environmentVariables
-					(const wchar_t**) 0      			//	developmentVariables
+					(const wchar_t**) nullptr,			//	environmentVariables
+					(const wchar_t**) nullptr			//	developmentVariables
 				);
 }
 
@@ -445,7 +445,7 @@ static	inline	const char	* GetAssertionFile(
 								)
 {
 	return	GetAssertionFile(
-					(const char**) 0      				//	fileName
+					(const char**) nullptr				//	fileName
 				);
 }
 
@@ -487,7 +487,7 @@ static	inline	const wchar_t	* GetAssertionFileW(
 									)
 {
 	return	GetAssertionFileW(
-					(const wchar_t**) 0      			//	fileName
+					(const wchar_t**) nullptr			//	fileName
 				);
 }
 
@@ -1843,7 +1843,7 @@ static	inline	char	* EncodeBase64(
 								int64_t					size
 							)
 {
-	char	* output = new char[(int_t) EncodeBase64(0      , input, size) / sizeof(char) + 1];
+	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
 
 	EncodeBase64(
 			output,
@@ -1910,7 +1910,7 @@ static	inline	wchar_t	* EncodeBase64W(
 								int64_t					size
 							)
 {
-	wchar_t * output = new wchar_t[(int_t) EncodeBase64(0      , input, size) / sizeof(wchar_t) + 1];
+	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
 
 	EncodeBase64W(
 			output,
@@ -2147,7 +2147,7 @@ static	inline	OwlClass	CreateClass(
 {
 	return	CreateClass(
 					model,
-					(const char*) 0      				//	name
+					(const char*) nullptr				//	name
 				);
 }
 
@@ -2202,7 +2202,7 @@ static	inline	OwlClass	CreateClassW(
 {
 	return	CreateClassW(
 					model,
-					(const wchar_t*) 0      			//	name
+					(const wchar_t*) nullptr			//	name
 				);
 }
 
@@ -2617,7 +2617,7 @@ static	inline	const char	* GetNameOfClass(
 {
 	return	GetNameOfClass(
 					owlClass,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -2664,7 +2664,7 @@ static	inline	const wchar_t	* GetNameOfClassW(
 {
 	return	GetNameOfClassW(
 					owlClass,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -2720,7 +2720,7 @@ static	inline	const char	* GetNameOfClassEx(
 	return	GetNameOfClassEx(
 					model,
 					owlClass,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -2776,7 +2776,7 @@ static	inline	const wchar_t	* GetNameOfClassWEx(
 	return	GetNameOfClassWEx(
 					model,
 					owlClass,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -2822,8 +2822,8 @@ static	inline	RdfProperty	GetClassPropertyByIterator(
 	return	GetClassPropertyByIterator(
 					owlClass,
 					rdfProperty,
-					0      ,							//	minCard
-					0      								//	maxCard
+					nullptr,							//	minCard
+					nullptr								//	maxCard
 				);
 }
 
@@ -2876,8 +2876,8 @@ static	inline	RdfProperty	GetClassPropertyByIteratorEx(
 					model,
 					owlClass,
 					rdfProperty,
-					0      ,							//	minCard
-					0      								//	maxCard
+					nullptr,							//	minCard
+					nullptr								//	maxCard
 				);
 }
 
@@ -3148,7 +3148,7 @@ static	inline	RdfProperty	CreateProperty(
 	return	CreateProperty(
 					model,
 					rdfPropertyType,
-					(const char*) 0      				//	name
+					(const char*) nullptr				//	name
 				);
 }
 
@@ -3161,7 +3161,7 @@ static	inline	RdfProperty	CreateProperty(
 	return	CreateProperty(
 					model,
 					0,									//	rdfPropertyType
-					(const char*) 0      				//	name
+					(const char*) nullptr				//	name
 				);
 }
 
@@ -3222,7 +3222,7 @@ static	inline	RdfProperty	CreatePropertyW(
 	return	CreatePropertyW(
 					model,
 					rdfPropertyType,
-					(const wchar_t*) 0      			//	name
+					(const wchar_t*) nullptr			//	name
 				);
 }
 
@@ -3235,7 +3235,7 @@ static	inline	RdfProperty	CreatePropertyW(
 	return	CreatePropertyW(
 					model,
 					0,									//	rdfPropertyType
-					(const wchar_t*) 0      			//	name
+					(const wchar_t*) nullptr			//	name
 				);
 }
 
@@ -3652,7 +3652,7 @@ static	inline	const char	* GetNameOfProperty(
 {
 	return	GetNameOfProperty(
 					rdfProperty,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -3699,7 +3699,7 @@ static	inline	const wchar_t	* GetNameOfPropertyW(
 {
 	return	GetNameOfPropertyW(
 					rdfProperty,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -3752,7 +3752,7 @@ static	inline	const char	* GetNameOfPropertyEx(
 	return	GetNameOfPropertyEx(
 					model,
 					rdfProperty,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -3805,7 +3805,7 @@ static	inline	const wchar_t	* GetNameOfPropertyWEx(
 	return	GetNameOfPropertyWEx(
 					model,
 					rdfProperty,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -4030,7 +4030,7 @@ static	inline	OwlInstance	CreateInstance(
 									OwlClass				owlClass
 								)
 {
-	const char	* name = 0      ;
+	const char	* name = nullptr;
 	return	CreateInstance(
 					owlClass,
 					(const char*) name
@@ -4079,7 +4079,7 @@ static	inline	OwlInstance	CreateInstanceW(
 									OwlClass				owlClass
 								)
 {
-	const wchar_t	* name = 0      ;
+	const wchar_t	* name = nullptr;
 	return	CreateInstanceW(
 					owlClass,
 					(const wchar_t*) name
@@ -4133,7 +4133,7 @@ static	inline	OwlInstance	CreateInstanceEx(
 									OwlClass				owlClass
 								)
 {
-	const char	* name = 0      ;
+	const char	* name = nullptr;
 	return	CreateInstanceEx(
 					model,
 					owlClass,
@@ -4188,7 +4188,7 @@ static	inline	OwlInstance	CreateInstanceWEx(
 									OwlClass				owlClass
 								)
 {
-	const wchar_t	* name = 0      ;
+	const wchar_t	* name = nullptr;
 	return	CreateInstanceWEx(
 					model,
 					owlClass,
@@ -4641,7 +4641,7 @@ static	inline	const char	* GetNameOfInstance(
 {
 	return	GetNameOfInstance(
 					owlInstance,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -4688,7 +4688,7 @@ static	inline	const wchar_t	* GetNameOfInstanceW(
 {
 	return	GetNameOfInstanceW(
 					owlInstance,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -4741,7 +4741,7 @@ static	inline	const char	* GetNameOfInstanceEx(
 	return	GetNameOfInstanceEx(
 					model,
 					owlInstance,
-					(const char**) 0      				//	name
+					(const char**) nullptr				//	name
 				);
 }
 
@@ -4794,7 +4794,7 @@ static	inline	const wchar_t	* GetNameOfInstanceWEx(
 	return	GetNameOfInstanceWEx(
 					model,
 					owlInstance,
-					(const wchar_t**) 0      			//	name
+					(const wchar_t**) nullptr			//	name
 				);
 }
 
@@ -5216,7 +5216,7 @@ static	inline	OwlInstance	GetObjectProperty(
 									OwlObjectProperty		owlObjectProperty
 								)
 {
-	OwlInstance	* values = 0      ;
+	OwlInstance	* values = nullptr;
 	int64_t		card = 0;
 
 	GetObjectProperty(
@@ -5528,7 +5528,7 @@ static	inline	int64_t	CalculateInstance(
 					owlInstance,
 					vertexBufferSize,
 					indexBufferSize,
-					0      								//	transformationBufferSize
+					nullptr								//	transformationBufferSize
 				);
 }
 
@@ -5540,9 +5540,9 @@ static	inline	int64_t	CalculateInstance(
 {
 	return	CalculateInstance(
 					owlInstance,
-					0      ,							//	vertexBufferSize
-					0      ,							//	indexBufferSize
-					0      								//	transformationBufferSize
+					nullptr,							//	vertexBufferSize
+					nullptr,							//	indexBufferSize
+					nullptr								//	transformationBufferSize
 				);
 }
 
@@ -5789,10 +5789,10 @@ static	inline	ConceptualFace	GetConceptualFace(
 					noIndicesLines,
 					startIndexPoints,
 					noIndicesPoints,
-					0      ,		//	startIndexFacePolygons
-					0      ,		//	noIndicesFacePolygons
-					0      ,		//	startIndexConceptualFacePolygons
-					0      			//	noIndicesConceptualFacePolygons
+					nullptr,		//	startIndexFacePolygons
+					nullptr,		//	noIndicesFacePolygons
+					nullptr,		//	startIndexConceptualFacePolygons
+					nullptr			//	noIndicesConceptualFacePolygons
 				);
 }
 
@@ -5806,12 +5806,12 @@ static	inline	ConceptualFace	GetConceptualFace(
 	return	GetConceptualFace(
 					owlInstance,
 					index,
-					0      ,		//	startIndexTriangles
-					0      ,		//	noIndicesTriangles
-					0      ,		//	startIndexLines
-					0      ,		//	noIndicesLines
-					0      ,		//	startIndexPoints
-					0      			//	noIndicesPoints
+					nullptr,		//	startIndexTriangles
+					nullptr,		//	noIndicesTriangles
+					nullptr,		//	startIndexLines
+					nullptr,		//	noIndicesLines
+					nullptr,		//	startIndexPoints
+					nullptr			//	noIndicesPoints
 				);
 }
 
@@ -6571,7 +6571,7 @@ static	inline	bool	IsDuplicate(
 	return	IsDuplicate(
 					originalOwlInstance,
 					duplicateOwlInstance,
-					0      ,							//	duplicateMatrix
+					nullptr,							//	duplicateMatrix
 					0.,									//	absoluteEpsilon
 					0.,									//	relativeEpsilon
 					false								//	checkMaterial
@@ -6646,8 +6646,8 @@ static	inline	double	GetArea(
 								OwlInstance				owlInstance
 							)
 {
-	const void	* vertexBuffer = 0      ,
-				* indexBuffer = 0      ;
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
 	return	GetArea(
 					owlInstance,
 					vertexBuffer,
@@ -6702,8 +6702,8 @@ static	inline	double	GetVolume(
 								OwlInstance				owlInstance
 							)
 {
-	const void	* vertexBuffer = 0      ,
-				* indexBuffer = 0      ;
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
 	return	GetVolume(
 					owlInstance,
 					vertexBuffer,
@@ -6761,8 +6761,8 @@ static	inline	void	GetCenter(
 								double					* center
 							)
 {
-	const void	* vertexBuffer = 0      ,
-				* indexBuffer = 0      ;
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
 	GetCenter(
 			owlInstance,
 			vertexBuffer,
@@ -6803,8 +6803,8 @@ static	inline	double	GetCentroid(
 								double					* centroid
 							)
 {
-	const void	* vertexBuffer = 0      ,
-				* indexBuffer = 0      ;
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
 	return	GetCentroid(
 					owlInstance,
 					vertexBuffer,
@@ -6856,8 +6856,8 @@ static	inline	double	GetConceptualFaceArea(
 								ConceptualFace			conceptualFace
 							)
 {
-	const void	* vertexBuffer = 0      ,
-				* indexBuffer = 0      ;
+	const void	* vertexBuffer = nullptr,
+				* indexBuffer = nullptr;
 	return	GetConceptualFaceArea(
 					conceptualFace,
 					vertexBuffer,
@@ -6928,7 +6928,7 @@ static	inline	bool	GetBoundingBox(
 {
 	return	GetBoundingBox(
 					owlInstance,
-					0      ,							//	transformationMatrix
+					nullptr,							//	transformationMatrix
 					startVector,
 					endVector
 				);
@@ -6992,8 +6992,8 @@ static	inline	double	GetDistance(
 	return	GetDistance(
 					firstOwlInstance,
 					secondOwlInstance,
-					0      ,							//	pointFirstInstance
-					0      ,							//	pointSecondInstance
+					nullptr,							//	pointFirstInstance
+					nullptr,							//	pointSecondInstance
 					true								//	allowCalculateInstance
 				);
 }
@@ -7030,7 +7030,7 @@ static	inline	uint32_t	GetColorOfComponent(
 	double		rgbwValues[4] = { 0., 0., 0., 0. };
 
 	for (size_t i = 0; i < 4; i++) {
-		double	* values = 0      ;
+		double	* values = nullptr;
 		int64_t	card = 0;
 		GetDatatypeProperty(
 				owlInstanceColorComponent,
@@ -7104,7 +7104,7 @@ static	inline	void	GetColor(
 
 	for (size_t i = 0; i < 4; i++) {
 		if (componentColors[i]) {
-			OwlInstance	* values = 0      ;
+			OwlInstance	* values = nullptr;
 			int64_t		card = 0;
 			GetObjectProperty(
 					owlInstanceColor,
@@ -7137,7 +7137,7 @@ static	inline	void	SetColor(
 	assert(IsInstanceOfClass(owlInstanceColor, "Color"));
 
 	{
-		OwlInstance	* values = 0      ;
+		OwlInstance	* values = nullptr;
 		int64_t		card = 0;
 		GetObjectProperty(
 				owlInstanceColor,
@@ -7163,7 +7163,7 @@ static	inline	void	SetColor(
 	}
 
 	{
-		OwlInstance	* values = 0      ;
+		OwlInstance	* values = nullptr;
 		int64_t		card = 0;
 		GetObjectProperty(
 				owlInstanceColor,
@@ -7189,7 +7189,7 @@ static	inline	void	SetColor(
 	}
 
 	{
-		OwlInstance	* values = 0      ;
+		OwlInstance	* values = nullptr;
 		int64_t		card = 0;
 		GetObjectProperty(
 				owlInstanceColor,
@@ -7215,7 +7215,7 @@ static	inline	void	SetColor(
 	}
 
 	{
-		OwlInstance	* values = 0      ;
+		OwlInstance	* values = nullptr;
 		int64_t		card = 0;
 		GetObjectProperty(
 				owlInstanceColor,
@@ -7253,7 +7253,7 @@ static	inline	void	GetMaterialColor(
 {
 	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
 
-	OwlInstance	* values = 0      ;
+	OwlInstance	* values = nullptr;
 	int64_t		card = 0;
 
 	GetObjectProperty(
@@ -7300,7 +7300,7 @@ static	inline	void	SetMaterialColor(
 {
 	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
 
-	int64_t	* values = 0      , card = 0;
+	int64_t	* values = nullptr, card = 0;
 	GetObjectProperty(
 			owlInstanceMaterial,
 			GetPropertyByName(
@@ -7337,9 +7337,9 @@ static	inline	uint32_t	GetMaterialColorAmbient(
 	GetMaterialColor(
 			owlInstanceMaterial,
 			&ambient,
-			0      ,							//	diffuse
-			0      ,							//	emissive
-			0      								//	specular
+			nullptr,							//	diffuse
+			nullptr,							//	emissive
+			nullptr								//	specular
 		);
 	return	ambient;
 }
@@ -7353,10 +7353,10 @@ static	inline	uint32_t	GetMaterialColorDiffuse(
 	uint32_t	diffuse = 0;
 	GetMaterialColor(
 			owlInstanceMaterial,
-			0      ,							//	ambient
+			nullptr,							//	ambient
 			&diffuse,
-			0      ,							//	emissive
-			0      								//	specular
+			nullptr,							//	emissive
+			nullptr								//	specular
 		);
 	return	diffuse;
 }
@@ -7370,10 +7370,10 @@ static	inline	uint32_t	GetMaterialColorEmissive(
 	uint32_t	emissive = 0;
 	GetMaterialColor(
 			owlInstanceMaterial,
-			0      ,							//	ambient
-			0      ,							//	diffuse
+			nullptr,							//	ambient
+			nullptr,							//	diffuse
 			&emissive,
-			0      								//	specular
+			nullptr								//	specular
 		);
 	return	emissive;
 }
@@ -7387,9 +7387,9 @@ static	inline	uint32_t	GetMaterialColorSpecular(
 	uint32_t	specular = 0;
 	GetMaterialColor(
 			owlInstanceMaterial,
-			0      ,							//	ambient
-			0      ,							//	diffuse
-			0      ,							//	emissive
+			nullptr,							//	ambient
+			nullptr,							//	diffuse
+			nullptr,							//	emissive
 			&specular
 		);
 	return	specular;
@@ -7447,9 +7447,9 @@ static	inline	uint32_t	GetVertexColorAmbient(
 			vertexIndex,
 			setting,
 			&ambient,
-			0      ,							//	diffuse
-			0      ,							//	emissive
-			0      								//	specular
+			nullptr,							//	diffuse
+			nullptr,							//	emissive
+			nullptr								//	specular
 		);
 	return	ambient;
 }
@@ -7469,10 +7469,10 @@ static	inline	uint32_t	GetVertexColorDiffuse(
 			vertexBuffer,
 			vertexIndex,
 			setting,
-			0      ,							//	ambient
+			nullptr,							//	ambient
 			&diffuse,
-			0      ,							//	emissive
-			0      								//	specular
+			nullptr,							//	emissive
+			nullptr								//	specular
 		);
 	return	diffuse;
 }
@@ -7492,10 +7492,10 @@ static	inline	uint32_t	GetVertexColorEmissive(
 			vertexBuffer,
 			vertexIndex,
 			setting,
-			0      ,							//	ambient
-			0      ,							//	diffuse
+			nullptr,							//	ambient
+			nullptr,							//	diffuse
 			&emissive,
-			0      								//	specular
+			nullptr								//	specular
 		);
 	return	emissive;
 }
@@ -7515,9 +7515,9 @@ static	inline	uint32_t	GetVertexColorSpecular(
 			vertexBuffer,
 			vertexIndex,
 			setting,
-			0      ,							//	ambient
-			0      ,							//	diffuse
-			0      ,							//	emissive
+			nullptr,							//	ambient
+			nullptr,							//	diffuse
+			nullptr,							//	emissive
 			&specular
 		);
 	return	specular;
@@ -7591,10 +7591,10 @@ static	inline	ConceptualFace	GetConceptualFaceEx(
 					noIndicesLines,
 					startIndexPoints,
 					noIndicesPoints,
-					0      ,							//	startIndexFacePolygons
-					0      ,							//	noIndicesFacePolygons
-					0      ,							//	startIndexConceptualFacePolygons
-					0      								//	noIndicesConceptualFacePolygons
+					nullptr,							//	startIndexFacePolygons
+					nullptr,							//	noIndicesFacePolygons
+					nullptr,							//	startIndexConceptualFacePolygons
+					nullptr								//	noIndicesConceptualFacePolygons
 				);
 }
 
@@ -7608,12 +7608,12 @@ static	inline	ConceptualFace	GetConceptualFaceEx(
 	return	GetConceptualFaceEx(
 					owlInstance,
 					index,
-					0      ,							//	startIndexTriangles
-					0      ,							//	noIndicesTriangles
-					0      ,							//	startIndexLines
-					0      ,							//	noIndicesLines
-					0      ,							//	startIndexPoints
-					0      								//	noIndicesPoints
+					nullptr,							//	startIndexTriangles
+					nullptr,							//	noIndicesTriangles
+					nullptr,							//	startIndexLines
+					nullptr,							//	noIndicesLines
+					nullptr,							//	startIndexPoints
+					nullptr								//	noIndicesPoints
 				);
 }
 
