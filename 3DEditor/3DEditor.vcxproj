@@ -255,6 +255,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
