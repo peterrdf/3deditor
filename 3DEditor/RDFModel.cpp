@@ -220,7 +220,7 @@ CRDFModel::~CRDFModel()
 		auto pTexture = GEOM::Texture::Create(m_iModel);
 		pTexture.set_scalingX(1.);
 		pTexture.set_scalingY(1.);
-		pTexture.set_name("texture.png");
+		pTexture.set_name("data\\texture.jpg");
 		vector<GEOM::Texture> vecTexures = { pTexture };
 
 		auto pMaterial = GEOM::Material::Create(m_iModel);
@@ -996,7 +996,7 @@ CTexture * CRDFModel::GetDefaultTexture()
 		assert(iLastSlash != -1);
 
 		strDefaultTexture = strDefaultTexture.Left(iLastSlash + 1);
-		strDefaultTexture += L"texture.jpg";
+		strDefaultTexture += L"data\\texture.jpg";
 
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
 
