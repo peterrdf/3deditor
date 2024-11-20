@@ -69,3 +69,12 @@
 /x64/Debug_stepengine/3DEditor.pdb
 /x64/Debug_stepengine/3DEditor.exe
 /x64/Release_stepengine/3DEditor.pdb
+/3DEditor/x64/Debug_ifcengine
+/3DEditor/x64/Release__ifcengine
+/3DEditor/x64/Release_ifcengine
+/Win32/Debug_ifcengine/3DEditor.pdb
+/Win32/Debug_ifcengine/3DEditor.exe
+/x64/Debug_ifcengine/3DEditor.pdb
+/x64/Debug_ifcengine/3DEditor.exe
+/x64/Release_ifcengine/3DEditor.pdb
+/Win32/Release_ifcengine/3DEditor.pdb
