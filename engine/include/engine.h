@@ -71,7 +71,7 @@ typedef		int64_t										ConceptualFace;
 
 //control vertex data
 #define		FORMAT_VERTEX_POINT							FLAGBIT(4)		//	Vertex contains 3D point info
-#define		FORMAT_VERTEX_NORMAL						FLAGBIT(5)		//	Vertex contains normat info
+#define		FORMAT_VERTEX_NORMAL						FLAGBIT(5)		//	Vertex contains normal info
 #define		FORMAT_VERTEX_TEXTURE_UV					FLAGBIT(6)		//	Vertex contains first 2D texture info
 #define		FORMAT_VERTEX_TEXTURE_TANGENT				FLAGBIT(28)		//	Vertex does contain tangent vector for first texture
 #define		FORMAT_VERTEX_TEXTURE_BINORMAL				FLAGBIT(29)		//	Vertex does contain binormal vector for first texture
@@ -90,7 +90,7 @@ typedef		int64_t										ConceptualFace;
 #define		FORMAT_EXPORT_FACE_POLYGONS					FLAGBIT(12)		//	Object face polygon lines (dense wireframe) are exported (requires FORMAT_FLAG_CONTAINS_TRIANGLES)
 #define		FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS		FLAGBIT(13)		//	Object conceptual face polygon lines (wireframe) are exported 
 #define		FORMAT_EXPORT_POLYGONS_AS_TUPLES			FLAGBIT(14)		//	Polygon lines (wireframe) exported as tuples (edges) - else as list (loop)
-#define		FORMAT_EXPORT_ADVANCED_NORMALS				FLAGBIT(15)		//	Normals are exported to be in line with the original semantic form description (orthogonal to conceprual face, could be non orthogonal to the planar face or triangle) - else all normals of triangles are transformed orthogonal to the palnar face or triangle they belong to
+#define		FORMAT_EXPORT_ADVANCED_NORMALS				FLAGBIT(15)		//	Normal's are exported to be in line with the original semantic form description (orthogonal to conceptual face, could be non orthogonal to the planar face or triangle) - else all normals of triangles are transformed orthogonal to the palnar face or triangle they belong to
 #define		FORMAT_EXPORT_DIRECTX						FLAGBIT(16)		//	Where possible DirectX compatibility is given to exported data. Unsets FORMAT_FLAG_OPENGL, FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
 #define		FORMAT_EXPORT_OPENGL						FLAGBIT(17)		//	Where possible OpenGL compatibility is given to exported data. Unsets FORMAT_FLAG_DIRECTX. Sets FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
 #define		FORMAT_EXPORT_DOUBLE_SIDED					FLAGBIT(18)		//	Every face has exactly one opposite face (normally both index and vertex array are doubled in size)
@@ -99,7 +99,7 @@ typedef		int64_t										ConceptualFace;
 #define		FORMAT_EXPORT_VERSION_0100					FLAGBIT(22)
 #define		FORMAT_EXPORT_VERSION_1000					FLAGBIT(23)
 
-#define GetVertexElementsCount(setting) GetVertexDataOffset(0, setting)	// Get number of elements in verctor data array with the format settings
+#define GetVertexElementsCount(setting) GetVertexDataOffset(0, setting)	// Get number of elements in vector data array with the format settings
 
 //
 //  Color pack/unpack
@@ -158,7 +158,7 @@ int64_t			DECL STDC	GetRevision(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -181,7 +181,7 @@ static	inline	int64_t	GetRevision(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -200,7 +200,7 @@ int64_t			DECL STDC	GetRevisionW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -223,7 +223,7 @@ static	inline	int64_t	GetRevisionW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -262,7 +262,7 @@ int64_t			DECL STDC	GetEnvironment(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -288,7 +288,7 @@ static	inline	int64_t	GetEnvironment(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -315,7 +315,7 @@ int64_t			DECL STDC	GetEnvironmentW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -341,7 +341,7 @@ static	inline	int64_t	GetEnvironmentW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -361,7 +361,7 @@ void			DECL STDC	SetAssertionFile(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -374,7 +374,7 @@ static	inline	void	SetAssertionFile(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -394,7 +394,7 @@ void			DECL STDC	SetAssertionFileW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -407,7 +407,7 @@ static	inline	void	SetAssertionFileW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -426,7 +426,7 @@ const char		DECL * STDC	GetAssertionFile(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -449,7 +449,7 @@ static	inline	const char	* GetAssertionFile(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -468,7 +468,7 @@ const wchar_t	DECL * STDC	GetAssertionFileW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -491,7 +491,7 @@ static	inline	const wchar_t	* GetAssertionFileW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -546,7 +546,7 @@ static	inline	const wchar_t	* GetAssertionFileW(
 //	Note: this setting is independent from the model, this call can also be called without a model defined.
 //
 //	The ascii value defines
-//		true [default]	8 bit serializatiom (size of char returned in bits)
+//		true [default]	8 bit serialization (size of char returned in bits)
 //		false			16/32 bit serialization (depending on the operating system, i.e. sizeof of wchar_t returned in number of bits)
 //	Note: this setting is model-dependent and requires a model present to have any effect.
 //
@@ -697,7 +697,7 @@ int64_t			DECL STDC	GetInstanceMetaInfo(
 //		0 - continuous curve / surface (i.e. degree 9)
 //		1 - the direction of the curve / surface is gradually changing (i.e. degree 1)
 //		2 - the change of direction of the curve / surface is gradually changing (i.e. degree 2)
-//	In return value of this function retuns the dimension of the found smoothness:
+//	In return value of this function returns the dimension of the found smoothness:
 //		0 - smoothness could not be defined
 //		1 - found the smoothness of a curve
 //		2 - found the smoothness of a surface
@@ -765,7 +765,7 @@ OwlModel		DECL STDC	GetModel(
 //		  by the hosting application.
 //	Note: internally there is no performance gain / loss. This is purely meant for situations
 //		  where the hosting application can benefit performance wise from having an ordered list.
-//	Note: use in combination with other libraries is not adviced, i.e. when combined with the
+//	Note: use in combination with other libraries is not advised, i.e. when combined with the
 //		  IFC generation from the IFC Engine component for example
 //
 void			DECL STDC	OrderedHandles(
@@ -798,7 +798,7 @@ void			DECL STDC	PeelArray(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -815,7 +815,7 @@ static	inline	void	PeelArray(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -828,7 +828,7 @@ static	inline	void	PeelArray(
 //				void					returns
 //
 //	This function allows to enable or disable several active consistency checks. Enabling the checks can 
-//	introduce performance effects; it is helpfull for and meant for debugging on client side.
+//	introduce performance effects; it is helpful for and meant for debugging on client side.
 //	If model is zero the consistency checks are set for all open and to be created models.
 //
 void			DECL STDC	SetInternalCheck(
@@ -846,7 +846,7 @@ void			DECL STDC	SetInternalCheck(
 //
 //	This function returns all current enabled active consistency checks given the mask the function is 
 //	called for.
-//	When leaving mask and settinbg zero it will return all bits that can be set.
+//	When leaving mask and setting zero it will return all bits that can be set.
 //
 uint64_t		DECL STDC	GetInternalCheck(
 									OwlModel				model,
@@ -878,7 +878,7 @@ int64_t			DECL STDC	GetInternalCheckIssueCnt(
 //	This function returns the oldest issues in the list of issues and reduces the list of issues with 1.
 //	The name and description represent the issue as ASCII string, if relevant the relating owlInstance
 //	will be returned through relatedOwlInstance.
-//	Namer, Description and relatedOwlInstance are optional.
+//	Name, Description and relatedOwlInstance are optional.
 //
 void			DECL STDC	GetInternalCheckIssue(
 									OwlModel				model,
@@ -889,7 +889,7 @@ void			DECL STDC	GetInternalCheckIssue(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -908,7 +908,7 @@ static	inline	void	GetInternalCheckIssue(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -924,7 +924,7 @@ static	inline	void	GetInternalCheckIssue(
 //	This function returns the oldest issues in the list of issues and reduces the list of issues with 1.
 //	The name and description represent the issue as Unicode string, if relevant the relating owlInstance
 //	will be returned through relatedOwlInstance.
-//	Namer, Description and relatedOwlInstance are optional.
+//	Name, Description and relatedOwlInstance are optional.
 //
 void			DECL STDC	GetInternalCheckIssueW(
 									OwlModel				model,
@@ -935,7 +935,7 @@ void			DECL STDC	GetInternalCheckIssueW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -954,7 +954,7 @@ static	inline	void	GetInternalCheckIssueW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1053,7 +1053,7 @@ int64_t			DECL STDC	GetExternalReferenceDataId(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1072,7 +1072,7 @@ static	inline	int64_t	GetExternalReferenceDataId(
 //  File IO / Stream / Copy API Calls
 //
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1103,7 +1103,7 @@ OwlModel		DECL STDC	OpenModel(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1116,7 +1116,7 @@ static	inline	OwlModel	OpenModel(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1136,7 +1136,7 @@ OwlModel		DECL STDC	OpenModelW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1149,7 +1149,7 @@ static	inline	OwlModel	OpenModelW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1185,7 +1185,7 @@ OwlModel		DECL STDC	OpenModelA(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1199,7 +1199,7 @@ static	inline	OwlModel	OpenModelA(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1223,7 +1223,7 @@ OwlInstance		DECL STDC	ImportModel(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1238,7 +1238,7 @@ static	inline	OwlInstance	ImportModel(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1262,7 +1262,7 @@ OwlInstance		DECL STDC	ImportModelW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1277,7 +1277,7 @@ static	inline	OwlInstance	ImportModelW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1321,7 +1321,7 @@ OwlInstance		DECL STDC	ImportModelA(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1337,7 +1337,7 @@ static	inline	OwlInstance	ImportModelA(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1348,7 +1348,7 @@ static	inline	OwlInstance	ImportModelA(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies on location file name.
+//	This function saves the selected instance and its dependencies on location file name.
 //
 int64_t			DECL STDC	SaveInstanceTree(
 									OwlInstance				owlInstance,
@@ -1357,7 +1357,7 @@ int64_t			DECL STDC	SaveInstanceTree(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1372,7 +1372,7 @@ static	inline	int64_t	SaveInstanceTree(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1383,7 +1383,7 @@ static	inline	int64_t	SaveInstanceTree(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies on location file name.
+//	This function saves the selected instance and its dependencies on location file name.
 //
 int64_t			DECL STDC	SaveInstanceTreeW(
 									OwlInstance				owlInstance,
@@ -1392,7 +1392,7 @@ int64_t			DECL STDC	SaveInstanceTreeW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1407,7 +1407,7 @@ static	inline	int64_t	SaveInstanceTreeW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1419,7 +1419,7 @@ static	inline	int64_t	SaveInstanceTreeW(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies in a stream.
+//	This function saves the selected instance and its dependencies in a stream.
 //
 int64_t			DECL STDC	SaveInstanceTreeS(
 									OwlInstance				owlInstance,
@@ -1435,7 +1435,7 @@ int64_t			DECL STDC	SaveInstanceTreeS(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies in an array.
+//	This function saves the selected instance and its dependencies in an array.
 //
 int64_t			DECL STDC	SaveInstanceTreeA(
 									OwlInstance				owlInstance,
@@ -1451,7 +1451,7 @@ int64_t			DECL STDC	SaveInstanceTreeA(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies on location file name.
+//	This function saves the selected instance and its dependencies on location file name.
 //
 int64_t			DECL STDC	SaveInstanceNetwork(
 									OwlInstance				owlInstance,
@@ -1461,7 +1461,7 @@ int64_t			DECL STDC	SaveInstanceNetwork(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1478,7 +1478,7 @@ static	inline	int64_t	SaveInstanceNetwork(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1490,7 +1490,7 @@ static	inline	int64_t	SaveInstanceNetwork(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies on location file name.
+//	This function saves the selected instance and its dependencies on location file name.
 //
 int64_t			DECL STDC	SaveInstanceNetworkW(
 									OwlInstance				owlInstance,
@@ -1500,7 +1500,7 @@ int64_t			DECL STDC	SaveInstanceNetworkW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1517,7 +1517,7 @@ static	inline	int64_t	SaveInstanceNetworkW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1530,7 +1530,7 @@ static	inline	int64_t	SaveInstanceNetworkW(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies in a stream.
+//	This function saves the selected instance and its dependencies in a stream.
 //
 int64_t			DECL STDC	SaveInstanceNetworkS(
 									OwlInstance				owlInstance,
@@ -1548,7 +1548,7 @@ int64_t			DECL STDC	SaveInstanceNetworkS(
 //
 //				int64_t					returns								OUT
 //
-//	This function saves the selected instance and its dependancies in an array.
+//	This function saves the selected instance and its dependencies in an array.
 //
 int64_t			DECL STDC	SaveInstanceNetworkA(
 									OwlInstance				owlInstance,
@@ -1573,7 +1573,7 @@ int64_t			DECL STDC	SaveModel(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1588,7 +1588,7 @@ static	inline	int64_t	SaveModel(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1608,7 +1608,7 @@ int64_t			DECL STDC	SaveModelW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1623,7 +1623,7 @@ static	inline	int64_t	SaveModelW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1718,7 +1718,7 @@ void			DECL STDC	SetOverrideFileIO(
 //	Available formats
 //		RDF
 //		TTL
-//		BIN/L - readible but large BIN format
+//		BIN/L - readable but large BIN format
 //		BIN/S - Optimized Binary, only running within given revision 
 //		BIN/X - Optimized Binary, running in all revisions supporting BIN/X
 //
@@ -1791,6 +1791,254 @@ OwlInstance		DECL STDC	CopyInstanceNetwork(
 									bool					includeInverseRelations,
 									OwlModel				targetModel
 								);
+
+//
+//		EncodeBase64                                            (http://rdf.bg/gkdoc/CP64/EncodeBase64.html)
+//				char					* output							IN / OUT
+//				const unsigned char		* input								IN
+//				int64_t					size								IN
+//				bool					terminator							IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to encode any data input array into a BASE64 string.
+//
+//	The output string has to be allocated by the host. The return value defines the length of the string size in bytes.
+//
+//	Terminator adds a 0 element to the end of the BASE64 generated string, it will NOT increase the length.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	EncodeBase64(
+									char					* output,
+									const unsigned char		* input,
+									int64_t					size,
+									bool					terminator
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	int64_t	EncodeBase64(
+								char					* output,
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	return	EncodeBase64(
+					output,
+					input,
+					size,
+					false								//	terminator
+				);
+}
+
+//
+//
+static	inline	char	* EncodeBase64(
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
+
+	EncodeBase64(
+			output,
+			input,
+			size,
+			true								//	terminator
+		);
+
+	return  output;
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		EncodeBase64W                                           (http://rdf.bg/gkdoc/CP64/EncodeBase64W.html)
+//				wchar_t					* output							IN / OUT
+//				const unsigned char		* input								IN
+//				int64_t					size								IN
+//				bool					terminator							IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to encode any data input array into a BASE64 string.
+//
+//	The output string has to be allocated by the host. The return value defines the length of the string size in bytes.
+//
+//	Terminator adds a 0 element to the end of the BASE64 generated string, it will NOT increase the length.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	EncodeBase64W(
+									wchar_t					* output,
+									const unsigned char		* input,
+									int64_t					size,
+									bool					terminator
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	int64_t	EncodeBase64W(
+								wchar_t					* output,
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	return	EncodeBase64W(
+					output,
+					input,
+					size,
+					false								//	terminator
+				);
+}
+
+//
+//
+static	inline	wchar_t	* EncodeBase64W(
+								const unsigned char		* input,
+								int64_t					size
+							)
+{
+	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
+
+	EncodeBase64W(
+			output,
+			input,
+			size,
+			true								//	terminator
+		);
+
+	return  output;
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		DecodeBase64                                            (http://rdf.bg/gkdoc/CP64/DecodeBase64.html)
+//				unsigned char			* output							IN / OUT
+//				const char				* input								IN
+//				int64_t					size								IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to decode a BASE64 string into any data output array.
+//
+//	The BASE64 string is measured by the (non-zero) size given or by the terminator.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	DecodeBase64(
+									unsigned char			* output,
+									const char				* input,
+									int64_t					size
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	int64_t	DecodeBase64(
+								unsigned char			* output,
+								char					* input,
+								int64_t					size
+							)
+{
+	return	DecodeBase64(
+					output,
+					(const char*) input,
+					size
+				);
+}
+
+//
+//
+static	inline	int64_t	DecodeBase64(
+								unsigned char			* output,
+								const char				* input
+							)
+{
+	return	DecodeBase64(
+					output,
+					input,
+					0									//	size
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		DecodeBase64W                                           (http://rdf.bg/gkdoc/CP64/DecodeBase64W.html)
+//				unsigned char			* output							IN / OUT
+//				const wchar_t			* input								IN
+//				int64_t					size								IN
+//
+//				int64_t					returns								OUT
+//
+//	Function to decode a BASE64 string into any data output array.
+//
+//	The BASE64 string is measured by the (non-zero) size given or by the terminator.
+//
+//	If output is nullptr the length will be calculated but the string itself will not be generated.
+//
+int64_t			DECL STDC	DecodeBase64W(
+									unsigned char			* output,
+									const wchar_t			* input,
+									int64_t					size
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	int64_t	DecodeBase64W(
+								unsigned char			* output,
+								wchar_t					* input,
+								int64_t					size
+							)
+{
+	return	DecodeBase64W(
+					output,
+					(const wchar_t*) input,
+					size
+				);
+}
+
+//
+//
+static	inline	int64_t	DecodeBase64W(
+								unsigned char			* output,
+								const wchar_t			* input
+							)
+{
+	return	DecodeBase64W(
+					output,
+					input,
+					0									//	size
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
 
 //
 //		CopyModel                                               (http://rdf.bg/gkdoc/CP64/CopyModel.html)
@@ -1866,7 +2114,7 @@ OwlModel		DECL STDC	IsModel(
 //		-	when the name is already used for an instance or property;
 //		-	if the model input is zero or not a model handle.
 //
-//	Giving the class a name is optional, if a name is not given it will recieve an automatically generated name,
+//	Giving the class a name is optional, if a name is not given it will receive an automatically generated name,
 //	it's automatically generated name can change between sessions.
 //
 OwlClass		DECL STDC	CreateClass(
@@ -1876,7 +2124,7 @@ OwlClass		DECL STDC	CreateClass(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1903,7 +2151,7 @@ static	inline	OwlClass	CreateClass(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1921,7 +2169,7 @@ static	inline	OwlClass	CreateClass(
 //		-	when the name is already used for an instance or property;
 //		-	if the model input is zero or not a model handle.
 //
-//	Giving the class a name is optional, if a name is not given it will recieve an automatically generated name,
+//	Giving the class a name is optional, if a name is not given it will receive an automatically generated name,
 //	it's automatically generated name can change between sessions.
 //
 OwlClass		DECL STDC	CreateClassW(
@@ -1931,7 +2179,7 @@ OwlClass		DECL STDC	CreateClassW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1958,7 +2206,7 @@ static	inline	OwlClass	CreateClassW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -1979,7 +2227,7 @@ OwlClass		DECL STDC	GetClassByName(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -1994,7 +2242,7 @@ static	inline	OwlClass	GetClassByName(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2015,7 +2263,7 @@ OwlClass		DECL STDC	GetClassByNameW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2030,7 +2278,7 @@ static	inline	OwlClass	GetClassByNameW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2058,7 +2306,7 @@ OwlClass		DECL STDC	GetClassesByIterator(
 //
 //				int64_t					returns								OUT
 //
-//	Defines (set/unset) the parent class of a given class. Multiple-inheritence is supported and behavior
+//	Defines (set/unset) the parent class of a given class. Multiple-inheritance is supported and behavior
 //	of parent classes is also inherited as well as cardinality restrictions on datatype properties and
 //	object properties (relations).
 //
@@ -2067,7 +2315,7 @@ OwlClass		DECL STDC	GetClassesByIterator(
 //	Returns the same value as IsClassAncestor after the call.
 //
 //	When unset: it removes parentOwlClass from immediate parents and returns 1, 
-//	or retunrs 0 if parentOwlClass is not immediate parent
+//	or returns 0 if parentOwlClass is not immediate parent
 //
 int64_t			DECL STDC	SetClassParent(
 									OwlClass				owlClass,
@@ -2084,7 +2332,7 @@ int64_t			DECL STDC	SetClassParent(
 //
 //				int64_t					returns								OUT
 //
-//	Defines (set/unset) the parent class of a given class. Multiple-inheritence is supported and behavior
+//	Defines (set/unset) the parent class of a given class. Multiple-inheritance is supported and behavior
 //	of parent classes is also inherited as well as cardinality restrictions on datatype properties and
 //	object properties (relations).
 //
@@ -2093,7 +2341,7 @@ int64_t			DECL STDC	SetClassParent(
 //	Returns the same value as IsClassAncestor after the call.
 //
 //	When unset: it removes parentOwlClass from immediate parents and returns 1, 
-//	or retunrs 0 if parentOwlClass is not immediate parent
+//	or returns 0 if parentOwlClass is not immediate parent
 //
 //	This call has the same behavior as SetClassParent, however needs to be
 //	used in case classes are exchanged as a successive series of integers.
@@ -2162,7 +2410,7 @@ int64_t			DECL STDC	SetNameOfClass(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2177,7 +2425,7 @@ static	inline	int64_t	SetNameOfClass(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2207,7 +2455,7 @@ int64_t			DECL STDC	SetNameOfClassW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2222,7 +2470,7 @@ static	inline	int64_t	SetNameOfClassW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2257,7 +2505,7 @@ int64_t			DECL STDC	SetNameOfClassEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2274,7 +2522,7 @@ static	inline	int64_t	SetNameOfClassEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2309,7 +2557,7 @@ int64_t			DECL STDC	SetNameOfClassWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2326,7 +2574,7 @@ static	inline	int64_t	SetNameOfClassWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2346,7 +2594,7 @@ const char		DECL * STDC	GetNameOfClass(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2373,7 +2621,7 @@ static	inline	const char	* GetNameOfClass(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2393,7 +2641,7 @@ const wchar_t	DECL * STDC	GetNameOfClassW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2420,7 +2668,7 @@ static	inline	const wchar_t	* GetNameOfClassW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2445,7 +2693,7 @@ const char		DECL * STDC	GetNameOfClassEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2476,7 +2724,7 @@ static	inline	const char	* GetNameOfClassEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2501,7 +2749,7 @@ const wchar_t	DECL * STDC	GetNameOfClassWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2532,7 +2780,7 @@ static	inline	const wchar_t	* GetNameOfClassWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2547,7 +2795,7 @@ static	inline	const wchar_t	* GetNameOfClassWEx(
 //
 //	Returns a handle to a property.
 //	If input property is zero, the handle will point to the first property having cardinality restriction to the class.
-//	else it will point to next propety with known restriction
+//	else it will point to next property with known restriction
 //	If all properties are past (or no relevant properties are found), the function will return 0.
 //	minCard and maxCard will contain restrictions for returned property
 //
@@ -2562,7 +2810,7 @@ RdfProperty		DECL STDC	GetClassPropertyByIterator(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2579,7 +2827,7 @@ static	inline	RdfProperty	GetClassPropertyByIterator(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2595,7 +2843,7 @@ static	inline	RdfProperty	GetClassPropertyByIterator(
 //
 //	Returns a handle to a property.
 //	If input property is zero, the handle will point to the first property having cardinality restriction to the class.
-//	else it will point to next propety with known restriction
+//	else it will point to next property with known restriction
 //	If all properties are past (or no relevant properties are found), the function will return 0.
 //	minCard and maxCard will contain restrictions for returned property
 //
@@ -2614,7 +2862,7 @@ RdfProperty		DECL STDC	GetClassPropertyByIteratorEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2633,7 +2881,7 @@ static	inline	RdfProperty	GetClassPropertyByIteratorEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2862,7 +3110,7 @@ OwlClass		DECL STDC	IsClass(
 //		-	when the name is already used for a class or instance;
 //		-	if the model input is zero or not a model handle.
 //
-//	Giving the property a name is optional, if a name is not given it will recieve an automatically generated name,
+//	Giving the property a name is optional, if a name is not given it will receive an automatically generated name,
 //	it's automatically generated name can change between sessions.
 //
 RdfProperty		DECL STDC	CreateProperty(
@@ -2873,7 +3121,7 @@ RdfProperty		DECL STDC	CreateProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2917,7 +3165,7 @@ static	inline	RdfProperty	CreateProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -2936,7 +3184,7 @@ static	inline	RdfProperty	CreateProperty(
 //		-	when the name is already used for a class or instance;
 //		-	if the model input is zero or not a model handle.
 //
-//	Giving the property a name is optional, if a name is not given it will recieve an automatically generated name,
+//	Giving the property a name is optional, if a name is not given it will receive an automatically generated name,
 //	it's automatically generated name can change between sessions.
 //
 RdfProperty		DECL STDC	CreatePropertyW(
@@ -2947,7 +3195,7 @@ RdfProperty		DECL STDC	CreatePropertyW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -2991,7 +3239,7 @@ static	inline	RdfProperty	CreatePropertyW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3012,7 +3260,7 @@ RdfProperty		DECL STDC	GetPropertyByName(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3027,7 +3275,7 @@ static	inline	RdfProperty	GetPropertyByName(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3048,7 +3296,7 @@ RdfProperty		DECL STDC	GetPropertyByNameW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3063,7 +3311,7 @@ static	inline	RdfProperty	GetPropertyByNameW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3092,7 +3340,7 @@ RdfProperty		DECL STDC	GetPropertiesByIterator(
 //				void					returns
 //
 //	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
-//	be an objectp[roperty, i.e. relation.]
+//	be an object[property, i.e. relation.]
 //	If rdfProperty is not an object property this call has no effect.
 //
 void			DECL STDC	SetPropertyRangeRestriction(
@@ -3111,7 +3359,7 @@ void			DECL STDC	SetPropertyRangeRestriction(
 //				void					returns
 //
 //	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
-//	be an objectp[roperty, i.e. relation.]
+//	be an object[property, i.e. relation.]
 //	If rdfProperty is not an object property this call has no effect.
 //
 void			DECL STDC	SetPropertyRangeRestrictionEx(
@@ -3197,7 +3445,7 @@ int64_t			DECL STDC	SetNameOfProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3212,7 +3460,7 @@ static	inline	int64_t	SetNameOfProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3242,7 +3490,7 @@ int64_t			DECL STDC	SetNameOfPropertyW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3257,7 +3505,7 @@ static	inline	int64_t	SetNameOfPropertyW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3292,7 +3540,7 @@ int64_t			DECL STDC	SetNameOfPropertyEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3309,7 +3557,7 @@ static	inline	int64_t	SetNameOfPropertyEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3344,7 +3592,7 @@ int64_t			DECL STDC	SetNameOfPropertyWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3361,7 +3609,7 @@ static	inline	int64_t	SetNameOfPropertyWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3381,7 +3629,7 @@ const char		DECL * STDC	GetNameOfProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3408,7 +3656,7 @@ static	inline	const char	* GetNameOfProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3428,7 +3676,7 @@ const wchar_t	DECL * STDC	GetNameOfPropertyW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3455,7 +3703,7 @@ static	inline	const wchar_t	* GetNameOfPropertyW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3477,7 +3725,7 @@ const char		DECL * STDC	GetNameOfPropertyEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3508,7 +3756,7 @@ static	inline	const char	* GetNameOfPropertyEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3530,7 +3778,7 @@ const wchar_t	DECL * STDC	GetNameOfPropertyWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3561,7 +3809,7 @@ static	inline	const wchar_t	* GetNameOfPropertyWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3761,7 +4009,7 @@ OwlInstance		DECL STDC	CreateInstance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3789,7 +4037,7 @@ static	inline	OwlInstance	CreateInstance(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3810,7 +4058,7 @@ OwlInstance		DECL STDC	CreateInstanceW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3838,7 +4086,7 @@ static	inline	OwlInstance	CreateInstanceW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3861,7 +4109,7 @@ OwlInstance		DECL STDC	CreateInstanceEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3893,7 +4141,7 @@ static	inline	OwlInstance	CreateInstanceEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -3916,7 +4164,7 @@ OwlInstance		DECL STDC	CreateInstanceWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -3948,7 +4196,7 @@ static	inline	OwlInstance	CreateInstanceWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4028,7 +4276,7 @@ OwlClass		DECL STDC	GetInstanceClassByIteratorEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4068,7 +4316,7 @@ static	inline	void	GetInstancePropertyCardinalityRestriction(
 	}
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4186,7 +4434,7 @@ int64_t			DECL STDC	SetNameOfInstance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4201,7 +4449,7 @@ static	inline	int64_t	SetNameOfInstance(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4231,7 +4479,7 @@ int64_t			DECL STDC	SetNameOfInstanceW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4246,7 +4494,7 @@ static	inline	int64_t	SetNameOfInstanceW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4281,7 +4529,7 @@ int64_t			DECL STDC	SetNameOfInstanceEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4298,7 +4546,7 @@ static	inline	int64_t	SetNameOfInstanceEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4333,7 +4581,7 @@ int64_t			DECL STDC	SetNameOfInstanceWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4350,7 +4598,7 @@ static	inline	int64_t	SetNameOfInstanceWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4370,7 +4618,7 @@ const char		DECL * STDC	GetNameOfInstance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4397,7 +4645,7 @@ static	inline	const char	* GetNameOfInstance(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4417,7 +4665,7 @@ const wchar_t	DECL * STDC	GetNameOfInstanceW(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4444,7 +4692,7 @@ static	inline	const wchar_t	* GetNameOfInstanceW(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4466,7 +4714,7 @@ const char		DECL * STDC	GetNameOfInstanceEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4497,7 +4745,7 @@ static	inline	const char	* GetNameOfInstanceEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4519,7 +4767,7 @@ const wchar_t	DECL * STDC	GetNameOfInstanceWEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4550,7 +4798,7 @@ static	inline	const wchar_t	* GetNameOfInstanceWEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4567,7 +4815,7 @@ static	inline	const wchar_t	* GetNameOfInstanceWEx(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
-//	or doubles, this list has a length as givin in the values card. The actual used type
+//	or doubles, this list has a length as given in the values card. The actual used type
 //	is given by the definition of the dataTypeProperty.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
@@ -4583,7 +4831,7 @@ int64_t			DECL STDC	SetDatatypeProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4693,7 +4941,7 @@ static	inline	int64_t	SetDatatypeProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4711,7 +4959,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
-//	or doubles, this list has a length as givin in the values card. The actual used type
+//	or doubles, this list has a length as given in the values card. The actual used type
 //	is given by the definition of the dataTypeProperty.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
@@ -4742,7 +4990,7 @@ int64_t			DECL STDC	SetDatatypePropertyEx(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
-//	or doubles, this list has a length as givin in the value card. The actual used type
+//	or doubles, this list has a length as given in the value card. The actual used type
 //	is given by the definition of the dataTypeProperty.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
@@ -4755,7 +5003,7 @@ int64_t			DECL STDC	GetDatatypeProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4774,7 +5022,7 @@ static	inline	int64_t	GetDatatypeProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4792,7 +5040,7 @@ static	inline	int64_t	GetDatatypeProperty(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
-//	or doubles, this list has a length as givin in the value card. The actual used type
+//	or doubles, this list has a length as given in the value card. The actual used type
 //	is given by the definition of the dataTypeProperty.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
@@ -4809,7 +5057,7 @@ int64_t			DECL STDC	GetDatatypePropertyEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4830,7 +5078,7 @@ static	inline	int64_t	GetDatatypePropertyEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4847,7 +5095,7 @@ static	inline	int64_t	GetDatatypePropertyEx(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
-//	has a length as givin in the values card.
+//	has a length as given in the values card.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 //	Note: the client application needs to make sure the cardinality of
@@ -4862,7 +5110,7 @@ int64_t			DECL STDC	SetObjectProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4882,7 +5130,7 @@ static	inline	int64_t	SetObjectProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -4900,7 +5148,7 @@ static	inline	int64_t	SetObjectProperty(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
-//	has a length as givin in the values card.
+//	has a length as given in the values card.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 //	This call has the same behavior as SetObjectProperty, however needs to be
@@ -4930,7 +5178,7 @@ int64_t			DECL STDC	SetObjectPropertyEx(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
-//	has a length as givin in the value card.
+//	has a length as given in the value card.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 int64_t			DECL STDC	GetObjectProperty(
@@ -4942,7 +5190,7 @@ int64_t			DECL STDC	GetObjectProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -4984,7 +5232,7 @@ static	inline	OwlInstance	GetObjectProperty(
 		return	0;
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5002,7 +5250,7 @@ static	inline	OwlInstance	GetObjectProperty(
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
-//	has a length as givin in the values card.
+//	has a length as given in the values card.
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 //	This call has the same behavior as GetObjectProperty, however needs to be
@@ -5018,7 +5266,7 @@ int64_t			DECL STDC	GetObjectPropertyEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5039,7 +5287,7 @@ static	inline	int64_t	GetObjectPropertyEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5050,7 +5298,7 @@ static	inline	int64_t	GetObjectPropertyEx(
 //				int64_t					returns								OUT
 //
 //	InstanceInContext structures give you more detailed information about
-//	individual parts of the geometry of a certain instance viualized.
+//	individual parts of the geometry of a certain instance visualized.
 //	It is allowed to have more then 1 InstanceInContext structures per instance.
 //	InstanceInContext structures are updated dynamically when the geometry
 //	structure is updated.
@@ -5065,7 +5313,7 @@ int64_t			DECL STDC	CreateInstanceInContextStructure(
 //
 //				void					returns
 //
-//	InstanceInContext structures are updated dynamically and therfore even while the cost
+//	InstanceInContext structures are updated dynamically and therefore even while the cost
 //	in performance and memory is limited it is advised to destroy structures as soon
 //	as they are obsolete.
 //
@@ -5167,7 +5415,7 @@ OwlInstance		DECL STDC	IsInstance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5237,7 +5485,7 @@ static	inline	bool	IsInstanceOfClassExact(
 //  Retrieve Geometry API Calls
 //
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5266,7 +5514,7 @@ int64_t			DECL STDC	CalculateInstance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5284,7 +5532,21 @@ static	inline	int64_t	CalculateInstance(
 				);
 }
 
-#ifdef __cplusplus
+//
+//
+static	inline	int64_t	CalculateInstance(
+								OwlInstance				owlInstance
+							)
+{
+	return	CalculateInstance(
+					owlInstance,
+					nullptr,							//	vertexBufferSize
+					nullptr,							//	indexBufferSize
+					nullptr								//	transformationBufferSize
+				);
+}
+
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5310,7 +5572,7 @@ int64_t			DECL STDC	UpdateInstance(
 //
 //				int64_t					returns								OUT
 //
-//	This function fills in values that are implicitely known but not given by the user. This function
+//	This function fills in values that are implicitly known but not given by the user. This function
 //	can also be used to identify default values of properties if not given.
 //
 int64_t			DECL STDC	InferenceInstance(
@@ -5503,7 +5765,7 @@ ConceptualFace	DECL STDC	GetConceptualFace(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5553,7 +5815,7 @@ static	inline	ConceptualFace	GetConceptualFace(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5844,7 +6106,7 @@ uint64_t		DECL STDC	SetFormat(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5859,7 +6121,7 @@ static	inline	uint64_t	SetFormat(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -5879,7 +6141,7 @@ uint64_t		DECL STDC	GetFormat(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -5893,7 +6155,18 @@ static	inline	uint64_t	GetFormat(
 				);
 }
 
-#ifdef __cplusplus
+//
+//
+static	inline	uint64_t	GetFormat(
+								)
+{
+	return	GetFormat(
+					0,
+					0									//	mask
+				);
+}
+
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6041,7 +6314,7 @@ void			DECL STDC	SetVertexBufferOffset(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6068,7 +6341,7 @@ static	inline	void	SetVertexBufferOffset(
 	}
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6092,7 +6365,7 @@ void			DECL STDC	GetVertexBufferOffset(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6109,7 +6382,7 @@ static	inline	void	GetVertexBufferOffset(
 		);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6266,7 +6539,7 @@ bool			DECL STDC	IsDuplicate(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6309,7 +6582,7 @@ static	inline	bool	IsDuplicate(
 //  Derived Geometry API Calls
 //
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6322,7 +6595,7 @@ static	inline	bool	IsDuplicate(
 //	This function calculates the perimeter of an instance.
 //
 //	Note: internally the call does not store its results, any optimization based on known
-//		  dependancies between instances need to be implemented on the client.
+//		  dependencies between instances need to be implemented on the client.
 //	Note: due to internal structure using already calculated vertex buffer / index buffer does not
 //		  give any performance benefits, in opposite to GetVolume and GetArea
 //
@@ -6339,7 +6612,7 @@ double			DECL STDC	GetPerimeter(
 //				double					returns								OUT
 //
 //	This function calculates the area of an instance.
-//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
+//	For performance reasons it is beneficial to call it with vertex and index buffer when
 //	the arrays are calculated anyway or Volume and Area are needed.
 //
 //	There are two ways to call GetVolume:
@@ -6353,7 +6626,7 @@ double			DECL STDC	GetPerimeter(
 //				operation.
 //
 //	Note: internally the call does not store its results, any optimization based on known
-//		  dependancies between instances need to be implemented on the client.
+//		  dependencies between instances need to be implemented on the client.
 //	Note: in case precision is important and vertex buffer is 32 bit it is advised to
 //		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
 //
@@ -6365,7 +6638,7 @@ double			DECL STDC	GetArea(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6382,7 +6655,7 @@ static	inline	double	GetArea(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6395,7 +6668,7 @@ static	inline	double	GetArea(
 //				double					returns								OUT
 //
 //	This function calculates the volume of an instance.
-//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
+//	For performance reasons it is beneficial to call it with vertex and index buffer when
 //	the arrays are calculated anyway or Volume and Area are needed.
 //
 //	There are two ways to call GetVolume:
@@ -6409,7 +6682,7 @@ static	inline	double	GetArea(
 //				operation.
 //
 //	Note: internally the call does not store its results, any optimization based on known
-//		  dependancies between instances need to be implemented on the client.
+//		  dependencies between instances need to be implemented on the client.
 //	Note: in case precision is important and vertex buffer is 32 bit it is advised to
 //		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
 //
@@ -6421,7 +6694,7 @@ double			DECL STDC	GetVolume(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6438,7 +6711,7 @@ static	inline	double	GetVolume(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6452,7 +6725,7 @@ static	inline	double	GetVolume(
 //				void					returns
 //
 //	This function calculates the center of an instance.
-//	For perfomance reasons it is benefitial to call it with vertex and index buffer when
+//	For performance reasons it is beneficial to call it with vertex and index buffer when
 //	the arrays are calculated anyway or Volume and Area are needed.
 //
 //	There are two ways to call GetCenter:
@@ -6466,7 +6739,7 @@ static	inline	double	GetVolume(
 //				operation.
 //
 //	Note: internally the call does not store its results, any optimization based on known
-//		  dependancies between instances need to be implemented on the client.
+//		  dependencies between instances need to be implemented on the client.
 //	Note: in case precision is important and vertex array is 32 bit it is advised to
 //		  set vertexBuffer and indexBuffer to 0 even if arrays are existing.
 //
@@ -6479,7 +6752,7 @@ void			DECL STDC	GetCenter(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6498,7 +6771,7 @@ static	inline	void	GetCenter(
 		);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6521,7 +6794,7 @@ double			DECL STDC	GetCentroid(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6540,7 +6813,7 @@ static	inline	double	GetCentroid(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6575,7 +6848,7 @@ double			DECL STDC	GetConceptualFaceArea(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6592,7 +6865,7 @@ static	inline	double	GetConceptualFaceArea(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6643,7 +6916,7 @@ bool			DECL STDC	GetBoundingBox(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6661,7 +6934,7 @@ static	inline	bool	GetBoundingBox(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -6707,7 +6980,7 @@ double			DECL STDC	GetDistance(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -6768,8 +7041,8 @@ static	inline	uint32_t	GetColorOfComponent(
 				(const void**) &values,
 				&card
 			);
-		assert(card == 1);
-		rgbwValues[i] = (card == 1) ? values[0] : 0.;
+		assert(card == 0 || card == 1);
+		rgbwValues[i] = (card == 1) ? values[0] : ((i == 3) ? 1. : 0.);
 	}
 
 	return	COLOR_ARR_RGBW(rgbwValues);
@@ -7122,7 +7395,7 @@ static	inline	uint32_t	GetMaterialColorSpecular(
 	return	specular;
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -7156,7 +7429,7 @@ void			DECL STDC	GetVertexColor(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -7254,7 +7527,7 @@ static	inline	uint32_t	GetVertexColorSpecular(
 //  Deprecated API Calls
 //
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -7294,7 +7567,7 @@ ConceptualFace	DECL STDC	GetConceptualFaceEx(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -7344,7 +7617,7 @@ static	inline	ConceptualFace	GetConceptualFaceEx(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -7480,7 +7753,7 @@ int64_t			DECL STDC	GetObjectTypeProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -7499,7 +7772,7 @@ static	inline	int64_t	GetObjectTypeProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -7541,7 +7814,7 @@ int64_t			DECL STDC	GetDataTypeProperty(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -7560,7 +7833,7 @@ static	inline	int64_t	GetDataTypeProperty(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
@@ -7595,7 +7868,7 @@ int64_t			DECL STDC	GetPropertyByNameAndType(
 
 #ifdef __cplusplus
 	}
-#endif
+//{{ Begin C++ polymorphic versions
 
 //
 //
@@ -7612,7 +7885,7 @@ static	inline	int64_t	GetPropertyByNameAndType(
 				);
 }
 
-#ifdef __cplusplus
+//}} End C++ polymorphic versions
 	extern "C" {
 #endif
 
