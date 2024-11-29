@@ -78,3 +78,9 @@
 /x64/Debug_ifcengine/3DEditor.exe
 /x64/Release_ifcengine/3DEditor.pdb
 /Win32/Release_ifcengine/3DEditor.pdb
+/3DEditor/x64/Debug_cis2engine
+/3DEditor/x64/Release_cis2engine
+/Win32/Debug_cis2engine/3DEditor.exe
+/Win32/Debug_cis2engine/3DEditor.pdb
+/x64/Debug_cis2engine
+/Win32/Release_cis2engine/3DEditor.pdb
