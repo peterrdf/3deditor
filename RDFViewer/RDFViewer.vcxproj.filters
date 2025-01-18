@@ -19,8 +19,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="res\fragment_shader2.txt" />
-    <Text Include="res\vertex_shader2.txt" />
+    <Text Include="res\fragment_shader2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="res\vertex_shader2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RDFViewer.h">
@@ -135,8 +139,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="RDFViewer.reg" />
     <None Include="res\RDFViewer.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RDFViewer.reg">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
