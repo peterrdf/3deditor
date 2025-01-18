@@ -944,7 +944,6 @@
     <Image Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
     <None Include="..\stb\.editorconfig" />
     <None Include="res\My3DEditor.rc2" />
     <None Include="res\Shader.frag">

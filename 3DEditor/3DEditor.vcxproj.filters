@@ -19,8 +19,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="res\vertex_shader2.txt" />
-    <Text Include="res\fragment_shader2.txt" />
+    <Text Include="res\fragment_shader2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="res\vertex_shader2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3DEditor.h">
@@ -358,9 +362,14 @@
     <None Include="res\My3DEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\JpegLoader\LibJpeg\.editorconfig" />
-    <None Include="..\stb\.editorconfig" />
-    <None Include="res\Shader.frag" />
-    <None Include="res\Shader.vert" />
+    <None Include="..\stb\.editorconfig">
+      <Filter>stb</Filter>
+    </None>
+    <None Include="res\Shader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Shader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
