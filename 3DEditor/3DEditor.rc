@@ -749,7 +749,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "3DEditor\n\n3DEditor\nRDF Files (*.rdf)\n.rdf\nMy3DEditor.Document\n3DEditor.Document"
+    IDR_MAINFRAME           "3DEditor\n\n3DEditor\nBIN Files (*.bin)\n.bin\nMy3DEditor.Document\n3DEditor.Document"
 END
 
 STRINGTABLE

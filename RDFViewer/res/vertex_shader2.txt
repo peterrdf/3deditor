@@ -23,6 +23,7 @@ void main(void) {
     vPosition = vertex;
 
     gl_Position = uPMatrix * vertex;
+    gl_PointSize = 5;
 
     if (uUseTexture > 0.5) {
         vTextureCoord = aTextureCoord;

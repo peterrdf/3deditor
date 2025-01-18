@@ -81,7 +81,7 @@ RDFViewerDoc.h, RDFViewerDoc.cpp - the document
         File type ID:        RDFViewer.Document
         Main frame caption:  RDFViewer
         Doc type name:       RDFViewer
-        Filter name:         RDFViewer Files (*.rdf)
+        Filter name:         RDFViewer Files (*.bin)
         File new short name: RDFViewer
         File type long name: RDFViewer.Document
 
