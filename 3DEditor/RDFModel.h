@@ -11,7 +11,7 @@
 using namespace std;
 
 // ************************************************************************************************
-static TCHAR SUPPORTED_FILES[] = _T("RDF Files (*.rdf;*.bin)|*.rdf;*.bin|\
+static TCHAR SUPPORTED_FILES[] = _T("BIN Files (*.bin)|*.bin|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
