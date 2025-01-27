@@ -237,7 +237,7 @@ void CRDFOpenGLView::Draw(CDC* pDC)
 				iWidth, iHeight,
 				m_pNavigatorSelectionFrameBuffer);
 		}
-	}	
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2760,7 +2760,7 @@ void CRDFOpenGLView::DrawPointedFace(_model* pM)
 }
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
-{
+{	
 	if (pM == nullptr)
 	{
 		return pair<int64_t, int64_t>(-1, -1);
@@ -3127,9 +3127,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 		clock_t timeSpan = clock() - m_tmShowTooltip;
 		if (timeSpan >= 200)
 		{
-			CString strInstanceMetaData = L"* Properties *";
-			strInstanceMetaData += L"\n";
-			strInstanceMetaData += pModel->GetInstanceMetaData(m_pPointedInstance);
+			CString strInstanceMetaData = pModel->GetInstanceMetaData(m_pPointedInstance);
 
 			GLdouble dX = 0.;
 			GLdouble dY = 0.;
@@ -3145,7 +3143,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 				GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
 				GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
-				strInstanceMetaData += L"\n";
+				strInstanceMetaData += L"\n\n";
 				strInstanceMetaData += L"X/Y/Z: ";
 				strInstanceMetaData += to_wstring(dWorldX).c_str();
 				strInstanceMetaData += L", ";
@@ -3155,8 +3153,6 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 
 				if (m_iPointedFace != -1)
 				{
-					strInstanceMetaData += L"\n\n";
-					strInstanceMetaData += L"* Geometry *";
 					strInstanceMetaData += L"\n";
 					strInstanceMetaData += L"Conceptual Face: ";
 					strInstanceMetaData += to_wstring(m_iPointedFace).c_str();

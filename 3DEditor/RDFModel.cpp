@@ -1015,31 +1015,36 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
 	{		
 		CString strMetaData = pInstance->getUniqueName();
-
-		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
-		while (iPropertyInstance != 0)
+		if (strMetaData.GetLength() >= 50)
 		{
-			auto itProperty = m_mapProperties.find(iPropertyInstance);
-			assert(itProperty != m_mapProperties.end());
-
-			CString strPropertyMetaData;
-			bool bMultiValue = false;
-			GetPropertyMetaData(pInstance, itProperty->second, strPropertyMetaData, L"", bMultiValue);
-
-			if (!bMultiValue)
-			{
-				strMetaData += L"\n";
-				strMetaData += strPropertyMetaData;
-			}
-
-			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
-		} // while (iPropertyInstance != 0)
-
-		if (strMetaData.GetLength() >= 256)
-		{
-			strMetaData = strMetaData.Left(250);
+			strMetaData = strMetaData.Left(50);
 			strMetaData += L"...";
 		}
+
+		//int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
+		//while (iPropertyInstance != 0)
+		//{
+		//	auto itProperty = m_mapProperties.find(iPropertyInstance);
+		//	assert(itProperty != m_mapProperties.end());
+
+		//	CString strPropertyMetaData;
+		//	bool bMultiValue = false;
+		//	GetPropertyMetaData(pInstance, itProperty->second, strPropertyMetaData, L"", bMultiValue);
+
+		//	if (!bMultiValue)
+		//	{
+		//		strMetaData += L"\n";
+		//		strMetaData += strPropertyMetaData;
+		//	}
+
+		//	iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
+		//} // while (iPropertyInstance != 0)
+
+		//if (strMetaData.GetLength() >= 256)
+		//{
+		//	strMetaData = strMetaData.Left(250);
+		//	strMetaData += L"...";
+		//}
 		 
 		m_mapInstanceMetaData[pInstance] = strMetaData;
 	} // if (m_mapInstanceMetaData.find(pInstance) == ...
