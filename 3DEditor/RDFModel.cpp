@@ -12,8 +12,6 @@
 #include "_dxf_parser.h"
 #endif
 
-#include "ascii.h"
-
 #include <bitset>
 #include <algorithm>
 #include <iostream>
