@@ -20,7 +20,6 @@ struct _matrix
 	double _41, _42, _43;
 };
 
-// ************************************************************************************************
 static void	_transform(const _vector3d* pV, const _matrix* pM, _vector3d* pOut)
 {
 	_vector3d vecTmp;
@@ -40,8 +39,7 @@ static void	_matrixRotateByEulerAngles(
 	_matrix* matrix,
 	double	alpha,
 	double	beta,
-	double	gamma
-)
+	double	gamma)
 {
 	//
 	//	https://en.wikipedia.org/wiki/Rotation_matrix
@@ -153,3 +151,225 @@ public:
 		return _vector3f(x / number, y / number, z / number);
 	}
 };
+
+// ************************************************************************************************
+struct _vector3
+{
+	double x;
+	double y;
+	double z;
+};
+
+// ************************************************************************************************
+struct _matrix4x3
+{
+	double _11, _12, _13;
+	double _21, _22, _23;
+	double _31, _32, _33;
+	double _41, _42, _43;
+};
+
+static void	_matrix4x3Transform(const _vector3* pIn, const _matrix4x3* pM, _vector3* pOut)
+{
+	_vector3 pTmp;
+	pTmp.x = pIn->x * pM->_11 + pIn->y * pM->_21 + pIn->z * pM->_31 + pM->_41;
+	pTmp.y = pIn->x * pM->_12 + pIn->y * pM->_22 + pIn->z * pM->_32 + pM->_42;
+	pTmp.z = pIn->x * pM->_13 + pIn->y * pM->_23 + pIn->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+static void _matrix4x3Identity(_matrix4x3* pM)
+{
+	assert(pM != nullptr);
+
+	memset(pM, 0, sizeof(_matrix4x3));
+
+	pM->_11 = pM->_22 = pM->_33 = 1.;
+}
+
+static double _matrixDeterminant(_matrix4x3* pM)
+{
+	double a = pM->_11 * pM->_22;
+	double b = pM->_12 * pM->_23;
+	double c = pM->_13 * pM->_21;
+	double d = pM->_22 * pM->_31;
+	double e = pM->_21 * pM->_33;
+	double f = pM->_23 * pM->_32;
+
+	double determinant =
+		a * pM->_33 +
+		b * pM->_31 +
+		c * pM->_32 -
+		pM->_13 * d -
+		pM->_12 * e -
+		pM->_11 * f;
+
+	return determinant;
+}
+
+static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _matrix4x3* pM2)
+{
+	assert((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
+
+	_matrix4x3 pTmp;
+	pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31;
+	pTmp._12 = pM1->_11 * pM2->_12 + pM1->_12 * pM2->_22 + pM1->_13 * pM2->_32;
+	pTmp._13 = pM1->_11 * pM2->_13 + pM1->_12 * pM2->_23 + pM1->_13 * pM2->_33;
+
+	pTmp._21 = pM1->_21 * pM2->_11 + pM1->_22 * pM2->_21 + pM1->_23 * pM2->_31;
+	pTmp._22 = pM1->_21 * pM2->_12 + pM1->_22 * pM2->_22 + pM1->_23 * pM2->_32;
+	pTmp._23 = pM1->_21 * pM2->_13 + pM1->_22 * pM2->_23 + pM1->_23 * pM2->_33;
+
+	pTmp._31 = pM1->_31 * pM2->_11 + pM1->_32 * pM2->_21 + pM1->_33 * pM2->_31;
+	pTmp._32 = pM1->_31 * pM2->_12 + pM1->_32 * pM2->_22 + pM1->_33 * pM2->_32;
+	pTmp._33 = pM1->_31 * pM2->_13 + pM1->_32 * pM2->_23 + pM1->_33 * pM2->_33;
+
+	pTmp._41 = pM1->_41 * pM2->_11 + pM1->_42 * pM2->_21 + pM1->_43 * pM2->_31 + pM2->_41;
+	pTmp._42 = pM1->_41 * pM2->_12 + pM1->_42 * pM2->_22 + pM1->_43 * pM2->_32 + pM2->_42;
+	pTmp._43 = pM1->_41 * pM2->_13 + pM1->_42 * pM2->_23 + pM1->_43 * pM2->_33 + pM2->_43;
+
+	pOut->_11 = pTmp._11;
+	pOut->_12 = pTmp._12;
+	pOut->_13 = pTmp._13;
+
+	pOut->_21 = pTmp._21;
+	pOut->_22 = pTmp._22;
+	pOut->_23 = pTmp._23;
+
+	pOut->_31 = pTmp._31;
+	pOut->_32 = pTmp._32;
+	pOut->_33 = pTmp._33;
+
+	pOut->_41 = pTmp._41;
+	pOut->_42 = pTmp._42;
+	pOut->_43 = pTmp._43;
+}
+
+// ************************************************************************************************
+struct _matrix4x4
+{
+	double _11, _12, _13, _14;
+	double _21, _22, _23, _24;
+	double _31, _32, _33, _34;
+	double _41, _42, _43, _44;
+};
+
+static void _matrix4x4Identity(_matrix4x4* pM)
+{
+	assert(pM != nullptr);
+
+	memset(pM, 0, sizeof(_matrix4x4));
+
+	pM->_11 = pM->_22 = pM->_33 = pM->_44 = 1.;
+}
+
+static void	_transform(const _vector3* pV, const _matrix4x4* pM, _vector3* pOut)
+{
+	_vector3 pTmp;
+	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
+	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
+	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+// ************************************************************************************************
+template<class T>
+class _buffer
+{
+
+private: // Members
+
+	T* m_pData;
+	int64_t m_iSize;
+
+public: // Methods
+
+	_buffer()
+		: m_pData(nullptr)
+		, m_iSize(0)
+	{
+	}
+
+	virtual ~_buffer()
+	{
+		delete[] m_pData;
+	}
+
+public: // Properties
+
+	T*& data() { return m_pData; }
+	int64_t& size() { return m_iSize; }
+};
+
+// ************************************************************************************************
+template<class V>
+class _vertexBuffer : public _buffer<V>
+{
+
+private: // Members
+
+	uint32_t m_iVertexLength;
+
+public: // Methods
+
+	_vertexBuffer(uint32_t iVertexLength)
+		: m_iVertexLength(iVertexLength)
+	{
+		static_assert(
+			is_same<V, float>::value ||
+			is_same<V, double>::value,
+			"V must be float or double type.");
+		assert(iVertexLength >= 3);
+	}
+
+	virtual ~_vertexBuffer()
+	{
+	}
+
+	void copyFrom(_vertexBuffer* pSource)
+	{
+		assert(pSource != nullptr);
+		assert(_buffer<V>::size() == pSource->size());
+		assert(getVertexLength() == pSource->getVertexLength());
+
+		memcpy(_buffer<V>::data(), pSource->data(), (uint32_t)_buffer<V>::size() * getVertexLength() * (uint32_t)sizeof(V));
+	}
+
+public: // Properties
+
+	uint32_t getVertexLength() { return m_iVertexLength; }
+};
+
+// ************************************************************************************************
+typedef _vertexBuffer<float> _vertices_f;
+typedef _vertexBuffer<double> _vertices_d;
+
+// ************************************************************************************************
+template<class I>
+class _indexBuffer : public _buffer<I>
+{
+
+public: // Methods
+
+	_indexBuffer()
+	{
+		static_assert(
+			is_same<I, int32_t>::value ||
+			is_same<I, int64_t>::value,
+			"I must be int32_t or int64_t type.");
+	}
+
+	virtual ~_indexBuffer()
+	{
+	}
+};
+
+// ************************************************************************************************
+typedef _indexBuffer<int32_t> _indices_i32;
+typedef _indexBuffer<int64_t> _indices_i64;
