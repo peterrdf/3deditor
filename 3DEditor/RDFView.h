@@ -7,38 +7,6 @@
 class CRDFController;
 
 // ------------------------------------------------------------------------------------------------
-enum class enumApplicationProperty : int
-{
-	Projection,
-	View,
-	ShowFaces,
-	CullFaces,
-	ShowFacesWireframes,
-	ShowConceptualFacesWireframes,
-	ShowLines,
-	ShowPoints,
-	ShowNormalVectors,
-	ShowTangenVectors,
-	ShowBiNormalVectors,
-	ScaleVectors,
-	ShowBoundingBoxes,
-	RotationMode,
-	ShowCoordinateSystem,
-	CoordinateSystemType,
-	ShowNavigator,	
-	PointLightingLocation,
-	AmbientLightWeighting,
-	SpecularLightWeighting,
-	DiffuseLightWeighting,
-	MaterialShininess,
-	Contrast,
-	Brightness,
-	Gamma,
-	VisibleValuesCountLimit,
-	ScalelAndCenter,
-};
-
-// ------------------------------------------------------------------------------------------------
 // View - MVC
 class CRDFView
 {

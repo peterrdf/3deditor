@@ -25,6 +25,8 @@ class CRDFModel : public _model
 
 protected: // Members
 
+	OwlModel m_iModel;
+
 	// Model
 	bool m_bExternalModel;
 	map<OwlClass, CRDFClass*> m_mapClasses;
@@ -62,6 +64,10 @@ public: // Methods
 
 	CRDFModel();
 	virtual ~CRDFModel();	
+
+	// _model
+	virtual OwlModel getOwlModel() const override { return m_iModel; }
+	virtual _instance* loadInstance(int64_t /*iInstance*/) override { ASSERT(FALSE); return nullptr; } //#todo
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);

@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 // https://en.m.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 class _quaterniond
 {

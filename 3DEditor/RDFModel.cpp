@@ -165,6 +165,7 @@ public: // Methods
 // ************************************************************************************************
 CRDFModel::CRDFModel()
 	: _model()
+	, m_iModel(0)
 	, m_bExternalModel(false)
 	, m_mapClasses()
 	, m_mapProperties()
@@ -417,7 +418,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 	SetFormatSettings(m_iModel);
 
-	m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance, true);
+	m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
 
 	ScaleAndCenter(true);
 }
@@ -512,9 +513,9 @@ void CRDFModel::ResetInstancesDefaultState()
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (m_mapInstanceDefaultState.find(itInstance->second->getInstance()) != m_mapInstanceDefaultState.end())
+		if (m_mapInstanceDefaultState.find(itInstance->second->_instance::getOwlInstance()) != m_mapInstanceDefaultState.end())
 		{
-			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getInstance()));
+			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->_instance::getOwlInstance()));
 		}
 	}
 }
@@ -583,7 +584,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 	int64_t iInstance = CreateInstance(iClassInstance);
 	assert(iInstance != 0);
 
-	auto pInstance = new CRDFInstance(m_iID++, iInstance, true);
+	auto pInstance = new CRDFInstance(m_iID++, iInstance);
 	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[iInstance] = pInstance;
@@ -593,7 +594,7 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 
 CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
 {
-	auto pInstance = new CRDFInstance(m_iID++, pThing, true);
+	auto pInstance = new CRDFInstance(m_iID++, pThing);
 	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[pThing] = pInstance;
@@ -605,9 +606,9 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
 	assert(pInstance != nullptr);
 
-	bool bResult = RemoveInstance(pInstance->getInstance()) == 0 ? true : false;
+	bool bResult = RemoveInstance(pInstance->_instance::getOwlInstance()) == 0 ? true : false;
 
-	auto itInstance = m_mapInstances.find(pInstance->getInstance());
+	auto itInstance = m_mapInstances.find(pInstance->_instance::getOwlInstance());
 	assert(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
@@ -627,7 +628,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
 
-	int64_t iClassInstance = GetInstanceClass(pInstance->getInstance());
+	int64_t iClassInstance = GetInstanceClass(pInstance->_instance::getOwlInstance());
 	assert(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
@@ -649,7 +650,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->getModel() != pInstance->getModel())
+		if (itRFDInstances->second->_instance::getOwlModel() != pInstance->_instance::getOwlModel())
 		{
 			continue;
 		}
@@ -659,7 +660,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		*/
 		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
 		{
-			vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
+			vecCompatibleInstances.push_back(itRFDInstances->second->_instance::getOwlInstance());
 
 			continue;
 		}
@@ -680,7 +681,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				vecCompatibleInstances.push_back(itRFDInstances->second->getInstance());
+				vecCompatibleInstances.push_back(itRFDInstances->second->_instance::getOwlInstance());
 
 				break;
 			}
@@ -791,7 +792,7 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			continue;
 		}
 
-		itInstance->second->scale(m_fBoundingSphereDiameter / 2.f);
+		itInstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
 	}
 
 	/* Min/Max */
@@ -944,7 +945,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->getModel() != m_iModel)
+		if (itInstance->second->_instance::getOwlModel() != m_iModel)
 		{
 			continue;
 		}
@@ -1066,7 +1067,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			strMetaData += iCard > 0 ? L"[...]" : L"[]";
 
@@ -1078,7 +1079,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);			
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1098,9 +1099,9 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			SetCharacterSerialization(pInstance->getModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
-			SetCharacterSerialization(pInstance->getModel(), 0, 0, true);
+			SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, false);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, true);
 
 			if (iCard == 1)
 			{
@@ -1119,7 +1120,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1138,7 +1139,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1157,7 +1158,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			double* pdValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1177,7 +1178,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1502,7 +1503,8 @@ void CRDFModel::LoadRDFInstances()
 		if (itInstance == m_mapInstances.end())
 		{
 			// Load Model
-			m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance, m_mapInstanceDefaultState.at(iInstance));
+			m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
+			m_mapInstances.at(iInstance)->setEnable(m_mapInstanceDefaultState.at(iInstance));
 		}
 		else
 		{
@@ -1710,7 +1712,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 		}
 
 		itInstance->second->LoadOriginalData();
-		itInstance->second->translate(fX, fY, fZ);
+		itInstance->second->_geometry::translate(fX, fY, fZ);
 	}
 }
 

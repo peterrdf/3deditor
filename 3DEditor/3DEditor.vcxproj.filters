@@ -16,6 +16,9 @@
     <Filter Include="stb">
       <UniqueIdentifier>{a8a477c5-cceb-42de-b704-85cdf4ba14bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{7e69532a-2079-46d3-9431-3e970ddf8ec4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -129,15 +132,6 @@
     <ClInclude Include="_dxf_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_oglUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ProgressIndicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,11 +156,47 @@
     <ClInclude Include="TextBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_settings_storage.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_3DUtils.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="_mvc.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_material.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_oglUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_quaterniond.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_settings_storage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ascii.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_host.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +304,18 @@
     </ClCompile>
     <ClCompile Include="TextBuilder.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_property.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

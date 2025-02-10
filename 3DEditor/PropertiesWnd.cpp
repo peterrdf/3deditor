@@ -166,7 +166,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->GetRestrictions(pData->GetInstance()->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 	if ((iMinCard == -1) && (iMaxCard == -1))
 	{
@@ -185,9 +185,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	{
 		int64_t iCard = 0;
 		wchar_t ** szValue = nullptr;
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
@@ -197,7 +197,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
@@ -207,7 +207,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
@@ -220,7 +220,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
@@ -233,7 +233,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 		assert(iCard > 0);
 
@@ -264,7 +264,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->GetRestrictions(pData->GetInstance()->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->GetType())
 	{
@@ -281,9 +281,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		assert(iCard > 0);
 		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -307,9 +307,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 			iCurrentValue++;
 		}
 
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard - 1);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard - 1);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -341,7 +341,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		assert(iCard > 0);
 		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -365,7 +365,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 			iCurrentValue++;
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -397,7 +397,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		wchar_t ** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		assert(iCard > 0);
 		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -421,7 +421,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 			iCurrentValue++;
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -453,7 +453,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);		
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 
 		assert(iCard > 0);
 		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -466,7 +466,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 		vecValues.erase(vecValues.begin() + pData->GetCard());
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -492,7 +492,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 		*/
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 		assert(iCard > 0);
 		assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -505,7 +505,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 
 		vecValues.erase(vecValues.begin() + pData->GetCard());
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());		
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -674,7 +674,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->GetRestrictions(pData->GetInstance()->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->GetType())
 	{
@@ -685,7 +685,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t * piObjectInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), &piObjectInstances, &iCard);
+		GetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), &piObjectInstances, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -705,7 +705,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -722,9 +722,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		if (iMaxCard == -1)
 		{
@@ -741,7 +741,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -758,7 +758,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -778,7 +778,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 		
 		if (iMaxCard == -1)
 		{
@@ -798,7 +798,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		double * piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -837,7 +837,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->GetRestrictions(pData->GetInstance()->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->GetType())
 	{
@@ -854,7 +854,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t * piInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
+		GetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -873,7 +873,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		{
 			assert(dlgEditObjectProperty.m_pExisitngRDFInstance != nullptr);
 
-			vecValues.push_back(dlgEditObjectProperty.m_pExisitngRDFInstance->getInstance());
+			vecValues.push_back(dlgEditObjectProperty.m_pExisitngRDFInstance->_instance::getOwlInstance());
 		}
 		break;
 
@@ -884,7 +884,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			CRDFInstance * pNewRDFInstance = pData->GetController()->CreateNewInstance((CPropertiesWnd *)m_pWndList->GetParent(), dlgEditObjectProperty.m_iNewInstanceRDFClass);
 			assert(pNewRDFInstance != nullptr);
 
-			vecValues.push_back(pNewRDFInstance->getInstance());
+			vecValues.push_back(pNewRDFInstance->_instance::getOwlInstance());
 		}
 		break;
 
@@ -895,7 +895,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		break;
 		} // switch (dlgEditObjectProperty.m_iMode)
 
-		SetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());		
+		SetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -917,7 +917,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -938,7 +938,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			pbNewValues[iValue] = vecValues[iValue];
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
 
 		delete[] pbNewValues;
 		pbNewValues = nullptr;
@@ -963,9 +963,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		wchar_t ** szValue = nullptr;
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void **)&szValue, &iCard);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetInstance()->_instance::getOwlInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 		assert(iMaxCard == 1);
@@ -986,9 +986,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Add a value
 		*/
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard + 1);
-		SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard + 1);
+		SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -1016,7 +1016,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetInstance()->_instance::getOwlInstance(), (void**)&szValue, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 		assert(iMaxCard == 1);
@@ -1037,7 +1037,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Add a value
 		*/
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -1065,7 +1065,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetInstance()->getInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetInstance()->_instance::getOwlInstance(), (void**)&szValue, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 		assert(iMaxCard == 1);
@@ -1086,7 +1086,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		/*
 		* Add a value
 		*/
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -1114,7 +1114,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);		
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -1129,7 +1129,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		vecValues.push_back(0.);
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -1151,7 +1151,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		*/
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 		assert((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -1166,7 +1166,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 		vecValues.push_back(0);
 
-		SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -1655,7 +1655,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
 
 			assert(iCard > 0);
 
@@ -1669,7 +1669,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t	iMinCard = 0;
 				int64_t iMaxCard = 0;
-				pData->GetProperty()->GetRestrictions(pData->GetInstance()->getInstance(), iMinCard, iMaxCard);				
+				pData->GetProperty()->GetRestrictions(pData->GetInstance()->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 				assert((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
@@ -1678,7 +1678,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				vecValues.erase(vecValues.begin() + pData->GetCard());
 
-				SetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+				SetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
 
 				/*
 				* Notify
@@ -1713,7 +1713,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						*/						
 						vecValues[pData->GetCard()] = dlgSelectInstanceDialog.m_iInstance;
 
-						SetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+						SetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
 
 						/*
 						* Notify
@@ -1746,7 +1746,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					int64_t iInstance = pObjectProperty->GetInstance((LPCTSTR)strValue);
 					vecValues[pData->GetCard()] = iInstance;
 
-					SetObjectProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+					SetObjectProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
 
 					/*
 					* Notify
@@ -1771,17 +1771,17 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pModel = GetController()->GetModel();
 			assert(pModel != nullptr);
 
-			assert(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"));
+			assert(pData->GetInstance()->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"));
 
 			auto& mapProperties = pModel->GetProperties();
 
 			/*
 			* R
 			*/
-			int64_t iRProperty = GetPropertyByName(pModel->getInstance(), "R");
+			int64_t iRProperty = GetPropertyByName(pModel->getOwlModel(), "R");
 
 			double dR = GetRValue(pColorSelectorProperty->GetColor()) / 255.;
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), iRProperty, &dR, 1);
+			SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), iRProperty, &dR, 1);
 
 			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iRProperty);
 			assert(itProperty != mapProperties.end());
@@ -1794,10 +1794,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* G
 			*/
-			int64_t iGProperty = GetPropertyByName(pModel->getInstance(), "G");
+			int64_t iGProperty = GetPropertyByName(pModel->getOwlModel(), "G");
 
 			double dG = GetGValue(pColorSelectorProperty->GetColor()) / 255.;
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), iGProperty, &dG, 1);
+			SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), iGProperty, &dG, 1);
 
 			itProperty = mapProperties.find(iGProperty);
 			assert(itProperty != mapProperties.end());
@@ -1810,10 +1810,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* B
 			*/
-			int64_t iBProperty = GetPropertyByName(pModel->getInstance(), "B");
+			int64_t iBProperty = GetPropertyByName(pModel->getOwlModel(), "B");
 
 			double dB = GetBValue(pColorSelectorProperty->GetColor()) / 255.;
-			SetDatatypeProperty(pData->GetInstance()->getInstance(), iBProperty, &dB, 1);
+			SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), iBProperty, &dB, 1);
 
 			itProperty = mapProperties.find(iBProperty);
 			assert(itProperty != mapProperties.end());
@@ -1852,7 +1852,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				bool* pbValue = nullptr;
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
 
 				assert(iCard > 0);
 
@@ -1872,7 +1872,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					pbNewValues[iValue] = vecValues[iValue];
 				}
 
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
 
 				delete[] pbNewValues;
 				pbNewValues = nullptr;
@@ -1890,9 +1890,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				wchar_t ** szValue = nullptr;
-				SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
-				SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+				SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&szValue, &iCard);
+				SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 				assert(iCard > 0);
 
@@ -1910,9 +1910,9 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
 				wcscpy(szNewValues[pData->GetCard()], strValue);
 
-				SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, false);
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard);
-				SetCharacterSerialization(pData->GetInstance()->getModel(), 0, 0, true);
+				SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, false);
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)szNewValues, iCard);
+				SetCharacterSerialization(pData->GetInstance()->_instance::getOwlModel(), 0, 0, true);
 
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
@@ -1933,7 +1933,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				char** szValue = nullptr;
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 				assert(iCard > 0);
 
@@ -1951,7 +1951,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
 				strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
 
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
 
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
@@ -1972,7 +1972,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				wchar_t** szValue = nullptr;
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
 
 				assert(iCard > 0);
 
@@ -1990,7 +1990,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
 				wcscpy(szNewValues[pData->GetCard()], strValue);
 
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
 
 				for (int iValue = 0; iValue < iCard; iValue++)
 				{
@@ -2011,7 +2011,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				double* pdValue = nullptr;
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&pdValue, &iCard);
 			
 				assert(iCard > 0);
 
@@ -2025,7 +2025,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				double dValue = _wtof((LPCTSTR)strValue);
 				vecValues[pData->GetCard()] = dValue;
 
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 				assert(GetController() != nullptr);
 
@@ -2040,7 +2040,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t iCard = 0;
 				int64_t * piValue = nullptr;
-				GetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+				GetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 				assert(iCard > 0);
 
@@ -2053,7 +2053,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				int64_t iValue = _wtoi64((LPCTSTR)strValue);
 				vecValues[pData->GetCard()] = iValue;
 
-				SetDatatypeProperty(pData->GetInstance()->getInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
+				SetDatatypeProperty(pData->GetInstance()->_instance::getOwlInstance(), pData->GetProperty()->GetInstance(), (void **)vecValues.data(), vecValues.size());
 
 				assert(GetController() != nullptr);
 
@@ -2777,35 +2777,35 @@ void CPropertiesWnd::LoadInstanceProperties()
 		/*
 		* ColorComponent
 		*/
-		if (pInstance->getClassInstance() == GetClassByName(pModel->getInstance(), "ColorComponent"))
+		if (pInstance->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"))
 		{
 			/*
 			* R
 			*/
-			int64_t iRProperty = GetPropertyByName(pModel->getInstance(), "R");
+			int64_t iRProperty = GetPropertyByName(pModel->getOwlModel(), "R");
 
 			int64_t iCard = 0;
 			double * pdRValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), iRProperty, (void **)&pdRValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), iRProperty, (void **)&pdRValue, &iCard);
 
 
 			/*
 			* G
 			*/
-			int64_t iGProperty = GetPropertyByName(pModel->getInstance(), "G");
+			int64_t iGProperty = GetPropertyByName(pModel->getOwlModel(), "G");
 
 			iCard = 0;
 			double * pdGValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), iGProperty, (void **)&pdGValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), iGProperty, (void **)&pdGValue, &iCard);
 
 			/*
 			* B
 			*/
-			int64_t iBProperty = GetPropertyByName(pModel->getInstance(), "B");
+			int64_t iBProperty = GetPropertyByName(pModel->getOwlModel(), "B");
 
 			iCard = 0;
 			double * pdBValue = nullptr;
-			GetDatatypeProperty(pInstance->getInstance(), iBProperty, (void **)&pdBValue, &iCard);
+			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), iBProperty, (void **)&pdBValue, &iCard);
 
 			CRDFColorSelectorProperty * pColorSelectorProperty = new CRDFColorSelectorProperty(_T("Color"), RGB((BYTE)(*pdRValue * 255.), (BYTE)(*pdGValue * 255.), (BYTE)(*pdBValue * 255.)), nullptr, _T("Color"),
 				(DWORD_PTR)new CRDFInstanceData(GetController(), pInstance));
@@ -2814,7 +2814,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 			pInstanceGroup->AddSubItem(pColorSelectorProperty);
 		} // if (pInstance->GetClassInstance() == ...
 
-		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
+		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->_instance::getOwlInstance(), 0);
 		while (iPropertyInstance != 0)
 		{
 			map<int64_t, CRDFProperty *>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
@@ -2824,7 +2824,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
 
-			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
+			iPropertyInstance = GetInstancePropertyByIterator(pInstance->_instance::getOwlInstance(), iPropertyInstance);
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
@@ -2898,12 +2898,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t * piObjectInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piObjectInstances, &iCard);
+		GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piObjectInstances, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2917,12 +2917,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2936,14 +2936,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		char ** szValue = nullptr;
-		SetCharacterSerialization(pInstance->getModel(), 0, 0, false);
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
-		SetCharacterSerialization(pInstance->getModel(), 0, 0, true);
+		SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, true);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2957,12 +2957,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2976,12 +2976,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -2995,12 +2995,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -3014,12 +3014,12 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+		wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 		CAddRDFInstanceProperty * pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iCard));
@@ -3046,13 +3046,13 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{	
 		int64_t * piInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pInstance->getInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+		GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t	iMinCard = 0;
 			int64_t iMaxCard = 0;
-			pProperty->GetRestrictions(pInstance->getInstance(), iMinCard, iMaxCard);
+			pProperty->GetRestrictions(pInstance->_instance::getOwlInstance(), iMinCard, iMaxCard);
 
 			if ((iMinCard == -1) && (iMaxCard == -1))
 			{
@@ -3140,7 +3140,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
 		if (iCard > 0)
 		{
@@ -3173,9 +3173,9 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		wchar_t ** szValue = nullptr;
-		SetCharacterSerialization(pInstance->getModel(), 0, 0, false);
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
-		SetCharacterSerialization(pInstance->getModel(), 0, 0, true);
+		SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, false);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+		SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, true);
 
 		if (iCard > 0)
 		{
@@ -3208,7 +3208,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		char ** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 		if (iCard > 0)
 		{
@@ -3241,7 +3241,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 		if (iCard > 0)
 		{
@@ -3274,7 +3274,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		double * pdValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
 
 		if (iCard > 0)
 		{
@@ -3307,7 +3307,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		int64_t * piValue = nullptr;
-		GetDatatypeProperty(pInstance->getInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
 
 		if (iCard > 0)
 		{
@@ -3369,7 +3369,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	wchar_t szBuffer[200];
 
 	auto pBaseInfoGroup = new CMFCPropertyGridProperty(L"Base information");
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
 	pBaseInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
@@ -3536,7 +3536,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Area
 	*/
 	{
-		swprintf(szBuffer, 100, L"%.6f", GetArea(pInstance->getInstance(), nullptr, nullptr));
+		swprintf(szBuffer, 100, L"%.6f", GetArea(pInstance->_instance::getOwlInstance(), nullptr, nullptr));
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Area", (_variant_t)szBuffer, L"Area");
 		pProperty->AllowEdit(FALSE);
@@ -3548,7 +3548,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	* Perimeter
 	*/
 	{
-		swprintf(szBuffer, 100, L"%.6f", GetPerimeter(pInstance->getInstance()));
+		swprintf(szBuffer, 100, L"%.6f", GetPerimeter(pInstance->_instance::getOwlInstance()));
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Perimeter", (_variant_t)szBuffer, L"Perimeter");
 		pProperty->AllowEdit(FALSE);
@@ -3561,7 +3561,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	*/
 	{
 		double arCentroid[3];
-		double dVolume = GetCentroid(pInstance->getInstance(), nullptr, nullptr, arCentroid);
+		double dVolume = GetCentroid(pInstance->_instance::getOwlInstance(), nullptr, nullptr, arCentroid);
 
 		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
 
@@ -3603,7 +3603,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	}
 
 	auto pMetaInfoGroup = new CMFCPropertyGridProperty(L"Meta information");
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
 	pMetaInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
@@ -3611,7 +3611,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*/
 	{
 		double arCentroid[3];
-		double dVolume = GetCentroid(pInstance->getInstance(), nullptr, nullptr, arCentroid);
+		double dVolume = GetCentroid(pInstance->_instance::getOwlInstance(), nullptr, nullptr, arCentroid);
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f, %.6f, %.6f", arCentroid[0], arCentroid[1], arCentroid[2]);
@@ -3633,7 +3633,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Area
 	*/
 	{
-		double dArea = GetArea(pInstance->getInstance(), nullptr, nullptr);
+		double dArea = GetArea(pInstance->_instance::getOwlInstance(), nullptr, nullptr);
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dArea);
@@ -3648,7 +3648,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	* Perimeter
 	*/
 	{
-		double dPerimeter = GetPerimeter(pInstance->getInstance());
+		double dPerimeter = GetPerimeter(pInstance->_instance::getOwlInstance());
 
 		wchar_t szBuffer[100];
 		swprintf(szBuffer, 100, L"%.6f", dPerimeter);
@@ -3770,7 +3770,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 0:   Check Design Tree Consistency
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(0)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Design Tree Consistency", (_variant_t)szResult, L"Check Design Tree Consistency");
 		pProperty->AllowEdit(FALSE);
@@ -3782,7 +3782,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 1:   Check Consistency for Triangle Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(1)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangle Output (through API)", (_variant_t)szResult, L"Check Consistency for Triangle Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3794,7 +3794,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 2:   Check Consistency for Line Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(2)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Line Output (through API)", (_variant_t)szResult, L"Check Consistency for Line Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3806,7 +3806,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 3:   Check Consistency for Point Output (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(3)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Point Output (through API)", (_variant_t)szResult, L"Check Consistency for Point Output (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3818,7 +3818,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 4:   Check Consistency for Generated Surfaces (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(4)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (through API)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3830,7 +3830,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 5:   Check Consistency for Generated Surfaces (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(5)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Surfaces (internal)", (_variant_t)szResult, L"Check Consistency for Generated Surfaces (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3842,7 +3842,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 6:   Check Consistency for Generated Solids (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(6)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (through API)", (_variant_t)szResult, L"Check Consistency for Generated Solids (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3854,7 +3854,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 7:   Check Consistency for Generated Solids (internal)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(7)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Generated Solids (internal)", (_variant_t)szResult, L"Check Consistency for Generated Solids (internal)");
 		pProperty->AllowEdit(FALSE);
@@ -3866,7 +3866,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 8:   Check Consistency for BoundingBox's
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(8)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for BoundingBox's", (_variant_t)szResult, L"Check Consistency for BoundingBox's");
 		pProperty->AllowEdit(FALSE);
@@ -3878,7 +3878,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 9:   Check Consistency for Triangulation
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(9)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Triangulation", (_variant_t)szResult, L"Check Consistency for Triangulation");
 		pProperty->AllowEdit(FALSE);
@@ -3890,7 +3890,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 10:  Check Consistency for Relations (through API)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(10)) > 0 ? L"FAILED" : L"OK";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Check Consistency for Relations (through API)", (_variant_t)szResult, L"Check Consistency for Relations (through API)");
 		pProperty->AllowEdit(FALSE);
@@ -3902,7 +3902,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 16:   Contains (Closed) Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(16)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Solid(s)", (_variant_t)szResult, L"Contains (Closed) Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3914,7 +3914,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 18:   Contains (Closed) Infinite Solid(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(18)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Infinite Solid(s)", (_variant_t)szResult, L"Contains (Closed) Infinite Solid(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3926,7 +3926,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 20:   Contains Closed Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(20)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Surface(s)", (_variant_t)szResult, L"Contains Closed Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3938,7 +3938,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 21:   Contains Open Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(21)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Surface(s)", (_variant_t)szResult, L"Contains Open Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3950,7 +3950,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 22:   Contains Closed Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(22)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Surface(s)", (_variant_t)szResult, L"Contains Closed Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3962,7 +3962,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 23:   Contains Open Infinite Surface(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(23)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Surface(s)", (_variant_t)szResult, L"Contains Open Infinite Surface(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3974,7 +3974,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 24:   Contains Closed Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(24)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Line(s)", (_variant_t)szResult, L"Contains Closed Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3986,7 +3986,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 25:   Contains Open Line(s)
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(25)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Line(s)", (_variant_t)szResult, L"Contains Open Line(s)");
 		pProperty->AllowEdit(FALSE);
@@ -3998,7 +3998,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 26:   Contains Closed Infinite Line(s) [i.e. both ends in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(26)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Closed Infinite Line(s)", (_variant_t)szResult, L"Contains Closed Infinite Line(s) [i.e. both ends in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -4010,7 +4010,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 27:   Contains Open Infinite Line(s) [i.e. one end in infinity]
 	*/
 	{
-		wchar_t* szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
+		wchar_t* szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(27)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains Open Infinite Line(s)", (_variant_t)szResult, L"Contains Open Infinite Line(s) [i.e. one end in infinity]");
 		pProperty->AllowEdit(FALSE);
@@ -4022,7 +4022,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	*   bit 28:   Contains (Closed) Point(s)
 	*/
 	{
-		wchar_t * szResult = CheckInstanceConsistency(pInstance->getInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
+		wchar_t * szResult = CheckInstanceConsistency(pInstance->_instance::getOwlInstance(), FLAGBIT(28)) > 0 ? L"YES" : L"-";
 
 		auto pProperty = new CMFCPropertyGridProperty(L"Contains (Closed) Point(s)", (_variant_t)szResult, L"Contains (Closed) Point(s)");
 		pProperty->AllowEdit(FALSE);
@@ -4091,7 +4091,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	auto pCardinalityProperty = (CAddRDFInstanceProperty*)pPropertyGroup->GetSubItem(1);
 
-	wstring strCardinality = pProperty->GetCardinality(pInstance->getInstance());
+	wstring strCardinality = pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
 
 	pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
 	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());

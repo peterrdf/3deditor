@@ -31,7 +31,7 @@ CRDFController::CRDFController()
 	wstring strSettingsFile = pthRootFolder.wstring();
 	strSettingsFile += L"\\3DEditor.settings";
 
-	m_pSettingsStorage->loadSettings(strSettingsFile);
+	getSettingsStorage()->loadSettings(strSettingsFile);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -46,7 +46,9 @@ void CRDFController::SetModel(CRDFModel * pModel)
 {
 	assert(pModel != nullptr);
 
-	m_pModel = pModel;
+	ASSERT(FALSE); //#todo
+
+	/*m_pModel = pModel;
 
 	m_pSelectedInstance = nullptr;
 	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
@@ -61,7 +63,7 @@ void CRDFController::SetModel(CRDFModel * pModel)
 		(*itView)->OnModelChanged();
 	}
 
-	m_bUpdatingModel = false;
+	m_bUpdatingModel = false;*/
 }
 
 CRDFModel* CRDFController::GetModel()
@@ -156,7 +158,7 @@ void CRDFController::Save(CRDFInstance* pInstance)
 		return;
 	}
 
-	SaveInstanceTreeW(pInstance->getInstance(), dlgFile.GetPathName());
+	SaveInstanceTreeW(pInstance->_instance::getOwlInstance(), dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -390,7 +392,7 @@ void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, 
 
 	// Rename
 	SetNameOfInstanceW(
-		pInstance->getInstance(),
+		pInstance->_instance::getOwlInstance(),
 		szName);
 
 	// Update cache
@@ -424,7 +426,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
 	}
 
-	int64_t iInstance = pInstance->getInstance();
+	int64_t iInstance = pInstance->_instance::getOwlInstance();
 
 	bool bResult = pModel->DeleteInstance(pInstance);
 	assert(bResult);
@@ -473,7 +475,7 @@ bool CRDFController::DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance
 		return false;
 	}
 
-	int64_t iInstance = pInstance->getInstance();
+	int64_t iInstance = pInstance->_instance::getOwlInstance();
 
 	//
 	//	find all child instances

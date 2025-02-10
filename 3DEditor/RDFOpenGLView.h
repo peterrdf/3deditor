@@ -51,8 +51,11 @@ public: // Methods
 	virtual ~CRDFOpenGLView();
 
 	// _oglRendererSettings
-	virtual _controller* getController() const override;
-	virtual _model* getModel() const override;
+	virtual _controller* getController() const;
+	virtual _controller* _getController() const override {
+		return getController();
+	}
+	virtual _model* getModel() const;
 	virtual void saveSetting(const string& strName, const string& strValue) override;
 	virtual string loadSetting(const string& strName) override;
 

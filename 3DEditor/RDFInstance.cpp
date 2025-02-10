@@ -5,8 +5,9 @@
 #include <memory>
 
 // ************************************************************************************************
-CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
-	: _geometry(iID, iInstance, bEnable)
+CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance)
+	: _geometry(iInstance)
+	, _instance(iID, this, nullptr)
 	, m_pOriginalVertexBuffer(nullptr)
 	, m_bNeedsRefresh(false)
 {
@@ -22,9 +23,9 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 
 /*virtual*/ void CRDFInstance::setEnable(bool bEnable) /*override*/
 {
-	_geometry::setEnable(bEnable);
+	_instance::setEnable(bEnable);
 
-	if (m_bEnable && m_bNeedsRefresh)
+	if (getEnable() && m_bNeedsRefresh)
 	{
 		m_bNeedsRefresh = false;
 
@@ -32,34 +33,38 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance, bool bEnable)
 	}
 }
 
+/*virtual*/ wstring CRDFInstance::getName() const /*override*/ {
+	return _rdf_instance::getName(_instance::getOwlInstance());
+}
+
 void CRDFInstance::UpdateName()
 {
-	OwlClass iClassInstance = GetInstanceClass(m_iInstance);
+	OwlClass iClassInstance = GetInstanceClass(_instance::getOwlInstance());
 	assert(iClassInstance != 0);
 
 	wchar_t* szClassName = nullptr;
 	GetNameOfClassW(iClassInstance, &szClassName);
 
 	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(m_iInstance, &szName);
+	GetNameOfInstanceW(_instance::getOwlInstance(), &szName);
 
 	if (szName == nullptr)
 	{
-		RdfProperty iTagProperty = GetPropertyByName(getModel(), "tag");
+		RdfProperty iTagProperty = GetPropertyByName(_instance::getOwlModel(), "tag");
 		if (iTagProperty != 0)
 		{
-			SetCharacterSerialization(getModel(), 0, 0, false);
+			SetCharacterSerialization(_instance::getOwlModel(), 0, 0, false);
 
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(m_iInstance, iTagProperty, (void**)&szValue, &iCard);
+			GetDatatypeProperty(_instance::getOwlInstance(), iTagProperty, (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
 				szName = szValue[0];
 			}
 
-			SetCharacterSerialization(getModel(), 0, 0, true);
+			SetCharacterSerialization(_instance::getOwlModel(), 0, 0, true);
 		}
 	} // if (szName == nullptr)
 
@@ -73,7 +78,7 @@ void CRDFInstance::UpdateName()
 	else
 	{
 		m_strName = szClassName;
-		swprintf(szUniqueName, 512, L"#%lld (%s)", m_iInstance, szClassName);
+		swprintf(szUniqueName, 512, L"#%lld (%s)", _instance::getOwlInstance(), szClassName);
 	}
 
 	m_strUniqueName = szUniqueName;
@@ -98,7 +103,7 @@ void CRDFInstance::LoadOriginalData()
 
 void CRDFInstance::Recalculate()
 {	
-	if (!m_bEnable)
+	if (!getEnable())
 	{
 		// Reloading on demand
 		m_bNeedsRefresh = true;
@@ -150,7 +155,7 @@ void CRDFInstance::Calculate()
 	m_pvecAABBMax = new _vector3d();
 
 	GetBoundingBox(
-		m_iInstance,
+		_instance::getOwlInstance(),
 		(double*)m_pmtxOriginalBBTransformation,
 		(double*)m_pvecOriginalBBMin,
 		(double*)m_pvecOriginalBBMax);
@@ -160,14 +165,14 @@ void CRDFInstance::Calculate()
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
 	if (!GetBoundingBox(
-		m_iInstance,
+		_instance::getOwlInstance(),
 		(double*)m_pvecAABBMin,
 		(double*)m_pvecAABBMax))
 	{
 		return;
 	}
 
-	if (!calculate(m_pOriginalVertexBuffer, m_pIndexBuffer))
+	if (!calculateInstance(m_pOriginalVertexBuffer, m_pIndexBuffer))
 	{
 		return;
 	}
@@ -181,7 +186,7 @@ void CRDFInstance::Calculate()
 	MATERIALS mapMaterial2ConcFaceLines;
 	MATERIALS mapMaterial2ConcFacePoints;
 
-	m_iConceptualFacesCount = GetConceptualFaceCnt(m_iInstance);
+	m_iConceptualFacesCount = GetConceptualFaceCnt(_instance::getOwlInstance());
 	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
 	{
 		int64_t iStartIndexTriangles = 0;
@@ -196,7 +201,7 @@ void CRDFInstance::Calculate()
 		int64_t iIndicesCountConceptualFacePolygons = 0;
 
 		ConceptualFace iConceptualFace = GetConceptualFace(
-			m_iInstance, 
+			_instance::getOwlInstance(),
 			iConceptualFaceIndex,
 			&iStartIndexTriangles, &iIndicesCountTriangles,
 			&iStartIndexLines, &iIndicesCountLines,

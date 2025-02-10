@@ -51,7 +51,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 			continue;
 		}
 
-		if (pInstance->getModel() == pModel->getInstance())
+		if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
 		{
 			vecModel.push_back(pInstance);
 		}		
@@ -60,7 +60,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	/*
 	* Model
 	*/
-	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
+	sort(vecModel.begin(), vecModel.end(), _geometriesComparator());
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
@@ -257,7 +257,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		bool bIsGeometryInstanceSelected = false;		
 		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 		{
-			if (vecSelectedInstances[iInstance]->hasGeometry())
+			if (vecSelectedInstances[iInstance]->_instance::hasGeometry())
 			{
 				bIsGeometryInstanceSelected = true;
 
@@ -393,7 +393,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		/*
 		* Instances with a geometry
 		*/
-		if (vecSelectedInstances[0]->hasGeometry())
+		if (vecSelectedInstances[0]->_instance::hasGeometry())
 		{
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -422,7 +422,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(vecSelectedInstances[0]->getInstance());
+				GetController()->ZoomToInstance(vecSelectedInstances[0]->_instance::getOwlInstance());
 			}
 			break;
 
@@ -437,7 +437,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (vecSelectedInstances[0]->getModel() != itRFDInstances->second->getModel())
+					if (vecSelectedInstances[0]->_instance::getOwlModel() != itRFDInstances->second->_instance::getOwlModel())
 					{
 						continue;
 					}
@@ -461,7 +461,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (vecSelectedInstances[0]->getModel() != itRFDInstances->second->getModel())
+					if (vecSelectedInstances[0]->_instance::getOwlModel() != itRFDInstances->second->_instance::getOwlModel())
 					{
 						continue;
 					}

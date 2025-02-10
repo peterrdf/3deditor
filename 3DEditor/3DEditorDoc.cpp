@@ -318,15 +318,15 @@ void CMy3DEditorDoc::OnViewZoomOut()
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
 	auto pInstance = GetSelectedInstance();
-	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
+	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->_instance::hasGeometry());
 
-	ZoomToInstance(pInstance->getInstance());
+	ZoomToInstance(pInstance->_instance::getOwlInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
 	auto pInstance = GetSelectedInstance();
-	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
+	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->_instance::hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()
@@ -355,7 +355,7 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 	}
 
 #ifdef _GIS_SUPPORT
-	SaveAsCityGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsCityGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
@@ -363,8 +363,8 @@ void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsCityGML(m_pModel->getInstance()));
+		(m_pModel->getOwlModel() != 0) &&
+		IsCityGML(m_pModel->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif
@@ -385,7 +385,7 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 	}
 
 #ifdef _GIS_SUPPORT
-	SaveAsInfraGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsInfraGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
@@ -393,8 +393,8 @@ void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsInfraGML(m_pModel->getInstance()));
+		(m_pModel->getOwlModel() != 0) &&
+		IsInfraGML(m_pModel->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif
@@ -415,7 +415,7 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 	}
 
 #ifdef _GIS_SUPPORT
-	SaveAsLandXMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsLandXMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
@@ -423,8 +423,8 @@ void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
 	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsLandXML(m_pModel->getInstance()));
+		(m_pModel->getOwlModel() != 0) &&
+		IsLandXML(m_pModel->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif
