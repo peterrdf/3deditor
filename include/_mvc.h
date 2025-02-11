@@ -90,16 +90,20 @@ public: // Methods
 	T* as()
 	{
 		return dynamic_cast<T*>(this);
-	}
-
-	static int64_t getNextInstanceID() { return s_iInstanceID++; }	
+	}		
 
 	void scale();
 	virtual void zoomTo(_instance* pInstance);
 	virtual void zoomToInstances(const set<_instance*>& setInstances);
 	virtual void zoomOut();
 
-	_instance* getInstanceByID(int64_t iID) const;	
+	_instance* getInstanceByID(int64_t iID) const;
+
+	static int64_t getNextInstanceID() { return s_iInstanceID++; }
+	static wstring getInstanceName(OwlInstance owlInstance);
+	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
+	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName);
+	static double getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName);
 
 protected: // Methods
 

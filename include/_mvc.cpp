@@ -312,6 +312,51 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return itInstance->second;
 }
 
+/*static*/ wstring _model::getInstanceName(OwlInstance owlInstance)
+{
+	CString strName;
+	strName.Format(_T("#%lld"), owlInstance);
+
+	strName += L" ";
+	strName += getInstanceClassName(owlInstance);
+
+	return (LPCWSTR)strName;
+}
+
+/*static*/ const wchar_t* _model::getInstanceClassName(OwlInstance owlInstance)
+{
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(GetInstanceClass(owlInstance), &szClassName);
+
+	return szClassName;
+}
+
+/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName)
+{
+	OwlInstance* piValues = nullptr;
+	int64_t	iCard = 0;
+	GetObjectProperty(
+		owlInstance,
+		GetPropertyByName(GetModel(owlInstance), szPropertyName),
+		&piValues,
+		&iCard);
+
+	return (iCard == 1) ? piValues[0] : 0;
+}
+
+/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName)
+{
+	double* pdValues = nullptr;
+	int64_t	iCard = 0;
+	GetDatatypeProperty(
+		owlInstance,
+		GetPropertyByName(GetModel(owlInstance), szPropertyName),
+		(void**)&pdValues,
+		&iCard);
+
+	return (iCard == 1) ? pdValues[0] : 0.;
+}
+
 void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (owlInstance == 0)
@@ -804,11 +849,8 @@ void _controller::saveInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 
-	wstring strName;
-	wstring strUniqueName;
-	_rdf_instance::buildInstanceNames(GetModel(owlInstance), owlInstance, strName, strUniqueName);
-
-	CString strValidFileName = validateFileName(strUniqueName.c_str()).c_str();
+	wstring strName = _model::getInstanceName(owlInstance);
+	CString strValidFileName = validateFileName(strName.c_str()).c_str();
 
 	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("bin"), strValidFileName,
