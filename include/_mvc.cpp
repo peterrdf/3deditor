@@ -51,8 +51,7 @@ void _model::scale()
 
 			for (auto pInstance : pGeometry->getInstances())
 			{
-				pGeometry->calculateMinMaxTransform(
-					this,
+				pGeometry->calculateBB(
 					pInstance,
 					m_fXmin, m_fXmax,
 					m_fYmin, m_fYmax,
@@ -126,8 +125,7 @@ void _model::scale()
 				continue;
 			}
 
-			pGeometry->calculateMinMaxTransform(
-				this,
+			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -179,8 +177,7 @@ void _model::scale()
 
 	for (auto pInstance : setInstances)
 	{
-		pInstance->getGeometry()->calculateMinMaxTransform(
-			this,
+		pInstance->getGeometry()->calculateBB(
 			pInstance,
 			m_fXmin, m_fXmax,
 			m_fYmin, m_fYmax,
@@ -223,8 +220,7 @@ void _model::scale()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	pInstance->getGeometry()->calculateMinMaxTransform(
-		this,
+	pInstance->getGeometry()->calculateBB(
 		pInstance,
 		m_fXmin, m_fXmax,
 		m_fYmin, m_fYmax,
@@ -272,8 +268,7 @@ void _model::scale()
 				continue;
 			}
 
-			pGeometry->calculateMinMaxTransform(
-				this,
+			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
@@ -543,6 +538,12 @@ void _controller::setModels(const vector<_model*>& vecModels)
 		(*itView)->onModelLoaded();
 	}
 
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->postModelLoaded();
+	}
+
 	m_bUpdatingModel = false;
 }
 
@@ -561,6 +562,13 @@ void _controller::addModel(_model* pModel)
 	}
 
 	m_bUpdatingModel = false;
+}
+
+void _controller::detachModels()
+{
+	m_vecModels.clear();
+
+	s_iInstanceID = 1;
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)
@@ -692,29 +700,7 @@ void _controller::zoomToInstance(_instance* pInstance)
 {
 	assert(pInstance != nullptr);
 
-	auto pModel = getModelByInstance(pInstance->getOwlModel());
-	if (pModel == nullptr)
-	{
-		assert(FALSE);
-
-		return;
-	}
-
-	pModel->zoomTo(pInstance);
-
-	for (auto pM : m_vecModels)
-	{
-		if (pM != pModel)
-		{
-			pM->setDimensions(pModel);
-		}
-	}
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->onWorldDimensionsChanged();
-	}
+	zoomToInstances(set<_instance*>{ pInstance });
 }
 
 void _controller::zoomToInstances(const set<_instance*>& setInstances)
@@ -842,7 +828,8 @@ bool _controller::isInstanceSelected(_instance* pInstance) const
 		return false;
 	}
 
-	return find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) != m_vecSelectedInstances.end();
+	return find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), 
+		(pInstance->getOwner() != nullptr ? pInstance->getOwner() : pInstance)) != m_vecSelectedInstances.end();
 }
 
 void _controller::saveInstance(OwlInstance owlInstance)

@@ -72,337 +72,100 @@ _geometry::_geometry(OwlInstance owlInstance)
 	clean();
 }
 
-/*static*/ void _geometry::calculateBBMinMax(
-	OwlInstance iInstance,
-	double& dXmin, double& dXmax,
-	double& dYmin, double& dYmax,
-	double& dZmin, double& dZmax)
-{
-	assert(iInstance != 0);
-
-	_vector3d vecBBMin;
-	_vector3d vecBBMax;
-	if (GetInstanceGeometryClass(iInstance) &&
-		GetBoundingBox(
-			iInstance,
-			(double*)&vecBBMin,
-			(double*)&vecBBMax))
-	{
-		dXmin = fmin(dXmin, vecBBMin.x);
-		dYmin = fmin(dYmin, vecBBMin.y);
-		dZmin = fmin(dZmin, vecBBMin.z);
-
-		dXmax = fmax(dXmax, vecBBMax.x);
-		dYmax = fmax(dYmax, vecBBMax.y);
-		dZmax = fmax(dZmax, vecBBMax.z);
-	}
-}
-
-void _geometry::calculateMinMax(
-	float& fXmin, float& fXmax,
-	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
-{
-	if (getVerticesCount() == 0)
-	{
-		return;
-	}
-
-	const auto iVertexLength = getVertexLength();
-
-	// Triangles
-	if (!m_vecTriangles.empty())
-	{
-		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
-		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
-				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iTriangle = ...
-	} // if (!m_vecTriangles.empty())
-
-	// Faces polygons
-	if (!m_vecFacePolygons.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecFacePolygons.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecFacePolygons[iPolygon].startIndex();
-				iIndex < m_vecFacePolygons[iPolygon].startIndex() + m_vecFacePolygons[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecFacePolygons.empty())
-
-	// Conceptual faces polygons
-	if (!m_vecConcFacePolygons.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
-				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if ((getIndices()[iIndex] == -1) || (getIndices()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecConcFacePolygons.empty())
-
-	// Lines
-	if (!m_vecLines.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
-				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if (getIndices()[iIndex] == -1)
-				{
-					continue;
-				}
-
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecLines.empty())
-
-	// Points
-	if (!m_vecPoints.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex();
-				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
-				iIndex++)
-			{
-				fXmin = (float)fmin(fXmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fXmax = (float)fmax(fXmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 0]);
-				fYmin = (float)fmin(fYmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fYmax = (float)fmax(fYmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 1]);
-				fZmin = (float)fmin(fZmin, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-				fZmax = (float)fmax(fZmax, getVertices()[(getIndices()[iIndex] * iVertexLength) + 2]);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecPoints.empty())
-}
-
-void _geometry::calculateMinMaxTransform(
-	const _matrix4x4* pTransformationMatrix,
-	float& fXmin, float& fXmax,
-	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
-{
-	if (!hasGeometry())
-	{
-		return;
-	}
-
-	const uint32_t VERTEX_LENGTH = getVertexLength();
-
-	// Triangles
-	if (!m_vecTriangles.empty())
-	{
-		for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++)
-		{
-			for (int64_t iIndex = m_vecTriangles[iTriangle].startIndex();
-				iIndex < m_vecTriangles[iTriangle].startIndex() + m_vecTriangles[iTriangle].indicesCount();
-				iIndex++)
-			{
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iTriangle = ...
-	} // if (!m_vecTriangles.empty())	
-
-	// Conceptual faces polygons
-	if (!m_vecConcFacePolygons.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecConcFacePolygons.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecConcFacePolygons[iPolygon].startIndex();
-				iIndex < m_vecConcFacePolygons[iPolygon].startIndex() + m_vecConcFacePolygons[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if ((m_pIndexBuffer->data()[iIndex] == -1) || (m_pIndexBuffer->data()[iIndex] == -2))
-				{
-					continue;
-				}
-
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecConcFacePolygons.empty())
-
-	// Lines
-	if (!m_vecLines.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecLines.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecLines[iPolygon].startIndex();
-				iIndex < m_vecLines[iPolygon].startIndex() + m_vecLines[iPolygon].indicesCount();
-				iIndex++)
-			{
-				if (m_pIndexBuffer->data()[iIndex] == -1)
-				{
-					continue;
-				}
-
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecLines.empty())
-
-	// Points
-	if (!m_vecPoints.empty())
-	{
-		for (size_t iPolygon = 0; iPolygon < m_vecPoints.size(); iPolygon++)
-		{
-			for (int64_t iIndex = m_vecPoints[iPolygon].startIndex();
-				iIndex < m_vecPoints[iPolygon].startIndex() + m_vecPoints[iPolygon].indicesCount();
-				iIndex++)
-			{
-				_vector3 vecPoint =
-				{
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 0],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 1],
-					m_pVertexBuffer->data()[(m_pIndexBuffer->data()[iIndex] * VERTEX_LENGTH) + 2]
-				};
-
-				if (pTransformationMatrix != nullptr)
-				{
-					_transform(&vecPoint, pTransformationMatrix, &vecPoint);
-				}
-
-				fXmin = (float)fmin(fXmin, vecPoint.x);
-				fXmax = (float)fmax(fXmax, vecPoint.x);
-				fYmin = (float)fmin(fYmin, vecPoint.y);
-				fYmax = (float)fmax(fYmax, vecPoint.y);
-				fZmin = (float)fmin(fZmin, vecPoint.z);
-				fZmax = (float)fmax(fZmax, vecPoint.z);
-			} // for (size_t iIndex = ...
-		} // for (size_t iPolygon = ...
-	} // if (!m_vecPoints.empty())
-}
-
-void _geometry::calculateMinMaxTransform(
-	_model* pModel,
+void _geometry::calculateBB(
 	_instance* pInstance,
 	float& fXmin, float& fXmax,
 	float& fYmin, float& fYmax,
-	float& fZmin, float& fZmax)
+	float& fZmin, float& fZmax) const
 {
-	assert(pModel != nullptr);
 	assert(pInstance != nullptr);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+	if (!hasGeometry() || isPlaceholder() || ignoreBB())
+	{
+		return;
+	}
 
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
+	if ((m_pvecAABBMin == nullptr) || (m_pvecAABBMax == nullptr))
+	{
+		return;
+	}
 
-	glm::mat4 matInstanceTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-	glm::mat4 matFinalTransformation = glm::identity<glm::mat4>();
-	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-	matFinalTransformation = matFinalTransformation * matInstanceTransformation;
-	matFinalTransformation = glm::translate(matFinalTransformation, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-	double arTransformation[16] = { 0.0 };
-	const float* pRawData = (const float*)glm::value_ptr(matFinalTransformation);
-	for (int i = 0; i < 16; ++i)
-		arTransformation[i] = pRawData[i];
-
-	calculateMinMaxTransform(
-		(const _matrix4x4*)arTransformation,
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
 		fXmin, fXmax,
 		fYmin, fYmax,
 		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMin->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMin->x, m_pvecAABBMax->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMin->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMin->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+
+	calculateBB(
+		m_pvecAABBMax->x, m_pvecAABBMax->y, m_pvecAABBMax->z,
+		pInstance->getTransformationMatrix(),
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax);
+}
+
+void _geometry::calculateBB(
+	double dX, double dY, double dZ,
+	const _matrix4x4* pTransformationMatrix,
+	float& fXmin, float& fXmax,
+	float& fYmin, float& fYmax,
+	float& fZmin, float& fZmax) const
+{
+	_vector3 vecPoint = { dX, dY, dZ };
+	if (pTransformationMatrix != nullptr)
+	{
+		_transform(&vecPoint, pTransformationMatrix, &vecPoint);
+	}
+
+	fXmin = (float)fmin(fXmin, vecPoint.x);
+	fXmax = (float)fmax(fXmax, vecPoint.x);
+	fYmin = (float)fmin(fYmin, vecPoint.y);
+	fYmax = (float)fmax(fYmax, vecPoint.y);
+	fZmin = (float)fmin(fZmin, vecPoint.z);
+	fZmax = (float)fmax(fZmax, vecPoint.z);
 }
 
 void _geometry::scale(float fScaleFactor)
@@ -421,6 +184,16 @@ void _geometry::scale(float fScaleFactor)
 		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1] /= fScaleFactor;
 		m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
 	}
+
+	m_pvecAABBMin->x /= fScaleFactor;
+	m_pvecAABBMin->y /= fScaleFactor;
+	m_pvecAABBMin->z /= fScaleFactor;
+
+	/* BB - Max */
+	m_pvecAABBMax->x /= fScaleFactor;
+	m_pvecAABBMax->y /= fScaleFactor;
+	m_pvecAABBMax->z /= fScaleFactor;
+
 
 	// Instances
 	for (size_t iInstance = 0; iInstance < m_vecInstances.size(); iInstance++)
@@ -447,14 +220,14 @@ void _geometry::translate(float fX, float fY, float fZ)
 	}
 
 	/* BB - Min */
-	m_pvecBBMin->x += fX;
-	m_pvecBBMin->y += fY;
-	m_pvecBBMin->z += fZ;
+	m_pvecAABBMin->x += fX;
+	m_pvecAABBMin->y += fY;
+	m_pvecAABBMin->z += fZ;
 
 	/* BB - Max */
-	m_pvecBBMax->x += fX;
-	m_pvecBBMax->y += fY;
-	m_pvecBBMax->z += fZ;
+	m_pvecAABBMax->x += fX;
+	m_pvecAABBMax->y += fY;
+	m_pvecAABBMax->z += fZ;
 }
 
 void _geometry::addInstance(_instance* pInstance)
@@ -514,10 +287,10 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
 /*virtual*/ void _geometry::calculateCore()
 {
-	ASSERT(m_pVertexBuffer == nullptr);
+	assert(m_pVertexBuffer == nullptr);
 	m_pVertexBuffer = new _vertices_f(getVertexLength());
 
-	ASSERT(m_pIndexBuffer == nullptr);
+	assert(m_pIndexBuffer == nullptr);
 	m_pIndexBuffer = new _indices_i32();
 
 	assert(m_pmtxOriginalBBTransformation == nullptr);
@@ -544,6 +317,11 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 	assert(m_pvecAABBMax == nullptr);
 	m_pvecAABBMax = new _vector3d();
 
+	if (!calculateInstance(m_pVertexBuffer, m_pIndexBuffer))
+	{
+		return;
+	}
+
 	GetBoundingBox(
 		getOwlInstance(),
 		(double*)m_pmtxOriginalBBTransformation,
@@ -562,10 +340,16 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 		return;
 	}
 
-	if (!calculateInstance(m_pVertexBuffer, m_pIndexBuffer))
-	{
-		return;
-	}
+	double arOffset[3];
+	GetVertexBufferOffset(getOwlModel(), arOffset);
+
+	m_pvecAABBMin->x += arOffset[0];
+	m_pvecAABBMin->y += arOffset[1];
+	m_pvecAABBMin->z += arOffset[2];
+
+	m_pvecAABBMax->x += arOffset[0];
+	m_pvecAABBMax->y += arOffset[1];
+	m_pvecAABBMax->z += arOffset[2];
 
 	MATERIALS mapMaterial2ConcFaces;
 	MATERIALS mapMaterial2ConcFaceLines;

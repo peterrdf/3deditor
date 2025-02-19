@@ -210,6 +210,96 @@ static double _matrixDeterminant(_matrix4x3* pM)
 	return determinant;
 }
 
+static void	_vector3Transform(
+					_vector3			* pOut,
+					const _vector3		* pV,
+					const _matrix4x3	* pM
+				)
+{
+	_vector3	pTmp;
+
+	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
+	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
+	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
+static void	_matrix4x3Inverse(
+				_matrix4x3			* pOut,
+				const _matrix4x3	* pM
+			)
+{
+	_matrix4x3 pTmp;
+
+	double	a, b, c, d, e, f, determinant;
+	a = pM->_11 * pM->_22;
+	b = pM->_12 * pM->_23;
+	c = pM->_13 * pM->_21;
+	d = pM->_22 * pM->_31;
+	e = pM->_21 * pM->_33;
+	f = pM->_23 * pM->_32;
+
+	determinant = a * pM->_33 +
+				  b * pM->_31 +
+				  c * pM->_32 -
+				  pM->_13 * d -
+				  pM->_12 * e -
+				  pM->_11 * f;
+
+	if (determinant < -0.0000000000000001 || determinant > 0.0000000000000001) {
+		pTmp._11 = (pM->_22 * pM->_33 - f) / determinant;
+		pTmp._12 = (pM->_13 * pM->_32 - pM->_12 * pM->_33) / determinant;
+		pTmp._13 = (b - pM->_13 * pM->_22) / determinant;
+		pTmp._21 = (pM->_23 * pM->_31 - e) / determinant;
+		pTmp._22 = (pM->_11 * pM->_33 - pM->_13 * pM->_31) / determinant;
+		pTmp._23 = (c - pM->_11 * pM->_23) / determinant;
+		pTmp._31 = (pM->_21 * pM->_32 - d) / determinant;
+		pTmp._32 = (pM->_12 * pM->_31 - pM->_11 * pM->_32) / determinant;
+		pTmp._33 = (a - pM->_12 * pM->_21) / determinant;
+		pTmp._41 = 0.;
+		pTmp._42 = 0.;
+		pTmp._43 = 0.;
+
+		_vector3	vTmp;
+		vTmp.x = -pM->_41;
+		vTmp.y = -pM->_42;
+		vTmp.z = -pM->_43;
+		_vector3Transform(&vTmp, &vTmp, &pTmp);
+
+		pOut->_11 = pTmp._11;
+		pOut->_12 = pTmp._12;
+		pOut->_13 = pTmp._13;
+
+		pOut->_21 = pTmp._21;
+		pOut->_22 = pTmp._22;
+		pOut->_23 = pTmp._23;
+
+		pOut->_31 = pTmp._31;
+		pOut->_32 = pTmp._32;
+		pOut->_33 = pTmp._33;
+
+		pOut->_41 = vTmp.x;
+		pOut->_42 = vTmp.y;
+		pOut->_43 = vTmp.z;
+	}
+	else {
+		_matrix4x3Identity(pOut);
+	}
+}
+
+static void	_matrix4x3Inverse(
+				_matrix4x3	* pInOut
+			)
+{
+	_matrix4x3Inverse(
+			pInOut,
+			(const _matrix4x3*) pInOut
+		);
+}
+
 static void	_matrix4x3Multiply(_matrix4x3* pOut, const _matrix4x3* pM1, const _matrix4x3* pM2)
 {
 	assert((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));

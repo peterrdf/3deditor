@@ -1190,7 +1190,7 @@ void CRDFOpenGLView::DrawFacesPolygons(_model* pM)
 		return;
 	}
 
-	if (!getShowFacesPolygons(pM))
+	if (!getShowFacesPolygons())
 	{
 		return;
 	}
@@ -1247,7 +1247,7 @@ void CRDFOpenGLView::DrawConceptualFacesPolygons(_model* pM)
 		return;
 	}
 
-	if (!getShowConceptualFacesPolygons(pM))
+	if (!getShowConceptualFacesPolygons())
 	{
 		return;
 	}
@@ -1300,7 +1300,7 @@ void CRDFOpenGLView::DrawLines(_model* pM)
 		return;
 	}
 
-	if (!getShowLines(pM))
+	if (!getShowLines())
 	{
 		return;
 	}
@@ -1366,7 +1366,7 @@ void CRDFOpenGLView::DrawPoints(_model* pM)
 		return;
 	}
 
-	if (!getShowPoints(pM))
+	if (!getShowPoints())
 	{
 		return;
 	}
@@ -1453,7 +1453,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
 		return;
 	}
 
-	if (!getShowBoundingBoxes(pModel))
+	if (!getShowBoundingBoxes())
 	{
 		return;
 	}

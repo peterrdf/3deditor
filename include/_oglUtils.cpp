@@ -587,14 +587,9 @@ void _oglRendererSettings::setShowFaces(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowFaces(_model* pModel)
+BOOL _oglRendererSettings::getShowFaces()
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowFaces;
-	}
-
-	return TRUE;
+	return m_bShowFaces;
 }
 
 void _oglRendererSettings::setGhostView(BOOL bValue)
@@ -637,14 +632,9 @@ void _oglRendererSettings::setCullFacesMode(LPCTSTR szMode)
 	saveSetting(strSettingName, (LPCSTR)CW2A(szMode));
 }
 
-LPCTSTR _oglRendererSettings::getCullFacesMode(_model* pModel) const
+LPCTSTR _oglRendererSettings::getCullFacesMode() const
 {
-	if (pModel != nullptr)
-	{
-		return m_strCullFaces;
-	}
-
-	return CULL_FACES_NONE;
+	return m_strCullFaces;
 }
 
 void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
@@ -657,14 +647,9 @@ void _oglRendererSettings::setShowFacesPolygons(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowFacesPolygons(_model* pModel) const
+BOOL _oglRendererSettings::getShowFacesPolygons() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowFacesPolygons;
-	}
-
-	return FALSE;
+	return m_bShowFacesPolygons;
 }
 
 void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
@@ -677,14 +662,9 @@ void _oglRendererSettings::setShowConceptualFacesPolygons(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowConceptualFacesPolygons(_model* pModel) const
+BOOL _oglRendererSettings::getShowConceptualFacesPolygons() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowConceptualFacesPolygons;
-	}
-
-	return TRUE;
+	return m_bShowConceptualFacesPolygons;
 }
 
 void _oglRendererSettings::setShowLines(BOOL bValue)
@@ -697,14 +677,9 @@ void _oglRendererSettings::setShowLines(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowLines(_model* pModel) const
+BOOL _oglRendererSettings::getShowLines() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowLines;
-	}
-
-	return TRUE;
+	return m_bShowLines;
 }
 
 void _oglRendererSettings::setLineWidth(GLfloat fWidth)
@@ -727,14 +702,9 @@ void _oglRendererSettings::setShowPoints(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowPoints(_model* pModel) const
+BOOL _oglRendererSettings::getShowPoints() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowPoints;
-	}
-
-	return TRUE;
+	return m_bShowPoints;
 }
 
 void _oglRendererSettings::setPointSize(GLfloat fSize)
@@ -757,14 +727,9 @@ void _oglRendererSettings::setShowBoundingBoxes(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowBoundingBoxes(_model* pModel) const
+BOOL _oglRendererSettings::getShowBoundingBoxes() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowBoundingBoxes;
-	}
-
-	return FALSE;
+	return m_bShowBoundingBoxes;
 }
 
 void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
@@ -777,14 +742,9 @@ void _oglRendererSettings::setShowNormalVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowNormalVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowNormalVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowNormalVectors;
-	}
-
-	return FALSE;
+	return m_bShowNormalVectors;
 }
 
 void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
@@ -797,14 +757,9 @@ void _oglRendererSettings::setShowTangentVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowTangentVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowTangentVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowTangenVectors;
-	}
-
-	return FALSE;
+	return m_bShowTangenVectors;
 }
 
 void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
@@ -817,14 +772,9 @@ void _oglRendererSettings::setShowBiNormalVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getShowBiNormalVectors(_model* pModel) const
+BOOL _oglRendererSettings::getShowBiNormalVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bShowBiNormalVectors;
-	}
-
-	return FALSE;
+	return m_bShowBiNormalVectors;
 }
 
 void _oglRendererSettings::setScaleVectors(BOOL bValue)
@@ -837,14 +787,9 @@ void _oglRendererSettings::setScaleVectors(BOOL bValue)
 	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
 }
 
-BOOL _oglRendererSettings::getScaleVectors(_model* pModel) const
+BOOL _oglRendererSettings::getScaleVectors() const
 {
-	if (pModel != nullptr)
-	{
-		return m_bScaleVectors;
-	}
-
-	return FALSE;
+	return m_bScaleVectors;
 }
 
 void _oglRendererSettings::setShowCoordinateSystem(BOOL bValue)
@@ -2053,7 +1998,7 @@ void _oglView::_drawInstancesFrameBuffer()
 		return;
 	}
 
-	if (!getShowFaces(pModel))
+	if (!getShowFaces())
 	{
 		return;
 	}
@@ -2065,7 +2010,7 @@ void _oglView::_drawInstancesFrameBuffer()
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	CString strCullFaces = getCullFacesMode(pModel);
+	CString strCullFaces = getCullFacesMode();
 
 	if (bTransparent)
 	{
@@ -2087,13 +2032,6 @@ void _oglView::_drawInstancesFrameBuffer()
 #else
 	m_pOGLProgram->_enableLighting(true);
 #endif
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	bool bGhostView = m_bGhostView && !getController()->getSelectedInstances().empty();
 
@@ -2122,12 +2060,8 @@ void _oglView::_drawInstancesFrameBuffer()
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2149,9 +2083,13 @@ void _oglView::_drawInstancesFrameBuffer()
 						pCohortMaterial = itUserDefinedMaterial->second;
 					}
 
+					bool bIsInstancePointed = m_pPointedInstance != nullptr ?
+						pInstance->getOwner() != nullptr ? pInstance->getOwner() == m_pPointedInstance : pInstance == m_pPointedInstance :
+						false;
+
 					const _material* pMaterial =
 						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
-						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						bIsInstancePointed ? m_pPointedInstanceMaterial :
 						pCohortMaterial;
 
 					float fTransparency = pMaterial->getA();
@@ -2227,7 +2165,7 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 		return;
 	}
 
-	if (!getShowConceptualFacesPolygons(pModel))
+	if (!getShowConceptualFacesPolygons())
 	{
 		return;
 	}
@@ -2246,14 +2184,6 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 #endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
-
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
@@ -2280,12 +2210,8 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2329,7 +2255,7 @@ void _oglView::_drawLines(_model* pModel)
 		return;
 	}
 
-	if (!getShowLines(pModel))
+	if (!getShowLines())
 	{
 		return;
 	}
@@ -2348,14 +2274,6 @@ void _oglView::_drawLines(_model* pModel)
 #endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
-
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
@@ -2382,12 +2300,8 @@ void _oglView::_drawLines(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2431,7 +2345,7 @@ void _oglView::_drawPoints(_model* pModel)
 		return;
 	}
 
-	if (!getShowPoints(pModel))
+	if (!getShowPoints())
 	{
 		return;
 	}
@@ -2451,14 +2365,6 @@ void _oglView::_drawPoints(_model* pModel)
 	m_pOGLProgram->_enableLighting(false);
 #endif
 	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
-
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
 
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
@@ -2485,12 +2391,8 @@ void _oglView::_drawPoints(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2503,9 +2405,13 @@ void _oglView::_drawPoints(_model* pModel)
 #endif
 				for (auto pCohort : pGeometry->pointsCohorts())
 				{
+					bool bIsInstancePointed = m_pPointedInstance != nullptr ?
+						pInstance->getOwner() != nullptr ? pInstance->getOwner() == m_pPointedInstance : pInstance == m_pPointedInstance :
+						false;
+
 					const _material* pMaterial =
 						getController()->isInstanceSelected(pInstance) ? m_pSelectedInstanceMaterial :
-						pInstance == m_pPointedInstance ? m_pPointedInstanceMaterial :
+						bIsInstancePointed ? m_pPointedInstanceMaterial :
 						pCohort->getMaterial();
 
 					m_pOGLProgram->_setAmbientColor(
@@ -2601,14 +2507,6 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 #endif
 	m_pOGLProgram->_setTransparency(1.f);
 
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	float dScaleFactor = (float)pModel->getOriginalBoundingSphereDiameter() / 2.f;
-	float fXTranslation = (float)vecVertexBufferOffset.x / dScaleFactor;
-	float fYTranslation = (float)vecVertexBufferOffset.y / dScaleFactor;
-	float fZTranslation = (float)vecVertexBufferOffset.z / dScaleFactor;
-
 	for (auto itCohort : m_oglBuffers.cohorts())
 	{
 		glBindVertexArray(itCohort.first);
@@ -2634,12 +2532,8 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 
 				// Transformation Matrix
 				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-
-				// Model-View Matrix
 				glm::mat4 matModelView = m_matModelView;
-				matModelView = glm::translate(matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 				matModelView = matModelView * matTransformation;
-				matModelView = glm::translate(matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
 
 				m_pOGLProgram->_setModelViewMatrix(matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -2807,6 +2701,11 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 			pPointedInstance = getController()->getInstanceByID(iInstanceID);
 			ASSERT(pPointedInstance != nullptr);
+		}
+
+		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr))
+		{
+			pPointedInstance = pPointedInstance->getOwner();
 		}
 
 		if (m_pPointedInstance != pPointedInstance)

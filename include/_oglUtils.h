@@ -32,16 +32,12 @@ public: // Methods
 	
 	static GLsizei getVerticesCountLimit(GLint iVertexLengthBytes)
 	{
-#ifdef WIN64
 		return numeric_limits<GLint>::max() / iVertexLengthBytes;
-#else
-		return 6500000;
-#endif
 	}
 
 	static GLsizei getIndicesCountLimit()
 	{
-		return 64800;
+		return numeric_limits<GLint>::max();
 	}
 
 #if defined _MFC_VER || defined _AFXDLL
@@ -2296,43 +2292,43 @@ public: // Properties
 	GLfloat getGhostViewTransparency() const;
 	
 	void setShowFaces(BOOL bValue);
-	BOOL getShowFaces(_model* pModel);
+	BOOL getShowFaces();
 
 	void setCullFacesMode(LPCTSTR szMode);
-	LPCTSTR getCullFacesMode(_model* pModel) const;
+	LPCTSTR getCullFacesMode() const;
 
 	void setShowFacesPolygons(BOOL bValue);
-	BOOL getShowFacesPolygons(_model* pModel) const;
+	BOOL getShowFacesPolygons() const;
 
 	void setShowConceptualFacesPolygons(BOOL bValue);
-	BOOL getShowConceptualFacesPolygons(_model* pModel) const;
+	BOOL getShowConceptualFacesPolygons() const;
 
 	void setShowLines(BOOL bValue);
-	BOOL getShowLines(_model* pModel) const;
+	BOOL getShowLines() const;
 
 	void setLineWidth(GLfloat fWidth);
 	GLfloat getLineWidth() const;
 
 	void setShowPoints(BOOL bValue);
-	BOOL getShowPoints(_model* pModel) const;
+	BOOL getShowPoints() const;
 
 	void setPointSize(GLfloat fSize);
 	GLfloat getPointSize() const;
 
 	void setShowBoundingBoxes(BOOL bValue);
-	BOOL getShowBoundingBoxes(_model* pModel) const;
+	BOOL getShowBoundingBoxes() const;
 
 	void setShowNormalVectors(BOOL bValue);
-	BOOL getShowNormalVectors(_model* pModel) const;
+	BOOL getShowNormalVectors() const;
 
 	void setShowTangentVectors(BOOL bValue);
-	BOOL getShowTangentVectors(_model* pModel) const;
+	BOOL getShowTangentVectors() const;
 
 	void setShowBiNormalVectors(BOOL bValue);
-	BOOL getShowBiNormalVectors(_model* pModel) const;
+	BOOL getShowBiNormalVectors() const;
 
 	void setScaleVectors(BOOL bValue);
-	BOOL getScaleVectors(_model* pModel) const;
+	BOOL getScaleVectors() const;
 
 	void setShowCoordinateSystem(BOOL bValue);
 	BOOL getShowCoordinateSystem() const;

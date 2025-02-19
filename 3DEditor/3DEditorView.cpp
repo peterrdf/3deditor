@@ -438,7 +438,7 @@ void CMy3DEditorView::OnShowFaces()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowFaces(!m_pOpenGLView->getShowFaces(nullptr));
+		m_pOpenGLView->setShowFaces(!m_pOpenGLView->getShowFaces());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFaces);
 	}
@@ -447,14 +447,14 @@ void CMy3DEditorView::OnShowFaces()
 void CMy3DEditorView::OnUpdateShowFaces(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFaces(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFaces());
 }
 
 void CMy3DEditorView::OnShowFacesWireframes()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowFacesPolygons(!m_pOpenGLView->getShowFacesPolygons(nullptr));
+		m_pOpenGLView->setShowFacesPolygons(!m_pOpenGLView->getShowFacesPolygons());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFacesWireframes);
 	}
@@ -463,14 +463,14 @@ void CMy3DEditorView::OnShowFacesWireframes()
 void CMy3DEditorView::OnUpdateShowFacesWireframes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFacesPolygons(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFacesPolygons());
 }
 
 void CMy3DEditorView::OnShowConcFacesWireframes()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowConceptualFacesPolygons(!m_pOpenGLView->getShowConceptualFacesPolygons(nullptr));
+		m_pOpenGLView->setShowConceptualFacesPolygons(!m_pOpenGLView->getShowConceptualFacesPolygons());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
@@ -479,14 +479,14 @@ void CMy3DEditorView::OnShowConcFacesWireframes()
 void CMy3DEditorView::OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowConceptualFacesPolygons(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowConceptualFacesPolygons());
 }
 
 void CMy3DEditorView::OnShowLines()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowLines(!m_pOpenGLView->getShowLines(nullptr));
+		m_pOpenGLView->setShowLines(!m_pOpenGLView->getShowLines());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowLines);
 	}
@@ -495,14 +495,14 @@ void CMy3DEditorView::OnShowLines()
 void CMy3DEditorView::OnUpdateShowLines(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowLines(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowLines());
 }
 
 void CMy3DEditorView::OnShowPoints()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowPoints(!m_pOpenGLView->getShowPoints(nullptr));
+		m_pOpenGLView->setShowPoints(!m_pOpenGLView->getShowPoints());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowPoints);
 	}
@@ -511,14 +511,14 @@ void CMy3DEditorView::OnShowPoints()
 void CMy3DEditorView::OnUpdateShowPoints(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowPoints(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowPoints());
 }
 
 void CMy3DEditorView::OnNormalVectors()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowNormalVectors(!m_pOpenGLView->getShowNormalVectors(nullptr));
+		m_pOpenGLView->setShowNormalVectors(!m_pOpenGLView->getShowNormalVectors());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowNormalVectors);
 	}
@@ -527,14 +527,14 @@ void CMy3DEditorView::OnNormalVectors()
 void CMy3DEditorView::OnUpdateNormalVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowNormalVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowNormalVectors());
 }
 
 void CMy3DEditorView::OnShowTangentVectors()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowTangentVectors(!m_pOpenGLView->getShowTangentVectors(nullptr));
+		m_pOpenGLView->setShowTangentVectors(!m_pOpenGLView->getShowTangentVectors());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowTangenVectors);
 	}
@@ -543,14 +543,14 @@ void CMy3DEditorView::OnShowTangentVectors()
 void CMy3DEditorView::OnUpdateShowTangentVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowTangentVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowTangentVectors());
 }
 
 void CMy3DEditorView::OnShowBiNormalVectors()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowBiNormalVectors(!m_pOpenGLView->getShowBiNormalVectors(nullptr));
+		m_pOpenGLView->setShowBiNormalVectors(!m_pOpenGLView->getShowBiNormalVectors());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBiNormalVectors);
 	}
@@ -559,14 +559,14 @@ void CMy3DEditorView::OnShowBiNormalVectors()
 void CMy3DEditorView::OnUpdateShowBiNormalVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBiNormalVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBiNormalVectors());
 }
 
 void CMy3DEditorView::OnShowBoundingBoxes()
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->setShowBoundingBoxes(!m_pOpenGLView->getShowBoundingBoxes(nullptr));
+		m_pOpenGLView->setShowBoundingBoxes(!m_pOpenGLView->getShowBoundingBoxes());
 
 		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBoundingBoxes);
 	}
@@ -575,5 +575,5 @@ void CMy3DEditorView::OnShowBoundingBoxes()
 void CMy3DEditorView::OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBoundingBoxes(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBoundingBoxes());
 }

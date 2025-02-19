@@ -2257,7 +2257,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces"), 
-			pOGLRenderer->getShowFaces(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
+			pOGLRenderer->getShowFaces() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Faces"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFaces));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2267,7 +2267,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 	
 	{
-		CString strCullFacesMode = pOGLRenderer->getCullFacesMode(nullptr);
+		CString strCullFacesMode = pOGLRenderer->getCullFacesMode();
 
 		auto pProperty = new CApplicationProperty(
 			_T("Cull Faces"), 
@@ -2283,7 +2283,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Faces wireframes"), 
-			pOGLRenderer->getShowFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOGLRenderer->getShowFacesPolygons() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Faces wireframes"), (DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2294,7 +2294,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Conceptual faces wireframes"), 
-			pOGLRenderer->getShowConceptualFacesPolygons(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOGLRenderer->getShowConceptualFacesPolygons() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Conceptual faces wireframes"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowConceptualFacesWireframes));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2305,7 +2305,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Lines"), pOGLRenderer->getShowLines(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Lines"), pOGLRenderer->getShowLines() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Lines"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowLines));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2328,7 +2328,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 	//}
 
 	{
-		auto pProperty = new CApplicationProperty(_T("Points"), pOGLRenderer->getShowPoints(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+		auto pProperty = new CApplicationProperty(_T("Points"), pOGLRenderer->getShowPoints() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Points"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowPoints));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
@@ -2358,7 +2358,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		* Normal vectors
 		*/
 		{
-			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOGLRenderer->getShowNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Normal vectors"), pOGLRenderer->getShowNormalVectors() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Normal vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2369,7 +2369,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOGLRenderer->getShowTangentVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Tangent vectors"), pOGLRenderer->getShowTangentVectors() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Tangent vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowTangenVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2380,7 +2380,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOGLRenderer->getShowBiNormalVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Bi-normal vectors"), pOGLRenderer->getShowBiNormalVectors() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Bi-normal vectors"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBiNormalVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2391,7 +2391,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		}
 
 		{
-			auto pProperty = new CApplicationProperty(_T("Scale"), pOGLRenderer->getScaleVectors(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			auto pProperty = new CApplicationProperty(_T("Scale"), pOGLRenderer->getScaleVectors() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Scale"), 
 				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScaleVectors));
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
@@ -2404,7 +2404,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Bounding boxes"), 
-			pOGLRenderer->getShowBoundingBoxes(nullptr) ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+			pOGLRenderer->getShowBoundingBoxes() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 			_T("Bounding boxes"), 
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowBoundingBoxes));
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);

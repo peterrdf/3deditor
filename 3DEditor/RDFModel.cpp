@@ -577,9 +577,11 @@ CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 	return nullptr;
 }
 
-CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
+CRDFInstance * CRDFModel::CreateNewInstance(int64_t /*iClassInstance*/)
 {
-	assert(iClassInstance != 0);
+	ASSERT(FALSE);//#todo
+	return nullptr;
+	/*assert(iClassInstance != 0);
 
 	int64_t iInstance = CreateInstance(iClassInstance);
 	assert(iInstance != 0);
@@ -589,17 +591,19 @@ CRDFInstance * CRDFModel::CreateNewInstance(int64_t iClassInstance)
 
 	m_mapInstances[iInstance] = pInstance;
 
-	return pInstance;
+	return pInstance;*/
 }
 
-CRDFInstance* CRDFModel::AddNewInstance(int64_t pThing)
+CRDFInstance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 {
-	auto pInstance = new CRDFInstance(m_iID++, pThing);
+	ASSERT(FALSE);//#todo
+	return nullptr;
+	/*auto pInstance = new CRDFInstance(m_iID++, pThing);
 	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
 
 	m_mapInstances[pThing] = pInstance;
 
-	return pInstance;
+	return pInstance;*/
 }
 
 bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
@@ -748,7 +752,8 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			itInstance->second->LoadOriginalData();
 		}
 		
-		itInstance->second->calculateMinMax(
+		itInstance->second->calculateBB(
+			itInstance->second,
 			m_fXmin, m_fXmax, 
 			m_fYmin, m_fYmax, 
 			m_fZmin, m_fZmax);
@@ -811,7 +816,8 @@ float CRDFModel::GetBoundingSphereDiameter() const
 			continue;
 		}
 
-		itInstance->second->calculateMinMax(
+		itInstance->second->calculateBB(
+			itInstance->second,
 			m_fXmin, m_fXmax,
 			m_fYmin, m_fYmax,
 			m_fZmin, m_fZmax);
@@ -848,9 +854,10 @@ float CRDFModel::GetBoundingSphereDiameter() const
 	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
-void CRDFModel::ZoomToInstance(int64_t iInstance)
+void CRDFModel::ZoomToInstance(int64_t /*iInstance*/)
 {
-	m_fBoundingSphereDiameter = 0.f;
+	ASSERT(FALSE);//#todo
+	/*m_fBoundingSphereDiameter = 0.f;
 
 	assert(iInstance != 0);
 	assert(m_mapInstances.find(iInstance) != m_mapInstances.end());
@@ -881,52 +888,53 @@ void CRDFModel::ZoomToInstance(int64_t iInstance)
 
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);*/
 }
 
 void CRDFModel::ZoomOut()
 {
-	m_fBoundingSphereDiameter = 0.f;
+	ASSERT(FALSE);//#todo
+	//m_fBoundingSphereDiameter = 0.f;
 
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
+	//m_fXmin = FLT_MAX;
+	//m_fXmax = -FLT_MAX;
+	//m_fYmin = FLT_MAX;
+	//m_fYmax = -FLT_MAX;
+	//m_fZmin = FLT_MAX;
+	//m_fZmax = -FLT_MAX;
 
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->getEnable())
-		{
-			continue;
-		}
+	//auto itInstance = m_mapInstances.begin();
+	//for (; itInstance != m_mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->getEnable())
+	//	{
+	//		continue;
+	//	}
 
-		itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-	}
+	//	itInstance->second->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
+	//}
 
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		m_fXmin = -1.;
-		m_fXmax = 1.;
-		m_fYmin = -1.;
-		m_fYmax = 1.;
-		m_fZmin = -1.;
-		m_fZmax = 1.;
-	}
+	//if ((m_fXmin == FLT_MAX) ||
+	//	(m_fXmax == -FLT_MAX) ||
+	//	(m_fYmin == FLT_MAX) ||
+	//	(m_fYmax == -FLT_MAX) ||
+	//	(m_fZmin == FLT_MAX) ||
+	//	(m_fZmax == -FLT_MAX))
+	//{
+	//	m_fXmin = -1.;
+	//	m_fXmax = 1.;
+	//	m_fYmin = -1.;
+	//	m_fYmax = 1.;
+	//	m_fZmin = -1.;
+	//	m_fZmax = 1.;
+	//}
 
-	/*
-	* World
-	*/
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	///*
+	//* World
+	//*/
+	//m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
 void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
@@ -1408,71 +1416,72 @@ void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
 
 void CRDFModel::UpdateVertexBufferOffset()
 {
+	//#todo
 	/* Min/Max/Offset */
-	m_dVertexBuffersOffsetX = 0.;
-	m_dVertexBuffersOffsetY = 0.;
-	m_dVertexBuffersOffsetZ = 0.;
-	m_dOriginalBoundingSphereDiameter = 2.;
+	//m_dVertexBuffersOffsetX = 0.;
+	//m_dVertexBuffersOffsetY = 0.;
+	//m_dVertexBuffersOffsetZ = 0.;
+	//m_dOriginalBoundingSphereDiameter = 2.;
 
-	double dXmin = DBL_MAX;
-	double dXmax = -DBL_MAX;
-	double dYmin = DBL_MAX;
-	double dYmax = -DBL_MAX;
-	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;	
+	//double dXmin = DBL_MAX;
+	//double dXmax = -DBL_MAX;
+	//double dYmin = DBL_MAX;
+	//double dYmax = -DBL_MAX;
+	//double dZmin = DBL_MAX;
+	//double dZmax = -DBL_MAX;	
 
-	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0)
-	{
-		if (m_mapInstanceDefaultState.at(iInstance))
-		{
-			CRDFInstance::calculateBBMinMax(
-				iInstance,
-				dXmin, dXmax,
-				dYmin, dYmax,
-				dZmin, dZmax);
-		}
+	//OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
+	//while (iInstance != 0)
+	//{
+	//	if (m_mapInstanceDefaultState.at(iInstance))
+	//	{
+	//		CRDFInstance::calculateBBMinMax(
+	//			iInstance,
+	//			dXmin, dXmax,
+	//			dYmin, dYmax,
+	//			dZmin, dZmax);
+	//	}
 
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	}
+	//	iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	//}
 
-	if ((dXmin == DBL_MAX) ||
-		(dXmax == -DBL_MAX) ||
-		(dYmin == DBL_MAX) ||
-		(dYmax == -DBL_MAX) ||
-		(dZmin == DBL_MAX) ||
-		(dZmax == -DBL_MAX))
-	{
-		// TODO: new status bar for geometry
-		/*::MessageBox(
-			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
+	//if ((dXmin == DBL_MAX) ||
+	//	(dXmax == -DBL_MAX) ||
+	//	(dYmin == DBL_MAX) ||
+	//	(dYmax == -DBL_MAX) ||
+	//	(dZmin == DBL_MAX) ||
+	//	(dZmax == -DBL_MAX))
+	//{
+	//	// TODO: new status bar for geometry
+	//	/*::MessageBox(
+	//		m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
+	//		_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
-		return;
-	}
+	//	return;
+	//}
 
-	m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
-	m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
-	m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
+	//m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
+	//m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
+	//m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
 
-	m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
+	//m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
+	//m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
+	//m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
 
-	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-		m_dVertexBuffersOffsetX,
-		m_dVertexBuffersOffsetY,
-		m_dVertexBuffersOffsetZ);
+	//TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+	//	m_dVertexBuffersOffsetX,
+	//	m_dVertexBuffersOffsetY,
+	//	m_dVertexBuffersOffsetZ);
 
-	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	SetVertexBufferOffset(
-		m_iModel,
-		m_dVertexBuffersOffsetX,
-		m_dVertexBuffersOffsetY,
-		m_dVertexBuffersOffsetZ);
+	//// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	//SetVertexBufferOffset(
+	//	m_iModel,
+	//	m_dVertexBuffersOffsetX,
+	//	m_dVertexBuffersOffsetY,
+	//	m_dVertexBuffersOffsetZ);
 
-	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-	ClearedExternalBuffers(m_iModel);
+	//// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	//ClearedExternalBuffers(m_iModel);
 }
 
 void CRDFModel::LoadRDFInstances()
@@ -1728,7 +1737,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 	// ASCII Chars
 	m_pTextBuilder->Initialize(m_iModel);
 
-	CreateCoordinateSystem();
+	//CreateCoordinateSystem();
 
 	LoadRDFModel();
 }
@@ -1740,256 +1749,258 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 
 void CSceneRDFModel::CreateCoordinateSystem()
 {
-	const double AXIS_LENGTH = 2.5;
+	//#todo
 
-	// Coordinate System
-	vector<OwlInstance> vecInstances;
+	//const double AXIS_LENGTH = 2.5;
 
-	// Coordinate System/X (1 Line3D)
-	OwlInstance iXAxisMaterial = 0;
-	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(1.);
-		pAmbient.set_G(0.);
-		pAmbient.set_B(0.);
-		pAmbient.set_W(1.);
+	//// Coordinate System
+	//vector<OwlInstance> vecInstances;
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	//// Coordinate System/X (1 Line3D)
+	//OwlInstance iXAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(1.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(0.);
+	//	pAmbient.set_W(1.);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
 
-		iXAxisMaterial = (int64_t)pMaterial;
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
 
-		vector<double> vecPoints =
-		{
-			0., 0., 0.,
-			AXIS_LENGTH / 2., 0., 0.,
-		};
+	//	iXAxisMaterial = (int64_t)pMaterial;
 
-		auto pXAxis = GEOM::Line3D::Create(m_iModel);
-		pXAxis.set_material(pMaterial);
-		pXAxis.set_points(vecPoints.data(), vecPoints.size());
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		AXIS_LENGTH / 2., 0., 0.,
+	//	};
 
-		vecInstances.push_back((int64_t)pXAxis);
-	}
+	//	auto pXAxis = GEOM::Line3D::Create(m_iModel);
+	//	pXAxis.set_material(pMaterial);
+	//	pXAxis.set_points(vecPoints.data(), vecPoints.size());
 
-	// Coordinate System/Y (Line3D)
-	OwlInstance iYAxisMaterial = 0;
-	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(1.);
-		pAmbient.set_B(0.);
-		pAmbient.set_W(1.);
+	//	vecInstances.push_back((int64_t)pXAxis);
+	//}
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	//// Coordinate System/Y (Line3D)
+	//OwlInstance iYAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(1.);
+	//	pAmbient.set_B(0.);
+	//	pAmbient.set_W(1.);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
 
-		iYAxisMaterial = (int64_t)pMaterial;
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
 
-		vector<double> vecPoints =
-		{
-			0., 0., 0.,
-			0., AXIS_LENGTH / 2., 0.,
-		};
+	//	iYAxisMaterial = (int64_t)pMaterial;
 
-		auto pYAxis = GEOM::Line3D::Create(m_iModel);
-		pYAxis.set_material(pMaterial);
-		pYAxis.set_points(vecPoints.data(), vecPoints.size());
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		0., AXIS_LENGTH / 2., 0.,
+	//	};
 
-		vecInstances.push_back((int64_t)pYAxis);
-	}
+	//	auto pYAxis = GEOM::Line3D::Create(m_iModel);
+	//	pYAxis.set_material(pMaterial);
+	//	pYAxis.set_points(vecPoints.data(), vecPoints.size());
 
-	// Coordinate System/Z (Line3D)
-	OwlInstance iZAxisMaterial = 0;
-	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(0.);
-		pAmbient.set_B(1.);
-		pAmbient.set_W(1.);
+	//	vecInstances.push_back((int64_t)pYAxis);
+	//}
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	//// Coordinate System/Z (Line3D)
+	//OwlInstance iZAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(1.);
+	//	pAmbient.set_W(1.);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
 
-		iZAxisMaterial = (int64_t)pMaterial;
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
 
-		vector<double> vecPoints =
-		{
-			0., 0., 0.,
-			0., 0., AXIS_LENGTH / 2.,
-		};
+	//	iZAxisMaterial = (int64_t)pMaterial;
 
-		auto pZAxis = GEOM::Line3D::Create(m_iModel);
-		pZAxis.set_material(pMaterial);
-		pZAxis.set_points(vecPoints.data(), vecPoints.size());
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		0., 0., AXIS_LENGTH / 2.,
+	//	};
 
-		vecInstances.push_back((int64_t)pZAxis);
-	}
+	//	auto pZAxis = GEOM::Line3D::Create(m_iModel);
+	//	pZAxis.set_material(pMaterial);
+	//	pZAxis.set_points(vecPoints.data(), vecPoints.size());
 
-	// Arrows (1 Cone => 3 Transformations)
-	{
-		const double ARROW_OFFSET = 2.5;
+	//	vecInstances.push_back((int64_t)pZAxis);
+	//}
 
-		auto pArrow = GEOM::Cone::Create(m_iModel);
-		pArrow.set_height(AXIS_LENGTH / 15.);
-		pArrow.set_radius(.075);
+	//// Arrows (1 Cone => 3 Transformations)
+	//{
+	//	const double ARROW_OFFSET = 2.5;
 
-		// +X
-		{
-			OwlInstance iPlusXInstance = Translate(
-				Rotate((int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
-				ARROW_OFFSET / 2., 0., 0.,
-				1., 1., 1.);
-			SetNameOfInstance(iPlusXInstance, "#(+X)");
+	//	auto pArrow = GEOM::Cone::Create(m_iModel);
+	//	pArrow.set_height(AXIS_LENGTH / 15.);
+	//	pArrow.set_radius(.075);
 
-			SetObjectProperty(
-				iPlusXInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iXAxisMaterial,
-				1);
+	//	// +X
+	//	{
+	//		OwlInstance iPlusXInstance = Translate(
+	//			Rotate((int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
+	//			ARROW_OFFSET / 2., 0., 0.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusXInstance, "#(+X)");
 
-			vecInstances.push_back(iPlusXInstance);
-		}
+	//		SetObjectProperty(
+	//			iPlusXInstance,
+	//			GetPropertyByName(m_iModel, "material"),
+	//			&iXAxisMaterial,
+	//			1);
 
-		// +Y
-		{
-			OwlInstance iPlusYInstance = Translate(
-				Rotate((int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
-				0., ARROW_OFFSET / 2., 0.,
-				1., 1., 1.);
-			SetNameOfInstance(iPlusYInstance, "#(+Y)");
+	//		vecInstances.push_back(iPlusXInstance);
+	//	}
 
-			SetObjectProperty(
-				iPlusYInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iYAxisMaterial,
-				1);
+	//	// +Y
+	//	{
+	//		OwlInstance iPlusYInstance = Translate(
+	//			Rotate((int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
+	//			0., ARROW_OFFSET / 2., 0.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusYInstance, "#(+Y)");
 
-			vecInstances.push_back(iPlusYInstance);
-		}
+	//		SetObjectProperty(
+	//			iPlusYInstance,
+	//			GetPropertyByName(m_iModel, "material"),
+	//			&iYAxisMaterial,
+	//			1);
 
-		// +Z
-		{
-			OwlInstance iPlusZInstance = Translate(
-				(int64_t)pArrow,
-				0., 0., ARROW_OFFSET / 2.,
-				1., 1., 1.);
-			SetNameOfInstance(iPlusZInstance, "#(+Z)");
+	//		vecInstances.push_back(iPlusYInstance);
+	//	}
 
-			SetObjectProperty(
-				iPlusZInstance,
-				GetPropertyByName(m_iModel, "material"),
-				&iZAxisMaterial,
-				1);
+	//	// +Z
+	//	{
+	//		OwlInstance iPlusZInstance = Translate(
+	//			(int64_t)pArrow,
+	//			0., 0., ARROW_OFFSET / 2.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusZInstance, "#(+Z)");
 
-			vecInstances.push_back(iPlusZInstance);
-		}
-	}
+	//		SetObjectProperty(
+	//			iPlusZInstance,
+	//			GetPropertyByName(m_iModel, "material"),
+	//			&iZAxisMaterial,
+	//			1);
 
-	/* Labels */
-	double dXmin = DBL_MAX;
-	double dXmax = -DBL_MAX;
-	double dYmin = DBL_MAX;
-	double dYmax = -DBL_MAX;
-	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;
+	//		vecInstances.push_back(iPlusZInstance);
+	//	}
+	//}
 
-	// X-axis
-	OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
-	assert(iPlusXLabelInstance != 0);
+	///* Labels */
+	//double dXmin = DBL_MAX;
+	//double dXmax = -DBL_MAX;
+	//double dYmin = DBL_MAX;
+	//double dYmax = -DBL_MAX;
+	//double dZmin = DBL_MAX;
+	//double dZmax = -DBL_MAX;
 
-	CRDFInstance::calculateBBMinMax(
-		iPlusXLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//// X-axis
+	//OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	//assert(iPlusXLabelInstance != 0);
 
-	// Y-axis
-	OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
-	assert(iPlusYLabelInstance != 0);
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusXLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	CRDFInstance::calculateBBMinMax(
-		iPlusYLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//// Y-axis
+	//OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	//assert(iPlusYLabelInstance != 0);
 
-	// Z-axis
-	OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
-	assert(iPlusZLabelInstance != 0);
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusYLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	CRDFInstance::calculateBBMinMax(
-		iPlusZLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//// Z-axis
+	//OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	//assert(iPlusZLabelInstance != 0);
 
-	/* Scale Factor */
-	double dMaxLength = dXmax - dXmin;
-	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
-	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusZLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	double dScaleFactor = ((AXIS_LENGTH / 2.) * .75) / dMaxLength;
+	///* Scale Factor */
+	//double dMaxLength = dXmax - dXmin;
+	//dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	//dMaxLength = fmax(dMaxLength, dZmax - dZmin);
 
-	/* Transform Labels */
+	//double dScaleFactor = ((AXIS_LENGTH / 2.) * .75) / dMaxLength;
 
-	// X-axis
-	OwlInstance iInstance = Translate(
-		Rotate(Scale(iPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
-		AXIS_LENGTH / 1.4, 0., 0.,
-		-1., 1., 1.);
-	
-	SetNameOfInstance(iInstance, "#X-axis");
-	SetObjectProperty(
-		iInstance,
-		GetPropertyByName(m_iModel, "material"),
-		&iXAxisMaterial,
-		1);
+	///* Transform Labels */
 
-	// Y-axis
-	iInstance = Translate(
-		Rotate(Scale(iPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-		0., AXIS_LENGTH / 1.4, 0.,
-		-1., 1., 1.);
+	//// X-axis
+	//OwlInstance iInstance = Translate(
+	//	Rotate(Scale(iPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
+	//	AXIS_LENGTH / 1.4, 0., 0.,
+	//	-1., 1., 1.);
+	//
+	//SetNameOfInstance(iInstance, "#X-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(m_iModel, "material"),
+	//	&iXAxisMaterial,
+	//	1);
 
-	SetNameOfInstance(iInstance, "#Y-axis");
-	SetObjectProperty(
-		iInstance,
-		GetPropertyByName(m_iModel, "material"),
-		&iYAxisMaterial,
-		1);
+	//// Y-axis
+	//iInstance = Translate(
+	//	Rotate(Scale(iPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//	0., AXIS_LENGTH / 1.4, 0.,
+	//	-1., 1., 1.);
 
-	// Z-axis
-	iInstance = Translate(
-		Rotate(Scale(iPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
-		0., 0., AXIS_LENGTH / 1.4,
-		1., 1., -1.);
+	//SetNameOfInstance(iInstance, "#Y-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(m_iModel, "material"),
+	//	&iYAxisMaterial,
+	//	1);
 
-	SetNameOfInstance(iInstance, "#Z-axis");
-	SetObjectProperty(
-		iInstance,
-		GetPropertyByName(m_iModel, "material"),
-		&iZAxisMaterial,
-		1);
+	//// Z-axis
+	//iInstance = Translate(
+	//	Rotate(Scale(iPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
+	//	0., 0., AXIS_LENGTH / 1.4,
+	//	1., 1., -1.);
 
-	/* Collection */
-	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"), "#Coordinate System#");
-	assert(iCollectionInstance != 0);
+	//SetNameOfInstance(iInstance, "#Z-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(m_iModel, "material"),
+	//	&iZAxisMaterial,
+	//	1);
 
-	SetObjectProperty(
-		iCollectionInstance,
-		GetPropertyByName(m_iModel, "objects"),
-		vecInstances.data(),
-		vecInstances.size());
+	///* Collection */
+	//OwlInstance iCollectionInstance = CreateInstance(GetClassByName(m_iModel, "Collection"), "#Coordinate System#");
+	//assert(iCollectionInstance != 0);
+
+	//SetObjectProperty(
+	//	iCollectionInstance,
+	//	GetPropertyByName(m_iModel, "objects"),
+	//	vecInstances.data(),
+	//	vecInstances.size());
 }
 
 // ************************************************************************************************
@@ -2176,119 +2187,120 @@ void CNavigatorRDFModel::CreateNaigator()
 
 void CNavigatorRDFModel::CreateNaigatorLabels()
 {
-	double dXmin = DBL_MAX;
-	double dXmax = -DBL_MAX;
-	double dYmin = DBL_MAX;
-	double dYmax = -DBL_MAX;
-	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;
+	//#todo
+	//double dXmin = DBL_MAX;
+	//double dXmax = -DBL_MAX;
+	//double dYmin = DBL_MAX;
+	//double dYmax = -DBL_MAX;
+	//double dZmin = DBL_MAX;
+	//double dZmax = -DBL_MAX;
 
-	/* Top */
-	OwlInstance iTopLabelInstance = m_pTextBuilder->BuildText("top", true);
-	assert(iTopLabelInstance != 0);
+	///* Top */
+	//OwlInstance iTopLabelInstance = m_pTextBuilder->BuildText("top", true);
+	//assert(iTopLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iTopLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iTopLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Bottom */
-	OwlInstance iBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
-	assert(iBottomLabelInstance != 0);
+	///* Bottom */
+	//OwlInstance iBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
+	//assert(iBottomLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iBottomLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iBottomLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Front */
-	OwlInstance iFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
-	assert(iFrontLabelInstance != 0);
+	///* Front */
+	//OwlInstance iFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
+	//assert(iFrontLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iFrontLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iFrontLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Back */
-	OwlInstance iBackLabelInstance = m_pTextBuilder->BuildText("back", true);
-	assert(iBackLabelInstance != 0);
+	///* Back */
+	//OwlInstance iBackLabelInstance = m_pTextBuilder->BuildText("back", true);
+	//assert(iBackLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iBackLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iBackLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Left */
-	OwlInstance iLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
-	assert(iLeftLabelInstance != 0);
+	///* Left */
+	//OwlInstance iLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
+	//assert(iLeftLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iLeftLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iLeftLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Right */
-	OwlInstance iRightLabelInstance = m_pTextBuilder->BuildText("right", true);
-	assert(iRightLabelInstance != 0);
+	///* Right */
+	//OwlInstance iRightLabelInstance = m_pTextBuilder->BuildText("right", true);
+	//assert(iRightLabelInstance != 0);
 
-	CRDFInstance::calculateBBMinMax(
-		iRightLabelInstance,
-		dXmin, dXmax,
-		dYmin, dYmax,
-		dZmin, dZmax);
+	//CRDFInstance::calculateBBMinMax(
+	//	iRightLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
 
-	/* Scale Factor */
-	double dMaxLength = dXmax - dXmin;
-	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
-	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+	///* Scale Factor */
+	//double dMaxLength = dXmax - dXmin;
+	//dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	//dMaxLength = fmax(dMaxLength, dZmax - dZmin);
 
-	double dScaleFactor = (1.5 * .9) / dMaxLength;
+	//double dScaleFactor = (1.5 * .9) / dMaxLength;
 
-	// Front
-	OwlInstance iInstance = Translate(
-		Rotate(Scale(iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
-		0., -.751, 0.,
-		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#front-label");
+	//// Front
+	//OwlInstance iInstance = Translate(
+	//	Rotate(Scale(iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+	//	0., -.751, 0.,
+	//	1., 1., 1.);
+	//SetNameOfInstance(iInstance, "#front-label");
 
-	// Back
-	iInstance = Translate(
-		Rotate(Scale(iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
-		0., .751, 0.,
-		-1., 1., 1.);
-	SetNameOfInstance(iInstance, "#back-label");
+	//// Back
+	//iInstance = Translate(
+	//	Rotate(Scale(iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+	//	0., .751, 0.,
+	//	-1., 1., 1.);
+	//SetNameOfInstance(iInstance, "#back-label");
 
-	// Top
-	iInstance = Translate(
-		Scale(iTopLabelInstance, dScaleFactor),
-		0., 0., .751,
-		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#top-label");
+	//// Top
+	//iInstance = Translate(
+	//	Scale(iTopLabelInstance, dScaleFactor),
+	//	0., 0., .751,
+	//	1., 1., 1.);
+	//SetNameOfInstance(iInstance, "#top-label");
 
-	// Bottom
-	iInstance = Translate(
-		Scale(iBottomLabelInstance, dScaleFactor),
-		0., 0., -.751,
-		-1, 1., 1.);
-	SetNameOfInstance(iInstance, "#bottom-label");
+	//// Bottom
+	//iInstance = Translate(
+	//	Scale(iBottomLabelInstance, dScaleFactor),
+	//	0., 0., -.751,
+	//	-1, 1., 1.);
+	//SetNameOfInstance(iInstance, "#bottom-label");
 
-	// Left
-	iInstance = Translate(
-		Rotate(Scale(iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-		-.751, 0., 0.,
-		1., -1., 1.);
-	SetNameOfInstance(iInstance, "#left-label");
+	//// Left
+	//iInstance = Translate(
+	//	Rotate(Scale(iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//	-.751, 0., 0.,
+	//	1., -1., 1.);
+	//SetNameOfInstance(iInstance, "#left-label");
 
-	// Right
-	iInstance = Translate(
-		Rotate(Scale(iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-		.751, 0., 0.,
-		1., 1., 1.);
-	SetNameOfInstance(iInstance, "#right-label");
+	//// Right
+	//iInstance = Translate(
+	//	Rotate(Scale(iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//	.751, 0., 0.,
+	//	1., 1., 1.);
+	//SetNameOfInstance(iInstance, "#right-label");
 }

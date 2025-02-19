@@ -61,13 +61,11 @@ END_MESSAGE_MAP()
 // CMy3DEditorDoc construction/destruction
 
 CMy3DEditorDoc::CMy3DEditorDoc()
-	: m_pModel(nullptr)
 {
 }
 
 CMy3DEditorDoc::~CMy3DEditorDoc()
 {
-	delete m_pModel;
 }
 
 BOOL CMy3DEditorDoc::OnNewDocument()
@@ -75,16 +73,10 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
+	auto pModel = new CRDFModel();
+	pModel->CreateDefaultModel();
 
-	m_pModel = new CRDFModel();
-	m_pModel->CreateDefaultModel();	
-
-	SetModel(m_pModel);	
+	setModel(pModel);
 
 	return TRUE;
 }
@@ -180,16 +172,10 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
-
-	m_pModel = new CRDFModel();
-	m_pModel->Load(lpszPathName, true);
+	auto pModel = new CRDFModel();
+	pModel->Load(lpszPathName, true);
 		
-	SetModel(m_pModel);
+	setModel(pModel);
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -206,7 +192,8 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	m_pModel->Save(lpszPathName);
+	ASSERT(FALSE);//#todo
+	//m_pModel->Save(lpszPathName);
 
 	return TRUE;
 }
@@ -342,7 +329,8 @@ void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
-	wstring strFileName = m_pModel->getPath();
+	ASSERT(FALSE); //#todo
+	/*wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.citygml";
 
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
@@ -356,23 +344,25 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 
 #ifdef _GIS_SUPPORT
 	SaveAsCityGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif
+#endif*/
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
-#ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getOwlModel() != 0) &&
-		IsCityGML(m_pModel->getOwlModel()));
-#else
-	pCmdUI->Enable(FALSE);
-#endif
+	ASSERT(FALSE); //#todo
+//#ifdef _GIS_SUPPORT
+//	pCmdUI->Enable((m_pModel != nullptr) &&
+//		(m_pModel->getOwlModel() != 0) &&
+//		IsCityGML(m_pModel->getOwlModel()));
+//#else
+//	pCmdUI->Enable(FALSE);
+//#endif
 }
 
 void CMy3DEditorDoc::OnExportAsInfragml()
 {
-	wstring strFileName = m_pModel->getPath();
+	ASSERT(FALSE); //#todo
+	/*wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
@@ -386,23 +376,25 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 
 #ifdef _GIS_SUPPORT
 	SaveAsInfraGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif
+#endif*/
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
-#ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getOwlModel() != 0) &&
-		IsInfraGML(m_pModel->getOwlModel()));
-#else
-	pCmdUI->Enable(FALSE);
-#endif
+	ASSERT(FALSE); //#todo
+//#ifdef _GIS_SUPPORT
+//	pCmdUI->Enable((m_pModel != nullptr) &&
+//		(m_pModel->getOwlModel() != 0) &&
+//		IsInfraGML(m_pModel->getOwlModel()));
+//#else
+//	pCmdUI->Enable(FALSE);
+//#endif
 }
 
 void CMy3DEditorDoc::OnExportAsLandxml()
 {
-	wstring strFileName = m_pModel->getPath();
+	ASSERT(FALSE); //#todo
+	/*wstring strFileName = m_pModel->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
@@ -416,16 +408,17 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 
 #ifdef _GIS_SUPPORT
 	SaveAsLandXMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif
+#endif*/
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
-#ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getOwlModel() != 0) &&
-		IsLandXML(m_pModel->getOwlModel()));
-#else
-	pCmdUI->Enable(FALSE);
-#endif
+	ASSERT(FALSE); //#todo
+//#ifdef _GIS_SUPPORT
+//	pCmdUI->Enable((m_pModel != nullptr) &&
+//		(m_pModel->getOwlModel() != 0) &&
+//		IsLandXML(m_pModel->getOwlModel()));
+//#else
+//	pCmdUI->Enable(FALSE);
+//#endif
 }
