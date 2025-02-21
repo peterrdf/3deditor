@@ -164,7 +164,7 @@ public: // Methods
 
 // ************************************************************************************************
 CRDFModel::CRDFModel()
-	: _model()
+	: _rdf_model()
 	, m_iModel(0)
 	, m_bExternalModel(false)
 	, m_mapClasses()

@@ -198,6 +198,9 @@
     <ClInclude Include="..\include\_host.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_rdf_model.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -321,6 +324,9 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_rdf_instance.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_model.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

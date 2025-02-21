@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_mvc.h"
+#include "_rdf_model.h"
 #include "Texture.h"
 #include "RDFClass.h"
 #include "RDFProperty.h"
@@ -19,7 +19,7 @@ Autocad DXF Files (*.dxf)|*.dxf|\
 All Files (*.*)|*.*||");
 
 // ************************************************************************************************
-class CRDFModel : public _model
+class CRDFModel : public _rdf_model
 {
 	friend class CLoadTask;
 
