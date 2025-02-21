@@ -2258,7 +2258,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_VIEW_ZOOM_OUT:
 			{
-				GetController()->ZoomOut();
+				GetController()->zoomOut();
 			}
 			break;
 

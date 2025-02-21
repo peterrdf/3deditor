@@ -18,8 +18,9 @@ CRDFController::CRDFController()
 	, m_bScaleAndCenter(TRUE)
 	, m_bModelCoordinateSystem(TRUE)
 {
-	m_pSceneModel->CreateDefaultModel();
-	m_pNavigatorModel->CreateDefaultModel(); 
+	//#todo
+	//m_pSceneModel->CreateDefaultModel();
+	//m_pNavigatorModel->CreateDefaultModel(); 
 
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));

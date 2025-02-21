@@ -39,6 +39,7 @@ CRDFController* CMy3DEditorView::GetController()
 
 	m_pOpenGLView = new CRDFOpenGLView(this);
 	m_pOpenGLView->setController(pController);
+	m_pOpenGLView->_load();
 }
 
 // CMy3DEditorView

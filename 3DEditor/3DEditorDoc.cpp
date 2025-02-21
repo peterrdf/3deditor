@@ -299,7 +299,7 @@ void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnViewZoomOut()
 {
-	ZoomOut();
+	zoomOut();
 }
 
 void CMy3DEditorDoc::OnInstancesZoomTo()

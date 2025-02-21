@@ -17,6 +17,7 @@ public: // Methods
 protected: // Methods
 
 	// _geometry
+	virtual void preCalculate() override;
 	virtual void calculateCore() override;
 	virtual void clean() override;
 
@@ -25,6 +26,10 @@ public: // Methods
 	void loadName();
 	void loadOriginalData();
 	void recalculate();
+
+private: // Methods
+
+	void setRDFFormatSettings();
 
 public: // Properties
 

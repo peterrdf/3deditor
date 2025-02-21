@@ -421,6 +421,8 @@ void CRDFModel::Load(OwlInstance iInstance)
 	m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
 
 	ScaleAndCenter(true);
+
+	scale();
 }
 
 #ifdef _DXF_SUPPORT
@@ -1537,6 +1539,8 @@ void CRDFModel::LoadRDFInstances()
 	*/
 
 	ScaleAndCenter(true);
+
+	scale();
 }
 
 void CRDFModel::Clean()
