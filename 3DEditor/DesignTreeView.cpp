@@ -49,8 +49,28 @@ public:
 
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
+/*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
+{
+	OnModelChanged();
+}
+
+/*virtual*/ void CDesignTreeView::onControllerChanged() /*override*/
+{
+	OnModelChanged();
+}
+
+/*virtual*/ void CDesignTreeView::OnControllerChanged() /*override*/
+{
+	//OnModelChanged();
+}
+
 /*virtual*/ void CDesignTreeView::OnModelChanged()
 {
+	if (GetController() == nullptr)
+	{
+		return;
+	}
+
 	if (GetController()->IsTestMode())
 	{
 		return;
@@ -2073,7 +2093,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	assert(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	GetController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -2662,7 +2682,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 void CDesignTreeView::OnDestroy()
 {
 	assert(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	GetController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

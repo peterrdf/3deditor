@@ -1,14 +1,16 @@
 #pragma once
 
+#include "_rdf_mvc.h"
 #include "RDFInstance.h"
 #include "RDFProperty.h"
 
 // ------------------------------------------------------------------------------------------------
 class CRDFController;
 
+
 // ------------------------------------------------------------------------------------------------
 // View - MVC
-class CRDFView
+class CRDFView : public _rdf_view
 {
 
 private: // Members

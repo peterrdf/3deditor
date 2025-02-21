@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_rdf_model.h"
+#include "_rdf_mvc.h"
 #include "Texture.h"
 #include "RDFClass.h"
 #include "RDFProperty.h"

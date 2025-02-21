@@ -52,6 +52,12 @@ private: // Members
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
+
+	// _view
+	virtual void onModelLoaded() override;
+	virtual void onControllerChanged() override;
+
+	virtual void OnControllerChanged() override;
 	
 	// CRDFView
 	virtual void OnModelChanged() override;

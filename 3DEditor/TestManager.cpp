@@ -19,7 +19,7 @@ CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDa
 {
 	assert(m_pController != nullptr);
 
-	m_pOpenGLView = (CRDFOpenGLView*)(m_pController->GetView<CRDFOpenGLView>());
+	m_pOpenGLView = (CRDFOpenGLView*)(m_pController->getViewAs<CRDFOpenGLView>());
 	assert(m_pOpenGLView != nullptr);
 
 	assert(!m_strInputDataDir.IsEmpty());

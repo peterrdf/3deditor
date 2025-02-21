@@ -98,7 +98,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 // ------------------------------------------------------------------------------------------------
 CRDFOpenGLView::~CRDFOpenGLView()
 {
-	GetController()->UnRegisterView(this);	
+	GetController()->unRegisterView(this);	
 
 	delete m_pInstanceSelectionFrameBuffer;
 	delete m_pFaceSelectionFrameBuffer;	
@@ -640,7 +640,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	assert(GetController() != nullptr);
 
-	GetController()->RegisterView(this);
+	GetController()->registerView(this);
 
 	loadSettings();
 }

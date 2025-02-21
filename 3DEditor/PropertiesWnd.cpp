@@ -1303,7 +1303,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 #pragma region Application
 	if (m_wndObjectCombo.GetCurSel() == 0)
 	{
-		auto pOGLRenderer = GetController()->GetView<_oglRenderer>();
+		auto pOGLRenderer = GetController()->getViewAs<_oglRenderer>();
 		if (pOGLRenderer == nullptr)
 		{
 			assert(false);
@@ -2131,7 +2131,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	assert(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	GetController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -2244,7 +2244,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 		return;
 	}
 
-	auto pOGLRenderer = GetController()->GetView<_oglRenderer>();
+	auto pOGLRenderer = GetController()->getViewAs<_oglRenderer>();
 	if (pOGLRenderer == nullptr)
 	{
 		assert(false);
@@ -4159,7 +4159,7 @@ void CPropertiesWnd::SetPropListFont()
 void CPropertiesWnd::OnDestroy()
 {
 	assert(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	GetController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }

@@ -21,7 +21,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 {
 	ASSERT(GetController() != nullptr);
 
-	GetController()->RegisterView(this);
+	GetController()->registerView(this);
 
 	m_lcInstances.SetController(GetController());
 }

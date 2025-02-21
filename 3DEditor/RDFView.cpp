@@ -4,7 +4,8 @@
 
 // ------------------------------------------------------------------------------------------------
 CRDFView::CRDFView()
-	: m_pController(nullptr)
+	: _rdf_view()
+	, m_pController(nullptr)
 {
 }
 

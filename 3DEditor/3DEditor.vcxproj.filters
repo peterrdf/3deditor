@@ -198,7 +198,7 @@
     <ClInclude Include="..\include\_host.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_rdf_model.h">
+    <ClInclude Include="..\include\_rdf_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -326,7 +326,7 @@
     <ClCompile Include="..\include\_rdf_instance.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\_rdf_model.cpp">
+    <ClCompile Include="..\include\_rdf_mvc.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

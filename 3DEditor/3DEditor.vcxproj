@@ -806,7 +806,7 @@
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_rdf_geometry.h" />
     <ClInclude Include="..\include\_rdf_instance.h" />
-    <ClInclude Include="..\include\_rdf_model.h" />
+    <ClInclude Include="..\include\_rdf_mvc.h" />
     <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="..\stb\stb_easy_font.h" />
@@ -943,7 +943,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\include\_rdf_model.cpp">
+    <ClCompile Include="..\include\_rdf_mvc.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>

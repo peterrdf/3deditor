@@ -688,7 +688,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	assert(GetController() != nullptr);
-	GetController()->RegisterView(this);
+	GetController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -919,7 +919,7 @@ void CClassView::OnChangeVisualStyle()
 void CClassView::OnDestroy()
 {
 	assert(GetController() != nullptr);
-	GetController()->UnRegisterView(this);
+	GetController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

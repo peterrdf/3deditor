@@ -1495,25 +1495,31 @@ void CRDFModel::LoadRDFInstances()
 		m_pProgress->Log(0/*info*/, "Loading RDF instances...");
 	}
 
-	int64_t iInstance = GetInstancesByIterator(m_iModel, 0);
+	OwlInstance owlInstance = GetInstancesByIterator(m_iModel, 0);
 
 	int64_t cntTotal = 0;
-	for (auto i = iInstance; i; i = GetInstancesByIterator(m_iModel, i)) {
+	for (auto i = owlInstance; i; i = GetInstancesByIterator(m_iModel, i)) {
 		cntTotal++;
 	}
 
 	prgs.Start(cntTotal);
 
-	while (iInstance != 0)
+	while (owlInstance != 0)
 	{
 		prgs.Step();
 
-		auto itInstance = m_mapInstances.find(iInstance);
+		auto itInstance = m_mapInstances.find(owlInstance);
 		if (itInstance == m_mapInstances.end())
 		{
 			// Load Model
-			m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
-			m_mapInstances.at(iInstance)->setEnable(m_mapInstanceDefaultState.at(iInstance));
+			m_mapInstances[owlInstance] = new CRDFInstance(m_iID++, owlInstance);
+			m_mapInstances.at(owlInstance)->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+
+			auto pGeometry = new _rdf_geometry(owlInstance);
+			addGeometry(pGeometry);
+
+			auto pInstance = new _rdf_instance(m_iID++, pGeometry, nullptr);
+			addInstance(pInstance);
 		}
 		else
 		{
@@ -1521,7 +1527,7 @@ void CRDFModel::LoadRDFInstances()
 			itInstance->second->Recalculate();
 		}
 
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
+		owlInstance = GetInstancesByIterator(m_iModel, owlInstance);
 	} // while (iInstance != 0)
 
 	prgs.Finish();

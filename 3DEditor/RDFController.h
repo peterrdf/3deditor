@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_mvc.h"
+#include "_rdf_mvc.h"
 
 #include <set>
 #include <vector>
@@ -17,7 +17,7 @@ class CRDFProperty;
 
 // ------------------------------------------------------------------------------------------------
 // Controller - MVC
-class CRDFController : public _controller
+class CRDFController : public _rdf_controller
 {
 
 private: // Members
@@ -28,10 +28,6 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
 	bool m_bUpdatingModel;
-
-	// --------------------------------------------------------------------------------------------
-	// Views - MVC
-	set<CRDFView *> m_setViews;
 
 	// --------------------------------------------------------------------------------------------
 	// Selected instance
@@ -64,36 +60,6 @@ public: // Methods
 	// Setter
 	void SetModel(CRDFModel * pModel);
 	CRDFModel* GetModel();
-
-	// --------------------------------------------------------------------------------------------
-	// Support for notifications
-	void RegisterView(CRDFView * pView);
-
-	// --------------------------------------------------------------------------------------------
-	// Support for notifications
-	void UnRegisterView(CRDFView * pView);
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	const set<CRDFView *> & GetViews();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	template <class T>
-	T * GetView()
-	{
-		set<CRDFView *>::const_iterator itView = m_setViews.begin();
-		for (; itView != m_setViews.end(); itView++)
-		{
-			T * pView = dynamic_cast<T *>(*itView);
-			if (pView != nullptr)
-			{
-				return pView;
-			}
-		}
-
-		return nullptr;
-	}
 
 	// --------------------------------------------------------------------------------------------
 	// Test mode
