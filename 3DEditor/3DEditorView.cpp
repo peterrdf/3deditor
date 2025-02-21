@@ -24,6 +24,23 @@ CRDFController* CMy3DEditorView::GetController()
 	return pDoc;
 }
 
+/*virtual*/ void CMy3DEditorView::onModelLoaded()
+{
+	delete m_pOpenGLView;
+	m_pOpenGLView = nullptr;
+
+	auto pController = GetController();
+	if (pController == nullptr)
+	{
+		ASSERT(FALSE);
+
+		return;
+	}
+
+	m_pOpenGLView = new CRDFOpenGLView(this);
+	m_pOpenGLView->setController(pController);
+}
+
 // CMy3DEditorView
 
 IMPLEMENT_DYNCREATE(CMy3DEditorView, CView)
@@ -83,8 +100,6 @@ END_MESSAGE_MAP()
 CMy3DEditorView::CMy3DEditorView()
 	: m_pOpenGLView(nullptr)
 {
-	// TODO: add construction code here
-
 }
 
 CMy3DEditorView::~CMy3DEditorView()
@@ -106,7 +121,7 @@ void CMy3DEditorView::OnDraw(CDC* pDC)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->Draw(pDC);
+		m_pOpenGLView->_draw(pDC);
 	}
 }
 
@@ -182,13 +197,15 @@ int CMy3DEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	DragAcceptFiles(TRUE);
 
-	CMy3DEditorDoc* pDoc = GetDocument();
+	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return -1;
 
-	m_pOpenGLView = new CRDFOpenGLView(this);
-	m_pOpenGLView->SetController(pDoc);
+	if (!pDoc)
+	{
+		return -1;
+	}
+
+	pDoc->registerView(this);
 
 	return 0;
 }
@@ -196,6 +213,16 @@ int CMy3DEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMy3DEditorView::OnDestroy()
 {
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	if (!pDoc)
+	{
+		return;
+	}
+
+	pDoc->unRegisterView(this);
+
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
 
@@ -213,7 +240,7 @@ void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -224,7 +251,7 @@ void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -235,7 +262,7 @@ void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -246,7 +273,7 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -256,7 +283,7 @@ void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -266,7 +293,7 @@ void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -277,7 +304,7 @@ void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -316,7 +343,7 @@ BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
+		m_pOpenGLView->_onMouseWheel(nFlags, zDelta, pt);
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
@@ -326,7 +353,7 @@ void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
+		m_pOpenGLView->_onKeyUp(nChar, nRepCnt, nFlags);
 	}
 
 	CView::OnKeyUp(nChar, nRepCnt, nFlags);

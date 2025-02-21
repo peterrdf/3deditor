@@ -2252,7 +2252,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(pInstance->_instance::getOwlInstance());
+				GetController()->zoomToInstance(pInstance);
 			}
 			break;
 

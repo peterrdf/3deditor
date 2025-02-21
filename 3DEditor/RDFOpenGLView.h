@@ -9,9 +9,7 @@
 #include <ctime>
 
 // ------------------------------------------------------------------------------------------------
-class CRDFOpenGLView 
-	: public _oglRenderer
-	, public CRDFView
+class CRDFOpenGLView : public _oglView
 {
 
 #pragma region Members
@@ -51,13 +49,13 @@ public: // Methods
 	virtual ~CRDFOpenGLView();
 
 	// _oglRendererSettings
-	virtual _controller* getController() const;
+	/*virtual _controller* getController() const;
 	virtual _controller* _getController() const override {
 		return getController();
 	}
 	virtual _model* getModel() const;
 	virtual void saveSetting(const string& strName, const string& strValue) override;
-	virtual string loadSetting(const string& strName) override;
+	virtual string loadSetting(const string& strName) override;*/
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);
@@ -76,7 +74,7 @@ public: // Methods
 	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	// CRDFView	
-	virtual void OnModelChanged() override;
+	/*virtual void OnModelChanged() override;
 	virtual void OnWorldDimensionsChanged() override;
 	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty) override;
 	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
@@ -86,12 +84,12 @@ public: // Methods
 	virtual void OnInstanceSelected(CRDFView * pSender) override;
 	virtual void OnInstancePropertySelected() override;
 	virtual void OnInstancesEnabledStateChanged() override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
+	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;*/
 
 protected: // Methods
 
 	// Overridden
-	virtual void OnControllerChanged() override;
+	//virtual void OnControllerChanged() override;
 
 private: // Methods
 

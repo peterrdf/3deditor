@@ -2247,8 +2247,6 @@ void CPropertiesWnd::LoadApplicationProperties()
 	auto pOGLRenderer = GetController()->getViewAs<_oglRenderer>();
 	if (pOGLRenderer == nullptr)
 	{
-		assert(false);
-
 		return;
 	}
 

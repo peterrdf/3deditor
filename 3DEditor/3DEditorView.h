@@ -6,12 +6,19 @@
 
 #include "RDFOpenGLView.h"
 
-class CMy3DEditorView : public CView
+class CMy3DEditorView 
+	: public CView
+	, public _view
 {
 
 private: // Members
 
-	CRDFOpenGLView* m_pOpenGLView;
+	_oglView* m_pOpenGLView;
+
+public: // Methods
+
+	// _view
+	virtual void onModelLoaded() override;
 
 private: // Methods
 
