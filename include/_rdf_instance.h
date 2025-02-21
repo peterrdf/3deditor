@@ -11,6 +11,11 @@ public:  // Methods
 
 	_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 	virtual ~_rdf_instance();
+
+	// instance
+	virtual void setEnable(bool bEnable) override;
+
+	void recalculate();
 	
 public: // Properties
 

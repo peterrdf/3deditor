@@ -8,58 +8,13 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 	, m_pOriginalVertexBuffer(nullptr)
 	, m_bNeedsRefresh(false)
 {
+	calculate();
+
 	loadName();
 }
 
 /*virtual*/ _rdf_geometry::~_rdf_geometry()
 {
-}
-
-void _rdf_geometry::loadName()
-{
-	OwlClass iClassInstance = GetInstanceClass(getOwlInstance());
-	assert(iClassInstance != 0);
-
-	wchar_t* szClassName = nullptr;
-	GetNameOfClassW(iClassInstance, &szClassName);
-
-	wchar_t* szName = nullptr;
-	GetNameOfInstanceW(getOwlInstance(), &szName);
-
-	if (szName == nullptr)
-	{
-		RdfProperty iTagProperty = GetPropertyByName(getOwlModel(), "tag");
-		if (iTagProperty != 0)
-		{
-			SetCharacterSerialization(getOwlModel(), 0, 0, false);
-
-			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(getOwlInstance(), iTagProperty, (void**)&szValue, &iCard);
-
-			if (iCard == 1)
-			{
-				szName = szValue[0];
-			}
-
-			SetCharacterSerialization(getOwlModel(), 0, 0, true);
-		}
-	} // if (szName == nullptr)
-
-	wchar_t szUniqueName[512];
-
-	if (szName != nullptr)
-	{
-		m_strName = szName;
-		swprintf(szUniqueName, 512, L"%s (%s)", szName, szClassName);
-	}
-	else
-	{
-		m_strName = szClassName;
-		swprintf(szUniqueName, 512, L"#%lld (%s)", getOwlInstance(), szClassName);
-	}
-
-	m_strUniqueName = szUniqueName;
 }
 
 /*virtual*/ void _rdf_geometry::calculateCore() /*override*/
@@ -269,4 +224,88 @@ void _rdf_geometry::loadName()
 	buildConcFacePolygonsCohorts(_oglUtils::getIndicesCountLimit());
 	buildLinesCohorts(mapMaterial2ConcFaceLines, _oglUtils::getIndicesCountLimit());
 	buildPointsCohorts(mapMaterial2ConcFacePoints, _oglUtils::getIndicesCountLimit());
+}
+
+/*virtual*/ void _rdf_geometry::clean() /*override*/
+{
+	_geometry::clean();
+
+	delete m_pOriginalVertexBuffer;
+	m_pOriginalVertexBuffer = nullptr;
+}
+
+void _rdf_geometry::loadName()
+{
+	OwlClass iClassInstance = GetInstanceClass(getOwlInstance());
+	assert(iClassInstance != 0);
+
+	wchar_t* szClassName = nullptr;
+	GetNameOfClassW(iClassInstance, &szClassName);
+
+	wchar_t* szName = nullptr;
+	GetNameOfInstanceW(getOwlInstance(), &szName);
+
+	if (szName == nullptr)
+	{
+		RdfProperty iTagProperty = GetPropertyByName(getOwlModel(), "tag");
+		if (iTagProperty != 0)
+		{
+			SetCharacterSerialization(getOwlModel(), 0, 0, false);
+
+			int64_t iCard = 0;
+			wchar_t** szValue = nullptr;
+			GetDatatypeProperty(getOwlInstance(), iTagProperty, (void**)&szValue, &iCard);
+
+			if (iCard == 1)
+			{
+				szName = szValue[0];
+			}
+
+			SetCharacterSerialization(getOwlModel(), 0, 0, true);
+		}
+	} // if (szName == nullptr)
+
+	wchar_t szUniqueName[512];
+
+	if (szName != nullptr)
+	{
+		m_strName = szName;
+		swprintf(szUniqueName, 512, L"%s (%s)", szName, szClassName);
+	}
+	else
+	{
+		m_strName = szClassName;
+		swprintf(szUniqueName, 512, L"#%lld (%s)", getOwlInstance(), szClassName);
+	}
+
+	m_strUniqueName = szUniqueName;
+}
+
+void _rdf_geometry::loadOriginalData()
+{
+	if (getVerticesCount() == 0)
+	{
+		return;
+	}
+
+	// Vertices
+	assert(m_pVertexBuffer != nullptr);
+	m_pVertexBuffer->copyFrom(m_pOriginalVertexBuffer);
+
+	// Bounding box
+	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
+	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
+	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+}
+
+void _rdf_geometry::recalculate()
+{
+	if (m_bNeedsRefresh)
+	{
+		clean();
+
+		calculate();
+
+		m_bNeedsRefresh = false;
+	}
 }
