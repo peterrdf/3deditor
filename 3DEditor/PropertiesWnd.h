@@ -274,8 +274,13 @@ class CPropertiesWnd
 {
 
 public: // Methods
+
+	// _view
+	virtual void postModelLoaded() override;
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CRDFView
+	//#todo
 	virtual void OnModelChanged();
 	virtual void OnShowBaseInformation();
 	virtual void OnShowMetaInformation();
@@ -284,7 +289,7 @@ public: // Methods
 	virtual void OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* pInstance);
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
+	//virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 	

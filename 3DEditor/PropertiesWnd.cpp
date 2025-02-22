@@ -1275,8 +1275,13 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	}
 }
 
+/*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
+{
+	OnModelChanged();
+}
+
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CPropertiesWnd::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty /*enApplicationProperty*/)
+/*virtual*/ void CPropertiesWnd::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/) /*override*/
 {
 	if (pSender == this)
 	{
@@ -1325,7 +1330,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowFaces(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFaces);
 				}
 				break;
 
@@ -1333,7 +1338,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setCullFacesMode(strValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::CullFaces);
 				}
 				break;
 
@@ -1341,7 +1346,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowFacesWireframes);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowFacesWireframes);
 				}
 				break;
 
@@ -1349,7 +1354,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowConceptualFacesPolygons(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowConceptualFacesWireframes);
 				}
 				break;
 
@@ -1357,7 +1362,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowLines(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowLines);
 				}
 				break;
 
@@ -1365,7 +1370,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowPoints(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowPoints);
 				}
 				break;
 
@@ -1373,7 +1378,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNormalVectors);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowNormalVectors);
 				}
 				break;
 
@@ -1381,7 +1386,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowTangentVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowTangenVectors);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowTangenVectors);
 				}
 				break;
 
@@ -1389,7 +1394,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowBiNormalVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBiNormalVectors);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowBiNormalVectors);
 				}
 				break;
 
@@ -1397,7 +1402,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setScaleVectors(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ScaleVectors);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ScaleVectors);
 				}
 				break;
 
@@ -1405,7 +1410,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowBoundingBoxes(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowBoundingBoxes);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowBoundingBoxes);
 				}
 				break;
 
@@ -1415,7 +1420,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					GetController()->SetVisibleValuesCountLimit(iValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::VisibleValuesCountLimit);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::VisibleValuesCountLimit);
 				}
 				break;
 
@@ -1423,7 +1428,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					GetController()->SetScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ScalelAndCenter);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ScalelAndCenter);
 				}
 				break;
 
@@ -1431,7 +1436,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->_setRotationMode(strValue == ROTATION_MODE_XY ? enumRotationMode::XY : enumRotationMode::XYZ);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::RotationMode);
 				}
 				break;
 				
@@ -1439,7 +1444,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowCoordinateSystem);
 				}
 				break;
 
@@ -1447,7 +1452,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					GetController()->SetModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
 				}
 				break;
 
@@ -1455,7 +1460,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				{
 					pOGLRenderer->setShowNavigator(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowNavigator);
 				}
 				break;				
 
@@ -1481,7 +1486,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue()))
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::PointLightingLocation);
 				}
 				break;
 
@@ -1507,7 +1512,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::AmbientLightWeighting);
 				}
 				break;
 
@@ -1533,7 +1538,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::DiffuseLightWeighting);
 				}
 				break;
 
@@ -1559,7 +1564,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						(float)_wtof((LPCTSTR)(CString)pZ->GetValue())
 					);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::SpecularLightWeighting);
 				}
 				break;
 
@@ -1572,7 +1577,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					pBlinnPhongProgram->_setMaterialShininess(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::MaterialShininess);
 				}
 				break;
 
@@ -1585,7 +1590,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					pBlinnPhongProgram->_setContrast(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Contrast);
 				}
 				break;
 
@@ -1598,7 +1603,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					pBlinnPhongProgram->_setBrightness(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Brightness);
 				}
 				break;
 
@@ -1611,7 +1616,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					pBlinnPhongProgram->_setGamma(fValue);
 
-					GetController()->OnApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
+					GetController()->onApplicationPropertyChanged(this, enumApplicationProperty::Gamma);
 				}
 				break;
 
