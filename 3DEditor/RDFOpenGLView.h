@@ -48,6 +48,9 @@ public: // Methods
 	CRDFOpenGLView(CWnd* pWnd);	
 	virtual ~CRDFOpenGLView();
 
+	// _oglView
+	virtual void _drawDecoration() override;
+
 	// _oglRendererSettings
 	/*virtual _controller* getController() const;
 	virtual _controller* _getController() const override {
@@ -113,7 +116,7 @@ private: // Methods
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
 
 	void DrawBoundingBoxes(_model* pM);
-	void DrawNormalVectors(_model* pM);
+	void DrawNormalVectors();
 	void DrawTangentVectors(_model* pM);
 	void DrawBiNormalVectors(_model* pM);
 	void DrawMainModelSelectionBuffers(

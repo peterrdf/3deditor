@@ -124,6 +124,7 @@ public: // Properties
 
 	virtual OwlModel getOwlModel() const PURE;
 
+	bool isDecoration() const { return m_strPath.empty(); }
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	uint64_t getVertexLength() const { return SetFormat(getOwlModel()) / sizeof(float); }
 	

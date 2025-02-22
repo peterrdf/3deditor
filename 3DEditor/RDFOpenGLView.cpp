@@ -68,6 +68,11 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
 
+/*virtual*/ void CRDFOpenGLView::_drawDecoration() /*override*/
+{
+	DrawNormalVectors();
+}
+
 // ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
@@ -880,40 +885,40 @@ void CRDFOpenGLView::DrawNavigatorModel(
 
 void CRDFOpenGLView::DrawModel(_model* pM)
 {
-	m_pOGLProgram->_enableTexture(false);
+	//m_pOGLProgram->_enableTexture(false);
 
-	/* Non-transparent faces */
-	DrawFaces(pM, false);
+	///* Non-transparent faces */
+	//DrawFaces(pM, false);
 
-	/* Transparent faces */
-	DrawFaces(pM, true);
+	///* Transparent faces */
+	//DrawFaces(pM, true);
 
-	/* Pointed face */
-	DrawPointedFace(pM);
+	///* Pointed face */
+	//DrawPointedFace(pM);
 
-	/* Faces polygons */
-	DrawFacesPolygons(pM);
+	///* Faces polygons */
+	//DrawFacesPolygons(pM);
 
-	/* Conceptual faces polygons */
-	DrawConceptualFacesPolygons(pM);
+	///* Conceptual faces polygons */
+	//DrawConceptualFacesPolygons(pM);
 
-	/* Lines */
-	DrawLines(pM);
+	///* Lines */
+	//DrawLines(pM);
 
-	/* Points */
-	DrawPoints(pM);
+	///* Points */
+	//DrawPoints(pM);
 
-	/* Bounding boxes */
-	DrawBoundingBoxes(pM);
+	///* Bounding boxes */
+	//DrawBoundingBoxes(pM);
 
-	/* Normal vectors */
-	DrawNormalVectors(pM);
+	///* Normal vectors */
+	//DrawNormalVectors(pM);
 
-	/* Tangent vectors */
-	DrawTangentVectors(pM);
+	///* Tangent vectors */
+	//DrawTangentVectors(pM);
 
-	/* Bi-Normal vectors */
-	DrawBiNormalVectors(pM);
+	///* Bi-Normal vectors */
+	//DrawBiNormalVectors(pM);
 }
 
 void CRDFOpenGLView::DrawFaces(_model* pM, bool bTransparent)
@@ -1315,95 +1320,95 @@ void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pB
 
 void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
 {
-	auto pModel = dynamic_cast<CRDFModel*>(pM);
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowBoundingBoxes())
-	{
-		return;
-	}
-
-#ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(false);
-#else
-	m_pOGLProgram->_enableLighting(false);
-#endif
-	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
-	m_pOGLProgram->_setTransparency(1.f);
-
-	_oglUtils::checkForErrors();
-
-	bool bIsNew = false;
-	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
-
-	if (iVAO == 0)
-	{
-		assert(false);
-
-		return;
-	}	
-	
-	GLuint iVBO = 0;
-
-	if (bIsNew)
-	{
-		glBindVertexArray(iVAO);
-
-		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
-		if ((iVBO == 0) || !bIsNew)
-		{
-			assert(false);
-
-			return;
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
-
-		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
-		if ((iIBO == 0) || !bIsNew)
-		{
-			assert(false);
-
-			return;
-		}
-
-		vector<unsigned int> vecIndices =
-		{
-			0, 1,
-			1, 2,
-			2, 3,
-			3, 0,
-			4, 5,
-			5, 6,
-			6, 7,
-			7, 4,
-			0, 6,
-			3, 5,
-			1, 7,
-			2, 4,
-		};
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
-
-		glBindVertexArray(0);
-
-		_oglUtils::checkForErrors();
-	} // if (bIsNew)
-	else
-	{
-		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
-		if (iVBO == 0)
-		{
-			assert(false);
-
-			return;
-		}
-	}
+//	auto pModel = dynamic_cast<CRDFModel*>(pM);
+//	if (pModel == nullptr)
+//	{
+//		return;
+//	}
+//
+//	if (!getShowBoundingBoxes())
+//	{
+//		return;
+//	}
+//
+//#ifdef _BLINN_PHONG_SHADERS
+//	m_pOGLProgram->_enableBlinnPhongModel(false);
+//#else
+//	m_pOGLProgram->_enableLighting(false);
+//#endif
+//	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+//	m_pOGLProgram->_setTransparency(1.f);
+//
+//	_oglUtils::checkForErrors();
+//
+//	bool bIsNew = false;
+//	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
+//
+//	if (iVAO == 0)
+//	{
+//		assert(false);
+//
+//		return;
+//	}	
+//	
+//	GLuint iVBO = 0;
+//
+//	if (bIsNew)
+//	{
+//		glBindVertexArray(iVAO);
+//
+//		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
+//		if ((iVBO == 0) || !bIsNew)
+//		{
+//			assert(false);
+//
+//			return;
+//		}
+//
+//		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+//		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+//
+//		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
+//		if ((iIBO == 0) || !bIsNew)
+//		{
+//			assert(false);
+//
+//			return;
+//		}
+//
+//		vector<unsigned int> vecIndices =
+//		{
+//			0, 1,
+//			1, 2,
+//			2, 3,
+//			3, 0,
+//			4, 5,
+//			5, 6,
+//			6, 7,
+//			7, 4,
+//			0, 6,
+//			3, 5,
+//			1, 7,
+//			2, 4,
+//		};
+//
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
+//
+//		glBindVertexArray(0);
+//
+//		_oglUtils::checkForErrors();
+//	} // if (bIsNew)
+//	else
+//	{
+//		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
+//		if (iVBO == 0)
+//		{
+//			assert(false);
+//
+//			return;
+//		}
+//	}
 
 	//auto& mapInstances = pModel->GetInstances();
 	//for (auto itInstance = mapInstances.begin(); 
@@ -1512,231 +1517,239 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
 	//_oglUtils::checkForErrors();
 }
 
-void CRDFOpenGLView::DrawNormalVectors(_model* pM)
+void CRDFOpenGLView::DrawNormalVectors()
 {
-//	auto pModel = dynamic_cast<CRDFModel*>(pM);
-//	if (pModel == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (!getShowNormalVectors(pModel))
-//	{
-//		return;
-//	}
-//
-//	float fXmin = -1.f;
-//	float fXmax = 1.f;
-//	float fYmin = -1.f;
-//	float fYmax = 1.f;
-//	float fZmin = -1.f;
-//	float fZmax = 1.f;
-//	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-//
-//	const auto VERTEX_LENGTH = pModel->getVertexLength();
-//	const float SCALE_FACTOR = getScaleVectors(pModel) ? sqrt(pow(fXmax - fXmin, 2.f) + pow(fYmax - fYmin, 2.f) + pow(fZmax - fZmin, 2.f)) * 0.1f : 1.f;
-//
-//#ifdef _BLINN_PHONG_SHADERS
-//	m_pOGLProgram->_enableBlinnPhongModel(false);
-//#else
-//	m_pOGLProgram->_enableLighting(false);
-//#endif
-//	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
-//	m_pOGLProgram->_setTransparency(1.f);
-//
-//	_oglUtils::checkForErrors();
-//
-//	bool bIsNew = false;
-//	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
-//
-//	if (iVAO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	GLuint iVBO = 0;
-//
-//	if (bIsNew)
-//	{
-//		glBindVertexArray(iVAO);
-//
-//		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
-//		if ((iVBO == 0) || !bIsNew)
-//		{
-//			assert(false);
-//
-//			return;
-//		}
-//
-//		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-//		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
-//
-//		glBindVertexArray(0);
-//
-//		_oglUtils::checkForErrors();
-//	} // if (bIsNew)
-//	else
-//	{
-//		iVBO = m_oglBuffers.getBuffer(NORMAL_VECS_VBO);
-//		if (iVBO == 0)
-//		{
-//			assert(false);
-//
-//			return;
-//		}
-//	}
-//
-//	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
-//	vector<float> vecVertices;
-//
-//	if (m_pSelectedInstance == nullptr)
-//	{
-//		auto& mapInstances = pModel->GetInstances();
-//
-//		auto itInstance = mapInstances.begin();
-//		for (; itInstance != mapInstances.end(); itInstance++)
-//		{
-//			auto pInstance = itInstance->second;
-//
-//			if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
-//			{
-//				continue;
-//			}
-//
-//			auto& vecTriangles = pInstance->getTriangles();
-//			if (vecTriangles.empty())
-//			{
-//				continue;
-//			}
-//
-//			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-//			{
-//				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
-//
-//				for (int64_t iIndex = pTriangle->startIndex();
-//					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-//					iIndex++)
-//				{
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-//
-//					vecVertices.push_back(0.f); // Nx
-//					vecVertices.push_back(0.f); // Ny
-//					vecVertices.push_back(0.f); // Nz
-//					vecVertices.push_back(0.f); // Tx
-//					vecVertices.push_back(0.f); // Ty
-//
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-//						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-//						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-//					vecVertices.push_back(pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-//						pInstance->getVertices()[(pInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-//
-//					vecVertices.push_back(0.f); // Nx
-//					vecVertices.push_back(0.f); // Ny
-//					vecVertices.push_back(0.f); // Nz
-//					vecVertices.push_back(0.f); // Tx
-//					vecVertices.push_back(0.f); // Ty
-//				} // for (size_t iIndex = ...
-//			} // for (size_t iTriangle = ...
-//		} // for (; itInstance != ...
-//	} // if (m_pSelectedInstance == nullptr)
-//	else
-//	{
-//		if (m_pSelectedInstance->getModel() == pModel->getInstance())
-//		{
-//			auto& vecTriangles = m_pSelectedInstance->getTriangles();
-//			assert(!vecTriangles.empty());
-//
-//			if (m_iPointedFace == -1)
-//			{
-//				for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-//				{
-//					auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
-//
-//					for (int64_t iIndex = pTriangle->startIndex();
-//						iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-//						iIndex++)
-//					{
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-//
-//						vecVertices.push_back(0.f); // Nx
-//						vecVertices.push_back(0.f); // Ny
-//						vecVertices.push_back(0.f); // Nz
-//						vecVertices.push_back(0.f); // Tx
-//						vecVertices.push_back(0.f); // Ty
-//
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-//							m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-//							m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-//						vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-//							m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-//
-//						vecVertices.push_back(0.f); // Nx
-//						vecVertices.push_back(0.f); // Ny
-//						vecVertices.push_back(0.f); // Nz
-//						vecVertices.push_back(0.f); // Tx
-//						vecVertices.push_back(0.f); // Ty
-//					} // for (size_t iIndex = ...
-//				} // for (size_t iTriangle = ...
-//			} // if (m_iPointedFace == -1)
-//			else
-//			{
-//				assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-//
-//				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-//
-//				for (int64_t iIndex = pTriangle->startIndex();
-//					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-//					iIndex++)
-//				{
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
-//
-//					vecVertices.push_back(0.f); // Nx
-//					vecVertices.push_back(0.f); // Ny
-//					vecVertices.push_back(0.f); // Nz
-//					vecVertices.push_back(0.f); // Tx
-//					vecVertices.push_back(0.f); // Ty
-//
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-//						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-//						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-//					vecVertices.push_back(m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-//						m_pSelectedInstance->getVertices()[(m_pSelectedInstance->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-//
-//					vecVertices.push_back(0.f); // Nx
-//					vecVertices.push_back(0.f); // Ny
-//					vecVertices.push_back(0.f); // Nz
-//					vecVertices.push_back(0.f); // Tx
-//					vecVertices.push_back(0.f); // Ty
-//				} // for (size_t iIndex = ...
-//			} // else if (m_iPointedFace == -1)
-//		} // if (m_pSelectedInstance->GetModel() == pModel->GetModel())		
-//	} // else if (m_pSelectedInstance == nullptr)
-//
-//	if (!vecVertices.empty())
-//	{
-//		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-//		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
-//
-//		glBindVertexArray(iVAO);
-//
-//		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
-//
-//		glBindVertexArray(0);
-//	} // if (!vecVertices.empty())
-//
-//	_oglUtils::checkForErrors();
+	if (!getShowNormalVectors())
+	{
+		return;
+	}
+
+	//#tbd
+	if (getController()->getSelectedInstances().size() != 1)
+	{
+		return;
+	}
+
+	auto pSelectedInstance = getController()->getSelectedInstances()[0];
+	auto pModel = getController()->getModelByInstance(pSelectedInstance->getOwlModel());
+
+	if (pModel->isDecoration())
+	{
+		return;
+	}
+
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	float fWorldBoundingSphereDiameter = fWorldXmax - fWorldXmin;
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
+	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
+
+	const auto VERTEX_LENGTH = pModel->getVertexLength();
+	const float SCALE_FACTOR = getScaleVectors() ? sqrt(pow(fWorldXmax - fWorldXmin, 2.f) + pow(fWorldYmax - fWorldYmin, 2.f) + pow(fWorldZmax - fWorldZmin, 2.f)) * 0.1f : 1.f;
+
+	bool bIsNew = false;
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
+
+	if (iVAO == 0)
+	{
+		assert(false);
+
+		return;
+	}
+
+	GLuint iVBO = 0;
+
+	if (bIsNew)
+	{
+		glBindVertexArray(iVAO);
+
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
+		if ((iVBO == 0) || !bIsNew)
+		{
+			assert(false);
+
+			return;
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
+
+		glBindVertexArray(0);
+
+		_oglUtils::checkForErrors();
+	} // if (bIsNew)
+	else
+	{
+		iVBO = m_oglBuffers.getBuffer(NORMAL_VECS_VBO);
+		if (iVBO == 0)
+		{
+			assert(false);
+
+			return;
+		}
+	}
+
+	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
+	vector<float> vecVertices;
+
+	if (pSelectedInstance == nullptr)
+	{
+		for (auto pGeometry : pModel->getGeometries())
+		{
+			assert(pGeometry->getInstances().size() == 1);
+			if (!pGeometry->getInstances()[0]->getEnable())
+			{
+				continue;
+			}
+
+			auto& vecTriangles = pGeometry->getTriangles();
+			if (vecTriangles.empty())
+			{
+				continue;
+			}
+
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+			{
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+				for (int64_t iIndex = pTriangle->startIndex();
+					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+					iIndex++)
+				{
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // for (size_t iTriangle = ...
+		} // for (; itInstance != ...
+	} // if (pSelectedInstance == nullptr)
+	else
+	{
+		auto pGeometry = pSelectedInstance->getGeometry();
+		assert(pGeometry->getInstances().size() == 1);
+
+		auto& vecTriangles = pGeometry->getTriangles();
+		assert(!vecTriangles.empty());
+
+		if (m_iPointedFace == -1)
+		{
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+			{
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+				for (int64_t iIndex = pTriangle->startIndex();
+					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+					iIndex++)
+				{
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // for (size_t iTriangle = ...
+		} // if (m_iPointedFace == -1)
+		else
+		{
+			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+
+			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+
+			for (int64_t iIndex = pTriangle->startIndex();
+				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+				iIndex++)
+			{
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+				vecVertices.push_back(0.f); // Nx
+				vecVertices.push_back(0.f); // Ny
+				vecVertices.push_back(0.f); // Nz
+				vecVertices.push_back(0.f); // Tx
+				vecVertices.push_back(0.f); // Ty
+
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
+
+				vecVertices.push_back(0.f); // Nx
+				vecVertices.push_back(0.f); // Ny
+				vecVertices.push_back(0.f); // Nz
+				vecVertices.push_back(0.f); // Tx
+				vecVertices.push_back(0.f); // Ty
+			} // for (size_t iIndex = ...
+		} // else if (m_iPointedFace == -1)
+	} // else if (pSelectedInstance == nullptr)
+
+	if (!vecVertices.empty())
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(iVAO);
+
+		glDrawArrays(GL_LINES, 0, (GLsizei)vecVertices.size() / GEOMETRY_VBO_VERTEX_LENGTH);
+
+		glBindVertexArray(0);
+	} // if (!vecVertices.empty())
+
+	_oglUtils::checkForErrors();
 }
 
 void CRDFOpenGLView::DrawTangentVectors(_model* pM)

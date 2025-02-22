@@ -1607,6 +1607,11 @@ _oglView::_oglView()
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
+		case enumApplicationProperty::ShowNormalVectors:
+		case enumApplicationProperty::ShowTangenVectors:
+		case enumApplicationProperty::ShowBiNormalVectors:
+		case enumApplicationProperty::ScaleVectors:
+		case enumApplicationProperty::ShowBoundingBoxes:
 		case enumApplicationProperty::RotationMode:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
@@ -1929,11 +1934,14 @@ _oglView::_oglView()
 		return;
 	}
 
-	// Scene
+	// Models
 	_drawFaces();
 	_drawConceptualFacesPolygons();
 	_drawLines();
 	_drawPoints();
+
+	// Decoration, e.g. Coordinate System, Navigation, Vectors, etc.
+	_drawDecoration();
 
 	// OpenGL
 	SwapBuffers(*pDC);
