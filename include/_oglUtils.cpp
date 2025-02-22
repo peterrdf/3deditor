@@ -1940,8 +1940,8 @@ _oglView::_oglView()
 	_drawLines();
 	_drawPoints();
 
-	// Decoration, e.g. Coordinate System, Navigation, Vectors, etc.
-	_drawDecoration();
+	// Decorations, e.g. Coordinate System, Navigation, Vectors, etc.
+	_drawDecorations();
 
 	// OpenGL
 	SwapBuffers(*pDC);

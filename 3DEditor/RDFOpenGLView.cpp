@@ -68,7 +68,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
 
-/*virtual*/ void CRDFOpenGLView::_drawDecoration() /*override*/
+/*virtual*/ void CRDFOpenGLView::_drawDecorations() /*override*/
 {
 	DrawNormalVectors();
 }
