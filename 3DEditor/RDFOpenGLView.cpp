@@ -68,26 +68,6 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
 
-///*virtual*/ _controller* CRDFOpenGLView::getController() const /*override*/
-//{
-//	return GetController();
-//}
-//
-///*virtual*/ _model* CRDFOpenGLView::getModel() const /*override*/
-//{
-//	return GetController()->getModel();
-//}
-//
-///*virtual*/ void CRDFOpenGLView::saveSetting(const string& strName, const string& strValue) /*override*/
-//{
-//	GetController()->getSettingsStorage()->setSetting(strName, strValue);
-//}
-//
-///*virtual*/ string CRDFOpenGLView::loadSetting(const string& strName) /*override*/
-//{
-//	return GetController()->getSettingsStorage()->getSetting(strName);
-//}
-
 // ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
@@ -126,66 +106,6 @@ void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
 	fX = m_fXTranslation;
 	fY = m_fYTranslation;
 	fZ = m_fZTranslation;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFOpenGLView::Draw(CDC* pDC)
-{
-	//CRect rcClient;
-	//m_pWnd->GetClientRect(&rcClient);
-
-	//int iWidth = rcClient.Width();
-	//int iHeight = rcClient.Height();
-
-	//if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
-	//{
-	//	return;
-	//}
-
-	//auto pController = getController();
-	//if (pController == nullptr)
-	//{
-	//	assert(false);
-
-	//	return;
-	//}
-
-	//DrawMainModel(
-	//	pController->GetModel(),
-	//	pController->GetSceneModel(),
-	//	0, 0,
-	//	iWidth, iHeight);
-
-	//if (m_bShowNavigator && !TEST_MODE)
-	//{
-	//	DrawNavigatorModel(
-	//		pController->GetNavigatorModel(),
-	//		0, 0,
-	//		iWidth, iHeight);
-	//}
-
-	///* End */
-	//SwapBuffers(*pDC);
-
-	///* Selection */
-
-	//if (!TEST_MODE)
-	//{
-	//	DrawMainModelSelectionBuffers(
-	//		pController->GetModel(),
-	//		0, 0,
-	//		iWidth, iHeight,
-	//		m_pInstanceSelectionFrameBuffer);
-
-	//	if (m_bShowNavigator)
-	//	{
-	//		DrawNavigatorModelSelectionBuffers(
-	//			pController->GetNavigatorModel(),
-	//			0, 0,
-	//			iWidth, iHeight,
-	//			m_pNavigatorSelectionFrameBuffer);
-	//	}
-	//}
 }
 
 // ------------------------------------------------------------------------------------------------

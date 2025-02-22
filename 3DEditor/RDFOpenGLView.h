@@ -62,9 +62,6 @@ public: // Methods
 	void GetRotation(float& fX, float& fY);
 	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
 	void GetTranslation(float& fX, float& fY, float& fZ);
-	
-	// Draw
-	void Draw(CDC* pDC);
 
 	// Mouse
 	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);

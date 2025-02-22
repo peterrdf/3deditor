@@ -1214,7 +1214,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 
 void CRDFModel::SetFormatSettings(int64_t iModel)
 {
-	string strSettings = "111111000000001111000001110001";
+	/*string strSettings = "111111000000001111000001110001";
 
 	bitset<64> bitSettings(strSettings);
 	int64_t iSettings = bitSettings.to_ulong();
@@ -1225,7 +1225,7 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 
 	SetFormat(iModel, (int64_t)iSettings, (int64_t)iMask);
 
-	SetBehavior(iModel, 2048 + 4096, 2048 + 4096);
+	SetBehavior(iModel, 2048 + 4096, 2048 + 4096);*/
 }
 
 void CRDFModel::LoadRDFModel()
@@ -1514,8 +1514,8 @@ void CRDFModel::LoadRDFInstances()
 		if (itInstance == m_mapInstances.end())
 		{
 			// Load Model
-			m_mapInstances[owlInstance] = new CRDFInstance(m_iID++, owlInstance);
-			m_mapInstances.at(owlInstance)->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			//m_mapInstances[owlInstance] = new CRDFInstance(m_iID++, owlInstance);
+			//m_mapInstances.at(owlInstance)->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 
 			auto pGeometry = new _rdf_geometry(owlInstance);
 			addGeometry(pGeometry);
@@ -1525,6 +1525,7 @@ void CRDFModel::LoadRDFInstances()
 		}
 		else
 		{
+			ASSERT(FALSE);//#todo
 			// Import Model
 			itInstance->second->Recalculate();
 		}
@@ -1538,7 +1539,7 @@ void CRDFModel::LoadRDFInstances()
 	* Scale and Center
 	*/
 
-	ScaleAndCenter(true);
+	//ScaleAndCenter(true);
 
 	scale();
 }

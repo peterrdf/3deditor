@@ -69,7 +69,7 @@ void CRDFViewerView::OnDraw(CDC* pDC)
 {
 	if (m_pOpenGLView != nullptr)
 	{
-		m_pOpenGLView->Draw(pDC);
+		m_pOpenGLView->_draw(pDC);
 	}
 }
 
