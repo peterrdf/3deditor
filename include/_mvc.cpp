@@ -18,6 +18,7 @@ _model::_model()
 	, m_fBoundingSphereDiameter(2.f)
 	, m_vecGeometries()
 	, m_vecInstances()
+	, m_mapTextures()
 {
 }
 
@@ -352,6 +353,33 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? pdValues[0] : 0.;
 }
 
+_texture* _model::getTexture(const wstring& strTexture)
+{
+	if (!m_strPath.empty())
+	{
+		if (m_mapTextures.find(strTexture) != m_mapTextures.end())
+		{
+			return m_mapTextures.at(strTexture);
+		}
+
+		fs::path pthFile = m_strPath;
+		fs::path pthTexture = pthFile.parent_path();
+		pthTexture.append(strTexture);
+
+		if (fs::exists(pthTexture))
+		{
+			auto pTexture = new _texture();
+			pTexture->load(pthTexture.wstring().c_str());
+
+			m_mapTextures[strTexture] = pTexture;
+
+			return pTexture;
+		}
+	} // if (!m_strModel.empty())
+
+	return getDefaultTexture();
+}
+
 void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (owlInstance == 0)
@@ -461,6 +489,12 @@ void _model::addInstance(_instance* pInstance)
 	}
 	m_vecInstances.clear();
 	m_mapID2Instance.clear();
+
+	for (auto itTexture : m_mapTextures)
+	{
+		delete itTexture.second;
+	}
+	m_mapTextures.clear();
 }
 
 void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const

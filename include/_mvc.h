@@ -2,6 +2,7 @@
 
 #include "_geometry.h"
 #include "_settings_storage.h"
+#include "_texture.h"
 
 #include <set>
 #include <string>
@@ -79,6 +80,8 @@ private: // Members
 	vector<_instance*> m_vecInstances;
 	map<int64_t, _instance*> m_mapID2Instance;
 
+	map<wstring, _texture*> m_mapTextures;
+
 public: // Methods
 
 	_model();
@@ -104,6 +107,9 @@ public: // Methods
 	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
 	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName);
 	static double getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName);
+
+	_texture* getTexture(const wstring& strTexture);
+	virtual _texture* getDefaultTexture() { return nullptr; };
 
 protected: // Methods
 

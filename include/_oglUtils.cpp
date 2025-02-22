@@ -2122,7 +2122,25 @@ void _oglView::_drawInstancesFrameBuffer()
 						}
 					}
 
-					m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
+					_texture* pTexture = nullptr;
+					if (pMaterial->hasTexture())
+					{
+						pTexture = pModel->getTexture(pMaterial->texture());
+					}
+						
+					if (pTexture != nullptr)
+					{											
+						m_pOGLProgram->_enableTexture(true);
+						
+						glActiveTexture(GL_TEXTURE0);
+						glBindTexture(GL_TEXTURE_2D, pTexture->getName());
+						
+						m_pOGLProgram->_setSampler(0);
+					}
+					else
+					{			
+						m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
+					}
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
 					glDrawElementsBaseVertex(GL_TRIANGLES,
@@ -2130,6 +2148,11 @@ void _oglView::_drawInstancesFrameBuffer()
 						GL_UNSIGNED_INT,
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
+
+					if (pTexture != nullptr)
+					{
+						m_pOGLProgram->_enableTexture(false);
+					}
 				}
 			} // auto pInstance : ...			
 		} // for (auto pGeometry : ...
