@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="stb">
-      <UniqueIdentifier>{a8a477c5-cceb-42de-b704-85cdf4ba14bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{7e69532a-2079-46d3-9431-3e970ddf8ec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\stb">
+      <UniqueIdentifier>{3ecbe9d0-4c86-4a94-9179-01cfb8129e68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -135,12 +135,6 @@
     <ClInclude Include="ProgressIndicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\stb\stb_image.h">
-      <Filter>stb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\stb\stb_easy_font.h">
-      <Filter>stb</Filter>
-    </ClInclude>
     <ClInclude Include="SearchTreeCtrlDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -203,6 +197,12 @@
     </ClInclude>
     <ClInclude Include="..\include\_texture.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_easy_font.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_image.h">
+      <Filter>include\stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,9 +293,6 @@
     <ClCompile Include="ProgressIndicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\stb\stb_image.cpp">
-      <Filter>stb</Filter>
-    </ClCompile>
     <ClCompile Include="SearchTreeCtrlDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -331,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="..\include\_rdf_mvc.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image.cpp">
+      <Filter>include\stb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -419,14 +419,14 @@
     <None Include="res\My3DEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\stb\.editorconfig">
-      <Filter>stb</Filter>
-    </None>
     <None Include="res\Shader.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\Shader.vert">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\include\stb\.editorconfig">
+      <Filter>include\stb</Filter>
     </None>
   </ItemGroup>
 </Project>
