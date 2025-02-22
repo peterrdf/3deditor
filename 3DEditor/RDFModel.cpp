@@ -185,7 +185,6 @@ CRDFModel::CRDFModel()
 	, m_fZmax(1.f)
 	, m_fBoundingSphereDiameter(1.f)
 	, m_pDefaultTexture(nullptr)
-	, m_mapTextures()
 	, m_pTextBuilder(new CTextBuilder())
 {}
 
@@ -964,34 +963,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 	}
 }
 
-CTexture* CRDFModel::GetTexture(const wstring& strTexture)
-{
-	if (!m_strPath.empty())
-	{
-		if (m_mapTextures.find(strTexture) != m_mapTextures.end())
-		{
-			return m_mapTextures.at(strTexture);
-		}
-
-		fs::path pthFile = m_strPath;
-		fs::path pthTexture = pthFile.parent_path();
-		pthTexture.append(strTexture);
-
-		if (fs::exists(pthTexture))
-		{
-			auto pOGLTexture = new CTexture();
-			pOGLTexture->LoadFile(pthTexture.wstring().c_str());
-
-			m_mapTextures[strTexture] = pOGLTexture;
-
-			return pOGLTexture;
-		}
-	} // if (!m_strModel.empty())
-
-	return GetDefaultTexture();
-}
-
-CTexture * CRDFModel::GetDefaultTexture()
+/*virtual*/ _texture* CRDFModel::getDefaultTexture() /*override*/
 {
 	if (m_pDefaultTexture == nullptr)
 	{
@@ -1009,15 +981,16 @@ CTexture * CRDFModel::GetDefaultTexture()
 
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
 
-		m_pDefaultTexture = new CTexture();
-		if (!m_pDefaultTexture->LoadFile(szDefaultTexture))
+		m_pDefaultTexture = new _texture();
+		if (!m_pDefaultTexture->load(szDefaultTexture))
 		{
-            MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
 		}
-	} // if (m_pDefaultTexture == nullptr)
+	}
 
 	return m_pDefaultTexture;
 }
+
 
 const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 {
@@ -1601,12 +1574,6 @@ void CRDFModel::Clean()
 	*/
 	delete m_pDefaultTexture;
 	m_pDefaultTexture = nullptr;
-
-	for (auto itTexure : m_mapTextures)
-	{
-		delete itTexure.second;
-	}
-	m_mapTextures.clear();
 
 	m_iID = 1;
 }

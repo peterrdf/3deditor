@@ -809,6 +809,7 @@
     <ClInclude Include="..\include\_rdf_mvc.h" />
     <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
+    <ClInclude Include="..\include\_texture.h" />
     <ClInclude Include="..\stb\stb_easy_font.h" />
     <ClInclude Include="..\stb\stb_image.h" />
     <ClInclude Include="3DEditor.h" />

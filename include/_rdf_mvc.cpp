@@ -5,11 +5,43 @@
 // ************************************************************************************************
 _rdf_model::_rdf_model()
 	: _model()
+	, m_mapTextures()
 {
 }
 
 /*virtual*/ _rdf_model::~_rdf_model()
 {
+	for (auto itTexture : m_mapTextures)
+	{
+		delete itTexture.second;
+	}
+}
+
+_texture* _rdf_model::getTexture(const wstring& strTexture)
+{
+	if (!m_strPath.empty())
+	{
+		if (m_mapTextures.find(strTexture) != m_mapTextures.end())
+		{
+			return m_mapTextures.at(strTexture);
+		}
+
+		fs::path pthFile = m_strPath;
+		fs::path pthTexture = pthFile.parent_path();
+		pthTexture.append(strTexture);
+
+		if (fs::exists(pthTexture))
+		{
+			auto pTexture = new _texture();
+			pTexture->load(pthTexture.wstring().c_str());
+
+			m_mapTextures[strTexture] = pTexture;
+
+			return pTexture;
+		}
+	} // if (!m_strModel.empty())
+
+	return getDefaultTexture();
 }
 
 // ************************************************************************************************

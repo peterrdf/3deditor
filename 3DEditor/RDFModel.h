@@ -54,8 +54,7 @@ protected: // Members
 	float m_fBoundingSphereDiameter;
 
 	// Support for textures
-	CTexture* m_pDefaultTexture;
-	map<wstring, CTexture*> m_mapTextures;
+	_texture* m_pDefaultTexture;
 
 	// Support for text
 	CTextBuilder* m_pTextBuilder;
@@ -68,6 +67,9 @@ public: // Methods
 	// _model
 	virtual OwlModel getOwlModel() const override { return m_iModel; }
 	virtual _instance* loadInstance(int64_t /*iInstance*/) override { ASSERT(FALSE); return nullptr; } //#todo
+
+	// _rdf_model
+	virtual _texture* getDefaultTexture() override;
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
@@ -106,9 +108,6 @@ public: // Methods
 
 	void OnInstanceNameEdited(CRDFInstance* pInstance);
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
-
-	CTexture* GetTexture(const wstring& strTexture);
-	CTexture* GetDefaultTexture();
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
 	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
