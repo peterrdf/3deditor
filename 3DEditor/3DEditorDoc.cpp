@@ -74,7 +74,7 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 		return FALSE;
 
 	auto pModel = new CRDFModel();
-	pModel->CreateDefaultModel();
+	pModel->CreateDefaultModel(L"DEFAULT");
 
 	setModel(pModel);
 

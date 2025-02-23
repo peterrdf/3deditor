@@ -70,7 +70,10 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_drawDecorations() /*override*/
 {
-	DrawNormalVectors();
+	for (auto pModel : getController()->getModels())
+	{
+		DrawNormalVectors(pModel);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1517,26 +1520,32 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
 	//_oglUtils::checkForErrors();
 }
 
-void CRDFOpenGLView::DrawNormalVectors()
+void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 {
-	if (!getShowNormalVectors())
+	if (pModel == nullptr)
 	{
 		return;
 	}
-
-	//#tbd
-	if (getController()->getSelectedInstances().size() != 1)
-	{
-		return;
-	}
-
-	auto pSelectedInstance = getController()->getSelectedInstances()[0];
-	auto pModel = getController()->getModelByInstance(pSelectedInstance->getOwlModel());
 
 	if (pModel->isDecoration())
 	{
 		return;
 	}
+
+	if (!getShowNormalVectors())
+	{
+		return;
+	}	
+
+	_instance* pSelectedInstance = nullptr;
+	if (getController()->getSelectedInstances().size() == 1)
+	{		
+		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
+		if (pSelectedInstanceModel == pModel)
+		{
+			pSelectedInstance = getController()->getSelectedInstances()[0];
+		}
+	}	
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 

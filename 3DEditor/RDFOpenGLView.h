@@ -115,10 +115,10 @@ private: // Methods
 	// Bounding box for each 3D object
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
 
-	void DrawBoundingBoxes(_model* pM);
-	void DrawNormalVectors();
-	void DrawTangentVectors(_model* pM);
-	void DrawBiNormalVectors(_model* pM);
+	void DrawBoundingBoxes(_model* pModel);
+	void DrawNormalVectors(_model* pModel);
+	void DrawTangentVectors(_model* pModel);
+	void DrawBiNormalVectors(_model* pModel);
 	void DrawMainModelSelectionBuffers(
 		_model* pM,
 		int iViewportX, int iViewportY,

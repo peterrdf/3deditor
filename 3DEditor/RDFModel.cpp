@@ -195,8 +195,10 @@ CRDFModel::~CRDFModel()
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ void CRDFModel::CreateDefaultModel()
+/*virtual*/ void CRDFModel::CreateDefaultModel(const wchar_t* szName)
 {
+	m_strPath = szName;
+
 	Clean();
 	
 	m_iModel = CreateModel();
@@ -1703,8 +1705,10 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 	}
 }
 
-/*virtual*/ void CSceneRDFModel::CreateDefaultModel() /*override*/
+/*virtual*/ void CSceneRDFModel::CreateDefaultModel(const wchar_t* szName) /*override*/
 {
+	m_strPath = szName;
+
 	Clean();
 
 	m_iModel = CreateModel();
@@ -1989,8 +1993,10 @@ CNavigatorRDFModel::CNavigatorRDFModel()
 /*virtual*/ CNavigatorRDFModel::~CNavigatorRDFModel()
 {}
 
-/*virtual*/ void CNavigatorRDFModel::CreateDefaultModel() /*override*/
+/*virtual*/ void CNavigatorRDFModel::CreateDefaultModel(const wchar_t* szName) /*override*/
 {
+	m_strPath = szName;
+
 	Clean();
 
 	m_iModel = CreateModel();
