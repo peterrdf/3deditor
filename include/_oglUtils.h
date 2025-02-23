@@ -2498,7 +2498,8 @@ public: // Methods
 
 protected: // Methods
 
-	virtual bool _preDraw();
+	virtual bool _prepareScene();
+	virtual void _preDraw() {}
 
 public: // Methods
 
@@ -2506,8 +2507,8 @@ public: // Methods
 
 protected: // Methods
 
-	virtual void _drawDecorations() {}
-	virtual void _postDraw();
+	virtual void _postDraw() {}
+	virtual void _drawBuffers();
 
 	void _drawFaces();
 	void _drawConceptualFacesPolygons();

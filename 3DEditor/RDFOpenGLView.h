@@ -44,7 +44,7 @@ public: // Methods
 	virtual ~CRDFOpenGLView();
 
 	// _oglView
-	virtual void _drawDecorations() override;
+	virtual void _postDraw() override;
 
 	// _oglRendererSettings
 	/*virtual _controller* getController() const;

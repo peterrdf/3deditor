@@ -65,7 +65,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
 
-/*virtual*/ void CRDFOpenGLView::_drawDecorations() /*override*/
+/*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
 	for (auto pModel : getController()->getModels())
 	{

@@ -1894,7 +1894,7 @@ _oglView::_oglView()
 	_redraw();
 }
 
-/*virtual*/ bool _oglView::_preDraw()
+/*virtual*/ bool _oglView::_prepareScene()
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -1929,10 +1929,13 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
-	if (!_preDraw())
+	if (!_prepareScene())
 	{
 		return;
 	}
+
+	// Coordinate System, Navigation, etc.
+	_preDraw();
 
 	// Models
 	_drawFaces();
@@ -1940,16 +1943,16 @@ _oglView::_oglView()
 	_drawLines();
 	_drawPoints();
 
-	// Decorations, e.g. Coordinate System, Navigation, Vectors, etc.
-	_drawDecorations();
+	// Tangent, Normal, Bi-Normal Vectors, etc.
+	_postDraw();
 
 	// OpenGL
 	SwapBuffers(*pDC);
 
-	_postDraw();
+	_drawBuffers();
 }
 
-/*virtual*/ void _oglView::_postDraw()
+/*virtual*/ void _oglView::_drawBuffers()
 {
 	_drawInstancesFrameBuffer();
 }
