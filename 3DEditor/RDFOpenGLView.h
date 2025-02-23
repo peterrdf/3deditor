@@ -46,15 +46,6 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 
-	// _oglRendererSettings
-	/*virtual _controller* getController() const;
-	virtual _controller* _getController() const override {
-		return getController();
-	}
-	virtual _model* getModel() const;
-	virtual void saveSetting(const string& strName, const string& strValue) override;
-	virtual string loadSetting(const string& strName) override;*/
-
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);
 	void GetRotation(float& fX, float& fY);
@@ -81,20 +72,8 @@ public: // Methods
 	virtual void OnInstancesEnabledStateChanged() override;
 	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;*/
 
-protected: // Methods
-
-	// Overridden
-	//virtual void OnControllerChanged() override;
-
 private: // Methods
 
-	void LoadModel(CRDFModel* pModel);
-
-	void DrawMainModel(
-		CRDFModel* pMainModel,
-		CRDFModel* pSceneModel,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight);
 	void DrawNavigatorModel(
 		CRDFModel* pNavigatorModel,
 		int iViewportX, int iViewportY,

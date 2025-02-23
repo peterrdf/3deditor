@@ -456,397 +456,43 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //	OnInstanceSelected(nullptr);
 //}
 
-// ------------------------------------------------------------------------------------------------
-/*virtual void CRDFOpenGLView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+//void CRDFOpenGLView::DrawMainModel(
+//	CRDFModel* pMainModel,
+//	CRDFModel* pSceneModel,
+//	int iViewportX, int iViewportY,
+//	int iViewportWidth, int iViewportHeight)
 //{
-//	if (pSender == this)
+//	if (pMainModel == nullptr)
 //	{
 //		return;
 //	}
 //
-//	switch (enApplicationProperty)
+//	float fXmin = -1.f;
+//	float fXmax = 1.f;
+//	float fYmin = -1.f;
+//	float fYmax = 1.f;
+//	float fZmin = -1.f;
+//	float fZmax = 1.f;
+//	pMainModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+//
+//	_prepare(
+//		iViewportX, iViewportY,
+//		iViewportWidth, iViewportHeight,
+//		fXmin, fXmax,
+//		fYmin, fYmax,
+//		fZmin, fZmax,
+//		true,
+//		true);
+//
+//	/* Model */
+//	DrawModel(pMainModel);
+//
+//	/* Scene */
+//	if (getShowCoordinateSystem() && !TEST_MODE)
 //	{
-//		case enumApplicationProperty::Projection:
-//		case enumApplicationProperty::View:
-//		case enumApplicationProperty::ShowFaces:
-//		case enumApplicationProperty::CullFaces:
-//		case enumApplicationProperty::ShowFacesWireframes:
-//		case enumApplicationProperty::ShowConceptualFacesWireframes:
-//		case enumApplicationProperty::ShowLines:
-//		case enumApplicationProperty::ShowPoints:
-//		case enumApplicationProperty::ShowNormalVectors:
-//		case enumApplicationProperty::ShowTangenVectors:
-//		case enumApplicationProperty::ShowBiNormalVectors:
-//		case enumApplicationProperty::ScaleVectors:
-//		case enumApplicationProperty::ShowBoundingBoxes:
-//		case enumApplicationProperty::RotationMode:
-//		case enumApplicationProperty::PointLightingLocation:
-//		case enumApplicationProperty::AmbientLightWeighting:
-//		case enumApplicationProperty::SpecularLightWeighting:
-//		case enumApplicationProperty::DiffuseLightWeighting:
-//		case enumApplicationProperty::MaterialShininess:
-//		case enumApplicationProperty::Contrast:
-//		case enumApplicationProperty::Brightness:
-//		case enumApplicationProperty::Gamma:
-//		case enumApplicationProperty::ShowCoordinateSystem:		
-//		case enumApplicationProperty::ShowNavigator:
-//		{
-//			_redraw();
-//		}
-//		break;
-//
-//		case enumApplicationProperty::VisibleValuesCountLimit:
-//		case enumApplicationProperty::ScalelAndCenter:
-//		case enumApplicationProperty::CoordinateSystemType:
-//		{
-//			// Not supported
-//		}
-//		break;
-//
-//		default:
-//		{
-//			assert(false); // Internal error!
-//		}
-//		break;
-//	} // switch (enApplicationProperty)
+//		DrawModel(pSceneModel);
+//	}
 //}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnControllerChanged()
-//{
-//	assert(GetController() != nullptr);
-//
-//	GetController()->registerView(this);
-//
-//	loadSettings();
-//}
-
-void CRDFOpenGLView::LoadModel(CRDFModel* pModel)
-{
-	if (pModel == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
-	ProgressStatus prgs(L"Prepare rendering");
-
-	// Limits
-	GLsizei VERTICES_MAX_COUNT = _oglUtils::getVerticesCountLimit(GEOMETRY_VBO_VERTEX_LENGTH * sizeof(float));
-	GLsizei INDICES_MAX_COUNT = _oglUtils::getIndicesCountLimit();
-
-	auto& mapInstances = pModel->GetInstances();
-
-	// VBO
-	GLuint iVerticesCount = 0;
-	vector<_geometry*> vecInstancesCohort;
-
-	// IBO - Conceptual faces
-	GLuint iConcFacesIndicesCount = 0;
-	vector<_cohort*> vecConcFacesCohorts;
-
-	// IBO - Conceptual face polygons
-	GLuint iConcFacePolygonsIndicesCount = 0;
-	vector<_cohort*> vecConcFacePolygonsCohorts;
-
-	// IBO - Face polygons
-	GLuint iFacePolygonsIndicesCount = 0;
-	vector<_cohort*> vecFacePolygonsCohorts;
-
-	// IBO - Lines
-	GLuint iLinesIndicesCount = 0;
-	vector<_cohort*> vecLinesCohorts;
-
-	// IBO - Points
-	GLuint iPointsIndicesCount = 0;
-	vector<_cohort*> vecPointsCohorts;
-
-	prgs.Start(mapInstances.size());
-	for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
-	{
-		prgs.Step();
-
-		auto pInstance = itInstance->second;
-		if (pInstance->getVerticesCount() == 0)
-		{
-			continue;
-		}
-
-		/******************************************************************************************
-		* Geometry
-		*/
-
-		/**
-		* VBO - Conceptual faces, polygons, etc.
-		*/
-		if (((int64_t)iVerticesCount + pInstance->getVerticesCount()) > (int64_t)VERTICES_MAX_COUNT)
-		{
-			if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
-			{
-				assert(false);
-
-				return;
-			}
-
-			iVerticesCount = 0;
-			vecInstancesCohort.clear();
-		}
-
-		/*
-		* IBO - Conceptual faces
-		*/
-		for (size_t iFacesCohort = 0; iFacesCohort < pInstance->concFacesCohorts().size(); iFacesCohort++)
-		{
-			if ((int64_t)(iConcFacesIndicesCount + pInstance->concFacesCohorts()[iFacesCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-				{
-					assert(false);
-
-					return;
-				}
-
-				iConcFacesIndicesCount = 0;
-				vecConcFacesCohorts.clear();
-			}
-
-			iConcFacesIndicesCount += (GLsizei)pInstance->concFacesCohorts()[iFacesCohort]->indices().size();
-			vecConcFacesCohorts.push_back(pInstance->concFacesCohorts()[iFacesCohort]);
-		}
-
-		/*
-		* IBO - Conceptual face polygons
-		*/
-		for (size_t iConcFacePolygonsCohort = 0; iConcFacePolygonsCohort < pInstance->concFacePolygonsCohorts().size(); iConcFacePolygonsCohort++)
-		{
-			if ((int64_t)(iConcFacePolygonsIndicesCount + pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-				{
-					assert(false);
-
-					return;
-				}
-
-				iConcFacePolygonsIndicesCount = 0;
-				vecConcFacePolygonsCohorts.clear();
-			}
-
-			iConcFacePolygonsIndicesCount += (GLsizei)pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]->indices().size();
-			vecConcFacePolygonsCohorts.push_back(pInstance->concFacePolygonsCohorts()[iConcFacePolygonsCohort]);
-		}
-
-		/*
-		* IBO - Face polygons
-		*/
-		for (size_t iFacePolygonsCohort = 0; iFacePolygonsCohort < pInstance->facePolygonsCohorts().size(); iFacePolygonsCohort++)
-		{
-			if ((int64_t)(iFacePolygonsIndicesCount + pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
-				{
-					assert(false);
-
-					return;
-				}
-
-				iFacePolygonsIndicesCount = 0;
-				vecFacePolygonsCohorts.clear();
-			}
-
-			iFacePolygonsIndicesCount += (GLsizei)pInstance->facePolygonsCohorts()[iFacePolygonsCohort]->indices().size();
-			vecFacePolygonsCohorts.push_back(pInstance->facePolygonsCohorts()[iFacePolygonsCohort]);
-		}
-
-		/*
-		* IBO - Lines
-		*/
-		for (size_t iLinesCohort = 0; iLinesCohort < pInstance->linesCohorts().size(); iLinesCohort++)
-		{
-			if ((int64_t)(iLinesIndicesCount + pInstance->linesCohorts()[iLinesCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-				{
-					assert(false);
-
-					return;
-				}
-
-				iLinesIndicesCount = 0;
-				vecLinesCohorts.clear();
-			}
-
-			iLinesIndicesCount += (GLsizei)pInstance->linesCohorts()[iLinesCohort]->indices().size();
-			vecLinesCohorts.push_back(pInstance->linesCohorts()[iLinesCohort]);
-		}
-
-		/*
-		* IBO - Points
-		*/
-		for (size_t iPointsCohort = 0; iPointsCohort < pInstance->pointsCohorts().size(); iPointsCohort++)
-		{
-			if ((int64_t)(iPointsIndicesCount + pInstance->pointsCohorts()[iPointsCohort]->indices().size()) > (int64_t)INDICES_MAX_COUNT)
-			{
-				if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-				{
-					assert(false);
-
-					return;
-				}
-
-				iPointsIndicesCount = 0;
-				vecPointsCohorts.clear();
-			}
-
-			iPointsIndicesCount += (GLsizei)pInstance->pointsCohorts()[iPointsCohort]->indices().size();
-			vecPointsCohorts.push_back(pInstance->pointsCohorts()[iPointsCohort]);
-		}
-
-		iVerticesCount += (GLsizei)pInstance->getVerticesCount();
-		vecInstancesCohort.push_back(pInstance);
-	} // for (; itInstance != ...
-
-	prgs.Finish();
-
-	/******************************************************************************************
-	* Geometry
-	*/
-
-	/*
-	* VBO - Conceptual faces, polygons, etc.
-	*/
-	if (iVerticesCount > 0)
-	{
-		if (m_oglBuffers.createCohort(vecInstancesCohort, m_pOGLProgram) != iVerticesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iVerticesCount = 0;
-		vecInstancesCohort.clear();
-	}
-
-	/*
-	* IBO - Conceptual faces
-	*/
-	if (iConcFacesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacesCohorts) != iConcFacesIndicesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iConcFacesIndicesCount = 0;
-		vecConcFacesCohorts.clear();
-	}
-
-	/*
-	* IBO - Conceptual face polygons
-	*/
-	if (iConcFacePolygonsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecConcFacePolygonsCohorts) != iConcFacePolygonsIndicesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iConcFacePolygonsIndicesCount = 0;
-		vecConcFacePolygonsCohorts.clear();
-	}
-
-	/*
-	* IBO - Face polygons
-	*/
-	if (iFacePolygonsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iFacePolygonsIndicesCount = 0;
-		vecFacePolygonsCohorts.clear();
-	}
-
-	/*
-	* IBO - Lines
-	*/
-	if (iLinesIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecLinesCohorts) != iLinesIndicesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iLinesIndicesCount = 0;
-		vecLinesCohorts.clear();
-	}
-
-	/*
-	* IBO - Points
-	*/
-	if (iPointsIndicesCount > 0)
-	{
-		if (m_oglBuffers.createIBO(vecPointsCohorts) != iPointsIndicesCount)
-		{
-			assert(false);
-
-			return;
-		}
-
-		iPointsIndicesCount = 0;
-		vecPointsCohorts.clear();
-	}
-}
-
-void CRDFOpenGLView::DrawMainModel(
-	CRDFModel* pMainModel,
-	CRDFModel* pSceneModel,
-	int iViewportX, int iViewportY,
-	int iViewportWidth, int iViewportHeight)
-{
-	if (pMainModel == nullptr)
-	{
-		return;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pMainModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	_prepare(
-		iViewportX, iViewportY,
-		iViewportWidth, iViewportHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
-
-	/* Model */
-	DrawModel(pMainModel);
-
-	/* Scene */
-	if (getShowCoordinateSystem() && !TEST_MODE)
-	{
-		DrawModel(pSceneModel);
-	}
-}
 
 void CRDFOpenGLView::DrawNavigatorModel(
 	CRDFModel* pNavigatorModel,
