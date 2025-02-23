@@ -71,7 +71,7 @@ public: // Methods
 	// _rdf_model
 	virtual _texture* getDefaultTexture() override;
 	
-	virtual void CreateDefaultModel(const wchar_t* szName);
+	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
 	void Load(OwlInstance iInstance);
 #ifdef _DXF_SUPPORT
@@ -155,7 +155,7 @@ public: // Methods
 	void TranslateModel(float fX, float fY, float fZ);
 
 	// CRDFModel
-	virtual void CreateDefaultModel(const wchar_t* szName) override;
+	virtual void CreateDefaultModel() override;
 	virtual void ScaleAndCenter(bool /*bLoadingModel = false*/) override {};
 
 protected: // Methods
@@ -175,7 +175,7 @@ public: // Methods
 	CNavigatorRDFModel();
 	virtual ~CNavigatorRDFModel();
 
-	virtual void CreateDefaultModel(const wchar_t* szName) override;
+	virtual void CreateDefaultModel() override;
 
 protected: // Methods
 

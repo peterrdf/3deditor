@@ -52,7 +52,7 @@ BOOL CRDFViewerDoc::OnNewDocument()
 	}
 
 	m_pModel = new CRDFModel();
-	m_pModel->CreateDefaultModel(L"DEFAULT");
+	m_pModel->CreateDefaultModel();
 
 	SetModel(m_pModel);
 
