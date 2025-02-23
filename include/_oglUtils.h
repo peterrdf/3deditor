@@ -2496,17 +2496,12 @@ public: // Methods
 
 	virtual void _load();
 
-protected: // Methods
-
-	virtual bool _prepareScene();
-	virtual void _preDraw() {}
-
-public: // Methods
-
 	virtual void _draw(CDC* pDC);
 
 protected: // Methods
 
+	virtual bool _prepareScene();
+	virtual void _preDraw() {}
 	virtual void _postDraw() {}
 	virtual void _drawBuffers();
 

@@ -33,9 +33,6 @@ private: // Members
 	_material* m_pPointedInstanceMaterial;
 	_material* m_pNavigatorPointedInstanceMaterial;
 
-	// Tooltip
-	clock_t m_tmShowTooltip;
-
 #pragma endregion // Members
 
 public: // Methods
@@ -45,6 +42,7 @@ public: // Methods
 
 	// _oglView
 	virtual void _postDraw() override;
+	virtual void _drawBuffers() override;
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);
@@ -88,22 +86,17 @@ private: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
-
 	void DrawBoundingBoxes(_model* pModel);
 	void DrawNormalVectors(_model* pModel);
 	void DrawTangentVectors(_model* pModel);
 	void DrawBiNormalVectors(_model* pModel);
-	void DrawMainModelSelectionBuffers(
-		_model* pM,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight,
-		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
+
 	void DrawNavigatorModelSelectionBuffers(
 		_model* pM,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight,
 		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
+	
 	void DrawFacesFrameBuffer(_model* pM);
 	void DrawPointedFace(_model* pM);
 	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);

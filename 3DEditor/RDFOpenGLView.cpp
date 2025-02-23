@@ -42,7 +42,6 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
 	, m_pNavigatorPointedInstanceMaterial(new _material())
-	, m_tmShowTooltip(clock())
 {
 	assert(pWnd != nullptr);
 
@@ -74,6 +73,11 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		DrawTangentVectors(pModel);
 		DrawBiNormalVectors(pModel);
 	}
+}
+
+/*virtual*/ void CRDFOpenGLView::_drawBuffers() /*override*/
+{
+	_oglView::_drawBuffers();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1878,147 +1882,6 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	_oglUtils::checkForErrors();
 }
 
-void CRDFOpenGLView::DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
-{
-	auto pModel = dynamic_cast<CRDFModel*>(pM);
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (pInstanceSelectionFrameBuffer == nullptr)
-	{
-		return;
-	}
-
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-	/* Create a frame buffer */
-	pInstanceSelectionFrameBuffer->create();
-
-	/* Selection colors */
-	//if (pInstanceSelectionFrameBuffer->encoding().empty())
-	//{
-	//	auto& mapInstances = pModel->GetInstances();
-	//	for (auto itInstance = mapInstances.begin(); itInstance != mapInstances.end(); itInstance++)
-	//	{
-	//		auto pInstance = itInstance->second;
-	//		if (!pInstance->getEnable())
-	//		{
-	//			continue;
-	//		}
-
-	//		auto& vecTriangles = pInstance->getTriangles();
-	//		if (vecTriangles.empty())
-	//		{
-	//			continue;
-	//		}
-
-	//		float fR, fG, fB;
-	//		_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
-
-	//		pInstanceSelectionFrameBuffer->encoding()[pInstance->getInstance()] = _color(fR, fG, fB);
-	//	}
-	//} // if (pInstanceSelectionFrameBuffer->encoding().empty())
-
-	/* Draw */
-
-	pInstanceSelectionFrameBuffer->bind();
-
-	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
-
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-#ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(false);
-#else
-	m_pOGLProgram->_enableLighting(false);
-#endif
-	m_pOGLProgram->_setTransparency(1.f);
-
-	for (auto itCohort : m_oglBuffers.cohorts())
-	{
-		glBindVertexArray(itCohort.first);
-
-	//	for (auto pInstance : itCohort.second)
-	//	{
-	//		if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
-	//		{
-	//			continue;
-	//		}
-
-	//		auto& vecTriangles = pInstance->getTriangles();
-	//		if (vecTriangles.empty())
-	//		{
-	//			continue;
-	//		}
-
-	//		auto itSelectionColor = pInstanceSelectionFrameBuffer->encoding().find(pInstance->getInstance());
-	//		assert(itSelectionColor != pInstanceSelectionFrameBuffer->encoding().end());
-
-	//		m_pOGLProgram->_setAmbientColor(
-	//			itSelectionColor->second.r(),
-	//			itSelectionColor->second.g(),
-	//			itSelectionColor->second.b());
-
-	//		for (auto pConcFacesCohort : pInstance->concFacesCohorts())
-	//		{
-	//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pConcFacesCohort->IBO());
-	//			glDrawElementsBaseVertex(GL_TRIANGLES,
-	//				(GLsizei)pConcFacesCohort->indices().size(),
-	//				GL_UNSIGNED_INT,
-	//				(void*)(sizeof(GLuint) * pConcFacesCohort->IBOOffset()),
-	//				pInstance->VBOOffset());
-	//		}
-	//	} // for (auto pInstance ...
-
-	//	glBindVertexArray(0);
-	} // for (auto itCohort ...
-
-	pInstanceSelectionFrameBuffer->unbind();
-
-	_oglUtils::checkForErrors();
-}
-
-void CRDFOpenGLView::DrawMainModelSelectionBuffers(
-	_model* pM,
-	int iViewportX, int iViewportY,
-	int iViewportWidth, int iViewportHeight,
-	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
-{
-	auto pModel = dynamic_cast<CRDFModel*>(pM);
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	_prepare(
-		iViewportX, iViewportY,
-		iViewportWidth, iViewportHeight,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
-
-	DrawInstancesFrameBuffer(pModel, pInstanceSelectionFrameBuffer);
-	DrawFacesFrameBuffer(pModel);
-}
-
 void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 	_model* pM,
 	int /*iViewportX*/, int iViewportY,
@@ -2048,7 +1911,7 @@ void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 		true,
 		false);
 
-	DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
+	//DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
 
 void CRDFOpenGLView::DrawFacesFrameBuffer(_model* pM)
