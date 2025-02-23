@@ -72,7 +72,10 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 	for (auto pModel : getController()->getModels())
 	{
+		DrawBoundingBoxes(pModel);
 		DrawNormalVectors(pModel);
+		DrawTangentVectors(pModel);
+		DrawBiNormalVectors(pModel);
 	}
 }
 
@@ -1321,203 +1324,198 @@ void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pB
 	vecBBVertex.z /= dScaleFactor;
 }
 
-void CRDFOpenGLView::DrawBoundingBoxes(_model* pM)
+void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 {
-//	auto pModel = dynamic_cast<CRDFModel*>(pM);
-//	if (pModel == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (!getShowBoundingBoxes())
-//	{
-//		return;
-//	}
-//
-//#ifdef _BLINN_PHONG_SHADERS
-//	m_pOGLProgram->_enableBlinnPhongModel(false);
-//#else
-//	m_pOGLProgram->_enableLighting(false);
-//#endif
-//	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
-//	m_pOGLProgram->_setTransparency(1.f);
-//
-//	_oglUtils::checkForErrors();
-//
-//	bool bIsNew = false;
-//	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
-//
-//	if (iVAO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}	
-//	
-//	GLuint iVBO = 0;
-//
-//	if (bIsNew)
-//	{
-//		glBindVertexArray(iVAO);
-//
-//		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
-//		if ((iVBO == 0) || !bIsNew)
-//		{
-//			assert(false);
-//
-//			return;
-//		}
-//
-//		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-//		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
-//
-//		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
-//		if ((iIBO == 0) || !bIsNew)
-//		{
-//			assert(false);
-//
-//			return;
-//		}
-//
-//		vector<unsigned int> vecIndices =
-//		{
-//			0, 1,
-//			1, 2,
-//			2, 3,
-//			3, 0,
-//			4, 5,
-//			5, 6,
-//			6, 7,
-//			7, 4,
-//			0, 6,
-//			3, 5,
-//			1, 7,
-//			2, 4,
-//		};
-//
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
-//
-//		glBindVertexArray(0);
-//
-//		_oglUtils::checkForErrors();
-//	} // if (bIsNew)
-//	else
-//	{
-//		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
-//		if (iVBO == 0)
-//		{
-//			assert(false);
-//
-//			return;
-//		}
-//	}
+	if (pModel == nullptr)
+	{
+		return;
+	}
 
-	//auto& mapInstances = pModel->GetInstances();
-	//for (auto itInstance = mapInstances.begin(); 
-	//	itInstance != mapInstances.end(); 
-	//	itInstance++)
-	//{
-	//	auto pInstance = itInstance->second;
+	if (pModel->isDecoration())
+	{
+		return;
+	}
 
-	//	if ((pInstance->getModel() != pModel->getInstance()) || !pInstance->getEnable())
-	//	{
-	//		continue;
-	//	}
+	if (!getShowBoundingBoxes())
+	{
+		return;
+	}
 
-	//	if ((pInstance->getBBTransformation() == nullptr) ||
-	//		(pInstance->getBBMin() == nullptr) || 
-	//		(pInstance->getBBMax() == nullptr))
-	//	{
-	//		continue;
-	//	}
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
 
-	//	_vector3d vecBoundingBoxMin = { pInstance->getBBMin()->x, pInstance->getBBMin()->y, pInstance->getBBMin()->z };
-	//	_vector3d vecBoundingBoxMax = { pInstance->getBBMax()->x, pInstance->getBBMax()->y, pInstance->getBBMax()->z };
+	_oglUtils::checkForErrors();
 
-	//	_vector3d vecVertexBufferOffset;
-	//	GetVertexBufferOffset(pInstance->getModel(), (double*)&vecVertexBufferOffset);	
+	bool bIsNew = false;
+	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
 
-	//	double dScaleFactor = (double)pModel->GetOriginalBoundingSphereDiameter() / 2.;
+	if (iVAO == 0)
+	{
+		assert(false);
 
-	//	// Bottom face
-	//	/*
-	//	Min1						Min2
-	//	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	//	|								|
-	//	|								|
-	//	|								|
-	//	|								|
-	//	|								|
-	//	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	//	Min4						Min3
-	//	*/
+		return;
+	}	
+	
+	GLuint iVBO = 0;
 
-	//	_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };	
-	//	TransformBBVertex(vecMin1, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);		
+	if (bIsNew)
+	{
+		glBindVertexArray(iVAO);
 
-	//	_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
-	//	TransformBBVertex(vecMin2, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
+		if ((iVBO == 0) || !bIsNew)
+		{
+			assert(false);
 
-	//	_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-	//	TransformBBVertex(vecMin3, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+			return;
+		}
 
-	//	_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
-	//	TransformBBVertex(vecMin4, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
 
-	//	// Top face
-	//	/*
-	//	Max3						Max4
-	//	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	//	|								|
-	//	|								|
-	//	|								|
-	//	|								|
-	//	|								|
-	//	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	//	Max2						Max1
-	//	*/
+		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
+		if ((iIBO == 0) || !bIsNew)
+		{
+			assert(false);
 
-	//	_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	//	TransformBBVertex(vecMax1, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+			return;
+		}
 
-	//	_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
-	//	TransformBBVertex(vecMax2, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+		vector<unsigned int> vecIndices =
+		{
+			0, 1,
+			1, 2,
+			2, 3,
+			3, 0,
+			4, 5,
+			5, 6,
+			6, 7,
+			7, 4,
+			0, 6,
+			3, 5,
+			1, 7,
+			2, 4,
+		};
 
-	//	_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-	//	TransformBBVertex(vecMax3, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_STATIC_DRAW);
 
-	//	_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
-	//	TransformBBVertex(vecMax4, pInstance->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+		glBindVertexArray(0);
 
-	//	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
-	//	vector<float> vecVertices = 
-	//	{
-	//		(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//		(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
-	//	};
+		_oglUtils::checkForErrors();
+	} // if (bIsNew)
+	else
+	{
+		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
+		if (iVBO == 0)
+		{
+			assert(false);
 
-	//	glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+			return;
+		}
+	}
 
-	//	glBindVertexArray(iVAO);
+	for (auto pGeometry : pModel->getGeometries())
+	{
+		assert(pGeometry->getInstances().size() == 1);
+		if ((pGeometry->getBBTransformation() == nullptr) ||
+			(pGeometry->getBBMin() == nullptr) ||
+			(pGeometry->getBBMax() == nullptr))
+		{
+			continue;
+		}
 
-	//	glDrawElementsBaseVertex(GL_LINES,
-	//		(GLsizei)24,
-	//		GL_UNSIGNED_INT,
-	//		(void*)0,
-	//		0);
+		_vector3d vecBoundingBoxMin = { pGeometry->getBBMin()->x, pGeometry->getBBMin()->y, pGeometry->getBBMin()->z };
+		_vector3d vecBoundingBoxMax = { pGeometry->getBBMax()->x, pGeometry->getBBMax()->y, pGeometry->getBBMax()->z };
 
-	//	glBindVertexArray(0);
-	//} // for (; itInstance != ...
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(pGeometry->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-	//_oglUtils::checkForErrors();
+		double dScaleFactor = (double)pModel->getOriginalBoundingSphereDiameter() / 2.;
+
+		// Bottom face
+		/*
+		Min1						Min2
+		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		|								|
+		|								|
+		|								|
+		|								|
+		|								|
+		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		Min4						Min3
+		*/
+
+		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };	
+		TransformBBVertex(vecMin1, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
+		TransformBBVertex(vecMin2, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMin3 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		TransformBBVertex(vecMin3, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMin4 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMax.z };
+		TransformBBVertex(vecMin4, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		// Top face
+		/*
+		Max3						Max4
+		>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		|								|
+		|								|
+		|								|
+		|								|
+		|								|
+		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		Max2						Max1
+		*/
+
+		_vector3d vecMax1 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		TransformBBVertex(vecMax1, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMax2 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMax.z };
+		TransformBBVertex(vecMax2, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMax3 = { vecBoundingBoxMin.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		TransformBBVertex(vecMax3, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		_vector3d vecMax4 = { vecBoundingBoxMax.x, vecBoundingBoxMax.y, vecBoundingBoxMin.z };
+		TransformBBVertex(vecMax4, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
+
+		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
+		vector<float> vecVertices = 
+		{
+			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin3.x, (GLfloat)vecMin3.y, (GLfloat)vecMin3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMin4.x, (GLfloat)vecMin4.y, (GLfloat)vecMin4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax1.x, (GLfloat)vecMax1.y, (GLfloat)vecMax1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax2.x, (GLfloat)vecMax2.y, (GLfloat)vecMax2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax3.x, (GLfloat)vecMax3.y, (GLfloat)vecMax3.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+			(GLfloat)vecMax4.x, (GLfloat)vecMax4.y, (GLfloat)vecMax4.z, 0.f, 0.f, 0.f, 0.f, 0.f,
+		};
+
+		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(iVAO);
+
+		glDrawElementsBaseVertex(GL_LINES,
+			(GLsizei)24,
+			GL_UNSIGNED_INT,
+			(void*)0,
+			0);
+
+		glBindVertexArray(0);
+	} // for (; itInstance != ...
+
+	_oglUtils::checkForErrors();
 }
 
 void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
@@ -1545,9 +1543,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 		{
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
-	}	
-
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	}
 
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
