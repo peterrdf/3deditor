@@ -1393,72 +1393,71 @@ void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
 
 void CRDFModel::UpdateVertexBufferOffset()
 {
-	//#todo
 	/* Min/Max/Offset */
-	//m_dVertexBuffersOffsetX = 0.;
-	//m_dVertexBuffersOffsetY = 0.;
-	//m_dVertexBuffersOffsetZ = 0.;
-	//m_dOriginalBoundingSphereDiameter = 2.;
+	m_dVertexBuffersOffsetX = 0.;
+	m_dVertexBuffersOffsetY = 0.;
+	m_dVertexBuffersOffsetZ = 0.;
+	m_dOriginalBoundingSphereDiameter = 2.;
 
-	//double dXmin = DBL_MAX;
-	//double dXmax = -DBL_MAX;
-	//double dYmin = DBL_MAX;
-	//double dYmax = -DBL_MAX;
-	//double dZmin = DBL_MAX;
-	//double dZmax = -DBL_MAX;	
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;	
 
-	//OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	//while (iInstance != 0)
-	//{
-	//	if (m_mapInstanceDefaultState.at(iInstance))
-	//	{
-	//		CRDFInstance::calculateBBMinMax(
-	//			iInstance,
-	//			dXmin, dXmax,
-	//			dYmin, dYmax,
-	//			dZmin, dZmax);
-	//	}
+	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
+	while (iInstance != 0)
+	{
+		if (m_mapInstanceDefaultState.at(iInstance))
+		{
+			CRDFInstance::calculateBBMinMax(
+				iInstance,
+				dXmin, dXmax,
+				dYmin, dYmax,
+				dZmin, dZmax);
+		}
 
-	//	iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	//}
+		iInstance = GetInstancesByIterator(m_iModel, iInstance);
+	}
 
-	//if ((dXmin == DBL_MAX) ||
-	//	(dXmax == -DBL_MAX) ||
-	//	(dYmin == DBL_MAX) ||
-	//	(dYmax == -DBL_MAX) ||
-	//	(dZmin == DBL_MAX) ||
-	//	(dZmax == -DBL_MAX))
-	//{
-	//	// TODO: new status bar for geometry
-	//	/*::MessageBox(
-	//		m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-	//		_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
+	if ((dXmin == DBL_MAX) ||
+		(dXmax == -DBL_MAX) ||
+		(dYmin == DBL_MAX) ||
+		(dYmax == -DBL_MAX) ||
+		(dZmin == DBL_MAX) ||
+		(dZmax == -DBL_MAX))
+	{
+		// TODO: new status bar for geometry
+		/*::MessageBox(
+			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
+			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
-	//	return;
-	//}
+		return;
+	}
 
-	//m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
-	//m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
-	//m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
+	m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
+	m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
+	m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
 
-	//m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
-	//m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
-	//m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
+	m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
+	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
 
-	//TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-	//	m_dVertexBuffersOffsetX,
-	//	m_dVertexBuffersOffsetY,
-	//	m_dVertexBuffersOffsetZ);
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		m_dVertexBuffersOffsetX,
+		m_dVertexBuffersOffsetY,
+		m_dVertexBuffersOffsetZ);
 
-	//// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	//SetVertexBufferOffset(
-	//	m_iModel,
-	//	m_dVertexBuffersOffsetX,
-	//	m_dVertexBuffersOffsetY,
-	//	m_dVertexBuffersOffsetZ);
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		m_iModel,
+		m_dVertexBuffersOffsetX,
+		m_dVertexBuffersOffsetY,
+		m_dVertexBuffersOffsetZ);
 
-	//// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-	//ClearedExternalBuffers(m_iModel);
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(m_iModel);
 }
 
 void CRDFModel::LoadRDFInstances()
@@ -1496,6 +1495,7 @@ void CRDFModel::LoadRDFInstances()
 			addGeometry(pGeometry);
 
 			auto pInstance = new _rdf_instance(m_iID++, pGeometry, nullptr);
+			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
 		}
 		else

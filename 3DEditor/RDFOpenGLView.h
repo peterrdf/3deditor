@@ -20,11 +20,6 @@ private: // Members
 	CPoint m_ptStartMousePosition;
 	CPoint m_ptPrevMousePosition;
 
-	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;	
-	CRDFInstance* m_pPointedInstance;
-	CRDFInstance* m_pSelectedInstance;
-
 	// Selection	
 	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
 	int64_t m_iPointedFace;
