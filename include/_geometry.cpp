@@ -168,6 +168,32 @@ void _geometry::calculateBB(
 	fZmax = (float)fmax(fZmax, vecPoint.z);
 }
 
+/*static*/ void _geometry::calculateBB(
+	OwlInstance owlInstance,
+	double& dXmin, double& dXmax,
+	double& dYmin, double& dYmax,
+	double& dZmin, double& dZmax)
+{
+	assert(owlInstance != 0);
+
+	_vector3d vecOriginalBBMin;
+	_vector3d vecOriginalBBMax;
+	if (GetInstanceGeometryClass(owlInstance) &&
+		GetBoundingBox(
+			owlInstance,
+			(double*)&vecOriginalBBMin,
+			(double*)&vecOriginalBBMax))
+	{
+		dXmin = fmin(dXmin, vecOriginalBBMin.x);
+		dYmin = fmin(dYmin, vecOriginalBBMin.y);
+		dZmin = fmin(dZmin, vecOriginalBBMin.z);
+
+		dXmax = fmax(dXmax, vecOriginalBBMax.x);
+		dYmax = fmax(dYmax, vecOriginalBBMax.y);
+		dZmax = fmax(dZmax, vecOriginalBBMax.z);
+	}
+}
+
 void _geometry::scale(float fScaleFactor)
 {
 	if (getVerticesCount() == 0)

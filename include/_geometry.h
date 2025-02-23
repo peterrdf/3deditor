@@ -219,6 +219,12 @@ public: // Methods
 		float& fYmin, float& fYmax,
 		float& fZmin, float& fZmax) const;
 
+	static void calculateBB(
+		OwlInstance owlInstance,
+		double& dXmin, double& dXmax,
+		double& dYmin, double& dYmax,
+		double& dZmin, double& dZmax);
+
 	void scale(float fScaleFactor);
 	void translate(float fX, float fY, float fZ);
 

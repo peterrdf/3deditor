@@ -1411,7 +1411,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 	{
 		if (m_mapInstanceDefaultState.at(iInstance))
 		{
-			CRDFInstance::calculateBBMinMax(
+			_geometry::calculateBB(
 				iInstance,
 				dXmin, dXmax,
 				dYmin, dYmax,
