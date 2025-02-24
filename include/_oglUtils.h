@@ -2504,8 +2504,7 @@ protected: // Methods
 	virtual void _preDraw() {}
 	virtual void _postDraw() {}
 	virtual void _drawBuffers();
-	virtual void _onPointInstance(const CPoint& /*point*/) {}
-
+	
 	void _drawFaces();
 	void _drawConceptualFacesPolygons();
 	void _drawLines();
@@ -2517,6 +2516,8 @@ protected: // Methods
 	void _drawLines(_model* pModel);
 	void _drawPoints(_model* pModel);
 	void _drawInstancesFrameBuffer(_model* pModel);	
+
+	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
 	// http://nehe.gamedev.net/article/using_gluunproject/16013/
 	bool getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);

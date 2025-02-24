@@ -2747,7 +2747,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			_redraw();
 		}
 
-		_onPointInstance(point);
+		_onMouseMove(point);
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 
 	if (m_pPointedInstance != nullptr)

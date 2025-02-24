@@ -22,6 +22,7 @@ private: // Members
 
 	// Selection	
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
+	_instance* m_pPointedFaceInstance;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
@@ -43,7 +44,7 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
-	virtual void _onPointInstance(const CPoint& point) override;
+	virtual void _onMouseMove(const CPoint& point) override;
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);
