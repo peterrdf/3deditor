@@ -34,7 +34,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglView()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_pFaceSelectionFrameBuffer(new _oglSelectionFramebuffer())
+	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
 	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -73,11 +73,76 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		DrawTangentVectors(pModel);
 		DrawBiNormalVectors(pModel);
 	}
+
+	DrawPointedFace();
 }
 
 /*virtual*/ void CRDFOpenGLView::_drawBuffers() /*override*/
 {
+	if (TEST_MODE)
+	{
+		return;
+	}
+
 	_oglView::_drawBuffers();
+
+	DrawFacesFrameBuffer();
+}
+
+/*virtual*/ void CRDFOpenGLView::_onPointInstance(const CPoint& point) /*override*/
+{
+	if (m_pPointedInstance == nullptr)
+	{
+		m_pPointFaceFrameBuffer->encoding().clear();
+		m_iPointedFace = -1;
+		m_iNearestVertex = -1;
+
+		return;
+	}
+
+	if (m_pPointFaceFrameBuffer->isInitialized())
+	{
+		int iWidth = 0;
+		int iHeight = 0;
+		
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+		
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+		
+		iWidth = rcClient.Width();
+		iHeight = rcClient.Height();
+		
+		GLubyte arPixels[4];
+		memset(arPixels, 0, sizeof(GLubyte) * 4);
+		
+		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+		
+		m_pPointFaceFrameBuffer->bind();		
+		glReadPixels(
+			(GLint)dX,
+			(GLint)dY,
+			1, 1,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			arPixels);		
+		m_pPointFaceFrameBuffer->unbind();
+		
+		int64_t iPointedFace = -1;
+		if (arPixels[3] != 0)
+		{
+			iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+			assert(m_pPointFaceFrameBuffer->encoding().find(iPointedFace) != m_pPointFaceFrameBuffer->encoding().end());
+		}
+		
+		if (m_iPointedFace != iPointedFace)
+		{
+			m_iPointedFace = iPointedFace;
+			m_iNearestVertex = -1;
+		}
+	} // if (m_pPointFaceFrameBuffer->isInitialized())
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -136,7 +201,7 @@ void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 
 	//			m_iPointedFace = -1;
 	//			m_iNearestVertex = -1;
-	//			m_pFaceSelectionFrameBuffer->encoding().clear();
+	//			m_pPointFaceFrameBuffer->encoding().clear();
 
 	//			_redraw();
 
@@ -211,13 +276,13 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //	// OpenGL buffers
 //	m_oglBuffers.clear();
 //
-//	m_pInstanceSelectionFrameBuffer->encoding().clear();
+//	m_pSelectInstanceFrameBuffer->encoding().clear();
 //	m_pPointedInstance = nullptr;
 //	m_pSelectedInstance = nullptr;
 //
 //	m_iPointedFace = -1;
 //	m_iNearestVertex = -1;
-//	m_pFaceSelectionFrameBuffer->encoding().clear();
+//	m_pPointFaceFrameBuffer->encoding().clear();
 //
 //	m_pNavigatorSelectionFrameBuffer->encoding().clear();
 //	m_pNavigatorPointedInstance = nullptr;
@@ -414,7 +479,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //
 //		m_iPointedFace = -1;
 //		m_iNearestVertex = -1;
-//		m_pFaceSelectionFrameBuffer->encoding().clear();
+//		m_pPointFaceFrameBuffer->encoding().clear();
 //
 //		_redraw();
 //	}
@@ -440,7 +505,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //
 //		m_iPointedFace = -1;
 //		m_iNearestVertex = -1;
-//		m_pFaceSelectionFrameBuffer->encoding().clear();
+//		m_pPointFaceFrameBuffer->encoding().clear();
 //
 //		_redraw();
 //	}
@@ -1913,266 +1978,236 @@ void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 
 	//DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
 }
-
-void CRDFOpenGLView::DrawFacesFrameBuffer(_model* pM)
+void CRDFOpenGLView::DrawFacesFrameBuffer()
 {
-//	if (pM == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (m_pSelectedInstance == nullptr)
-//	{
-//		return;
-//	}
-//	
-//	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
-//	{
-//		return;
-//	}
-//
-//	/*
-//	* Create a frame buffer
-//	*/
-//	int iWidth = 0;
-//	int iHeight = 0;
-//
-//	CRect rcClient;
-//	m_pWnd->GetClientRect(&rcClient);
-//
-//	iWidth = rcClient.Width();
-//	iHeight = rcClient.Height();
-//
-//	if ((iWidth < MIN_VIEW_PORT_LENGTH) || (iHeight < MIN_VIEW_PORT_LENGTH))
-//	{
-//		return;
-//	}
-//
-//	BOOL bResult = m_pOGLContext->makeCurrent();
-//	VERIFY(bResult);
-//
-//	m_pFaceSelectionFrameBuffer->create();
-//
-//	/*
-//	* Selection colors
-//	*/
-//	if (m_pFaceSelectionFrameBuffer->encoding().empty())
-//	{
-//		auto& vecTriangles = m_pSelectedInstance->getTriangles();
-//		assert(!vecTriangles.empty());
-//
-//		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
-//		{
-//			float fR, fG, fB;
-//			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
-//
-//			m_pFaceSelectionFrameBuffer->encoding()[iTriangle] = _color(fR, fG, fB);
-//		}
-//	}
-//
-//	/*
-//	* Draw
-//	*/
-//
-//	m_pFaceSelectionFrameBuffer->bind();
-//
-//	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
-//
-//	glClearColor(0.0, 0.0, 0.0, 0.0);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	// Set up the parameters
-//	glEnable(GL_DEPTH_TEST);
-//	glDepthFunc(GL_LEQUAL);
-//
-//#ifdef _BLINN_PHONG_SHADERS
-//	m_pOGLProgram->_enableBlinnPhongModel(false);
-//#else
-//	m_pOGLProgram->_enableLighting(false);
-//#endif
-//	m_pOGLProgram->_setTransparency(1.f);
-//
-//	_oglUtils::checkForErrors();	
-//
-//	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
-//	if (iVAO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//	bool bIsNew = false;
-//	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
-//
-//	if (iIBO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	if (bIsNew)
-//	{
-//		vector<unsigned int> vecIndices(64, 0);
-//
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//
-//		_oglUtils::checkForErrors();
-//	}
-//
-//	glBindVertexArray(iVAO);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
-//
-//	auto& vecTriangles = m_pSelectedInstance->getTriangles();
-//	assert(!vecTriangles.empty());
-//
-//	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-//	{
-//		auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
-//
-//		vector<unsigned int> vecIndices;
-//		for (int64_t iIndex = pTriangle->startIndex();
-//			iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-//			iIndex++)
-//		{
-//			vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
-//		}
-//
-//		if (!vecIndices.empty())
-//		{
-//			auto itSelectionColor = m_pFaceSelectionFrameBuffer->encoding().find(iTriangle);
-//			assert(itSelectionColor != m_pFaceSelectionFrameBuffer->encoding().end());
-//
-//			m_pOGLProgram->_setAmbientColor(
-//				itSelectionColor->second.r(),
-//				itSelectionColor->second.g(),
-//				itSelectionColor->second.b());
-//			
-//			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)* vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);			
-//
-//			glDrawElementsBaseVertex(GL_TRIANGLES,
-//				(GLsizei)vecIndices.size(),
-//				GL_UNSIGNED_INT,
-//				(void*)(sizeof(GLuint) * 0),
-//				m_pSelectedInstance->VBOOffset());
-//		}
-//	}
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//	glBindVertexArray(0);
-//
-//	m_pFaceSelectionFrameBuffer->unbind();
-//
-//	_oglUtils::checkForErrors();
+	if (m_pPointedInstance == nullptr)
+	{
+		return;
+	}
+
+	auto pGeometry = m_pPointedInstance->getGeometry();
+	assert(pGeometry->getInstances().size() == 1);
+
+	//
+	// Create a frame buffer
+	//
+
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+	m_pPointFaceFrameBuffer->create();
+
+	// Selection colors
+	if (m_pPointFaceFrameBuffer->encoding().empty())
+	{
+		auto& vecTriangles = pGeometry->getTriangles();
+		assert(!vecTriangles.empty());
+
+		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
+		{
+			float fR, fG, fB;
+			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
+
+			m_pPointFaceFrameBuffer->encoding()[iTriangle] = _color(fR, fG, fB);
+		}
+	}
+
+	//
+	// Draw
+	//
+
+	m_pPointFaceFrameBuffer->bind();
+
+	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+	m_pOGLProgram->_setTransparency(1.f);
+
+	_oglUtils::checkForErrors();
+
+	GLuint iVAO = m_oglBuffers.findVAO(pGeometry);
+	if (iVAO == 0)
+	{
+		assert(false);
+
+		return;
+	}
+
+	bool bIsNew = false;
+	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
+
+	if (iIBO == 0)
+	{
+		assert(false);
+
+		return;
+	}
+
+	if (bIsNew)
+	{
+		vector<unsigned int> vecIndices(64, 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		_oglUtils::checkForErrors();
+	}
+
+	glBindVertexArray(iVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
+
+	auto& vecTriangles = pGeometry->getTriangles();
+	assert(!vecTriangles.empty());
+
+	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
+	{
+		auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
+
+		vector<unsigned int> vecIndices;
+		for (int64_t iIndex = pTriangle->startIndex();
+			iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+			iIndex++)
+		{
+			vecIndices.push_back(pGeometry->getIndices()[iIndex]);
+		}
+
+		if (!vecIndices.empty())
+		{
+			auto itSelectionColor = m_pPointFaceFrameBuffer->encoding().find(iTriangle);
+			assert(itSelectionColor != m_pPointFaceFrameBuffer->encoding().end());
+
+			m_pOGLProgram->_setAmbientColor(
+				itSelectionColor->second.r(),
+				itSelectionColor->second.g(),
+				itSelectionColor->second.b());
+
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+			glDrawElementsBaseVertex(GL_TRIANGLES,
+				(GLsizei)vecIndices.size(),
+				GL_UNSIGNED_INT,
+				(void*)(sizeof(GLuint) * 0),
+				pGeometry->VBOOffset());
+		}
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	m_pPointFaceFrameBuffer->unbind();
+
+	_oglUtils::checkForErrors();
 }
 
-void CRDFOpenGLView::DrawPointedFace(_model* pM)
+void CRDFOpenGLView::DrawPointedFace()
 {
-//	if (pM == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if (m_pSelectedInstance == nullptr)
-//	{
-//		return;
-//	}
-//
-//	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
-//	{
-//		return;
-//	}
-//
-//	if (m_iPointedFace == -1)
-//	{
-//		return;
-//	}
-//
-//	/*
-//	* Triangles
-//	*/
-//	auto& vecTriangles = m_pSelectedInstance->getTriangles();
-//
-//	assert(!vecTriangles.empty());
-//	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-//
-//#ifdef _BLINN_PHONG_SHADERS
-//	m_pOGLProgram->_enableBlinnPhongModel(false);
-//#else
-//	m_pOGLProgram->_enableLighting(false);
-//#endif
-//	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
-//	m_pOGLProgram->_setTransparency(1.f);
-//
-//	_oglUtils::checkForErrors();	
-//
-//	GLuint iVAO = m_oglBuffers.findVAO(m_pSelectedInstance);
-//	if (iVAO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	bool bIsNew = false;
-//	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
-//
-//	if (iIBO == 0)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	glBindVertexArray(iVAO);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);	
-//
-//	auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-//
-//	vector<unsigned int> vecIndices;
-//	for (int64_t iIndex = pTriangle->startIndex();
-//		iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-//		iIndex++)
-//	{
-//		vecIndices.push_back(m_pSelectedInstance->getIndices()[iIndex]);
-//	}
-//
-//	if (!vecIndices.empty())
-//	{
-//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-//		glDrawElementsBaseVertex(GL_TRIANGLES,
-//			(GLsizei)vecIndices.size(),
-//			GL_UNSIGNED_INT,
-//			(void*)(sizeof(GLuint) * 0),
-//			m_pSelectedInstance->VBOOffset());
-//
-//		if (m_iNearestVertex != -1)
-//		{
-//			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
-//
-//			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
-//
-//			glDisable(GL_DEPTH_TEST);
-//			glEnable(GL_PROGRAM_POINT_SIZE);			
-//
-//			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
-//			glDrawElementsBaseVertex(GL_POINTS,
-//				(GLsizei)vecIndices.size(),
-//				GL_UNSIGNED_INT,
-//				(void*)(sizeof(GLuint) * 0),
-//				m_pSelectedInstance->VBOOffset());
-//			
-//			glEnable(GL_DEPTH_TEST);
-//			glDisable(GL_PROGRAM_POINT_SIZE);
-//		} // if (m_iNearestVertex != -1)
-//	} // if (!vecIndices.empty())
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//	glBindVertexArray(0);
-//
-//	_oglUtils::checkForErrors();
+	if (m_pPointedInstance == nullptr)
+	{
+		return;
+	}
+
+	if (m_iPointedFace == -1)
+	{
+		return;
+	}
+
+	/*
+	* Triangles
+	*/
+	auto pGeometry = m_pPointedInstance->getGeometry();
+	assert(pGeometry->getInstances().size() == 1);
+
+	auto& vecTriangles = pGeometry->getTriangles();
+
+	assert(!vecTriangles.empty());
+	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
+
+	_oglUtils::checkForErrors();	
+
+	GLuint iVAO = m_oglBuffers.findVAO(pGeometry);
+	if (iVAO == 0)
+	{
+		assert(false);
+
+		return;
+	}
+
+	bool bIsNew = false;
+	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
+
+	if (iIBO == 0)
+	{
+		assert(false);
+
+		return;
+	}
+
+	glBindVertexArray(iVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);	
+
+	auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+
+	vector<unsigned int> vecIndices;
+	for (int64_t iIndex = pTriangle->startIndex();
+		iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+		iIndex++)
+	{
+		vecIndices.push_back(pGeometry->getIndices()[iIndex]);
+	}
+
+	if (!vecIndices.empty())
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			(GLsizei)vecIndices.size(),
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(GLuint) * 0),
+			pGeometry->VBOOffset());
+
+		if (m_iNearestVertex != -1)
+		{
+			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
+
+			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_PROGRAM_POINT_SIZE);			
+
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
+			glDrawElementsBaseVertex(GL_POINTS,
+				(GLsizei)vecIndices.size(),
+				GL_UNSIGNED_INT,
+				(void*)(sizeof(GLuint) * 0),
+				pGeometry->VBOOffset());
+			
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_PROGRAM_POINT_SIZE);
+		} // if (m_iNearestVertex != -1)
+	} // if (!vecIndices.empty())
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	_oglUtils::checkForErrors();
 }
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
@@ -2432,7 +2467,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //		/*
 //		* Select an instance
 //		*/
-//		if (m_pInstanceSelectionFrameBuffer->isInitialized())
+//		if (m_pSelectInstanceFrameBuffer->isInitialized())
 //		{
 //			int iWidth = 0;
 //			int iHeight = 0;
@@ -2452,7 +2487,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
 //			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 //
-//			m_pInstanceSelectionFrameBuffer->bind();
+//			m_pSelectInstanceFrameBuffer->bind();
 //
 //			glReadPixels(
 //				(GLint)dX,
@@ -2462,7 +2497,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //				GL_UNSIGNED_BYTE,
 //				arPixels);
 //
-//			m_pInstanceSelectionFrameBuffer->unbind();
+//			m_pSelectInstanceFrameBuffer->unbind();
 //
 //			CRDFInstance* pPointedInstance = nullptr;
 //			if (arPixels[3] != 0)
@@ -2483,12 +2518,12 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //			{
 //				PointNavigatorInstance(point);
 //			}
-//		} // if (m_pInstanceSelectionFrameBuffer->isInitialized())
+//		} // if (m_pSelectInstanceFrameBuffer->isInitialized())
 //
 //		/*
 //		* Select a face
 //		*/
-//		if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && 
+//		if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && 
 //			(m_pSelectedInstance != nullptr) && 
 //			m_pSelectedInstance->getEnable())
 //		{
@@ -2510,7 +2545,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
 //			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 //
-//			m_pFaceSelectionFrameBuffer->bind();
+//			m_pPointFaceFrameBuffer->bind();
 //
 //			glReadPixels(
 //				(GLint)dX,
@@ -2520,13 +2555,13 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //				GL_UNSIGNED_BYTE,
 //				arPixels);
 //
-//			m_pFaceSelectionFrameBuffer->unbind();
+//			m_pPointFaceFrameBuffer->unbind();
 //
 //			int64_t iPointedFace = -1;
 //			if (arPixels[3] != 0)
 //			{
 //				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-//				assert(m_pFaceSelectionFrameBuffer->encoding().find(iPointedFace) != m_pFaceSelectionFrameBuffer->encoding().end());
+//				assert(m_pPointFaceFrameBuffer->encoding().find(iPointedFace) != m_pPointFaceFrameBuffer->encoding().end());
 //			}
 //
 //			if (m_iPointedFace != iPointedFace)
@@ -2536,7 +2571,7 @@ void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 //
 //				_redraw();
 //			}
-//		} // if ((m_pFaceSelectionFrameBuffer->isInitialized() != 0) && ...
+//		} // if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && ...
 //	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
 //
 //#ifdef _TOOLTIPS_SUPPORT

@@ -2504,6 +2504,7 @@ protected: // Methods
 	virtual void _preDraw() {}
 	virtual void _postDraw() {}
 	virtual void _drawBuffers();
+	virtual void _onPointInstance(const CPoint& /*point*/) {}
 
 	void _drawFaces();
 	void _drawConceptualFacesPolygons();

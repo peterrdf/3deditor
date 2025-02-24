@@ -21,7 +21,7 @@ private: // Members
 	CPoint m_ptPrevMousePosition;
 
 	// Selection	
-	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
+	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
@@ -43,6 +43,7 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
+	virtual void _onPointInstance(const CPoint& point) override;
 
 	// Test
 	void SetRotation(float fX, float fY, BOOL bRedraw);
@@ -97,8 +98,8 @@ private: // Methods
 		int iViewportWidth, int iViewportHeight,
 		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
 	
-	void DrawFacesFrameBuffer(_model* pM);
-	void DrawPointedFace(_model* pM);
+	void DrawFacesFrameBuffer();
+	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 	void PointNavigatorInstance(const CPoint& point);
 	bool SelectNavigatorInstance();
