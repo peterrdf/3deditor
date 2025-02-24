@@ -121,18 +121,13 @@ void _model::scale()
 
 		for (auto pInstance : pGeometry->getInstances())
 		{
-			if (!pInstance->getEnable())
-			{
-				continue;
-			}
-
 			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
 				m_fYmin, m_fYmax,
 				m_fZmin, m_fZmax);
 		}
-	} // for (auto pGeometry : ...
+	}
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||

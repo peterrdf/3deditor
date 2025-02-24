@@ -2019,7 +2019,9 @@ void _oglView::_drawInstancesFrameBuffer()
 		return;
 	}
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
 
 	CString strCullFaces = getCullFacesMode();
 
@@ -2188,8 +2190,10 @@ void _oglView::_drawInstancesFrameBuffer()
 
 	_oglUtils::checkForErrors();
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFaces() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
 }
 
 void _oglView::_drawConceptualFacesPolygons(_model* pModel)
@@ -2209,7 +2213,9 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 		return;
 	}
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
 
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
@@ -2278,8 +2284,10 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 
 	_oglUtils::checkForErrors();
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
 }
 
 void _oglView::_drawLines(_model* pModel)
@@ -2299,7 +2307,9 @@ void _oglView::_drawLines(_model* pModel)
 		return;
 	}
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
 
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);
@@ -2368,8 +2378,10 @@ void _oglView::_drawLines(_model* pModel)
 
 	_oglUtils::checkForErrors();
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawLines() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
 }
 
 void _oglView::_drawPoints(_model* pModel)
@@ -2389,7 +2401,9 @@ void _oglView::_drawPoints(_model* pModel)
 		return;
 	}
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -2471,8 +2485,10 @@ void _oglView::_drawPoints(_model* pModel)
 
 	_oglUtils::checkForErrors();
 
+#ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawPoints() : %lld [탎]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
 }
 
 void _oglView::_drawInstancesFrameBuffer(_model* pModel)
