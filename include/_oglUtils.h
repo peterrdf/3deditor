@@ -2467,7 +2467,7 @@ protected: // Members
 	CPoint m_ptPrevMousePosition;	
 
 	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;
+	_oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
 	_instance* m_pPointedInstance;	
 
 	// Tooltip

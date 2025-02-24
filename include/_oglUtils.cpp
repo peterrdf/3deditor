@@ -1499,7 +1499,7 @@ _oglView::_oglView()
 	, m_mapUserDefinedMaterials()
 	, m_ptStartMousePosition(-1, -1)
 	, m_ptPrevMousePosition(-1, -1)
-	, m_pInstanceSelectionFrameBuffer(new _oglSelectionFramebuffer())
+	, m_pSelectInstanceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pPointedInstance(nullptr)	
 	, m_tmShowTooltip(clock())
 {	
@@ -1511,7 +1511,7 @@ _oglView::_oglView()
 
 	_destroy();
 
-	delete m_pInstanceSelectionFrameBuffer;
+	delete m_pSelectInstanceFrameBuffer;
 
 	removeUserDefinedMaterials();
 }
@@ -1662,7 +1662,7 @@ _oglView::_oglView()
 	// OpenGL buffers
 	m_oglBuffers.clear();
 
-	m_pInstanceSelectionFrameBuffer->encoding().clear();
+	m_pSelectInstanceFrameBuffer->encoding().clear();
 	m_pPointedInstance = nullptr;
 
 	float fWorldXmin = FLT_MAX;
@@ -2494,10 +2494,10 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
-	m_pInstanceSelectionFrameBuffer->create();
+	m_pSelectInstanceFrameBuffer->create();
 
 	// Selection colors
-	if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+	if (m_pSelectInstanceFrameBuffer->encoding().empty())
 	{
 		for (auto pM : getController()->getModels())
 		{
@@ -2513,17 +2513,17 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 					float fR, fG, fB;
 					_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
 
-					m_pInstanceSelectionFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+					m_pSelectInstanceFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 				}
 			}
 		} // for (auto pM : ...
-	} // if (m_pInstanceSelectionFrameBuffer->encoding().empty())
+	} // if (m_pSelectInstanceFrameBuffer->encoding().empty())
 
 	//
 	// Draw
 	//
 
-	m_pInstanceSelectionFrameBuffer->bind();
+	m_pSelectInstanceFrameBuffer->bind();
 
 	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
 
@@ -2582,8 +2582,8 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 				{
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
-					auto itSelectionColor = m_pInstanceSelectionFrameBuffer->encoding().find(pInstance->getID());
-					ASSERT(itSelectionColor != m_pInstanceSelectionFrameBuffer->encoding().end());
+					auto itSelectionColor = m_pSelectInstanceFrameBuffer->encoding().find(pInstance->getID());
+					ASSERT(itSelectionColor != m_pSelectInstanceFrameBuffer->encoding().end());
 
 					m_pOGLProgram->_setAmbientColor(
 						itSelectionColor->second.r(),
@@ -2606,7 +2606,7 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	// Restore Model-View Matrix
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
-	m_pInstanceSelectionFrameBuffer->unbind();
+	m_pSelectInstanceFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
 }
@@ -2697,7 +2697,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
 		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
 		((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
-		m_pInstanceSelectionFrameBuffer->isInitialized())
+		m_pSelectInstanceFrameBuffer->isInitialized())
 	{
 		int iWidth = 0;
 		int iHeight = 0;
@@ -2717,8 +2717,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
 		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 
-		m_pInstanceSelectionFrameBuffer->bind();
-
+		m_pSelectInstanceFrameBuffer->bind();
 		glReadPixels(
 			(GLint)dX,
 			(GLint)dY,
@@ -2726,8 +2725,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			GL_RGBA,
 			GL_UNSIGNED_BYTE,
 			arPixels);
-
-		m_pInstanceSelectionFrameBuffer->unbind();
+		m_pSelectInstanceFrameBuffer->unbind();
 
 		_instance* pPointedInstance = nullptr;
 		if (arPixels[3] != 0)
