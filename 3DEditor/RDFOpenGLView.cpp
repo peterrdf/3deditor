@@ -32,16 +32,12 @@ int NAVIGATION_VIEW_LENGTH = 200;
 // ------------------------------------------------------------------------------------------------
 CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglView()
-	, m_ptStartMousePosition(-1, -1)
-	, m_ptPrevMousePosition(-1, -1)
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pPointedFaceInstance(nullptr)
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
 	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
 	, m_pNavigatorPointedInstance(nullptr)
-	, m_pSelectedInstanceMaterial(new _material())
-	, m_pPointedInstanceMaterial(new _material())
 	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
 	assert(pWnd != nullptr);
@@ -67,6 +63,12 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
+	auto pController = dynamic_cast<CRDFController*>(getController());
+	auto pCoordinateSystemModel = pController->GetSceneModel();
+
+	_drawFaces(pCoordinateSystemModel, false);
+	_drawFaces(pCoordinateSystemModel, true);
+
 	for (auto pModel : getController()->getModels())
 	{
 		DrawBoundingBoxes(pModel);

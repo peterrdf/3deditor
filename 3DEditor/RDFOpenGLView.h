@@ -16,22 +16,15 @@ class CRDFOpenGLView : public _oglView
 
 private: // Members
 
-	// Mouse
-	CPoint m_ptStartMousePosition;
-	CPoint m_ptPrevMousePosition;
-
-	// Selection	
+	// Point Face	
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
 	_instance* m_pPointedFaceInstance;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
+	// Navigator
 	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
 	CRDFInstance* m_pNavigatorPointedInstance;
-	
-	// Materials
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
 	_material* m_pNavigatorPointedInstanceMaterial;
 
 #pragma endregion // Members
