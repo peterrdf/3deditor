@@ -330,7 +330,7 @@ public: // Properties
 	_vector3d* getBBMax() const { return m_pvecBBMax; }
 	_vector3d* getAABBMin() const { return m_pvecAABBMin; }
 	_vector3d* getAABBMax() const { return m_pvecAABBMax; }
-	virtual bool ignoreBB() const { return false; }
+	virtual bool ignoreBB() const { return isPlaceholder(); }
 
 	// Primitives
 	const vector<_primitives>& getTriangles() const { return m_vecTriangles; }
