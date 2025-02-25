@@ -2790,22 +2790,22 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, fl
 	ASSERT(pIndices != nullptr);
 
 	/*
-	* Conceptual Face Polygons
+	* Triangles
 	*/
-	auto& vecConcFacePolygons = m_pSelectedInstance->getConcFacePolygons();
+	auto& vecTriangles = m_pSelectedInstance->getTriangles();
 
-	assert(!vecConcFacePolygons.empty());
-	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecConcFacePolygons.size()));
+	assert(!vecTriangles.empty());
+	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 	int64_t iVertexIndex = -1;
 	int64_t iConcFaceVertexIndex = -1;
 	double dMinDistance = DBL_MAX;
 
-	auto pConceptulFacePolygon = const_cast<_primitives*>(&vecConcFacePolygons[m_iPointedFace]);
+	auto pConceptulFace = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 	int64_t iZeroBasedIndex = 0;
-	for (int64_t iIndex = pConceptulFacePolygon->startIndex();
-		iIndex < pConceptulFacePolygon->startIndex() + pConceptulFacePolygon->indicesCount();
+	for (int64_t iIndex = pConceptulFace->startIndex();
+		iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
 		iIndex++, iZeroBasedIndex++)
 	{
 		fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
