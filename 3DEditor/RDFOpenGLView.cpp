@@ -2218,67 +2218,68 @@ void CRDFOpenGLView::DrawPointedFace()
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
 {	
-	if (pM == nullptr)
-	{
-		return pair<int64_t, int64_t>(-1, -1);
-	}
+	//if (pM == nullptr)
+	//{
+	//	return pair<int64_t, int64_t>(-1, -1);
+	//}
 
-	if (m_pSelectedInstance == nullptr)
-	{
-		return pair<int64_t, int64_t>(-1, -1);
-	}
+	//if (m_pSelectedInstance == nullptr)
+	//{
+	//	return pair<int64_t, int64_t>(-1, -1);
+	//}
 
-	if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
-	{
-		return pair<int64_t, int64_t>(-1, -1);
-	}
+	//if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
+	//{
+	//	return pair<int64_t, int64_t>(-1, -1);
+	//}
 
-	if (m_iPointedFace == -1)
-	{
-		return pair<int64_t, int64_t>(-1, -1);
-	}
+	//if (m_iPointedFace == -1)
+	//{
+	//	return pair<int64_t, int64_t>(-1, -1);
+	//}
 
-	const auto VERTEX_LENGTH = pM->getVertexLength();
+	//const auto VERTEX_LENGTH = pM->getVertexLength();
 
-	float* pVertices = m_pSelectedInstance->getVertices();
-	ASSERT(pVertices != nullptr);
+	//float* pVertices = m_pSelectedInstance->getVertices();
+	//ASSERT(pVertices != nullptr);
 
-	int32_t* pIndices = m_pSelectedInstance->getIndices();
-	ASSERT(pIndices != nullptr);
+	//int32_t* pIndices = m_pSelectedInstance->getIndices();
+	//ASSERT(pIndices != nullptr);
 
-	/*
-	* Triangles
-	*/
-	auto& vecTriangles = m_pSelectedInstance->getTriangles();
+	///*
+	//* Triangles
+	//*/
+	//auto& vecTriangles = m_pSelectedInstance->getTriangles();
 
-	assert(!vecTriangles.empty());
-	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+	//assert(!vecTriangles.empty());
+	//assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
-	int64_t iVertexIndex = -1;
-	int64_t iConcFaceVertexIndex = -1;
-	double dMinDistance = DBL_MAX;
+	//int64_t iVertexIndex = -1;
+	//int64_t iConcFaceVertexIndex = -1;
+	//double dMinDistance = DBL_MAX;
 
-	auto pConceptulFace = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+	//auto pConceptulFace = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
-	int64_t iZeroBasedIndex = 0;
-	for (int64_t iIndex = pConceptulFace->startIndex();
-		iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
-		iIndex++, iZeroBasedIndex++)
-	{
-		fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
-		fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
-		fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
+	//int64_t iZeroBasedIndex = 0;
+	//for (int64_t iIndex = pConceptulFace->startIndex();
+	//	iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
+	//	iIndex++, iZeroBasedIndex++)
+	//{
+	//	fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
+	//	fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
+	//	fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
 
-		double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
-		if (dMinDistance > dDistance)
-		{
-			iConcFaceVertexIndex = iZeroBasedIndex;
-			iVertexIndex = pIndices[iIndex];			
-			dMinDistance = dDistance;
-		}
-	}
+	//	double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
+	//	if (dMinDistance > dDistance)
+	//	{
+	//		iConcFaceVertexIndex = iZeroBasedIndex;
+	//		iVertexIndex = pIndices[iIndex];			
+	//		dMinDistance = dDistance;
+	//	}
+	//}
 
-	return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+	//return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+	return pair<int64_t, int64_t>(-1, -1);
 }
 
 void CRDFOpenGLView::PointNavigatorInstance(const CPoint& point)
