@@ -5,6 +5,7 @@
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
+	, m_bEnable(true)
 	, m_pWorld(nullptr)
 	, m_mapID2Instance()
 	, m_bUpdteVertexBuffers(true)
@@ -45,7 +46,8 @@ void _model::scale()
 
 		for (auto pGeometry : m_vecGeometries)
 		{
-			if (!pGeometry->hasGeometry())
+			if (!pGeometry->hasGeometry() ||
+				pGeometry->ignoreBB())
 			{
 				continue;
 			}
@@ -112,15 +114,25 @@ void _model::scale()
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
+	int64_t iEnabledInstances = 0;
 	for (auto pGeometry : m_vecGeometries)
 	{
-		if (!pGeometry->hasGeometry())
+		if (!pGeometry->hasGeometry() 
+			|| pGeometry->ignoreBB() ||
+			!pGeometry->getShow())
 		{
 			continue;
 		}
 
 		for (auto pInstance : pGeometry->getInstances())
 		{
+			if (!pInstance->getEnable())
+			{
+				continue;
+			}
+
+			iEnabledInstances++;
+
 			pGeometry->calculateBB(
 				pInstance,
 				m_fXmin, m_fXmax,
@@ -128,6 +140,29 @@ void _model::scale()
 				m_fZmin, m_fZmax);
 		}
 	}
+
+	// Special case: all instances are disabled
+	if (iEnabledInstances == 0)
+	{
+		for (auto pGeometry : m_vecGeometries)
+		{
+			if (!pGeometry->hasGeometry()
+				|| pGeometry->ignoreBB() ||
+				!pGeometry->getShow())
+			{
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances())
+			{
+				pGeometry->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+		}
+	} // if (iEnabledInstances == 0)
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -576,28 +611,49 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::addModel(_model* pModel)
+void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 {
-	assert(pModel != nullptr);
-
 	m_bUpdatingModel = true;
 
-	m_vecModels.push_back(pModel);
-
 	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->preModelLoaded();
+	}
+
+	// Disable all
+	for (auto pModel : m_vecModels)
+	{
+		pModel->setEnable(false);
+	}
+
+	// Add if needed and Enable
+	for (auto pModel : vecModels)
+	{
+		if (find(m_vecModels.begin(), m_vecModels.end(), pModel) == m_vecModels.end())
+		{
+			m_vecModels.push_back(pModel);
+		}
+
+		pModel->setEnable(true);
+	}
+
+	m_vecSelectedInstances.clear();
+	m_pTargetInstance = nullptr;
+
+	itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
 	{
 		(*itView)->onModelLoaded();
 	}
 
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++)
+	{
+		(*itView)->postModelLoaded();
+	}
+
 	m_bUpdatingModel = false;
-}
-
-void _controller::detachModels()
-{
-	m_vecModels.clear();
-
-	s_iInstanceID = 1;
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)
@@ -616,7 +672,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 	m_vecSelectedInstances.clear();
 	m_pTargetInstance = nullptr;
 
-	auto pInstance = getModel()->loadInstance(iInstance);
+	auto pInstance = getModels()[0]->loadInstance(iInstance);
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++)
@@ -639,6 +695,11 @@ void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float
 	fWorldZmax = -FLT_MAX;
 	for (auto pModel : getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		float fXmin = FLT_MAX;
 		float fXmax = -FLT_MAX;
 		float fYmin = FLT_MAX;
@@ -801,6 +862,17 @@ void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
 
 void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd/* = false*/)
 {
+	vector<_instance*> vecInstance;
+	if (pInstance != nullptr)
+	{
+		vecInstance.push_back(pInstance);
+	}
+
+	selectInstances(pSender, vecInstance, bAdd);
+}
+
+void _controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/)
+{
 	if (m_bUpdatingModel)
 	{
 		return;
@@ -808,19 +880,21 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 
 	bool bNotify = false;
 
-	if (!bAdd || (pInstance == nullptr))
+	if (!bAdd || vecInstance.empty())
 	{
 		bNotify = !m_vecSelectedInstances.empty();
 
 		m_vecSelectedInstances.clear();
 	}
 
-	if ((pInstance != nullptr) &&
-		(find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+	for (auto pInstance : vecInstance)
 	{
-		bNotify = true;
+		if ((find(m_vecSelectedInstances.begin(), m_vecSelectedInstances.end(), pInstance) == m_vecSelectedInstances.end()))
+		{
+			bNotify = true;
 
-		m_vecSelectedInstances.push_back(pInstance);
+			m_vecSelectedInstances.push_back(pInstance);
+		}
 	}
 
 	if (bNotify)
@@ -917,6 +991,19 @@ void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInst
 	}
 }
 
+void _controller::resetInstancesEnabledState(_view* pSender)
+{
+	for (auto pModel : m_vecModels)
+	{
+		if (pModel->getEnable())
+		{
+			pModel->resetInstancesEnabledState();
+		}
+	}
+
+	onInstancesEnabledStateChanged(pSender);
+}
+
 void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
 	auto itView = m_setViews.begin();
@@ -959,8 +1046,10 @@ _model* _controller::getModel() const
 { 
 	if (!m_vecModels.empty())
 	{
+		assert(m_vecModels.size() == 1);
+
 		return m_vecModels.front();
-	}
+	}	
 
 	return nullptr; 
 }

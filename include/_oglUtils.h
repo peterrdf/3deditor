@@ -2394,6 +2394,14 @@ protected: // Members
 	float m_fScaleFactorMax;
 	float m_fScaleFactorInterval;
 
+	// Camera
+	bool m_bCameraSettings;
+	_vector3d m_vecViewPoint;
+	_vector3d m_vecDirection;
+	_vector3d m_vecUpVector;
+	double m_dFieldOfView;
+	double m_dAspectRatio;
+
 public: // Methods
 
 	_oglRenderer();
@@ -2424,6 +2432,26 @@ public: // Methods
 	void _rotateMouseLButton(float fXAngle, float fYAngle);
 	void _zoomMouseMButton(LONG lDelta);
 	void _panMouseRButton(float fX, float fY);
+
+	void _setCameraSettings(
+		bool bPerspective,		
+		double arViewPoint[3],
+		double arDirection[3],
+		double arUpVector[3],
+		double dViewToWorldScale,
+		double dFieldOfView,
+		double dAspectRatio,
+		double dLengthConversionFactor);
+
+	void _getCameraSettings(
+		bool& bPerspective,
+		double arViewPoint[3],
+		double arDirection[3],
+		double arUpVector[3],
+		double& dViewToWorldScale,
+		double& dFieldOfView,
+		double& dAspectRatio,
+		double dLengthConversionFactor);
 
 private: //  Methods
 
@@ -2504,23 +2532,18 @@ protected: // Methods
 	virtual void _preDraw() {}
 	virtual void _postDraw() {}
 	virtual void _drawBuffers();
-	
+
 	void _drawFaces();
+	void _drawFaces(bool bTransparent);
 	void _drawConceptualFacesPolygons();
 	void _drawLines();
 	void _drawPoints();
 	void _drawInstancesFrameBuffer();
 
-	void _drawFaces(_model* pModel, bool bTransparent);	
-	void _drawConceptualFacesPolygons(_model* pModel);
-	void _drawLines(_model* pModel);
-	void _drawPoints(_model* pModel);
-	void _drawInstancesFrameBuffer(_model* pModel);	
-
 	virtual void _onMouseMove(const CPoint& /*point*/) {}
 
 	// http://nehe.gamedev.net/article/using_gluunproject/16013/
-	bool getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
+	bool getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
 
 public: // Methods
 

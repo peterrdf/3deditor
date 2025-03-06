@@ -3,6 +3,24 @@
 #include "_instance.h"
 
 // ************************************************************************************************
+static glm::vec3 directionToEulerAngles(const glm::vec3 & direction, const glm::vec3 & upVector)
+{
+	glm::vec3 dir = glm::normalize(direction);
+	glm::vec3 up = glm::normalize(upVector);
+
+	// Y1
+	glm::vec3 right = glm::normalize(glm::cross(up, dir));
+
+	// ortho up
+	up = glm::cross(dir, right);
+
+	glm::mat3 rotationMatrix = glm::mat3(right, up, dir);
+	glm::vec3 eulerAngles = glm::eulerAngles(glm::quat_cast(rotationMatrix));
+
+	return eulerAngles;
+}
+
+// ************************************************************************************************
 _oglRendererSettings::_oglRendererSettings()
 	: m_enProjection(enumProjection::Perspective)
 	, m_enRotationMode(enumRotationMode::XYZ)
@@ -866,6 +884,12 @@ _oglRenderer::_oglRenderer()
 	, m_fScaleFactorMin(0.f)
 	, m_fScaleFactorMax(2.f)
 	, m_fScaleFactorInterval(2.f)
+	, m_bCameraSettings(false)
+	, m_vecViewPoint({ 0., 0, 0. })
+	, m_vecDirection({ 0., 0, 0. })
+	, m_vecUpVector({ 0., 0, 0. })
+	, m_dFieldOfView(45.)
+	, m_dAspectRatio(1.)
 {
 	_setView(enumView::Isometric);
 }
@@ -1047,8 +1071,12 @@ void _oglRenderer::_prepare(
 	// aspect   - Aspect ratio of the viewport
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
-	GLdouble fovY = 45.0;
-	GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	GLdouble fovY = m_dFieldOfView;
+	if (!m_bCameraSettings)
+	{
+		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	}
+	GLdouble aspect = m_dAspectRatio;
 
 	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
 	zNear = min(zNear, abs((double)fZmin));
@@ -1142,6 +1170,7 @@ void _oglRenderer::_prepare(
 	}
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 #ifdef _BLINN_PHONG_SHADERS
 	glm::mat4 matNormal = m_matModelView;
@@ -1231,6 +1260,99 @@ void _oglRenderer::_panMouseRButton(float fX, float fY)
 	_pan(
 		m_fPanXInterval * fX,
 		m_fPanYInterval * -fY);
+}
+
+void _oglRenderer::_setCameraSettings(
+	bool bPerspective,
+	double arViewPoint[3],
+	double arDirection[3],
+	double arUpVector[3],
+	double dViewToWorldScale,
+	double dFieldOfView,
+	double dAspectRatio,
+	double dLengthConversionFactor)
+{
+	_reset();
+
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
+
+	m_bCameraSettings = true;
+
+	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;	
+
+	m_vecViewPoint = { arViewPoint[0] / dLengthConversionFactor, arViewPoint[1] / dLengthConversionFactor, arViewPoint[2] / dLengthConversionFactor };
+	m_vecViewPoint.x = (m_vecViewPoint.x + vecVertexBufferOffset.x) / dScaleFactor;
+	m_vecViewPoint.y = (m_vecViewPoint.y + vecVertexBufferOffset.y) / dScaleFactor;
+	m_vecViewPoint.z = (m_vecViewPoint.z + vecVertexBufferOffset.z) / dScaleFactor;
+
+	m_vecDirection = { arDirection[0], arDirection[1], arDirection[2] };
+
+	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
+
+	m_fScaleFactor = (float)dViewToWorldScale;
+
+	m_dFieldOfView = dFieldOfView;
+	m_dAspectRatio = dAspectRatio;
+
+	// I. Rotation and View point
+	glm::mat4 matRotation = glm::lookAt(
+		glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, -m_vecViewPoint.z),
+		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+	glm::quat quatRotation = glm::quat_cast(matRotation);
+	m_rotation = _quaterniond(quatRotation.w, quatRotation.x, quatRotation.y, quatRotation.z);
+
+	// II. Only rotation; View point is not set
+	/*glm::vec3 eulerAngles = directionToEulerAngles(
+		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+	m_rotation = _quaterniond::toQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z);*/
+
+	_redraw();
+}
+
+void _oglRenderer::_getCameraSettings(
+	bool& bPerspective,
+	double arViewPoint[3],
+	double arDirection[3],
+	double arUpVector[3],
+	double& dViewToWorldScale,
+	double& dFieldOfView,
+	double& dAspectRatio,
+	double dLengthConversionFactor)
+{
+	auto pWorld = _getController()->getModel();
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
+	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;	
+
+	bPerspective = m_enProjection == enumProjection::Perspective;
+
+	arViewPoint[0] = -m_matModelView[3][0] * dScaleFactor;
+	arViewPoint[1] = -m_matModelView[3][1] * dScaleFactor;
+	arViewPoint[2] = -m_matModelView[3][2] * dScaleFactor;
+	arViewPoint[0] -= vecVertexBufferOffset.x;
+	arViewPoint[1] -= vecVertexBufferOffset.y;
+	arViewPoint[2] -= vecVertexBufferOffset.z;
+	arViewPoint[0] *= dLengthConversionFactor;
+	arViewPoint[1] *= dLengthConversionFactor;
+	arViewPoint[2] *= dLengthConversionFactor;
+
+	arDirection[0] = -m_matModelView[2][0];
+	arDirection[1] = -m_matModelView[2][1];
+	arDirection[2] = -m_matModelView[2][2];
+
+	arUpVector[0] = m_matModelView[0][0];
+	arUpVector[1] = m_matModelView[0][1];
+	arUpVector[2] = m_matModelView[0][2];
+
+	dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
+
+	dFieldOfView = 45.0;
+	dAspectRatio = 1.;
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
@@ -1439,6 +1561,13 @@ void _oglRenderer::_reset()
 	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
 
 	m_fScaleFactor = fWorldBoundingSphereDiameter;
+
+	m_bCameraSettings = false;
+	m_vecViewPoint = { 0., 0, 0. };
+	m_vecDirection = { 0., 0, 0. };
+	m_vecUpVector = { 0., 0, 0. };
+	m_dFieldOfView = 45.;
+	m_dAspectRatio = 1.;
 }
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
@@ -1694,6 +1823,11 @@ _oglView::_oglView()
 		
 	for (auto pModel : getController()->getModels())
 	{
+		if (!pModel->getEnable())
+		{
+			continue;
+		}
+
 		// VBO
 		GLuint iVerticesCount = 0;
 		vector<_geometry*> vecGeometriesCohort;
@@ -1929,6 +2063,16 @@ _oglView::_oglView()
 
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
+	// Initialize
+	if (!_prepareScene())
+	{
+		return;
+	}
+
+	// Off-screen
+	_drawBuffers();
+
+	// Restore
 	if (!_prepareScene())
 	{
 		return;
@@ -1946,10 +2090,8 @@ _oglView::_oglView()
 	// Tangent, Normal, Bi-Normal Vectors, etc.
 	_postDraw();
 
-	// OpenGL
-	SwapBuffers(*pDC);
-
-	_drawBuffers();
+	// Update
+	SwapBuffers(*pDC);	
 }
 
 /*virtual*/ void _oglView::_drawBuffers()
@@ -1959,66 +2101,12 @@ _oglView::_oglView()
 
 void _oglView::_drawFaces()
 {
-	for (auto pModel : getController()->getModels())
-	{
-		_drawFaces(pModel, false);
-	}
-
-	for (auto pModel : getController()->getModels())
-	{
-		_drawFaces(pModel, true);
-	}
+	_drawFaces(false);
+	_drawFaces(true);
 }
 
-void _oglView::_drawConceptualFacesPolygons()
+/*virtual*/ void _oglView::_drawFaces(bool bTransparent)
 {
-	for (auto pModel : getController()->getModels())
-	{
-		_drawConceptualFacesPolygons(pModel);
-	}
-}
-
-void _oglView::_drawLines()
-{
-	for (auto pModel : getController()->getModels())
-	{
-		_drawLines(pModel);
-	}
-}
-
-void _oglView::_drawPoints()
-{
-	for (auto pModel : getController()->getModels())
-	{
-		_drawPoints(pModel);
-	}
-}
-
-void _oglView::_drawInstancesFrameBuffer()
-{
-	for (auto pModel : getController()->getModels())
-	{
-		_drawInstancesFrameBuffer(pModel);
-	}
-}
-
-/*virtual*/ void _oglView::_drawFaces(_model* pModel, bool bTransparent)
-{
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowFaces())
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2054,6 +2142,9 @@ void _oglView::_drawInstancesFrameBuffer()
 
 		for (auto pGeometry : itCohort.second)
 		{
+			auto pModel = getController()->getModelByInstance(pGeometry->getOwlModel());
+			assert(pModel->getEnable());
+
 			if (!pGeometry->getShow())
 			{
 				continue;
@@ -2108,7 +2199,7 @@ void _oglView::_drawInstancesFrameBuffer()
 					float fTransparency = pMaterial->getA();
 					if (bGhostView)
 					{
-						if ((pMaterial != m_pSelectedInstanceMaterial) && 
+						if ((pMaterial != m_pSelectedInstanceMaterial) &&
 							(pMaterial != m_pPointedInstanceMaterial) &&
 							(fTransparency > m_fGhostViewTransparency))
 						{
@@ -2140,18 +2231,18 @@ void _oglView::_drawInstancesFrameBuffer()
 					{
 						pTexture = pModel->getTexture(pMaterial->texture());
 					}
-						
+
 					if (pTexture != nullptr)
-					{											
+					{
 						m_pOGLProgram->_enableTexture(true);
-						
+
 						glActiveTexture(GL_TEXTURE0);
 						glBindTexture(GL_TEXTURE_2D, pTexture->getName());
-						
+
 						m_pOGLProgram->_setSampler(0);
 					}
 					else
-					{			
+					{
 						m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
 					}
 
@@ -2196,23 +2287,8 @@ void _oglView::_drawInstancesFrameBuffer()
 #endif
 }
 
-void _oglView::_drawConceptualFacesPolygons(_model* pModel)
+void _oglView::_drawConceptualFacesPolygons()
 {
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowConceptualFacesPolygons())
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2290,23 +2366,8 @@ void _oglView::_drawConceptualFacesPolygons(_model* pModel)
 #endif
 }
 
-void _oglView::_drawLines(_model* pModel)
+void _oglView::_drawLines()
 {
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowLines())
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2384,23 +2445,8 @@ void _oglView::_drawLines(_model* pModel)
 #endif
 }
 
-void _oglView::_drawPoints(_model* pModel)
+void _oglView::_drawPoints()
 {
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (!getShowPoints())
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
@@ -2491,18 +2537,8 @@ void _oglView::_drawPoints(_model* pModel)
 #endif
 }
 
-void _oglView::_drawInstancesFrameBuffer(_model* pModel)
+void _oglView::_drawInstancesFrameBuffer()
 {
-	if (pModel == nullptr)
-	{
-		return;
-	}
-
-	if (pModel->getGeometries().empty())
-	{
-		return;
-	}
-
 	//
 	// Create a frame buffer
 	//
@@ -2515,9 +2551,14 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	// Selection colors
 	if (m_pSelectInstanceFrameBuffer->encoding().empty())
 	{
-		for (auto pM : getController()->getModels())
+		for (auto pModel : getController()->getModels())
 		{
-			for (auto pGeometry : pM->getGeometries())
+			if (!pModel->getEnable())
+			{
+				continue;
+			}
+
+			for (auto pGeometry : pModel->getGeometries())
 			{
 				if (pGeometry->getTriangles().empty())
 				{
@@ -2532,7 +2573,7 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 					m_pSelectInstanceFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 				}
 			}
-		} // for (auto pM : ...
+		} // for (auto pModel : ...
 	} // if (m_pSelectInstanceFrameBuffer->encoding().empty())
 
 	//
@@ -2627,45 +2668,16 @@ void _oglView::_drawInstancesFrameBuffer(_model* pModel)
 	_oglUtils::checkForErrors();
 }
 
-bool _oglView::getOGLPos(_model* pModel, int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
-	if (pModel == nullptr)
-	{
-		return false;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
-	//
-	// Restore Z buffer
-	// 
-
-	_prepare(
-		0, 0,
-		rcClient.Width(), rcClient.Height(),
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		true);
-
-	// Store Matrices
 	GLfloat arModelViewMatrix[16];
 	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
 
 	GLfloat arProjectionMatrix[16];
 	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
-	
-	_draw(m_pWnd->GetDC());
 
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 
@@ -2779,7 +2791,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			GLdouble dX = 0.;
 			GLdouble dY = 0.;
 			GLdouble dZ = 0.;
-			if (getOGLPos(pModel, point.x, point.y, -FLT_MAX, dX, dY, dZ))
+			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
 			{
 				_vector3d vecVertexBufferOffset;
 				GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);

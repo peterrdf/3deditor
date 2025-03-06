@@ -63,7 +63,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
-	auto pController = dynamic_cast<CRDFController*>(getController());
+	/*auto pController = dynamic_cast<CRDFController*>(getController());
 	auto pCoordinateSystemModel = pController->GetSceneModel();
 
 	_drawFaces(pCoordinateSystemModel, false);
@@ -77,7 +77,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		DrawBiNormalVectors(pModel);
 	}
 
-	DrawPointedFace();
+	DrawPointedFace();*/
 }
 
 /*virtual*/ void CRDFOpenGLView::_drawBuffers() /*override*/
