@@ -2218,67 +2218,7 @@ void CRDFOpenGLView::DrawPointedFace()
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
 {	
-	//if (pM == nullptr)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if (m_pSelectedInstance == nullptr)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if (m_iPointedFace == -1)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//const auto VERTEX_LENGTH = pM->getVertexLength();
-
-	//float* pVertices = m_pSelectedInstance->getVertices();
-	//ASSERT(pVertices != nullptr);
-
-	//int32_t* pIndices = m_pSelectedInstance->getIndices();
-	//ASSERT(pIndices != nullptr);
-
-	///*
-	//* Conceptual Face Polygons
-	//*/
-	//auto& vecConcFacePolygons = m_pSelectedInstance->getConcFacePolygons();
-
-	//assert(!vecConcFacePolygons.empty());
-	//assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecConcFacePolygons.size()));
-
-	//int64_t iVertexIndex = -1;
-	//int64_t iConcFaceVertexIndex = -1;
-	//double dMinDistance = DBL_MAX;
-
-	//auto pConceptulFacePolygon = const_cast<_primitives*>(&vecConcFacePolygons[m_iPointedFace]);
-
-	//int64_t iZeroBasedIndex = 0;
-	//for (int64_t iIndex = pConceptulFacePolygon->startIndex();
-	//	iIndex < pConceptulFacePolygon->startIndex() + pConceptulFacePolygon->indicesCount();
-	//	iIndex++, iZeroBasedIndex++)
-	//{
-	//	fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
-	//	fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
-	//	fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
-
-	//	double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
-	//	if (dMinDistance > dDistance)
-	//	{
-	//		iConcFaceVertexIndex = iZeroBasedIndex;
-	//		iVertexIndex = pIndices[iIndex];			
-	//		dMinDistance = dDistance;
-	//	}
-	//}
-
-	//return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+	
 
 	return pair<int64_t, int64_t>(-1, -1);
 }
