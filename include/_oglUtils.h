@@ -1687,11 +1687,6 @@ public: // Methods
 		} // if (m_iFrameBuffer == 0)
 	}
 
-	virtual bool isInitialized() const
-	{
-		return m_iFrameBuffer != 0;
-	}
-
 	void bind()
 	{
 		assert(m_iFrameBuffer != 0);
@@ -1704,6 +1699,13 @@ public: // Methods
 		assert(m_iFrameBuffer != 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+public: // Properties
+
+	virtual bool isInitialized() const
+	{
+		return m_iFrameBuffer != 0;
 	}
 };
 
@@ -1726,6 +1728,14 @@ public: // Methods
 	virtual ~_oglSelectionFramebuffer()
 	{
 	}
+
+	// _oglFramebuffer
+	virtual bool isInitialized() const override
+	{
+		return _oglFramebuffer::isInitialized() && !m_mapEncoding.empty();
+	}
+
+public: // Properties
 
 	map<int64_t, _color>& encoding()
 	{

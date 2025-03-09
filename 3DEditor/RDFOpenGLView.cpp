@@ -33,7 +33,6 @@ int NAVIGATION_VIEW_LENGTH = 200;
 CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglView()
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pPointedFaceInstance(nullptr)
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
 	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
@@ -63,13 +62,9 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::onInstanceSelected(_view* pSender) /*override*/
 {
-	if (m_pPointedFaceInstance != m_pPointedInstance)
-	{
-		m_pPointFaceFrameBuffer->encoding().clear();
-		m_pPointedFaceInstance = m_pPointedInstance;
-		m_iPointedFace = -1;
-		m_iNearestVertex = -1;
-	}
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
 
 	_oglView::onInstanceSelected(pSender);
 }
@@ -1992,12 +1987,14 @@ void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 }
 void CRDFOpenGLView::DrawFacesFrameBuffer()
 {
-	if (m_pPointedFaceInstance == nullptr)
+	if (getController()->getSelectedInstances().size() != 1)
 	{
 		return;
 	}
 
-	auto pGeometry = m_pPointedFaceInstance->getGeometry();
+	auto pSelectedInstance = getController()->getSelectedInstances().front();
+
+	auto pGeometry = pSelectedInstance->getGeometry();
 	assert(pGeometry->getInstances().size() == 1);
 
 	//
@@ -2124,7 +2121,12 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 
 void CRDFOpenGLView::DrawPointedFace()
 {
-	if (m_pPointedFaceInstance == nullptr)
+	if (!getShowFaces())
+	{
+		return;
+	}
+	
+	if (getController()->getSelectedInstances().size() != 1)
 	{
 		return;
 	}
@@ -2134,10 +2136,12 @@ void CRDFOpenGLView::DrawPointedFace()
 		return;
 	}
 
+	auto pSelectedInstance = getController()->getSelectedInstances().front();
+
 	/*
 	* Triangles
 	*/
-	auto pGeometry = m_pPointedFaceInstance->getGeometry();
+	auto pGeometry = pSelectedInstance->getGeometry();
 	assert(pGeometry->getInstances().size() == 1);
 
 	auto& vecTriangles = pGeometry->getTriangles();

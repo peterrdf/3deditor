@@ -18,7 +18,6 @@ private: // Members
 
 	// Point Face	
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
-	_instance* m_pPointedFaceInstance;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
