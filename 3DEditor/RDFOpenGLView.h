@@ -34,7 +34,11 @@ public: // Methods
 	CRDFOpenGLView(CWnd* pWnd);	
 	virtual ~CRDFOpenGLView();
 
+	// _view
+	virtual void onInstanceSelected(_view* pSender) override;
+
 	// _oglView
+	virtual void _preDraw() override;
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
 	virtual void _onMouseMove(const CPoint& point) override;

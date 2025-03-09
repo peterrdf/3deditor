@@ -61,14 +61,30 @@ CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
 
-/*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
+/*virtual*/ void CRDFOpenGLView::onInstanceSelected(_view* pSender) /*override*/
+{
+	if (m_pPointedFaceInstance != m_pPointedInstance)
+	{
+		m_pPointFaceFrameBuffer->encoding().clear();
+		m_pPointedFaceInstance = m_pPointedInstance;
+		m_iPointedFace = -1;
+		m_iNearestVertex = -1;
+	}
+
+	_oglView::onInstanceSelected(pSender);
+}
+
+/*virtual*/ void CRDFOpenGLView::_preDraw() /*override*/
 {
 	/*auto pController = dynamic_cast<CRDFController*>(getController());
 	auto pCoordinateSystemModel = pController->GetSceneModel();
 
 	_drawFaces(pCoordinateSystemModel, false);
-	_drawFaces(pCoordinateSystemModel, true);
+	_drawFaces(pCoordinateSystemModel, true);*/
+}
 
+/*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
+{
 	for (auto pModel : getController()->getModels())
 	{
 		DrawBoundingBoxes(pModel);
@@ -77,7 +93,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		DrawBiNormalVectors(pModel);
 	}
 
-	DrawPointedFace();*/
+	DrawPointedFace();
 }
 
 /*virtual*/ void CRDFOpenGLView::_drawBuffers() /*override*/
@@ -94,18 +110,6 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_onMouseMove(const CPoint& point) /*override*/
 {
-	if (m_pPointedFaceInstance != m_pPointedInstance)
-	{
-		m_pPointFaceFrameBuffer->encoding().clear();
-		m_pPointedFaceInstance = m_pPointedInstance;
-		m_iPointedFace = -1;
-		m_iNearestVertex = -1;
-
-		_redraw();
-
-		return;
-	}
-
 	if (m_pPointFaceFrameBuffer->isInitialized())
 	{
 		int iWidth = 0;
@@ -147,6 +151,8 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		{
 			m_iPointedFace = iPointedFace;
 			m_iNearestVertex = -1;
+
+			_redraw();
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 }

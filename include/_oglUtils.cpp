@@ -2752,56 +2752,58 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 	// Selection
 	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
 		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
-		((nFlags & MK_RBUTTON) != MK_RBUTTON) &&
-		m_pSelectInstanceFrameBuffer->isInitialized())
+		((nFlags & MK_RBUTTON) != MK_RBUTTON))
 	{
-		int iWidth = 0;
-		int iHeight = 0;
-
-		BOOL bResult = m_pOGLContext->makeCurrent();
-		VERIFY(bResult);
-
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
-
-		iWidth = rcClient.Width();
-		iHeight = rcClient.Height();
-
-		GLubyte arPixels[4];
-		memset(arPixels, 0, sizeof(GLubyte) * 4);
-
-		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-
-		m_pSelectInstanceFrameBuffer->bind();
-		glReadPixels(
-			(GLint)dX,
-			(GLint)dY,
-			1, 1,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
-			arPixels);
-		m_pSelectInstanceFrameBuffer->unbind();
-
-		_instance* pPointedInstance = nullptr;
-		if (arPixels[3] != 0)
+		if (m_pSelectInstanceFrameBuffer->isInitialized())
 		{
-			int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-			pPointedInstance = getController()->getInstanceByID(iInstanceID);
-			ASSERT(pPointedInstance != nullptr);
-		}
+			int iWidth = 0;
+			int iHeight = 0;
 
-		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr))
-		{
-			pPointedInstance = pPointedInstance->getOwner();
-		}
+			BOOL bResult = m_pOGLContext->makeCurrent();
+			VERIFY(bResult);
 
-		if (m_pPointedInstance != pPointedInstance)
-		{
-			m_pPointedInstance = pPointedInstance;			
+			CRect rcClient;
+			m_pWnd->GetClientRect(&rcClient);
 
-			_redraw();
-		}
+			iWidth = rcClient.Width();
+			iHeight = rcClient.Height();
+
+			GLubyte arPixels[4];
+			memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+
+			m_pSelectInstanceFrameBuffer->bind();
+			glReadPixels(
+				(GLint)dX,
+				(GLint)dY,
+				1, 1,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE,
+				arPixels);
+			m_pSelectInstanceFrameBuffer->unbind();
+
+			_instance* pPointedInstance = nullptr;
+			if (arPixels[3] != 0)
+			{
+				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+				pPointedInstance = getController()->getInstanceByID(iInstanceID);
+				ASSERT(pPointedInstance != nullptr);
+			}
+
+			if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr))
+			{
+				pPointedInstance = pPointedInstance->getOwner();
+			}
+
+			if (m_pPointedInstance != pPointedInstance)
+			{
+				m_pPointedInstance = pPointedInstance;
+
+				_redraw();
+			}
+		} // if (m_pSelectInstanceFrameBuffer->isInitialized())		
 
 		_onMouseMove(point);
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
