@@ -2355,7 +2355,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_RENAME:
 			{
-				CRenameDialog dlgRename(pInstance->getName().c_str());
+				CRenameDialog dlgRename(pInstance->getName());
 				if (dlgRename.DoModal() == IDOK)
 				{
 					//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);//#todo
@@ -2484,7 +2484,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		case ID_INSTANCES_RENAME:
 		{
-			CRenameDialog dlgRename(pInstance->getName().c_str());
+			CRenameDialog dlgRename(pInstance->getName());
 			if (dlgRename.DoModal() == IDOK)
 			{
 				//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);#todo

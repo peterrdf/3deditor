@@ -3373,7 +3373,7 @@ void CPropertiesWnd::LoadBaseInformation()
 	wchar_t szBuffer[200];
 
 	auto pBaseInfoGroup = new CMFCPropertyGridProperty(L"Base information");
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->_geometry::getName());
 	pBaseInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*
@@ -3607,7 +3607,7 @@ void CPropertiesWnd::LoadMetaInformation()
 	}
 
 	auto pMetaInfoGroup = new CMFCPropertyGridProperty(L"Meta information");
-	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getName().c_str());
+	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->_geometry::getName());
 	pMetaInfoGroup->AddSubItem(pInstanceGroup);
 
 	/*

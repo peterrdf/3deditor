@@ -419,7 +419,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 	SetFormatSettings(m_iModel);
 
-	m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
+	//m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
 
 	ScaleAndCenter(true);
 

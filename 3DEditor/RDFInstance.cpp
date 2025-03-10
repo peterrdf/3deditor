@@ -33,10 +33,6 @@ CRDFInstance::CRDFInstance(int64_t iID, OwlInstance iInstance)
 	}
 }
 
-/*virtual*/ wstring CRDFInstance::getName() const /*override*/ {
-	return _model::getInstanceName(_instance::getOwlInstance());
-}
-
 void CRDFInstance::UpdateName()
 {
 	OwlClass iClassInstance = GetInstanceClass(_instance::getOwlInstance());

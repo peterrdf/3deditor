@@ -29,8 +29,6 @@ public: // Methods
 	// Name/Unique Name
 	void UpdateName();
 
-	virtual wstring getName() const override;
-
 	// Refresh
 	void LoadOriginalData();
 	void Recalculate();

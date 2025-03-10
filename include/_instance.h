@@ -49,7 +49,7 @@ public: // Methods
 public: // Properties
 
 	int64_t getID() const { return m_iID; }
-	virtual wstring getName() const PURE;
+	virtual const wchar_t* getName() const PURE;
 	_geometry* getGeometry() const { return m_pGeometry; }
 	template<typename T>
 	T* getGeometryAs() const { return dynamic_cast<T*>(getGeometry()); }
@@ -90,6 +90,6 @@ struct _instancesComparator
 {
 	bool operator()(const _instance* i1, const _instance* i2) const
 	{
-		return wcscmp(i1->getName().c_str(), i2->getName().c_str()) < 0;
+		return wcscmp(i1->getName(), i2->getName()) < 0;
 	}
 };
