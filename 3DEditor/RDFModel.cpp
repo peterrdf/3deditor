@@ -998,7 +998,7 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 {
 	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
 	{		
-		CString strMetaData = pInstance->getUniqueName();
+		CString strMetaData = pInstance->_instance::getUniqueName();
 		if (strMetaData.GetLength() >= 50)
 		{
 			strMetaData = strMetaData.Left(50);

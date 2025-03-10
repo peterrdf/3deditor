@@ -64,7 +64,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
 	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
 	{
-		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
+		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->_instance::getUniqueName());
 
 		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
 

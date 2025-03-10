@@ -70,52 +70,8 @@ public:  // Methods
 
 public: // Properties
 
-	// _instance
-	virtual wstring getName() const override
-	{
-		return getName(getSdaiInstance());
-	}
-
 	SdaiInstance getSdaiInstance() const { return getGeometryAs<_ap_geometry>()->getSdaiInstance(); }
 	ExpressID getExpressID() const { return getGeometryAs<_ap_geometry>()->getExpressID(); }
 	SdaiEntity getSdaiEntity() const { return getGeometryAs<_ap_geometry>()->getSdaiEntity(); }
-	const wchar_t* getEntityName() const { return getGeometryAs<_ap_geometry>()->getEntityName(); }
-
-	static wstring getName(SdaiInstance sdaiInstance)
-	{
-		wstring strUniqueName;
-
-		int64_t iExpressID = internalGetP21Line(sdaiInstance);
-		if (iExpressID != 0)
-		{
-			CString strID;
-			strID.Format(_T("#%lld"), iExpressID);
-
-			strUniqueName = strID;
-			strUniqueName += L" ";
-			strUniqueName += _ap_geometry::getEntityName(sdaiInstance);
-		}
-
-		wchar_t* szName = nullptr;
-		sdaiGetAttrBN(sdaiInstance, "Name", sdaiUNICODE, &szName);
-
-		if ((szName != nullptr) && (wcslen(szName) > 0))
-		{
-			strUniqueName += L" '";
-			strUniqueName += szName;
-			strUniqueName += L"'";
-		}
-
-		wchar_t* szDescription = nullptr;
-		sdaiGetAttrBN(sdaiInstance, "Description", sdaiUNICODE, &szDescription);
-
-		if ((szDescription != nullptr) && (wcslen(szDescription) > 0))
-		{
-			strUniqueName += L" (";
-			strUniqueName += szDescription;
-			strUniqueName += L")";
-		}
-
-		return strUniqueName;
-	}	
+	const wchar_t* getEntityName() const { return getGeometryAs<_ap_geometry>()->getEntityName(); }	
 };

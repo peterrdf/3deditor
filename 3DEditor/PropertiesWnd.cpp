@@ -2745,7 +2745,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		auto pInstance = prSelectedInstanceProperty.first;
 		auto pProperty = prSelectedInstanceProperty.second;
 
-		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->_instance::getUniqueName());
 		
 		wstring strAncestors = CRDFClass::GetAncestors(pInstance->getClassInstance());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
@@ -2773,7 +2773,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		auto& mapProperties = pModel->GetProperties();
 
-		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->_instance::getUniqueName());
 
 		wstring strAncestors = CRDFClass::GetAncestors(pInstance->getClassInstance());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
@@ -3091,7 +3091,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(piInstances[iValue]);
 					assert(itInstanceValue != mapInstances.end());
 
-					pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)itInstanceValue->second->getUniqueName(), pProperty->GetName(),
+					pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)itInstanceValue->second->_instance::getUniqueName(), pProperty->GetName(),
 						(DWORD_PTR)new CRDFInstancePropertyData(GetController(), pInstance, pProperty, iValue));
 				}
 				else

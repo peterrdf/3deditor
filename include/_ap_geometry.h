@@ -16,6 +16,7 @@ public: // Methods
 		: _geometry(owlInstance)
 		, m_sdaiInstance(sdaiInstance)
 	{
+		m_strName = m_strUniqueName = getName(sdaiInstance);
 	}
 
 	virtual ~_ap_geometry()

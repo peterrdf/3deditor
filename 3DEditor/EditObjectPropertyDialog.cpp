@@ -126,7 +126,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 		if (find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
 		{
-			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
+			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->_instance::getUniqueName());
 			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 			continue;
@@ -148,7 +148,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
+				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->_instance::getUniqueName());
 				m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 				break;

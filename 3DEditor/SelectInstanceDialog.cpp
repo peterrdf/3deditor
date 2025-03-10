@@ -93,7 +93,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
 		assert(itInstanceValue != mapInstances.end());
 
-		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();
+		CString strInstanceUniqueName = itInstanceValue->second->_instance::getUniqueName();
 		if ((m_pInstance->_instance::getOwlInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
 			IsUsedRecursively(m_pInstance->_instance::getOwlInstance(), itInstanceValue->second->_instance::getOwlInstance()))
 		{

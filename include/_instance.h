@@ -49,7 +49,8 @@ public: // Methods
 public: // Properties
 
 	int64_t getID() const { return m_iID; }
-	virtual const wchar_t* getName() const PURE;
+	virtual const wchar_t* getName() const { return m_pGeometry->getName(); }
+	virtual const wchar_t* getUniqueName() const { return m_pGeometry->getUniqueName(); }
 	_geometry* getGeometry() const { return m_pGeometry; }
 	template<typename T>
 	T* getGeometryAs() const { return dynamic_cast<T*>(getGeometry()); }
