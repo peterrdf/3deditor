@@ -777,9 +777,7 @@
     <ClInclude Include="..\3DEditor\NewInstanceDialog.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\RDFInstance.h" />
-    <ClInclude Include="..\3DEditor\RDFInstanceItem.h" />
     <ClInclude Include="..\3DEditor\RDFItem.h" />
-    <ClInclude Include="..\3DEditor\RDFPropertyItem.h" />
     <ClInclude Include="..\3DEditor\SearchTreeCtrlDialog.h" />
     <ClInclude Include="..\3DEditor\TextBuilder.h" />
     <ClInclude Include="..\3DEditor\TreeCtrlEx.h" />
@@ -819,12 +817,10 @@
     <ClCompile Include="..\3DEditor\RDFClass.cpp" />
     <ClCompile Include="..\3DEditor\RDFController.cpp" />
     <ClCompile Include="..\3DEditor\RDFInstance.cpp" />
-    <ClCompile Include="..\3DEditor\RDFInstanceItem.cpp" />
     <ClCompile Include="..\3DEditor\RDFItem.cpp" />
     <ClCompile Include="..\3DEditor\RDFModel.cpp" />
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />
     <ClCompile Include="..\3DEditor\RDFProperty.cpp" />
-    <ClCompile Include="..\3DEditor\RDFPropertyItem.cpp" />
     <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp" />
     <ClCompile Include="..\3DEditor\RDFView.cpp" />
     <ClCompile Include="..\3DEditor\RenameDialog.cpp" />

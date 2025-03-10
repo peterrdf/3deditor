@@ -920,7 +920,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
 	if ((pItem != nullptr) && (pItem->getType() == enumItemType::Instance))
 	{
-		return pItem->GetInstance() == GetController()->GetSelectedInstance();
+		return pItem->GetInstance() == getController()->getSelectedInstance();
 	}
 
 	return false;
@@ -1240,7 +1240,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 				auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
 				ASSERT(pInstanceItem != nullptr);
 
-				RemoveInstanceItemData(pInstanceItem->GetInstance(), hItem);
+				//RemoveInstanceItemData(pInstanceItem->GetInstance(), hItem);#todo
 			}
 			break;
 
@@ -1249,7 +1249,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 				auto pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
 				ASSERT(pPropertyItem != nullptr);
 
-				RemovePropertyItemData(pPropertyItem->GetInstance(), pPropertyItem->GetProperty(), hItem);
+				//RemovePropertyItemData(pPropertyItem->GetInstance(), pPropertyItem->GetProperty(), hItem);#todo
 			}
 			break;
 
@@ -1458,8 +1458,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, _rdf_instance* pInstance)
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	//#todo
-	/*map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
+	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
 		CRDFInstanceItem * pInstanceItem = new CRDFInstanceItem(pInstance);
@@ -1474,10 +1473,10 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, _rdf_instance* pInstance)
 		itInstance2Item->second->items().push_back(hInstance);
 
 		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)itInstance2Item->second);
-	}*/
+	}
 }
 
-void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
+void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 {
 	wchar_t szBuffer[100];
 
@@ -1499,7 +1498,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	auto& mapProperties = pModel->GetProperties();
 	auto& mapInstances = pModel->GetInstances();
 
-	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->_instance::getOwlInstance(), 0);
+	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), 0);
 	while (iPropertyInstance != 0)
 	{
 		const auto& itProperty = mapProperties.find(iPropertyInstance);
@@ -1513,7 +1512,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
 
-		map<int64_t, map<int64_t, CRDFPropertyItem *> >::iterator itInstance2Properties = m_mapInstance2Properties.find(pInstance->_instance::getOwlInstance());
+		auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
 		if (itInstance2Properties == m_mapInstance2Properties.end())
 		{
 			auto pPropertyItem = new CRDFPropertyItem(pInstance, pProperty);
@@ -2166,7 +2165,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-	auto& mapInstances = pModel->GetInstances();
+	auto& mapInstances = pModel->getInstances();
 
 	auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 	auto pInstance = pInstanceItem->GetInstance();
@@ -2174,7 +2173,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	/*
 	* Instances with a geometry
 	*/
-	if (pInstance->_instance::hasGeometry())
+	if (pInstance->hasGeometry())
 	{
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
@@ -2227,10 +2226,10 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				auto itRFDInstances = mapInstances.begin();
+				/*auto itRFDInstances = mapInstances.begin();#todo
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (pInstance->_instance::getOwlModel() != itRFDInstances->second->_instance::getOwlModel())
+					if (pInstance->_instance::getOwlModel() != itRFDInstances->second->getOwlModel())
 					{
 						continue;
 					}
@@ -2245,19 +2244,19 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					itRFDInstances->second->setEnable(false);
 				}
 
-				getController()->onInstancesEnabledStateChanged(this);
+				getController()->onInstancesEnabledStateChanged(this);*/
 			}
 			break;
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				auto itRFDInstances = mapInstances.begin();
+				/*auto itRFDInstances = mapInstances.begin();#todo
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
 					itRFDInstances->second->setEnable(true);
 				}
 
-				getController()->onInstancesEnabledStateChanged(this);
+				getController()->onInstancesEnabledStateChanged(this);*/
 			}
 			break;
 
@@ -2305,39 +2304,39 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_REMOVE:
 			{
-				if (pInstance->isReferenced())
+				if (pInstance->getGeometry()->isReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 					return;
 				}
 
-				GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);//#todo
+				//GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_REMOVE_TREE:
 			{
-				if (pInstance->isReferenced())
+				if (pInstance->getGeometry()->isReferenced())
 				{
 					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 					return;
 				}
 
-				GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);//#todo
+				//GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_ADD_MEASUREMENTS:
 			{
-				GetController()->AddMeasurements(this, pInstance);//#todo
+				//GetController()->AddMeasurements(this, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
-				GetController()->Save(pInstance);//#todo
+				//GetController()->Save(pInstance);//#todo
 			}
 			break;
 
@@ -2359,7 +2358,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				CRenameDialog dlgRename(pInstance->getName().c_str());
 				if (dlgRename.DoModal() == IDOK)
 				{
-					GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);
+					//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);//#todo
 
 					m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
 				}
@@ -2394,13 +2393,13 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	{
 		case ID_INSTANCES_ENABLE_ALL:
 		{
-			auto itRFDInstances = mapInstances.begin();
+			/*auto itRFDInstances = mapInstances.begin();#todo
 			for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 			{
 				itRFDInstances->second->setEnable(true);
 			}
 
-			getController()->onInstancesEnabledStateChanged(this);
+			getController()->onInstancesEnabledStateChanged(this);*/
 		}
 		break;
 
@@ -2440,33 +2439,33 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		case ID_INSTANCES_REMOVE:
 		{
-			if (pInstance->isReferenced())
+			if (pInstance->getGeometry()->isReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 				return;
 			}
 
-			GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
+			//GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);#todo
 		}
 		break;
 
 		case ID_INSTANCES_REMOVE_TREE:
 		{
-			if (pInstance->isReferenced())
+			if (pInstance->getGeometry()->isReferenced())
 			{
 				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
 				return;
 			}
 
-			GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);
+			//GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);#todo
 		}
 		break;
 
 		case ID_INSTANCES_SAVE:
 		{
-			GetController()->Save(pInstance);
+			//GetController()->Save(pInstance);#todo
 		}
 		break;
 
@@ -2488,7 +2487,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			CRenameDialog dlgRename(pInstance->getName().c_str());
 			if (dlgRename.DoModal() == IDOK)
 			{
-				GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);
+				//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);#todo
 
 				m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
 			}
@@ -2657,7 +2656,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 
-			GetController()->SelectInstance(nullptr/*update this view also*/, pInstanceItem->GetInstance());
+			//GetController()->SelectInstance(nullptr/*update this view also*/, pInstanceItem->GetInstance());#todo
 		}
 		else if (pItem->getType() == enumItemType::Property)
 		{
@@ -2665,7 +2664,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 			auto pSelectedInstance = pPropertyItem->GetInstance();
 			auto pSelectedProperty = pPropertyItem->GetProperty();			
 
-			GetController()->SelectInstanceProperty(pSelectedInstance, pSelectedProperty);
+			//GetController()->SelectInstanceProperty(pSelectedInstance, pSelectedProperty);#todo
 
 			SelectInstance(GetController()->GetSelectedInstance(), FALSE);
 		} // else if (pItem->getType() == enumItemType::Property)

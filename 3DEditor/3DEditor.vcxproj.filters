@@ -90,12 +90,6 @@
     <ClInclude Include="RDFItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFPropertyItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFInstanceItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EditObjectPropertyDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -255,12 +249,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFInstanceItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditObjectPropertyDialog.cpp">

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RDFInstance.h"
+#include "RDFProperty.h"
 
 enum class enumItemType : int
 {
@@ -9,46 +10,55 @@ enum class enumItemType : int
 	Property = 2,
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFItem
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// HTREEITEM-s
-	vector<HTREEITEM> m_vecItems;
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
-	CRDFInstance* m_pInstance;
+	_rdf_instance* m_pInstance;
+	vector<HTREEITEM> m_vecItems;	
 
 protected: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Type
 	enumItemType m_enItemType;
 
-public: // Members
+public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CRDFItem(CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
+	CRDFItem(_rdf_instance* pInstance);
 	virtual ~CRDFItem();
 
-	// --------------------------------------------------------------------------------------------
-	// Accessor
-	vector<HTREEITEM>& items();
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CRDFInstance* GetInstance() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	enumItemType getType() const;
+public: // Properties
+	
+	_rdf_instance* GetInstance() const { return m_pInstance; }
+	enumItemType getType() const { return m_enItemType; }
+	vector<HTREEITEM>& items() { return m_vecItems; }
 };
 
+// ************************************************************************************************
+class CRDFInstanceItem
+	: public CRDFItem
+{
+
+public: // Methods
+
+	CRDFInstanceItem(_rdf_instance* pInstance);
+	virtual ~CRDFInstanceItem();
+};
+
+// ************************************************************************************************
+class CRDFPropertyItem :
+	public CRDFItem
+{
+
+private: // Members
+
+	CRDFProperty* m_pProperty;
+
+public: // Methods
+
+	CRDFPropertyItem(_rdf_instance* pInstance, CRDFProperty* pProperty);
+	virtual ~CRDFPropertyItem();
+
+	CRDFProperty* GetProperty() const { return m_pProperty; }
+};

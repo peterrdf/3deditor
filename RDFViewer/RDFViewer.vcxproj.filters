@@ -126,9 +126,6 @@
     <ClInclude Include="..\3DEditor\RDFInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\3DEditor\RDFInstanceItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3DEditor\RDFItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -136,9 +133,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3DEditor\TreeCtrlEx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3DEditor\RDFPropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_rdf_mvc.h">
@@ -230,9 +224,6 @@
     <ClCompile Include="..\3DEditor\EditObjectPropertyDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\RDFInstanceItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3DEditor\RDFItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -243,9 +234,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\RenameDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\RDFPropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_rdf_geometry.cpp">

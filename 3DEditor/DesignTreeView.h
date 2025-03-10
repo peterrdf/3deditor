@@ -4,8 +4,7 @@
 #include "TreeCtrlEx.h"
 #include "RDFView.h"
 #include "RDFInstance.h"
-#include "RDFInstanceItem.h"
-#include "RDFPropertyItem.h"
+#include "RDFItem.h"
 #include "SearchTreeCtrlDialog.h"
 
 #include <map>
@@ -96,7 +95,7 @@ private: // Methods
 	void InstancesUnreferencedItemsView();
 	
 	void AddInstance(HTREEITEM hParent, _rdf_instance* pInstance);
-	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
+	void AddProperties(HTREEITEM hParent, _rdf_instance* pInstance);
 
 	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
 
