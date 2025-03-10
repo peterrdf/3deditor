@@ -8,6 +8,8 @@
 #include "RDFModel.h"
 #include "ClassViewConsts.h"
 
+#include "_ptr.h"
+
 class CClassViewMenuButton : public CMFCToolBarMenuButton
 {
 
@@ -37,7 +39,6 @@ public:
 
 IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CClassView::onModelLoaded()
 {
 	if (GetController()->IsTestMode())
@@ -48,13 +49,11 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CClassView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ vector<CString> CClassView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
@@ -66,7 +65,6 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 	};
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CClassView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
@@ -140,23 +138,6 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 	return strItemText.Find(strTextLower, 0) != -1;
 }
 
-CRDFModel* CClassView::GetModel() const
-{
-	auto pController = GetController();
-	if (pController == nullptr)
-	{
-		assert(false);
-
-		return nullptr;
-	}
-
-	auto pModel = pController->GetModel();
-	assert(pModel != nullptr);
-
-	return pModel;
-}
-
-// ------------------------------------------------------------------------------------------------
 void CClassView::UpdateView()
 {
 	m_pSearchDialog->Reset();
@@ -183,7 +164,6 @@ void CClassView::UpdateView()
 	} // switch (m_nCurrSort)
 }
 
-// ------------------------------------------------------------------------------------------------
 void CClassView::ClassesAlphabeticalView()
 {
 	m_treeCtrl.DeleteAllItems();
@@ -218,7 +198,6 @@ void CClassView::ClassesAlphabeticalView()
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CClassView::ClassesHierarchicalView()
 {
 	m_treeCtrl.DeleteAllItems();
@@ -252,14 +231,167 @@ void CClassView::ClassesHierarchicalView()
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
 }
 
-// ------------------------------------------------------------------------------------------------
+void CClassView::PropertiesAlphabeticalView()
+{
+	m_treeCtrl.DeleteAllItems();
+
+	auto pModel = GetModel();
+
+	auto& mapProperties = pModel->GetProperties();
+
+	// RDF Property => Name : Instance
+	map<wstring, int64_t> mapName2Instance;
+
+	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Properties"), IMAGE_MODEL, IMAGE_MODEL);
+	for (auto itProperty = mapProperties.begin();
+		itProperty != mapProperties.end();
+		itProperty++)
+	{
+		auto pProperty = itProperty->second;
+
+		mapName2Instance[pProperty->GetName()] = pProperty->GetInstance();
+	} // for (; itProperty != ...
+
+	for (auto itName2Instance = mapName2Instance.begin();
+		itName2Instance != mapName2Instance.end();
+		itName2Instance++)
+	{
+		auto itProperty = mapProperties.find(itName2Instance->second);
+		assert(itProperty != mapProperties.end());
+
+		auto pProperty = itProperty->second;
+
+		wstring strNameAndType = pProperty->GetName();
+		strNameAndType += L" : ";
+
+		switch (pProperty->GetType())
+		{
+		case OBJECTPROPERTY_TYPE:
+		{
+			strNameAndType += L"owl:ObjectProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_STRING:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			strNameAndType += L"owl:DatatypeProperty";
+		}
+		break;
+
+		default:
+		{
+			strNameAndType += L"unknown";
+		}
+		break;
+		} // switch (pProperty->getType())
+
+		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hRoot);
+		switch (pProperty->GetType())
+		{
+		case OBJECTPROPERTY_TYPE:
+		{
+			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+
+			auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
+			assert(pObjectRDFProperty != nullptr);
+
+			auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
+			assert(!vecRestrictions.empty());
+
+			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+			{
+				char* szClassName = nullptr;
+				GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
+
+				m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
+			}
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:boolean", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_STRING:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_DOUBLE:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:double", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		case DATATYPEPROPERTY_TYPE_INTEGER:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : xsd:integer", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+
+		default:
+		{
+			m_treeCtrl.InsertItem(L"rdfs:range : unknown", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+		}
+		break;
+		} // switch (pProperty->getType())
+	} // for (; itName2Instance != ...
+
+	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
+}
+
 HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses)
 {
 	assert(iClassInstance != 0);
 	
 	auto pModel = GetModel();
 
-	auto mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->GetClasses();
 
 	auto itClass = mapClasses.find(iClassInstance);
 	assert(itClass != mapClasses.end());
@@ -290,7 +422,6 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 	return hClass;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 {
 	assert(iClassInstance != 0);
@@ -461,7 +592,6 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	} // for (size_t iAncestorClass = ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 {
 	assert(iClassInstance != 0);
@@ -493,159 +623,18 @@ void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 	} // for (; itClass != ...
 }
 
-// ------------------------------------------------------------------------------------------------
-void CClassView::PropertiesAlphabeticalView()
+CRDFModel* CClassView::GetModel() const
 {
-	m_treeCtrl.DeleteAllItems();
-
-	auto pModel = GetModel();
-
-	auto& mapProperties = pModel->GetProperties();
-
-	// RDF Property => Name : Instance
-	map<wstring, int64_t> mapName2Instance;
-
-	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Properties"), IMAGE_MODEL, IMAGE_MODEL);	
-	for (auto itProperty = mapProperties.begin(); 
-		itProperty != mapProperties.end(); 
-		itProperty++)
+	if (getController()->getModels().empty())
 	{
-		auto pProperty = itProperty->second;
+		ASSERT(FALSE);
 
-		mapName2Instance[pProperty->GetName()] = pProperty->GetInstance();
-	} // for (; itProperty != ...
-	
-	for (auto itName2Instance = mapName2Instance.begin();
-		itName2Instance != mapName2Instance.end(); 
-		itName2Instance++)
-	{
-		auto itProperty = mapProperties.find(itName2Instance->second);
-		assert(itProperty != mapProperties.end());
+		return nullptr;
+	}
 
-		auto pProperty = itProperty->second;
+	ASSERT(getController()->getModels().size() == 1);
 
-		wstring strNameAndType = pProperty->GetName();
-		strNameAndType += L" : ";
-
-		switch (pProperty->GetType())
-		{
-			case OBJECTPROPERTY_TYPE:
-			{
-				strNameAndType += L"owl:ObjectProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_BOOLEAN:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_STRING:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_DOUBLE:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_INTEGER:
-			{
-				strNameAndType += L"owl:DatatypeProperty";
-			}
-			break;
-
-			default:
-			{
-				strNameAndType += L"unknown";
-			}
-			break;
-		} // switch (pProperty->getType())
-
-		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hRoot);
-		switch (pProperty->GetType())
-		{
-			case OBJECTPROPERTY_TYPE:
-			{
-				HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-
-				auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-				assert(pObjectRDFProperty != nullptr);
-
-				auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-				assert(!vecRestrictions.empty());
-
-				for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
-				{
-					char * szClassName = nullptr;
-					GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
-
-					m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
-				}
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_BOOLEAN:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:boolean", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_STRING:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:string", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_DOUBLE:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:double", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_INTEGER:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : xsd:integer", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-
-			default:
-			{
-				m_treeCtrl.InsertItem(L"rdfs:range : unknown", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
-			}
-			break;
-		} // switch (pProperty->getType())
-	} // for (; itName2Instance != ...
-
-	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
+	return _ptr<CRDFModel>(getController()->getModels()[0]);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -687,8 +676,7 @@ int CClassView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	assert(GetController() != nullptr);
-	GetController()->registerView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -918,8 +906,7 @@ void CClassView::OnChangeVisualStyle()
 
 void CClassView::OnDestroy()
 {
-	assert(GetController() != nullptr);
-	GetController()->unRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

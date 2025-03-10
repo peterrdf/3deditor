@@ -85,3 +85,11 @@ public: // Properties
 	OwlInstance getOwlInstance() const { return getGeometry()->getOwlInstance(); }
 	bool hasGeometry() const { return getGeometry()->hasGeometry(); }
 };
+
+struct _instancesComparator
+{
+	bool operator()(const _instance* i1, const _instance* i2) const
+	{
+		return wcscmp(i1->getName().c_str(), i2->getName().c_str()) < 0;
+	}
+};

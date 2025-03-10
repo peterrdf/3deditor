@@ -11,6 +11,8 @@
 #include "ProgressIndicator.h"
 #include "RenameDialog.h"
 
+#include "_ptr.h"
+
 #include <algorithm>
 using namespace std;
 
@@ -51,26 +53,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 /*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
 {
-	OnModelChanged();
-}
-
-/*virtual*/ void CDesignTreeView::onControllerChanged() /*override*/
-{
-	OnModelChanged();
-}
-
-/*virtual*/ void CDesignTreeView::OnControllerChanged() /*override*/
-{
-	//OnModelChanged();
-}
-
-/*virtual*/ void CDesignTreeView::OnModelChanged()
-{
-	if (GetController() == nullptr)
-	{
-		return;
-	}
-
 	if (GetController()->IsTestMode())
 	{
 		return;
@@ -80,6 +62,21 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	m_nCurrSort = ID_SORTING_INSTANCES_NOT_REFERENCED;
 
 	UpdateView();
+}
+
+/*virtual*/ void CDesignTreeView::onControllerChanged() /*override*/
+{
+	//OnModelChanged();?????????????????
+}
+
+/*virtual*/ void CDesignTreeView::OnControllerChanged() /*override*/
+{
+	//OnModelChanged();?????????????????
+}
+
+/*virtual*/ void CDesignTreeView::OnModelChanged()
+{
+	
 }
 
 /*virtual*/ void CDesignTreeView::OnInstanceSelected(CRDFView* pSender)
@@ -1055,15 +1052,16 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 CRDFModel* CDesignTreeView::GetModel() const
 {
-	auto pController = GetController();
-	if (pController == nullptr)
+	if (getController()->getModels().empty())
 	{
-		assert(false);
+		ASSERT(FALSE);
 
 		return nullptr;
 	}
 
-	return pController->GetModel();
+	ASSERT(getController()->getModels().size() == 1);
+
+	return _ptr<CRDFModel>(getController()->getModels()[0]);
 }
 
 void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem)
@@ -1299,7 +1297,7 @@ void CDesignTreeView::UpdateView()
 	} // switch (m_nCurrSort)
 	
 	/** Restore the selected instance */
-	if (GetController()->GetSelectedInstance() != nullptr)
+	if (getController()->getSelectedInstance() != nullptr)
 	{
 		OnInstanceSelected(nullptr);
 	}
@@ -2092,8 +2090,7 @@ int CDesignTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	assert(GetController() != nullptr);
-	GetController()->registerView(this);
+	getController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -2200,13 +2197,6 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-	if (GetController() == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
@@ -2252,25 +2242,25 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->zoomToInstance(pInstance);
+				getController()->zoomToInstance(pInstance);
 			}
 			break;
 
 			case ID_VIEW_ZOOM_OUT:
 			{
-				GetController()->zoomOut();
+				getController()->zoomOut();
 			}
 			break;
 
 			case ID_INSTANCES_BASE_INFORMATION:
 			{
-				GetController()->ShowBaseInformation(pInstance);
+				//getController()->ShowBaseInformation(pInstance);#todo
 			}
 			break;
 
 			case ID_INSTANCES_META_INFORMATION:
 			{
-				GetController()->ShowMetaInformation(pInstance);
+				//getController()->ShowMetaInformation(pInstance);#todo
 			}
 			break;
 
@@ -2294,7 +2284,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					itRFDInstances->second->setEnable(false);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -2306,7 +2296,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					itRFDInstances->second->setEnable(true);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -2314,7 +2304,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			{
 				pModel->ResetInstancesDefaultState();
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 			 
@@ -2348,7 +2338,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			{
 				pInstance->setEnable(!pInstance->getEnable());
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -2361,7 +2351,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);
+				GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
 
@@ -2374,19 +2364,19 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);
+				GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_ADD_MEASUREMENTS:
 			{
-				GetController()->AddMeasurements(this, pInstance);
+				GetController()->AddMeasurements(this, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
-				GetController()->Save(pInstance);
+				GetController()->Save(pInstance);//#todo
 			}
 			break;
 
@@ -2449,15 +2439,15 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				itRFDInstances->second->setEnable(true);
 			}
 
-			GetController()->OnInstancesEnabledStateChanged();
+			getController()->onInstancesEnabledStateChanged(this);
 		}
 		break;
 
 		case ID_INSTANCES_ENABLE_RESET:
 		{
-			pModel->ResetInstancesDefaultState();
+			pModel->resetInstancesEnabledState();
 
-			GetController()->OnInstancesEnabledStateChanged();
+			getController()->onInstancesEnabledStateChanged(this);
 		}
 		break;
 
@@ -2681,8 +2671,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 
 void CDesignTreeView::OnDestroy()
 {
-	assert(GetController() != nullptr);
-	GetController()->unRegisterView(this);
+	getController()->unRegisterView(this);
 
 	__super::OnDestroy();
 

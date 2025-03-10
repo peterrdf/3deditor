@@ -47,35 +47,15 @@ public: // Methods
 
 private: // Methods
 
-	CRDFModel* GetModel() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Reloads the tree
 	void UpdateView();
-
-	// --------------------------------------------------------------------------------------------
-	// Alphabetical View   
 	void ClassesAlphabeticalView();
-
-	// --------------------------------------------------------------------------------------------
-	// Hierarchical View   
 	void ClassesHierarchicalView();
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
+	void PropertiesAlphabeticalView();
 	HTREEITEM AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
 	void AddProperties(HTREEITEM hParent, int64_t iClassInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
 	void AddChildClasses(HTREEITEM hParent, int64_t iClassInstance);
 
-	// --------------------------------------------------------------------------------------------
-	// Alphabetical View   
-	void PropertiesAlphabeticalView();
+	CRDFModel* GetModel() const;
 
 public:
 	CClassView();

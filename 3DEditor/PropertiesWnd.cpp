@@ -2135,8 +2135,7 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	assert(GetController() != nullptr);
-	GetController()->registerView(this);
+	getRDFController()->registerView(this);
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
@@ -2231,6 +2230,7 @@ void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadApplicationProperties()
 {
+	return;//#todo
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
 
@@ -2718,6 +2718,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 // ------------------------------------------------------------------------------------------------
 void CPropertiesWnd::LoadInstanceProperties()
 {
+	return;//#todo
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
 
@@ -4161,8 +4162,7 @@ void CPropertiesWnd::SetPropListFont()
 
 void CPropertiesWnd::OnDestroy()
 {
-	assert(GetController() != nullptr);
-	GetController()->unRegisterView(this);
+	getRDFController()->unRegisterView(this);
 
 	__super::OnDestroy();
 }

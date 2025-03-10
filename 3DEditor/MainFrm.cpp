@@ -319,7 +319,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	BOOL bNameValid;
 
 	// Create class view
-	m_classView.SetController(pController);
+	m_classView.setController(pController);
 
 	CString strClassView;
 	bNameValid = strClassView.LoadString(IDS_CLASS_VIEW);
@@ -331,7 +331,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	}
 
 	// Create file view
-	m_designTreeView.SetController(pController);
+	m_designTreeView.setController(pController);
 	
 	CString strFileView;
 	bNameValid = strFileView.LoadString(IDS_FILE_VIEW);
@@ -343,7 +343,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	}
 
 	// Create properties window
-	m_propertiesView.SetController(pController);
+	m_propertiesView.setController(pController);
 	
 	CString strPropertiesWnd;
 	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
