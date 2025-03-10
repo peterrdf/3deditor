@@ -95,7 +95,7 @@ private: // Methods
 	void InstancesGroupByClassView();
 	void InstancesUnreferencedItemsView();
 	
-	void AddInstance(HTREEITEM hParent, CRDFInstance* pInstance);
+	void AddInstance(HTREEITEM hParent, _rdf_instance* pInstance);
 	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
 
 	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);

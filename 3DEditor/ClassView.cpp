@@ -69,7 +69,7 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 {
 	if (hItem == NULL)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return FALSE;
 	}
@@ -86,7 +86,7 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if (iImage == IMAGE_CLASS)
 		{
@@ -104,7 +104,7 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if (iImage == IMAGE_PROPERTY)
 		{
@@ -122,7 +122,7 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if (iImage == IMAGE_VALUE)
 		{
@@ -187,7 +187,7 @@ void CClassView::ClassesAlphabeticalView()
 		itName2Instance++)
 	{
 		auto itClass = mapClasses.find(itName2Instance->second);
-		assert(itClass != mapClasses.end());
+		ASSERT(itClass != mapClasses.end());
 
 		auto pClass = itClass->second;
 
@@ -257,7 +257,7 @@ void CClassView::PropertiesAlphabeticalView()
 		itName2Instance++)
 	{
 		auto itProperty = mapProperties.find(itName2Instance->second);
-		assert(itProperty != mapProperties.end());
+		ASSERT(itProperty != mapProperties.end());
 
 		auto pProperty = itProperty->second;
 
@@ -323,10 +323,10 @@ void CClassView::PropertiesAlphabeticalView()
 			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 			auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
-			assert(pObjectRDFProperty != nullptr);
+			ASSERT(pObjectRDFProperty != nullptr);
 
 			auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-			assert(!vecRestrictions.empty());
+			ASSERT(!vecRestrictions.empty());
 
 			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 			{
@@ -387,14 +387,14 @@ void CClassView::PropertiesAlphabeticalView()
 
 HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses)
 {
-	assert(iClassInstance != 0);
+	ASSERT(iClassInstance != 0);
 	
 	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
 	auto itClass = mapClasses.find(iClassInstance);
-	assert(itClass != mapClasses.end());
+	ASSERT(itClass != mapClasses.end());
 
 	auto pClass = itClass->second;
 
@@ -410,7 +410,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 			for (size_t iParentClass = 0; iParentClass < vecParentClasses.size(); iParentClass++)
 			{
 				auto itParentRDFClass = mapClasses.find(vecParentClasses[iParentClass]);
-				assert(itParentRDFClass != mapClasses.end());
+				ASSERT(itParentRDFClass != mapClasses.end());
 
 				auto pParentRDFClass = itParentRDFClass->second;
 
@@ -424,7 +424,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 
 void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 {
-	assert(iClassInstance != 0);
+	ASSERT(iClassInstance != 0);
 
 	wchar_t szBuffer[512];	
 	
@@ -434,7 +434,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	auto& mapProperties = pModel->GetProperties();
 
 	auto itClass = mapClasses.find(iClassInstance);
-	assert(itClass != mapClasses.end());
+	ASSERT(itClass != mapClasses.end());
 
 	auto pClass = itClass->second;
 
@@ -446,7 +446,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	for (size_t iAncestorClass = 0; iAncestorClass < vecAncestors.size(); iAncestorClass++)
 	{
 		auto itAncestorRDFClass = mapClasses.find(vecAncestors[iAncestorClass]);
-		assert(itAncestorRDFClass != mapClasses.end());
+		ASSERT(itAncestorRDFClass != mapClasses.end());
 
 		auto pAncestorRDFClass = itAncestorRDFClass->second;
 
@@ -454,7 +454,7 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 		for (size_t iPropertyRestriction = 0; iPropertyRestriction < vecPropertyRestrictions.size(); iPropertyRestriction++)
 		{
 			auto itProperty = mapProperties.find(vecPropertyRestrictions[iPropertyRestriction]->getPropertyInstance());
-			assert(itProperty != mapProperties.end());
+			ASSERT(itProperty != mapProperties.end());
 
 			auto pProperty = itProperty->second;
 
@@ -521,14 +521,14 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 					HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 					CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-					assert(pObjectRDFProperty != nullptr);
+					ASSERT(pObjectRDFProperty != nullptr);
 
 					auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
 					for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
 					{
 						auto itRestrictionRDFClass = mapClasses.find(vecRestrictions[iRestriction]);
-						assert(itRestrictionRDFClass != mapClasses.end());
-						assert(itRestrictionRDFClass->second != nullptr);
+						ASSERT(itRestrictionRDFClass != mapClasses.end());
+						ASSERT(itRestrictionRDFClass->second != nullptr);
 
 						m_treeCtrl.InsertItem(itRestrictionRDFClass->second->GetName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
 					}
@@ -594,14 +594,14 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 
 void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 {
-	assert(iClassInstance != 0);
+	ASSERT(iClassInstance != 0);
 	
 	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
 	auto itParentRDFClass = mapClasses.find(iClassInstance);
-	assert(itParentRDFClass != mapClasses.end());
+	ASSERT(itParentRDFClass != mapClasses.end());
 
 	auto itClass = mapClasses.begin();
 	for (; itClass != mapClasses.end(); itClass++)
@@ -883,7 +883,7 @@ void CClassView::OnChangeVisualStyle()
 	if (!bmp.LoadBitmap(uiBmpId))
 	{
 		TRACE(_T("Can't load bitmap: %x\n"), uiBmpId);
-		assert(false);
+		ASSERT(false);
 		return;
 	}
 

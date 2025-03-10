@@ -163,7 +163,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
-	assert(itPropertyItem != itInstance2Properties->second.end());
+	ASSERT(itPropertyItem != itInstance2Properties->second.end());
 
 	auto pPropertyItem = itPropertyItem->second;
 	if ((pPropertyItem == nullptr) || pPropertyItem->items().empty())
@@ -183,7 +183,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			int64_t iCard = 0;
 			GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -217,7 +217,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -253,9 +253,9 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 					if (piInstances[iInstance] != 0)
 					{
 						const auto& itInstance = mapInstances.find(piInstances[iInstance]);
-						assert(itInstance != mapInstances.end());
+						ASSERT(itInstance != mapInstances.end());
 
-						AddInstance(hProperty, itInstance->second);					
+						//AddInstance(hProperty, itInstance->second);#todo				
 					} // if (piInstances[iInstance] != 0)
 					else
 					{
@@ -287,7 +287,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			bool* pbValue = nullptr;
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -321,7 +321,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -376,7 +376,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
 			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, true);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -410,7 +410,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -464,7 +464,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			char ** szValue = nullptr;
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -498,7 +498,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -552,7 +552,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			wchar_t** szValue = nullptr;
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -586,7 +586,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -640,7 +640,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			double * pdValue = nullptr;
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -674,7 +674,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -727,7 +727,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			int64_t * piValue = nullptr;
 			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pPropertyItem->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
-			assert(iCard >= 0);
+			ASSERT(iCard >= 0);
 
 			for (size_t iItem = 0; iItem < pPropertyItem->items().size(); iItem++)
 			{
@@ -761,7 +761,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				/*
 				* Update the cardinality
 				*/
-				assert(hCardinality != nullptr);
+				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
 				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
@@ -810,7 +810,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		default:
 		{
-			assert(false); // unknown property
+			ASSERT(false); // unknown property
 		}
 		break;
 	} // switch (pPropertyItem->GetProperty()->getType())
@@ -909,7 +909,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 		default:
 		{
-			assert(false); // Internal error!
+			ASSERT(false); // Internal error!
 		}
 		break;
 	} // switch (enApplicationProperty)
@@ -949,7 +949,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 {
 	if (hItem == NULL)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -960,7 +960,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 	if (!GetTreeView()->GetItem(&tvItem))
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -981,7 +981,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 {
 	if (hItem == NULL)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return FALSE;
 	}
@@ -998,7 +998,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if ((iImage == IMAGE_INSTANCE) || (iImage == IMAGE_INSTANCE_CHECK_FAILED))
 		{
@@ -1016,7 +1016,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if (iImage == IMAGE_PROPERTY)
 		{
@@ -1034,7 +1034,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		int iImage, iSelectedImage = -1;
 		GetTreeView()->GetItemImage(hItem, iImage, iSelectedImage);
 
-		assert(iImage == iSelectedImage);
+		ASSERT(iImage == iSelectedImage);
 
 		if (iImage == IMAGE_VALUE)
 		{
@@ -1086,7 +1086,7 @@ void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeIt
 		if (bSelectTreeItem)
 		{
 			HTREEITEM hModel = m_treeCtrl.GetRootItem();
-			assert(hModel != NULL); // Internal error!
+			ASSERT(hModel != NULL); // Internal error!
 
 			if (hModel != NULL)
 			{
@@ -1114,7 +1114,7 @@ void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeIt
 			if (itInstance2Item != m_mapInstance2Item.end())
 			{
 				// The item is visible	
-				assert(!itInstance2Item->second->items().empty());
+				ASSERT(!itInstance2Item->second->items().empty());
 				m_treeCtrl.Expand(itInstance2Item->second->items()[0], TVE_EXPAND);
 			}
 			else
@@ -1131,7 +1131,7 @@ void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeIt
 	if (itInstance2Item != m_mapInstance2Item.end())
 	{
 		// The item is visible
-		assert(!itInstance2Item->second->items().empty());
+		ASSERT(!itInstance2Item->second->items().empty());
 
 		m_hSelectedInstance = itInstance2Item->second->items()[0];
 
@@ -1173,7 +1173,7 @@ void CDesignTreeView::GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscen
 
 void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDescendants)
 {
-	assert(hItem != nullptr);
+	ASSERT(hItem != nullptr);
 
 	HTREEITEM hChild = m_treeCtrl.GetChildItem(hItem);
 	while (hChild != nullptr)
@@ -1191,32 +1191,32 @@ void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDes
 
 void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
 {
-	assert(pInstance != nullptr);
-	assert(hInstance != nullptr);
+	ASSERT(pInstance != nullptr);
+	ASSERT(hInstance != nullptr);
 
 	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->_instance::getOwlInstance());
-	assert(itInstance2Item != m_mapInstance2Item.end());
+	ASSERT(itInstance2Item != m_mapInstance2Item.end());
 
 	vector<HTREEITEM>::const_iterator itInstance = find(itInstance2Item->second->items().begin(), itInstance2Item->second->items().end(), hInstance);
-	assert(itInstance != itInstance2Item->second->items().end());
+	ASSERT(itInstance != itInstance2Item->second->items().end());
 
 	itInstance2Item->second->items().erase(itInstance);
 }
 
 void CDesignTreeView::RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty* pProperty, HTREEITEM hProperty)
 {
-	assert(pInstance != nullptr);
-	assert(pProperty != nullptr);
-	assert(hProperty != NULL);
+	ASSERT(pInstance != nullptr);
+	ASSERT(pProperty != nullptr);
+	ASSERT(hProperty != NULL);
 
 	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->_instance::getOwlInstance());
-	assert(itInstance2Properties != m_mapInstance2Properties.end());
+	ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
 
 	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
-	assert(itPropertyItem != itInstance2Properties->second.end());
+	ASSERT(itPropertyItem != itInstance2Properties->second.end());
 
 	auto itInstance = find(itPropertyItem->second->items().begin(), itPropertyItem->second->items().end(), hProperty);
-	assert(itInstance != itPropertyItem->second->items().end());
+	ASSERT(itInstance != itPropertyItem->second->items().end());
 
 	itPropertyItem->second->items().erase(itInstance);
 }
@@ -1225,7 +1225,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 {
 	if (hItem == NULL)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -1238,7 +1238,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 			case enumItemType::Instance:
 			{
 				auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-				assert(pInstanceItem != nullptr);
+				ASSERT(pInstanceItem != nullptr);
 
 				RemoveInstanceItemData(pInstanceItem->GetInstance(), hItem);
 			}
@@ -1247,7 +1247,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 			case enumItemType::Property:
 			{
 				auto pPropertyItem = dynamic_cast<CRDFPropertyItem *>(pItem);
-				assert(pPropertyItem != nullptr);
+				ASSERT(pPropertyItem != nullptr);
 
 				RemovePropertyItemData(pPropertyItem->GetInstance(), pPropertyItem->GetProperty(), hItem);
 			}
@@ -1255,7 +1255,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 
 			default:
 			{
-				assert(false); // Internal error!
+				ASSERT(false); // Internal error!
 			}
 			break;
 		} // switch (pItem->getType())
@@ -1291,7 +1291,7 @@ void CDesignTreeView::UpdateView()
 
 		default:
 		{
-			assert(false); // unknown view
+			ASSERT(false); // unknown view
 		}
 		break;
 	} // switch (m_nCurrSort)
@@ -1314,39 +1314,23 @@ void CDesignTreeView::InstancesAlphabeticalView()
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
 
-	auto& mapInstances = pModel->GetInstances();
-
-	vector<CRDFInstance*> vecModel;	
-	for (auto itRFDInstances = mapInstances.begin();
-		itRFDInstances != mapInstances.end(); 
-		itRFDInstances++)
+	vector<_rdf_instance*> vecRoots;	
+	for (auto pInstance : pModel->getInstances())
 	{
-		auto pInstance = itRFDInstances->second;
-
-		if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
-		{
-			vecModel.push_back(pInstance);
-		}
-		else
-		{
-			assert(false);
-		}
+		vecRoots.push_back(_ptr<_rdf_instance>(pInstance));
 	}
 
-	/*
-	* Model
-	*/
-	sort(vecModel.begin(), vecModel.end(), _geometriesComparator());
+	sort(vecRoots.begin(), vecRoots.end(), _instancesComparator());
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
+	for (size_t iInstance = 0; iInstance < vecRoots.size(); iInstance++)
 	{
-		AddInstance(hModel, vecModel[iInstance]);
+		AddInstance(hModel, vecRoots[iInstance]);
 	}
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
@@ -1360,128 +1344,104 @@ void CDesignTreeView::InstancesGroupByClassView()
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
 
-	auto& mapInstances = pModel->GetInstances();
+	//auto& mapInstances = pModel->GetInstances();
 
-	map<wstring, vector<CRDFInstance*>> mapModel;	
-	for (auto itRFDInstances = mapInstances.begin();
-		itRFDInstances != mapInstances.end(); 
-		itRFDInstances++)
-	{
-		auto pInstance = itRFDInstances->second;
+	//map<wstring, vector<CRDFInstance*>> mapModel;	
+	//for (auto itRFDInstances = mapInstances.begin();
+	//	itRFDInstances != mapInstances.end(); 
+	//	itRFDInstances++)
+	//{
+	//	auto pInstance = itRFDInstances->second;
 
-		char* szName = nullptr;
-		GetNameOfClass(pInstance->getClassInstance(), &szName);
+	//	char* szName = nullptr;
+	//	GetNameOfClass(pInstance->getClassInstance(), &szName);
 
-		wstring strName = CA2W(szName);
+	//	wstring strName = CA2W(szName);
 
-		if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
-		{
-			auto itModel = mapModel.find(strName);
-			if (itModel == mapModel.end())
-			{
-				vector<CRDFInstance*> vecInstances;
-				vecInstances.push_back(pInstance);
+	//	if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
+	//	{
+	//		auto itModel = mapModel.find(strName);
+	//		if (itModel == mapModel.end())
+	//		{
+	//			vector<CRDFInstance*> vecInstances;
+	//			vecInstances.push_back(pInstance);
 
-				mapModel[strName] = vecInstances;
-			}
-			else
-			{
-				itModel->second.push_back(pInstance);
-			}
-		}
-		else
-		{
-			assert(false);
-		}
-	} // for (auto itRFDInstances = ...
+	//			mapModel[strName] = vecInstances;
+	//		}
+	//		else
+	//		{
+	//			itModel->second.push_back(pInstance);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		ASSERT(false);
+	//	}
+	//} // for (auto itRFDInstances = ...
 
-	/*
-	* Model
-	*/
-	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);	
-	for (auto itModel = mapModel.begin();
-		itModel != mapModel.end(); 
-		itModel++)
-	{
-		HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
+	///*
+	//* Model
+	//*/
+	//HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);	
+	//for (auto itModel = mapModel.begin();
+	//	itModel != mapModel.end(); 
+	//	itModel++)
+	//{
+	//	HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
 
-		vector<CRDFInstance *> vecInstances = itModel->second;
-		sort(vecInstances.begin(), vecInstances.end(), _geometriesComparator());
+	//	vector<CRDFInstance *> vecInstances = itModel->second;
+	//	sort(vecInstances.begin(), vecInstances.end(), _instancesComparator());
 
-		for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
-		{
-			AddInstance(hClass, vecInstances[iInstance]);
-		}
-	} // for (; itModel != ...
+	//	for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
+	//	{
+	//		AddInstance(hClass, vecInstances[iInstance]);
+	//	}
+	//} // for (; itModel != ...
 
-	m_treeCtrl.Expand(hModel, TVE_EXPAND);
+	//m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 void CDesignTreeView::InstancesUnreferencedItemsView()
 {
-	ProgressStatus prgs(L"Build project tree");
-
 	m_treeCtrl.DeleteAllItems();
 	Clean();	
 
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
 
-	auto& mapInstances = pModel->GetInstances();
-
-	prgs.Start(mapInstances.size());
-
-	vector<CRDFInstance *> vecModel;
-	for (auto itRFDInstances = mapInstances.begin();
-		itRFDInstances != mapInstances.end(); 
-		itRFDInstances++)
+	vector<_rdf_instance*> vecRoots;
+	for (auto pInstance : pModel->getInstances())
 	{
-		prgs.Step();
-
-		CRDFInstance * pInstance = itRFDInstances->second;
-
-		if (pInstance->isReferenced())
+		if (pInstance->getGeometry()->isReferenced())
 		{
 			continue;
 		}
 
-		if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
-		{
-			vecModel.push_back(pInstance);
-		}
-		else
-		{
-			assert(false);
-		}
-	} // for (; itRFDInstances != ...
+		vecRoots.push_back(_ptr<_rdf_instance>(pInstance));
+	}
 
-	prgs.Finish();
-
-	/*
-	* Model
-	*/
-	sort(vecModel.begin(), vecModel.end(), _geometriesComparator());
+	sort(vecRoots.begin(), vecRoots.end(), _instancesComparator());
 
 	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);
-	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
+	for (size_t iInstance = 0; iInstance < vecRoots.size(); iInstance++)
 	{
-		AddInstance(hModel, vecModel[iInstance]);
+		AddInstance(hModel, vecRoots[iInstance]);
 	}
 
 	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
-void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance* pInstance)
+void CDesignTreeView::AddInstance(HTREEITEM hParent, _rdf_instance* pInstance)
 {
 	/*
 	* The instances will be loaded on demand
@@ -1498,13 +1458,14 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance* pInstance)
 
 	HTREEITEM hInstance = m_treeCtrl.InsertItem(&tvInsertStruct);
 
-	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->_instance::getOwlInstance());
+	//#todo
+	/*map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
 		CRDFInstanceItem * pInstanceItem = new CRDFInstanceItem(pInstance);
 		pInstanceItem->items().push_back(hInstance);
 
-		m_mapInstance2Item[pInstance->_instance::getOwlInstance()] = pInstanceItem;
+		m_mapInstance2Item[pInstance->getOwlInstance()] = pInstanceItem;
 
 		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)pInstanceItem);
 	}
@@ -1513,7 +1474,7 @@ void CDesignTreeView::AddInstance(HTREEITEM hParent, CRDFInstance* pInstance)
 		itInstance2Item->second->items().push_back(hInstance);
 
 		m_treeCtrl.SetItemData(hInstance, (DWORD_PTR)itInstance2Item->second);
-	}
+	}*/
 }
 
 void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
@@ -1522,7 +1483,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 	if (pInstance == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -1530,7 +1491,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -1542,7 +1503,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 	while (iPropertyInstance != 0)
 	{
 		const auto& itProperty = mapProperties.find(iPropertyInstance);
-		assert(itProperty != mapProperties.end());
+		ASSERT(itProperty != mapProperties.end());
 
 		auto pProperty = itProperty->second;
 
@@ -1593,7 +1554,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
 			CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-			assert(pObjectRDFProperty != nullptr);
+			ASSERT(pObjectRDFProperty != nullptr);
 
 			auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
 			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
@@ -1639,9 +1600,9 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 					if (piInstances[iInstance] != 0)
 					{
 						map<int64_t, CRDFInstance *>::const_iterator itInstance = mapInstances.find(piInstances[iInstance]);
-						assert(itInstance != mapInstances.end());
+						ASSERT(itInstance != mapInstances.end());
 
-						AddInstance(hProperty, itInstance->second);
+						//AddInstance(hProperty, itInstance->second);#todo
 					} // if (piInstances[iInstance] != 0)
 					else
 					{
@@ -1892,7 +1853,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 		default:
 		{
-			assert(false); // unknown property
+			ASSERT(false); // unknown property
 		}
 		break;
 		} // switch (pProperty->getType())
@@ -1903,87 +1864,87 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, CRDFInstance * pInstance)
 
 void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
 {
-	assert(iModel != 0);
-	assert(hModel != nullptr);
+	ASSERT(iModel != 0);
+	ASSERT(hModel != nullptr);
 
-	auto pModel = GetModel();
-	if (pModel == nullptr)
-	{
-		assert(false);
+	//auto pModel = GetModel();
+	//if (pModel == nullptr)
+	//{
+	//	ASSERT(false);
 
-		return;
-	}
+	//	return;
+	//}
 
-	auto& mapInstances = pModel->GetInstances();
+	//auto& mapInstances = pModel->GetInstances();
 
-	vector<CRDFInstance*> vecInstances;
-	vector<HTREEITEM> vecObsoleteItems;
+	//vector<CRDFInstance*> vecInstances;
+	//vector<HTREEITEM> vecObsoleteItems;
 
-	HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
-	while (hItem != nullptr)
-	{
-		auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
-		assert(pItem != nullptr);
-		assert(pItem->getType() == enumItemType::Instance);
+	//HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
+	//while (hItem != nullptr)
+	//{
+	//	auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
+	//	ASSERT(pItem != nullptr);
+	//	ASSERT(pItem->getType() == enumItemType::Instance);
 
-		auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-		assert(pInstanceItem != nullptr);
+	//	auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
+	//	ASSERT(pInstanceItem != nullptr);
 
-		if (pInstanceItem->GetInstance()->isReferenced())
-		{
-			vecObsoleteItems.push_back(hItem);
-		}
-		else
-		{
-			vecInstances.push_back(pInstanceItem->GetInstance());
-		}
+	//	if (pInstanceItem->GetInstance()->isReferenced())
+	//	{
+	//		vecObsoleteItems.push_back(hItem);
+	//	}
+	//	else
+	//	{
+	//		vecInstances.push_back(pInstanceItem->GetInstance());
+	//	}
 
-		hItem = m_treeCtrl.GetNextSiblingItem(hItem);
-	} // while (hChild != nullptr)
+	//	hItem = m_treeCtrl.GetNextSiblingItem(hItem);
+	//} // while (hChild != nullptr)
 
-	/*
-	* Delete the items with references
-	*/
-	for (int64_t iItem = 0; iItem < (int64_t)vecObsoleteItems.size(); iItem++)
-	{
-		RemoveItemData(vecObsoleteItems[iItem]);
+	///*
+	//* Delete the items with references
+	//*/
+	//for (int64_t iItem = 0; iItem < (int64_t)vecObsoleteItems.size(); iItem++)
+	//{
+	//	RemoveItemData(vecObsoleteItems[iItem]);
 
-		vector<HTREEITEM> vecDescendants;
-		GetDescendants(vecObsoleteItems[iItem], vecDescendants);
+	//	vector<HTREEITEM> vecDescendants;
+	//	GetDescendants(vecObsoleteItems[iItem], vecDescendants);
 
-		for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++)
-		{
-			RemoveItemData(vecDescendants[iDescendant]);
-		}
+	//	for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++)
+	//	{
+	//		RemoveItemData(vecDescendants[iDescendant]);
+	//	}
 
-		m_treeCtrl.DeleteItem(vecObsoleteItems[iItem]);
-	} // for (int64_t iItem = ...
+	//	m_treeCtrl.DeleteItem(vecObsoleteItems[iItem]);
+	//} // for (int64_t iItem = ...
 
-	/*
-	* Add the missing items without references
-	*/
-	auto itRFDInstances = mapInstances.begin();
-	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
-	{
-		CRDFInstance * pInstance = itRFDInstances->second;
+	///*
+	//* Add the missing items without references
+	//*/
+	//auto itRFDInstances = mapInstances.begin();
+	//for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
+	//{
+	//	CRDFInstance * pInstance = itRFDInstances->second;
 
-		if (pInstance->isReferenced())
-		{
-			continue;
-		}
+	//	if (pInstance->isReferenced())
+	//	{
+	//		continue;
+	//	}
 
-		if (pInstance->_instance::getOwlModel() != iModel)
-		{
-			continue;
-		}
+	//	if (pInstance->_instance::getOwlModel() != iModel)
+	//	{
+	//		continue;
+	//	}
 
-		if (find(vecInstances.begin(), vecInstances.end(), pInstance) != vecInstances.end())
-		{
-			continue;
-		}
+	//	if (find(vecInstances.begin(), vecInstances.end(), pInstance) != vecInstances.end())
+	//	{
+	//		continue;
+	//	}
 
-		AddInstance(hModel, pInstance);
-	} // for (; itRFDInstances != ...
+	//	AddInstance(hModel, pInstance);
+	//} // for (; itRFDInstances != ...
 }
 
 void CDesignTreeView::Clean()
@@ -2200,7 +2161,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	auto pModel = GetModel();
 	if (pModel == nullptr)
 	{
-		assert(false);
+		ASSERT(false);
 
 		return;
 	}
@@ -2407,7 +2368,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			default:
 			{
-				assert(false);
+				ASSERT(false);
 			}
 			break;
 		} // switch (uiCommand)	
@@ -2536,7 +2497,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		default:
 		{
-			assert(false);
+			ASSERT(false);
 		}
 		break;
 	} // switch (uiCommand)	
@@ -2649,7 +2610,7 @@ void CDesignTreeView::OnChangeVisualStyle()
 	if (!bmp.LoadBitmap(uiBmpId))
 	{
 		TRACE(_T("Can't load bitmap: %x\n"), uiBmpId);
-		assert(false);
+		ASSERT(false);
 		return;
 	}
 
@@ -2710,7 +2671,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 		} // else if (pItem->getType() == enumItemType::Property)
 		else
 		{
-			assert(false); // Internal error!
+			ASSERT(false); // Internal error!
 		}
 	} // if (pItem != nullptr)
 	else
@@ -2734,7 +2695,7 @@ void CDesignTreeView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(pNMTreeView->itemNew.hItem);
-	assert((pItem != nullptr) && (pItem->getType() == enumItemType::Instance));
+	ASSERT((pItem != nullptr) && (pItem->getType() == enumItemType::Instance));
 
 	if (pItem != nullptr)
 	{
