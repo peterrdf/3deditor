@@ -36,8 +36,8 @@ private: // Members
 
 public: // Methods
 
-	// CRDFView
-	virtual void OnModelChanged() override;
+	// _view
+	virtual void onModelLoaded() override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
