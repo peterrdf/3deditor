@@ -59,12 +59,13 @@ public: // Methods
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	
-	// CRDFView
-	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance) override;
+	// _rdf_view
+	//#todo
+	/*virtual void OnInstancePropertyEdited(_rdf_instance* pInstance, CRDFProperty* pProperty) override;
+	virtual void OnNewInstanceCreated(CRDFView* pSender, _rdf_instance* pInstance) override;
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView* pSender);
-	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance) override;
+	virtual void OnMeasurementsAdded(CRDFView* pSender, _rdf_instance* pInstance) override;*/
 	
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;
@@ -83,8 +84,8 @@ private: // Methods
 	
 	void GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
-	void RemoveInstanceItemData(CRDFInstance* pInstance, HTREEITEM hInstance);
-	void RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
+	void RemoveInstanceItemData(_rdf_instance* pInstance, HTREEITEM hInstance);
+	void RemovePropertyItemData(_rdf_instance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);
 	void UpdateView();
 

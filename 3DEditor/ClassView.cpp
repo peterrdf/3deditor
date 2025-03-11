@@ -10,6 +10,7 @@
 
 #include "_ptr.h"
 
+// ************************************************************************************************
 class CClassViewMenuButton : public CMFCToolBarMenuButton
 {
 
@@ -39,6 +40,7 @@ public:
 
 IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 
+// ************************************************************************************************
 /*virtual*/ void CClassView::onModelLoaded()
 {
 	if (GetController()->IsTestMode())
@@ -173,7 +175,7 @@ void CClassView::ClassesAlphabeticalView()
 	auto& mapClasses = pModel->GetClasses();
 
 	// RDF Classes => Name : Instance
-	map<wstring, int64_t> mapName2Instance;	
+	map<wstring, OwlClass> mapName2Instance;
 	for (auto itClass = mapClasses.begin();
 		itClass != mapClasses.end(); 
 		itClass++)
@@ -206,7 +208,7 @@ void CClassView::ClassesHierarchicalView()
 
 	auto& mapClasses = pModel->GetClasses();
 
-	vector<int64_t> vecRootClasses;	
+	vector<OwlClass> vecRootClasses;
 	for (auto itClass = mapClasses.begin(); 
 		itClass != mapClasses.end();
 		itClass++)
@@ -240,7 +242,7 @@ void CClassView::PropertiesAlphabeticalView()
 	auto& mapProperties = pModel->GetProperties();
 
 	// RDF Property => Name : Instance
-	map<wstring, int64_t> mapName2Instance;
+	map<wstring, OwlClass> mapName2Instance;
 
 	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Properties"), IMAGE_MODEL, IMAGE_MODEL);
 	for (auto itProperty = mapProperties.begin();
@@ -385,15 +387,15 @@ void CClassView::PropertiesAlphabeticalView()
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
 }
 
-HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses)
+HTREEITEM CClassView::AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddParentClasses)
 {
-	ASSERT(iClassInstance != 0);
+	ASSERT(owlClass != 0);
 	
 	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
-	auto itClass = mapClasses.find(iClassInstance);
+	auto itClass = mapClasses.find(owlClass);
 	ASSERT(itClass != mapClasses.end());
 
 	auto pClass = itClass->second;
@@ -402,7 +404,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 
 	if (bAddParentClasses)
 	{
-		const vector<int64_t> & vecParentClasses = pClass->getParentClasses();
+		auto& vecParentClasses = pClass->getParentClasses();
 		if (!vecParentClasses.empty())
 		{
 			HTREEITEM hParentClasses = m_treeCtrl.InsertItem(L"Parent Classes", IMAGE_COLLECTION, IMAGE_COLLECTION, hClass);
@@ -422,9 +424,9 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, int64_t iClassInstance, bool b
 	return hClass;
 }
 
-void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
+void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 {
-	ASSERT(iClassInstance != 0);
+	ASSERT(owlClass != 0);
 
 	wchar_t szBuffer[512];	
 	
@@ -433,12 +435,12 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	auto& mapClasses = pModel->GetClasses();
 	auto& mapProperties = pModel->GetProperties();
 
-	auto itClass = mapClasses.find(iClassInstance);
+	auto itClass = mapClasses.find(owlClass);
 	ASSERT(itClass != mapClasses.end());
 
 	auto pClass = itClass->second;
 
-	vector<int64_t> vecAncestors;
+	vector<OwlClass> vecAncestors;
 	pModel->GetClassAncestors(pClass->GetInstance(), vecAncestors);
 
 	vecAncestors.push_back(pClass->GetInstance());
@@ -592,15 +594,15 @@ void CClassView::AddProperties(HTREEITEM hParent, int64_t iClassInstance)
 	} // for (size_t iAncestorClass = ...
 }
 
-void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
+void CClassView::AddChildClasses(HTREEITEM hParent, OwlClass owlClass)
 {
-	ASSERT(iClassInstance != 0);
+	ASSERT(owlClass != 0);
 	
 	auto pModel = GetModel();
 
 	auto& mapClasses = pModel->GetClasses();
 
-	auto itParentRDFClass = mapClasses.find(iClassInstance);
+	auto itParentRDFClass = mapClasses.find(owlClass);
 	ASSERT(itParentRDFClass != mapClasses.end());
 
 	auto itClass = mapClasses.begin();
@@ -608,13 +610,13 @@ void CClassView::AddChildClasses(HTREEITEM hParent, int64_t iClassInstance)
 	{
 		auto pClass = itClass->second;
 
-		const vector<int64_t> & vecParentClasses = pClass->getParentClasses();
+		auto& vecParentClasses = pClass->getParentClasses();
 		if (vecParentClasses.empty())
 		{
 			continue;
 		}
 
-		if (vecParentClasses[0] == iClassInstance)
+		if (vecParentClasses[0] == owlClass)
 		{
 			HTREEITEM hClass = AddClass(hParent, pClass->GetInstance(), false);
 			AddProperties(hClass, pClass->GetInstance());
@@ -637,10 +639,7 @@ CRDFModel* CClassView::GetModel() const
 	return _ptr<CRDFModel>(getController()->getModels()[0]);
 }
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
+// ************************************************************************************************
 CClassView::CClassView()
 	: m_pSearchDialog(nullptr)
 {

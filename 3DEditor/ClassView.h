@@ -5,6 +5,7 @@
 #include "RDFView.h"
 #include "SearchTreeCtrlDialog.h"
 
+// ************************************************************************************************
 class CClassToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -15,6 +16,7 @@ class CClassToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ************************************************************************************************
 class CClassView
 	: public CDockablePane
 	, public CRDFView
@@ -51,9 +53,9 @@ private: // Methods
 	void ClassesAlphabeticalView();
 	void ClassesHierarchicalView();
 	void PropertiesAlphabeticalView();
-	HTREEITEM AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses);
-	void AddProperties(HTREEITEM hParent, int64_t iClassInstance);
-	void AddChildClasses(HTREEITEM hParent, int64_t iClassInstance);
+	HTREEITEM AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddParentClasses);
+	void AddProperties(HTREEITEM hParent, OwlClass owlClass);
+	void AddChildClasses(HTREEITEM hParent, OwlClass owlClass);
 
 	CRDFModel* GetModel() const;
 
@@ -85,7 +87,6 @@ protected:
 	afx_msg void OnNewFolder();
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg LRESULT OnChangeActiveTab(WPARAM, LPARAM);
 	afx_msg void OnSort(UINT id);
 	afx_msg void OnUpdateSort(CCmdUI* pCmdUI);
 

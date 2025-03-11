@@ -105,770 +105,774 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
-{
-	if ((pInstance == nullptr) || (pProperty == nullptr))
-	{
-		ASSERT(FALSE);
-		
-		return;
-	}
-
-	auto pModel = GetModel();
-	if (pModel == nullptr)
-	{
-		ASSERT(false);
-
-		return;
-	}
-
-	/* Check Design Tree Consistency */
-	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
-	if (itInstance2Item != m_mapInstance2Item.end())
-	{
-		int iInstanceImage = true ?//pInstance->getDesignTreeConsistency() ? #todo
-			IMAGE_INSTANCE : 
-			IMAGE_INSTANCE_CHECK_FAILED;
-
-		for (size_t iItem = 0; iItem < itInstance2Item->second->Items().size(); iItem++)
-		{
-			m_treeCtrl.SetItemImage(itInstance2Item->second->Items()[iItem], iInstanceImage, iInstanceImage);
-
-			vector<HTREEITEM> vecAscendants;
-			GetAscendants(itInstance2Item->second->Items()[iItem], vecAscendants);
-
-			for (auto hAscendant : vecAscendants)
-			{
-				auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hAscendant);
-
-				int iAscendantImage = pItem->GetInstance()->getDesignTreeConsistency() ?
-					IMAGE_INSTANCE : 
-					IMAGE_INSTANCE_CHECK_FAILED;
-
-				m_treeCtrl.SetItemImage(hAscendant, iAscendantImage, iAscendantImage);
-			}
-		} // for (size_t iItem = ...
-	} // if (itInstance2Item != ...
-	else
-	{
-		ASSERT(FALSE);
-	}
-
-	/* Update non-referenced item */
-	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && 
-		(pProperty->GetType() == OBJECTPROPERTY_TYPE))
-	{
-		HTREEITEM hModel = m_treeCtrl.GetChildItem(NULL);
-		if (hModel != nullptr)
-		{
-			UpdateRootItemsUnreferencedItemsView(pModel->getOwlModel(), hModel);
-		}
-		else
-		{
-			ASSERT(FALSE);
-		}
-	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
-
-	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
-	if (itInstance2Properties == m_mapInstance2Properties.end())
-	{
-		// The properties are not loaded
-		return;
-	}
-
-	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
-	ASSERT(itPropertyItem != itInstance2Properties->second.end());
-
-	auto pPropertyItem = itPropertyItem->second;
-	if ((pPropertyItem == nullptr) || pPropertyItem->Items().empty())
-	{
-		ASSERT(false);
-		
-		return;
-	}
-
-	/* Property */
-	wchar_t szBuffer[512];
-	switch (pPropertyItem->GetProperty()->GetType())
-	{
-		case OBJECTPROPERTY_TYPE:
-		{
-			int64_t* piInstances = nullptr;
-			int64_t iCard = 0;
-			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if (strText.Find(_T("owl:cardinality : ")) == 0)
-					{
-						hCardinality = hChild;
-					}
-					else
-					{
-						if (strText.Find(_T("rdfs:range")) == -1)
-						{
-							vecValues.push_back(hChild);
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					RemoveItemData(vecValues[iValue]);
-
-					vector<HTREEITEM> vecDescendants;
-					GetDescendants(vecValues[iValue], vecDescendants);
-
-					for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++)
-					{
-						RemoveItemData(vecDescendants[iDescendant]);
-					}
-
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				} // for (int64_t iValue = ...
-
-				/*
-				* Add the values
-				*/
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iInstancesCount = iCard;
-				for (int64_t iInstance = 0; iInstance < iInstancesCount; iInstance++)
-				{
-					if (piInstances[iInstance] != 0)
-					{
-						auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
-						assert(pChildInstance != nullptr);
-
-						AddInstance(hProperty, pChildInstance);
-					}
-					else
-					{
-						m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
-					}
-
-					if ((iInstance + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iInstance = ...
-
-				if (iInstancesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		} // case OBJECTPROPERTY_TYPE:
-		break;
-
-		case DATATYPEPROPERTY_TYPE_BOOLEAN:
-		{
-			int64_t iCard = 0;
-			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					swprintf(szBuffer, 100, L"value = %s", pbValue[iValue] ? L"True" : L"False");
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
-		break;
-
-		case DATATYPEPROPERTY_TYPE_STRING:
-		{
-			int64_t iCard = 0;
-			wchar_t ** szValue = nullptr;
-			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
-			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, true);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					wstring strValue = wstring(szValue[iValue]);
-					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-		{
-			int64_t iCard = 0;
-			char ** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					wstring strValue = CA2W(szValue[iValue]);
-					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-		{
-			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					wstring strValue = wstring(szValue[iValue]);
-					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_DOUBLE:
-		{
-			int64_t iCard = 0;
-			double * pdValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);			
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}			
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		} // case DATATYPEPROPERTY_TYPE_DOUBLE:
-		break;
-
-		case DATATYPEPROPERTY_TYPE_INTEGER:
-		{
-			int64_t iCard = 0;
-			int64_t * piValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pPropertyItem->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
-
-			ASSERT(iCard >= 0);
-
-			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
-			{
-				vector<HTREEITEM> vecValues;
-				HTREEITEM hCardinality = nullptr;
-
-				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
-				while (hChild != nullptr)
-				{
-					CString strText = m_treeCtrl.GetItemText(hChild);
-					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
-					{
-						vecValues.push_back(hChild);
-					}
-					else
-					{
-						if (strText.Find(_T("owl:cardinality : ")) == 0)
-						{
-							hCardinality = hChild;
-						}
-					}
-
-					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
-				}
-
-				/*
-				* Disable the drawing
-				*/
-				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
-
-				/*
-				* Update the cardinality
-				*/
-				ASSERT(hCardinality != nullptr);
-
-				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
-
-				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
-
-				/*
-				* Delete all values
-				*/
-				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
-				{
-					m_treeCtrl.DeleteItem(vecValues[iValue]);
-				}
-
-				/*
-				* Add the values
-				*/
-
-				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
-
-				int64_t iValuesCount = iCard;
-				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-				{
-					swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
-
-					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
-
-					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
-					{
-						break;
-					}
-				} // for (int64_t iValue = ...
-
-				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
-				{
-					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
-				}
-			} // for (size_t iItem = ...
-
-			/*
-			* Enable the drawing
-			*/
-			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
-		} // case DATATYPEPROPERTY_TYPE_INTEGER:
-		break;
-
-		default:
-		{
-			ASSERT(false); // unknown property
-		}
-		break;
-	} // switch (pPropertyItem->GetProperty()->GetType())
-}
-
-/*virtual*/ void CDesignTreeView::OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * /*pInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	UpdateView();
-}
-
-/*virtual*/ void CDesignTreeView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	UpdateView();
-}
-
-/*virtual*/ void CDesignTreeView::OnInstancesDeleted(CRDFView* pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	UpdateView();
-}
-
-/*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, CRDFInstance * /*pInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	UpdateView();
-}
+//#todo
+///*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(_rdf_instance* pInstance, CRDFProperty* pProperty)
+//{
+//	if ((pInstance == nullptr) || (pProperty == nullptr))
+//	{
+//		ASSERT(FALSE);
+//		
+//		return;
+//	}
+//
+//	auto pModel = GetModel();
+//	if (pModel == nullptr)
+//	{
+//		ASSERT(false);
+//
+//		return;
+//	}
+//
+//	/* Check Design Tree Consistency */
+//	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
+//	if (itInstance2Item != m_mapInstance2Item.end())
+//	{
+//		int iInstanceImage = true ?//pInstance->getDesignTreeConsistency() ? #todo
+//			IMAGE_INSTANCE : 
+//			IMAGE_INSTANCE_CHECK_FAILED;
+//
+//		for (size_t iItem = 0; iItem < itInstance2Item->second->Items().size(); iItem++)
+//		{
+//			m_treeCtrl.SetItemImage(itInstance2Item->second->Items()[iItem], iInstanceImage, iInstanceImage);
+//
+//			vector<HTREEITEM> vecAscendants;
+//			GetAscendants(itInstance2Item->second->Items()[iItem], vecAscendants);
+//
+//			for (auto hAscendant : vecAscendants)
+//			{
+//				auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hAscendant);
+//
+//				int iAscendantImage = pItem->GetInstance()->getDesignTreeConsistency() ?
+//					IMAGE_INSTANCE : 
+//					IMAGE_INSTANCE_CHECK_FAILED;
+//
+//				m_treeCtrl.SetItemImage(hAscendant, iAscendantImage, iAscendantImage);
+//			}
+//		} // for (size_t iItem = ...
+//	} // if (itInstance2Item != ...
+//	else
+//	{
+//		ASSERT(FALSE);
+//	}
+//
+//	/* Update non-referenced item */
+//	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && 
+//		(pProperty->GetType() == OBJECTPROPERTY_TYPE))
+//	{
+//		HTREEITEM hModel = m_treeCtrl.GetChildItem(NULL);
+//		if (hModel != nullptr)
+//		{
+//			UpdateRootItemsUnreferencedItemsView(pModel->getOwlModel(), hModel);
+//		}
+//		else
+//		{
+//			ASSERT(FALSE);
+//		}
+//	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
+//
+//	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
+//	if (itInstance2Properties == m_mapInstance2Properties.end())
+//	{
+//		// The properties are not loaded
+//		return;
+//	}
+//
+//	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
+//	ASSERT(itPropertyItem != itInstance2Properties->second.end());
+//
+//	auto pPropertyItem = itPropertyItem->second;
+//	if ((pPropertyItem == nullptr) || pPropertyItem->Items().empty())
+//	{
+//		ASSERT(false);
+//		
+//		return;
+//	}
+//
+//	/* Property */
+//	wchar_t szBuffer[512];
+//	switch (pPropertyItem->GetProperty()->GetType())
+//	{
+//		case OBJECTPROPERTY_TYPE:
+//		{
+//			int64_t* piInstances = nullptr;
+//			int64_t iCard = 0;
+//			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if (strText.Find(_T("owl:cardinality : ")) == 0)
+//					{
+//						hCardinality = hChild;
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("rdfs:range")) == -1)
+//						{
+//							vecValues.push_back(hChild);
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					RemoveItemData(vecValues[iValue]);
+//
+//					vector<HTREEITEM> vecDescendants;
+//					GetDescendants(vecValues[iValue], vecDescendants);
+//
+//					for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++)
+//					{
+//						RemoveItemData(vecDescendants[iDescendant]);
+//					}
+//
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				} // for (int64_t iValue = ...
+//
+//				/*
+//				* Add the values
+//				*/
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iInstancesCount = iCard;
+//				for (int64_t iInstance = 0; iInstance < iInstancesCount; iInstance++)
+//				{
+//					if (piInstances[iInstance] != 0)
+//					{
+//						auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
+//						assert(pChildInstance != nullptr);
+//
+//						AddInstance(hProperty, pChildInstance);
+//					}
+//					else
+//					{
+//						m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
+//					}
+//
+//					if ((iInstance + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iInstance = ...
+//
+//				if (iInstancesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		} // case OBJECTPROPERTY_TYPE:
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+//		{
+//			int64_t iCard = 0;
+//			bool* pbValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					swprintf(szBuffer, 100, L"value = %s", pbValue[iValue] ? L"True" : L"False");
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_STRING:
+//		{
+//			int64_t iCard = 0;
+//			wchar_t ** szValue = nullptr;
+//			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, false);
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+//			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, true);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					wstring strValue = wstring(szValue[iValue]);
+//					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+//		{
+//			int64_t iCard = 0;
+//			char ** szValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					wstring strValue = CA2W(szValue[iValue]);
+//					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+//		{
+//			int64_t iCard = 0;
+//			wchar_t** szValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					wstring strValue = wstring(szValue[iValue]);
+//					swprintf(szBuffer, 100, L"value = '%s'", strValue.c_str());
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_DOUBLE:
+//		{
+//			int64_t iCard = 0;
+//			double * pdValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);			
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					swprintf(szBuffer, 100, L"value = %.6f", pdValue[iValue]);
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}			
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		} // case DATATYPEPROPERTY_TYPE_DOUBLE:
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_INTEGER:
+//		{
+//			int64_t iCard = 0;
+//			int64_t * piValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pPropertyItem->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+//
+//			ASSERT(iCard >= 0);
+//
+//			for (size_t iItem = 0; iItem < pPropertyItem->Items().size(); iItem++)
+//			{
+//				vector<HTREEITEM> vecValues;
+//				HTREEITEM hCardinality = nullptr;
+//
+//				HTREEITEM hChild = m_treeCtrl.GetChildItem(pPropertyItem->Items()[iItem]);
+//				while (hChild != nullptr)
+//				{
+//					CString strText = m_treeCtrl.GetItemText(hChild);
+//					if ((strText.Find(_T("value = ")) == 0) || strText.Find(_T("...")) == 0)
+//					{
+//						vecValues.push_back(hChild);
+//					}
+//					else
+//					{
+//						if (strText.Find(_T("owl:cardinality : ")) == 0)
+//						{
+//							hCardinality = hChild;
+//						}
+//					}
+//
+//					hChild = m_treeCtrl.GetNextSiblingItem(hChild);
+//				}
+//
+//				/*
+//				* Disable the drawing
+//				*/
+//				m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
+//
+//				/*
+//				* Update the cardinality
+//				*/
+//				ASSERT(hCardinality != nullptr);
+//
+//				wstring strCardinality = L"owl:cardinality : ";
+//				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
+//
+//				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
+//
+//				/*
+//				* Delete all values
+//				*/
+//				for (int64_t iValue = 0; iValue < (int64_t)vecValues.size(); iValue++)
+//				{
+//					m_treeCtrl.DeleteItem(vecValues[iValue]);
+//				}
+//
+//				/*
+//				* Add the values
+//				*/
+//
+//				HTREEITEM hProperty = pPropertyItem->Items()[iItem];
+//
+//				int64_t iValuesCount = iCard;
+//				for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
+//				{
+//					swprintf(szBuffer, 100, L"value = %lld", piValue[iValue]);
+//
+//					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//
+//					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
+//					{
+//						break;
+//					}
+//				} // for (int64_t iValue = ...
+//
+//				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
+//				{
+//					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
+//				}
+//			} // for (size_t iItem = ...
+//
+//			/*
+//			* Enable the drawing
+//			*/
+//			m_treeCtrl.SendMessage(WM_SETREDRAW, 1, 0);
+//		} // case DATATYPEPROPERTY_TYPE_INTEGER:
+//		break;
+//
+//		default:
+//		{
+//			ASSERT(false); // unknown property
+//		}
+//		break;
+//	} // switch (pPropertyItem->GetProperty()->GetType())
+//}
+
+//#todo
+///*virtual*/ void CDesignTreeView::OnNewInstanceCreated(CRDFView* pSender, _rdf_instance * /*pInstance*/)
+//{
+//	if (pSender == this)
+//	{
+//		return;
+//	}
+//
+//	UpdateView();
+//}
+
+//#todo
+///*virtual*/ void CDesignTreeView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
+//{
+//	if (pSender == this)
+//	{
+//		return;
+//	}
+//
+//	UpdateView();
+//}
+
+//#todo
+///*virtual*/ void CDesignTreeView::OnInstancesDeleted(CRDFView* pSender)
+//{
+//	if (pSender == this)
+//	{
+//		return;
+//	}
+//
+//	UpdateView();
+//}
+
+///*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, _rdf_instance * /*pInstance*/)
+//{
+//	if (pSender == this)
+//	{
+//		return;
+//	}
+//
+//	UpdateView();
+//}
 
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
@@ -1140,7 +1144,7 @@ void CDesignTreeView::GetDescendants(HTREEITEM hItem, vector<HTREEITEM> & vecDes
 	}
 }
 
-void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM hInstance)
+void CDesignTreeView::RemoveInstanceItemData(_rdf_instance* pInstance, HTREEITEM hInstance)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(hInstance != nullptr);
@@ -1154,7 +1158,7 @@ void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM
 	itInstance2Item->second->Items().erase(itInstance);
 }
 
-void CDesignTreeView::RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty* pProperty, HTREEITEM hProperty)
+void CDesignTreeView::RemovePropertyItemData(_rdf_instance* pInstance, CRDFProperty* pProperty, HTREEITEM hProperty)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(pProperty != nullptr);
@@ -1813,7 +1817,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 
 	//auto& mapInstances = pModel->GetInstances();
 
-	//vector<CRDFInstance*> vecInstances;
+	//vector<_rdf_instance*> vecInstances;
 	//vector<HTREEITEM> vecObsoleteItems;
 
 	//HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
@@ -1862,7 +1866,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 	//auto itRFDInstances = mapInstances.begin();
 	//for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 	//{
-	//	CRDFInstance * pInstance = itRFDInstances->second;
+	//	_rdf_instance * pInstance = itRFDInstances->second;
 
 	//	if (pInstance->isReferenced())
 	//	{
@@ -2244,6 +2248,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
+				ASSERT(FALSE); //#todo
 				//GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
@@ -2257,18 +2262,21 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
+				ASSERT(FALSE); //#todo
 				//GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_ADD_MEASUREMENTS:
 			{
+				ASSERT(FALSE); //#todo
 				//GetController()->AddMeasurements(this, pInstance);//#todo
 			}
 			break;
 
 			case ID_INSTANCES_SAVE:
 			{
+				ASSERT(FALSE); //#todo
 				//GetController()->Save(pInstance);//#todo
 			}
 			break;
@@ -2291,6 +2299,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				CRenameDialog dlgRename(pInstance->getName());
 				if (dlgRename.DoModal() == IDOK)
 				{
+					ASSERT(FALSE); //#todo
 					//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);//#todo
 
 					m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
