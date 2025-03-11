@@ -64,29 +64,43 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-/*virtual*/ void CDesignTreeView::onControllerChanged() /*override*/
-{
-	//OnModelChanged();?????????????????
-}
-
-/*virtual*/ void CDesignTreeView::OnControllerChanged() /*override*/
-{
-	//OnModelChanged();?????????????????
-}
-
-/*virtual*/ void CDesignTreeView::OnModelChanged()
-{
-	
-}
-
-/*virtual*/ void CDesignTreeView::OnInstanceSelected(CRDFView* pSender)
+/*virtual*/ void CDesignTreeView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
 	{
 		return;
 	}
 
-	SelectInstance(GetController()->GetSelectedInstance(), TRUE);
+	_rdf_instance* pSelectedInstance = nullptr;
+	if (getController()->getSelectedInstance() != nullptr)
+	{
+		pSelectedInstance = _ptr<_rdf_instance>(getController()->getSelectedInstance());
+	}
+
+	SelectInstance(pSelectedInstance, TRUE);
+}
+
+/*virtual*/ void CDesignTreeView::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	switch (enApplicationProperty)
+	{
+		case enumApplicationProperty::VisibleValuesCountLimit:
+		{
+			UpdateView();
+		}
+		break;
+
+		default:
+		{
+			// Not supported
+		}
+		break;
+	} // switch (enApplicationProperty)
 }
 
 /*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
@@ -854,65 +868,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-/*virtual*/ void CDesignTreeView::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	switch (enApplicationProperty)
-	{
-		case enumApplicationProperty::Projection:
-		case enumApplicationProperty::View:
-		case enumApplicationProperty::ShowFaces:
-		case enumApplicationProperty::CullFaces:
-		case enumApplicationProperty::ShowFacesWireframes:
-		case enumApplicationProperty::ShowConceptualFacesWireframes:
-		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::ShowNormalVectors:
-		case enumApplicationProperty::ShowTangenVectors:
-		case enumApplicationProperty::ShowBiNormalVectors:
-		case enumApplicationProperty::ScaleVectors:
-		case enumApplicationProperty::ShowBoundingBoxes:
-		case enumApplicationProperty::RotationMode:
-		case enumApplicationProperty::PointLightingLocation:
-		case enumApplicationProperty::AmbientLightWeighting:
-		case enumApplicationProperty::SpecularLightWeighting:
-		case enumApplicationProperty::DiffuseLightWeighting:
-		case enumApplicationProperty::MaterialShininess:
-		case enumApplicationProperty::Contrast:
-		case enumApplicationProperty::Brightness:
-		case enumApplicationProperty::Gamma:
-		case enumApplicationProperty::ShowCoordinateSystem:
-		case enumApplicationProperty::CoordinateSystemType:
-		case enumApplicationProperty::ShowNavigator:		
-		{
-			// Not supported
-		}
-		break;
-
-		case enumApplicationProperty::VisibleValuesCountLimit:
-		{
-			UpdateView();
-		}
-		break;
-
-		case enumApplicationProperty::ScalelAndCenter:
-		{
-			// Not supported
-		}
-		break;
-
-		default:
-		{
-			ASSERT(false); // Internal error!
-		}
-		break;
-	} // switch (enApplicationProperty)
-}
-
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
@@ -1062,7 +1017,7 @@ CRDFModel* CDesignTreeView::GetModel() const
 	return _ptr<CRDFModel>(getController()->getModels()[0]);
 }
 
-void CDesignTreeView::SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem)
+void CDesignTreeView::SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeItem)
 {
 	if (m_pSelectedInstance == pInstance)
 	{
@@ -2648,7 +2603,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 
 			//GetController()->SelectInstanceProperty(pSelectedInstance, pSelectedProperty);#todo
 
-			SelectInstance(GetController()->GetSelectedInstance(), FALSE);
+			SelectInstance(pSelectedInstance, FALSE);
 		} // else if (pItem->GetType() == enumItemType::Property)
 		else
 		{

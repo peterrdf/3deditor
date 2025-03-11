@@ -41,7 +41,7 @@ private: // Members
 	map<int64_t, map<int64_t, CRDFPropertyItem*>> m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem*)
 
 	// Selection
-	CRDFInstance* m_pSelectedInstance;
+	_rdf_instance* m_pSelectedInstance;
 	HTREEITEM m_hSelectedInstance;
 
 	// UI
@@ -54,19 +54,15 @@ public: // Methods
 
 	// _view
 	virtual void onModelLoaded() override;
-	virtual void onControllerChanged() override;
-
-	virtual void OnControllerChanged() override;
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CRDFView
-	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CRDFView* pSender) override;
 	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty) override;
 	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance) override;
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView* pSender);
 	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance) override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;
@@ -81,7 +77,7 @@ private: // Methods
 
 	CRDFModel* GetModel() const;
 
-	void SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem);
+	void SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeItem);
 	
 	void GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
