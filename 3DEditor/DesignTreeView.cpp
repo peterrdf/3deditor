@@ -22,6 +22,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+// ************************************************************************************************
 class CDesignTreeViewMenuButton : public CMFCToolBarMenuButton
 {
 
@@ -51,6 +52,7 @@ public:
 
 IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
+// ************************************************************************************************
 /*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
 {
 	if (GetController()->IsTestMode())
@@ -879,13 +881,11 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ CTreeCtrlEx* CDesignTreeView::GetTreeView() /*override*/
 {
 	return &m_treeCtrl;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ vector<CString> CDesignTreeView::GetSearchFilters() /*override*/
 {
 	return vector<CString>
@@ -897,7 +897,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	};
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CDesignTreeView::LoadChildrenIfNeeded(HTREEITEM hItem) /*override*/
 {
 	if (hItem == NULL)
@@ -929,7 +928,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ BOOL CDesignTreeView::ContainsText(int iFilter, HTREEITEM hItem, const CString& strText) /*override*/
 {
 	if (hItem == NULL)
@@ -1940,9 +1938,7 @@ void CDesignTreeView::GetAncestors(OwlInstance iInstance, vector<int64_t>& vecAn
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDesignTreeView
-
+// ************************************************************************************************
 CDesignTreeView::CDesignTreeView()
 	: m_mapInstance2Item()
 	, m_mapInstance2Properties()

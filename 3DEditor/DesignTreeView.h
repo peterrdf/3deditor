@@ -10,6 +10,7 @@
 #include <map>
 using namespace std;
 
+// ************************************************************************************************
 class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -20,6 +21,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
 	, public CRDFView
