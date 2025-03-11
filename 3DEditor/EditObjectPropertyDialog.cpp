@@ -83,7 +83,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 	int64_t * piInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->_instance::getOwlInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
 	assert(pModel != nullptr);
@@ -116,7 +116,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->_instance::getOwlModel() != m_pInstance->_instance::getOwlModel())
+		if (itRFDInstances->second->getOwlModel() != m_pInstance->getOwlModel())
 		{
 			continue;
 		}
@@ -126,7 +126,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 		if (find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
 		{
-			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->_instance::getUniqueName());
+			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 			continue;
@@ -148,7 +148,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->_instance::getUniqueName());
+				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 				m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
 
 				break;
@@ -172,7 +172,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Ancestors
 	*/
-	int64_t	iClassInstance = GetClassesByIterator(m_pInstance->_instance::getOwlModel(), 0);
+	int64_t	iClassInstance = GetClassesByIterator(m_pInstance->getOwlModel(), 0);
 	while (iClassInstance != 0)
 	{
 		vector<int64_t> vecAncestorClasses;
@@ -191,7 +191,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 			} // for (size_t iAncestorClass = ...
 		} // if (!vecAncestorClasses.empty())
 
-		iClassInstance = GetClassesByIterator(m_pInstance->_instance::getOwlModel(), iClassInstance);
+		iClassInstance = GetClassesByIterator(m_pInstance->getOwlModel(), iClassInstance);
 	} // while (iClassInstance != 0)
 
 	for (set<int64_t>::iterator itClass = setClasses.begin(); itClass != setClasses.end(); itClass++)
@@ -251,7 +251,7 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 		CString strClassName;
 		m_cmbNewInstance.GetLBText(m_cmbNewInstance.GetCurSel(), strClassName);
 
-		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->_instance::getOwlModel(), CW2A((LPCTSTR)strClassName));
+		m_iNewInstanceRDFClass = GetClassByName(m_pInstance->getOwlModel(), CW2A((LPCTSTR)strClassName));
 		assert(m_iNewInstanceRDFClass != 0);
 	}
 	break;

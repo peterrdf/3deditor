@@ -305,15 +305,15 @@ void CMy3DEditorDoc::OnViewZoomOut()
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
 	auto pInstance = GetSelectedInstance();
-	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->_instance::hasGeometry());
+	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
-	ZoomToInstance(pInstance->_instance::getOwlInstance());
+	ZoomToInstance(pInstance->getOwlInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
 	auto pInstance = GetSelectedInstance();
-	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->_instance::hasGeometry());
+	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()

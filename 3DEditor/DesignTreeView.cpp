@@ -123,7 +123,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	}
 
 	/* Check Design Tree Consistency */
-	auto itInstance2Item = m_mapInstance2Item.find(pInstance->_instance::getOwlInstance());
+	auto itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
 	if (itInstance2Item != m_mapInstance2Item.end())
 	{
 		int iInstanceImage = true ?//pInstance->getDesignTreeConsistency() ? #todo
@@ -169,7 +169,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		}
 	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
 
-	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->_instance::getOwlInstance());
+	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
 	if (itInstance2Properties == m_mapInstance2Properties.end())
 	{
 		// The properties are not loaded
@@ -195,7 +195,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -234,7 +234,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -299,7 +299,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -338,7 +338,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -387,7 +387,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 			int64_t iCard = 0;
 			wchar_t ** szValue = nullptr;
 			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
 			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, true);
 
 			ASSERT(iCard >= 0);
@@ -427,7 +427,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -476,7 +476,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			char ** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -515,7 +515,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -564,7 +564,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -603,7 +603,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -652,7 +652,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			double * pdValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -691,7 +691,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -739,7 +739,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		{
 			int64_t iCard = 0;
 			int64_t * piValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pPropertyItem->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pPropertyItem->GetProperty()->GetInstance(), (void **)&piValue, &iCard);
 
 			ASSERT(iCard >= 0);
 
@@ -778,7 +778,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				ASSERT(hCardinality != nullptr);
 
 				wstring strCardinality = L"owl:cardinality : ";
-				strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+				strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 				m_treeCtrl.SetItemText(hCardinality, strCardinality.c_str());
 
@@ -1052,11 +1052,11 @@ void CDesignTreeView::SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeI
 	m_treeCtrl.SendMessage(WM_SETREDRAW, 0, 0);
 
 	/** Load instance on demand */
-	auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->_instance::getOwlInstance());
+	auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->getOwlInstance());
 	if (itInstance2Item == m_mapInstance2Item.end())
 	{
-		vector<int64_t> vecAncestors{ m_pSelectedInstance->_instance::getOwlInstance() };
-		GetAncestors(m_pSelectedInstance->_instance::getOwlInstance(), vecAncestors);
+		vector<int64_t> vecAncestors{ m_pSelectedInstance->getOwlInstance() };
+		GetAncestors(m_pSelectedInstance->getOwlInstance(), vecAncestors);
 
 		/** Load the ancestors */
 		for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor > 0; iAncestor--)
@@ -1075,7 +1075,7 @@ void CDesignTreeView::SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeI
 			}
 		} // for (size_t iAncestor = ...
 
-		itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->_instance::getOwlInstance());
+		itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->getOwlInstance());
 	} // if (itInstance2Item == m_mapInstance2Item.end())
 
 	/** Select */
@@ -1145,7 +1145,7 @@ void CDesignTreeView::RemoveInstanceItemData(CRDFInstance * pInstance, HTREEITEM
 	ASSERT(pInstance != nullptr);
 	ASSERT(hInstance != nullptr);
 
-	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->_instance::getOwlInstance());
+	map<int64_t, CRDFInstanceItem *>::iterator itInstance2Item = m_mapInstance2Item.find(pInstance->getOwlInstance());
 	ASSERT(itInstance2Item != m_mapInstance2Item.end());
 
 	vector<HTREEITEM>::const_iterator itInstance = find(itInstance2Item->second->Items().begin(), itInstance2Item->second->Items().end(), hInstance);
@@ -1160,7 +1160,7 @@ void CDesignTreeView::RemovePropertyItemData(CRDFInstance* pInstance, CRDFProper
 	ASSERT(pProperty != nullptr);
 	ASSERT(hProperty != NULL);
 
-	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->_instance::getOwlInstance());
+	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
 	ASSERT(itInstance2Properties != m_mapInstance2Properties.end());
 
 	auto itPropertyItem = itInstance2Properties->second.find(pProperty->GetInstance());
@@ -1457,7 +1457,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 			map<int64_t, CRDFPropertyItem *> mapItemProperties;
 			mapItemProperties[pProperty->GetInstance()] = pPropertyItem;
 
-			m_mapInstance2Properties[pInstance->_instance::getOwlInstance()] = mapItemProperties;
+			m_mapInstance2Properties[pInstance->getOwlInstance()] = mapItemProperties;
 
 			m_treeCtrl.SetItemData(hProperty, (DWORD_PTR)pPropertyItem);
 		}
@@ -1517,13 +1517,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t * piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1562,13 +1562,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t iCard = 0;
 			bool * pbValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pbValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&pbValue, &iCard);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1600,14 +1600,14 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 			int64_t iCard = 0;
 			wchar_t ** szValue = nullptr;
 			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&szValue, &iCard);
 			SetCharacterSerialization(pModel->getOwlModel(), 0, 0, true);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1639,13 +1639,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1677,13 +1677,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1715,14 +1715,14 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t iCard = 0;
 			double * pdValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&pdValue, &iCard);
 
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1753,13 +1753,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		{
 			int64_t iCard = 0;
 			int64_t * piValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void **)&piValue, &iCard);
 
 			/*
 			* owl:cardinality
 			*/
 			wstring strCardinality = L"owl:cardinality : ";
-			strCardinality += pProperty->GetCardinality(pInstance->_instance::getOwlInstance());
+			strCardinality += pProperty->GetCardinality(pInstance->getOwlInstance());
 
 			m_treeCtrl.InsertItem(strCardinality.c_str(), IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
@@ -1793,7 +1793,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		break;
 		} // switch (pProperty->GetType())
 
-		iPropertyInstance = GetInstancePropertyByIterator(pInstance->_instance::getOwlInstance(), iPropertyInstance);
+		iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), iPropertyInstance);
 	} // while (iPropertyInstance != 0)
 }
 
@@ -1869,7 +1869,7 @@ void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREE
 	//		continue;
 	//	}
 
-	//	if (pInstance->_instance::getOwlModel() != iModel)
+	//	if (pInstance->getOwlModel() != iModel)
 	//	{
 	//		continue;
 	//	}
@@ -2162,7 +2162,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				/*auto itRFDInstances = mapInstances.begin();#todo
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
-					if (pInstance->_instance::getOwlModel() != itRFDInstances->second->getOwlModel())
+					if (pInstance->getOwlModel() != itRFDInstances->second->getOwlModel())
 					{
 						continue;
 					}
