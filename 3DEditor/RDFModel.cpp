@@ -665,7 +665,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Check this instance
 		*/
-		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getClassInstance()) != vecRestrictions.end())
+		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
 		{
 			vecCompatibleInstances.push_back(itRFDInstances->second->_instance::getOwlInstance());
 
@@ -725,136 +725,137 @@ float CRDFModel::GetBoundingSphereDiameter() const
 
 /*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
-	ProgressStatus stat(L"Calculate scene sizes...");
-	if (m_pProgress != nullptr)
-	{
-		m_pProgress->Log(0/*info*/, "Calculate scene sizes...");
-	}
+	ASSERT(FALSE);//#todo
+	//ProgressStatus stat(L"Calculate scene sizes...");
+	//if (m_pProgress != nullptr)
+	//{
+	//	m_pProgress->Log(0/*info*/, "Calculate scene sizes...");
+	//}
 
-	/* World */
-	m_fBoundingSphereDiameter = 0.f;
+	///* World */
+	//m_fBoundingSphereDiameter = 0.f;
 
-	/* Min/Max */
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
+	///* Min/Max */
+	//m_fXmin = FLT_MAX;
+	//m_fXmax = -FLT_MAX;
+	//m_fYmin = FLT_MAX;
+	//m_fYmax = -FLT_MAX;
+	//m_fZmin = FLT_MAX;
+	//m_fZmax = -FLT_MAX;
 
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->getEnable())
-		{
-			continue;
-		}
+	//auto itInstance = m_mapInstances.begin();
+	//for (; itInstance != m_mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->getEnable())
+	//	{
+	//		continue;
+	//	}
 
-		if (!bLoadingModel)
-		{
-			itInstance->second->LoadOriginalData();
-		}
-		
-		itInstance->second->calculateBB(
-			itInstance->second,
-			m_fXmin, m_fXmax, 
-			m_fYmin, m_fYmax, 
-			m_fZmin, m_fZmax);
-	}
+	//	if (!bLoadingModel)
+	//	{
+	//		itInstance->second->LoadOriginalData();
+	//	}
+	//	
+	//	itInstance->second->calculateBB(
+	//		itInstance->second,
+	//		m_fXmin, m_fXmax, 
+	//		m_fYmin, m_fYmax, 
+	//		m_fZmin, m_fZmax);
+	//}
 
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		// TODO: new status bar for geometry
-		/*::MessageBox(
-			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
+	//if ((m_fXmin == FLT_MAX) ||
+	//	(m_fXmax == -FLT_MAX) ||
+	//	(m_fYmin == FLT_MAX) ||
+	//	(m_fYmax == -FLT_MAX) ||
+	//	(m_fZmin == FLT_MAX) ||
+	//	(m_fZmax == -FLT_MAX))
+	//{
+	//	// TODO: new status bar for geometry
+	//	/*::MessageBox(
+	//		m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(), 
+	//		_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
 
-		return;
-	}
-	
-	/* World */
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	//	return;
+	//}
+	//
+	///* World */
+	//m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
-		m_fXmin,
-		m_fXmax,
-		m_fYmin,
-		m_fYmax,
-		m_fZmin,
-		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+	//TRACE(L"\n*** Scale and Center I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	//	m_fXmin,
+	//	m_fXmax,
+	//	m_fYmin,
+	//	m_fYmax,
+	//	m_fZmin,
+	//	m_fZmax);
+	//TRACE(L"\n*** Scale and Center, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
 
-	/* Scale and Center */
-	itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->getEnable())
-		{
-			continue;
-		}
+	///* Scale and Center */
+	//itInstance = m_mapInstances.begin();
+	//for (; itInstance != m_mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->getEnable())
+	//	{
+	//		continue;
+	//	}
 
-		itInstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
-	}
+	//	itInstance->second->_geometry::scale(m_fBoundingSphereDiameter / 2.f);
+	//}
 
-	/* Min/Max */
-	m_fXmin = FLT_MAX;
-	m_fXmax = -FLT_MAX;
-	m_fYmin = FLT_MAX;
-	m_fYmax = -FLT_MAX;
-	m_fZmin = FLT_MAX;
-	m_fZmax = -FLT_MAX;
+	///* Min/Max */
+	//m_fXmin = FLT_MAX;
+	//m_fXmax = -FLT_MAX;
+	//m_fYmin = FLT_MAX;
+	//m_fYmax = -FLT_MAX;
+	//m_fZmin = FLT_MAX;
+	//m_fZmax = -FLT_MAX;
 
-	itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->getEnable())
-		{
-			continue;
-		}
+	//itInstance = m_mapInstances.begin();
+	//for (; itInstance != m_mapInstances.end(); itInstance++)
+	//{
+	//	if (!itInstance->second->getEnable())
+	//	{
+	//		continue;
+	//	}
 
-		itInstance->second->calculateBB(
-			itInstance->second,
-			m_fXmin, m_fXmax,
-			m_fYmin, m_fYmax,
-			m_fZmin, m_fZmax);
-	}
+	//	itInstance->second->calculateBB(
+	//		itInstance->second,
+	//		m_fXmin, m_fXmax,
+	//		m_fYmin, m_fYmax,
+	//		m_fZmin, m_fZmax);
+	//}
 
-	if ((m_fXmin == FLT_MAX) ||
-		(m_fXmax == -FLT_MAX) ||
-		(m_fYmin == FLT_MAX) ||
-		(m_fYmax == -FLT_MAX) ||
-		(m_fZmin == FLT_MAX) ||
-		(m_fZmax == -FLT_MAX))
-	{
-		// TODO: new status bar for geometry
-		/*
-		::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(), 
-			_T("Internal error."), _T("Error"), MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-			*/
-		return;
-	}
+	//if ((m_fXmin == FLT_MAX) ||
+	//	(m_fXmax == -FLT_MAX) ||
+	//	(m_fYmin == FLT_MAX) ||
+	//	(m_fYmax == -FLT_MAX) ||
+	//	(m_fZmin == FLT_MAX) ||
+	//	(m_fZmax == -FLT_MAX))
+	//{
+	//	// TODO: new status bar for geometry
+	//	/*
+	//	::MessageBox(
+	//		::AfxGetMainWnd()->GetSafeHwnd(), 
+	//		_T("Internal error."), _T("Error"), MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	//		*/
+	//	return;
+	//}
 
-	/* World */
-	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+	///* World */
+	//m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
-	TRACE(L"\n*** Scale and Center II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
-		m_fXmin,
-		m_fXmax,
-		m_fYmin,
-		m_fYmax,
-		m_fZmin,
-		m_fZmax);
-	TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+	//TRACE(L"\n*** Scale and Center II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+	//	m_fXmin,
+	//	m_fXmax,
+	//	m_fYmin,
+	//	m_fYmax,
+	//	m_fZmin,
+	//	m_fZmax);
+	//TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 void CRDFModel::ZoomToInstance(int64_t /*iInstance*/)
@@ -951,7 +952,8 @@ void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
 
 void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
 {
-	SetFormatSettings(m_iModel);
+	ASSERT(FALSE); //#todo
+	/*SetFormatSettings(m_iModel);
 
 	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
@@ -962,7 +964,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 		}
 
 		itInstance->second->Recalculate();
-	}
+	}*/
 }
 
 /*virtual*/ _texture* CRDFModel::getDefaultTexture() /*override*/
@@ -1502,7 +1504,7 @@ void CRDFModel::LoadRDFInstances()
 		{
 			ASSERT(FALSE);//#todo
 			// Import Model
-			itInstance->second->Recalculate();
+			//itInstance->second->Recalculate();
 		}
 
 		owlInstance = GetInstancesByIterator(m_iModel, owlInstance);
@@ -1700,8 +1702,9 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 			continue;
 		}
 
-		itInstance->second->LoadOriginalData();
-		itInstance->second->_geometry::translate(fX, fY, fZ);
+		ASSERT(FALSE);//#todo
+		/*itInstance->second->LoadOriginalData();
+		itInstance->second->_geometry::translate(fX, fY, fZ);*/
 	}
 }
 

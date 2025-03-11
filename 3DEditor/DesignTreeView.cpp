@@ -126,7 +126,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	auto itInstance2Item = m_mapInstance2Item.find(pInstance->_instance::getOwlInstance());
 	if (itInstance2Item != m_mapInstance2Item.end())
 	{
-		int iInstanceImage = pInstance->getDesignTreeConsistency() ? 
+		int iInstanceImage = true ?//pInstance->getDesignTreeConsistency() ? #todo
 			IMAGE_INSTANCE : 
 			IMAGE_INSTANCE_CHECK_FAILED;
 

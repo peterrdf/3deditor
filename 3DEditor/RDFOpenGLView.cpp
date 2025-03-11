@@ -2368,7 +2368,7 @@ bool CRDFOpenGLView::SelectNavigatorInstance()
 		return false;
 	}
 
-	wstring strInstanceName = m_pNavigatorPointedInstance->_geometry::getName();
+	wstring strInstanceName = m_pNavigatorPointedInstance->getName();
 	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label"))
 	{
 		_setView(enumView::Front); 
