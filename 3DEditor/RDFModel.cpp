@@ -516,9 +516,9 @@ void CRDFModel::ResetInstancesDefaultState()
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (m_mapInstanceDefaultState.find(itInstance->second->_instance::getOwlInstance()) != m_mapInstanceDefaultState.end())
+		if (m_mapInstanceDefaultState.find(itInstance->second->getOwlInstance()) != m_mapInstanceDefaultState.end())
 		{
-			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->_instance::getOwlInstance()));
+			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getOwlInstance()));
 		}
 	}
 }
@@ -613,9 +613,9 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 {
 	assert(pInstance != nullptr);
 
-	bool bResult = RemoveInstance(pInstance->_instance::getOwlInstance()) == 0 ? true : false;
+	bool bResult = RemoveInstance(pInstance->getOwlInstance()) == 0 ? true : false;
 
-	auto itInstance = m_mapInstances.find(pInstance->_instance::getOwlInstance());
+	auto itInstance = m_mapInstances.find(pInstance->getOwlInstance());
 	assert(itInstance != m_mapInstances.end());
 
 	m_mapInstances.erase(itInstance);
@@ -635,7 +635,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
 
-	int64_t iClassInstance = GetInstanceClass(pInstance->_instance::getOwlInstance());
+	int64_t iClassInstance = GetInstanceClass(pInstance->getOwlInstance());
 	assert(iClassInstance != 0);
 
 	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
@@ -657,7 +657,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		/*
 		* Skip the instances that belong to a different model
 		*/
-		if (itRFDInstances->second->_instance::getOwlModel() != pInstance->_instance::getOwlModel())
+		if (itRFDInstances->second->getOwlModel() != pInstance->getOwlModel())
 		{
 			continue;
 		}
@@ -667,7 +667,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		*/
 		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
 		{
-			vecCompatibleInstances.push_back(itRFDInstances->second->_instance::getOwlInstance());
+			vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
 
 			continue;
 		}
@@ -688,7 +688,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 		{
 			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
 			{
-				vecCompatibleInstances.push_back(itRFDInstances->second->_instance::getOwlInstance());
+				vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
 
 				break;
 			}
@@ -958,7 +958,7 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFPrope
 	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
-		if (itInstance->second->_instance::getOwlModel() != m_iModel)
+		if (itInstance->second->getOwlModel() != m_iModel)
 		{
 			continue;
 		}
@@ -1000,7 +1000,7 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 {
 	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
 	{		
-		CString strMetaData = pInstance->_instance::getUniqueName();
+		CString strMetaData = pInstance->getUniqueName();
 		if (strMetaData.GetLength() >= 50)
 		{
 			strMetaData = strMetaData.Left(50);
@@ -1054,7 +1054,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
 
 			strMetaData += iCard > 0 ? L"[...]" : L"[]";
 
@@ -1066,7 +1066,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1086,9 +1086,9 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
-			SetCharacterSerialization(pInstance->_instance::getOwlModel(), 0, 0, true);
+			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
 
 			if (iCard == 1)
 			{
@@ -1107,7 +1107,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1126,7 +1126,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1145,7 +1145,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			double* pdValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1165,7 +1165,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProp
 		{
 			int64_t iCard = 0;
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pInstance->_instance::getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
 
 			if (iCard == 1)
 			{

@@ -475,7 +475,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //	}
 //
 //	auto pSelectedInstance = GetController()->GetSelectedInstance();
-//	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->_instance::hasGeometry() || pSelectedInstance->getTriangles().empty()))
+//	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
 //	{
 //		pSelectedInstance = nullptr;
 //	}
@@ -501,7 +501,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //
 //	CRDFInstance * pSelectedInstance = prSelectedInstanceProperty.first;
 //
-//	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->_instance::hasGeometry() || pSelectedInstance->getTriangles().empty()))
+//	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
 //	{
 //		pSelectedInstance = nullptr;
 //	}
