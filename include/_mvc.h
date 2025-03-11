@@ -118,8 +118,8 @@ protected: // Methods
 
 	void setVertexBufferOffset(OwlInstance owlInstance);
 
-	void addGeometry(_geometry* pGeometry);
-	void addInstance(_instance* pInstance);
+	virtual void addGeometry(_geometry* pGeometry);
+	virtual void addInstance(_instance* pInstance);
 
 	virtual void clean(bool bCloseModel = true);
 

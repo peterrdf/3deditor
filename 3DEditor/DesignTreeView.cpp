@@ -138,8 +138,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		ASSERT(FALSE);
 	}
 
-	auto& mapInstances = pModel->GetInstances();
-
 	/* Update non-referenced item */
 	if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && 
 		(pProperty->GetType() == OBJECTPROPERTY_TYPE))
@@ -252,23 +250,23 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				{
 					if (piInstances[iInstance] != 0)
 					{
-						const auto& itInstance = mapInstances.find(piInstances[iInstance]);
-						ASSERT(itInstance != mapInstances.end());
+						auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
+						assert(pChildInstance != nullptr);
 
-						//AddInstance(hProperty, itInstance->second);#todo				
-					} // if (piInstances[iInstance] != 0)
+						AddInstance(hProperty, pChildInstance);
+					}
 					else
 					{
 						m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
 					}
 
-					if ((iInstance + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iInstance + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iInstance = ...
 
-				if (iInstancesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iInstancesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -349,13 +347,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -439,13 +437,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -527,13 +525,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -615,13 +613,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -702,13 +700,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}			
@@ -789,13 +787,13 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1349,61 +1347,47 @@ void CDesignTreeView::InstancesGroupByClassView()
 		return;
 	}
 
-	//auto& mapInstances = pModel->GetInstances();
+	map<wstring, vector<_rdf_instance*>> mapModel;
+	for (auto pInstance : pModel->getInstances())
+	{
+		_ptr<_rdf_instance> rdfInstance(pInstance);
 
-	//map<wstring, vector<CRDFInstance*>> mapModel;	
-	//for (auto itRFDInstances = mapInstances.begin();
-	//	itRFDInstances != mapInstances.end(); 
-	//	itRFDInstances++)
-	//{
-	//	auto pInstance = itRFDInstances->second;
+		char* szName = nullptr;
+		GetNameOfClass(pInstance->getGeometry()->getClassInstance(), &szName);
 
-	//	char* szName = nullptr;
-	//	GetNameOfClass(pInstance->getClassInstance(), &szName);
+		wstring strName = CA2W(szName);
 
-	//	wstring strName = CA2W(szName);
+		auto itModel = mapModel.find(strName);
+		if (itModel == mapModel.end())
+		{
+			mapModel[strName] = vector<_rdf_instance*>{ rdfInstance };
+		}
+		else
+		{
+			itModel->second.push_back(rdfInstance);
+		}
+	} // for (auto pInstance : ...
 
-	//	if (pInstance->_instance::getOwlModel() == pModel->getOwlModel())
-	//	{
-	//		auto itModel = mapModel.find(strName);
-	//		if (itModel == mapModel.end())
-	//		{
-	//			vector<CRDFInstance*> vecInstances;
-	//			vecInstances.push_back(pInstance);
+	/*
+	* Model
+	*/
+	HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);	
+	for (auto itModel = mapModel.begin();
+		itModel != mapModel.end(); 
+		itModel++)
+	{
+		HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
 
-	//			mapModel[strName] = vecInstances;
-	//		}
-	//		else
-	//		{
-	//			itModel->second.push_back(pInstance);
-	//		}
-	//	}
-	//	else
-	//	{
-	//		ASSERT(false);
-	//	}
-	//} // for (auto itRFDInstances = ...
+		vector<_rdf_instance*> vecInstances = itModel->second;
+		sort(vecInstances.begin(), vecInstances.end(), _instancesComparator());
 
-	///*
-	//* Model
-	//*/
-	//HTREEITEM hModel = m_treeCtrl.InsertItem(_T("Model"), IMAGE_MODEL, IMAGE_MODEL);	
-	//for (auto itModel = mapModel.begin();
-	//	itModel != mapModel.end(); 
-	//	itModel++)
-	//{
-	//	HTREEITEM hClass = m_treeCtrl.InsertItem(itModel->first.c_str(), IMAGE_INSTANCE, IMAGE_INSTANCE, hModel);
+		for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
+		{
+			AddInstance(hClass, vecInstances[iInstance]);
+		}
+	} // for (; itModel != ...
 
-	//	vector<CRDFInstance *> vecInstances = itModel->second;
-	//	sort(vecInstances.begin(), vecInstances.end(), _instancesComparator());
-
-	//	for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++)
-	//	{
-	//		AddInstance(hClass, vecInstances[iInstance]);
-	//	}
-	//} // for (; itModel != ...
-
-	//m_treeCtrl.Expand(hModel, TVE_EXPAND);
+	m_treeCtrl.Expand(hModel, TVE_EXPAND);
 }
 
 void CDesignTreeView::InstancesUnreferencedItemsView()
@@ -1496,7 +1480,6 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 	}
 
 	auto& mapProperties = pModel->GetProperties();
-	auto& mapInstances = pModel->GetInstances();
 
 	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), 0);
 	while (iPropertyInstance != 0)
@@ -1598,23 +1581,23 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 				{
 					if (piInstances[iInstance] != 0)
 					{
-						map<int64_t, CRDFInstance *>::const_iterator itInstance = mapInstances.find(piInstances[iInstance]);
-						ASSERT(itInstance != mapInstances.end());
+						auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
+						assert(pChildInstance != nullptr);
 
-						//AddInstance(hProperty, itInstance->second);#todo
-					} // if (piInstances[iInstance] != 0)
+						AddInstance(hProperty, pChildInstance);
+					} 
 					else
 					{
 						m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
 					}					
 
-					if ((iInstance + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iInstance + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iInstance = ...
 
-				if (iInstancesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iInstancesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1645,13 +1628,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1685,13 +1668,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1723,13 +1706,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1761,13 +1744,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1799,13 +1782,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -1836,13 +1819,13 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 					m_treeCtrl.InsertItem(szBuffer, IMAGE_VALUE, IMAGE_VALUE, hProperty);
 
-					if ((iValue + 1) >= GetController()->GetVisibleValuesCountLimit())
+					if ((iValue + 1) >= getRDFController()->getVisibleValuesCountLimit())
 					{
 						break;
 					}
 				} // for (int64_t iValue = ...
 
-				if (iValuesCount > GetController()->GetVisibleValuesCountLimit())
+				if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 				{
 					m_treeCtrl.InsertItem(L"...", IMAGE_VALUE, IMAGE_VALUE, hProperty);
 				}
@@ -2164,8 +2147,6 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		return;
 	}
-
-	auto& mapInstances = pModel->getInstances();
 
 	auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 	auto pInstance = pInstanceItem->GetInstance();
