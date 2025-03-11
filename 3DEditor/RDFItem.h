@@ -31,8 +31,8 @@ public: // Methods
 public: // Properties
 	
 	_rdf_instance* GetInstance() const { return m_pInstance; }
-	enumItemType getType() const { return m_enItemType; }
-	vector<HTREEITEM>& items() { return m_vecItems; }
+	enumItemType GetType() const { return m_enItemType; }
+	vector<HTREEITEM>& Items() { return m_vecItems; }
 };
 
 // ************************************************************************************************
