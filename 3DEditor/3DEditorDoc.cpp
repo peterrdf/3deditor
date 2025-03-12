@@ -289,7 +289,8 @@ void CMy3DEditorDoc::OnFileImport()
 		return;
 	}
 
-	ImportModel(nullptr, dlgFile.GetPathName().GetString());
+	ASSERT(0);//#todo
+	//ImportModel(nullptr, dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)

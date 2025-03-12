@@ -2267,13 +2267,6 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			}
 			break;
 
-			case ID_INSTANCES_ADD_MEASUREMENTS:
-			{
-				ASSERT(FALSE); //#todo
-				//GetController()->AddMeasurements(this, pInstance);//#todo
-			}
-			break;
-
 			case ID_INSTANCES_SAVE:
 			{
 				ASSERT(FALSE); //#todo

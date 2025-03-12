@@ -625,11 +625,6 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 	return bResult;
 }
 
-void CRDFModel::AddMeasurements(CRDFInstance * /*pInstance*/)
-{	
-	assert(false); // TODO: PENDING REFACTORING!
-}
-
 void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
 	assert(pInstance != nullptr);

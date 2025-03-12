@@ -92,8 +92,6 @@ public: // Methods
 	CRDFInstance* AddNewInstance(int64_t pThing);
 	bool DeleteInstance(CRDFInstance* pInstance);
 
-	void AddMeasurements(CRDFInstance* pInstance);	
-
 	void GetCompatibleInstances(CRDFInstance* pInstance, CObjectRDFProperty* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 	
 	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;

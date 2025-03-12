@@ -458,56 +458,33 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::AddMeasurements(CRDFView * pSender, CRDFInstance * pInstance)
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	if (pModel == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
-	pModel->AddMeasurements(pInstance);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnMeasurementsAdded(pSender, pInstance);
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	if (pModel == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
-	pModel->ImportModel(szPath);
-
-	UpdateCoordinateSystem();
-
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnModelChanged();
-	}
-
-	m_bUpdatingModel = false;*/
-}
+//void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*auto pModel = GetModel();
+//	assert(pModel != nullptr);
+//
+//	if (pModel == nullptr)
+//	{
+//		assert(false);
+//
+//		return;
+//	}
+//
+//	pModel->ImportModel(szPath);
+//
+//	UpdateCoordinateSystem();
+//
+//	m_bUpdatingModel = true;
+//
+//	auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnModelChanged();
+//	}
+//
+//	m_bUpdatingModel = false;*/
+//}
 
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancesEnabledStateChanged()

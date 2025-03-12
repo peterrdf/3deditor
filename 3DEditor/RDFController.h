@@ -111,14 +111,9 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Removes instances
 	bool DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> vecInstances);
-
-	// --------------------------------------------------------------------------------------------
-	// Adds measurements/annotations
-	void AddMeasurements(CRDFView * pSender, CRDFInstance * pInstance);
-
 	// --------------------------------------------------------------------------------------------
 	// Import
-	void ImportModel(CRDFView* pSender, const wchar_t* szPath);
+	//void ImportModel(CRDFView* pSender, const wchar_t* szPath);
 
 	// --------------------------------------------------------------------------------------------
 	// Enable/Disable support
