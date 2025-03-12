@@ -166,51 +166,6 @@ pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty
 	return m_prSelectedInstanceProperty;
 }
 
-//// ------------------------------------------------------------------------------------------------
-//int CRDFController::GetVisibleValuesCountLimit() const
-//{
-//	return m_iVisibleValuesCountLimit;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
-//{
-//	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//BOOL CRDFController::GetScaleAndCenter() const
-//{
-//	return m_bScaleAndCenter;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
-//{
-//	m_bScaleAndCenter = bScaleAndCenter;
-//}
-//
-//// ------------------------------------------------------------------------------------------------
-//BOOL CRDFController::GetModelCoordinateSystem() const
-//{
-//	return m_bModelCoordinateSystem;
-//}
-
-//// ------------------------------------------------------------------------------------------------
-//void CRDFController::SetModelCoordinateSystem(BOOL bValue)
-//{
-//	ASSERT(FALSE);//#todo
-//	/*m_bModelCoordinateSystem = bValue;
-//
-//	UpdateCoordinateSystem();
-//
-//	auto itView = m_setViews.begin();
-//	for (; itView != m_setViews.end(); itView++)
-//	{
-//		(*itView)->OnWorldDimensionsChanged();
-//	}*/
-//}
-
 // ------------------------------------------------------------------------------------------------
 //void CRDFController::UpdateCoordinateSystem()
 //{
@@ -251,32 +206,32 @@ pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty
 //}
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	if (pModel == nullptr)
-	{
-		assert(false);
-
-		return;
-	}
-
-	pModel->OnInstancePropertyEdited(pInstance, pProperty);
-
-	if (m_bScaleAndCenter)
-	{
-		pModel->ScaleAndCenter();
-	}
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnInstancePropertyEdited(pInstance, pProperty);
-	}*/
-}
+//void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*auto pModel = GetModel();
+//	assert(pModel != nullptr);
+//
+//	if (pModel == nullptr)
+//	{
+//		assert(false);
+//
+//		return;
+//	}
+//
+//	pModel->OnInstancePropertyEdited(pInstance, pProperty);
+//
+//	if (m_bScaleAndCenter)
+//	{
+//		pModel->ScaleAndCenter();
+//	}
+//
+//	auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnInstancePropertyEdited(pInstance, pProperty);
+//	}*/
+//}
 
 // ------------------------------------------------------------------------------------------------
 //void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)

@@ -95,42 +95,6 @@ public: // Methods
 	pair<CRDFInstance *, CRDFProperty *> GetSelectedInstanceProperty() const;
 
 	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//int GetVisibleValuesCountLimit() const;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	///void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//BOOL GetScaleAndCenter() const;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//void SetScaleAndCenter(BOOL bScaleAndCenter);
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//BOOL GetModelCoordinateSystem() const;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//void SetModelCoordinateSystem(BOOL bValue);
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//void UpdateCoordinateSystem();
-
-	// --------------------------------------------------------------------------------------------
-	// Edit properties support
-	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// Edit properties support
-	//void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
-
-	// --------------------------------------------------------------------------------------------
 	// Factory
 	CRDFInstance* CreateNewInstance(CRDFView* pSender, int64_t iClassInstance);
 	void RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName);
