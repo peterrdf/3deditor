@@ -1267,6 +1267,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
+	/*if (GetController()->IsTestMode())#todo
+	{
+		return;
+	}*/
+
 	m_wndObjectCombo.SetCurSel(0 /*Application*/);
 
 	LoadApplicationProperties();
