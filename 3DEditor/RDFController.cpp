@@ -142,32 +142,32 @@ void CRDFController::Save(CRDFInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
-{
-	ASSERT(FALSE);//#todo
-	/*m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnShowBaseInformation();
-	}*/
-}
+//void CRDFController::ShowBaseInformation(CRDFInstance* pInstance)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*m_pSelectedInstance = pInstance;
+//	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
+//
+//	auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnShowBaseInformation();
+//	}*/
+//}
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::ShowMetaInformation(CRDFInstance* pInstance)
-{
-	ASSERT(FALSE);//#todo
-	/*m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnShowMetaInformation();
-	}*/
-}
+//void CRDFController::ShowMetaInformation(CRDFInstance* pInstance)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*m_pSelectedInstance = pInstance;
+//	m_prSelectedInstanceProperty = pair<CRDFInstance*, CRDFProperty*>(nullptr, nullptr);
+//
+//	auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnShowMetaInformation();
+//	}*/
+//}
 
 // ------------------------------------------------------------------------------------------------
 void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)

@@ -83,11 +83,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Base information support
-	void ShowBaseInformation(CRDFInstance* pInstance);
+	//void ShowBaseInformation(CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Meta information support
-	void ShowMetaInformation(CRDFInstance * pInstance);
+	//void ShowMetaInformation(CRDFInstance * pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
@@ -131,7 +131,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void UpdateCoordinateSystem();
+	//void UpdateCoordinateSystem();
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support
@@ -171,16 +171,9 @@ public: // Methods
 	// Enable/Disable support
 	void OnInstancesEnabledStateChanged();
 
-	// --------------------------------------------------------------------------------------------
 	// Tests
 	void BeginTestMode();
-
-	// --------------------------------------------------------------------------------------------
-	// Tests
 	void EndTestMode();
-
-	// --------------------------------------------------------------------------------------------
-	// Tests
 	BOOL IsTestMode();
 };
 

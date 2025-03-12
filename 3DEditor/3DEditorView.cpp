@@ -99,7 +99,9 @@ END_MESSAGE_MAP()
 // CMy3DEditorView construction/destruction
 
 CMy3DEditorView::CMy3DEditorView()
-	: m_pOpenGLView(nullptr)
+	: CView()
+	, _rdf_view()
+	, m_pOpenGLView(nullptr)
 {
 }
 
