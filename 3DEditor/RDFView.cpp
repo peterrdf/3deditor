@@ -15,16 +15,6 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-//void CRDFView::SetController(CRDFController * pController)
-//{
-//	assert(pController != nullptr);
-//
-//	m_pController = pController;
-//
-//	OnControllerChanged();
-//}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFView::OnInstanceSelected(CRDFView * /*pSender*/)
 {
 }
