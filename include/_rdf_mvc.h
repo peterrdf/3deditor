@@ -56,13 +56,21 @@ private: // Members
 	// UI
 	int m_iVisibleValuesCountLimit;
 
+	// OpenGL View
+	bool m_bScaleAndCenter;
+	bool m_bModelCoordinateSystem;
+
 public: // Methods
 
 	_rdf_controller();
 	virtual ~_rdf_controller();
 
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
-	void setVisibleValuesCountLimit(int iLimit) { m_iVisibleValuesCountLimit = iLimit; }
+	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
+	bool getScaleAndCenter() const { return m_bScaleAndCenter; }
+	void setScaleAndCenter(bool bNewValue) { m_bScaleAndCenter = bNewValue; }
+	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
+	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
 
 	// Events
 };

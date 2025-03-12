@@ -103,25 +103,25 @@ private:  // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Controller
-	CRDFController * m_pController;
+	_rdf_controller * m_pController;
 
 	// --------------------------------------------------------------------------------------------
 	// Instance
-	CRDFInstance * m_pInstance;
+	_rdf_instance * m_pInstance;
 
 public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CRDFInstanceData(CRDFController * pController, CRDFInstance * pInstance);
+	CRDFInstanceData(_rdf_controller * pController, _rdf_instance * pInstance);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFController * GetController() const;
+	_rdf_controller * GetController() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CRDFInstance * GetInstance() const;
+	_rdf_instance * GetInstance() const;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// ctor
-	CRDFInstancePropertyData(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, int64_t iCard);
+	CRDFInstancePropertyData(_rdf_controller * pController, _rdf_instance * pInstance, CRDFProperty * pProperty, int64_t iCard);
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
@@ -281,13 +281,12 @@ public: // Methods
 	
 	// CRDFView
 	//#todo
-	virtual void OnModelChanged();
 	virtual void OnShowBaseInformation();
 	virtual void OnShowMetaInformation();
 	virtual void OnInstanceSelected(CRDFView* pSender);
 	virtual void OnInstancePropertySelected();
-	virtual void OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* pInstance);
-	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance * pInstance);
+	virtual void OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* pInstance);
+	virtual void OnNewInstanceCreated(CRDFView* pSender, _rdf_instance * pInstance);
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
 	//virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
@@ -343,9 +342,9 @@ protected:
 
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
-	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, CRDFInstance* pInstance, CRDFProperty* pProperty);
-	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty);
-	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, CRDFInstance* pInstance, CRDFProperty* pProperty);
+	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
+	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
+	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
 	void LoadBaseInformation();
 	void LoadMetaInformation();
 	void SetPropListFont();
