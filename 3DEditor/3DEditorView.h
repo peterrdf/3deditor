@@ -8,7 +8,7 @@
 
 class CMy3DEditorView 
 	: public CView
-	, public _view
+	, public _rdf_view
 {
 
 private: // Members

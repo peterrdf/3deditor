@@ -14,9 +14,9 @@ CRDFController::CRDFController()
 	, m_bUpdatingModel(false)
 	, m_pSelectedInstance(nullptr)
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
-	, m_iVisibleValuesCountLimit(10000)
-	, m_bScaleAndCenter(TRUE)
-	, m_bModelCoordinateSystem(TRUE)
+	//, m_iVisibleValuesCountLimit(10000)
+	//, m_bScaleAndCenter(TRUE)
+	//, m_bModelCoordinateSystem(TRUE)
 {
 	//#todo
 	m_pSceneModel->CreateDefaultModel();
@@ -219,89 +219,89 @@ pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty
 	return m_prSelectedInstanceProperty;
 }
 
-// ------------------------------------------------------------------------------------------------
-int CRDFController::GetVisibleValuesCountLimit() const
-{
-	return m_iVisibleValuesCountLimit;
-}
+//// ------------------------------------------------------------------------------------------------
+//int CRDFController::GetVisibleValuesCountLimit() const
+//{
+//	return m_iVisibleValuesCountLimit;
+//}
+//
+//// ------------------------------------------------------------------------------------------------
+//void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
+//{
+//	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
+//}
+//
+//// ------------------------------------------------------------------------------------------------
+//BOOL CRDFController::GetScaleAndCenter() const
+//{
+//	return m_bScaleAndCenter;
+//}
+//
+//// ------------------------------------------------------------------------------------------------
+//void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
+//{
+//	m_bScaleAndCenter = bScaleAndCenter;
+//}
+//
+//// ------------------------------------------------------------------------------------------------
+//BOOL CRDFController::GetModelCoordinateSystem() const
+//{
+//	return m_bModelCoordinateSystem;
+//}
+
+//// ------------------------------------------------------------------------------------------------
+//void CRDFController::SetModelCoordinateSystem(BOOL bValue)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*m_bModelCoordinateSystem = bValue;
+//
+//	UpdateCoordinateSystem();
+//
+//	auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnWorldDimensionsChanged();
+//	}*/
+//}
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SetVisibleValuesCountLimit(int iVisibleValuesCountLimit)
-{
-	m_iVisibleValuesCountLimit = iVisibleValuesCountLimit;
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL CRDFController::GetScaleAndCenter() const
-{
-	return m_bScaleAndCenter;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::SetScaleAndCenter(BOOL bScaleAndCenter)
-{
-	m_bScaleAndCenter = bScaleAndCenter;
-}
-
-// ------------------------------------------------------------------------------------------------
-BOOL CRDFController::GetModelCoordinateSystem() const
-{
-	return m_bModelCoordinateSystem;
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::SetModelCoordinateSystem(BOOL bValue)
-{
-	ASSERT(FALSE);//#todo
-	/*m_bModelCoordinateSystem = bValue;
-
-	UpdateCoordinateSystem();
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnWorldDimensionsChanged();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::UpdateCoordinateSystem()
-{
-	ASSERT(FALSE);//#todo
-	//auto pModel = GetModel();
-	//assert(pModel != nullptr);
-
-	//if (pModel == nullptr)
-	//{
-	//	assert(false);
-
-	//	return;
-	//}
-	//	
-	//if (!m_bModelCoordinateSystem)
-	//{
-	//	/* Vertex Buffers Offset */
-	//	double dVertexBuffersOffsetX = 0.;
-	//	double dVertexBuffersOffsetY = 0.;
-	//	double dVertexBuffersOffsetZ = 0.;
-	//	pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
-
-	//	double dBoundingSphereDiameter = pModel->GetOriginalBoundingSphereDiameter();
-
-	//	dVertexBuffersOffsetX /= dBoundingSphereDiameter / 2.;
-	//	dVertexBuffersOffsetY /= dBoundingSphereDiameter / 2.;
-	//	dVertexBuffersOffsetZ /= dBoundingSphereDiameter / 2.;
-
-	//	m_pSceneModel->TranslateModel(
-	//		dVertexBuffersOffsetX,
-	//		dVertexBuffersOffsetY,
-	//		dVertexBuffersOffsetZ);
-	//}
-	//else
-	//{
-	//	m_pSceneModel->TranslateModel(0.f, 0.f, 0.f);
-	//}
-}
+//void CRDFController::UpdateCoordinateSystem()
+//{
+//	ASSERT(FALSE);//#todo
+//	//auto pModel = GetModel();
+//	//assert(pModel != nullptr);
+//
+//	//if (pModel == nullptr)
+//	//{
+//	//	assert(false);
+//
+//	//	return;
+//	//}
+//	//	
+//	//if (!m_bModelCoordinateSystem)
+//	//{
+//	//	/* Vertex Buffers Offset */
+//	//	double dVertexBuffersOffsetX = 0.;
+//	//	double dVertexBuffersOffsetY = 0.;
+//	//	double dVertexBuffersOffsetZ = 0.;
+//	//	pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
+//
+//	//	double dBoundingSphereDiameter = pModel->GetOriginalBoundingSphereDiameter();
+//
+//	//	dVertexBuffersOffsetX /= dBoundingSphereDiameter / 2.;
+//	//	dVertexBuffersOffsetY /= dBoundingSphereDiameter / 2.;
+//	//	dVertexBuffersOffsetZ /= dBoundingSphereDiameter / 2.;
+//
+//	//	m_pSceneModel->TranslateModel(
+//	//		dVertexBuffersOffsetX,
+//	//		dVertexBuffersOffsetY,
+//	//		dVertexBuffersOffsetZ);
+//	//}
+//	//else
+//	//{
+//	//	m_pSceneModel->TranslateModel(0.f, 0.f, 0.f);
+//	//}
+//}
 
 // ------------------------------------------------------------------------------------------------
 void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
@@ -332,15 +332,15 @@ void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFPrope
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
-{
-	ASSERT(FALSE);//#todo
-	/*auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
-	}*/
-}
+//void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
+//{
+//	ASSERT(FALSE);//#todo
+//	/*auto itView = m_setViews.begin();
+//	for (; itView != m_setViews.end(); itView++)
+//	{
+//		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
+//	}*/
+//}
 
 CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {

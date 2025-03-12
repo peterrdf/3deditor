@@ -39,12 +39,12 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	int m_iVisibleValuesCountLimit;
+	//int m_iVisibleValuesCountLimit;
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	BOOL m_bScaleAndCenter;
-	BOOL m_bModelCoordinateSystem;
+	//BOOL m_bScaleAndCenter;
+	//BOOL m_bModelCoordinateSystem;
 
 public: // Methods
 
@@ -107,27 +107,27 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	int GetVisibleValuesCountLimit() const;
+	//int GetVisibleValuesCountLimit() const;
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
+	///void SetVisibleValuesCountLimit(int iVisibleValuesCountLimit);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	BOOL GetScaleAndCenter() const;
+	//BOOL GetScaleAndCenter() const;
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetScaleAndCenter(BOOL bScaleAndCenter);
+	//void SetScaleAndCenter(BOOL bScaleAndCenter);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	BOOL GetModelCoordinateSystem() const;
+	//BOOL GetModelCoordinateSystem() const;
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
-	void SetModelCoordinateSystem(BOOL bValue);
+	//void SetModelCoordinateSystem(BOOL bValue);
 
 	// --------------------------------------------------------------------------------------------
 	// UI properties
@@ -139,7 +139,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Edit properties support
-	void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
+	//void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Factory
