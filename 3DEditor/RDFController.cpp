@@ -54,38 +54,6 @@ CRDFModel* CRDFController::GetModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::ZoomToInstance(int64_t iInstance)
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	pModel->ZoomToInstance(iInstance);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnWorldDimensionsChanged();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::ZoomOut()
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	pModel->ZoomOut();
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnWorldDimensionsChanged();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
 void CRDFController::ScaleAndCenter()
 {
 	ASSERT(FALSE);//#todo
@@ -99,21 +67,6 @@ void CRDFController::ScaleAndCenter()
 	{
 		(*itView)->OnWorldDimensionsChanged();
 	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::Save(CRDFInstance* pInstance)
-{
-	TCHAR szFilters[] = _T("BIN Files (*.bin)|*.bin|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("bin"), pInstance->getUniqueName(),
-		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
-		return;
-	}
-
-	SaveInstanceTreeW(pInstance->getOwlInstance(), dlgFile.GetPathName());
 }
 
 // ------------------------------------------------------------------------------------------------

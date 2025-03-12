@@ -422,13 +422,13 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->ZoomToInstance(vecSelectedInstances[0]->getOwlInstance());
+				GetController()->zoomToInstance(vecSelectedInstances[0]);
 			}
 			break;
 
 			case ID_VIEW_ZOOM_OUT:
 			{
-				GetController()->ZoomOut();
+				GetController()->zoomOut();
 			}
 			break;
 

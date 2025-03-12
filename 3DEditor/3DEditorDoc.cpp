@@ -305,27 +305,27 @@ void CMy3DEditorDoc::OnViewZoomOut()
 
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
-	auto pInstance = GetSelectedInstance();
+	auto pInstance = getSelectedInstance();
 	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
-	ZoomToInstance(pInstance->getOwlInstance());
+	zoomToInstance(pInstance);
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
-	auto pInstance = GetSelectedInstance();
+	auto pInstance = getSelectedInstance();
 	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()
 {
-	assert(GetSelectedInstance() != nullptr);
-	Save(GetSelectedInstance());
+	assert(getSelectedInstance() != nullptr);
+	saveInstance(getSelectedInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetSelectedInstance() != nullptr);
+	pCmdUI->Enable(getSelectedInstance() != nullptr);
 }
 
 void CMy3DEditorDoc::OnExportAsCitygml()

@@ -2269,8 +2269,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_SAVE:
 			{
-				ASSERT(FALSE); //#todo
-				//GetController()->Save(pInstance);//#todo
+				getController()->saveInstance(pInstance);
 			}
 			break;
 
