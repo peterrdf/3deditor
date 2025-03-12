@@ -31,7 +31,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Sets up Controller
-	void SetController(CRDFController* pController);
+	//void SetController(CRDFController* pController);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF model has been loaded

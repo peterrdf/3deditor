@@ -41,6 +41,8 @@ public: // Methods
 	virtual ~_rdf_view();
 
 	// Events
+	virtual void onShowBaseInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onShowMetaInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 
 public: // Properties
 
@@ -65,12 +67,16 @@ public: // Methods
 	_rdf_controller();
 	virtual ~_rdf_controller();
 
+	// Events
+	void showBaseInformation(_view* pSender, _rdf_instance* pInstance);
+	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
+
+public: // Properties
+
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
 	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
 	bool getScaleAndCenter() const { return m_bScaleAndCenter; }
 	void setScaleAndCenter(bool bNewValue) { m_bScaleAndCenter = bNewValue; }
 	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
-	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
-
-	// Events
+	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }	
 };

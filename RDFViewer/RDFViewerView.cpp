@@ -147,7 +147,7 @@ int CRDFViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pOpenGLView->setController(pDoc);
 
 	m_pInstancesDialog = new CInstancesDialog();
-	m_pInstancesDialog->SetController(pDoc);
+	m_pInstancesDialog->setController(pDoc);
 	m_pInstancesDialog->Create(CInstancesDialog::IDD, this);	
 	m_pInstancesDialog->ShowWindow(SW_SHOW);
 

@@ -278,11 +278,14 @@ public: // Methods
 	// _view
 	virtual void postModelLoaded() override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
+
+	// _rdf_view
+	virtual void onShowBaseInformation(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onShowMetaInformation(_view* pSender, _rdf_instance* pInstance) override;
 	
 	// CRDFView
 	//#todo
-	virtual void OnShowBaseInformation();
-	virtual void OnShowMetaInformation();
+	
 	virtual void OnInstanceSelected(CRDFView* pSender);
 	virtual void OnInstancePropertySelected();
 	virtual void OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* pInstance);
@@ -345,8 +348,8 @@ protected:
 	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
 	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
 	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, CRDFProperty* pProperty);
-	void LoadBaseInformation();
-	void LoadMetaInformation();
+	void LoadBaseInformation(_rdf_instance* pInstance);
+	void LoadMetaInformation(_rdf_instance* pInstance);
 	void SetPropListFont();
 
 	int m_nComboHeight;

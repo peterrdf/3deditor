@@ -82,14 +82,6 @@ public: // Methods
 	void Save(CRDFInstance* pInstance);
 
 	// --------------------------------------------------------------------------------------------
-	// Base information support
-	//void ShowBaseInformation(CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Meta information support
-	//void ShowMetaInformation(CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
 	// Selection support
 	void SelectInstance(CRDFView * pSender, CRDFInstance * pInstance);
 

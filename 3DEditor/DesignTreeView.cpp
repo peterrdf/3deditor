@@ -2151,13 +2151,13 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_BASE_INFORMATION:
 			{
-				//getController()->ShowBaseInformation(pInstance);#todo
+				getRDFController()->showBaseInformation(this, pInstance);
 			}
 			break;
 
 			case ID_INSTANCES_META_INFORMATION:
 			{
-				//getController()->ShowMetaInformation(pInstance);#todo
+				getRDFController()->showMetaInformation(this, pInstance);
 			}
 			break;
 
