@@ -344,52 +344,6 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //}
 
 // ------------------------------------------------------------------------------------------------
-/*virtual void CRDFOpenGLView::OnWorldDimensionsChanged() /*override*/
-//{
-	///*
-	//* Center
-	//*/
-	//auto pController = GetController();
-	//assert(pController != nullptr);
-
-	//CRDFModel * pModel = pController->GetModel();
-	//assert(pModel != nullptr);
-
-	//float fXmin = -1.f;
-	//float fXmax = 1.f;
-	//float fYmin = -1.f;
-	//float fYmax = 1.f;
-	//float fZmin = -1.f;
-	//float fZmax = 1.f;
-	//pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	//m_fXTranslation = fXmin;
-	//m_fXTranslation += (fXmax - fXmin) / 2.f;
-	//m_fXTranslation = -m_fXTranslation;
-
-	//m_fYTranslation = fYmin;
-	//m_fYTranslation += (fYmax - fYmin) / 2.f;
-	//m_fYTranslation = -m_fYTranslation;
-
-	//m_fZTranslation = fZmin;
-	//m_fZTranslation += (fZmax - fZmin) / 2.f;
-	//m_fZTranslation = -m_fZTranslation;
-	//m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-
-	//m_fScaleFactor = pModel->GetBoundingSphereDiameter();
-
-	///*
-	//* Reload model
-	//*/
-	//OnModelChanged();
-
-	///*
-	//* Restore the selection
-	//*/
-	//OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
 ///*virtual*/ void CRDFOpenGLView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, CRDFProperty* /*pProperty*/) /*override*/
 //{
 //	/*

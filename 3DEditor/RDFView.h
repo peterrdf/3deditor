@@ -25,14 +25,6 @@ public: // Methods
 	virtual ~CRDFView();
 
 	// --------------------------------------------------------------------------------------------
-	// An RDF model has been loaded
-	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// RDF model has been recalculated
-	virtual void OnWorldDimensionsChanged();
-
-	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been selected
 	virtual void OnInstanceSelected(CRDFView* pSender);
 

@@ -63,10 +63,6 @@ public: // Methods
 	virtual void LoadModel(LPCTSTR szFileName);
 
 	// --------------------------------------------------------------------------------------------
-	// [-1, 1]
-	void ScaleAndCenter();
-
-	// --------------------------------------------------------------------------------------------
 	// Selection support
 	void SelectInstance(CRDFView * pSender, CRDFInstance * pInstance);
 

@@ -266,7 +266,8 @@ void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
 
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 {
-	ScaleAndCenter();
+	//#todo
+	//ScaleAndCenter();
 }
 
 void CMy3DEditorDoc::OnFileOpen()

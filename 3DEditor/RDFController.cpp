@@ -54,22 +54,6 @@ CRDFModel* CRDFController::GetModel()
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::ScaleAndCenter()
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	pModel->ScaleAndCenter();
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnWorldDimensionsChanged();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
 void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
 {
 	ASSERT(FALSE);//#todo
