@@ -1840,6 +1840,10 @@ _oglView::_oglView()
 		GLuint iConcFacesIndicesCount = 0;
 		vector<_cohort*> vecConcFacesCohorts;
 
+		// IBO - Face polygons
+		GLuint iFacePolygonsIndicesCount = 0;
+		vector<_cohort*> vecFacePolygonsCohorts;
+
 		// IBO - Conceptual face polygons
 		GLuint iConcFacePolygonsIndicesCount = 0;
 		vector<_cohort*> vecConcFacePolygonsCohorts;
@@ -1891,6 +1895,26 @@ _oglView::_oglView()
 
 				iConcFacesIndicesCount += (GLsizei)pGeometry->concFacesCohorts()[iCohort]->indices().size();
 				vecConcFacesCohorts.push_back(pGeometry->concFacesCohorts()[iCohort]);
+			}
+
+			//  IBO - Face polygons
+			for (size_t iCohort = 0; iCohort < pGeometry->facePolygonsCohorts().size(); iCohort++)
+			{
+				if ((int_t)(iFacePolygonsIndicesCount + pGeometry->facePolygonsCohorts()[iCohort]->indices().size()) > (int_t)INDICES_MAX_COUNT)
+				{
+					if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
+					{
+						ASSERT(FALSE);
+
+						return;
+					}
+
+					iFacePolygonsIndicesCount = 0;
+					vecFacePolygonsCohorts.clear();
+				}
+
+				iFacePolygonsIndicesCount += (GLsizei)pGeometry->facePolygonsCohorts()[iCohort]->indices().size();
+				vecFacePolygonsCohorts.push_back(pGeometry->facePolygonsCohorts()[iCohort]);
 			}
 
 			//  IBO - Conceptual face polygons
@@ -1983,6 +2007,20 @@ _oglView::_oglView()
 
 			iConcFacesIndicesCount = 0;
 			vecConcFacesCohorts.clear();
+		}
+
+		//  IBO - Face polygons
+		if (iFacePolygonsIndicesCount > 0)
+		{
+			if (m_oglBuffers.createIBO(vecFacePolygonsCohorts) != iFacePolygonsIndicesCount)
+			{
+				ASSERT(FALSE);
+
+				return;
+			}
+
+			iFacePolygonsIndicesCount = 0;
+			vecFacePolygonsCohorts.clear();
 		}
 
 		//  IBO - Conceptual face polygons
