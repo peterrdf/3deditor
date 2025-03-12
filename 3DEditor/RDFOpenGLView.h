@@ -74,12 +74,6 @@ private: // Methods
 		CRDFModel* pNavigatorModel,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight);
-	void DrawModel(_model* pM);
-	void DrawFaces(_model* pM, bool bTransparent);
-	void DrawFacesPolygons(_model* pM);
-	void DrawConceptualFacesPolygons(_model* pM);
-	void DrawLines(_model* pM);
-	void DrawPoints(_model* pM);
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
