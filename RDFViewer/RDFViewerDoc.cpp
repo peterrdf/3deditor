@@ -51,10 +51,10 @@ BOOL CRDFViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	m_pModel = new CRDFModel();
-	m_pModel->CreateDefaultModel();
+	auto pModel = new CRDFModel();
+	pModel->CreateDefaultModel();
 
-	SetModel(m_pModel);
+	setModel(pModel);
 
 	return TRUE;
 }
@@ -149,16 +149,10 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
+	auto pModel = new CRDFModel();
+	pModel->Load(lpszPathName, true);
 
-	m_pModel = new CRDFModel();
-	m_pModel->Load(lpszPathName, true);	
-
-	SetModel(m_pModel);
+	setModel(pModel);
 
 	// Title
 	CString strTitle = AfxGetAppName();

@@ -41,31 +41,6 @@ CRDFController::~CRDFController()
 	delete m_pNavigatorModel;	
 }
 
-// ------------------------------------------------------------------------------------------------
-void CRDFController::SetModel(CRDFModel * pModel)
-{
-	assert(pModel != nullptr);
-
-	ASSERT(FALSE); //#todo
-
-	/*m_pModel = pModel;
-
-	m_pSelectedInstance = nullptr;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
-
-	UpdateCoordinateSystem();
-
-	m_bUpdatingModel = true;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnModelChanged();
-	}
-
-	m_bUpdatingModel = false;*/
-}
-
 CRDFModel* CRDFController::GetModel()
 {
 	return dynamic_cast<CRDFModel*>(getModel());

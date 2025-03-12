@@ -56,9 +56,6 @@ public: // Methods
 	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
 	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }	
 
-	// --------------------------------------------------------------------------------------------
-	// Setter
-	void SetModel(CRDFModel * pModel);
 	CRDFModel* GetModel();
 
 	// --------------------------------------------------------------------------------------------
