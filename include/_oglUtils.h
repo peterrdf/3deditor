@@ -2545,6 +2545,7 @@ protected: // Methods
 
 	void _drawFaces();
 	void _drawFaces(bool bTransparent);
+	void _drawFacesPolygons();
 	void _drawConceptualFacesPolygons();
 	void _drawLines();
 	void _drawPoints();

@@ -1736,6 +1736,7 @@ _oglView::_oglView()
 		case enumApplicationProperty::GhostViewTransparency:
 		case enumApplicationProperty::ShowFaces:
 		case enumApplicationProperty::CullFaces:
+		case enumApplicationProperty::ShowFacesWireframes:
 		case enumApplicationProperty::ShowConceptualFacesWireframes:
 		case enumApplicationProperty::ShowLines:
 		case enumApplicationProperty::ShowPoints:
@@ -2086,6 +2087,7 @@ _oglView::_oglView()
 
 	// Models
 	_drawFaces();
+	_drawFacesPolygons();
 	_drawConceptualFacesPolygons();
 	_drawLines();
 	_drawPoints();
@@ -2292,6 +2294,90 @@ void _oglView::_drawFaces()
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+#endif
+}
+
+void _oglView::_drawFacesPolygons()
+{
+	if (!getShowFacesPolygons())
+	{
+		return;
+	}
+
+#ifdef _DEBUG_DRAW_DURATION
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+#endif
+
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+	m_pOGLProgram->_enableLighting(false);
+#endif
+	m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+	m_pOGLProgram->_setTransparency(1.f);
+
+	for (auto itCohort : m_oglBuffers.cohorts())
+	{
+		glBindVertexArray(itCohort.first);
+
+		for (auto pGeometry : itCohort.second)
+		{
+			if (!pGeometry->getShow())
+			{
+				continue;
+			}
+
+			if (pGeometry->facePolygonsCohorts().empty())
+			{
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances())
+			{
+				if (!pInstance->getEnable())
+				{
+					continue;
+				}
+
+				// Transformation Matrix
+				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
+				glm::mat4 matModelView = m_matModelView;
+				matModelView = matModelView * matTransformation;
+
+				m_pOGLProgram->_setModelViewMatrix(matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+				glm::mat4 matNormal = m_matModelView * matTransformation;
+				matNormal = glm::inverse(matNormal);
+				matNormal = glm::transpose(matNormal);
+				m_pOGLProgram->_setNormalMatrix(matNormal);
+#else
+				m_pOGLProgram->_setNormalMatrix(matModelView);
+#endif
+				for (size_t iCohort = 0; iCohort < pGeometry->facePolygonsCohorts().size(); iCohort++)
+				{
+					_cohort* pCohort = pGeometry->facePolygonsCohorts()[iCohort];
+
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pCohort->IBO());
+					glDrawElementsBaseVertex(GL_LINES,
+						(GLsizei)pCohort->indices().size(),
+						GL_UNSIGNED_INT,
+						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
+						pGeometry->VBOOffset());
+				}
+			} // for (size_t iInstance = ...			
+		} // for (auto pGeometry ...
+
+		glBindVertexArray(0);
+	} // for (auto itCohort ...
+
+	// Restore Model-View Matrix
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+
+	_oglUtils::checkForErrors();
+
+#ifdef _DEBUG_DRAW_DURATION
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	TRACE(L"\n*** DrawFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 
