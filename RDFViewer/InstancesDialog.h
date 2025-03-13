@@ -31,6 +31,9 @@ private: // Members
 
 protected: // Methods
 
+	// _veiw
+	virtual void onInstanceSelected(_view* pSender) override;
+
 	// --------------------------------------------------------------------------------------------
 	// Overridden
 	virtual void OnControllerChanged();
@@ -38,10 +41,6 @@ protected: // Methods
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
 	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceSelected(CRDFView * pSender);
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView

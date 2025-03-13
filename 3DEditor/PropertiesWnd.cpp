@@ -19,12 +19,11 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CResourceViewBar
-
+// ************************************************************************************************
 #define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
 #define WM_LOAD_INSTANCE_PROPERTIES WM_USER + 2
 
+// ************************************************************************************************
 #define TRUE_VALUE_PROPERTY L"Yes"
 #define FALSE_VALUE_PROPERTY L"No"
 #define ROTATION_MODE_XY L"2D"
@@ -1203,12 +1202,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
-	/*if (GetController()->IsTestMode())#todo
+	if (_ptr<CRDFController>(getRDFController())->IsTestMode())
 	{
 		return;
-	}*/
+	}
 
-	m_wndObjectCombo.SetCurSel(0 /*Application*/);
+	m_wndObjectCombo.SetCurSel(0/*Application*/);
 
 	LoadApplicationProperties();
 }

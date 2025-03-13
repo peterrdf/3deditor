@@ -56,20 +56,7 @@ CRDFModel* CRDFController::GetModel()
 // ------------------------------------------------------------------------------------------------
 void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
 {
-	ASSERT(FALSE);//#todo
-	/*if (m_bUpdatingModel)
-	{
-		return;
-	}
-
-	m_pSelectedInstance = pInstance;
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnInstanceSelected(pSender);
-	}*/
+	ASSERT(FALSE);// obsolete!!!!
 }
 
 // ------------------------------------------------------------------------------------------------

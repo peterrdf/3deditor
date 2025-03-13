@@ -1224,8 +1224,7 @@ void CDesignTreeView::UpdateView()
 	/** Disable the drawing */	
 	m_bUpdateInProgress = true;
 
-	switch (m_nCurrSort)
-	{
+	switch (m_nCurrSort) {
 		case ID_SORTING_INSTANCES_SORTALPHABETIC:
 		{
 			InstancesAlphabeticalView();
@@ -1254,7 +1253,7 @@ void CDesignTreeView::UpdateView()
 	/** Restore the selected instance */
 	if (getController()->getSelectedInstance() != nullptr)
 	{
-		OnInstanceSelected(nullptr);//#todo
+		onInstanceSelected(nullptr);
 	}
 	
 	/** Enable the drawing */	

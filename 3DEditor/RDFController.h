@@ -15,8 +15,7 @@ enum class enumApplicationProperty;
 class CRDFInstance;
 class CRDFProperty;
 
-// ------------------------------------------------------------------------------------------------
-// Controller - MVC
+// ***********************************************************************************************
 class CRDFController : public _rdf_controller
 {
 
@@ -36,15 +35,6 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	// Selected instance property
 	pair<CRDFInstance *, CRDFProperty *> m_prSelectedInstanceProperty;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//int m_iVisibleValuesCountLimit;
-
-	// --------------------------------------------------------------------------------------------
-	// UI properties
-	//BOOL m_bScaleAndCenter;
-	//BOOL m_bModelCoordinateSystem;
 
 public: // Methods
 

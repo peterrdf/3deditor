@@ -16,6 +16,41 @@ using namespace std;
 
 IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
+/*virtual*/ void CInstancesDialog::onInstanceSelected(_view* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	m_bUpdateInProgress = true;
+
+	// Unselect
+	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
+	while (pos)
+	{
+		int iItem = m_lcInstances.GetNextSelectedItem(pos);
+		m_lcInstances.SetItemState(iItem, 0, LVIS_SELECTED);
+	}
+
+	ASSERT(GetController() != nullptr);
+
+	CRDFInstance* pSelectedInstance = GetController()->GetSelectedInstance();
+	if (pSelectedInstance == nullptr)
+	{
+		return;
+	}
+
+	auto itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
+	if (itInstance2Item != m_mapInstance2Item.end())
+	{
+		m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
+		m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
+	}
+
+	m_bUpdateInProgress = false;
+}
+
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CInstancesDialog::OnControllerChanged()
 {
@@ -69,42 +104,6 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
 
 		m_mapInstance2Item[vecModel[iInstance]] = iItem;
-	}
-
-	m_bUpdateInProgress = false;
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnInstanceSelected(CRDFView * pSender)
-{
-	if (pSender == this)
-	{
-		return;
-	}	
-
-	m_bUpdateInProgress = true;
-
-	// Unselect
-	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
-	while (pos)
-	{
-		int iItem = m_lcInstances.GetNextSelectedItem(pos);
-		m_lcInstances.SetItemState(iItem, 0, LVIS_SELECTED);
-	}
-
-	ASSERT(GetController() != nullptr);
-
-	CRDFInstance * pSelectedInstance = GetController()->GetSelectedInstance();
-	if (pSelectedInstance == nullptr)
-	{
-		return;
-	}
-
-	auto itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
-	if (itInstance2Item != m_mapInstance2Item.end())
-	{
-		m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
-		m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
 	}
 
 	m_bUpdateInProgress = false;
