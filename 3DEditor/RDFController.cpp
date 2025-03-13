@@ -170,17 +170,6 @@ pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty
 //	}*/
 //}
 
-// ------------------------------------------------------------------------------------------------
-//void CRDFController::OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty)
-//{
-//	ASSERT(FALSE);//#todo
-//	/*auto itView = m_setViews.begin();
-//	for (; itView != m_setViews.end(); itView++)
-//	{
-//		(*itView)->OnApplicationPropertyChanged(pSender, enApplicationProperty);
-//	}*/
-//}
-
 CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
 {
 	ASSERT(FALSE);//#todo

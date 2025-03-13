@@ -197,6 +197,7 @@ public: // Methods
 
 	// _view
 	virtual void postModelLoaded() override;
+	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 
 	// _rdf_view
@@ -205,13 +206,10 @@ public: // Methods
 	
 	// CRDFView
 	//#todo
-	
-	virtual void OnInstanceSelected(CRDFView* pSender);
 	virtual void OnInstancePropertySelected();
 	virtual void OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* pInstance);
 	virtual void OnNewInstanceCreated(CRDFView* pSender, _rdf_instance * pInstance);
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
-	//virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 	

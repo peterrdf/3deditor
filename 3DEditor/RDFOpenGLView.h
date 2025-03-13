@@ -62,10 +62,8 @@ public: // Methods
 	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView * pSender) override;
 	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstanceSelected(CRDFView * pSender) override;
 	virtual void OnInstancePropertySelected() override;
-	virtual void OnInstancesEnabledStateChanged() override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;*/
+	virtual void OnInstancesEnabledStateChanged() override;*/
 
 private: // Methods
 

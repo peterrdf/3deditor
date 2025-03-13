@@ -60,11 +60,6 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnApplicationPropertyChanged(CRDFView* /*pSender*/, enumApplicationProperty /*enApplicationProperty*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
 CRDFController * CRDFView::GetController() const
 {
 	return m_pController;

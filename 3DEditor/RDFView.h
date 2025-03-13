@@ -60,10 +60,6 @@ public: // Methods
 	// Enable/Disable support
 	virtual void OnInstancesEnabledStateChanged();
 
-	// --------------------------------------------------------------------------------------------
-	// UI properties support
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty);
-
 protected: // Methods
 
 	// --------------------------------------------------------------------------------------------

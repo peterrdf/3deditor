@@ -1254,7 +1254,7 @@ void CDesignTreeView::UpdateView()
 	/** Restore the selected instance */
 	if (getController()->getSelectedInstance() != nullptr)
 	{
-		OnInstanceSelected(nullptr);
+		OnInstanceSelected(nullptr);//#todo
 	}
 	
 	/** Enable the drawing */	
