@@ -274,13 +274,6 @@ CObjectRDFProperty::CObjectRDFProperty(RdfProperty iInstance)
 	: _rdf_property(iInstance)
 	, m_vecRestrictions()
 {
-	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getRdfProperty(), 0);
-	while (iRestrictionsClassInstance != 0)
-	{
-		m_vecRestrictions.push_back(iRestrictionsClassInstance);
-
-		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getRdfProperty(), iRestrictionsClassInstance);
-	}
 }
 
 CObjectRDFProperty::~CObjectRDFProperty()

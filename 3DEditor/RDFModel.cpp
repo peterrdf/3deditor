@@ -630,65 +630,65 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFPrope
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
 
-	int64_t iClassInstance = GetInstanceClass(pInstance->getOwlInstance());
-	assert(iClassInstance != 0);
+	//int64_t iClassInstance = GetInstanceClass(pInstance->getOwlInstance());
+	//assert(iClassInstance != 0);
 
-	auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-	assert(!vecRestrictions.empty());
+	//auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
+	//assert(!vecRestrictions.empty());
 
-	auto& mapRFDInstances = GetInstances();
+	//auto& mapRFDInstances = GetInstances();
 
-	auto itRFDInstances = mapRFDInstances.begin();
-	for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
-	{
-		/*
-		* Skip this instance
-		*/
-		if (itRFDInstances->second == pInstance)
-		{
-			continue;
-		}
+	//auto itRFDInstances = mapRFDInstances.begin();
+	//for (; itRFDInstances != mapRFDInstances.end(); itRFDInstances++)
+	//{
+	//	/*
+	//	* Skip this instance
+	//	*/
+	//	if (itRFDInstances->second == pInstance)
+	//	{
+	//		continue;
+	//	}
 
-		/*
-		* Skip the instances that belong to a different model
-		*/
-		if (itRFDInstances->second->getOwlModel() != pInstance->getOwlModel())
-		{
-			continue;
-		}
+	//	/*
+	//	* Skip the instances that belong to a different model
+	//	*/
+	//	if (itRFDInstances->second->getOwlModel() != pInstance->getOwlModel())
+	//	{
+	//		continue;
+	//	}
 
-		/*
-		* Check this instance
-		*/
-		if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
-		{
-			vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
+	//	/*
+	//	* Check this instance
+	//	*/
+	//	if (std::find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
+	//	{
+	//		vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
 
-			continue;
-		}
+	//		continue;
+	//	}
 
-		/*
-		* Check the ancestor classes
-		*/
+	//	/*
+	//	* Check the ancestor classes
+	//	*/
 
-		vector<int64_t> vecAncestorClasses;
-		CRDFClass::GetAncestors(iClassInstance, vecAncestorClasses);
+	//	vector<int64_t> vecAncestorClasses;
+	//	CRDFClass::GetAncestors(iClassInstance, vecAncestorClasses);
 
-		if (vecAncestorClasses.empty())
-		{
-			continue;
-		}
+	//	if (vecAncestorClasses.empty())
+	//	{
+	//		continue;
+	//	}
 
-		for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++)
-		{
-			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
-			{
-				vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
+	//	for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++)
+	//	{
+	//		if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
+	//		{
+	//			vecCompatibleInstances.push_back(itRFDInstances->second->getOwlInstance());
 
-				break;
-			}
-		} // for (size_t iAncestorClass = ...
-	} // for (; itRFDInstances != ...
+	//			break;
+	//		}
+	//	} // for (size_t iAncestorClass = ...
+	//} // for (; itRFDInstances != ...
 }
 
 void CRDFModel::GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const

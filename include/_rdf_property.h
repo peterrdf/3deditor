@@ -19,12 +19,13 @@ public: // Methods
 	virtual ~_rdf_property();
 
 	wstring getRangeAsString() const;
-	wstring getRangeAsStringEx(vector<int64_t>& vecRestrictionClasses) const { return getRangeAsStringEx(m_rdfProperty, vecRestrictionClasses); }
+	wstring getRangeAsStringEx(vector<int64_t>& vecRestrictionClasses) const { return getRangeAsStringEx(getRdfProperty(), vecRestrictionClasses); }
 	static wstring getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
 	void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
 	static void getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
+	void getRangeRestrictions(vector<OwlClass>& vecRestrictionClasses) const { getRangeRestrictions(getRdfProperty(), vecRestrictionClasses); };
 	static void getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 
 public: // Properties
@@ -87,6 +88,4 @@ public: // Methods
 
 	CObjectRDFProperty(RdfProperty iInstance);
 	virtual ~CObjectRDFProperty();
-
-	const vector<int64_t>& GetRestrictions() const { return m_vecRestrictions; }
 };

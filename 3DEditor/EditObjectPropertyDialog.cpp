@@ -93,11 +93,10 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Restrictions
 	*/
-	CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(m_pProperty);
-	assert(pObjectRDFProperty != nullptr);
 
-	const vector<int64_t> & vecRestrictions = pObjectRDFProperty->GetRestrictions();
-	assert(!vecRestrictions.empty());
+	vector<OwlClass> vecRestrictionClasses;
+	m_pProperty->getRangeRestrictions(vecRestrictionClasses);
+	assert(!vecRestrictionClasses.empty());
 
 	/*
 	* Populate Existing instance combo
@@ -124,7 +123,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Check this instance
 		*/
-		if (find(vecRestrictions.begin(), vecRestrictions.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictions.end())
+		if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictionClasses.end())
 		{
 			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
@@ -146,7 +145,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 		for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++)
 		{
-			if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
+			if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictionClasses.end())
 			{
 				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 				m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
@@ -164,9 +163,9 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	* Restrictions
 	*/
 	set<int64_t> setClasses;
-	for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+	for (size_t iRestriction = 0; iRestriction < vecRestrictionClasses.size(); iRestriction++)
 	{
-		setClasses.insert(vecRestrictions[iRestriction]);
+		setClasses.insert(vecRestrictionClasses[iRestriction]);
 	}
 
 	/*
@@ -182,7 +181,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		{
 			for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++)
 			{
-				if (find(vecRestrictions.begin(), vecRestrictions.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictions.end())
+				if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictionClasses.end())
 				{
 					setClasses.insert(iClassInstance);
 

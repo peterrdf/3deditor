@@ -2802,18 +2802,14 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	*/
 	if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	{
-		ASSERT(getRDFController() != nullptr);
-
-		CObjectRDFProperty* pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
-		ASSERT(pObjectRDFProperty != nullptr);
+		vector<OwlClass> vecRestrictionClasses;
+		pProperty->getRangeRestrictions(vecRestrictionClasses);
 
 		wstring strRange;
-
-		auto vecRestrictions = pObjectRDFProperty->GetRestrictions();
-		for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+		for (size_t iRestriction = 0; iRestriction < vecRestrictionClasses.size(); iRestriction++)
 		{
 			char* szClassName = nullptr;
-			GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
+			GetNameOfClass(vecRestrictionClasses[iRestriction], &szClassName);
 
 			if (!strRange.empty())
 			{

@@ -322,18 +322,15 @@ void CClassView::PropertiesAlphabeticalView()
 		{
 		case OBJECTPROPERTY_TYPE:
 		{
-			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
+			vector<OwlClass> vecRestrictionClasses;
+			pProperty->getRangeRestrictions(vecRestrictionClasses);
 
-			auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pProperty);
-			ASSERT(pObjectRDFProperty != nullptr);
+			HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);			
 
-			auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-			ASSERT(!vecRestrictions.empty());
-
-			for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+			for (size_t iRestriction = 0; iRestriction < vecRestrictionClasses.size(); iRestriction++)
 			{
 				char* szClassName = nullptr;
-				GetNameOfClass(vecRestrictions[iRestriction], &szClassName);
+				GetNameOfClass(vecRestrictionClasses[iRestriction], &szClassName);
 
 				m_treeCtrl.InsertItem(CA2W(szClassName), IMAGE_VALUE, IMAGE_VALUE, hRange);
 			}
@@ -520,15 +517,14 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
+					vector<OwlClass> vecRestrictionClasses;
+					pProperty->getRangeRestrictions(vecRestrictionClasses);
+
 					HTREEITEM hRange = m_treeCtrl.InsertItem(L"rdfs:range", IMAGE_PROPERTY, IMAGE_PROPERTY, hProperty);
 
-					CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
-					ASSERT(pObjectRDFProperty != nullptr);
-
-					auto& vecRestrictions = pObjectRDFProperty->GetRestrictions();
-					for (size_t iRestriction = 0; iRestriction < vecRestrictions.size(); iRestriction++)
+					for (size_t iRestriction = 0; iRestriction < vecRestrictionClasses.size(); iRestriction++)
 					{
-						auto itRestrictionRDFClass = mapClasses.find(vecRestrictions[iRestriction]);
+						auto itRestrictionRDFClass = mapClasses.find(vecRestrictionClasses[iRestriction]);
 						ASSERT(itRestrictionRDFClass != mapClasses.end());
 						ASSERT(itRestrictionRDFClass->second != nullptr);
 
