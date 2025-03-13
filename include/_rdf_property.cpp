@@ -242,7 +242,8 @@ _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInst
 
 // ************************************************************************************************
 _rdf_property_t::_rdf_property_t(RdfProperty iInstance, int iType)
-	: m_iInstance(iInstance)
+	: _rdf_property(iInstance)
+	, m_iInstance(iInstance)
 	, m_szName(nullptr)
 	, m_iType(iType)
 {

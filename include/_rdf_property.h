@@ -72,7 +72,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class _rdf_property_t
+class _rdf_property_t : public _rdf_property
 {
 
 private: // Members
