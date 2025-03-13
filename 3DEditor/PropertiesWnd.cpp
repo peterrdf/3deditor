@@ -143,7 +143,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getCardinalityRestriction(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 	if ((iMinCard == -1) && (iMaxCard == -1))
 	{
@@ -240,7 +240,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getCardinalityRestriction(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->getType())
 	{
@@ -633,7 +633,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getCardinalityRestriction(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->getType())
 	{
@@ -795,7 +795,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getCardinalityRestriction(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 	switch (pData->GetProperty()->getType())
 	{
@@ -1635,7 +1635,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t	iMinCard = 0;
 				int64_t iMaxCard = 0;
-				pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+				pData->GetProperty()->getCardinalityRestriction(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 

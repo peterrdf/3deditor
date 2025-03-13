@@ -23,8 +23,8 @@ public: // Methods
 	static wstring getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
-	void getRestrictions(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getRestrictions(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
-	static void getRestrictions(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
+	void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
+	static void getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
 
 public: // Properties
 

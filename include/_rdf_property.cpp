@@ -135,7 +135,7 @@ wstring _rdf_property::getRangeAsString() const
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	getRestrictions(owlInstance, rdfProperty, iMinCard, iMaxCard);
+	getCardinalityRestriction(owlInstance, rdfProperty, iMinCard, iMaxCard);
 
 	wchar_t szBuffer[100];
 	if ((iMinCard == -1) && (iMaxCard == -1))
@@ -157,7 +157,7 @@ wstring _rdf_property::getRangeAsString() const
 	return szBuffer;
 }
 
-/*static*/ void _rdf_property::getRestrictions(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard)
+/*static*/ void _rdf_property::getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard)
 {
 	assert(owlInstance != 0);
 	assert(rdfProperty != 0);
