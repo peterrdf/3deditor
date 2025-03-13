@@ -28,8 +28,8 @@ public: // Properties
 	RdfProperty getRdfProperty() const { return m_rdfProperty; }
 	RdfPropertyType getType() const { return getType(m_rdfProperty); }
 	static RdfPropertyType getType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
-	wstring getTypeName() { return getTypeName(getType()); }
-	static wstring getTypeName(RdfPropertyType rdfPropertyType);
+	wstring getTypeAsString() { return getTypeAsString(getType()); }
+	static wstring getTypeAsString(RdfPropertyType rdfPropertyType);
 	wchar_t* getName() const;
 };
 
@@ -86,7 +86,6 @@ public: // Methods
 	_rdf_property_t(RdfProperty iInstance, int iType);
 	virtual ~_rdf_property_t();
 
-	wstring GetTypeAsString() const;
 	wstring GetRange() const;
 	wstring GetCardinality(OwlInstance iInstance) const;
 	void GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const;

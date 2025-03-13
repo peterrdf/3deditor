@@ -1447,7 +1447,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 
 		wstring strNameAndType = pProperty->GetName();
 		strNameAndType += L" : ";
-		strNameAndType += pProperty->GetTypeAsString();
+		strNameAndType += pProperty->getTypeAsString();
 
 		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
 

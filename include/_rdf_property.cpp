@@ -154,7 +154,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	return szBuffer;
 }
 
-/*static*/ wstring _rdf_property::getTypeName(RdfPropertyType rdfPropertyType)
+/*static*/ wstring _rdf_property::getTypeAsString(RdfPropertyType rdfPropertyType)
 {
 	wstring strTypeName = rdfPropertyType == OBJECTPROPERTY_TYPE ?
 		L"owl:ObjectProperty" :
@@ -254,64 +254,6 @@ _rdf_property_t::_rdf_property_t(RdfProperty iInstance, int iType)
 
 /*virtual*/ _rdf_property_t::~_rdf_property_t()
 {
-}
-
-wstring _rdf_property_t::GetTypeAsString() const
-{
-	wstring strType = L"unknown";
-
-	switch (GetType())
-	{
-	case OBJECTPROPERTY_TYPE:
-	{
-		strType = L"owl:ObjectProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_BOOLEAN:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_STRING:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_DOUBLE:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_INTEGER:
-	{
-		strType = L"owl:DatatypeProperty";
-	}
-	break;
-
-	default:
-	{
-		assert(false); // Not supported!
-	}
-	break;
-	} // switch (getType())
-
-	return strType;
 }
 
 wstring _rdf_property_t::GetRange() const
