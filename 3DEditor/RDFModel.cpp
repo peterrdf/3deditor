@@ -386,7 +386,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 			case 0:
 			{
-				m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
@@ -1277,7 +1277,7 @@ void CRDFModel::LoadRDFModel()
 
 				case 0:
 				{
-					m_mapProperties[iPropertyInstance] = new CUndefinedRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 

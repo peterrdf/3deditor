@@ -25,6 +25,7 @@ public: // Methods
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
 	void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
 	static void getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
+	static void getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 
 public: // Properties
 
@@ -88,14 +89,4 @@ public: // Methods
 	virtual ~CObjectRDFProperty();
 
 	const vector<int64_t>& GetRestrictions() const { return m_vecRestrictions; }
-};
-
-// ************************************************************************************************
-class CUndefinedRDFProperty : public _rdf_property
-{
-
-public: // Methods
-
-	CUndefinedRDFProperty(RdfProperty iInstance);
-	virtual ~CUndefinedRDFProperty();
 };

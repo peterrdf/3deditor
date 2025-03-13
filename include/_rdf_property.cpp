@@ -170,6 +170,19 @@ wstring _rdf_property::getRangeAsString() const
 	GetClassPropertyAggregatedCardinalityRestriction(owlClass, rdfProperty, &iMinCard, &iMaxCard);
 }
 
+/*static*/ void _rdf_property::getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
+{
+	vecRestrictionClasses.clear();
+
+	OwlClass owlClass = GetRangeRestrictionsByIterator(rdfProperty, 0);
+	while (owlClass != 0)
+	{
+		vecRestrictionClasses.push_back(owlClass);
+
+		owlClass = GetRangeRestrictionsByIterator(rdfProperty, owlClass);
+	}
+}
+
 /*static*/ wstring _rdf_property::getTypeAsString(RdfPropertyType rdfPropertyType)
 {
 	wstring strTypeName = rdfPropertyType == OBJECTPROPERTY_TYPE ?
@@ -271,15 +284,5 @@ CObjectRDFProperty::CObjectRDFProperty(RdfProperty iInstance)
 }
 
 CObjectRDFProperty::~CObjectRDFProperty()
-{
-}
-
-// ************************************************************************************************
-CUndefinedRDFProperty::CUndefinedRDFProperty(RdfProperty iInstance)
-	: _rdf_property(iInstance)
-{
-}
-
-CUndefinedRDFProperty::~CUndefinedRDFProperty()
 {
 }
