@@ -5,7 +5,6 @@
 #include "InstancesList.h"
 
 #include <set>
-
 using namespace std;
 
 // CInstancesDialog dialog
@@ -17,17 +16,9 @@ class CInstancesDialog
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Instances
 	CInstancesList m_lcInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// Don't send notifications while updating the view
 	bool m_bUpdateInProgress;
-
-	// --------------------------------------------------------------------------------------------
-	// Find an item by CRDFInstance *
-	map<CRDFInstance *, int> m_mapInstance2Item;
+	map<_rdf_instance*, int> m_mapInstance2Item;
 
 protected: // Methods
 

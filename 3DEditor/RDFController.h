@@ -29,10 +29,6 @@ private: // Members
 	bool m_bUpdatingModel;
 
 	// --------------------------------------------------------------------------------------------
-	// Selected instance
-	CRDFInstance * m_pSelectedInstance;
-
-	// --------------------------------------------------------------------------------------------
 	// Selected instance property
 	pair<CRDFInstance *, CRDFProperty *> m_prSelectedInstanceProperty;
 
@@ -55,10 +51,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Selection support
 	void SelectInstance(CRDFView * pSender, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	CRDFInstance * GetSelectedInstance() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support

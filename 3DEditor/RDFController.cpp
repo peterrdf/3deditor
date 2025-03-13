@@ -12,7 +12,6 @@ CRDFController::CRDFController()
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
 	, m_bUpdatingModel(false)
-	, m_pSelectedInstance(nullptr)
 	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
 	//, m_iVisibleValuesCountLimit(10000)
 	//, m_bScaleAndCenter(TRUE)
@@ -57,12 +56,6 @@ CRDFModel* CRDFController::GetModel()
 void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
 {
 	ASSERT(FALSE);// obsolete!!!!
-}
-
-// ------------------------------------------------------------------------------------------------
-CRDFInstance * CRDFController::GetSelectedInstance() const
-{
-	return m_pSelectedInstance;
 }
 
 // ------------------------------------------------------------------------------------------------

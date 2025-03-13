@@ -8,8 +8,9 @@
 #include "RDFModel.h"
 #include "RDFController.h"
 
-#include <algorithm>
+#include "_ptr.h"
 
+#include <algorithm>
 using namespace std;
 
 // CInstancesDialog dialog
@@ -33,15 +34,15 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 		m_lcInstances.SetItemState(iItem, 0, LVIS_SELECTED);
 	}
 
-	ASSERT(GetController() != nullptr);
-
-	CRDFInstance* pSelectedInstance = GetController()->GetSelectedInstance();
+	auto pSelectedInstance = getRDFController()->getSelectedInstance();
 	if (pSelectedInstance == nullptr)
 	{
 		return;
 	}
 
-	auto itInstance2Item = m_mapInstance2Item.find(pSelectedInstance);
+	_ptr<_rdf_instance> rdfInstance(pSelectedInstance);
+
+	auto itInstance2Item = m_mapInstance2Item.find(rdfInstance);
 	if (itInstance2Item != m_mapInstance2Item.end())
 	{
 		m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
@@ -67,30 +68,20 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_bUpdateInProgress = true;
 
 	m_lcInstances.DeleteAllItems();
-	m_mapInstance2Item.clear();	
+	m_mapInstance2Item.clear();
 
-	CRDFModel * pModel = GetController()->GetModel();
-	ASSERT(pModel != nullptr);
+	auto pModel = getRDFController()->getModel();
 
-	auto& mapInstances = pModel->GetInstances();
-
-	vector<CRDFInstance *> vecModel;
-
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
-	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
+	vector<_rdf_instance*> vecModel;
+	for (auto pInstance : pModel->getInstances())
 	{
-		CRDFInstance * pInstance = itRFDInstances->second;
-
 		if (pInstance->getGeometry()->isReferenced())
 		{
 			continue;
 		}
 
-		if (pInstance->getOwlModel() == pModel->getOwlModel())
-		{
-			vecModel.push_back(pInstance);
-		}		
-	} // for (; itRFDInstances != ...
+		vecModel.push_back(_ptr<_rdf_instance>(pInstance));
+	}
 
 	/*
 	* Model
@@ -110,13 +101,13 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
+/*virtual*/ void CInstancesDialog::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/)
 {
 	OnModelChanged();
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnInstancesDeleted(CRDFView * /*pSender*/)
+/*virtual*/ void CInstancesDialog::OnInstancesDeleted(CRDFView* /*pSender*/)
 {
 	OnModelChanged();
 }
@@ -131,29 +122,20 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 		return;
 	}
 
-	vector<CRDFInstance *> vecSelectedInstances;
+	vector<_rdf_instance*> vecSelectedInstances;
 
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
 	while (pos)
 	{
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
-		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
+		_rdf_instance* pInstance = (_rdf_instance*)m_lcInstances.GetItemData(iItem);
 		ASSERT(pInstance != nullptr);
 
 		vecSelectedInstances.push_back(pInstance);
 	}
 
-	ASSERT(GetController() != nullptr);
-
-	if (vecSelectedInstances.size() == 1)
-	{
-		GetController()->SelectInstance(this, vecSelectedInstances[0]);
-	} // if (vecSelectedInstances.size() == 1)
-	else
-	{
-		GetController()->SelectInstance(this, nullptr);
-	} // if (vecSelectedInstances.size() == 1)	
+	getRDFController()->selectInstance(this, vecSelectedInstances.size() == 1 ? vecSelectedInstances[0] : nullptr);
 }
 
 CInstancesDialog::CInstancesDialog(CWnd* pParent /*=nullptr*/)
@@ -232,14 +214,14 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		return;
 	}
 
-	vector<CRDFInstance *> vecSelectedInstances;
+	vector<_rdf_instance*> vecSelectedInstances;
 
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
 	while (pos)
 	{
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
-		CRDFInstance * pInstance = (CRDFInstance *)m_lcInstances.GetItemData(iItem);
+		_rdf_instance* pInstance = (_rdf_instance*)m_lcInstances.GetItemData(iItem);
 		ASSERT(pInstance != nullptr);
 
 		vecSelectedInstances.push_back(pInstance);
@@ -253,7 +235,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	if (vecSelectedInstances.size() > 1)
 	{
-		bool bIsGeometryInstanceSelected = false;		
+		bool bIsGeometryInstanceSelected = false;
 		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 		{
 			if (vecSelectedInstances[iInstance]->hasGeometry())
@@ -273,7 +255,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_MULTI_SEL));
 
-			CMenu * pPopup = menu.GetSubMenu(0);
+			CMenu* pPopup = menu.GetSubMenu(0);
 
 			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 			if (uiCommand == 0)
@@ -309,7 +291,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_REMOVE:
 			{
-				vector<CRDFInstance *> vecInstances;
+				vector<_rdf_instance*> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
 					if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced())
@@ -322,7 +304,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecInstances.push_back(vecSelectedInstances[iInstance]);
 				}
 
-				GetController()->DeleteInstances(this, vecInstances);
+				//GetController()->DeleteInstances(this, vecInstances);#todo
 			}
 			break;
 
@@ -342,7 +324,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 
-			CMenu * pPopup = menu.GetSubMenu(0);
+			CMenu* pPopup = menu.GetSubMenu(0);
 
 			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 			if (uiCommand == 0)
@@ -356,7 +338,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 			case ID_INSTANCES_REMOVE:
 			{
-				vector<CRDFInstance *> vecInstances;
+				vector<_rdf_instance*> vecInstances;
 				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
 				{
 					if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced())
@@ -369,7 +351,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecInstances.push_back(vecSelectedInstances[iInstance]);
 				}
 
-				GetController()->DeleteInstances(this, vecInstances);
+				//GetController()->DeleteInstances(this, vecInstances);#todo
 			}
 			break;
 
@@ -397,7 +379,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
-			CMenu * pPopup = menu.GetSubMenu(0);
+			CMenu* pPopup = menu.GetSubMenu(0);
 
 			if (vecSelectedInstances[0]->getEnable())
 			{
@@ -412,10 +394,8 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			ASSERT(GetController() != nullptr);
 
-			CRDFModel * pModel = GetController()->GetModel();
+			CRDFModel* pModel = GetController()->GetModel();
 			ASSERT(pModel != nullptr);
-
-			auto& mapInstances = pModel->GetInstances();
 
 			switch (uiCommand)
 			{
@@ -433,7 +413,8 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+				//#todo
+				/*map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
 					if (vecSelectedInstances[0]->getOwlModel() != itRFDInstances->second->getOwlModel())
@@ -451,13 +432,14 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					itRFDInstances->second->setEnable(false);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				GetController()->OnInstancesEnabledStateChanged();*/
 			}
 			break;
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+				//#todo
+				/*map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
 				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 				{
 					if (vecSelectedInstances[0]->getOwlModel() != itRFDInstances->second->getOwlModel())
@@ -468,10 +450,10 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					if (!itRFDInstances->second->getGeometry()->isReferenced())
 					{
 						itRFDInstances->second->setEnable(true);
-					}					
+					}
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				GetController()->OnInstancesEnabledStateChanged();*/
 			}
 			break;
 
@@ -492,7 +474,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					return;
 				}
 
-				GetController()->DeleteInstance(this, vecSelectedInstances[0]);
+				//GetController()->DeleteInstance(this, vecSelectedInstances[0]);#todo
 			}
 			break;
 
@@ -512,7 +494,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		CMenu menu;
 		VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES_NO_GEOMETRY));
 
-		CMenu * pPopup = menu.GetSubMenu(0);
+		CMenu* pPopup = menu.GetSubMenu(0);
 
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
 		if (uiCommand == 0)
@@ -533,7 +515,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			GetController()->DeleteInstance(this, vecSelectedInstances[0]);
+			//GetController()->DeleteInstance(this, vecSelectedInstances[0]);#todo
 		}
 		break;
 
