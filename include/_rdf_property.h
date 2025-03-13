@@ -18,9 +18,8 @@ public: // Methods
 	_rdf_property(RdfProperty rdfProperty);
 	virtual ~_rdf_property();
 
-	wstring getRangeAsString() const;
-	wstring getRangeAsStringEx(vector<int64_t>& vecRestrictionClasses) const { return getRangeAsStringEx(getRdfProperty(), vecRestrictionClasses); }
-	static wstring getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
+	wstring getRangeAsString() const { return getRangeAsString(getRdfProperty()); }
+	static wstring getRangeAsString(RdfProperty rdfProperty);
 	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
 	void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }

@@ -4,35 +4,24 @@
 // ************************************************************************************************
 _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	: m_rdfProperty(rdfProperty)
-{}
+{
+	assert(m_rdfProperty != 0);
+}
 
 /*virtual*/ _rdf_property::~_rdf_property()
 {}
 
-wstring _rdf_property::getRangeAsString() const
+/*static*/ wstring _rdf_property::getRangeAsString(RdfProperty rdfProperty)
 {
-	vector<OwlClass> vecRestrictionClasses;
-	return getRangeAsStringEx(m_rdfProperty, vecRestrictionClasses);
-}
+	assert(rdfProperty != 0);
 
-/*static*/ wstring _rdf_property::getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
-{
 	wstring strRange = L"unknown";
-	vecRestrictionClasses.clear();
 
 	switch (getType(rdfProperty))
 	{
 		case OBJECTTYPEPROPERTY_TYPE:
 		{
 			strRange = L"xsd:object";
-
-			int64_t iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, 0);
-			while (iRestrictionClassInstance != 0)
-			{
-				vecRestrictionClasses.push_back(iRestrictionClassInstance);				
-
-				iRestrictionClassInstance = GetRangeRestrictionsByIterator(rdfProperty, iRestrictionClassInstance);
-			}
 		}
 		break;
 
