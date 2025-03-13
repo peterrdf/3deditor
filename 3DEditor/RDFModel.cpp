@@ -350,13 +350,13 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
-				m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _bool_rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_STRING:
 			{
-				m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _string_rdf_property(iPropertyInstance);
 			}
 			break;
 
@@ -374,13 +374,13 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 			case DATATYPEPROPERTY_TYPE_INTEGER:
 			{
-				m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _integer_rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_DOUBLE:
 			{
-				m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _double_rdf_property(iPropertyInstance);
 			}
 			break;
 
@@ -945,7 +945,7 @@ void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
 	}
 }
 
-void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
+void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property_t * /*pProperty*/)
 {
 	ASSERT(FALSE); //#todo
 	/*SetFormatSettings(m_iModel);
@@ -1033,7 +1033,7 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 	return m_mapInstanceMetaData.at(pInstance);
 }
 
-void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
+void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
 {
 	strMetaData = strPrefix;
 	strMetaData += pProperty->GetName() != nullptr ? pProperty->GetName() : L"NA";
@@ -1241,13 +1241,13 @@ void CRDFModel::LoadRDFModel()
 
 				case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				{
-					m_mapProperties[iPropertyInstance] = new CBoolRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _bool_rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_STRING:
 				{
-					m_mapProperties[iPropertyInstance] = new CStringRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _string_rdf_property(iPropertyInstance);
 				}
 				break;
 
@@ -1265,13 +1265,13 @@ void CRDFModel::LoadRDFModel()
 
 				case DATATYPEPROPERTY_TYPE_INTEGER:
 				{
-					m_mapProperties[iPropertyInstance] = new CIntRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _integer_rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_DOUBLE:
 				{
-					m_mapProperties[iPropertyInstance] = new CDoubleRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _double_rdf_property(iPropertyInstance);
 				}
 				break;
 

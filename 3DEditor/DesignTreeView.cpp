@@ -106,7 +106,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 }
 
 //#todo
-///*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(_rdf_instance* pInstance, CRDFProperty* pProperty)
+///*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property_t* pProperty)
 //{
 //	if ((pInstance == nullptr) || (pProperty == nullptr))
 //	{
@@ -1158,7 +1158,7 @@ void CDesignTreeView::RemoveInstanceItemData(_rdf_instance* pInstance, HTREEITEM
 	itInstance2Item->second->Items().erase(itInstance);
 }
 
-void CDesignTreeView::RemovePropertyItemData(_rdf_instance* pInstance, CRDFProperty* pProperty, HTREEITEM hProperty)
+void CDesignTreeView::RemovePropertyItemData(_rdf_instance* pInstance, _rdf_property_t* pProperty, HTREEITEM hProperty)
 {
 	ASSERT(pInstance != nullptr);
 	ASSERT(pProperty != nullptr);

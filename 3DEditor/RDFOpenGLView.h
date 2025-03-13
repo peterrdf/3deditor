@@ -57,7 +57,7 @@ public: // Methods
 
 	// CRDFView	
 	/*virtual void OnModelChanged() override;
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty) override;
+	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, _rdf_property_t * pProperty) override;
 	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
 	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView * pSender) override;

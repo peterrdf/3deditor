@@ -25,7 +25,7 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, CRDFProperty * /*pProperty*/)
+/*virtual*/ void CRDFView::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property_t * /*pProperty*/)
 {
 }
 

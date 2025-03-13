@@ -834,7 +834,6 @@
     <ClInclude Include="RDFInstance.h" />
     <ClInclude Include="RDFItem.h" />
     <ClInclude Include="RDFModel.h" />
-    <ClInclude Include="RDFProperty.h" />
     <ClInclude Include="RDFPropertyRestriction.h" />
     <ClInclude Include="RDFView.h" />
     <ClInclude Include="Resource.h" />
@@ -1015,7 +1014,6 @@
     <ClCompile Include="RDFInstance.cpp" />
     <ClCompile Include="RDFItem.cpp" />
     <ClCompile Include="RDFModel.cpp" />
-    <ClCompile Include="RDFProperty.cpp" />
     <ClCompile Include="RDFPropertyRestriction.cpp" />
     <ClCompile Include="RDFView.cpp" />
     <ClCompile Include="SearchTreeCtrlDialog.cpp" />

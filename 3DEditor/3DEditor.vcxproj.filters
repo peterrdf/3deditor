@@ -66,9 +66,6 @@
     <ClInclude Include="RDFClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFPropertyRestriction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -228,9 +225,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFPropertyRestriction.cpp">

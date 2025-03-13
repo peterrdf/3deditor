@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RDFInstance.h"
-#include "RDFProperty.h"
+#include "_rdf_property.h"
 
 enum class enumItemType : int
 {
@@ -53,12 +53,12 @@ class CRDFPropertyItem :
 
 private: // Members
 
-	CRDFProperty* m_pProperty;
+	_rdf_property_t* m_pProperty;
 
 public: // Methods
 
-	CRDFPropertyItem(_rdf_instance* pInstance, CRDFProperty* pProperty);
+	CRDFPropertyItem(_rdf_instance* pInstance, _rdf_property_t* pProperty);
 	virtual ~CRDFPropertyItem();
 
-	CRDFProperty* GetProperty() const { return m_pProperty; }
+	_rdf_property_t* GetProperty() const { return m_pProperty; }
 };

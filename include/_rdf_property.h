@@ -6,7 +6,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class _rdf_property
+class _rdf_property 
 {
 
 private: // Members	
@@ -69,4 +69,115 @@ public: // Methods
 private: // Methods
 
 	_rdf_property_collection* loadPropertyCollection(OwlInstance owlInstance);
+};
+
+// ************************************************************************************************
+class _rdf_property_t
+{
+
+private: // Members
+
+	RdfProperty m_iInstance;
+	wchar_t* m_szName;
+	int m_iType;
+
+public: // Methods
+
+	_rdf_property_t(RdfProperty iInstance, int iType);
+	virtual ~_rdf_property_t();
+
+	wstring GetTypeAsString() const;
+	wstring GetRange() const;
+	wstring GetCardinality(OwlInstance iInstance) const;
+	void GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const;
+
+	RdfProperty GetInstance() const { return m_iInstance; }
+	const wchar_t* GetName() const { return m_szName; }
+	int GetType() const { return m_iType; }
+};
+
+// ************************************************************************************************
+class _double_rdf_property : public _rdf_property_t
+{
+
+public: // Methods
+
+	_double_rdf_property(RdfProperty iInstance);
+	virtual ~_double_rdf_property();
+};
+
+// ************************************************************************************************
+class _integer_rdf_property : public _rdf_property_t
+{
+
+public: // Methods
+
+	_integer_rdf_property(RdfProperty iInstance);
+	virtual ~_integer_rdf_property();
+};
+
+// ************************************************************************************************
+class _bool_rdf_property : public _rdf_property_t
+{
+
+public: // Methods
+
+	_bool_rdf_property(RdfProperty iInstance);
+	virtual ~_bool_rdf_property();
+};
+
+// ************************************************************************************************
+class _string_rdf_property : public _rdf_property_t
+{
+
+public: // Methods
+
+	_string_rdf_property(RdfProperty iInstance);
+	virtual ~_string_rdf_property();
+};
+
+// ************************************************************************************************
+class CCharArrayRDFProperty : public _rdf_property_t
+{
+
+public: // Methods
+
+	CCharArrayRDFProperty(RdfProperty iInstance);
+	virtual ~CCharArrayRDFProperty();
+};
+
+// ************************************************************************************************
+class CWCharArrayRDFProperty : public _rdf_property_t
+{
+
+public: // Methods
+
+	CWCharArrayRDFProperty(RdfProperty iInstance);
+	virtual ~CWCharArrayRDFProperty();
+};
+
+// ************************************************************************************************
+class CObjectRDFProperty : public _rdf_property_t
+{
+
+private: // Members
+
+	vector<int64_t> m_vecRestrictions;
+
+public: // Methods
+
+	CObjectRDFProperty(RdfProperty iInstance);
+	virtual ~CObjectRDFProperty();
+
+	const vector<int64_t>& GetRestrictions() const { return m_vecRestrictions; }
+};
+
+// ************************************************************************************************
+class CUndefinedRDFProperty : public _rdf_property_t
+{
+
+public: // Methods
+
+	CUndefinedRDFProperty(RdfProperty iInstance);
+	virtual ~CUndefinedRDFProperty();
 };

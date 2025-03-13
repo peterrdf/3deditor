@@ -12,7 +12,7 @@ CRDFController::CRDFController()
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
 	, m_bUpdatingModel(false)
-	, m_prSelectedInstanceProperty(pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr))
+	, m_prSelectedInstanceProperty(pair<CRDFInstance *, _rdf_property_t *>(nullptr, nullptr))
 	//, m_iVisibleValuesCountLimit(10000)
 	//, m_bScaleAndCenter(TRUE)
 	//, m_bModelCoordinateSystem(TRUE)
@@ -59,7 +59,7 @@ void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, CRDFProperty * pProperty)
+void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, _rdf_property_t * pProperty)
 {
 	ASSERT(FALSE);//#todo
 	/*if (m_bUpdatingModel)
@@ -67,7 +67,7 @@ void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, CRDFProper
 		return;
 	}
 
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(pInstance, pProperty);
+	m_prSelectedInstanceProperty = pair<CRDFInstance *, _rdf_property_t *>(pInstance, pProperty);
 	m_pSelectedInstance = pInstance;
 
 	auto itView = m_setViews.begin();
@@ -78,7 +78,7 @@ void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, CRDFProper
 }
 
 // ------------------------------------------------------------------------------------------------
-pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty() const
+pair<CRDFInstance *, _rdf_property_t *> CRDFController::GetSelectedInstanceProperty() const
 {
 	return m_prSelectedInstanceProperty;
 }
@@ -123,7 +123,7 @@ pair<CRDFInstance *, CRDFProperty *> CRDFController::GetSelectedInstanceProperty
 //}
 
 // ------------------------------------------------------------------------------------------------
-//void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty)
+//void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property_t* pProperty)
 //{
 //	ASSERT(FALSE);//#todo
 //	/*auto pModel = GetModel();
@@ -224,7 +224,7 @@ bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance
 	if (m_pSelectedInstance == pInstance)
 	{
 		m_pSelectedInstance = nullptr;
-		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
+		m_prSelectedInstanceProperty = pair<CRDFInstance *, _rdf_property_t *>(nullptr, nullptr);
 	}
 
 	int64_t iInstance = pInstance->getOwlInstance();
@@ -249,7 +249,7 @@ bool CRDFController::DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInst
 	/*if (m_pSelectedInstance == pInstance)
 	{
 		m_pSelectedInstance = nullptr;
-		m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
+		m_prSelectedInstanceProperty = pair<CRDFInstance *, _rdf_property_t *>(nullptr, nullptr);
 	}
 
 	if (DeleteInstanceTreeRecursive(pSender, pInstance))
@@ -346,7 +346,7 @@ bool CRDFController::DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> 
 		if (m_pSelectedInstance == vecInstances[iInstance])
 		{
 			m_pSelectedInstance = nullptr;
-			m_prSelectedInstanceProperty = pair<CRDFInstance *, CRDFProperty *>(nullptr, nullptr);
+			m_prSelectedInstanceProperty = pair<CRDFInstance *, _rdf_property_t *>(nullptr, nullptr);
 		}
 
 		bResult &= pModel->DeleteInstance(vecInstances[iInstance]);

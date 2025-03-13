@@ -38,7 +38,7 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent /*=nullptr*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, _rdf_property_t * pProperty, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)

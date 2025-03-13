@@ -3,7 +3,7 @@
 #include "_rdf_mvc.h"
 #include "Texture.h"
 #include "RDFClass.h"
-#include "RDFProperty.h"
+#include "_rdf_property.h"
 #include "RDFInstance.h"
 #include "TextBuilder.h"
 
@@ -30,7 +30,7 @@ protected: // Members
 	// Model
 	bool m_bExternalModel;
 	map<OwlClass, CRDFClass*> m_mapClasses;
-	map<RdfProperty, CRDFProperty*> m_mapProperties;
+	map<RdfProperty, _rdf_property_t*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, CRDFInstance*> m_mapInstances;
 
@@ -105,13 +105,13 @@ public: // Methods
 	void ZoomOut();
 
 	void OnInstanceNameEdited(CRDFInstance* pInstance);
-	void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
+	void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property_t* pProperty);
 
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	void GetPropertyMetaData(CRDFInstance* pInstance, CRDFProperty* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
+	void GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
 	const map<OwlClass, CRDFClass*>& GetClasses() const { return m_mapClasses; }
-	const map<RdfProperty, CRDFProperty*>& GetProperties() const { return m_mapProperties; }
+	const map<RdfProperty, _rdf_property_t*>& GetProperties() const { return m_mapProperties; }
 	const map<OwlInstance, CRDFInstance*>& GetInstances() const { return m_mapInstances; }
 
 protected: // Methods

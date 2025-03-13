@@ -27,7 +27,7 @@ CRDFInstanceItem::~CRDFInstanceItem()
 
 
 // ************************************************************************************************
-CRDFPropertyItem::CRDFPropertyItem(_rdf_instance* pInstance, CRDFProperty* pProperty)
+CRDFPropertyItem::CRDFPropertyItem(_rdf_instance* pInstance, _rdf_property_t* pProperty)
 	: CRDFItem(pInstance)
 	, m_pProperty(pProperty)
 {

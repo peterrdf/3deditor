@@ -205,10 +205,10 @@ private: // Members
 	// Disable all notifications	
 	bool m_bUpdatingModel; 
 
+protected:
+
 	// Selection
 	vector<_instance*> m_vecSelectedInstances;
-
-protected:
 
 	// Target
 	_instance* m_pTargetInstance;

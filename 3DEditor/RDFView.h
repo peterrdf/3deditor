@@ -2,7 +2,7 @@
 
 #include "_rdf_mvc.h"
 #include "RDFInstance.h"
-#include "RDFProperty.h"
+#include "_rdf_property.h"
 
 // ------------------------------------------------------------------------------------------------
 class CRDFController;
@@ -34,7 +34,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been modified
-	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty);
+	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property_t* pProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been created
