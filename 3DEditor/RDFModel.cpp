@@ -630,6 +630,8 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, _rdf_property *
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
 
+	ASSERT(FALSE); //#todo
+
 	//int64_t iClassInstance = GetInstanceClass(pInstance->getOwlInstance());
 	//assert(iClassInstance != 0);
 
