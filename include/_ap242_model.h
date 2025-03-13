@@ -15,42 +15,42 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
-	bool m_bLoadInstancesOnDemand;
+    bool m_bLoadInstancesOnDemand;
 
-	map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
-	vector<_ap242_draughting_model*> m_vecDraughtingModels;
+    map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
+    vector<_ap242_draughting_model*> m_vecDraughtingModels;
 
 public: // Methods
 
-	_ap242_model(bool bLoadInstancesOnDemand = false);
-	virtual ~_ap242_model();
+    _ap242_model(bool bLoadInstancesOnDemand = false);
+    virtual ~_ap242_model();
 
 protected: // Methods
 
-	// _model
-	virtual _instance* loadInstance(int64_t iInstance) override;
-	virtual void clean(bool bCloseModel = true) override;
+    // _model
+    virtual _instance* loadInstance(int64_t iInstance) override;
+    virtual void clean(bool bCloseModel = true) override;
 
-	// _ap_model
-	virtual void attachModelCore() override;
+    // _ap_model
+    virtual void attachModelCore() override;
 
 private: // Methods
 
-	void loadProductDefinitions();
-	_ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
-	_ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
-	void loadAssemblies();
-	void loadGeometry();
-	void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
+    void loadProductDefinitions();
+    _ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
+    _ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
+    void loadAssemblies();
+    void loadGeometry();
+    void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
 
-	void loadDraughtingModels();
-	_ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
-	_ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);	
+    void loadDraughtingModels();
+    _ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
+    _ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);
 
-	void save(const wchar_t* szPath);	
+    void save(const wchar_t* szPath);
 
 public: // Properties
 
-	const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
-	const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
+    const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
+    const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
 };

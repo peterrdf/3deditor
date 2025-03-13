@@ -45,28 +45,28 @@ class _ifc_unit
 
 private: // Members	
 
-	int m_iType;
-	wstring m_strType;
-	wstring m_strPrefix;
-	wstring m_strName;
+    int m_iType;
+    wstring m_strType;
+    wstring m_strPrefix;
+    wstring m_strName;
 
 public: // Methods
-	
-	_ifc_unit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName);
+
+    _ifc_unit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName);
     virtual ~_ifc_unit();
 
 public: // Properties
 
-	wstring getType() const { return m_strType; }
+    wstring getType() const { return m_strType; }
     wstring getPrefix() const { return m_strPrefix; }
     wstring getName() const { return m_strName; }
     wstring getUnit() const; // [PREFIX][SPACE][NAME]
 
 protected: // Methods
-	
+
     void convertType(const wchar_t* szUnitType);
-	void convertPrefix(const wchar_t* szPrefix);
-	void convertName(const wchar_t * szName);
+    void convertPrefix(const wchar_t* szPrefix);
+    void convertName(const wchar_t* szName);
 };
 
 // ************************************************************************************************
@@ -75,28 +75,28 @@ class _ifc_unit_provider
 
 private: // Members
 
-	SdaiModel m_sdaiModel;
-	map<wstring, _ifc_unit*> m_mapUnits;
+    SdaiModel m_sdaiModel;
+    map<wstring, _ifc_unit*> m_mapUnits;
 
 public: // Methods
 
-	_ifc_unit_provider(SdaiModel iModel);
-	virtual ~_ifc_unit_provider();
+    _ifc_unit_provider(SdaiModel iModel);
+    virtual ~_ifc_unit_provider();
 
-	const _ifc_unit* getUnit(const wchar_t* szUnit) const;
-	
-	pair<wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
-	pair<wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
-	pair<wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
-	pair<wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
-	pair<wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
-	pair<wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
-	pair<wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
+    const _ifc_unit* getUnit(const wchar_t* szUnit) const;
+
+    pair<wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
+    pair<wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
+    pair<wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
+    pair<wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
+    pair<wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
+    pair<wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
+    pair<wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
 
 protected: // Methods
 
-	void load();
-	void loadUnits(SdaiInstance sdaiProjectInstance);
+    void load();
+    void loadUnits(SdaiInstance sdaiProjectInstance);
 };
 
 #endif // IFCUNIT_H

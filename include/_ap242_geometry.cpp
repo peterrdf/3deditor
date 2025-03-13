@@ -3,20 +3,19 @@
 
 // ************************************************************************************************
 _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-	: _ap_geometry(owlInstance, sdaiInstance)
+    : _ap_geometry(owlInstance, sdaiInstance)
 {
-	calculate();
+    calculate();
 }
 
 /*virtual*/ _ap242_geometry::~_ap242_geometry()
-{
-}
+{}
 
 /*virtual*/ void _ap242_geometry::preCalculate() /*override*/
 {
-	// Format
-	setAPFormatSettings();
+    // Format
+    setAPFormatSettings();
 
-	// Extra settings
-	setSegmentation(getSdaiModel(), 16, 0.);
+    // Extra settings
+    setSegmentation(getSdaiModel(), 16, 0.);
 }

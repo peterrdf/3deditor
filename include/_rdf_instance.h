@@ -12,17 +12,17 @@ class _rdf_instance : public _instance
 
 public:  // Methods
 
-	_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
-	virtual ~_rdf_instance();
+    _rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix);
+    virtual ~_rdf_instance();
 
-	// instance
-	virtual void setEnable(bool bEnable) override;
+    // instance
+    virtual void setEnable(bool bEnable) override;
 
-	void recalculate();
-	
+    void recalculate();
+
 public: // Properties
 
-	virtual const wchar_t* getName() const override { return getGeometry()->getName(); }
-	const wchar_t* getUniqueName() const { return getGeometry()->getUniqueName(); }
-	bool getDesignTreeConsistency() { return CheckInstanceConsistency(getOwlInstance(), FLAGBIT(0)) == 0; }
+    virtual const wchar_t* getName() const override { return getGeometry()->getName(); }
+    const wchar_t* getUniqueName() const { return getGeometry()->getUniqueName(); }
+    bool getDesignTreeConsistency() { return CheckInstanceConsistency(getOwlInstance(), FLAGBIT(0)) == 0; }
 };
