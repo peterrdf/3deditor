@@ -35,16 +35,13 @@ static char THIS_FILE[]=__FILE__;
 // Moved in CSelectInstanceDialog
 //#define USED_SUFFIX L" [used]"
 
+// ************************************************************************************************
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
+	: m_enPropertyType(enApplicationProperty)
 {
-	m_enPropertyType = enApplicationProperty;
 }
 
-enumApplicationProperty CApplicationPropertyData::GetType() const
-{
-	return m_enPropertyType;
-}
-
+// ************************************************************************************************
 CLightPropertyData::CLightPropertyData(enumApplicationProperty enApplicationProperty, int iLightIndex)
 	: CApplicationPropertyData(enApplicationProperty)
 	, m_iLightIndex(iLightIndex)
@@ -56,6 +53,7 @@ int CLightPropertyData::GetLightIndex() const
 	return m_iLightIndex;
 }
 
+// ************************************************************************************************
 CApplicationProperty::CApplicationProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
 {
@@ -71,6 +69,7 @@ CApplicationProperty::CApplicationProperty(const CString & strGroupName, DWORD_P
 	delete (CApplicationPropertyData *)GetData();
 }
 
+// ************************************************************************************************
 CColorApplicationProperty::CColorApplicationProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridColorProperty(strName, color, pPalette, szDescription, dwData)
 {
@@ -81,6 +80,7 @@ CColorApplicationProperty::CColorApplicationProperty(const CString & strName, co
 	delete (CApplicationPropertyData *)GetData();
 }
 
+// ************************************************************************************************
 CRDFInstanceData::CRDFInstanceData(_rdf_controller * pController, _rdf_instance * pInstance)
 	: m_pController(pController)
 	, m_pInstance(pInstance)
@@ -89,16 +89,11 @@ CRDFInstanceData::CRDFInstanceData(_rdf_controller * pController, _rdf_instance 
 	ASSERT(m_pInstance != nullptr);
 }
 
-_rdf_controller * CRDFInstanceData::GetController() const
+/*virtual*/ CRDFInstanceData::~CRDFInstanceData()
 {
-	return m_pController;
 }
 
-_rdf_instance * CRDFInstanceData::GetInstance() const
-{
-	return m_pInstance;
-}
-
+// ************************************************************************************************
 CRDFInstancePropertyData::CRDFInstancePropertyData(_rdf_controller * pController, _rdf_instance * pInstance, CRDFProperty * pProperty, int64_t iCard)
 	: CRDFInstanceData(pController, pInstance)
 	, m_pProperty(pProperty)
@@ -107,7 +102,7 @@ CRDFInstancePropertyData::CRDFInstancePropertyData(_rdf_controller * pController
 	ASSERT(m_pProperty != nullptr);
 }
 
-CRDFProperty * CRDFInstancePropertyData::GetProperty() const
+CRDFProperty* CRDFInstancePropertyData::GetProperty() const
 {
 	return m_pProperty;
 }
@@ -124,6 +119,7 @@ void CRDFInstancePropertyData::SetCard(int64_t iCard)
 	m_iCard = iCard;
 }
 
+// ************************************************************************************************
 CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
 {
@@ -577,6 +573,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString & strName, const COleVa
 	m_varValue.vt = VT_I8;
 }
 
+// ************************************************************************************************
 CRDFInstanceObjectProperty::CRDFInstanceObjectProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
 	, m_mapValues()
@@ -595,8 +592,6 @@ void CRDFInstanceObjectProperty::AddValue(const wstring & strValue, int64_t iIns
 	m_mapValues[strValue] = iInstance;
 }
 
-// --------------------------------------------------------------------------------------------
-// Gets an instance by value
 int64_t CRDFInstanceObjectProperty::GetInstance(const wstring & strValue) const
 {
 	map<wstring, int64_t>::const_iterator itValues = m_mapValues.find(strValue);
@@ -605,6 +600,7 @@ int64_t CRDFInstanceObjectProperty::GetInstance(const wstring & strValue) const
 	return itValues->second;
 }
 
+// ************************************************************************************************
 CRDFColorSelectorProperty::CRDFColorSelectorProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridColorProperty(strName, color, pPalette, szDescription, dwData)
 {
@@ -616,6 +612,7 @@ CRDFColorSelectorProperty::CRDFColorSelectorProperty(const CString & strName, co
 	delete (CRDFInstancePropertyData *)GetData();
 }
 
+// ************************************************************************************************
 CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridProperty(strName, vtValue, szDescription, dwData)
 {
@@ -624,11 +621,6 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString & strName, const 
 /*virtual*/ CAddRDFInstanceProperty::~CAddRDFInstanceProperty()
 {
 	delete (CRDFInstancePropertyData *)GetData();
-}
-
-void CAddRDFInstanceProperty::SetModified(BOOL bModified)
-{
-	m_bIsModified = bModified;
 }
 
 /*virtual*/ BOOL CAddRDFInstanceProperty::HasButton() const
@@ -1159,6 +1151,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	} // switch (pData->GetProperty()->getType())
 }
 
+void CAddRDFInstanceProperty::SetModified(BOOL bModified)
+{
+	m_bIsModified = bModified;
+}
+
+// ************************************************************************************************
 /*virtual*/ void CPropertiesWnd::OnInstanceSelected(CRDFView * /*pSender*/)
 {
 	m_wndObjectCombo.SetCurSel(1 /*Properties*/);

@@ -8,6 +8,7 @@
 #include <map>
 using namespace std;
 
+// ************************************************************************************************
 class CPropertiesToolBar : public CMFCToolBar
 {
 public:
@@ -19,28 +20,22 @@ public:
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CApplicationPropertyData
 {
 
 private:  // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Type
 	enumApplicationProperty m_enPropertyType;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CApplicationPropertyData(enumApplicationProperty enApplicationProperty);
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	enumApplicationProperty GetType() const;
+	enumApplicationProperty GetType() const { return m_enPropertyType; }
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CLightPropertyData : public CApplicationPropertyData
 {
 
@@ -61,7 +56,7 @@ public: // Methods
 	int GetLightIndex() const;
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CApplicationProperty : public CMFCPropertyGridProperty
 {
 
@@ -80,194 +75,119 @@ public: // Methods
 	virtual ~CApplicationProperty();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CColorApplicationProperty : public CMFCPropertyGridColorProperty
 {
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CColorApplicationProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CColorApplicationProperty();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFInstanceData
 {
 
 private:  // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
-	_rdf_controller * m_pController;
-
-	// --------------------------------------------------------------------------------------------
-	// Instance
-	_rdf_instance * m_pInstance;
+	_rdf_controller* m_pController;
+	_rdf_instance* m_pInstance;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
-	CRDFInstanceData(_rdf_controller * pController, _rdf_instance * pInstance);
+	CRDFInstanceData(_rdf_controller* pController, _rdf_instance* pInstance);
+	virtual ~CRDFInstanceData();
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	_rdf_controller * GetController() const;
+public: // Properties
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	_rdf_instance * GetInstance() const;
+	_rdf_controller* GetController() const { return m_pController; }
+	_rdf_instance* GetInstance() const { return m_pInstance; }
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFInstancePropertyData : public CRDFInstanceData
 {
 
 private:  // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Property
 	CRDFProperty * m_pProperty;
-
-	// --------------------------------------------------------------------------------------------
-	// Card
 	int64_t m_iCard;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFInstancePropertyData(_rdf_controller * pController, _rdf_instance * pInstance, CRDFProperty * pProperty, int64_t iCard);
 
-	// --------------------------------------------------------------------------------------------
-	// Getter
+
+public: // Properties
+
 	CRDFProperty * GetProperty() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
 	int64_t GetCard() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Setter
 	void SetCard(int64_t iCard);
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFInstanceProperty : public CMFCPropertyGridProperty
 {
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CRDFInstanceProperty();
 
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual BOOL HasButton() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual void OnClickButton(CPoint point);
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual CString FormatProperty();
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual BOOL TextToVar(const CString & strText);
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual CWnd * CreateInPlaceEdit(CRect rectEdit, BOOL& bDefaultFormat);
 
-	// --------------------------------------------------------------------------------------------
-	// Support for int64_t
 	void EnableSpinControlInt64();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFInstanceObjectProperty : public CMFCPropertyGridProperty
 {
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// VALUE : INSTANCE
 	map<wstring, int64_t> m_mapValues;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFInstanceObjectProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CRDFInstanceObjectProperty();
 
-	// --------------------------------------------------------------------------------------------
-	// Adds a pair - VALUE : INSTANCE
 	void AddValue(const wstring & strValue, int64_t iInstance);
 
-	// --------------------------------------------------------------------------------------------
-	// Gets an instance by value
 	int64_t GetInstance(const wstring & strValue) const;
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFColorSelectorProperty : public CMFCPropertyGridColorProperty
 {
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CRDFColorSelectorProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CRDFColorSelectorProperty();
 };
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CAddRDFInstanceProperty : public CMFCPropertyGridProperty
 {
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// ctor
 	CAddRDFInstanceProperty(const CString & strName, const COleVariant & vtValue, LPCTSTR szDescription, DWORD_PTR dwData);	
-
-	// --------------------------------------------------------------------------------------------
-	// dtor
 	virtual ~CAddRDFInstanceProperty();
 
-	// --------------------------------------------------------------------------------------------
-	// Access to a protected member function
-	void SetModified(BOOL bModified);
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual BOOL HasButton() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Overridden
 	virtual void OnClickButton(CPoint point);
+
+	void SetModified(BOOL bModified);
 };
 
-
+// ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
 	, public CRDFView
