@@ -350,37 +350,37 @@ void CRDFModel::Load(OwlInstance iInstance)
 
 			case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			{
-				m_mapProperties[iPropertyInstance] = new _bool_rdf_property(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_STRING:
 			{
-				m_mapProperties[iPropertyInstance] = new _string_rdf_property(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
 			{
-				m_mapProperties[iPropertyInstance] = new CCharArrayRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
 			{
-				m_mapProperties[iPropertyInstance] = new CWCharArrayRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_INTEGER:
 			{
-				m_mapProperties[iPropertyInstance] = new _integer_rdf_property(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
 			case DATATYPEPROPERTY_TYPE_DOUBLE:
 			{
-				m_mapProperties[iPropertyInstance] = new _double_rdf_property(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
@@ -945,7 +945,7 @@ void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
 	}
 }
 
-void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property_t * /*pProperty*/)
+void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property * /*pProperty*/)
 {
 	ASSERT(FALSE); //#todo
 	/*SetFormatSettings(m_iModel);
@@ -1033,23 +1033,23 @@ const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
 	return m_mapInstanceMetaData.at(pInstance);
 }
 
-void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
+void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
 {
 	strMetaData = strPrefix;
-	strMetaData += pProperty->GetName() != nullptr ? pProperty->GetName() : L"NA";
+	strMetaData += pProperty->getName() != nullptr ? pProperty->getName() : L"NA";
 	strMetaData += L": ";
 
 	bMultiValue = false;
 
 	/* value */
 	wchar_t szBuffer[1000];
-	switch (pProperty->GetType())
+	switch (pProperty->getType())
 	{
 		case OBJECTPROPERTY_TYPE:
 		{
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &piInstances, &iCard);
 
 			strMetaData += iCard > 0 ? L"[...]" : L"[]";
 
@@ -1061,7 +1061,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 		{
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pbValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1082,7 +1082,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
 			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
 
 			if (iCard == 1)
@@ -1102,7 +1102,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 		{
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1121,7 +1121,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 		{
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1140,7 +1140,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 		{
 			int64_t iCard = 0;
 			double* pdValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pdValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1160,7 +1160,7 @@ void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property_t* pP
 		{
 			int64_t iCard = 0;
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&piValue, &iCard);
 
 			if (iCard == 1)
 			{
@@ -1241,37 +1241,37 @@ void CRDFModel::LoadRDFModel()
 
 				case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				{
-					m_mapProperties[iPropertyInstance] = new _bool_rdf_property(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_STRING:
 				{
-					m_mapProperties[iPropertyInstance] = new _string_rdf_property(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
 				{
-					m_mapProperties[iPropertyInstance] = new CCharArrayRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
 				{
-					m_mapProperties[iPropertyInstance] = new CWCharArrayRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_INTEGER:
 				{
-					m_mapProperties[iPropertyInstance] = new _integer_rdf_property(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 
 				case DATATYPEPROPERTY_TYPE_DOUBLE:
 				{
-					m_mapProperties[iPropertyInstance] = new _double_rdf_property(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 

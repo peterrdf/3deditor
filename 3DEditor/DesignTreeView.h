@@ -61,7 +61,7 @@ public: // Methods
 	
 	// _rdf_view
 	//#todo
-	/*virtual void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property_t* pProperty) override;
+	/*virtual void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty) override;
 	virtual void OnNewInstanceCreated(CRDFView* pSender, _rdf_instance* pInstance) override;
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView* pSender);
@@ -85,7 +85,7 @@ private: // Methods
 	void GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
 	void RemoveInstanceItemData(_rdf_instance* pInstance, HTREEITEM hInstance);
-	void RemovePropertyItemData(_rdf_instance* pInstance, _rdf_property_t * pProperty, HTREEITEM hProperty);
+	void RemovePropertyItemData(_rdf_instance* pInstance, _rdf_property * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);
 	void UpdateView();
 

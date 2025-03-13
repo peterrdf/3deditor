@@ -18,10 +18,13 @@ public: // Methods
 	_rdf_property(RdfProperty rdfProperty);
 	virtual ~_rdf_property();
 
-	wstring getRange(vector<int64_t>& vecRestrictionClasses) const { return getRange(m_rdfProperty, vecRestrictionClasses); }
-	static wstring getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
+	wstring getRangeAsString() const;
+	wstring getRangeAsStringEx(vector<int64_t>& vecRestrictionClasses) const { return getRangeAsStringEx(m_rdfProperty, vecRestrictionClasses); }
+	static wstring getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
 	wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
 	static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
+	void getRestrictions(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getRestrictions(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
+	static void getRestrictions(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
 
 public: // Properties
 
@@ -30,7 +33,7 @@ public: // Properties
 	static RdfPropertyType getType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
 	wstring getTypeAsString() { return getTypeAsString(getType()); }
 	static wstring getTypeAsString(RdfPropertyType rdfPropertyType);
-	wchar_t* getName() const;
+	const wchar_t* getName() const;
 };
 
 // ************************************************************************************************
@@ -72,91 +75,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class _rdf_property_t : public _rdf_property
-{
-
-private: // Members
-
-	RdfProperty m_iInstance;
-	wchar_t* m_szName;
-	int m_iType;
-
-public: // Methods
-
-	_rdf_property_t(RdfProperty iInstance, int iType);
-	virtual ~_rdf_property_t();
-
-	wstring GetRange() const;
-	wstring GetCardinality(OwlInstance iInstance) const;
-	void GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const;
-
-	RdfProperty GetInstance() const { return m_iInstance; }
-	const wchar_t* GetName() const { return m_szName; }
-	int GetType() const { return m_iType; }
-};
-
-// ************************************************************************************************
-class _double_rdf_property : public _rdf_property_t
-{
-
-public: // Methods
-
-	_double_rdf_property(RdfProperty iInstance);
-	virtual ~_double_rdf_property();
-};
-
-// ************************************************************************************************
-class _integer_rdf_property : public _rdf_property_t
-{
-
-public: // Methods
-
-	_integer_rdf_property(RdfProperty iInstance);
-	virtual ~_integer_rdf_property();
-};
-
-// ************************************************************************************************
-class _bool_rdf_property : public _rdf_property_t
-{
-
-public: // Methods
-
-	_bool_rdf_property(RdfProperty iInstance);
-	virtual ~_bool_rdf_property();
-};
-
-// ************************************************************************************************
-class _string_rdf_property : public _rdf_property_t
-{
-
-public: // Methods
-
-	_string_rdf_property(RdfProperty iInstance);
-	virtual ~_string_rdf_property();
-};
-
-// ************************************************************************************************
-class CCharArrayRDFProperty : public _rdf_property_t
-{
-
-public: // Methods
-
-	CCharArrayRDFProperty(RdfProperty iInstance);
-	virtual ~CCharArrayRDFProperty();
-};
-
-// ************************************************************************************************
-class CWCharArrayRDFProperty : public _rdf_property_t
-{
-
-public: // Methods
-
-	CWCharArrayRDFProperty(RdfProperty iInstance);
-	virtual ~CWCharArrayRDFProperty();
-};
-
-// ************************************************************************************************
-class CObjectRDFProperty : public _rdf_property_t
+class CObjectRDFProperty : public _rdf_property
 {
 
 private: // Members
@@ -172,7 +91,7 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class CUndefinedRDFProperty : public _rdf_property_t
+class CUndefinedRDFProperty : public _rdf_property
 {
 
 public: // Methods

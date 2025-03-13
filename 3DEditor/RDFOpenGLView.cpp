@@ -344,7 +344,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //}
 
 // ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, _rdf_property_t* /*pProperty*/) /*override*/
+///*virtual*/ void CRDFOpenGLView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, _rdf_property* /*pProperty*/) /*override*/
 //{
 //	/*
 //	* Reload model
@@ -451,7 +451,7 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //{
 //	assert(GetController() != nullptr);
 //
-//	pair<CRDFInstance *, _rdf_property_t *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
+//	pair<CRDFInstance *, _rdf_property *> prSelectedInstanceProperty = GetController()->GetSelectedInstanceProperty();
 //
 //	CRDFInstance * pSelectedInstance = prSelectedInstanceProperty.first;
 //

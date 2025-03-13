@@ -69,7 +69,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 
 	int64_t* piInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->getOwlInstance(), m_pObjectRDFProperty->GetInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getOwlInstance(), m_pObjectRDFProperty->getRdfProperty(), &piInstances, &iCard);
 
 	assert(iCard > 0);
 	assert((m_iCard >= 0) && (m_iCard < iCard));

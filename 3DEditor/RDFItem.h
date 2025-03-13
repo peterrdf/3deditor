@@ -53,12 +53,12 @@ class CRDFPropertyItem :
 
 private: // Members
 
-	_rdf_property_t* m_pProperty;
+	_rdf_property* m_pProperty;
 
 public: // Methods
 
-	CRDFPropertyItem(_rdf_instance* pInstance, _rdf_property_t* pProperty);
+	CRDFPropertyItem(_rdf_instance* pInstance, _rdf_property* pProperty);
 	virtual ~CRDFPropertyItem();
 
-	_rdf_property_t* GetProperty() const { return m_pProperty; }
+	_rdf_property* GetProperty() const { return m_pProperty; }
 };

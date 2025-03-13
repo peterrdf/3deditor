@@ -13,7 +13,7 @@ class CNavigatorRDFModel;
 class CRDFView;
 enum class enumApplicationProperty;
 class CRDFInstance;
-class _rdf_property_t;
+class _rdf_property;
 
 // ***********************************************************************************************
 class CRDFController : public _rdf_controller
@@ -30,7 +30,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// Selected instance property
-	pair<CRDFInstance *, _rdf_property_t *> m_prSelectedInstanceProperty;
+	pair<CRDFInstance *, _rdf_property *> m_prSelectedInstanceProperty;
 
 public: // Methods
 
@@ -54,11 +54,11 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	void SelectInstanceProperty(CRDFInstance * pInstance, _rdf_property_t * pProperty);
+	void SelectInstanceProperty(CRDFInstance * pInstance, _rdf_property * pProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// Selection support
-	pair<CRDFInstance *, _rdf_property_t *> GetSelectedInstanceProperty() const;
+	pair<CRDFInstance *, _rdf_property *> GetSelectedInstanceProperty() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Factory

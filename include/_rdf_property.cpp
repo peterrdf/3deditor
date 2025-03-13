@@ -9,7 +9,13 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 /*virtual*/ _rdf_property::~_rdf_property()
 {}
 
-/*static*/ wstring _rdf_property::getRange(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
+wstring _rdf_property::getRangeAsString() const
+{
+	vector<OwlClass> vecRestrictionClasses;
+	return getRangeAsStringEx(m_rdfProperty, vecRestrictionClasses);
+}
+
+/*static*/ wstring _rdf_property::getRangeAsStringEx(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses)
 {
 	wstring strRange = L"unknown";
 	vecRestrictionClasses.clear();
@@ -62,7 +68,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 	} // switch (getType())
@@ -72,8 +78,8 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 /*static*/ wstring _rdf_property::getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty)
 {
-	ASSERT(owlInstance != 0);
-	ASSERT(rdfProperty != 0);
+	assert(owlInstance != 0);
+	assert(rdfProperty != 0);
 
 	int64_t iCard = 0;
 	switch (getType(rdfProperty))
@@ -122,17 +128,14 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 		default:
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		break;
 	} // switch (getType(rdfProperty))
 
-	OwlClass iInstanceClass = GetInstanceClass(owlInstance);
-	ASSERT(iInstanceClass != 0);
-
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	GetClassPropertyAggregatedCardinalityRestriction(iInstanceClass, rdfProperty, &iMinCard, &iMaxCard);
+	getRestrictions(owlInstance, rdfProperty, iMinCard, iMaxCard);
 
 	wchar_t szBuffer[100];
 	if ((iMinCard == -1) && (iMaxCard == -1))
@@ -154,6 +157,19 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	return szBuffer;
 }
 
+/*static*/ void _rdf_property::getRestrictions(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard)
+{
+	assert(owlInstance != 0);
+	assert(rdfProperty != 0);
+
+	OwlClass owlClass = GetInstanceClass(owlInstance);
+	assert(owlClass != 0);
+
+	iMinCard = -1;
+	iMaxCard = -1;
+	GetClassPropertyAggregatedCardinalityRestriction(owlClass, rdfProperty, &iMinCard, &iMaxCard);
+}
+
 /*static*/ wstring _rdf_property::getTypeAsString(RdfPropertyType rdfPropertyType)
 {
 	wstring strTypeName = rdfPropertyType == OBJECTPROPERTY_TYPE ?
@@ -163,7 +179,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	return strTypeName;
 }
 
-wchar_t* _rdf_property::getName() const
+const wchar_t* _rdf_property::getName() const
 {
 	wchar_t* szName = nullptr;
 	GetNameOfPropertyW(m_rdfProperty, &szName);
@@ -201,7 +217,7 @@ _rdf_property_collection* _rdf_property_provider::getPropertyCollection(OwlInsta
 {
 	if (owlInstance == 0)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 
 		return nullptr;
 	}
@@ -222,7 +238,7 @@ _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInst
 {
 	if (owlInstance == 0)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 
 		return nullptr;
 	}
@@ -241,254 +257,16 @@ _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInst
 }
 
 // ************************************************************************************************
-_rdf_property_t::_rdf_property_t(RdfProperty iInstance, int iType)
-	: _rdf_property(iInstance)
-	, m_iInstance(iInstance)
-	, m_szName(nullptr)
-	, m_iType(iType)
-{
-	assert(m_iInstance != 0);
-
-	GetNameOfPropertyW(m_iInstance, &m_szName);
-}
-
-/*virtual*/ _rdf_property_t::~_rdf_property_t()
-{
-}
-
-wstring _rdf_property_t::GetRange() const
-{
-	wstring strRange = L"unknown";
-
-	switch (GetType())
-	{
-	case OBJECTPROPERTY_TYPE:
-	{
-		strRange = L"xsd:object";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_BOOLEAN:
-	{
-		strRange = L"xsd:boolean";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_STRING:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-	{
-		strRange = L"xsd:string";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_DOUBLE:
-	{
-		strRange = L"xsd:double";
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_INTEGER:
-	{
-		strRange = L"xsd:integer";
-	}
-	break;
-
-	default:
-	{
-		assert(false); // Not supported!
-	}
-	break;
-	} // switch (getType())
-
-	return strRange;
-}
-
-wstring _rdf_property_t::GetCardinality(OwlInstance iInstance) const
-{
-	assert(iInstance != 0);
-
-	int64_t iCard = 0;
-
-	switch (GetType())
-	{
-	case OBJECTPROPERTY_TYPE:
-	{
-		int64_t* piInstances = nullptr;
-		GetObjectProperty(iInstance, GetInstance(), &piInstances, &iCard);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_BOOLEAN:
-	{
-		bool* pbValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&pbValue, &iCard);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_STRING:
-	{
-		wchar_t** szValue = nullptr;
-		SetCharacterSerialization(GetModel(iInstance), 0, 0, false);
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-		SetCharacterSerialization(GetModel(iInstance), 0, 0, true);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-	{
-		char** szValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-	{
-		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&szValue, &iCard);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_DOUBLE:
-	{
-		double* pdValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&pdValue, &iCard);
-	}
-	break;
-
-	case DATATYPEPROPERTY_TYPE_INTEGER:
-	{
-		int64_t* piValue = nullptr;
-		GetDatatypeProperty(iInstance, GetInstance(), (void**)&piValue, &iCard);
-	}
-	break;
-
-	default:
-	{
-		assert(false);
-	}
-	break;
-	} // switch (getType())
-
-	int64_t	iMinCard = 0;
-	int64_t iMaxCard = 0;
-	GetRestrictions(iInstance, iMinCard, iMaxCard);
-
-	wchar_t szBuffer[256];
-
-	if ((iMinCard == -1) && (iMaxCard == -1))
-	{
-		swprintf(szBuffer, 256, L"%lld of [0 - infinity>", iCard);
-	}
-	else
-	{
-		if (iMaxCard == -1)
-		{
-			swprintf(szBuffer, 256, L"%lld of [%lld - infinity>", iCard, iMinCard);
-		}
-		else
-		{
-			swprintf(szBuffer, 256, L"%lld of [%lld - %lld]", iCard, iMinCard, iMaxCard);
-		}
-	}
-
-	return szBuffer;
-}
-
-void _rdf_property_t::GetRestrictions(OwlInstance iInstance, int64_t& iMinCard, int64_t& iMaxCard) const
-{
-	assert(iInstance != 0);
-
-	OwlClass iClassInstance = GetInstanceClass(iInstance);
-	assert(iClassInstance != 0);
-
-	iMinCard = -1;
-	iMaxCard = -1;
-	GetClassPropertyAggregatedCardinalityRestriction(iClassInstance, m_iInstance, &iMinCard, &iMaxCard);
-}
-
-// ************************************************************************************************
-_double_rdf_property::_double_rdf_property(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_DOUBLE)
-{
-}
-
-/*virtual*/ _double_rdf_property::~_double_rdf_property()
-{
-}
-
-// ************************************************************************************************
-_integer_rdf_property::_integer_rdf_property(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_INTEGER)
-{
-}
-
-_integer_rdf_property::~_integer_rdf_property()
-{
-}
-
-// ************************************************************************************************
-_bool_rdf_property::_bool_rdf_property(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_BOOLEAN)
-{
-}
-
-/*virtual*/ _bool_rdf_property::~_bool_rdf_property()
-{
-}
-
-// ************************************************************************************************
-_string_rdf_property::_string_rdf_property(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_STRING)
-{
-}
-
-_string_rdf_property::~_string_rdf_property()
-{
-}
-
-// ************************************************************************************************
-CCharArrayRDFProperty::CCharArrayRDFProperty(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_CHAR_ARRAY)
-{
-}
-
-// ************************************************************************************************
-CCharArrayRDFProperty::~CCharArrayRDFProperty()
-{
-}
-
-// ************************************************************************************************
-CWCharArrayRDFProperty::CWCharArrayRDFProperty(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY)
-{
-}
-
-CWCharArrayRDFProperty::~CWCharArrayRDFProperty()
-{
-}
-
-// ************************************************************************************************
 CObjectRDFProperty::CObjectRDFProperty(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, OBJECTPROPERTY_TYPE)
+	: _rdf_property(iInstance)
 	, m_vecRestrictions()
 {
-	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), 0);
+	int64_t	iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getRdfProperty(), 0);
 	while (iRestrictionsClassInstance != 0)
 	{
 		m_vecRestrictions.push_back(iRestrictionsClassInstance);
 
-		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(GetInstance(), iRestrictionsClassInstance);
+		iRestrictionsClassInstance = GetRangeRestrictionsByIterator(getRdfProperty(), iRestrictionsClassInstance);
 	}
 }
 
@@ -498,7 +276,7 @@ CObjectRDFProperty::~CObjectRDFProperty()
 
 // ************************************************************************************************
 CUndefinedRDFProperty::CUndefinedRDFProperty(RdfProperty iInstance)
-	: _rdf_property_t(iInstance, -1)
+	: _rdf_property(iInstance)
 {
 }
 

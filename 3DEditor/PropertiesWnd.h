@@ -111,17 +111,17 @@ class CRDFInstancePropertyData : public CRDFInstanceData
 
 private:  // Members
 
-	_rdf_property_t * m_pProperty;
+	_rdf_property * m_pProperty;
 	int64_t m_iCard;
 
 public: // Methods
 
-	CRDFInstancePropertyData(_rdf_controller * pController, _rdf_instance * pInstance, _rdf_property_t * pProperty, int64_t iCard);
+	CRDFInstancePropertyData(_rdf_controller * pController, _rdf_instance * pInstance, _rdf_property * pProperty, int64_t iCard);
 
 
 public: // Properties
 
-	_rdf_property_t * GetProperty() const;
+	_rdf_property * GetProperty() const;
 	int64_t GetCard() const;
 	void SetCard(int64_t iCard);
 };
@@ -263,9 +263,9 @@ protected:
 
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
-	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty);
-	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty);
-	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty);
+	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
+	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
+	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void LoadBaseInformation(_rdf_instance* pInstance);
 	void LoadMetaInformation(_rdf_instance* pInstance);
 	void SetPropListFont();

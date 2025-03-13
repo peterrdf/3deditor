@@ -34,7 +34,7 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been modified
-	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property_t* pProperty);
+	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
 
 	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been created

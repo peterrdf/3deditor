@@ -38,7 +38,7 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, _rdf_property_t * pProperty, CWnd* pParent /*=nullptr*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, _rdf_property * pProperty, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)
@@ -83,7 +83,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 	int64_t * piInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->GetInstance(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->getRdfProperty(), &piInstances, &iCard);
 
 	CRDFModel * pModel = m_pController->GetModel();
 	assert(pModel != nullptr);

@@ -93,7 +93,7 @@ CRDFInstanceData::CRDFInstanceData(_rdf_controller* pController, _rdf_instance* 
 }
 
 // ************************************************************************************************
-CRDFInstancePropertyData::CRDFInstancePropertyData(_rdf_controller* pController, _rdf_instance* pInstance, _rdf_property_t* pProperty, int64_t iCard)
+CRDFInstancePropertyData::CRDFInstancePropertyData(_rdf_controller* pController, _rdf_instance* pInstance, _rdf_property* pProperty, int64_t iCard)
 	: CRDFInstanceData(pController, pInstance)
 	, m_pProperty(pProperty)
 	, m_iCard(iCard)
@@ -101,7 +101,7 @@ CRDFInstancePropertyData::CRDFInstancePropertyData(_rdf_controller* pController,
 	ASSERT(m_pProperty != nullptr);
 }
 
-_rdf_property_t* CRDFInstancePropertyData::GetProperty() const
+_rdf_property* CRDFInstancePropertyData::GetProperty() const
 {
 	return m_pProperty;
 }
@@ -143,14 +143,14 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 	if ((iMinCard == -1) && (iMaxCard == -1))
 	{
 		iMinCard = 0;
 	}
 
-	switch (pData->GetProperty()->GetType())
+	switch (pData->GetProperty()->getType())
 	{
 	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
@@ -163,7 +163,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
@@ -174,7 +174,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
@@ -184,7 +184,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case TYPE_CHAR_DATATYPE:
@@ -197,7 +197,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		bHasButton = iCard > iMinCard ? TRUE : FALSE;
 	} // case DATATYPEPROPERTY_TYPE_DOUBLE:
@@ -210,7 +210,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
 		ASSERT(iCard > 0);
 
@@ -240,9 +240,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 	*/
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->GetType())
+	switch (pData->GetProperty()->getType())
 	{
 	case DATATYPEPROPERTY_TYPE_BOOLEAN:
 	{
@@ -258,7 +258,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 		ASSERT(iCard > 0);
@@ -284,7 +284,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		}
 
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard - 1);
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
@@ -317,7 +317,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		ASSERT(iCard > 0);
 		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -341,7 +341,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			iCurrentValue++;
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard - 1);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -373,7 +373,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		ASSERT(iCard > 0);
 		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -397,7 +397,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			iCurrentValue++;
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard - 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard - 1);
 
 		for (int iValue = 0; iValue < iCard - 1; iValue++)
 		{
@@ -429,7 +429,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		ASSERT(iCard > 0);
 		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -442,7 +442,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 
 		vecValues.erase(vecValues.begin() + pData->GetCard());
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -468,7 +468,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 		*/
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
 		ASSERT(iCard > 0);
 		ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
@@ -481,7 +481,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 
 		vecValues.erase(vecValues.begin() + pData->GetCard());
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -633,9 +633,9 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->GetType())
+	switch (pData->GetProperty()->getType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
@@ -644,7 +644,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t* piObjectInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), &piObjectInstances, &iCard);
+		GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), &piObjectInstances, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -664,7 +664,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pbValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -682,7 +682,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		int64_t iCard = 0;
 		char** szValue = nullptr;
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 		if (iMaxCard == -1)
@@ -700,7 +700,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -717,7 +717,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -737,7 +737,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -757,7 +757,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		double* piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
 		if (iMaxCard == -1)
 		{
@@ -795,9 +795,9 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 	int64_t	iMinCard = 0;
 	int64_t iMaxCard = 0;
-	pData->GetProperty()->GetRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+	pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
-	switch (pData->GetProperty()->GetType())
+	switch (pData->GetProperty()->getType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
@@ -813,7 +813,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t* piInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
+		GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), &piInstances, &iCard);
 
 		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -856,7 +856,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		//break;
 		//} // switch (dlgEditObjectProperty.m_iMode)
 
-		SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+		SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -878,7 +878,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pbValue, &iCard);
 
 		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -899,7 +899,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			pbNewValues[iValue] = vecValues[iValue];
 		}
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)pbNewValues, vecValues.size());
 
 		delete[] pbNewValues;
 		pbNewValues = nullptr;
@@ -948,7 +948,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		* Add a value
 		*/
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard + 1);
 		SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
@@ -998,7 +998,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		/*
 		* Add a value
 		*/
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard + 1);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -1047,7 +1047,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		/*
 		* Add a value
 		*/
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard + 1);
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard + 1);
 
 		for (int iValue = 0; iValue < iCard + 1; iValue++)
 		{
@@ -1075,7 +1075,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -1090,7 +1090,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 		vecValues.push_back(0.);
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -1112,7 +1112,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 		*/
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
-		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
 		ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
 
@@ -1127,7 +1127,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 
 		vecValues.push_back(0);
 
-		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+		SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 		/*
 		* Notify
@@ -1621,7 +1621,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			int64_t* piInstances = nullptr;
 			int64_t iCard = 0;
-			GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), &piInstances, &iCard);
+			GetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), &piInstances, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -1635,7 +1635,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				int64_t	iMinCard = 0;
 				int64_t iMaxCard = 0;
-				pData->GetProperty()->GetRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
+				pData->GetProperty()->getRestrictions(pData->GetInstance()->getOwlInstance(), iMinCard, iMaxCard);
 
 				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
 
@@ -1644,7 +1644,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				*/
 				vecValues.erase(vecValues.begin() + pData->GetCard());
 
-				SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+				SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), vecValues.data(), vecValues.size());
 
 				/*
 				* Notify
@@ -1751,7 +1751,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			double dR = GetRValue(pColorSelectorProperty->GetColor()) / 255.;
 			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), iRProperty, &dR, 1);
 
-			map<int64_t, _rdf_property_t*>::const_iterator itProperty = mapProperties.find(iRProperty);
+			map<int64_t, _rdf_property*>::const_iterator itProperty = mapProperties.find(iRProperty);
 			ASSERT(itProperty != mapProperties.end());
 
 			/*
@@ -1811,7 +1811,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		auto pData = (CRDFInstancePropertyData*)pProperty->GetData();
 		ASSERT(pData != nullptr);
 
-		switch (pData->GetProperty()->GetType())
+		switch (pData->GetProperty()->getType())
 		{
 		case DATATYPEPROPERTY_TYPE_BOOLEAN:
 		{
@@ -1820,7 +1820,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			*/
 			int64_t iCard = 0;
 			bool* pbValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pbValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pbValue, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -1840,7 +1840,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				pbNewValues[iValue] = vecValues[iValue];
 			}
 
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)pbNewValues, vecValues.size());
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)pbNewValues, vecValues.size());
 
 			delete[] pbNewValues;
 			pbNewValues = nullptr;
@@ -1860,7 +1860,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 			ASSERT(iCard > 0);
@@ -1880,7 +1880,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			wcscpy(szNewValues[pData->GetCard()], strValue);
 
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard);
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 			for (int iValue = 0; iValue < iCard; iValue++)
@@ -1902,7 +1902,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			*/
 			int64_t iCard = 0;
 			char** szValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -1920,7 +1920,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
 			strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
 
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard);
 
 			for (int iValue = 0; iValue < iCard; iValue++)
 			{
@@ -1941,7 +1941,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			*/
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -1959,7 +1959,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
 			wcscpy(szNewValues[pData->GetCard()], strValue);
 
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)szNewValues, iCard);
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard);
 
 			for (int iValue = 0; iValue < iCard; iValue++)
 			{
@@ -1980,7 +1980,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			*/
 			int64_t iCard = 0;
 			double* pdValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&pdValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -1994,7 +1994,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			double dValue = _wtof((LPCTSTR)strValue);
 			vecValues[pData->GetCard()] = dValue;
 
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 			ASSERT(getRDFController() != nullptr);
 			ASSERT(FALSE);//#todo
@@ -2009,7 +2009,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			*/
 			int64_t iCard = 0;
 			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)&piValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
 			ASSERT(iCard > 0);
 
@@ -2022,7 +2022,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			int64_t iValue = _wtoi64((LPCTSTR)strValue);
 			vecValues[pData->GetCard()] = iValue;
 
-			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), (void**)vecValues.data(), vecValues.size());
+			SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
 			ASSERT(getRDFController() != nullptr);
 			ASSERT(FALSE);//#todo
@@ -2776,10 +2776,10 @@ void CPropertiesWnd::LoadInstanceProperties()
 		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), 0);
 		while (iPropertyInstance != 0)
 		{
-			map<int64_t, _rdf_property_t*>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
+			map<int64_t, _rdf_property*>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
 			ASSERT(itProperty != mapProperties.end());
 
-			_rdf_property_t* pProperty = itProperty->second;
+			_rdf_property* pProperty = itProperty->second;
 
 			AddInstanceProperty(pInstanceGroup, rdfInstance, pProperty);
 
@@ -2792,15 +2792,15 @@ void CPropertiesWnd::LoadInstanceProperties()
 	} // if (pInstance != nullptr)
 }
 
-void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty)
+void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
-	auto pPropertyGroup = new CMFCPropertyGridProperty(pProperty->GetName());
+	auto pPropertyGroup = new CMFCPropertyGridProperty(pProperty->getName());
 	pInstanceGroup->AddSubItem(pPropertyGroup);
 
 	/*
 	* range
 	*/
-	if (pProperty->GetType() == OBJECTPROPERTY_TYPE)
+	if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	{
 		ASSERT(getRDFController() != nullptr);
 
@@ -2823,14 +2823,14 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 			strRange += CA2W(szClassName);
 		}
 
-		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->GetName());
+		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
 	} // if (pProperty->getType() == OBJECTPROPERTY_TYPE)
 	else
 	{
-		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->GetRange().c_str(), pProperty->GetName());
+		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)pProperty->getRangeAsString().c_str(), pProperty->getName());
 		pRange->AllowEdit(FALSE);
 
 		pPropertyGroup->AddSubItem(pRange);
@@ -2847,21 +2847,21 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	AddInstancePropertyValues(pPropertyGroup, pInstance, pProperty);
 }
 
-void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty)
+void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
-	switch (pProperty->GetType()) {
+	switch (pProperty->getType()) {
 	case OBJECTPROPERTY_TYPE:
 	{
 		int64_t* piObjectInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piObjectInstances, &iCard);
+		GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &piObjectInstances, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2873,14 +2873,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pbValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2893,15 +2893,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 		int64_t iCard = 0;
 		char** szValue = nullptr;
 		SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 		SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2913,14 +2913,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2932,14 +2932,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2951,14 +2951,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2970,14 +2970,14 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	{
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&piValue, &iCard);
 
 		/*
 		* owl:cardinality
 		*/
-		wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+		wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
-		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->GetName(),
+		CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 			(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 		pCardinality->AllowEdit(FALSE);
 
@@ -2993,15 +2993,15 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 	} // switch (pProperty->getType())
 }
 
-void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property_t* pProperty)
+void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
-	switch (pProperty->GetType())
+	switch (pProperty->getType())
 	{
 	case OBJECTPROPERTY_TYPE:
 	{
 		int64_t* piInstances = nullptr;
 		int64_t iCard = 0;
-		GetObjectProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), &piInstances, &iCard);
+		GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &piInstances, &iCard);
 
 		//#todo
 		//if (iCard > 0)
@@ -3096,14 +3096,14 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		bool* pbValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pbValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pbValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pbValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pbValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 
 				pPropertyGroup->AddSubItem(pInstanceProperty);
@@ -3116,7 +3116,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -3130,7 +3130,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
 		SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 		SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
 
 		if (iCard > 0)
@@ -3138,7 +3138,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 
 				pPropertyGroup->AddSubItem(pInstancProperty);
@@ -3151,7 +3151,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -3164,14 +3164,14 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		char** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 
 				pPropertyGroup->AddSubItem(pInstancProperty);
@@ -3184,7 +3184,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -3197,14 +3197,14 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		wchar_t** szValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&szValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 
 				pPropertyGroup->AddSubItem(pInstancProperty);
@@ -3217,7 +3217,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -3230,14 +3230,14 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		double* pdValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&pdValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pdValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pdValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pdValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 
 				pPropertyGroup->AddSubItem(pInstanceProperty);
@@ -3250,7 +3250,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -3263,14 +3263,14 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	{
 		int64_t iCard = 0;
 		int64_t* piValue = nullptr;
-		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->GetInstance(), (void**)&piValue, &iCard);
+		GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&piValue, &iCard);
 
 		if (iCard > 0)
 		{
 			int64_t iValuesCount = iCard;
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
 			{
-				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)piValue[iValue], pProperty->GetName(),
+				CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)piValue[iValue], pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 				pInstanceProperty->EnableSpinControlInt64();
 
@@ -3284,7 +3284,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 			if (iValuesCount > getRDFController()->getVisibleValuesCountLimit())
 			{
-				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->GetName());
+				auto pGridProperty = new CMFCPropertyGridProperty(L"...", (_variant_t)L"...", pProperty->getName());
 				pGridProperty->AllowEdit(FALSE);
 
 				pPropertyGroup->AddSubItem(pGridProperty);
@@ -4039,7 +4039,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	*/
 	auto pCardinalityProperty = (CAddRDFInstanceProperty*)pPropertyGroup->GetSubItem(1);
 
-	wstring strCardinality = pProperty->GetCardinality(pInstance->getOwlInstance());
+	wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
 	pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
 	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());

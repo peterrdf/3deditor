@@ -251,7 +251,7 @@ void CClassView::PropertiesAlphabeticalView()
 	{
 		auto pProperty = itProperty->second;
 
-		mapName2Instance[pProperty->GetName()] = pProperty->GetInstance();
+		mapName2Instance[pProperty->getName()] = pProperty->getRdfProperty();
 	} // for (; itProperty != ...
 
 	for (auto itName2Instance = mapName2Instance.begin();
@@ -263,10 +263,10 @@ void CClassView::PropertiesAlphabeticalView()
 
 		auto pProperty = itProperty->second;
 
-		wstring strNameAndType = pProperty->GetName();
+		wstring strNameAndType = pProperty->getName();
 		strNameAndType += L" : ";
 
-		switch (pProperty->GetType())
+		switch (pProperty->getType())
 		{
 		case OBJECTPROPERTY_TYPE:
 		{
@@ -318,7 +318,7 @@ void CClassView::PropertiesAlphabeticalView()
 		} // switch (pProperty->getType())
 
 		HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hRoot);
-		switch (pProperty->GetType())
+		switch (pProperty->getType())
 		{
 		case OBJECTPROPERTY_TYPE:
 		{
@@ -460,10 +460,10 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 
 			auto pProperty = itProperty->second;
 
-			wstring strNameAndType = pProperty->GetName();
+			wstring strNameAndType = pProperty->getName();
 			strNameAndType += L" : ";
 
-			switch (pProperty->GetType())
+			switch (pProperty->getType())
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
@@ -516,7 +516,7 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 
 			HTREEITEM hProperty = m_treeCtrl.InsertItem(strNameAndType.c_str(), IMAGE_PROPERTY, IMAGE_PROPERTY, hParent);
 
-			switch (pProperty->GetType())
+			switch (pProperty->getType())
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
