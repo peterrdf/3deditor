@@ -18,7 +18,7 @@ private: // Members
 	CRDFInstance* m_pInstance;
 
 	// --------------------------------------------------------------------------------------------
-	CObjectRDFProperty* m_pObjectRDFProperty;
+	_rdf_property* m_pObjectRDFProperty;
 
 	// --------------------------------------------------------------------------------------------
 	int64_t m_iCard;
@@ -36,7 +36,7 @@ public: // Members
 
 public:
 	CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
-		CObjectRDFProperty* pObjectRDFProperty, int64_t iCard, CWnd* pParent = nullptr);   // standard constructor
+		_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSelectInstanceDialog();
 
 // Dialog Data

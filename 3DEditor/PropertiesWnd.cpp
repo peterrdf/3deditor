@@ -1666,7 +1666,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(FALSE);//#todo
 				//if (strValue == SELECT_OBJECT_PROPERTY_COMMAND)
 				//{
-				//	auto pObjectRDFProperty = dynamic_cast<CObjectRDFProperty*>(pData->GetProperty());
+				//	auto pObjectRDFProperty = dynamic_cast<_rdf_property*>(pData->GetProperty());
 				//	ASSERT(pObjectRDFProperty != nullptr);
 
 				//	ASSERT(pData->GetController() != nullptr);
@@ -3022,7 +3022,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 		//	* Compatible instances
 		//	*/
 		//	// Moved in CSelectInstanceDialog
-		//	//CObjectRDFProperty * pObjectRDFProperty = dynamic_cast<CObjectRDFProperty *>(pProperty);
+		//	//_rdf_property * pObjectRDFProperty = dynamic_cast<_rdf_property *>(pProperty);
 		//	//ASSERT(pObjectRDFProperty != nullptr);
 
 		//	// Moved in CSelectInstanceDialog

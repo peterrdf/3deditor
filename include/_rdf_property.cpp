@@ -268,14 +268,3 @@ _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInst
 
 	return propertyCollection;
 }
-
-// ************************************************************************************************
-CObjectRDFProperty::CObjectRDFProperty(RdfProperty iInstance)
-	: _rdf_property(iInstance)
-	, m_vecRestrictions()
-{
-}
-
-CObjectRDFProperty::~CObjectRDFProperty()
-{
-}

@@ -16,7 +16,7 @@
 IMPLEMENT_DYNAMIC(CSelectInstanceDialog, CDialogEx)
 
 CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
-	CObjectRDFProperty* pObjectRDFProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
+	_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SELECT_INSTANCE, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)

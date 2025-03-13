@@ -344,7 +344,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 			{
 			case OBJECTPROPERTY_TYPE:
 			{
-				m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 			}
 			break;
 
@@ -625,7 +625,7 @@ bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
 	return bResult;
 }
 
-void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, CObjectRDFProperty * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
+void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, _rdf_property * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
@@ -1235,7 +1235,7 @@ void CRDFModel::LoadRDFModel()
 			{
 				case OBJECTPROPERTY_TYPE:
 				{
-					m_mapProperties[iPropertyInstance] = new CObjectRDFProperty(iPropertyInstance);
+					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
 				}
 				break;
 

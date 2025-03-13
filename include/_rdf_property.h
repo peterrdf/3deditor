@@ -75,17 +75,3 @@ private: // Methods
 
 	_rdf_property_collection* loadPropertyCollection(OwlInstance owlInstance);
 };
-
-// ************************************************************************************************
-class CObjectRDFProperty : public _rdf_property
-{
-
-private: // Members
-
-	vector<int64_t> m_vecRestrictions;
-
-public: // Methods
-
-	CObjectRDFProperty(RdfProperty iInstance);
-	virtual ~CObjectRDFProperty();
-};
