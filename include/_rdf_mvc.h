@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_mvc.h"
+#include "_rdf_property.h"
 
 #include <map>
 using namespace std;
@@ -55,6 +56,9 @@ class _rdf_controller : public _controller
 
 private: // Members
 
+	// Selection
+	_rdf_property* m_pSelectedProperty;
+
 	// UI
 	int m_iVisibleValuesCountLimit;
 
@@ -68,6 +72,7 @@ public: // Methods
 	virtual ~_rdf_controller();
 
 	// Events
+	void selectInstanceProperty(_rdf_instance* pInstance, _rdf_property* pProperty);
 	void showBaseInformation(_view* pSender, _rdf_instance* pInstance);
 	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
 
