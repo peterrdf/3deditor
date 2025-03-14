@@ -1155,35 +1155,20 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_bIsModified = bModified;
 }
 
-/*virtual*/ void CPropertiesWnd::OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* /*pInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
-
-	LoadInstanceProperties();
-}
-
 /*virtual*/ void CPropertiesWnd::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
-	if (m_wndObjectCombo.GetCurSel() == 1)
-	{
+	if (m_wndObjectCombo.GetCurSel() == 1) {
 		LoadInstanceProperties();
 	}
 }
 
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
-	if (_ptr<CRDFController>(getRDFController())->IsTestMode())
-	{
+	if (_ptr<CRDFController>(getRDFController())->IsTestMode())	{
 		return;
 	}
 
@@ -1201,21 +1186,18 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty /*enApplicationProperty*/) /*override*/
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
-	if (m_wndObjectCombo.GetCurSel() == 0)
-	{
+	if (m_wndObjectCombo.GetCurSel() == 0) {
 		LoadApplicationProperties();
 	}
 }
 
 /*virtual*/ void CPropertiesWnd::onInstancePropertySelected(_view* pSender) /*override*/
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
@@ -1226,8 +1208,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::onShowBaseInformation(_view* pSender, _rdf_instance* pInstance) /*override*/
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
@@ -1238,14 +1219,22 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::onShowMetaInformation(_view* pSender, _rdf_instance* pInstance) /*override*/
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
 	m_wndObjectCombo.SetCurSel(1/*Properties*/);
 
 	LoadMetaInformation(pInstance);
+}
+
+/*virtual*/ void CPropertiesWnd::onInstanceRenamed(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	LoadInstanceProperties();
 }
 
 /*virtual*/ void CPropertiesWnd::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
@@ -1255,8 +1244,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 		return;
 	}
 
-	if (m_wndObjectCombo.GetCurSel() == 1)
-	{
+	if (m_wndObjectCombo.GetCurSel() == 1) {
 		LoadInstanceProperties();
 	}
 }

@@ -152,11 +152,37 @@ void _rdf_controller::showMetaInformation(_view* pSender, _rdf_instance* pInstan
 	}
 }
 
-_rdf_instance* _rdf_controller::createInstance(_view* pSender, OwlClass owlClass)
+void _rdf_controller::renameInstance(_view* pSender, _rdf_instance* pInstance, const wchar_t* szName)
 {
+	assert(pInstance != nullptr);
+	assert(szName != nullptr);
+
 	if (getModel() == nullptr) {
 		assert(false);
+		return;
+	}
 
+	SetNameOfInstanceW(
+		pInstance->getOwlInstance(),
+		szName);
+
+	pInstance->getGeometryAs<_rdf_geometry>()->loadName();
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInstanceRenamed(pSender, pInstance);
+		}
+	}
+}
+
+_rdf_instance* _rdf_controller::createInstance(_view* pSender, OwlClass owlClass)
+{
+	assert(owlClass != 0);
+
+	if (getModel() == nullptr) {
+		assert(false);
 		return nullptr;
 	}
 

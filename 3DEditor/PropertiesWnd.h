@@ -204,12 +204,13 @@ public: // Methods
 	virtual void onInstancePropertySelected(_view* pSender) override;
 	virtual void onShowBaseInformation(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onShowMetaInformation(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstanceRenamed(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
 	
 	// CRDFView
 	//#todo
 	
-	virtual void OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* pInstance);
+	
 	
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
 

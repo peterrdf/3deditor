@@ -104,11 +104,10 @@ public: // Methods
 	void ZoomToInstance(int64_t iInstance);
 	void ZoomOut();
 
-	void OnInstanceNameEdited(CRDFInstance* pInstance);
 	void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
 
-	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	void GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
+	//const CString& GetInstanceMetaData(CRDFInstance* pInstance);
+	//void GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
 	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }

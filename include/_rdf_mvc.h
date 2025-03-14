@@ -47,6 +47,8 @@ public: // Methods
 	virtual void onInstancePropertySelected(_view* /*pSender*/) {}
 	virtual void onShowBaseInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 	virtual void onShowMetaInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+
+	virtual void onInstanceRenamed(_view* pSender, _rdf_instance* /*pInstance*/) {}
 	virtual void onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/) {}
 
 public: // Properties
@@ -90,6 +92,7 @@ public: // Methods
 	void selectInstanceProperty(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void showBaseInformation(_view* pSender, _rdf_instance* pInstance);
 	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
+	void renameInstance(_view* pSender, _rdf_instance* pInstance, const wchar_t* szName);
 	_rdf_instance* createInstance(_view* pSender, OwlClass owlClass);
 
 public: // Properties

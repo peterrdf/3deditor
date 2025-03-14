@@ -921,15 +921,6 @@ void CRDFModel::ZoomOut()
 	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-void CRDFModel::OnInstanceNameEdited(CRDFInstance* pInstance)
-{
-	auto itMetaData = m_mapInstanceMetaData.find(pInstance);
-	if (itMetaData != m_mapInstanceMetaData.end())
-	{
-		m_mapInstanceMetaData.erase(pInstance);
-	}
-}
-
 void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property * /*pProperty*/)
 {
 	ASSERT(FALSE); //#todo
@@ -976,198 +967,198 @@ void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_prop
 }
 
 
-const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
-{
-	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
-	{		
-		CString strMetaData = pInstance->getUniqueName();
-		if (strMetaData.GetLength() >= 50)
-		{
-			strMetaData = strMetaData.Left(50);
-			strMetaData += L"...";
-		}
+//const CString& CRDFModel::GetInstanceMetaData(CRDFInstance* pInstance)
+//{
+//	if (m_mapInstanceMetaData.find(pInstance) == m_mapInstanceMetaData.end())
+//	{		
+//		CString strMetaData = pInstance->getUniqueName();
+//		if (strMetaData.GetLength() >= 50)
+//		{
+//			strMetaData = strMetaData.Left(50);
+//			strMetaData += L"...";
+//		}
+//
+//		//int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
+//		//while (iPropertyInstance != 0)
+//		//{
+//		//	auto itProperty = m_mapProperties.find(iPropertyInstance);
+//		//	assert(itProperty != m_mapProperties.end());
+//
+//		//	CString strPropertyMetaData;
+//		//	bool bMultiValue = false;
+//		//	GetPropertyMetaData(pInstance, itProperty->second, strPropertyMetaData, L"", bMultiValue);
+//
+//		//	if (!bMultiValue)
+//		//	{
+//		//		strMetaData += L"\n";
+//		//		strMetaData += strPropertyMetaData;
+//		//	}
+//
+//		//	iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
+//		//} // while (iPropertyInstance != 0)
+//
+//		//if (strMetaData.GetLength() >= 256)
+//		//{
+//		//	strMetaData = strMetaData.Left(250);
+//		//	strMetaData += L"...";
+//		//}
+//		 
+//		m_mapInstanceMetaData[pInstance] = strMetaData;
+//	} // if (m_mapInstanceMetaData.find(pInstance) == ...
+//
+//	return m_mapInstanceMetaData.at(pInstance);
+//}
 
-		//int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), 0);
-		//while (iPropertyInstance != 0)
-		//{
-		//	auto itProperty = m_mapProperties.find(iPropertyInstance);
-		//	assert(itProperty != m_mapProperties.end());
-
-		//	CString strPropertyMetaData;
-		//	bool bMultiValue = false;
-		//	GetPropertyMetaData(pInstance, itProperty->second, strPropertyMetaData, L"", bMultiValue);
-
-		//	if (!bMultiValue)
-		//	{
-		//		strMetaData += L"\n";
-		//		strMetaData += strPropertyMetaData;
-		//	}
-
-		//	iPropertyInstance = GetInstancePropertyByIterator(pInstance->getInstance(), iPropertyInstance);
-		//} // while (iPropertyInstance != 0)
-
-		//if (strMetaData.GetLength() >= 256)
-		//{
-		//	strMetaData = strMetaData.Left(250);
-		//	strMetaData += L"...";
-		//}
-		 
-		m_mapInstanceMetaData[pInstance] = strMetaData;
-	} // if (m_mapInstanceMetaData.find(pInstance) == ...
-
-	return m_mapInstanceMetaData.at(pInstance);
-}
-
-void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
-{
-	strMetaData = strPrefix;
-	strMetaData += pProperty->getName() != nullptr ? pProperty->getName() : L"NA";
-	strMetaData += L": ";
-
-	bMultiValue = false;
-
-	/* value */
-	wchar_t szBuffer[1000];
-	switch (pProperty->getType())
-	{
-		case OBJECTPROPERTY_TYPE:
-		{
-			int64_t* piInstances = nullptr;
-			int64_t iCard = 0;
-			GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &piInstances, &iCard);
-
-			strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-			bMultiValue = true;
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_BOOLEAN:
-		{
-			int64_t iCard = 0;
-			bool* pbValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pbValue, &iCard);
-
-			if (iCard == 1)
-			{
-				swprintf(szBuffer, 100, L"value = %s", pbValue[0] ? L"TRUE" : L"FALSE");
-				strMetaData += szBuffer;
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_STRING:
-		{
-			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;
-			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
-			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
-
-			if (iCard == 1)
-			{
-				strMetaData += szValue[0];
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-		{
-			int64_t iCard = 0;
-			char** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
-
-			if (iCard == 1)
-			{
-				strMetaData += CA2W(szValue[0]);
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-		{
-			int64_t iCard = 0;
-			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
-
-			if (iCard == 1)
-			{
-				strMetaData += szValue[0];
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_DOUBLE:
-		{
-			int64_t iCard = 0;
-			double* pdValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pdValue, &iCard);
-
-			if (iCard == 1)
-			{
-				swprintf(szBuffer, 100, L"%.6f", pdValue[0]);
-				strMetaData += szBuffer;
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		case DATATYPEPROPERTY_TYPE_INTEGER:
-		{
-			int64_t iCard = 0;
-			int64_t* piValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&piValue, &iCard);
-
-			if (iCard == 1)
-			{
-				swprintf(szBuffer, 100, L"%lld", piValue[0]);
-				strMetaData += szBuffer;
-			}
-			else
-			{
-				strMetaData += iCard > 0 ? L"[...]" : L"[]";
-
-				bMultiValue = true;
-			}
-		}
-		break;
-
-		default:
-		{
-			assert(false); // unknown property
-		}
-		break;
-	} // switch (pProperty->getType())
-}
+//void CRDFModel::GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue)
+//{
+//	strMetaData = strPrefix;
+//	strMetaData += pProperty->getName() != nullptr ? pProperty->getName() : L"NA";
+//	strMetaData += L": ";
+//
+//	bMultiValue = false;
+//
+//	/* value */
+//	wchar_t szBuffer[1000];
+//	switch (pProperty->getType())
+//	{
+//		case OBJECTPROPERTY_TYPE:
+//		{
+//			int64_t* piInstances = nullptr;
+//			int64_t iCard = 0;
+//			GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &piInstances, &iCard);
+//
+//			strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//			bMultiValue = true;
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_BOOLEAN:
+//		{
+//			int64_t iCard = 0;
+//			bool* pbValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pbValue, &iCard);
+//
+//			if (iCard == 1)
+//			{
+//				swprintf(szBuffer, 100, L"value = %s", pbValue[0] ? L"TRUE" : L"FALSE");
+//				strMetaData += szBuffer;
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_STRING:
+//		{
+//			int64_t iCard = 0;
+//			wchar_t** szValue = nullptr;
+//			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, false);
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
+//			SetCharacterSerialization(pInstance->getOwlModel(), 0, 0, true);
+//
+//			if (iCard == 1)
+//			{
+//				strMetaData += szValue[0];
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
+//		{
+//			int64_t iCard = 0;
+//			char** szValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
+//
+//			if (iCard == 1)
+//			{
+//				strMetaData += CA2W(szValue[0]);
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
+//		{
+//			int64_t iCard = 0;
+//			wchar_t** szValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&szValue, &iCard);
+//
+//			if (iCard == 1)
+//			{
+//				strMetaData += szValue[0];
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_DOUBLE:
+//		{
+//			int64_t iCard = 0;
+//			double* pdValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&pdValue, &iCard);
+//
+//			if (iCard == 1)
+//			{
+//				swprintf(szBuffer, 100, L"%.6f", pdValue[0]);
+//				strMetaData += szBuffer;
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		case DATATYPEPROPERTY_TYPE_INTEGER:
+//		{
+//			int64_t iCard = 0;
+//			int64_t* piValue = nullptr;
+//			GetDatatypeProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), (void**)&piValue, &iCard);
+//
+//			if (iCard == 1)
+//			{
+//				swprintf(szBuffer, 100, L"%lld", piValue[0]);
+//				strMetaData += szBuffer;
+//			}
+//			else
+//			{
+//				strMetaData += iCard > 0 ? L"[...]" : L"[]";
+//
+//				bMultiValue = true;
+//			}
+//		}
+//		break;
+//
+//		default:
+//		{
+//			assert(false); // unknown property
+//		}
+//		break;
+//	} // switch (pProperty->getType())
+//}
 
 void CRDFModel::SetFormatSettings(int64_t iModel)
 {

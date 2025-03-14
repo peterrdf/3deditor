@@ -2288,8 +2288,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				CRenameDialog dlgRename(pInstance->getName());
 				if (dlgRename.DoModal() == IDOK)
 				{
-					ASSERT(FALSE); //#todo
-					//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);//#todo
+					getRDFController()->renameInstance(this, pInstance, dlgRename.m_strName);
 
 					m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
 				}
@@ -2418,7 +2417,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			CRenameDialog dlgRename(pInstance->getName());
 			if (dlgRename.DoModal() == IDOK)
 			{
-				//GetController()->RenameInstance(this, pInstance, dlgRename.m_strName);#todo
+				getRDFController()->renameInstance(this, pInstance, dlgRename.m_strName);
 
 				m_treeCtrl.SetItemText(hTreeItem, dlgRename.m_strName);
 			}

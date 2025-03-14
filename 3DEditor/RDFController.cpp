@@ -118,36 +118,6 @@ CRDFModel* CRDFController::GetModel()
 //	}*/
 //}
 
-void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName)
-{
-	ASSERT(FALSE);//#todo
-	//auto pModel = GetModel();
-	//assert(pModel != nullptr);
-
-	//if (pModel == nullptr)
-	//{
-	//	assert(false);
-
-	//	return;
-	//}
-
-	//// Rename
-	//SetNameOfInstanceW(
-	//	pInstance->getOwlInstance(),
-	//	szName);
-
-	//// Update cache
-	//pInstance->UpdateName();
-	//pModel->OnInstanceNameEdited(pInstance);
-
-	//// Notify
-	//auto itView = m_setViews.begin();
-	//for (; itView != m_setViews.end(); itView++)
-	//{
-	//	(*itView)->OnInstanceNameEdited(pSender, pInstance);
-	//}
-}
-
 // ------------------------------------------------------------------------------------------------
 bool CRDFController::DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance)
 {

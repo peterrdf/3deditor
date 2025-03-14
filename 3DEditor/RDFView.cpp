@@ -15,11 +15,6 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnInstanceNameEdited(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFView::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property * /*pProperty*/)
 {
 }

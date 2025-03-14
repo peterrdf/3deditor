@@ -42,7 +42,6 @@ public: // Methods
 	CRDFModel* GetModel();
 
 // MOVE !!!
-	void RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName);
 	bool DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance);
 	bool DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInstance);
 	bool DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance);
