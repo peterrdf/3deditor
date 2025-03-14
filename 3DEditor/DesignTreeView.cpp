@@ -105,6 +105,16 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (enApplicationProperty)
 }
 
+/*virtual*/ void CDesignTreeView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	UpdateView();
+}
+
 //#todo
 ///*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty)
 //{
@@ -829,17 +839,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 //		}
 //		break;
 //	} // switch (pPropertyItem->GetProperty()->GetType())
-//}
-
-//#todo
-///*virtual*/ void CDesignTreeView::OnNewInstanceCreated(CRDFView* pSender, _rdf_instance * /*pInstance*/)
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//
-//	UpdateView();
 //}
 
 //#todo
@@ -2646,7 +2645,7 @@ void CDesignTreeView::OnNewInstance()
 
 	if (dlgNewInstance.m_pNewInstanceRDFClass != nullptr)
 	{
-		GetController()->CreateNewInstance(nullptr/*update this view also*/, dlgNewInstance.m_pNewInstanceRDFClass->GetInstance());
+		getRDFController()->createInstance(nullptr/*update this view also*/, dlgNewInstance.m_pNewInstanceRDFClass->GetInstance());
 	}
 }
 

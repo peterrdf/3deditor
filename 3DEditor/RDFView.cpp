@@ -25,11 +25,6 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnNewInstanceCreated(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFView::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
 {
 }

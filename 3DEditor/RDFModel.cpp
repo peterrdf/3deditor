@@ -580,23 +580,6 @@ CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 	return nullptr;
 }
 
-CRDFInstance * CRDFModel::CreateNewInstance(int64_t /*iClassInstance*/)
-{
-	ASSERT(FALSE);//#todo
-	return nullptr;
-	/*assert(iClassInstance != 0);
-
-	int64_t iInstance = CreateInstance(iClassInstance);
-	assert(iInstance != 0);
-
-	auto pInstance = new CRDFInstance(m_iID++, iInstance);
-	pInstance->calculateMinMax(m_fXmin, m_fXmax, m_fYmin, m_fYmax, m_fZmin, m_fZmax);
-
-	m_mapInstances[iInstance] = pInstance;
-
-	return pInstance;*/
-}
-
 CRDFInstance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 {
 	ASSERT(FALSE);//#todo

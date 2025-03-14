@@ -60,9 +60,12 @@ public: // Methods
 	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	
 	// _rdf_view
+	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
+	//virtual void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty) override;
+
 	//#todo
-	/*virtual void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView* pSender, _rdf_instance* pInstance) override;
+	/*
+	
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
 	virtual void OnInstancesDeleted(CRDFView* pSender);
 	virtual void OnMeasurementsAdded(CRDFView* pSender, _rdf_instance* pInstance) override;*/

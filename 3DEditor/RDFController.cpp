@@ -118,33 +118,6 @@ CRDFModel* CRDFController::GetModel()
 //	}*/
 //}
 
-CRDFInstance* CRDFController::CreateNewInstance(CRDFView * pSender, int64_t iClassInstance)
-{
-	ASSERT(FALSE);//#todo
-	/*auto pModel = GetModel();
-	assert(pModel != nullptr);
-
-	if (pModel == nullptr)
-	{
-		assert(false);
-
-		return nullptr;
-	}
-
-	auto pNewRDFInstance = pModel->CreateNewInstance(iClassInstance);
-	assert(pNewRDFInstance != nullptr);
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnNewInstanceCreated(pSender, pNewRDFInstance);
-	}
-
-	return pNewRDFInstance;*/
-
-	return nullptr;
-}
-
 void CRDFController::RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName)
 {
 	ASSERT(FALSE);//#todo

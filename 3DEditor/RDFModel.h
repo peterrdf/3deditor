@@ -89,7 +89,6 @@ public: // Methods
 	CRDFInstance* GetInstanceByID(int64_t iID);
 	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
 
-	CRDFInstance* CreateNewInstance(int64_t iClassInstance);
 	CRDFInstance* AddNewInstance(int64_t pThing);
 	bool DeleteInstance(CRDFInstance* pInstance);
 

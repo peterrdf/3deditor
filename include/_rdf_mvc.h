@@ -25,6 +25,8 @@ public:  // Methods
 
 	_rdf_instance* getInstance(OwlInstance owlInstance);
 
+	_rdf_instance* createInstance(OwlClass owlClass);
+
 protected:
 
 	// _model
@@ -45,6 +47,7 @@ public: // Methods
 	virtual void onInstancePropertySelected(_view* /*pSender*/) {}
 	virtual void onShowBaseInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 	virtual void onShowMetaInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/) {}
 
 public: // Properties
 
@@ -86,6 +89,7 @@ public: // Methods
 	void selectInstanceProperty(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void showBaseInformation(_view* pSender, _rdf_instance* pInstance);
 	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
+	_rdf_instance* createInstance(_view* pSender, OwlClass owlClass);
 
 public: // Properties
 

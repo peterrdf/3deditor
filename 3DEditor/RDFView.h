@@ -33,10 +33,6 @@ public: // Methods
 	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
 
 	// --------------------------------------------------------------------------------------------
-	// An RDF Instance has been created
-	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
 	// An RDF Instance has been deleted
 	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);	
 

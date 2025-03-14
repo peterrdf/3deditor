@@ -1167,19 +1167,6 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	LoadInstanceProperties();
 }
 
-/*virtual*/ void CPropertiesWnd::OnNewInstanceCreated(CRDFView* pSender, _rdf_instance* /*pInstance*/)
-{
-	if (pSender == this)
-	{
-		return;
-	}
-
-	if (m_wndObjectCombo.GetCurSel() == 1)
-	{
-		LoadInstanceProperties();
-	}
-}
-
 /*virtual*/ void CPropertiesWnd::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
 {
 	if (pSender == this)
@@ -1259,6 +1246,19 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_wndObjectCombo.SetCurSel(1/*Properties*/);
 
 	LoadMetaInformation(pInstance);
+}
+
+/*virtual*/ void CPropertiesWnd::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1)
+	{
+		LoadInstanceProperties();
+	}
 }
 
 /*afx_msg*/ LRESULT CPropertiesWnd::OnPropertyChanged(__in WPARAM /*wparam*/, __in LPARAM lparam)
