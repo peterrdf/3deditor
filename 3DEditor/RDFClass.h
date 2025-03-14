@@ -12,7 +12,7 @@ class _rdf_class
 
 private: // Members
 
-	OwlClass m_iInstance;
+	OwlClass m_owlClass;
 	wchar_t* m_szName;
 	vector<OwlClass> m_vecParentClasses;
 	vector<OwlClass> m_vecAncestorClasses;
@@ -25,10 +25,10 @@ public: // Methods
 
 	void AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction);
 
-	static void GetAncestors(OwlClass iClassInstance, vector<OwlClass>& vecAncestorClasses);
-	static wstring GetAncestors(OwlClass iClassInstance);
+	static void GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
+	static wstring GetAncestors(OwlClass owlClass);
 
-	OwlClass GetInstance() const { return m_iInstance; }
+	OwlClass GetInstance() const { return m_owlClass; }
 	const wchar_t* GetName() const { return m_szName; }
 	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
 	const vector<OwlClass> & getAncestorClasses() const { return m_vecAncestorClasses; }

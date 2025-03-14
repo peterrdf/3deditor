@@ -1308,7 +1308,7 @@ void CDesignTreeView::InstancesGroupByClassView()
 		_ptr<_rdf_instance> rdfInstance(pInstance);
 
 		char* szName = nullptr;
-		GetNameOfClass(pInstance->getGeometry()->getClassInstance(), &szName);
+		GetNameOfClass(pInstance->getGeometry()->getOwlClass(), &szName);
 
 		wstring strName = CA2W(szName);
 

@@ -2,29 +2,29 @@
 #include "RDFClass.h"
 
 // ************************************************************************************************
-_rdf_class::_rdf_class(OwlClass iInstance)
-	: m_iInstance(iInstance)
+_rdf_class::_rdf_class(OwlClass owlClass)
+	: m_owlClass(owlClass)
 	, m_szName(nullptr)
 	, m_vecParentClasses()
 	, m_vecAncestorClasses()
 	, m_vecPropertyRestrictions()
 {
-	assert(m_iInstance != 0);
+	assert(m_owlClass != 0);
 
-	GetNameOfClassW(m_iInstance, &m_szName);
+	GetNameOfClassW(m_owlClass, &m_szName);
 
-	OwlClass iParentClassInstance = GetClassParentsByIterator(m_iInstance, 0);
-	while (iParentClassInstance != 0)
+	OwlClass owlParentClass = GetClassParentsByIterator(m_owlClass, 0);
+	while (owlParentClass != 0)
 	{
-		m_vecParentClasses.push_back(iParentClassInstance);
+		m_vecParentClasses.push_back(owlParentClass);
 
-		m_vecAncestorClasses.push_back(iParentClassInstance);
-		GetAncestors(iParentClassInstance, m_vecAncestorClasses);
+		m_vecAncestorClasses.push_back(owlParentClass);
+		GetAncestors(owlParentClass, m_vecAncestorClasses);
 
 		char * szParentClassName = nullptr;
-		GetNameOfClass(iParentClassInstance, &szParentClassName);
+		GetNameOfClass(owlParentClass, &szParentClassName);
 
-		iParentClassInstance = GetClassParentsByIterator(m_iInstance, iParentClassInstance);
+		owlParentClass = GetClassParentsByIterator(m_owlClass, owlParentClass);
 	}
 }
 
@@ -46,23 +46,23 @@ void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestr
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
-void _rdf_class::GetAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestorClasses)
+void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass> & vecAncestorClasses)
 {
-	OwlClass iParentClassInstance = GetClassParentsByIterator(iClassInstance, 0);
-	while (iParentClassInstance != 0)
+	OwlClass owlParentClass = GetClassParentsByIterator(owlClass, 0);
+	while (owlParentClass != 0)
 	{
-		vecAncestorClasses.push_back(iParentClassInstance);
+		vecAncestorClasses.push_back(owlParentClass);
 
-		GetAncestors(iParentClassInstance, vecAncestorClasses);
+		GetAncestors(owlParentClass, vecAncestorClasses);
 
-		iParentClassInstance = GetClassParentsByIterator(iClassInstance, iParentClassInstance);
+		owlParentClass = GetClassParentsByIterator(owlClass, owlParentClass);
 	}
 }
 
-/*static*/ wstring _rdf_class::GetAncestors(OwlClass iClassInstance)
+/*static*/ wstring _rdf_class::GetAncestors(OwlClass owlClass)
 {
 	vector<OwlClass> vecAncestors;
-	GetAncestors(iClassInstance, vecAncestors);
+	GetAncestors(owlClass, vecAncestors);
 
 	wstring strAncestors;
 	for (auto iAncestor : vecAncestors)

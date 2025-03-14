@@ -174,28 +174,28 @@ void CClassView::ClassesAlphabeticalView()
 
 	auto& mapClasses = pModel->GetClasses();
 
-	// RDF Classes => Name : Instance
-	map<wstring, OwlClass> mapName2Instance;
+	// RDF Classes => Name : OwlClass
+	map<wstring, OwlClass> mapName2Class;
 	for (auto itClass = mapClasses.begin();
 		itClass != mapClasses.end(); 
 		itClass++)
 	{
-		mapName2Instance[itClass->second->GetName()] = itClass->second->GetInstance();
+		mapName2Class[itClass->second->GetName()] = itClass->second->GetInstance();
 	}
 
 	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Classes"), IMAGE_MODEL, IMAGE_MODEL);
-	for (auto itName2Instance = mapName2Instance.begin();
-		itName2Instance != mapName2Instance.end(); 
-		itName2Instance++)
+	for (auto itName2Class = mapName2Class.begin();
+		itName2Class != mapName2Class.end();
+		itName2Class++)
 	{
-		auto itClass = mapClasses.find(itName2Instance->second);
+		auto itClass = mapClasses.find(itName2Class->second);
 		ASSERT(itClass != mapClasses.end());
 
 		auto pClass = itClass->second;
 
 		HTREEITEM hClass = AddClass(hRoot, pClass->GetInstance(), true);
 		AddProperties(hClass, pClass->GetInstance());
-	} // for (; itName2Instance != ...	
+	} // for (; itName2Class != ...	
 
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
 }
@@ -242,7 +242,7 @@ void CClassView::PropertiesAlphabeticalView()
 	auto& mapProperties = pModel->GetProperties();
 
 	// RDF Property => Name : Instance
-	map<wstring, OwlClass> mapName2Instance;
+	map<wstring, OwlClass> mapName2Class;
 
 	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Properties"), IMAGE_MODEL, IMAGE_MODEL);
 	for (auto itProperty = mapProperties.begin();
@@ -251,14 +251,13 @@ void CClassView::PropertiesAlphabeticalView()
 	{
 		auto pProperty = itProperty->second;
 
-		mapName2Instance[pProperty->getName()] = pProperty->getRdfProperty();
+		mapName2Class[pProperty->getName()] = pProperty->getRdfProperty();
 	} // for (; itProperty != ...
 
-	for (auto itName2Instance = mapName2Instance.begin();
-		itName2Instance != mapName2Instance.end();
-		itName2Instance++)
-	{
-		auto itProperty = mapProperties.find(itName2Instance->second);
+	for (auto itName2Class = mapName2Class.begin();
+		itName2Class != mapName2Class.end();
+		itName2Class++) {
+		auto itProperty = mapProperties.find(itName2Class->second);
 		ASSERT(itProperty != mapProperties.end());
 
 		auto pProperty = itProperty->second;
@@ -379,7 +378,7 @@ void CClassView::PropertiesAlphabeticalView()
 		}
 		break;
 		} // switch (pProperty->getType())
-	} // for (; itName2Instance != ...
+	} // for (; itName2Class != ...
 
 	m_treeCtrl.Expand(hRoot, TVE_EXPAND);
 }

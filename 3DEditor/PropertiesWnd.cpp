@@ -1732,7 +1732,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			auto pModel = getRDFController()->getModel();
 			ASSERT(pModel != nullptr);
 
-			ASSERT(pData->GetInstance()->getGeometry()->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"));
+			ASSERT(pData->GetInstance()->getGeometry()->getOwlClass() == GetClassByName(pModel->getOwlModel(), "ColorComponent"));
 
 			auto& mapProperties = _ptr<CRDFModel>(pModel)->GetProperties();
 
@@ -2699,7 +2699,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getUniqueName());
 		
-		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getClassInstance());
+		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getOwlClass());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		AddInstanceProperty(pInstanceGroup, _ptr<_rdf_instance>(pSelectedInstance), pSelectedInstanceProperty);
@@ -2722,13 +2722,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getUniqueName());
 
-		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getClassInstance());
+		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getOwlClass());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		/*
 		* ColorComponent
 		*/
-		if (pSelectedInstance->getGeometry()->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"))
+		if (pSelectedInstance->getGeometry()->getOwlClass() == GetClassByName(pModel->getOwlModel(), "ColorComponent"))
 		{
 			/*
 			* R

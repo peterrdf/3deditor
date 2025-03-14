@@ -123,7 +123,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		/*
 		* Check this instance
 		*/
-		if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), itRFDInstances->second->getGeometry()->getClassInstance()) != vecRestrictionClasses.end())
+		if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), itRFDInstances->second->getGeometry()->getOwlClass()) != vecRestrictionClasses.end())
 		{
 			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
 			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
@@ -136,7 +136,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 
 		vector<int64_t> vecAncestorClasses;
-		_rdf_class::GetAncestors(itRFDInstances->second->getGeometry()->getClassInstance(), vecAncestorClasses);
+		_rdf_class::GetAncestors(itRFDInstances->second->getGeometry()->getOwlClass(), vecAncestorClasses);
 
 		if (vecAncestorClasses.empty())
 		{

@@ -303,7 +303,7 @@ public: // Properties
 
     // Metadata
     virtual OwlInstance getOwlInstance() { return m_owlInstance; }
-    OwlClass getClassInstance() { return ::GetInstanceClass(getOwlInstance()); }
+    OwlClass getOwlClass() { return ::GetInstanceClass(getOwlInstance()); }
     virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
     bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }
     virtual bool isPlaceholder() const { return false; }

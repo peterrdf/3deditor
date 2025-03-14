@@ -242,11 +242,11 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 
 void _rdf_geometry::loadName()
 {
-	OwlClass iClassInstance = GetInstanceClass(getOwlInstance());
-	assert(iClassInstance != 0);
+	OwlClass owlClass = GetInstanceClass(getOwlInstance());
+	assert(owlClass != 0);
 
 	wchar_t* szClassName = nullptr;
-	GetNameOfClassW(iClassInstance, &szClassName);
+	GetNameOfClassW(owlClass, &szClassName);
 
 	wchar_t* szName = nullptr;
 	GetNameOfInstanceW(getOwlInstance(), &szName);
