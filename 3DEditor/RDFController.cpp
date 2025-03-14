@@ -12,7 +12,6 @@ CRDFController::CRDFController()
 	, m_pSceneModel(new CSceneRDFModel())
 	, m_pNavigatorModel(new CNavigatorRDFModel())
 	, m_bUpdatingModel(false)
-	, m_prSelectedInstanceProperty(pair<CRDFInstance *, _rdf_property *>(nullptr, nullptr))
 	//, m_iVisibleValuesCountLimit(10000)
 	//, m_bScaleAndCenter(TRUE)
 	//, m_bModelCoordinateSystem(TRUE)
@@ -50,37 +49,6 @@ CRDFModel* CRDFController::GetModel()
 /*virtual*/ void CRDFController::LoadModel(LPCTSTR /*szFileName*/)
 {
 	assert(false);
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::SelectInstance(CRDFView* pSender, CRDFInstance* pInstance)
-{
-	ASSERT(FALSE);// obsolete!!!!
-}
-
-// ------------------------------------------------------------------------------------------------
-void CRDFController::SelectInstanceProperty(CRDFInstance * pInstance, _rdf_property * pProperty)
-{
-	ASSERT(FALSE);//#todo
-	/*if (m_bUpdatingModel)
-	{
-		return;
-	}
-
-	m_prSelectedInstanceProperty = pair<CRDFInstance *, _rdf_property *>(pInstance, pProperty);
-	m_pSelectedInstance = pInstance;
-
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++)
-	{
-		(*itView)->OnInstancePropertySelected();
-	}*/
-}
-
-// ------------------------------------------------------------------------------------------------
-pair<CRDFInstance *, _rdf_property *> CRDFController::GetSelectedInstanceProperty() const
-{
-	return m_prSelectedInstanceProperty;
 }
 
 // ------------------------------------------------------------------------------------------------

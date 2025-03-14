@@ -28,10 +28,6 @@ private: // Members
 	// Updating model - disable all notifications
 	bool m_bUpdatingModel;
 
-	// --------------------------------------------------------------------------------------------
-	// Selected instance property
-	pair<CRDFInstance *, _rdf_property *> m_prSelectedInstanceProperty;
-
 public: // Methods
 
 	CRDFController();
@@ -47,18 +43,6 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// Test mode
 	virtual void LoadModel(LPCTSTR szFileName);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	void SelectInstance(CRDFView * pSender, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	void SelectInstanceProperty(CRDFInstance * pInstance, _rdf_property * pProperty);
-
-	// --------------------------------------------------------------------------------------------
-	// Selection support
-	pair<CRDFInstance *, _rdf_property *> GetSelectedInstanceProperty() const;
 
 	// --------------------------------------------------------------------------------------------
 	// Factory

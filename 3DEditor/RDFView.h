@@ -25,10 +25,6 @@ public: // Methods
 	virtual ~CRDFView();
 
 	// --------------------------------------------------------------------------------------------
-	// An RDF Property has been selected
-	virtual void OnInstancePropertySelected();
-
-	// --------------------------------------------------------------------------------------------
 	// The Name has been modified
 	virtual void OnInstanceNameEdited(CRDFView* pSender, CRDFInstance* pInstance);
 

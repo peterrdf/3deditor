@@ -1155,13 +1155,6 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_bIsModified = bModified;
 }
 
-/*virtual*/ void CPropertiesWnd::OnInstancePropertySelected()
-{
-	m_wndObjectCombo.SetCurSel(1 /*Properties*/);
-
-	LoadInstanceProperties();
-}
-
 /*virtual*/ void CPropertiesWnd::OnInstanceNameEdited(CRDFView* pSender, _rdf_instance* /*pInstance*/)
 {
 	if (pSender == this)
@@ -1230,6 +1223,18 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	{
 		LoadApplicationProperties();
 	}
+}
+
+/*virtual*/ void CPropertiesWnd::onInstancePropertySelected(_view* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	m_wndObjectCombo.SetCurSel(1/*Properties*/);
+
+	LoadInstanceProperties();
 }
 
 /*virtual*/ void CPropertiesWnd::onShowBaseInformation(_view* pSender, _rdf_instance* pInstance) /*override*/
@@ -2699,45 +2704,43 @@ void CPropertiesWnd::LoadInstanceProperties()
 	/*
 	* One property
 	*/
-	//#todo
-	//auto prSelectedInstanceProperty = getRDFController()->GetSelectedInstanceProperty();
-	//if ((prSelectedInstanceProperty.first != nullptr) && (prSelectedInstanceProperty.second != nullptr))
-	//{
-	//	auto pInstance = prSelectedInstanceProperty.first;
-	//	auto pProperty = prSelectedInstanceProperty.second;
+	auto pSelectedInstanceProperty = getRDFController()->getSelectedInstanceProperty();
+	if (pSelectedInstanceProperty != nullptr)
+	{
+		auto pSelectedInstance = getRDFController()->getSelectedInstance();
 
-	//	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
-	//	
-	//	wstring strAncestors = _rdf_class::GetAncestors(pInstance->getGeometry()->getClassInstance());
-	//	pInstanceGroup->SetDescription(strAncestors.c_str());
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getUniqueName());
+		
+		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getClassInstance());
+		pInstanceGroup->SetDescription(strAncestors.c_str());
 
-	//	AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
+		AddInstanceProperty(pInstanceGroup, _ptr<_rdf_instance>(pSelectedInstance), pSelectedInstanceProperty);
 
-	//	m_wndPropList.AddProperty(pInstanceGroup);
+		m_wndPropList.AddProperty(pInstanceGroup);
 
-	//	return;		
-	//} // if ((prSelectedInstanceProperty.first != nullptr) && ...
+		return;		
+	}
 
 	/*
 	* All properties
 	*/
-	auto pInstance = getRDFController()->getSelectedInstance();
-	if (pInstance != nullptr)
+	auto pSelectedInstance = getRDFController()->getSelectedInstance();
+	if (pSelectedInstance != nullptr)
 	{
-		_ptr<_rdf_instance> rdfInstance(pInstance);
+		_ptr<_rdf_instance> rdfInstance(pSelectedInstance);
 		auto pModel = _ptr<CRDFModel>(getRDFController()->getModel());
 
 		auto& mapProperties = _ptr<CRDFModel>(pModel)->GetProperties();
 
-		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
+		auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getUniqueName());
 
-		wstring strAncestors = _rdf_class::GetAncestors(pInstance->getGeometry()->getClassInstance());
+		wstring strAncestors = _rdf_class::GetAncestors(pSelectedInstance->getGeometry()->getClassInstance());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		/*
 		* ColorComponent
 		*/
-		if (pInstance->getGeometry()->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"))
+		if (pSelectedInstance->getGeometry()->getClassInstance() == GetClassByName(pModel->getOwlModel(), "ColorComponent"))
 		{
 			/*
 			* R
@@ -2746,7 +2749,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			int64_t iCard = 0;
 			double* pdRValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), iRProperty, (void**)&pdRValue, &iCard);
+			GetDatatypeProperty(pSelectedInstance->getOwlInstance(), iRProperty, (void**)&pdRValue, &iCard);
 
 			/*
 			* G
@@ -2755,7 +2758,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			iCard = 0;
 			double* pdGValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), iGProperty, (void**)&pdGValue, &iCard);
+			GetDatatypeProperty(pSelectedInstance->getOwlInstance(), iGProperty, (void**)&pdGValue, &iCard);
 
 			/*
 			* B
@@ -2764,7 +2767,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			iCard = 0;
 			double* pdBValue = nullptr;
-			GetDatatypeProperty(pInstance->getOwlInstance(), iBProperty, (void**)&pdBValue, &iCard);
+			GetDatatypeProperty(pSelectedInstance->getOwlInstance(), iBProperty, (void**)&pdBValue, &iCard);
 
 			auto pColorSelectorProperty = new CRDFColorSelectorProperty(_T("Color"), RGB((BYTE)(*pdRValue * 255.), (BYTE)(*pdGValue * 255.), (BYTE)(*pdBValue * 255.)), nullptr, _T("Color"),
 				(DWORD_PTR)new CRDFInstanceData(getRDFController(), rdfInstance));
@@ -2773,7 +2776,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 			pInstanceGroup->AddSubItem(pColorSelectorProperty);
 		} // if (pInstance->getGeometry()->getClassInstance() == ...
 
-		int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), 0);
+		int64_t iPropertyInstance = GetInstancePropertyByIterator(pSelectedInstance->getOwlInstance(), 0);
 		while (iPropertyInstance != 0)
 		{
 			map<int64_t, _rdf_property*>::const_iterator itProperty = mapProperties.find(iPropertyInstance);
@@ -2783,13 +2786,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			AddInstanceProperty(pInstanceGroup, rdfInstance, pProperty);
 
-			iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), iPropertyInstance);
+			iPropertyInstance = GetInstancePropertyByIterator(pSelectedInstance->getOwlInstance(), iPropertyInstance);
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
 
 		return;
-	} // if (pInstance != nullptr)
+	} // if (pSelectedInstance != nullptr)
 }
 
 void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty)

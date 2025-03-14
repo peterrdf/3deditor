@@ -552,9 +552,6 @@ void _controller::setModels(const vector<_model*>& vecModels)
 
     m_vecModels = vecModels;
 
-    m_vecSelectedInstances.clear();
-    m_pTargetInstance = nullptr;
-
     itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {
         (*itView)->onModelLoaded();
@@ -577,6 +574,8 @@ void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
         (*itView)->preModelLoaded();
     }
 
+    cleanSelection();
+
     // Disable all
     for (auto pModel : m_vecModels) {
         pModel->setEnable(false);
@@ -590,9 +589,6 @@ void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 
         pModel->setEnable(true);
     }
-
-    m_vecSelectedInstances.clear();
-    m_pTargetInstance = nullptr;
 
     itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {
@@ -619,8 +615,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
     m_bUpdatingModel = true;
 
-    m_vecSelectedInstances.clear();
-    m_pTargetInstance = nullptr;
+    cleanSelection();
 
     auto pInstance = getModels()[0]->loadInstance(iInstance);
 
@@ -955,7 +950,15 @@ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationPr
     }
     m_vecModels.clear();
 
+    cleanSelection();
+
     s_iInstanceID = 1;
+}
+
+/*virtual*/ void _controller::cleanSelection()
+{
+    m_vecSelectedInstances.clear();
+    m_pTargetInstance = nullptr;
 }
 
 _model* _controller::getModel() const

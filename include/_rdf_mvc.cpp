@@ -65,10 +65,39 @@ _rdf_controller::_rdf_controller()
 /*virtual*/ _rdf_controller::~_rdf_controller()
 {}
 
-void _rdf_controller::selectInstanceProperty(_rdf_instance* pInstance, _rdf_property* pProperty)
+/*virtual*/ void _rdf_controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/) /*override*/
+{
+    _controller::selectInstances(pSender, vecInstance, bAdd);
+
+    m_pSelectedProperty = nullptr;
+}
+
+/*virtual*/ void _rdf_controller::cleanSelection() /*override*/
+{
+    _controller::cleanSelection();
+
+    m_pSelectedProperty = nullptr;
+}
+
+void _rdf_controller::selectInstanceProperty(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
     assert(pInstance != nullptr);
     assert(pProperty != nullptr);
+
+    if (m_bUpdatingModel) {
+        return;
+    }
+
+    m_vecSelectedInstances = vector<_instance*>{ pInstance };
+    m_pSelectedProperty = pProperty;
+
+    auto itView = getViews().begin();
+    for (; itView != getViews().end(); itView++) {
+        _ptr<_rdf_view> rdfView(*itView, false);
+        if (rdfView) {
+            rdfView->onInstancePropertySelected(pSender);
+        }
+    }
 }
 
 void _rdf_controller::showBaseInformation(_view* pSender, _rdf_instance* pInstance)

@@ -2596,7 +2596,7 @@ void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
 			auto pSelectedInstance = pPropertyItem->GetInstance();
 			auto pSelectedProperty = pPropertyItem->GetProperty();			
 
-			//GetController()->SelectInstanceProperty(pSelectedInstance, pSelectedProperty);#todo
+			getRDFController()->selectInstanceProperty(this, pSelectedInstance, pSelectedProperty);
 
 			SelectInstance(pSelectedInstance, FALSE);
 		} // else if (pItem->GetType() == enumItemType::Property)
