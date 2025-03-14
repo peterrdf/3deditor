@@ -52,6 +52,7 @@ public: // Methods
 public: // Properties
 
 	_rdf_controller* getRDFController() const;
+	_rdf_model* getRDFModel() const;
 };
 
 // ************************************************************************************************

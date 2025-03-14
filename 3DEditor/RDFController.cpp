@@ -9,16 +9,16 @@ BOOL TEST_MODE = FALSE;
 // ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
 	: _rdf_controller()
-	, m_pSceneModel(new CSceneRDFModel())
-	, m_pNavigatorModel(new CNavigatorRDFModel())
-	, m_bUpdatingModel(false)
+	//, m_pSceneModel(new CSceneRDFModel())
+	//, m_pNavigatorModel(new CNavigatorRDFModel())
+	//, m_bUpdatingModel(false)
 	//, m_iVisibleValuesCountLimit(10000)
 	//, m_bScaleAndCenter(TRUE)
 	//, m_bModelCoordinateSystem(TRUE)
 {
 	//#todo
-	m_pSceneModel->CreateDefaultModel();
-	m_pNavigatorModel->CreateDefaultModel(); 
+	//m_pSceneModel->CreateDefaultModel();
+	//m_pNavigatorModel->CreateDefaultModel(); 
 
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
@@ -35,8 +35,8 @@ CRDFController::CRDFController()
 // ------------------------------------------------------------------------------------------------
 CRDFController::~CRDFController()
 {
-	delete m_pSceneModel;
-	delete m_pNavigatorModel;	
+	//delete m_pSceneModel;
+	//delete m_pNavigatorModel;	
 }
 
 CRDFModel* CRDFController::GetModel()

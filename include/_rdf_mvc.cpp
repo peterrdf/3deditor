@@ -72,6 +72,15 @@ _rdf_controller* _rdf_view::getRDFController() const
 	return _ptr<_rdf_controller>(m_pController);
 }
 
+_rdf_model* _rdf_view::getRDFModel() const
+{
+	if (getController()->getModel() != nullptr) {
+		return _ptr<_rdf_model>(getController()->getModel());
+	}
+
+	return nullptr;
+}
+
 // ************************************************************************************************
 _rdf_controller::_rdf_controller()
 	: _controller()

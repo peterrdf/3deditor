@@ -21,12 +21,12 @@ class CRDFController : public _rdf_controller
 
 private: // Members
 
-	CSceneRDFModel* m_pSceneModel;
-	CNavigatorRDFModel* m_pNavigatorModel;	
+	//CSceneRDFModel* m_pSceneModel;
+	//CNavigatorRDFModel* m_pNavigatorModel;	
 
 	// --------------------------------------------------------------------------------------------
 	// Updating model - disable all notifications
-	bool m_bUpdatingModel;
+	//bool m_bUpdatingModel;
 
 public: // Methods
 
@@ -35,40 +35,25 @@ public: // Methods
 
 	// --------------------------------------------------------------------------------------------
 	// Getter
-	CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
-	CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }	
-
+	//CSceneRDFModel* GetSceneModel() const { return m_pSceneModel; }
+	//CNavigatorRDFModel* GetNavigatorModel() const { return m_pNavigatorModel; }	
+	
+// REMOVE!!!	
 	CRDFModel* GetModel();
 
-	// --------------------------------------------------------------------------------------------
-	// Test mode
-	virtual void LoadModel(LPCTSTR szFileName);
-
-	// --------------------------------------------------------------------------------------------
-	// Factory
+// MOVE !!!
 	void RenameInstance(CRDFView* pSender, CRDFInstance* pInstance, LPCTSTR szName);
-
-	// --------------------------------------------------------------------------------------------
-	// Removes an instance
 	bool DeleteInstance(CRDFView * pSender, CRDFInstance * pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Removes an instance tree
 	bool DeleteInstanceTree(CRDFView * pSender, CRDFInstance * pInstance);
 	bool DeleteInstanceTreeRecursive(CRDFView* pSender, CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Removes instances
 	bool DeleteInstances(CRDFView * pSender, vector<CRDFInstance *> vecInstances);
-	// --------------------------------------------------------------------------------------------
-	// Import
 	//void ImportModel(CRDFView* pSender, const wchar_t* szPath);
 
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
+// MOVE!!!
 	void OnInstancesEnabledStateChanged();
 
 	// Tests
+	virtual void LoadModel(LPCTSTR szFileName);
 	void BeginTestMode();
 	void EndTestMode();
 	BOOL IsTestMode();
