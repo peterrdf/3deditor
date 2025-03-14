@@ -7,7 +7,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CRDFClass
+class _rdf_class
 {
 
 private: // Members
@@ -20,8 +20,8 @@ private: // Members
 
 public: // Methods
 
-	CRDFClass(OwlClass iInstance);
-	virtual ~CRDFClass();
+	_rdf_class(OwlClass iInstance);
+	virtual ~_rdf_class();
 
 	void AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction);
 

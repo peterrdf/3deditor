@@ -2,7 +2,7 @@
 #include "RDFClass.h"
 
 // ************************************************************************************************
-CRDFClass::CRDFClass(OwlClass iInstance)
+_rdf_class::_rdf_class(OwlClass iInstance)
 	: m_iInstance(iInstance)
 	, m_szName(nullptr)
 	, m_vecParentClasses()
@@ -28,7 +28,7 @@ CRDFClass::CRDFClass(OwlClass iInstance)
 	}
 }
 
-CRDFClass::~CRDFClass()
+_rdf_class::~_rdf_class()
 {
 	for (size_t iProperty = 0; iProperty < m_vecPropertyRestrictions.size(); iProperty++)
 	{
@@ -36,7 +36,7 @@ CRDFClass::~CRDFClass()
 	}
 }
 
-void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
+void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
 {
 	assert(pPropertyRestriction != nullptr);
 
@@ -46,7 +46,7 @@ void CRDFClass::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestri
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
-void CRDFClass::GetAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestorClasses)
+void _rdf_class::GetAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestorClasses)
 {
 	OwlClass iParentClassInstance = GetClassParentsByIterator(iClassInstance, 0);
 	while (iParentClassInstance != 0)
@@ -59,7 +59,7 @@ void CRDFClass::GetAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAnce
 	}
 }
 
-/*static*/ wstring CRDFClass::GetAncestors(OwlClass iClassInstance)
+/*static*/ wstring _rdf_class::GetAncestors(OwlClass iClassInstance)
 {
 	vector<OwlClass> vecAncestors;
 	GetAncestors(iClassInstance, vecAncestors);

@@ -20,7 +20,7 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Class
-	CRDFClass * m_pNewInstanceRDFClass;
+	_rdf_class * m_pNewInstanceRDFClass;
 
 public:
 	CNewInstanceDialog(CRDFController * pController, CWnd* pParent = nullptr);   // standard constructor

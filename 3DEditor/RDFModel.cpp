@@ -326,7 +326,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 		auto itClass = m_mapClasses.find(iClassInstance);
 		if (itClass == m_mapClasses.end())
 		{
-			m_mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
+			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
 		}
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
@@ -674,7 +674,7 @@ void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, _rdf_property *
 	//	*/
 
 	//	vector<int64_t> vecAncestorClasses;
-	//	CRDFClass::GetAncestors(iClassInstance, vecAncestorClasses);
+	//	_rdf_class::GetAncestors(iClassInstance, vecAncestorClasses);
 
 	//	if (vecAncestorClasses.empty())
 	//	{
@@ -1219,7 +1219,7 @@ void CRDFModel::LoadRDFModel()
 		auto itClass = m_mapClasses.find(iClassInstance);
 		if (itClass == m_mapClasses.end())
 		{
-			m_mapClasses[iClassInstance] = new CRDFClass(iClassInstance);
+			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
 		}
 
 		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);

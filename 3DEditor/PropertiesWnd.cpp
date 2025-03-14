@@ -2708,7 +2708,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 	//	auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
 	//	
-	//	wstring strAncestors = CRDFClass::GetAncestors(pInstance->getGeometry()->getClassInstance());
+	//	wstring strAncestors = _rdf_class::GetAncestors(pInstance->getGeometry()->getClassInstance());
 	//	pInstanceGroup->SetDescription(strAncestors.c_str());
 
 	//	AddInstanceProperty(pInstanceGroup, pInstance, pProperty);
@@ -2731,7 +2731,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 		auto pInstanceGroup = new CMFCPropertyGridProperty(pInstance->getUniqueName());
 
-		wstring strAncestors = CRDFClass::GetAncestors(pInstance->getGeometry()->getClassInstance());
+		wstring strAncestors = _rdf_class::GetAncestors(pInstance->getGeometry()->getClassInstance());
 		pInstanceGroup->SetDescription(strAncestors.c_str());
 
 		/*

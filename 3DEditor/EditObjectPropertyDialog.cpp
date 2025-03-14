@@ -136,7 +136,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 
 		vector<int64_t> vecAncestorClasses;
-		CRDFClass::GetAncestors(itRFDInstances->second->getGeometry()->getClassInstance(), vecAncestorClasses);
+		_rdf_class::GetAncestors(itRFDInstances->second->getGeometry()->getClassInstance(), vecAncestorClasses);
 
 		if (vecAncestorClasses.empty())
 		{
@@ -175,7 +175,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	while (iClassInstance != 0)
 	{
 		vector<int64_t> vecAncestorClasses;
-		CRDFClass::GetAncestors(iClassInstance, vecAncestorClasses);
+		_rdf_class::GetAncestors(iClassInstance, vecAncestorClasses);
 
 		if (!vecAncestorClasses.empty())
 		{

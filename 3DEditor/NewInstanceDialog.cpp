@@ -63,7 +63,7 @@ void CNewInstanceDialog::OnOK()
 {
 	assert(m_cmbClasses.GetCurSel() != CB_ERR);
 
-	m_pNewInstanceRDFClass = (CRDFClass *)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
+	m_pNewInstanceRDFClass = (_rdf_class *)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
 
 	CDialogEx::OnOK();
 }

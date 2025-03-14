@@ -30,7 +30,7 @@ protected: // Members
 
 	// Model
 	bool m_bExternalModel;
-	map<OwlClass, CRDFClass*> m_mapClasses;
+	map<OwlClass, _rdf_class*> m_mapClasses;
 	map<RdfProperty, _rdf_property*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, CRDFInstance*> m_mapInstances;
@@ -111,7 +111,7 @@ public: // Methods
 	const CString& GetInstanceMetaData(CRDFInstance* pInstance);
 	void GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
-	const map<OwlClass, CRDFClass*>& GetClasses() const { return m_mapClasses; }
+	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }
 	const map<OwlInstance, CRDFInstance*>& GetInstances() const { return m_mapInstances; }
 
