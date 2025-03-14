@@ -82,7 +82,7 @@ void _model::scale()
               m_fYmax,
               m_fZmin,
               m_fZmax);
-        TRACE(L"\n*** Scale, Bounding sphere I *** =>  %.16f", m_fBoundingSphereDiameter);
+        TRACE(L"\n*** Scale I, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
     } // if (m_pWorld == nullptr)
     else {
         m_dOriginalBoundingSphereDiameter = m_pWorld->getOriginalBoundingSphereDiameter();
@@ -170,7 +170,7 @@ void _model::scale()
           m_fYmax,
           m_fZmin,
           m_fZmax);
-    TRACE(L"\n*** Scale, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
+    TRACE(L"\n*** Scale II, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 /*virtual*/ void _model::zoomToInstances(const set<_instance*>& setInstances)
@@ -213,6 +213,15 @@ void _model::scale()
     m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+    TRACE(L"\n*** zoomToInstances *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+        m_fXmin,
+        m_fXmax,
+        m_fYmin,
+        m_fYmax,
+        m_fZmin,
+        m_fZmax);
+    TRACE(L"\n*** zoomToInstances, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 /*virtual*/ void _model::zoomTo(_instance* pInstance)
@@ -254,6 +263,15 @@ void _model::scale()
     m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+    TRACE(L"\n*** zoomTo *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+        m_fXmin,
+        m_fXmax,
+        m_fYmin,
+        m_fYmax,
+        m_fZmin,
+        m_fZmax);
+    TRACE(L"\n*** zoomTo, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 /*virtual*/ void _model::zoomOut()
@@ -300,6 +318,15 @@ void _model::scale()
     m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
     m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+    TRACE(L"\n*** zoomOut *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+        m_fXmin,
+        m_fXmax,
+        m_fYmin,
+        m_fYmax,
+        m_fZmin,
+        m_fZmax);
+    TRACE(L"\n*** zoomOut, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
 _instance* _model::getInstanceByID(int64_t iID) const
