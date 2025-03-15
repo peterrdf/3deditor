@@ -35,9 +35,6 @@ protected: // Fields
 	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
-	
-	map<_rdf_instance*, CString> m_mapInstanceMetaData;
-
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	double m_dVertexBuffersOffsetX;
 	double m_dVertexBuffersOffsetY;
@@ -97,15 +94,8 @@ public: // Methods
 	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float GetBoundingSphereDiameter() const;
 
-	virtual void ScaleAndCenter(bool bLoadingModel = false);	
-
-	void ZoomToInstance(int64_t iInstance);
-	void ZoomOut();
-
+	virtual void ScaleAndCenter(bool bLoadingModel = false);
 	void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty);
-
-	//const CString& GetInstanceMetaData(_rdf_instance* pInstance);
-	//void GetPropertyMetaData(_rdf_instance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
 	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }
@@ -113,7 +103,7 @@ public: // Methods
 
 protected: // Methods
 
-	void SetFormatSettings(int64_t iModel);
+	void SetFormatSettings(int64_t iModel) { assert(0); /*#todo*/ }
 	virtual void PreLoadDRFModel() {}
 	void LoadRDFModel();
 	virtual void PostLoadDRFModel();
