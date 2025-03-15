@@ -42,18 +42,18 @@ class _rdf_property_restriction
 
 private: // Fields
 
-	int64_t m_iPropertyInstance;
+	RdfProperty m_rdfProperty;
 	int64_t m_iMinCard;
 	int64_t m_iMaxCard;
 
 public: // Methods
 
-	_rdf_property_restriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard);
+	_rdf_property_restriction(RdfProperty rdfProperty, int64_t iMinCard, int64_t iMaxCard);
 	virtual ~_rdf_property_restriction();
 
 public: // Properties
 
-	int64_t getPropertyInstance() const;
-	int64_t getMinCard() const;
-	int64_t getMaxCard() const;
+	RdfProperty getRdfProperty() const { return m_rdfProperty; }
+	int64_t getMinCard() const { return m_iMinCard; }
+	int64_t getMaxCard() const { return m_iMaxCard; }
 };

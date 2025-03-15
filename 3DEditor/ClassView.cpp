@@ -422,7 +422,7 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 
 		const vector<_rdf_property_restriction*>& vecPropertyRestrictions = pAncestorRDFClass->getPropertyRestrictions();
 		for (size_t iPropertyRestriction = 0; iPropertyRestriction < vecPropertyRestrictions.size(); iPropertyRestriction++) {
-			auto itProperty = mapProperties.find(vecPropertyRestrictions[iPropertyRestriction]->getPropertyInstance());
+			auto itProperty = mapProperties.find(vecPropertyRestrictions[iPropertyRestriction]->getRdfProperty());
 			ASSERT(itProperty != mapProperties.end());
 
 			auto pProperty = itProperty->second;

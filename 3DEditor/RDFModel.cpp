@@ -61,28 +61,23 @@ public: // Methods
 	}
 
 	virtual ~CLoadTask()
-	{}
+	{
+	}
 
 	virtual void Run() override
 	{
-		if (m_pProgress != nullptr)
-		{
+		if (m_pProgress != nullptr) {
 			CString strLog;
-			if (m_bLoading)
-			{
+			if (m_bLoading) {
 				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
-			}
-			else
-			{
+			} else {
 				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
-			}		
+			}
 
-			if (!TEST_MODE)
-			{
-				if (m_pProgress != nullptr)
-				{
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
 					m_pProgress->Log(0/*info*/, CW2A(strLog));
-				}				
+				}
 			}
 		}
 
@@ -90,8 +85,7 @@ public: // Methods
 		strExtension.MakeUpper();
 
 #ifdef _DXF_SUPPORT
-		if (strExtension == L".DXF")
-		{
+		if (strExtension == L".DXF") {
 			m_pModel->LoadDXF(m_szPath);
 		}
 #endif
@@ -101,25 +95,19 @@ public: // Methods
 			(strExtension == L".GMLZIP") ||
 			(strExtension == L".GMLZ") ||
 			(strExtension == L".XML") ||
-			(strExtension == L".JSON"))
-		{
+			(strExtension == L".JSON")) {
 			m_pModel->LoadGISModel(m_szPath);
-		}
-		else
+		} else
 #endif		
 		{
-			if (m_bLoading)
-			{
+			if (m_bLoading) {
 				m_pModel->m_iModel = OpenModelW(m_szPath);
-				if (m_pModel->m_iModel != 0)
-				{
+				if (m_pModel->m_iModel != 0) {
 					m_pModel->SetFormatSettings(m_pModel->m_iModel);
 
 					m_pModel->LoadRDFModel();
 				}
-			}
-			else
-			{
+			} else {
 				assert(m_pModel->m_iModel != 0);
 
 				ImportModelW(m_pModel->m_iModel, m_szPath);
@@ -128,36 +116,27 @@ public: // Methods
 			}
 		}
 
-		if (m_pModel->m_iModel == 0)
-		{
+		if (m_pModel->m_iModel == 0) {
 			CString strError;
 			strError.Format(L"Failed to open '%s'.", m_szPath);
 
-			if (!TEST_MODE)
-			{
-				if (m_pProgress != nullptr)
-				{
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
 					m_pProgress->Log(2/*error*/, CW2A(strError));
 				}
 
 				::MessageBox(
-					::AfxGetMainWnd()->GetSafeHwnd(), 
+					::AfxGetMainWnd()->GetSafeHwnd(),
 					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-			}
-			else
-			{
+			} else {
 				TRACE(L"\nError: %s", (LPCTSTR)strError);
-			}		
-		}
-		else
-		{
-			if (!TEST_MODE)
-			{
-				if (m_pProgress != nullptr)
-				{
+			}
+		} else {
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
 					m_pProgress->Log(0/*info*/, "*** Done. ***");
 				}
-			}		
+			}
 		}
 	}
 };
@@ -171,7 +150,7 @@ CRDFModel::CRDFModel()
 	, m_mapProperties()
 	, m_iID(1)
 	, m_mapInstances()
-	, m_mapInstanceMetaData()	
+	, m_mapInstanceMetaData()
 	, m_dVertexBuffersOffsetX(0.)
 	, m_dVertexBuffersOffsetY(0.)
 	, m_dVertexBuffersOffsetZ(0.)
@@ -185,7 +164,8 @@ CRDFModel::CRDFModel()
 	, m_fBoundingSphereDiameter(1.f)
 	, m_pDefaultTexture(nullptr)
 	, m_pTextBuilder(new CTextBuilder())
-{}
+{
+}
 
 CRDFModel::~CRDFModel()
 {
@@ -199,9 +179,9 @@ CRDFModel::~CRDFModel()
 	m_strPath = L"DEFAULT";
 
 	Clean();
-	
+
 	m_iModel = CreateModel();
-	assert(m_iModel != 0);	
+	assert(m_iModel != 0);
 
 	SetFormatSettings(m_iModel);
 
@@ -278,8 +258,7 @@ CRDFModel::~CRDFModel()
 
 void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 {
-	if (bLoading)
-	{
+	if (bLoading) {
 		Clean();
 
 		m_strPath = szPath;
@@ -287,15 +266,13 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 
 	CLoadTask loadTask(this, szPath, bLoading);
 #ifdef _PROGRESS_UI_SUPPORT
-	if (!TEST_MODE)
-	{
+	if (!TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 
 		m_pProgress = &dlgProgress;
 		dlgProgress.DoModal();
 		m_pProgress = nullptr;
-	}
-	else
+	} else
 #endif
 	{
 		loadTask.Run();
@@ -320,11 +297,9 @@ void CRDFModel::Load(OwlInstance iInstance)
 #ifdef _TOOLTIPS_SUPPORT
 	// Load/Import Model
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
-	while (iClassInstance != 0)
-	{
+	while (iClassInstance != 0) {
 		auto itClass = m_mapClasses.find(iClassInstance);
-		if (itClass == m_mapClasses.end())
-		{
+		if (itClass == m_mapClasses.end()) {
 			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
 		}
 
@@ -332,85 +307,27 @@ void CRDFModel::Load(OwlInstance iInstance)
 	} // while (iClassInstance != 0)
 
 	// Load/Import Model
-	RdfProperty iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
-	while (iPropertyInstance != 0)
-	{
-		auto itProperty = m_mapProperties.find(iPropertyInstance);
-		if (itProperty == m_mapProperties.end())
-		{
-			int64_t iPropertyType = GetPropertyType(iPropertyInstance);
-			switch (iPropertyType)
-			{
-			case OBJECTPROPERTY_TYPE:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_BOOLEAN:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_STRING:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_INTEGER:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case DATATYPEPROPERTY_TYPE_DOUBLE:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			case 0:
-			{
-				m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-			}
-			break;
-
-			default:
-				assert(false); // Not supported!
-				break;
-			} // switch (iPropertyType)
+	RdfProperty rdfProperty = GetPropertiesByIterator(m_iModel, 0);
+	while (rdfProperty != 0) {
+		auto itProperty = m_mapProperties.find(rdfProperty);
+		if (itProperty == m_mapProperties.end()) {
+			m_mapProperties[rdfProperty] = new _rdf_property(rdfProperty);
 
 			auto itClasses = m_mapClasses.begin();
-			for (; itClasses != m_mapClasses.end(); itClasses++)
-			{
+			for (; itClasses != m_mapClasses.end(); itClasses++) {
 				int64_t	iMinCard = -1;
 				int64_t iMaxCard = -1;
-				GetClassPropertyCardinalityRestrictionNested(itClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
+				GetClassPropertyCardinalityRestrictionNested(itClasses->first, rdfProperty, &iMinCard, &iMaxCard);
 
-				if ((iMinCard == -1) && (iMaxCard == -1))
-				{
+				if ((iMinCard == -1) && (iMaxCard == -1)) {
 					continue;
 				}
 
-				itClasses->second->addPropertyRestriction(new _rdf_property_restriction(iPropertyInstance, iMinCard, iMaxCard));
+				itClasses->second->addPropertyRestriction(new _rdf_property_restriction(rdfProperty, iMinCard, iMaxCard));
 			} // for (; itClasses != ...
 		} // if (itProperty == m_mapProperties.end())
 
-		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
+		rdfProperty = GetPropertiesByIterator(m_iModel, rdfProperty);
 	} // while (iPropertyInstance != 0)
 #endif // _TOOLTIPS_SUPPORT
 
@@ -428,21 +345,17 @@ void CRDFModel::Load(OwlInstance iInstance)
 #ifdef _DXF_SUPPORT
 void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
-	if (m_iModel == 0)
-	{
+	if (m_iModel == 0) {
 		m_iModel = CreateModel();
 		assert(m_iModel != 0);
 
 		SetFormatSettings(m_iModel);
 	}
 
-	try
-	{
+	try {
 		_dxf::_parser parser(m_iModel);
 		parser.load(CW2A(szPath));
-	}
-	catch (const std::runtime_error& ex)
-	{
+	} catch (const std::runtime_error& ex) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -457,16 +370,14 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 #ifdef _GIS_SUPPORT
 void CRDFModel::LoadGISModel(const wchar_t* szPath)
 {
-	if (m_iModel == 0)
-	{
+	if (m_iModel == 0) {
 		m_iModel = CreateModel();
 		assert(m_iModel != 0);
 
 		SetFormatSettings(m_iModel);
 	}
 
-	try
-	{
+	try {
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
@@ -478,17 +389,13 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
 
 		ImportGISModel(m_iModel, CW2A(szPath));
-	}
-	catch (const std::runtime_error& err)
-	{
+	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 
 		return;
-	}
-	catch (...)
-	{
+	} catch (...) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -513,16 +420,14 @@ void CRDFModel::ResetInstancesDefaultState()
 	GetInstancesDefaultState();
 
 	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (m_mapInstanceDefaultState.find(itInstance->second->getOwlInstance()) != m_mapInstanceDefaultState.end())
-		{
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (m_mapInstanceDefaultState.find(itInstance->second->getOwlInstance()) != m_mapInstanceDefaultState.end()) {
 			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getOwlInstance()));
 		}
 	}
 }
 
-void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const
+void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass>& vecAncestors) const
 {
 	assert(iClassInstance != 0);
 
@@ -532,13 +437,11 @@ void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & ve
 	auto pClass = itClass->second;
 
 	const auto& vecParentClasses = pClass->getParentClasses();
-	if (vecParentClasses.empty())
-	{
+	if (vecParentClasses.empty()) {
 		return;
 	}
 
-	for (size_t iParentClass = 0; iParentClass < vecParentClasses.size(); iParentClass++)
-	{
+	for (size_t iParentClass = 0; iParentClass < vecParentClasses.size(); iParentClass++) {
 		vecAncestors.insert(vecAncestors.begin(), vecParentClasses[iParentClass]);
 
 		GetClassAncestors(vecParentClasses[iParentClass], vecAncestors);
@@ -550,10 +453,8 @@ _rdf_instance* CRDFModel::GetInstanceByID(int64_t iID)
 	assert(iID != 0);
 
 	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (itInstance->second->getID() == iID)
-		{
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (itInstance->second->getID() == iID) {
 			return itInstance->second;
 		}
 	}
@@ -568,10 +469,8 @@ _rdf_instance* CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 	assert(iInstance != 0);
 
 	map<int64_t, _rdf_instance*>::iterator itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (itInstance->first == iInstance)
-		{
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (itInstance->first == iInstance) {
 			return itInstance->second;
 		}
 	}
@@ -592,7 +491,7 @@ _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 }
 
 
-void CRDFModel::GetCompatibleInstances(_rdf_instance* pInstance, _rdf_property * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
+void CRDFModel::GetCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const
 {
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
@@ -905,7 +804,7 @@ void CRDFModel::ZoomOut()
 	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_property * /*pProperty*/)
+void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/)
 {
 	ASSERT(FALSE); //#todo
 	/*SetFormatSettings(m_iModel);
@@ -924,8 +823,7 @@ void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_prop
 
 /*virtual*/ _texture* CRDFModel::getDefaultTexture() /*override*/
 {
-	if (m_pDefaultTexture == nullptr)
-	{
+	if (m_pDefaultTexture == nullptr) {
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
@@ -941,8 +839,7 @@ void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_prop
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
 
 		m_pDefaultTexture = new _texture();
-		if (!m_pDefaultTexture->load(szDefaultTexture))
-		{
+		if (!m_pDefaultTexture->load(szDefaultTexture)) {
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
 		}
 	}
@@ -1163,8 +1060,7 @@ void CRDFModel::SetFormatSettings(int64_t iModel)
 void CRDFModel::LoadRDFModel()
 {
 	ProgressStatus(L"Loading RDF model schema...");
-	if (m_pProgress != nullptr)
-	{
+	if (m_pProgress != nullptr) {
 		m_pProgress->Log(0/*info*/, "Loading RDF model schema...");
 	}
 
@@ -1172,11 +1068,9 @@ void CRDFModel::LoadRDFModel()
 
 	// Load/Import Model
 	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
-	while (iClassInstance != 0)
-	{
+	while (iClassInstance != 0) {
 		auto itClass = m_mapClasses.find(iClassInstance);
-		if (itClass == m_mapClasses.end())
-		{
+		if (itClass == m_mapClasses.end()) {
 			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
 		}
 
@@ -1185,14 +1079,11 @@ void CRDFModel::LoadRDFModel()
 
 	// Load/Import Model
 	RdfProperty iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
-	while (iPropertyInstance != 0)
-	{
+	while (iPropertyInstance != 0) {
 		auto itProperty = m_mapProperties.find(iPropertyInstance);
-		if (itProperty == m_mapProperties.end())
-		{
+		if (itProperty == m_mapProperties.end()) {
 			int64_t iPropertyType = GetPropertyType(iPropertyInstance);
-			switch (iPropertyType)
-			{
+			switch (iPropertyType) {
 				case OBJECTPROPERTY_TYPE:
 				{
 					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
@@ -1247,14 +1138,12 @@ void CRDFModel::LoadRDFModel()
 			} // switch (iPropertyType)
 
 			auto itClasses = m_mapClasses.begin();
-			for (; itClasses != m_mapClasses.end(); itClasses++)
-			{
+			for (; itClasses != m_mapClasses.end(); itClasses++) {
 				int64_t	iMinCard = -1;
 				int64_t iMaxCard = -1;
 				GetClassPropertyCardinalityRestrictionNested(itClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
 
-				if ((iMinCard == -1) && (iMaxCard == -1))
-				{
+				if ((iMinCard == -1) && (iMaxCard == -1)) {
 					continue;
 				}
 
@@ -1283,31 +1172,26 @@ void CRDFModel::GetInstancesDefaultState()
 
 	// Enable only unreferenced instances
 	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0)
-	{
+	while (iInstance != 0) {
 		m_mapInstanceDefaultState[iInstance] = GetInstanceInverseReferencesByIterator(iInstance, 0) == 0;
 
 		iInstance = GetInstancesByIterator(m_iModel, iInstance);
 	}
 
 	// Enable children/descendants with geometry
-	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState)
-	{
-		if (!itInstanceDefaultState.second)
-		{
+	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState) {
+		if (!itInstanceDefaultState.second) {
 			continue;
 		}
 
 		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
-			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr))
-		{
+			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr)) {
 			OwlClass iNillClass = GetClassByName(m_iModel, "Nill");
 
 			OwlClass iInstanceClass = GetInstanceClass(itInstanceDefaultState.first);
 			assert(iInstanceClass != 0);
 
-			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass))
-			{
+			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass)) {
 				GetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
 			}
 		}
@@ -1319,25 +1203,20 @@ void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
 	assert(iInstance != 0);
 
 	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
-	while (iProperty != 0)
-	{
-		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE)
-		{
+	while (iProperty != 0) {
+		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE) {
 			int64_t iValuesCount = 0;
 			OwlInstance* piValues = nullptr;
 			GetObjectProperty(iInstance, iProperty, &piValues, &iValuesCount);
 
-			for (int64_t iValue = 0; iValue < iValuesCount; iValue++)
-			{
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 				if ((piValues[iValue] != 0) &&
-					!m_mapInstanceDefaultState.at(piValues[iValue]))
-				{
+					!m_mapInstanceDefaultState.at(piValues[iValue])) {
 					// Enable to avoid infinity recursion
 					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
 
 					if (!GetInstanceGeometryClass(piValues[iValue]) ||
-						!GetBoundingBox(piValues[iValue], nullptr, nullptr))
-					{
+						!GetBoundingBox(piValues[iValue], nullptr, nullptr)) {
 						GetInstanceDefaultStateRecursive(piValues[iValue]);
 					}
 				}
@@ -1361,13 +1240,11 @@ void CRDFModel::UpdateVertexBufferOffset()
 	double dYmin = DBL_MAX;
 	double dYmax = -DBL_MAX;
 	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;	
+	double dZmax = -DBL_MAX;
 
 	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0)
-	{
-		if (m_mapInstanceDefaultState.at(iInstance))
-		{
+	while (iInstance != 0) {
+		if (m_mapInstanceDefaultState.at(iInstance)) {
 			_geometry::calculateBB(
 				iInstance,
 				dXmin, dXmax,
@@ -1383,8 +1260,7 @@ void CRDFModel::UpdateVertexBufferOffset()
 		(dYmin == DBL_MAX) ||
 		(dYmax == -DBL_MAX) ||
 		(dZmin == DBL_MAX) ||
-		(dZmax == -DBL_MAX))
-	{
+		(dZmax == -DBL_MAX)) {
 		// TODO: new status bar for geometry
 		/*::MessageBox(
 			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
@@ -1423,8 +1299,7 @@ void CRDFModel::LoadRDFInstances()
 	* Default instances
 	*/
 	ProgressStatus prgs(L"Loading RDF instances...");
-	if (m_pProgress != nullptr)
-	{
+	if (m_pProgress != nullptr) {
 		m_pProgress->Log(0/*info*/, "Loading RDF instances...");
 	}
 
@@ -1437,13 +1312,11 @@ void CRDFModel::LoadRDFInstances()
 
 	prgs.Start(cntTotal);
 
-	while (owlInstance != 0)
-	{
+	while (owlInstance != 0) {
 		prgs.Step();
 
 		auto itInstance = m_mapInstances.find(owlInstance);
-		if (itInstance == m_mapInstances.end())
-		{
+		if (itInstance == m_mapInstances.end()) {
 			// Load Model
 			//m_mapInstances[owlInstance] = new CRDFInstance(m_iID++, owlInstance);
 			//m_mapInstances.at(owlInstance)->setEnable(m_mapInstanceDefaultState.at(owlInstance));
@@ -1454,9 +1327,7 @@ void CRDFModel::LoadRDFInstances()
 			auto pInstance = new _rdf_instance(m_iID++, pGeometry, nullptr);
 			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
-		}
-		else
-		{
+		} else {
 			ASSERT(FALSE);//#todo
 			// Import Model
 			//itInstance->second->Recalculate();
@@ -1481,27 +1352,22 @@ void CRDFModel::Clean()
 	/*
 	* Model
 	*/
-	if (!m_bExternalModel)
-	{
-		if (m_iModel != 0)
-		{
+	if (!m_bExternalModel) {
+		if (m_iModel != 0) {
 			CloseModel(m_iModel);
 			m_iModel = 0;
 		}
-	}
-	else
-	{
+	} else {
 		m_iModel = 0;
 
 		m_bExternalModel = false;
-	}	
+	}
 
 	/*
 	* RDF Classes
 	*/
 	auto itClasses = m_mapClasses.begin();
-	for (; itClasses != m_mapClasses.end(); itClasses++)
-	{
+	for (; itClasses != m_mapClasses.end(); itClasses++) {
 		delete itClasses->second;
 	}
 	m_mapClasses.clear();
@@ -1510,8 +1376,7 @@ void CRDFModel::Clean()
 	* RDF Properties
 	*/
 	auto itProperty = m_mapProperties.begin();
-	for (; itProperty != m_mapProperties.end(); itProperty++)
-	{
+	for (; itProperty != m_mapProperties.end(); itProperty++) {
 		delete itProperty->second;
 	}
 	m_mapProperties.clear();
@@ -1520,8 +1385,7 @@ void CRDFModel::Clean()
 	* RDF Instances
 	*/
 	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
 		delete itInstance->second;
 	}
 	m_mapInstances.clear();
@@ -1538,7 +1402,7 @@ void CRDFModel::Clean()
 }
 
 OwlInstance CRDFModel::Translate(
-	OwlInstance iInstance, 
+	OwlInstance iInstance,
 	double dX, double dY, double dZ,
 	double d11, double d22, double d33)
 {
@@ -1634,7 +1498,7 @@ OwlInstance CRDFModel::Rotate(
 	return iTransformationInstance;
 }
 
-void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard)
+void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t* pMinCard, int64_t* pMaxCard)
 {
 	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
 }
@@ -1642,18 +1506,18 @@ void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, 
 // ************************************************************************************************
 CSceneRDFModel::CSceneRDFModel()
 	: CRDFModel()
-{}
+{
+}
 
 /*virtual*/ CSceneRDFModel::~CSceneRDFModel()
-{}
+{
+}
 
 void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 {
 	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (!itInstance->second->getEnable())
-		{
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (!itInstance->second->getEnable()) {
 			continue;
 		}
 
@@ -1944,10 +1808,12 @@ void CSceneRDFModel::CreateCoordinateSystem()
 // ************************************************************************************************
 CNavigatorRDFModel::CNavigatorRDFModel()
 	: CSceneRDFModel()
-{}
+{
+}
 
 /*virtual*/ CNavigatorRDFModel::~CNavigatorRDFModel()
-{}
+{
+}
 
 /*virtual*/ void CNavigatorRDFModel::CreateDefaultModel() /*override*/
 {
@@ -2119,7 +1985,7 @@ void CNavigatorRDFModel::CreateNaigator()
 			(int64_t)pSphere,
 			-.75, .75, -.75,
 			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-right");		
+		SetNameOfInstance(iInstance, "#back-bottom-right");
 	}
 }
 

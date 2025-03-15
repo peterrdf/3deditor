@@ -39,7 +39,7 @@ void _rdf_class::addPropertyRestriction(_rdf_property_restriction* pPropertyRest
 	assert(pPropertyRestriction != nullptr);
 
 	char* szPropertyName = nullptr;
-	GetNameOfProperty(pPropertyRestriction->getPropertyInstance(), &szPropertyName);
+	GetNameOfProperty(pPropertyRestriction->getRdfProperty(), &szPropertyName);
 
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
@@ -78,29 +78,14 @@ void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorCl
 
 
 // ************************************************************************************************
-_rdf_property_restriction::_rdf_property_restriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard)
-	: m_iPropertyInstance(iPropertyInstance)
+_rdf_property_restriction::_rdf_property_restriction(RdfProperty rdfProperty, int64_t iMinCard, int64_t iMaxCard)
+	: m_rdfProperty(rdfProperty)
 	, m_iMinCard(iMinCard)
 	, m_iMaxCard(iMaxCard)
 {
-	assert(m_iPropertyInstance != 0);
+	assert(m_rdfProperty != 0);
 }
 
 _rdf_property_restriction::~_rdf_property_restriction()
 {
-}
-
-int64_t _rdf_property_restriction::getPropertyInstance() const
-{
-	return m_iPropertyInstance;
-}
-
-int64_t _rdf_property_restriction::getMinCard() const
-{
-	return m_iMinCard;
-}
-
-int64_t _rdf_property_restriction::getMaxCard() const
-{
-	return m_iMaxCard;
 }
