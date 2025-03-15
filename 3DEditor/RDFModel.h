@@ -1,11 +1,11 @@
 #pragma once
 
-#include "_rdf_mvc.h"
 #include "Texture.h"
 #include "RDFClass.h"
-#include "RDFInstance.h"
 #include "TextBuilder.h"
 
+#include "_rdf_instance.h"
+#include "_rdf_mvc.h"
 #include "_rdf_property.h"
 
 #include <map>
@@ -33,10 +33,10 @@ protected: // Members
 	map<OwlClass, _rdf_class*> m_mapClasses;
 	map<RdfProperty, _rdf_property*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
-	map<OwlInstance, CRDFInstance*> m_mapInstances;
+	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
 	
-	map<CRDFInstance*, CString> m_mapInstanceMetaData;
+	map<_rdf_instance*, CString> m_mapInstanceMetaData;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	double m_dVertexBuffersOffsetX;
@@ -85,12 +85,12 @@ public: // Methods
 	void ResetInstancesDefaultState();
 		
 	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
-	CRDFInstance* GetInstanceByID(int64_t iID);
-	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
+	_rdf_instance* GetInstanceByID(int64_t iID);
+	_rdf_instance* GetInstanceByIInstance(int64_t iInstance);
 
-	CRDFInstance* AddNewInstance(int64_t pThing);
+	_rdf_instance* AddNewInstance(int64_t pThing);
 
-	void GetCompatibleInstances(CRDFInstance* pInstance, _rdf_property* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
+	void GetCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 	
 	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
 	double GetOriginalBoundingSphereDiameter() const;
@@ -102,14 +102,14 @@ public: // Methods
 	void ZoomToInstance(int64_t iInstance);
 	void ZoomOut();
 
-	void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
+	void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty);
 
-	//const CString& GetInstanceMetaData(CRDFInstance* pInstance);
-	//void GetPropertyMetaData(CRDFInstance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
+	//const CString& GetInstanceMetaData(_rdf_instance* pInstance);
+	//void GetPropertyMetaData(_rdf_instance* pInstance, _rdf_property* pProperty, CString& strMetaData, const CString& strPrefix, bool& bMultiValue);
 
 	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }
-	const map<OwlInstance, CRDFInstance*>& GetInstances() const { return m_mapInstances; }
+	const map<OwlInstance, _rdf_instance*>& GetInstances() const { return m_mapInstances; }
 
 protected: // Methods
 

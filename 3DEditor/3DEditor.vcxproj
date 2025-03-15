@@ -831,7 +831,6 @@
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="RDFClass.h" />
     <ClInclude Include="RDFController.h" />
-    <ClInclude Include="RDFInstance.h" />
     <ClInclude Include="RDFItem.h" />
     <ClInclude Include="RDFModel.h" />
     <ClInclude Include="RDFPropertyRestriction.h" />
@@ -1010,7 +1009,6 @@
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="RDFClass.cpp" />
     <ClCompile Include="RDFController.cpp" />
-    <ClCompile Include="RDFInstance.cpp" />
     <ClCompile Include="RDFItem.cpp" />
     <ClCompile Include="RDFModel.cpp" />
     <ClCompile Include="RDFPropertyRestriction.cpp" />

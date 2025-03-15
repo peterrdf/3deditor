@@ -1,8 +1,8 @@
 #pragma once
 
 #include "RDFController.h"
-#include "RDFInstance.h"
 
+#include "_rdf_mvc.h"
 #include "_rdf_property.h"
 
 // CSelectInstanceDialog dialog
@@ -17,7 +17,7 @@ private: // Members
 	CRDFController* m_pController;
 
 	// --------------------------------------------------------------------------------------------
-	CRDFInstance* m_pInstance;
+	_rdf_instance* m_pInstance;
 
 	// --------------------------------------------------------------------------------------------
 	_rdf_property* m_pObjectRDFProperty;
@@ -37,7 +37,7 @@ public: // Members
 	CString m_strOldInstanceUniqueName;
 
 public:
-	CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
+	CSelectInstanceDialog(CRDFController* pController, _rdf_instance* pInstance,
 		_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSelectInstanceDialog();
 

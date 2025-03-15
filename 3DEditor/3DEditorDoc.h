@@ -8,7 +8,9 @@
 #include "RDFModel.h"
 #include "RDFController.h"
 
-// ------------------------------------------------------------------------------------------------
+#include "_instance.h"
+
+// ************************************************************************************************
 class CMy3DEditorDoc
 	: public CDocument
 	, public CRDFController

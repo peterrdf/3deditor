@@ -123,9 +123,6 @@
     <ClInclude Include="..\3DEditor\EditObjectPropertyDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\3DEditor\RDFInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3DEditor\RDFItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,9 +162,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\RDFInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\Texture.cpp">

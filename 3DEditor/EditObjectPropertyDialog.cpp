@@ -40,7 +40,7 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, _rdf_property * pProperty, CWnd* pParent /*=nullptr*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController * pController, _rdf_instance * pInstance, _rdf_property * pProperty, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)
@@ -103,7 +103,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	/*
 	* Populate Existing instance combo
 	*/
-	map<int64_t, CRDFInstance *>::const_iterator itRFDInstances = mapInstances.begin();
+	map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
 	for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
 	{
 		/*
@@ -241,7 +241,7 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 	{
 		assert(m_cmbExistingInstance.GetCurSel() != CB_ERR);
 
-		m_pExisitngRDFInstance = (CRDFInstance *)m_cmbExistingInstance.GetItemDataPtr(m_cmbExistingInstance.GetCurSel());
+		m_pExisitngRDFInstance = (_rdf_instance*)m_cmbExistingInstance.GetItemDataPtr(m_cmbExistingInstance.GetCurSel());
 	}
 	break;
 

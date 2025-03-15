@@ -17,7 +17,7 @@
 
 IMPLEMENT_DYNAMIC(CSelectInstanceDialog, CDialogEx)
 
-CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
+CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, _rdf_instance* pInstance,
 	_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SELECT_INSTANCE, pParent)
 	, m_pController(pController)
@@ -91,7 +91,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	m_strOldInstanceUniqueName = EMPTY_INSTANCE;
 	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
 	{
-		map<int64_t, CRDFInstance *>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
+		map<int64_t, _rdf_instance*>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
 		assert(itInstanceValue != mapInstances.end());
 
 		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();

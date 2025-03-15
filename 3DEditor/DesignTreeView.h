@@ -3,10 +3,10 @@
 
 #include "TreeCtrlEx.h"
 #include "RDFModel.h"
-#include "RDFInstance.h"
 #include "RDFItem.h"
 #include "SearchTreeCtrlDialog.h"
 
+#include "_rdf_instance.h"
 #include "_rdf_mvc.h"
 
 #include <map>

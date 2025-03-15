@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RDFInstance.h"
+#include "_rdf_mvc.h"
 #include "_rdf_property.h"
 
 enum class enumItemType : int

@@ -2,10 +2,11 @@
 #define _OPEN_GL_IFC_VIEW_H_
 
 #include "Generic.h"
-#include "RDFInstance.h"
 #include "RDFModel.h"
 #include <ctime>
 
+#include "_rdf_instance.h"
+#include "_rdf_mvc.h"
 #include "_oglUtils.h"
 
 // ------------------------------------------------------------------------------------------------
@@ -23,7 +24,7 @@ private: // Members
 
 	// Navigator
 	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
-	CRDFInstance* m_pNavigatorPointedInstance;
+	_rdf_instance* m_pNavigatorPointedInstance;
 	_material* m_pNavigatorPointedInstanceMaterial;
 
 #pragma endregion // Members

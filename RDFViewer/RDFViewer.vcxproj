@@ -776,7 +776,6 @@
     <ClInclude Include="..\3DEditor\EditObjectPropertyDialog.h" />
     <ClInclude Include="..\3DEditor\NewInstanceDialog.h" />
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
-    <ClInclude Include="..\3DEditor\RDFInstance.h" />
     <ClInclude Include="..\3DEditor\RDFItem.h" />
     <ClInclude Include="..\3DEditor\SearchTreeCtrlDialog.h" />
     <ClInclude Include="..\3DEditor\TextBuilder.h" />
@@ -816,7 +815,6 @@
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp" />
     <ClCompile Include="..\3DEditor\RDFClass.cpp" />
     <ClCompile Include="..\3DEditor\RDFController.cpp" />
-    <ClCompile Include="..\3DEditor\RDFInstance.cpp" />
     <ClCompile Include="..\3DEditor\RDFItem.cpp" />
     <ClCompile Include="..\3DEditor\RDFModel.cpp" />
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />

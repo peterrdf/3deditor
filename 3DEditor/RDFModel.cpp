@@ -545,7 +545,7 @@ void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & ve
 	}
 }
 
-CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
+_rdf_instance* CRDFModel::GetInstanceByID(int64_t iID)
 {
 	assert(iID != 0);
 
@@ -563,11 +563,11 @@ CRDFInstance * CRDFModel::GetInstanceByID(int64_t iID)
 	return nullptr;
 }
 
-CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
+_rdf_instance* CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 {
 	assert(iInstance != 0);
 
-	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
+	map<int64_t, _rdf_instance*>::iterator itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++)
 	{
 		if (itInstance->first == iInstance)
@@ -579,7 +579,7 @@ CRDFInstance * CRDFModel::GetInstanceByIInstance(int64_t iInstance)
 	return nullptr;
 }
 
-CRDFInstance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
+_rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 {
 	ASSERT(FALSE);//#todo
 	return nullptr;
@@ -592,7 +592,7 @@ CRDFInstance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 }
 
 
-void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, _rdf_property * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
+void CRDFModel::GetCompatibleInstances(_rdf_instance* pInstance, _rdf_property * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {
 	assert(pInstance != nullptr);
 	assert(pObjectRDFProperty != nullptr);
@@ -905,7 +905,7 @@ void CRDFModel::ZoomOut()
 	//m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 }
 
-void CRDFModel::OnInstancePropertyEdited(CRDFInstance * /*pInstance*/, _rdf_property * /*pProperty*/)
+void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_property * /*pProperty*/)
 {
 	ASSERT(FALSE); //#todo
 	/*SetFormatSettings(m_iModel);

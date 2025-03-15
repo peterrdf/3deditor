@@ -2,11 +2,11 @@
 
 #include "RDFController.h"
 #include "RDFClass.h"
-#include "RDFInstance.h"
 #include "afxwin.h"
 
-// CEditObjectPropertyDialog dialog
+#include "_rdf_instance.h"
 
+// ************************************************************************************************
 class CEditObjectPropertyDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CEditObjectPropertyDialog)
@@ -19,7 +19,7 @@ private: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instance
-	CRDFInstance * m_pInstance;
+	_rdf_instance* m_pInstance;
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Property
@@ -29,7 +29,7 @@ public: // Members
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instance
-	CRDFInstance * m_pExisitngRDFInstance;
+	_rdf_instance* m_pExisitngRDFInstance;
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Class
@@ -42,7 +42,7 @@ private: // Methods
 	void ValidateUI();
 
 public:
-	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, _rdf_property * pProperty, CWnd* pParent = nullptr);   // standard constructor
+	CEditObjectPropertyDialog(CRDFController * pController, _rdf_instance* pInstance, _rdf_property * pProperty, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditObjectPropertyDialog();
 
 // Dialog Data
