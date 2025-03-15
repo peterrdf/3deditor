@@ -27,7 +27,6 @@ wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 wchar_t TOOLTIP_INFORMATION[] = L"Information";
 
 int NAVIGATION_VIEW_LENGTH = 200;
-//int MIN_VIEW_PORT_LENGTH = 100;
 
 // ------------------------------------------------------------------------------------------------
 CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)

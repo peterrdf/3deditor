@@ -2,10 +2,8 @@
 #include "RDFController.h"
 #include "RDFModel.h"
 
-// ------------------------------------------------------------------------------------------------
 BOOL TEST_MODE = FALSE;
 
-// ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
 	: _rdf_controller()
 {
@@ -21,46 +19,15 @@ CRDFController::CRDFController()
 	getSettingsStorage()->loadSettings(strSettingsFile);
 }
 
-// ------------------------------------------------------------------------------------------------
 CRDFController::~CRDFController()
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFController::LoadModel(LPCTSTR /*szFileName*/)
 {
 	assert(false);
 }
 
-// ------------------------------------------------------------------------------------------------
-//void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty)
-//{
-//	ASSERT(FALSE);//#todo
-//	/*auto pModel = GetModel();
-//	assert(pModel != nullptr);
-//
-//	if (pModel == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	pModel->OnInstancePropertyEdited(pInstance, pProperty);
-//
-//	if (m_bScaleAndCenter)
-//	{
-//		pModel->ScaleAndCenter();
-//	}
-//
-//	auto itView = m_setViews.begin();
-//	for (; itView != m_setViews.end(); itView++)
-//	{
-//		(*itView)->OnInstancePropertyEdited(pInstance, pProperty);
-//	}*/
-//}
-
-// ------------------------------------------------------------------------------------------------
 //void CRDFController::ImportModel(_rdf_view* /*pSender*/, const wchar_t* szPath)
 //{
 //	ASSERT(FALSE);//#todo
@@ -89,20 +56,17 @@ CRDFController::~CRDFController()
 //	m_bUpdatingModel = false;*/
 //}
 
-// ------------------------------------------------------------------------------------------------
 void CRDFController::BeginTestMode()
 {
 	TEST_MODE = TRUE;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFController::EndTestMode()
 {
 	// PATCH: see PATCH: AMD 6700 XT - Access violation
 	//TEST_MODE = FALSE;
 }
 
-// ------------------------------------------------------------------------------------------------
 BOOL CRDFController::IsTestMode()
 {
 	return TEST_MODE;
