@@ -1055,7 +1055,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 				auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
 				ASSERT(pInstanceItem != nullptr);
 
-				//RemoveInstanceItemData(pInstanceItem->GetInstance(), hItem);#todo
+				RemoveInstanceItemData(pInstanceItem->GetInstance(), hItem);
 			}
 			break;
 
@@ -1064,7 +1064,7 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 				auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
 				ASSERT(pPropertyItem != nullptr);
 
-				//RemovePropertyItemData(pPropertyItem->GetInstance(), pPropertyItem->GetProperty(), hItem);#todo
+				RemovePropertyItemData(pPropertyItem->GetInstance(), pPropertyItem->GetProperty(), hItem);
 			}
 			break;
 
@@ -2093,13 +2093,11 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	switch (uiCommand) {
 		case ID_INSTANCES_ENABLE_ALL:
 		{
-			/*auto itRFDInstances = mapInstances.begin();#todo
-			for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
-			{
-				itRFDInstances->second->setEnable(true);
+			for (auto pInstance : pModel->getInstances()) {
+				pInstance->setEnable(true);
 			}
 
-			getController()->onInstancesEnabledStateChanged(this);*/
+			getController()->onInstancesEnabledStateChanged(this);
 		}
 		break;
 

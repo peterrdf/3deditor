@@ -182,7 +182,7 @@ CRDFModel::~CRDFModel()
 	m_iModel = CreateModel();
 	assert(m_iModel != 0);
 
-	SetFormatSettings(m_iModel);
+	//SetFormatSettings(m_iModel);
 
 	// Cube 1
 	{
