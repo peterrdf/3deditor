@@ -34,7 +34,7 @@ _rdf_class::~_rdf_class()
 	}
 }
 
-void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction)
+void _rdf_class::AddPropertyRestriction(_rdf_property_restriction* pPropertyRestriction)
 {
 	assert(pPropertyRestriction != nullptr);
 
@@ -78,7 +78,7 @@ void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorCl
 
 
 // ************************************************************************************************
-CRDFPropertyRestriction::CRDFPropertyRestriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard)
+_rdf_property_restriction::_rdf_property_restriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard)
 	: m_iPropertyInstance(iPropertyInstance)
 	, m_iMinCard(iMinCard)
 	, m_iMaxCard(iMaxCard)
@@ -86,25 +86,25 @@ CRDFPropertyRestriction::CRDFPropertyRestriction(int64_t iPropertyInstance, int6
 	assert(m_iPropertyInstance != 0);
 }
 
-CRDFPropertyRestriction::~CRDFPropertyRestriction()
+_rdf_property_restriction::~_rdf_property_restriction()
 {
 }
 
-int64_t CRDFPropertyRestriction::getPropertyInstance() const
+int64_t _rdf_property_restriction::getPropertyInstance() const
 {
 	return m_iPropertyInstance;
 }
 
 // --------------------------------------------------------------------------------------------
 // Getter
-int64_t CRDFPropertyRestriction::getMinCard() const
+int64_t _rdf_property_restriction::getMinCard() const
 {
 	return m_iMinCard;
 }
 
 // --------------------------------------------------------------------------------------------
 // Getter
-int64_t CRDFPropertyRestriction::getMaxCard() const
+int64_t _rdf_property_restriction::getMaxCard() const
 {
 	return m_iMaxCard;
 }

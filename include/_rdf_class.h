@@ -5,7 +5,7 @@
 using namespace std;
 
 // ************************************************************************************************
-class CRDFPropertyRestriction;
+class _rdf_property_restriction;
 
 // ************************************************************************************************
 class _rdf_class
@@ -17,27 +17,27 @@ private: // Fields
 	wchar_t* m_szName;
 	vector<OwlClass> m_vecParentClasses;
 	vector<OwlClass> m_vecAncestorClasses;
-	vector<CRDFPropertyRestriction*> m_vecPropertyRestrictions;
+	vector<_rdf_property_restriction*> m_vecPropertyRestrictions;
 
 public: // Methods
 
-	_rdf_class(OwlClass iInstance);
+	_rdf_class(OwlClass owlClass);
 	virtual ~_rdf_class();
 
-	void AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction);
+	void AddPropertyRestriction(_rdf_property_restriction* pPropertyRestriction);
 
 	static void GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
 	static wstring GetAncestors(OwlClass owlClass);
 
-	OwlClass GetInstance() const { return m_owlClass; }
+	OwlClass getOwlClass() const { return m_owlClass; }
 	const wchar_t* GetName() const { return m_szName; }
 	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
 	const vector<OwlClass> & getAncestorClasses() const { return m_vecAncestorClasses; }
-	const vector<CRDFPropertyRestriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
+	const vector<_rdf_property_restriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
 };
 
 // ************************************************************************************************
-class CRDFPropertyRestriction
+class _rdf_property_restriction
 {
 
 private: // Fields
@@ -48,8 +48,8 @@ private: // Fields
 
 public: // Methods
 
-	CRDFPropertyRestriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard);
-	virtual ~CRDFPropertyRestriction();
+	_rdf_property_restriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard);
+	virtual ~_rdf_property_restriction();
 
 public: // Properties
 

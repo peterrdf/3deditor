@@ -406,7 +406,7 @@ void CRDFModel::Load(OwlInstance iInstance)
 					continue;
 				}
 
-				itClasses->second->AddPropertyRestriction(new CRDFPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
+				itClasses->second->AddPropertyRestriction(new _rdf_property_restriction(iPropertyInstance, iMinCard, iMaxCard));
 			} // for (; itClasses != ...
 		} // if (itProperty == m_mapProperties.end())
 
@@ -1258,7 +1258,7 @@ void CRDFModel::LoadRDFModel()
 					continue;
 				}
 
-				itClasses->second->AddPropertyRestriction(new CRDFPropertyRestriction(iPropertyInstance, iMinCard, iMaxCard));
+				itClasses->second->AddPropertyRestriction(new _rdf_property_restriction(iPropertyInstance, iMinCard, iMaxCard));
 			} // for (; itClasses != ...
 		} // if (itProperty == m_mapProperties.end())
 
