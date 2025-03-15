@@ -239,7 +239,7 @@ bool _rdf_controller::deleteInstance(_view* pSender, _rdf_instance* pInstance)
 		return false;
 	}
 
-	if (getSelectedInstance() == pInstance)	{
+	if (getSelectedInstance() == pInstance) {
 		cleanSelection();
 	}
 
@@ -293,7 +293,7 @@ bool _rdf_controller::deleteInstanceTreeRecursive(_view* pSender, _rdf_instance*
 	}
 
 	OwlInstance owlInstance = pInstance->getOwlInstance();
-	
+
 	int64_t	iChildrenCount = 0;
 	RdfProperty rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
 	while (rdfProperty != 0) {
@@ -304,7 +304,7 @@ bool _rdf_controller::deleteInstanceTreeRecursive(_view* pSender, _rdf_instance*
 		}
 		rdfProperty = GetInstancePropertyByIterator(owlInstance, rdfProperty);
 	}
-	
+
 	int64_t	i = 0;
 	OwlInstance* arChildren = new OwlInstance[iChildrenCount];
 	rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
@@ -342,7 +342,7 @@ bool _rdf_controller::deleteInstances(_view* pSender, const vector<_rdf_instance
 	}
 
 	bool bResult = true;
-	for ( auto pInstance : vecInstances) {
+	for (auto pInstance : vecInstances) {
 		if (getSelectedInstance() == pInstance) {
 			cleanSelection();
 		}
@@ -380,7 +380,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		return;
 	}
 
-	_ptr<_rdf_model>(getModel())->recalculate();	
+	_ptr<_rdf_model>(getModel())->recalculate();
 	if (m_bScaleAndCenter) {
 		getModel()->scale();
 	}
