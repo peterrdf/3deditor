@@ -8,7 +8,7 @@
 class _quaterniond
 {
 
-private: // Members
+private: // Fields
 
     double m_dW;
     double m_dX;

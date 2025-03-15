@@ -10,7 +10,7 @@ using namespace std;
 class CTextBuilder
 {
 
-private: // Members
+private: // Fields
 
 	OwlModel m_iModel;
 

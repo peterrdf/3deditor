@@ -91,7 +91,7 @@ public: // Methods
 class _oglShader
 {
 
-protected: // Members
+protected: // Fields
 
     GLenum	m_iType; // GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
     GLuint	m_iID;
@@ -198,7 +198,7 @@ public: // Methods
 class _oglProgram
 {
 
-private: // Members
+private: // Fields
 
     GLuint m_iID;
 
@@ -536,7 +536,7 @@ class _oglBlinnPhongProgram : public _oglProgram
 
 #pragma region Members
 
-private: // Members
+private: // Fields
 
     // OpenGL
 
@@ -958,7 +958,7 @@ class _oglPerPixelProgram : public _oglProgram
 
 #pragma region Members
 
-private: // Members
+private: // Fields
 
     bool m_bSupportsTexture;
 
@@ -1255,7 +1255,7 @@ public: // Constants
     const int MIN_GL_MAJOR_VERSION = 3;
     const int MIN_GL_MINOR_VERSION = 3;
 
-private: // Members
+private: // Fields
 
     HDC m_hDC;
     HGLRC m_hGLContext;
@@ -1553,7 +1553,7 @@ public: // Methods
 class _oglFramebuffer
 {
 
-private: // Members
+private: // Fields
 
     GLuint m_iFrameBuffer;
     GLuint m_iTextureBuffer;
@@ -1662,7 +1662,7 @@ public: // Properties
 class _oglSelectionFramebuffer : public _oglFramebuffer
 {
 
-private: // Members
+private: // Fields
 
     map<int64_t, _color> m_mapEncoding; // ID : Color
 
@@ -1746,7 +1746,7 @@ public: // Methods
 class _oglBuffers
 {
 
-private: // Members
+private: // Fields
 
     map<GLuint, vector<_geometry*>> m_mapCohorts;
     map<wstring, GLuint> m_mapVAOs;
@@ -2149,7 +2149,7 @@ enum class enumMouseEvent : int
 class _oglRendererSettings
 {
 
-protected: // Members
+protected: // Fields
 
     // Mode
     enumProjection m_enProjection;
@@ -2273,7 +2273,7 @@ public: // Properties
 class _oglRenderer : public _oglRendererSettings
 {
 
-protected: // Members
+protected: // Fields
 
     // MFC
     CWnd* m_pWnd;
@@ -2414,7 +2414,7 @@ class _oglView
     , public _view
 {
 
-protected: // Members
+protected: // Fields
 
     // Override the material
     map<_instance*, _material*> m_mapUserDefinedMaterials;

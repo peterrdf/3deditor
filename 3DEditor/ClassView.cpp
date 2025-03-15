@@ -4,10 +4,10 @@
 #include "ClassView.h"
 #include "Resource.h"
 #include "3DEditor.h"
-#include "RDFClass.h"
 #include "RDFModel.h"
 #include "ClassViewConsts.h"
 
+#include "_rdf_class.h"
 #include "_ptr.h"
 
 // ************************************************************************************************

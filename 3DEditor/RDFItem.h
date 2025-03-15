@@ -14,12 +14,12 @@ enum class enumItemType : int
 class CRDFItem
 {
 
-private: // Members
+private: // Fields
 
 	_rdf_instance* m_pInstance;
 	vector<HTREEITEM> m_vecItems;	
 
-protected: // Members
+protected: // Fields
 
 	enumItemType m_enItemType;
 
@@ -51,7 +51,7 @@ class CRDFPropertyItem :
 	public CRDFItem
 {
 
-private: // Members
+private: // Fields
 
 	_rdf_property* m_pProperty;
 

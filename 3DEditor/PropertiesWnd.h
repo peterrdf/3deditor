@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "RDFPropertyRestriction.h"
 #include "RDFController.h"
 
 #include <map>
@@ -23,7 +22,7 @@ public:
 class CApplicationPropertyData
 {
 
-private:  // Members
+private:  // Fields
 
 	enumApplicationProperty m_enPropertyType;
 
@@ -38,7 +37,7 @@ public: // Methods
 class CLightPropertyData : public CApplicationPropertyData
 {
 
-private:  // Members
+private:  // Fields
 
 	// --------------------------------------------------------------------------------------------
 	// Zero-based index
@@ -88,7 +87,7 @@ public: // Methods
 class CRDFInstanceData
 {
 
-private:  // Members
+private:  // Fields
 
 	_rdf_controller* m_pController;
 	_rdf_instance* m_pInstance;
@@ -108,7 +107,7 @@ public: // Properties
 class CRDFInstancePropertyData : public CRDFInstanceData
 {
 
-private:  // Members
+private:  // Fields
 
 	_rdf_property * m_pProperty;
 	int64_t m_iCard;
@@ -147,7 +146,7 @@ public: // Methods
 class CRDFInstanceObjectProperty : public CMFCPropertyGridProperty
 {
 
-private: // Members
+private: // Fields
 
 	map<wstring, int64_t> m_mapValues;
 

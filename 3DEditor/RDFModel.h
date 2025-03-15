@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Texture.h"
-#include "RDFClass.h"
 #include "TextBuilder.h"
 
-#include "_rdf_instance.h"
 #include "_rdf_mvc.h"
+#include "_rdf_instance.h"
+#include "_rdf_class.h"
 #include "_rdf_property.h"
 
 #include <map>
@@ -24,7 +24,7 @@ class CRDFModel : public _rdf_model
 {
 	friend class CLoadTask;
 
-protected: // Members
+protected: // Fields
 
 	OwlModel m_iModel;
 

@@ -4,10 +4,8 @@
 
 #include <string>
 
-// ------------------------------------------------------------------------------------------------
 #define EPSILON 1E-6
 
-// ------------------------------------------------------------------------------------------------
 _octant::_octant(_octree* pTree, _octant_type type, double dXmin, double dXmax, double dYmin, double dYmax, double dZmin, double dZmax)
 	: m_pTree(pTree)
 	, m_type(type)
@@ -20,7 +18,6 @@ _octant::_octant(_octree* pTree, _octant_type type, double dXmin, double dXmax, 
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ _octant::~_octant()
 {
 }
@@ -31,7 +28,6 @@ _octant::_octant(_octree* pTree, _octant_type type, double dXmin, double dXmax, 
 	return m_pTree;
 }
 
-// ------------------------------------------------------------------------------------------------
 _octant_type _octant::getType() const
 {
 	return m_type;
@@ -73,7 +69,6 @@ double _octant::getZmax() const
 	return m_dZmax;
 }
 
-// ------------------------------------------------------------------------------------------------
 _octree_point::_octree_point(_octree* pTree, double dXmin, double dXmax, double dYmin, double dYmax, double dZmin, double dZmax, double dX, double dY, double dZ)
 	: _octant(pTree, _octant_type::Point, dXmin, dXmax, dYmin, dYmax, dZmin, dZmax)
 	, m_setNeighbors()
@@ -85,31 +80,26 @@ _octree_point::_octree_point(_octree* pTree, double dXmin, double dXmax, double 
 	getTree()->onPointCreated(this);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ _octree_point::~_octree_point()
 {
 	getTree()->onPointDeleted(this);
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree_point::getX() const
 {
 	return m_dX;
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree_point::getY() const
 {
 	return m_dY;
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree_point::getZ() const
 {
 	return m_dZ;
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree_point::distanceTo(const _octree_point* pPoint) const
 {
 	return sqrt(
@@ -118,7 +108,6 @@ double _octree_point::distanceTo(const _octree_point* pPoint) const
 		pow(m_dZ - pPoint->m_dZ, 2.));
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree_point::distanceTo(const _vector3f& pPoint) const
 {
 	return sqrt(
@@ -127,13 +116,11 @@ double _octree_point::distanceTo(const _vector3f& pPoint) const
 		pow(m_dZ - pPoint.getZ(), 2.));
 }
 
-// ------------------------------------------------------------------------------------------------
 set<_octree_point*>& _octree_point::neighbors()
 {
 	return m_setNeighbors;
 }
 
-// ------------------------------------------------------------------------------------------------
 // https://en.wikipedia.org/wiki/Heron%27s_formula
 double _octree_point::area(const _octree_point* pPoint2, const _octree_point* pPoint3) const
 {
@@ -153,14 +140,12 @@ multimap<_octree_point*, _octree_point*>& _octree_point::triangles()
 	return m_mapTrinagles;
 }
 
-// ------------------------------------------------------------------------------------------------
 _octree_node::_octree_node(_octree* pTree, double dXmin, double dXmax, double dYmin, double dYmax, double dZmin, double dZmax)
 	: _octant(pTree, _octant_type::Node, dXmin, dXmax, dYmin, dYmax, dZmin, dZmax)
 	, m_vecOctants(8, nullptr)
 {
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ _octree_node::~_octree_node()
 {
 	for (size_t iOctant = 0; iOctant < m_vecOctants.size(); iOctant++)
@@ -169,13 +154,11 @@ _octree_node::_octree_node(_octree* pTree, double dXmin, double dXmax, double dY
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 const vector<_octant*>& _octree_node::getOctants() const
 {
 	return m_vecOctants;
 }
 
-// ------------------------------------------------------------------------------------------------
 bool _octree_node::insertPoint(double dX, double dY, double dZ)
 {
 	/*
@@ -450,7 +433,6 @@ bool _octree_node::insertPoint(double dX, double dY, double dZ)
 	return true;
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree_node::populateNeighbors(_octree_point* pPoint)
 {
 	if (pPoint == nullptr)
@@ -556,7 +538,6 @@ void _octree_node::populateNeighbors(_octree_point* pPoint)
 	} // for (size_t iOctant = ...
 }
 
-// ------------------------------------------------------------------------------------------------
 _octree::_octree(int64_t iModel, double dXmin, double dXmax, double dYmin, double dYmax, double dZmin, double dZmax)
 	: _octree_node(nullptr, dXmin, dXmax, dYmin, dYmax, dZmin, dZmax)
 	, m_iModel(iModel)
@@ -568,13 +549,11 @@ _octree::_octree(int64_t iModel, double dXmin, double dXmax, double dYmin, doubl
 	assert(m_iModel != 0);
 }
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ _octree::~_octree()
 {
 	m_bIgnoreEvents = true;
 }
 
-// ------------------------------------------------------------------------------------------------
 int64_t _octree::getModel()
 {
 	return m_iModel;
@@ -586,7 +565,6 @@ int64_t _octree::getModel()
 	return this;
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::onPointCreated(_octree_point* pPoint)
 {
 	if (m_bIgnoreEvents)
@@ -616,7 +594,6 @@ void _octree::onPointCreated(_octree_point* pPoint)
 	m_dOctantLength = min(m_dOctantLength, pPoint->getXmax() - pPoint->getXmin());
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::onPointDeleted(_octree_point* pPoint)
 {
 	if (m_bIgnoreEvents)
@@ -642,19 +619,16 @@ void _octree::onPointDeleted(_octree_point* pPoint)
 	m_setPoints.erase(itPoint);
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree::getOctantLength()
 {
 	return m_dOctantLength;
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree::getSearchForNeighborsDistance()
 {
 	return m_dSearchForNeighborsDistance;
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::dump()
 {
 	TRACE(L"\n*****************************************************");
@@ -664,7 +638,6 @@ void _octree::dump()
 	TRACE(L"\n*****************************************************");
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::buildMesh()
 {
 	if (m_iModel == 0)
@@ -795,7 +768,6 @@ void _octree::buildMesh()
 	SetDatatypeProperty(iTriangleSetInstance, GetPropertyByName(m_iModel, "indices"), vecIndices.data(), vecIndices.size());
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::preProcessing(_octree_node* pNode, set<_octree_point*>& setPoints)
 {
 	if (pNode == nullptr)
@@ -844,7 +816,6 @@ void _octree::preProcessing(_octree_node* pNode, set<_octree_point*>& setPoints)
 	} // for (size_t iOctant = ...
 }
 
-// ------------------------------------------------------------------------------------------------
 void _octree::buildTriangles1Point(_octree_point* pPoint1, vector<double>& vecVertices)
 {
 	if (pPoint1->neighbors().size() < 2)
@@ -925,7 +896,6 @@ void _octree::buildTriangles1Point(_octree_point* pPoint1, vector<double>& vecVe
 	} // for (; itTriangle != ...
 }
 
-// ------------------------------------------------------------------------------------------------
 _octree_point* _octree::buildTriangles2Points(_octree_point* pPoint1, _octree_point* pPoint2, bool bBuildSideTriangles, vector<double>& vecVertices)
 {
 	// Sorted by area
@@ -1037,7 +1007,6 @@ _octree_point* _octree::buildTriangles2Points(_octree_point* pPoint1, _octree_po
 	return nullptr;
 }
 
-// ------------------------------------------------------------------------------------------------
 bool _octree::triangleExists(_octree_point* pPoint1, _octree_point* pPoint2, _octree_point* pPoint3)
 {
 	if ((pPoint1 == nullptr) || (pPoint2 == nullptr) || (pPoint3 == nullptr))
@@ -1119,7 +1088,6 @@ bool _octree::triangleExists(_octree_point* pPoint1, _octree_point* pPoint2, _oc
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
 bool _octree::addTriangle(_octree_point* pPoint1, _octree_point* pPoint2, _octree_point* pPoint3, vector<double>& vecVertices)
 {
 	if ((pPoint1 == nullptr) || (pPoint2 == nullptr) || (pPoint3 == nullptr))
@@ -1160,7 +1128,6 @@ bool _octree::addTriangle(_octree_point* pPoint1, _octree_point* pPoint2, _octre
 	return true;
 }
 
-// ------------------------------------------------------------------------------------------------
 bool _octree::validateTriangle(_octree_point* pPoint1, _octree_point* pPoint2, _octree_point* pPoint3) const
 {
 	if ((pPoint1 == nullptr) || (pPoint2 == nullptr) || (pPoint3 == nullptr))
@@ -1255,7 +1222,6 @@ bool _octree::validateTriangle(_octree_point* pPoint1, _octree_point* pPoint2, _
 	return true;
 }
 
-// ------------------------------------------------------------------------------------------------
 double _octree::calculateCircumsphere(const _octree_point* pPoint1, const _octree_point* pPoint2, const _octree_point* pPoint3, _vector3f& vecCenter) const
 {
 	if ((pPoint1 == nullptr) || (pPoint2 == nullptr) || (pPoint3 == nullptr))
@@ -1285,7 +1251,7 @@ double _octree::calculateCircumsphere(const _octree_point* pPoint1, const _octre
 	return circumsphereRadius;
 }
 
-// ------------------------------------------------------------------------------------------------
+
 bool _octree::inCircumsphere(_octree_point* pPoint, const _vector3f& vecCenter, double R) const
 {
 	if (pPoint == nullptr)
@@ -1305,7 +1271,6 @@ bool _octree::inCircumsphere(_octree_point* pPoint, const _vector3f& vecCenter, 
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
 bool _octree::neighborsInCircumsphere(_octree_point* pPoint1, _octree_point* pPoint2, _octree_point* pPoint3, const _vector3f& vecCenter, double R) const
 {
 	/*

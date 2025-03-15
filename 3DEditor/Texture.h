@@ -9,7 +9,7 @@
 class CTexture
 {
 
-private: // Members
+private: // Fields
 
 	GLuint m_iOGLName;
 	

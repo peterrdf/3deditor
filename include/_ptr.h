@@ -8,7 +8,7 @@ template<typename Tout>
 class _ptr
 {
 
-private: // Members
+private: // Fields
 
     Tout* m_pTout;
 
@@ -58,7 +58,7 @@ template<typename T>
 class _vector_sequential_iterator
 {
 
-private: // Members
+private: // Fields
 
     const vector<T*>& m_vecData;
     int64_t m_iIndex;

@@ -14,7 +14,7 @@ namespace fs = std::experimental::filesystem;
 class _texture
 {
 
-private: // Members
+private: // Fields
 
 	GLuint m_iName;
 	

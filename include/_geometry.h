@@ -19,7 +19,7 @@ using namespace std;
 class _primitives
 {
 
-private: // Members
+private: // Fields
 
     int64_t m_iStartIndex;
     int64_t m_iIndicesCount;
@@ -44,7 +44,7 @@ public: // Properties
 class _cohort
 {
 
-private: // Members
+private: // Fields
 
     vector<GLuint> m_vecIndices;
 
@@ -85,7 +85,7 @@ public: // Properties
 class _face : public _primitives
 {
 
-private: // Members
+private: // Fields
 
     int64_t m_iIndex;
 
@@ -108,7 +108,7 @@ public: // Properties
 class _cohortWithMaterial : public _cohort
 {
 
-private: // Members
+private: // Fields
 
     vector<_face> m_vecFaces;
     _material m_material;
@@ -141,12 +141,12 @@ class _instance;
 class _geometry
 {
 
-private: // Members
+private: // Fields
 
     // Metadata
     OwlInstance m_owlInstance;
 
-protected: // Members
+protected: // Fields
 
     wstring m_strName;
     wstring m_strUniqueName;
@@ -193,7 +193,7 @@ protected: // Members
     GLuint m_iVBO;
     GLsizei m_iVBOOffset;
 
-public: // Members
+public: // Fields
 
     const uint32_t DEFAULT_COLOR_R = 175;
     const uint32_t DEFAULT_COLOR_G = 175;

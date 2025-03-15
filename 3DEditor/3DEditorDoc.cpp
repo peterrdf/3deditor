@@ -21,7 +21,6 @@
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------------------------------------------------
 /*virtual*/ void CMy3DEditorDoc::LoadModel(LPCTSTR szFileName)
 {
 	if (szFileName != nullptr)

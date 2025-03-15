@@ -38,7 +38,7 @@ class CDesignTreeView
 		Values,
 	};
 
-private: // Members
+private: // Fields
 
 	// Cache
 	map<int64_t, CRDFInstanceItem*> m_mapInstance2Item; // INSTANCE : CRDFInstanceItem*	

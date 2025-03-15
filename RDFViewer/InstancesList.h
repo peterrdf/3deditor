@@ -8,7 +8,7 @@ class _rdf_controller;
 class CInstancesList : public CListCtrl
 {
 
-private: // Members
+private: // Fields
 
 	_rdf_controller* m_pController;
 

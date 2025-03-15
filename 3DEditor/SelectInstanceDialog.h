@@ -11,7 +11,7 @@ class CSelectInstanceDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CSelectInstanceDialog)
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	CRDFController* m_pController;
@@ -25,7 +25,7 @@ private: // Members
 	// --------------------------------------------------------------------------------------------
 	int64_t m_iCard;
 
-public: // Members
+public: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	int64_t m_iInstance;

@@ -6,7 +6,7 @@
 class CTest
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	const int VERSION = 1;

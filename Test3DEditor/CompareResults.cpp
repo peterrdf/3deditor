@@ -7,7 +7,6 @@
 
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
 CCompareResults::CCompareResults(const CString& strTestResults1, const CString& strTestResults2, const CString& strTestReportDir)
 	: m_iComparisonIndex(0)
 	, m_strTestResults1(strTestResults1)
@@ -19,7 +18,6 @@ CCompareResults::CCompareResults(const CString& strTestResults1, const CString& 
 	m_strTestReportDir += CTime::GetCurrentTime().Format(_T("%Y-%m-%d-%H-%M-%S"));
 }
 
-// ------------------------------------------------------------------------------------------------
 void CCompareResults::Execute()
 {
 	m_iComparisonIndex = 0;
@@ -145,7 +143,6 @@ void CCompareResults::Execute()
 	} // for (POSITION posTest = ...
 }
 
-// ------------------------------------------------------------------------------------------------
 /*static*/ void CCompareResults::FindFiles(const wchar_t* szFolder, const wchar_t* szWildcard, CStringList& lsFiles)
 {
 	ASSERT(szFolder != nullptr);
@@ -175,7 +172,6 @@ void CCompareResults::Execute()
 	fileFind.Close();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*static*/ void CCompareResults::FindTests(const wchar_t* szFolder, CStringList& lsTests)
 {
 	ASSERT(szFolder != nullptr);
@@ -204,7 +200,6 @@ void CCompareResults::Execute()
 	fileFind.Close();
 }
 
-// ------------------------------------------------------------------------------------------------
 /*static*/ bool CCompareResults::LoadTest(const wchar_t* szTestFilePath, TEST& test)
 {
 	wifstream streamTest(szTestFilePath);
@@ -298,7 +293,6 @@ static double CompareColours(const unsigned char* pixel1, const unsigned char* p
 		pow((double)pixel1[2] - (double)pixel2[2], 2)) / 198608. /*pow(256, 2) * 3*/;
 }
 
-// ------------------------------------------------------------------------------------------------
 /*static*/ void CCompareResults::Compare(const wchar_t* szTest, const wchar_t* szScreenshotFilePath1, const wchar_t* szScreenshotFilePath2, CTestHtmlReport* pReport)
 {
 	CString strError;

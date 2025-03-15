@@ -1,17 +1,17 @@
 #pragma once
 
 #include "RDFController.h"
-#include "RDFClass.h"
 #include "afxwin.h"
 
 #include "_rdf_instance.h"
+#include "_rdf_class.h"
 
 // ************************************************************************************************
 class CEditObjectPropertyDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CEditObjectPropertyDialog)
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	// Controller
@@ -25,7 +25,7 @@ private: // Members
 	// RDF Property
 	_rdf_property * m_pProperty;
 
-public: // Members
+public: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	// RDF Instance

@@ -63,12 +63,6 @@
     <ClInclude Include="RDFModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFPropertyRestriction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -189,6 +183,12 @@
     <ClInclude Include="..\include\stb\stb_image.h">
       <Filter>include\stb</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_ifc_model.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_class.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -216,12 +216,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFPropertyRestriction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFController.cpp">
@@ -301,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="..\include\stb\stb_image.cpp">
       <Filter>include\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_class.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

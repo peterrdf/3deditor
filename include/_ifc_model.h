@@ -61,7 +61,7 @@ class _ifc_instance;
 class _ifc_model : public _ap_model
 {
 
-private: // Members
+private: // Fields
 
     // Load
     bool m_bUseWorldCoordinates;

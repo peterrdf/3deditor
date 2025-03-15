@@ -386,7 +386,7 @@ template<class T>
 class _buffer
 {
 
-private: // Members
+private: // Fields
 
     T* m_pData;
     int64_t m_iSize;
@@ -414,7 +414,7 @@ template<class V>
 class _vertexBuffer : public _buffer<V>
 {
 
-private: // Members
+private: // Fields
 
     uint32_t m_iVertexLength;
 

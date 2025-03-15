@@ -42,7 +42,7 @@ void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 class CLoadTask : public CTask
 {
 
-private: // Members
+private: // Fields
 
 	CRDFModel* m_pModel;
 	const wchar_t* m_szPath;

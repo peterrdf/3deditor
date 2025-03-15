@@ -11,7 +11,7 @@ class CMy3DEditorView
 	, public _rdf_view
 {
 
-private: // Members
+private: // Fields
 
 	_oglView* m_pOpenGLView;
 

@@ -9,7 +9,7 @@ using namespace std;
 class _rdf_property
 {
 
-private: // Members	
+private: // Fields	
 
     RdfProperty m_rdfProperty;
 
@@ -41,7 +41,7 @@ public: // Properties
 class _rdf_property_collection
 {
 
-private: // Members
+private: // Fields
 
     vector<_rdf_property*> m_vecProperties;
 
@@ -59,7 +59,7 @@ public: // Properties
 class _rdf_property_provider
 {
 
-private: // Members
+private: // Fields
 
     map<OwlInstance, _rdf_property_collection*> m_mapPropertyCollections;
 

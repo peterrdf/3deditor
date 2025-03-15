@@ -15,7 +15,7 @@ class CInstancesDialog
 	, public _rdf_view
 {
 
-private: // Members
+private: // Fields
 
 	CInstancesList m_lcInstances;
 	bool m_bUpdateInProgress;

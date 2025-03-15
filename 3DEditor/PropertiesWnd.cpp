@@ -6,11 +6,11 @@
 #include "MainFrm.h"
 #include "3DEditor.h"
 #include "RDFOpenGLView.h"
-#include "RDFClass.h"
 #include "RDFModel.h"
 #include "EditObjectPropertyDialog.h"
 #include "SelectInstanceDialog.h"
 
+#include "_rdf_class.h"
 #include "_ptr.h"
 
 #ifdef _DEBUG

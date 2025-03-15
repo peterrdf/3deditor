@@ -14,7 +14,7 @@ class _rdf_instance;
 class _rdf_model : public _model
 {
 
-private: // Members
+private: // Fields
 
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
@@ -73,7 +73,7 @@ public: // Properties
 class _rdf_controller : public _controller
 {
 
-private: // Members
+private: // Fields
 
 	// Selection
 	_rdf_property* m_pSelectedProperty;

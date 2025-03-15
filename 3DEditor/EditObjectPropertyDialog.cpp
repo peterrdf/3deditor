@@ -9,7 +9,6 @@
 
 #include "_ptr.h"
 
-// ------------------------------------------------------------------------------------------------
 void CEditObjectPropertyDialog::ValidateUI()
 {
 	UpdateData(TRUE);

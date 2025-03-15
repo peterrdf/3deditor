@@ -9,11 +9,9 @@
 #include <memory>
 using namespace std;
 
-// ------------------------------------------------------------------------------------------------
 class _vector3f;
 class _octree;
 
-// ------------------------------------------------------------------------------------------------
 enum class _octant_type
 {
 	Unknown = -1,
@@ -21,7 +19,6 @@ enum class _octant_type
 	Point,
 };
 
-// ------------------------------------------------------------------------------------------------
 enum class _octant_position
 {
 	Unknown = -1,
@@ -35,17 +32,16 @@ enum class _octant_position
 	BackTopRight = 7,
 };
 
-// ------------------------------------------------------------------------------------------------
 class  _octant
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	_octree* m_pTree;
 	_octant_type m_type;
 
-protected:  // Members
+protected:  // Fields
 
 	// --------------------------------------------------------------------------------------------
 	double m_dXmin;
@@ -80,11 +76,10 @@ public: // Methods
 	double getZmax() const;
 };
 
-// ------------------------------------------------------------------------------------------------
 class _octree_point : public _octant
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	set<_octree_point*> m_setNeighbors;
@@ -133,11 +128,10 @@ public: // Methods
 	multimap<_octree_point*, _octree_point*>& triangles();
 };
 
-// ------------------------------------------------------------------------------------------------
 class _octree_node : public _octant
 {
 
-protected: // Members	
+protected: // Fields	
 
 	// --------------------------------------------------------------------------------------------
 	vector<_octant*> m_vecOctants;
@@ -162,11 +156,10 @@ public: // Methods
 	void populateNeighbors(_octree_point* pPoint);
 };
 
-// ------------------------------------------------------------------------------------------------
 class _octree : public _octree_node
 {
 
-private: // Members	
+private: // Fields	
 
 	// --------------------------------------------------------------------------------------------
 	int64_t m_iModel;	

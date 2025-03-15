@@ -17,7 +17,7 @@ namespace fs = std::experimental::filesystem;
 class _settings_storage
 {
 
-private: // Members
+private: // Fields
 
     wstring m_strSettingsFile;
     map<string, string> m_mapSettings;

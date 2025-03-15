@@ -9,13 +9,12 @@
 #include "_rdf_mvc.h"
 #include "_oglUtils.h"
 
-// ------------------------------------------------------------------------------------------------
 class CRDFOpenGLView : public _oglView
 {
 
 #pragma region Members
 
-private: // Members
+private: // Fields
 
 	// Point Face	
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
@@ -27,7 +26,7 @@ private: // Members
 	_rdf_instance* m_pNavigatorPointedInstance;
 	_material* m_pNavigatorPointedInstanceMaterial;
 
-#pragma endregion // Members
+#pragma endregion // Fields
 
 public: // Methods
 	

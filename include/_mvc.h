@@ -54,7 +54,7 @@ class _model
 {
     friend class _controller;
 
-protected: // Members
+protected: // Fields
 
     wstring m_strPath;
     bool m_bEnable;
@@ -74,7 +74,7 @@ protected: // Members
     float m_fZmax;
     float m_fBoundingSphereDiameter;
 
-private: // Members
+private: // Fields
 
     vector<_geometry*> m_vecGeometries;
     // 1...*
@@ -147,7 +147,7 @@ public: // Properties
 class _view
 {
 
-protected: // Members
+protected: // Fields
 
     _controller* m_pController;
 
@@ -195,7 +195,7 @@ public: // Properties
 class _controller
 {
 
-private: // Members
+private: // Fields
 
     vector<_model*> m_vecModels;
     set<_view*> m_setViews;

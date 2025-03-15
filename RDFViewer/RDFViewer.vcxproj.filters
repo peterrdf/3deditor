@@ -135,6 +135,9 @@
     <ClInclude Include="..\include\_rdf_mvc.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_rdf_class.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -155,13 +158,7 @@
     <ClCompile Include="..\3DEditor\RDFModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\RDFClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3DEditor\RDFController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\Texture.cpp">
@@ -231,6 +228,9 @@
       <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\include\_rdf_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>

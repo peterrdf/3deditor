@@ -10,7 +10,7 @@
 class CRDFViewerView : public CView
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	// OpenGL View

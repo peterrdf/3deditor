@@ -26,7 +26,7 @@ class CSearchTreeCtrlDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CSearchTreeCtrlDialog)
 
-private: // Members
+private: // Fields
 
 	CSearchTreeCtrlDialogSite* m_pSite;
 

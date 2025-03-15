@@ -6,7 +6,7 @@
 class _instance
 {
 
-private: // Members
+private: // Fields
 
     int64_t m_iID;
     _geometry* m_pGeometry;

@@ -10,7 +10,7 @@ using namespace std;
 class CTestHtmlReport
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	wofstream m_htmlReport;

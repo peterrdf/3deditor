@@ -6,7 +6,7 @@
 class _color
 {
 
-private: // Members
+private: // Fields
 
     float m_fR;
     float m_fG;
@@ -115,7 +115,7 @@ public: // Methods
 class _material
 {
 
-private: // Members
+private: // Fields
 
     _color m_clrAmbient;
     _color m_clrDiffuse;

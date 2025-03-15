@@ -31,7 +31,7 @@ private: // Classes
 		Values = 3,
 	};
 
-private: // Members
+private: // Fields
 
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 

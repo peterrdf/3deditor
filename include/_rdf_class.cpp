@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "RDFClass.h"
+#include "_host.h"
+#include "_rdf_class.h"
 
 // ************************************************************************************************
 _rdf_class::_rdf_class(OwlClass owlClass)
@@ -14,14 +14,13 @@ _rdf_class::_rdf_class(OwlClass owlClass)
 	GetNameOfClassW(m_owlClass, &m_szName);
 
 	OwlClass owlParentClass = GetClassParentsByIterator(m_owlClass, 0);
-	while (owlParentClass != 0)
-	{
+	while (owlParentClass != 0) {
 		m_vecParentClasses.push_back(owlParentClass);
 
 		m_vecAncestorClasses.push_back(owlParentClass);
 		GetAncestors(owlParentClass, m_vecAncestorClasses);
 
-		char * szParentClassName = nullptr;
+		char* szParentClassName = nullptr;
 		GetNameOfClass(owlParentClass, &szParentClassName);
 
 		owlParentClass = GetClassParentsByIterator(m_owlClass, owlParentClass);
@@ -30,13 +29,12 @@ _rdf_class::_rdf_class(OwlClass owlClass)
 
 _rdf_class::~_rdf_class()
 {
-	for (size_t iProperty = 0; iProperty < m_vecPropertyRestrictions.size(); iProperty++)
-	{
+	for (size_t iProperty = 0; iProperty < m_vecPropertyRestrictions.size(); iProperty++) {
 		delete m_vecPropertyRestrictions[iProperty];
 	}
 }
 
-void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestriction)
+void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction* pPropertyRestriction)
 {
 	assert(pPropertyRestriction != nullptr);
 
@@ -46,11 +44,10 @@ void _rdf_class::AddPropertyRestriction(CRDFPropertyRestriction * pPropertyRestr
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
-void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass> & vecAncestorClasses)
+void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses)
 {
 	OwlClass owlParentClass = GetClassParentsByIterator(owlClass, 0);
-	while (owlParentClass != 0)
-	{
+	while (owlParentClass != 0) {
 		vecAncestorClasses.push_back(owlParentClass);
 
 		GetAncestors(owlParentClass, vecAncestorClasses);
@@ -65,10 +62,8 @@ void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass> & vecAncestorC
 	GetAncestors(owlClass, vecAncestors);
 
 	wstring strAncestors;
-	for (auto iAncestor : vecAncestors)
-	{
-		if (!strAncestors.empty())
-		{
+	for (auto iAncestor : vecAncestors) {
+		if (!strAncestors.empty()) {
 			strAncestors += L";";
 		}
 
@@ -79,4 +74,37 @@ void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass> & vecAncestorC
 	}
 
 	return strAncestors;
+}
+
+
+// ************************************************************************************************
+CRDFPropertyRestriction::CRDFPropertyRestriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard)
+	: m_iPropertyInstance(iPropertyInstance)
+	, m_iMinCard(iMinCard)
+	, m_iMaxCard(iMaxCard)
+{
+	assert(m_iPropertyInstance != 0);
+}
+
+CRDFPropertyRestriction::~CRDFPropertyRestriction()
+{
+}
+
+int64_t CRDFPropertyRestriction::getPropertyInstance() const
+{
+	return m_iPropertyInstance;
+}
+
+// --------------------------------------------------------------------------------------------
+// Getter
+int64_t CRDFPropertyRestriction::getMinCard() const
+{
+	return m_iMinCard;
+}
+
+// --------------------------------------------------------------------------------------------
+// Getter
+int64_t CRDFPropertyRestriction::getMaxCard() const
+{
+	return m_iMaxCard;
 }

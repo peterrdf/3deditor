@@ -14,7 +14,7 @@ class CRDFViewerDoc
 	, public CRDFController
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	// Model (MVC)

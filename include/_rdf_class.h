@@ -1,16 +1,17 @@
 #pragma once
 
-#include "RDFPropertyRestriction.h"
-
 #include <string>
 #include <vector>
 using namespace std;
 
 // ************************************************************************************************
+class CRDFPropertyRestriction;
+
+// ************************************************************************************************
 class _rdf_class
 {
 
-private: // Members
+private: // Fields
 
 	OwlClass m_owlClass;
 	wchar_t* m_szName;
@@ -35,3 +36,24 @@ public: // Methods
 	const vector<CRDFPropertyRestriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
 };
 
+// ************************************************************************************************
+class CRDFPropertyRestriction
+{
+
+private: // Fields
+
+	int64_t m_iPropertyInstance;
+	int64_t m_iMinCard;
+	int64_t m_iMaxCard;
+
+public: // Methods
+
+	CRDFPropertyRestriction(int64_t iPropertyInstance, int64_t iMinCard, int64_t iMaxCard);
+	virtual ~CRDFPropertyRestriction();
+
+public: // Properties
+
+	int64_t getPropertyInstance() const;
+	int64_t getMinCard() const;
+	int64_t getMaxCard() const;
+};

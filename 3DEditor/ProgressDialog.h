@@ -53,7 +53,7 @@ class CProgressDialog
 {
 	DECLARE_DYNAMIC(CProgressDialog)
 
-private: // Members
+private: // Fields
 
 	CWinThread* m_pThread;
 	CTask* m_pTask;
