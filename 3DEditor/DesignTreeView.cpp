@@ -55,8 +55,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 // ************************************************************************************************
 /*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
 {
-	if (GetController()->IsTestMode())
-	{
+	if (_ptr<CRDFController>(getRDFController())->IsTestMode()) {
 		return;
 	}
 
@@ -2633,7 +2632,7 @@ void CDesignTreeView::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CDesignTreeView::OnNewInstance()
 {
-	CNewInstanceDialog dlgNewInstance(GetController(), ::AfxGetMainWnd());
+	CNewInstanceDialog dlgNewInstance(getRDFController(), ::AfxGetMainWnd());
 	if (dlgNewInstance.DoModal() != IDOK)
 	{
 		return;

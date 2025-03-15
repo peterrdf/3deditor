@@ -2,7 +2,8 @@
 #include "stdafx.h"
 #include "InstancesList.h"
 #include "RDFInstance.h"
-#include "RDFController.h"
+
+#include "_rdf_mvc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,7 +44,7 @@ BOOL CInstancesList::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CInstancesList::SetController(CRDFController* pController)
+void CInstancesList::SetController(_rdf_controller* pController)
 {
     m_pController = pController;
 }

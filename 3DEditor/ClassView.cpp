@@ -43,8 +43,7 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 // ************************************************************************************************
 /*virtual*/ void CClassView::onModelLoaded()
 {
-	if (GetController()->IsTestMode())
-	{
+	if (_ptr<CRDFController>(getRDFController())->IsTestMode()) {
 		return;
 	}
 

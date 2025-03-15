@@ -23,19 +23,17 @@ private: // Members
 protected: // Methods
 
 	// _veiw
+	virtual void onModelLoaded() override;
 	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onControllerChanged() override;
 
 	// _rdf_view
 	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancesDeleted(_view* pSender) override;
 
 	// --------------------------------------------------------------------------------------------
-	// Overridden
-	virtual void OnControllerChanged();//#todo
-
-	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnModelChanged();//#todo
+	
 
 	DECLARE_DYNAMIC(CInstancesDialog)
 

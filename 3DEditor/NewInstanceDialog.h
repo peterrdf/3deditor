@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RDFController.h"
+#include "_rdf_mvc.h"
 #include "RDFClass.h"
 #include "afxwin.h"
 
@@ -12,9 +12,7 @@ class CNewInstanceDialog : public CDialogEx
 
 private: // Members
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
-	CRDFController * m_pController;
+	_rdf_controller * m_pController;
 
 public: // Members
 
@@ -23,7 +21,7 @@ public: // Members
 	_rdf_class * m_pNewInstanceRDFClass;
 
 public:
-	CNewInstanceDialog(CRDFController * pController, CWnd* pParent = nullptr);   // standard constructor
+	CNewInstanceDialog(_rdf_controller* pController, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CNewInstanceDialog();
 
 // Dialog Data

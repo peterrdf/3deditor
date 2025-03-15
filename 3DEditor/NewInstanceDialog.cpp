@@ -7,11 +7,13 @@
 #include "afxdialogex.h"
 #include "RDFModel.h"
 
+#include "_ptr.h"
+
 // CNewInstanceDialog dialog
 
 IMPLEMENT_DYNAMIC(CNewInstanceDialog, CDialogEx)
 
-CNewInstanceDialog::CNewInstanceDialog(CRDFController * pController, CWnd* pParent /*=nullptr*/)
+CNewInstanceDialog::CNewInstanceDialog(_rdf_controller* pController, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CNewInstanceDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pNewInstanceRDFClass(nullptr)
@@ -41,8 +43,7 @@ BOOL CNewInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	CRDFModel * pModel = m_pController->GetModel();
-	assert(pModel != nullptr);
+	_ptr<CRDFModel> pModel(m_pController->getModel());
 
 	auto& mapClasses = pModel->GetClasses();
 

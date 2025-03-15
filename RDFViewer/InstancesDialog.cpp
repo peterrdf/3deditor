@@ -17,6 +17,43 @@ using namespace std;
 
 IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
+/*virtual*/ void CInstancesDialog::onModelLoaded() /*override*/
+{
+	m_bUpdateInProgress = true;
+
+	m_lcInstances.DeleteAllItems();
+	m_mapInstance2Item.clear();
+
+	auto pModel = getRDFController()->getModel();
+
+	vector<_rdf_instance*> vecModel;
+	for (auto pInstance : pModel->getInstances())
+	{
+		if (pInstance->getGeometry()->isReferenced())
+		{
+			continue;
+		}
+
+		vecModel.push_back(_ptr<_rdf_instance>(pInstance));
+	}
+
+	/*
+	* Model
+	*/
+	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
+
+	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
+	{
+		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
+
+		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
+
+		m_mapInstance2Item[vecModel[iInstance]] = iItem;
+	}
+
+	m_bUpdateInProgress = false;
+}
+
 /*virtual*/ void CInstancesDialog::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this)
@@ -52,62 +89,21 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_bUpdateInProgress = false;
 }
 
+/*virtual*/ void CInstancesDialog::onControllerChanged() /*override*/
+{
+	getController()->registerView(this);
+
+	m_lcInstances.SetController(getRDFController());
+}
+
 /*virtual*/ void CInstancesDialog::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
 {
-	OnModelChanged();
+	onModelLoaded();
 }
 
 /*virtual*/ void CInstancesDialog::onInstancesDeleted(_view* pSender) /*override*/
 {
-	OnModelChanged();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnControllerChanged()
-{
-	ASSERT(GetController() != nullptr);
-
-	GetController()->registerView(this);
-
-	m_lcInstances.SetController(GetController());
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnModelChanged()
-{
-	m_bUpdateInProgress = true;
-
-	m_lcInstances.DeleteAllItems();
-	m_mapInstance2Item.clear();
-
-	auto pModel = getRDFController()->getModel();
-
-	vector<_rdf_instance*> vecModel;
-	for (auto pInstance : pModel->getInstances())
-	{
-		if (pInstance->getGeometry()->isReferenced())
-		{
-			continue;
-		}
-
-		vecModel.push_back(_ptr<_rdf_instance>(pInstance));
-	}
-
-	/*
-	* Model
-	*/
-	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
-
-	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
-	{
-		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
-
-		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
-
-		m_mapInstance2Item[vecModel[iInstance]] = iItem;
-	}
-
-	m_bUpdateInProgress = false;
+	onModelLoaded();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -225,8 +221,6 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		vecSelectedInstances.push_back(pInstance);
 	}
 
-	ASSERT(GetController() != nullptr);
-
 	/*
 	* Multi selection
 	*/
@@ -260,8 +254,6 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 				return;
 			}
-
-			ASSERT(GetController() != nullptr);
 
 			switch (uiCommand)
 			{
@@ -330,8 +322,6 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			ASSERT(GetController() != nullptr);
-
 			switch (uiCommand)
 			{
 			case ID_INSTANCES_REMOVE:
@@ -390,22 +380,17 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			ASSERT(GetController() != nullptr);
-
-			CRDFModel* pModel = GetController()->GetModel();
-			ASSERT(pModel != nullptr);
-
 			switch (uiCommand)
 			{
 			case ID_INSTANCES_ZOOM_TO:
 			{
-				GetController()->zoomToInstance(vecSelectedInstances[0]);
+				getController()->zoomToInstance(vecSelectedInstances[0]);
 			}
 			break;
 
 			case ID_VIEW_ZOOM_OUT:
 			{
-				GetController()->zoomOut();
+				getController()->zoomOut();
 			}
 			break;
 
@@ -499,8 +484,6 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 			return;
 		}
-
-		ASSERT(GetController() != nullptr);
 
 		switch (uiCommand)
 		{

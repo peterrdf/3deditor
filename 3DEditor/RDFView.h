@@ -13,12 +13,6 @@ class CRDFController;
 class CRDFView : public _rdf_view
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Controller - MVC
-	CRDFController* m_pController;
-
 public: // Methods
 
 	CRDFView();
@@ -27,15 +21,5 @@ public: // Methods
 	// --------------------------------------------------------------------------------------------
 	// An RDF Property has been modified
 	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
-
-protected: // Methods
-
-	// --------------------------------------------------------------------------------------------
-	// Getter
-	CRDFController* GetController() const;
-
-	// --------------------------------------------------------------------------------------------
-	// The controller has been changed
-	virtual void OnControllerChanged();
 };
 
