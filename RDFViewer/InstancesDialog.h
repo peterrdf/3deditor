@@ -25,21 +25,17 @@ protected: // Methods
 	// _veiw
 	virtual void onInstanceSelected(_view* pSender) override;
 
+	// _rdf_view
+	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancesDeleted(_view* pSender) override;
+
 	// --------------------------------------------------------------------------------------------
 	// Overridden
-	virtual void OnControllerChanged();
+	virtual void OnControllerChanged();//#todo
 
 	// --------------------------------------------------------------------------------------------
 	// CRDFView
-	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstancesDeleted(CRDFView * pSender);
+	virtual void OnModelChanged();//#todo
 
 	DECLARE_DYNAMIC(CInstancesDialog)
 

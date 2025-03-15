@@ -69,6 +69,32 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	_oglView::onInstanceSelected(pSender);
 }
 
+/*virtual*/ void CRDFOpenGLView::onInstancesEnabledStateChanged(_view* pSender) /*override*/
+{
+	_load();
+}
+
+//#todo????????????????
+///*virtual*/ void CRDFOpenGLView::onInstancePropertySelected(_view* pSender) /*override*/
+//{
+//
+//}
+//
+///*virtual*/ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+//{
+//
+//}
+//
+///*virtual*/ void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+//{
+//
+//}
+//
+///*virtual*/ void CRDFOpenGLView::onInstancesDeleted(_view* pSender) /*override*/
+//{
+//
+//}
+
 /*virtual*/ void CRDFOpenGLView::_preDraw() /*override*/
 {
 	/*auto pController = dynamic_cast<CRDFController*>(getController());
@@ -470,20 +496,6 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //
 //		_redraw();
 //	}
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstancesEnabledStateChanged() /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	OnModelChanged();
-//
-//	/*
-//	* Restore the selection
-//	*/
-//	OnInstanceSelected(nullptr);
 //}
 
 //void CRDFOpenGLView::DrawMainModel(

@@ -35,8 +35,7 @@ protected: // Members
 	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, CRDFInstance*> m_mapInstances;
 
-	// Cache
-	map<OwlInstance, bool> m_mapInstanceDefaultState; 
+	
 	map<CRDFInstance*, CString> m_mapInstanceMetaData;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
@@ -90,7 +89,6 @@ public: // Methods
 	CRDFInstance* GetInstanceByIInstance(int64_t iInstance);
 
 	CRDFInstance* AddNewInstance(int64_t pThing);
-	bool DeleteInstance(CRDFInstance* pInstance);
 
 	void GetCompatibleInstances(CRDFInstance* pInstance, _rdf_property* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 	

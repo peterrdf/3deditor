@@ -473,14 +473,40 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
     } // if (m_bUpdteVertexBuffers)
 }
 
-void _model::addGeometry(_geometry* pGeometry)
+/*virtual*/ void _model::addGeometry(_geometry* pGeometry)
 {
     assert(pGeometry != nullptr);
 
     m_vecGeometries.push_back(pGeometry);
 }
 
-void _model::addInstance(_instance* pInstance)
+/*virtual*/ void _model::deleteGeometry(_geometry* pGeometry)
+{
+    assert(pGeometry != nullptr);
+
+    for (auto pInstance : pGeometry->getInstances()) {
+        // Instance
+        auto itInstance = find(m_vecInstances.begin(), m_vecInstances.end(), pInstance);
+        assert(itInstance != m_vecInstances.end());
+        m_vecInstances.erase(itInstance);
+        
+        // ID
+        auto itID2Instance = m_mapID2Instance.find(pInstance->getID());
+        assert(itID2Instance != m_mapID2Instance.end());
+        m_mapID2Instance.erase(itID2Instance);
+
+        delete pInstance;
+    }
+
+    // Geometry
+    auto itGeometry = find(m_vecGeometries.begin(), m_vecGeometries.end(), pGeometry);
+    assert(itGeometry != m_vecGeometries.end());
+    m_vecGeometries.erase(itGeometry);
+
+    delete pGeometry;
+}
+
+/*virtual*/ void _model::addInstance(_instance* pInstance)
 {
     assert(pInstance != nullptr);
     assert(pInstance->getGeometry() != nullptr);

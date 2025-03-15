@@ -18,6 +18,11 @@ private: // Members
 
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
+protected: //#todo private
+
+	// Cache
+	map<OwlInstance, bool> m_mapInstanceDefaultState;
+
 public:  // Methods
 
 	_rdf_model();
@@ -26,6 +31,7 @@ public:  // Methods
 	_rdf_instance* getInstance(OwlInstance owlInstance);
 
 	_rdf_instance* createInstance(OwlClass owlClass);
+	bool deleteInstance(_rdf_instance* pInstance);
 
 protected:
 
@@ -47,9 +53,11 @@ public: // Methods
 	virtual void onInstancePropertySelected(_view* /*pSender*/) {}
 	virtual void onShowBaseInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 	virtual void onShowMetaInformation(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
-
-	virtual void onInstanceRenamed(_view* pSender, _rdf_instance* /*pInstance*/) {}
-	virtual void onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstanceRenamed(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstanceCreated(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstanceDeleted(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstancesDeleted(_view* /*pSender*/) {}
+	virtual void onMeasurementsAdded(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 
 public: // Properties
 
@@ -94,6 +102,10 @@ public: // Methods
 	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
 	void renameInstance(_view* pSender, _rdf_instance* pInstance, const wchar_t* szName);
 	_rdf_instance* createInstance(_view* pSender, OwlClass owlClass);
+	bool deleteInstance(_view* pSender, _rdf_instance* pInstance);
+	bool deleteInstanceTree(_view* pSender, _rdf_instance* pInstance);
+	bool deleteInstanceTreeRecursive(_view* pSender, _rdf_instance* pInstance);
+	bool deleteInstances(_view* pSender, const vector<_rdf_instance*>& vecInstances);
 
 public: // Properties
 

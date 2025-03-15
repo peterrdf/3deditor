@@ -28,22 +28,6 @@ public: // Methods
 	// An RDF Property has been modified
 	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty);
 
-	// --------------------------------------------------------------------------------------------
-	// An RDF Instance has been deleted
-	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);	
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Instances have been deleted
-	virtual void OnInstancesDeleted(CRDFView* pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// Measurements have been added
-	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Enable/Disable support
-	virtual void OnInstancesEnabledStateChanged();
-
 protected: // Methods
 
 	// --------------------------------------------------------------------------------------------

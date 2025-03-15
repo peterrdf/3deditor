@@ -6,6 +6,8 @@
 // ************************************************************************************************
 _rdf_model::_rdf_model()
 	: _model()
+	, m_mapInstances()
+	, m_mapInstanceDefaultState()
 {
 }
 
@@ -39,7 +41,27 @@ _rdf_instance* _rdf_model::createInstance(OwlClass owlClass)
 	auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
 	addInstance(pInstance);
 
+	m_mapInstanceDefaultState[owlInstance] = true;
+
 	return pInstance;
+}
+
+bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
+{
+	assert(pInstance != nullptr);
+
+	bool bResult = RemoveInstance(pInstance->getOwlInstance()) == 0 ? true : false;
+	assert(bResult);
+
+	// _rdf_model
+	auto itInstance = m_mapInstances.find(pInstance->getOwlInstance());
+	assert(itInstance != m_mapInstances.end());
+	m_mapInstances.erase(itInstance);
+
+	// _model
+	_model::deleteGeometry(pInstance->getGeometry());
+
+	return bResult;
 }
 
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
@@ -55,6 +77,7 @@ _rdf_instance* _rdf_model::createInstance(OwlClass owlClass)
 	_model::clean(bCloseModel);
 
 	m_mapInstances.clear();
+	m_mapInstanceDefaultState.clear();
 }
 
 // ************************************************************************************************
@@ -198,4 +221,136 @@ _rdf_instance* _rdf_controller::createInstance(_view* pSender, OwlClass owlClass
 	}
 
 	return pInstance;
+}
+
+bool _rdf_controller::deleteInstance(_view* pSender, _rdf_instance* pInstance)
+{
+	assert(pInstance != nullptr);
+
+	if (getModel() == nullptr) {
+		assert(false);
+		return nullptr;
+	}
+
+	if (getSelectedInstance() == pInstance)	{
+		cleanSelection();
+	}
+
+	bool bResult = _ptr<_rdf_model>(getModel())->deleteInstance(pInstance);
+	assert(bResult);
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInstanceDeleted(pSender, pInstance);
+		}
+	}
+
+	return bResult;
+}
+
+bool _rdf_controller::deleteInstanceTree(_view* pSender, _rdf_instance* pInstance)
+{
+	assert(pInstance != nullptr);
+
+	if (getModel() == nullptr) {
+		assert(false);
+		return nullptr;
+	}
+
+	if (getSelectedInstance() == pInstance) {
+		cleanSelection();
+	}
+
+	if (deleteInstanceTreeRecursive(pSender, pInstance)) {
+		auto itView = getViews().begin();
+		for (; itView != getViews().end(); itView++) {
+			_ptr<_rdf_view> rdfView(*itView, false);
+			if (rdfView) {
+				rdfView->onInstancesDeleted(pSender);
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool _rdf_controller::deleteInstanceTreeRecursive(_view* pSender, _rdf_instance* pInstance)
+{
+	if (getModel() == nullptr) {
+		assert(false);
+		return nullptr;
+	}
+
+	OwlInstance owlInstance = pInstance->getOwlInstance();
+	
+	int64_t	iChildrenCount = 0;
+	RdfProperty rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
+	while (rdfProperty != 0) {
+		if (GetPropertyType(rdfProperty) == OBJECTPROPERTY_TYPE) {
+			OwlInstance* values = nullptr, card = 0;
+			GetObjectProperty(owlInstance, rdfProperty, &values, &card);
+			iChildrenCount += card;
+		}
+		rdfProperty = GetInstancePropertyByIterator(owlInstance, rdfProperty);
+	}
+	
+	int64_t	i = 0;
+	OwlInstance* arChildren = new OwlInstance[iChildrenCount];
+	rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
+	while (rdfProperty != 0) {
+		if (GetPropertyType(rdfProperty) == OBJECTPROPERTY_TYPE) {
+			OwlInstance* values = nullptr, card = 0;
+			GetObjectProperty(owlInstance, rdfProperty, &values, &card);
+			memcpy(&arChildren[i], values, card * sizeof(int64_t));
+			i += card;
+		}
+		rdfProperty = GetInstancePropertyByIterator(owlInstance, rdfProperty);
+	}
+	assert(i == iChildrenCount);
+
+	_ptr<_rdf_model> rdfModel(getModel());
+	bool bResult = rdfModel->deleteInstance(pInstance);
+	assert(bResult);
+
+	for (int64_t i = 0; i < iChildrenCount; i++) {
+		auto pChildInstance = rdfModel->getInstance(arChildren[i]);
+		if (pChildInstance) {
+			bResult &= deleteInstanceTreeRecursive(pSender, pChildInstance);
+			assert(bResult);
+		}
+	}
+
+	return bResult;
+}
+
+bool _rdf_controller::deleteInstances(_view* pSender, const vector<_rdf_instance*>& vecInstances)
+{
+	if (getModel() == nullptr) {
+		assert(false);
+		return nullptr;
+	}
+
+	bool bResult = true;
+	for ( auto pInstance : vecInstances) {
+		if (getSelectedInstance() == pInstance) {
+			cleanSelection();
+		}
+
+		bResult &= _ptr<_rdf_model>(getModel())->deleteInstance(pInstance);
+		assert(bResult);
+	}
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInstancesDeleted(pSender);
+		}
+	}
+
+	return bResult;
 }

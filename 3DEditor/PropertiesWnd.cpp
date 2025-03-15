@@ -1155,7 +1155,18 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_bIsModified = bModified;
 }
 
-/*virtual*/ void CPropertiesWnd::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
+/*virtual*/ void CPropertiesWnd::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1) {
+		LoadInstanceProperties();
+	}
+}
+
+/*virtual*/ void CPropertiesWnd::onInstancesDeleted(_view* pSender) /*override*/
 {
 	if (pSender == this) {
 		return;

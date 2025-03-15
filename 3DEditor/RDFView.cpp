@@ -20,26 +20,6 @@ CRDFView::~CRDFView()
 }
 
 // ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnInstanceDeleted(CRDFView * /*pSender*/, int64_t /*iInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnInstancesDeleted(CRDFView * /*pSender*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnMeasurementsAdded(CRDFView * /*pSender*/, CRDFInstance * /*pInstance*/)
-{
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CRDFView::OnInstancesEnabledStateChanged()
-{
-}
-
-// ------------------------------------------------------------------------------------------------
 CRDFController * CRDFView::GetController() const
 {
 	return m_pController;

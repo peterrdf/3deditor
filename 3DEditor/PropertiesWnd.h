@@ -206,13 +206,8 @@ public: // Methods
 	virtual void onShowMetaInformation(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstanceRenamed(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
-	
-	// CRDFView
-	//#todo
-	
-	
-	
-	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance);
+	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancesDeleted(_view* pSender) override;
 
 protected: // Methods
 	

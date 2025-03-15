@@ -35,6 +35,13 @@ public: // Methods
 
 	// _view
 	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
+
+	// _rdf_view #todo???????????????????????????
+	//virtual void onInstancePropertySelected(_view* pSender) override;
+	//virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
+	//virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	//virtual void onInstancesDeleted(_view* pSender) override;
 
 	// _oglView
 	virtual void _preDraw() override;
@@ -63,7 +70,7 @@ public: // Methods
 	virtual void OnInstancesDeleted(CRDFView * pSender) override;
 	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
 	virtual void OnInstancePropertySelected() override;
-	virtual void OnInstancesEnabledStateChanged() override;*/
+	*/
 
 private: // Methods
 

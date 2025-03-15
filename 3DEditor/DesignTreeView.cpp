@@ -115,6 +115,36 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
+/*virtual*/ void CDesignTreeView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+		
+	UpdateView();
+}
+
+/*virtual*/ void CDesignTreeView::onInstancesDeleted(_view* pSender) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	UpdateView();
+}
+
+/*virtual*/ void CDesignTreeView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (pSender == this)
+	{
+		return;
+	}
+
+	UpdateView();
+}
+
 //#todo
 ///*virtual*/ void CDesignTreeView::OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty)
 //{
@@ -841,37 +871,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 //	} // switch (pPropertyItem->GetProperty()->GetType())
 //}
 
-//#todo
-///*virtual*/ void CDesignTreeView::OnInstanceDeleted(CRDFView* pSender, int64_t /*iInstance*/)
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//
-//	UpdateView();
-//}
-
-//#todo
-///*virtual*/ void CDesignTreeView::OnInstancesDeleted(CRDFView* pSender)
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//
-//	UpdateView();
-//}
-
-///*virtual*/ void CDesignTreeView::OnMeasurementsAdded(CRDFView* pSender, _rdf_instance * /*pInstance*/)
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//
-//	UpdateView();
-//}
 
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
@@ -2211,7 +2210,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					itRFDInstances->second->setEnable(!pInstance->isReferenced());
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged();
 			}
 			break;*/
 
@@ -2224,7 +2223,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					itRFDInstances->second->setEnable(pInstance->isReferenced());
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged();
 			}
 			break;*/
 
@@ -2245,8 +2244,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				ASSERT(FALSE); //#todo
-				//GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);//#todo
+				getRDFController()->deleteInstance(nullptr/*update this view also*/, pInstance);
 			}
 			break;
 
@@ -2259,8 +2257,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					return;
 				}
 
-				ASSERT(FALSE); //#todo
-				//GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);//#todo
+				getRDFController()->deleteInstanceTree(nullptr/*update this view also*/, pInstance);
 			}
 			break;
 
@@ -2350,7 +2347,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				itRFDInstances->second->setEnable(!pInstance->isReferenced());
 			}
 
-			GetController()->OnInstancesEnabledStateChanged();
+			getController()->onInstancesEnabledStateChanged(this);
 		}
 		break;*/
 
@@ -2363,7 +2360,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				itRFDInstances->second->setEnable(pInstance->isReferenced());
 			}
 
-			GetController()->OnInstancesEnabledStateChanged();
+			getController()->onInstancesEnabledStateChanged(this);
 		}
 		break;*/
 
@@ -2376,7 +2373,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			//GetController()->DeleteInstance(nullptr/*update this view also*/, pInstance);#todo
+			getRDFController()->deleteInstance(nullptr/*update this view also*/, pInstance);
 		}
 		break;
 
@@ -2389,13 +2386,13 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				return;
 			}
 
-			//GetController()->DeleteInstanceTree(nullptr/*update this view also*/, pInstance);#todo
+			getRDFController()->deleteInstanceTree(nullptr/*update this view also*/, pInstance);
 		}
 		break;
 
 		case ID_INSTANCES_SAVE:
 		{
-			//GetController()->Save(pInstance);#todo
+			getController()->saveInstance(pInstance);
 		}
 		break;
 

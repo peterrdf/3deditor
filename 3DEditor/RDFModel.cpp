@@ -171,7 +171,6 @@ CRDFModel::CRDFModel()
 	, m_mapProperties()
 	, m_iID(1)
 	, m_mapInstances()
-	, m_mapInstanceDefaultState()
 	, m_mapInstanceMetaData()	
 	, m_dVertexBuffersOffsetX(0.)
 	, m_dVertexBuffersOffsetY(0.)
@@ -592,21 +591,6 @@ CRDFInstance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 	return pInstance;*/
 }
 
-bool CRDFModel::DeleteInstance(CRDFInstance * pInstance)
-{
-	assert(pInstance != nullptr);
-
-	bool bResult = RemoveInstance(pInstance->getOwlInstance()) == 0 ? true : false;
-
-	auto itInstance = m_mapInstances.find(pInstance->getOwlInstance());
-	assert(itInstance != m_mapInstances.end());
-
-	m_mapInstances.erase(itInstance);
-
-	delete pInstance;
-
-	return bResult;
-}
 
 void CRDFModel::GetCompatibleInstances(CRDFInstance * pInstance, _rdf_property * pObjectRDFProperty, vector<int64_t> & vecCompatibleInstances) const
 {

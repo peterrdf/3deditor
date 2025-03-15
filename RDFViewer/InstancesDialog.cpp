@@ -52,6 +52,16 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_bUpdateInProgress = false;
 }
 
+/*virtual*/ void CInstancesDialog::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	OnModelChanged();
+}
+
+/*virtual*/ void CInstancesDialog::onInstancesDeleted(_view* pSender) /*override*/
+{
+	OnModelChanged();
+}
+
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CInstancesDialog::OnControllerChanged()
 {
@@ -98,18 +108,6 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	}
 
 	m_bUpdateInProgress = false;
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/)
-{
-	OnModelChanged();
-}
-
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CInstancesDialog::OnInstancesDeleted(CRDFView* /*pSender*/)
-{
-	OnModelChanged();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -274,7 +272,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecSelectedInstances[iInstance]->setEnable(true);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -285,7 +283,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecSelectedInstances[iInstance]->setEnable(false);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -304,7 +302,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecInstances.push_back(vecSelectedInstances[iInstance]);
 				}
 
-				//GetController()->DeleteInstances(this, vecInstances);#todo
+				getRDFController()->deleteInstances(this, vecInstances);
 			}
 			break;
 
@@ -351,7 +349,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					vecInstances.push_back(vecSelectedInstances[iInstance]);
 				}
 
-				//GetController()->DeleteInstances(this, vecInstances);#todo
+				getRDFController()->deleteInstances(this, vecInstances);
 			}
 			break;
 
@@ -432,7 +430,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					itRFDInstances->second->setEnable(false);
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();*/
+				getController()->onInstancesEnabledStateChanged();*/
 			}
 			break;
 
@@ -453,7 +451,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					}
 				}
 
-				GetController()->OnInstancesEnabledStateChanged();*/
+				getController()->onInstancesEnabledStateChanged();*/
 			}
 			break;
 
@@ -461,7 +459,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 				vecSelectedInstances[0]->setEnable(!vecSelectedInstances[0]->getEnable());
 
-				GetController()->OnInstancesEnabledStateChanged();
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
@@ -474,7 +472,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					return;
 				}
 
-				//GetController()->DeleteInstance(this, vecSelectedInstances[0]);#todo
+				getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
 			}
 			break;
 
@@ -515,7 +513,7 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				return;
 			}
 
-			//GetController()->DeleteInstance(this, vecSelectedInstances[0]);#todo
+			getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
 		}
 		break;
 
