@@ -7,6 +7,8 @@
 #include "afxdialogex.h"
 #include "RDFModel.h"
 
+#include "_ptr.h"
+
 // ------------------------------------------------------------------------------------------------
 void CEditObjectPropertyDialog::ValidateUI()
 {
@@ -85,8 +87,8 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->getRdfProperty(), &piInstances, &iCard);
 
-	CRDFModel * pModel = m_pController->GetModel();
-	assert(pModel != nullptr);
+
+	_ptr<CRDFModel> pModel(m_pController->getModel());
 
 	auto& mapInstances = pModel->GetInstances();
 

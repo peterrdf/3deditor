@@ -2,6 +2,7 @@
 
 #include "RDFController.h"
 #include "RDFClass.h"
+#include "RDFInstance.h"
 #include "afxwin.h"
 
 // CEditObjectPropertyDialog dialog

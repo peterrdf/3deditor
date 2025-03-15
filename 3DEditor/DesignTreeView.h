@@ -2,10 +2,12 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "RDFView.h"
+#include "RDFModel.h"
 #include "RDFInstance.h"
 #include "RDFItem.h"
 #include "SearchTreeCtrlDialog.h"
+
+#include "_rdf_mvc.h"
 
 #include <map>
 using namespace std;
@@ -24,7 +26,7 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 // ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
-	, public CRDFView
+	, public _rdf_view
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -64,12 +66,8 @@ public: // Methods
 	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancesDeleted(_view* pSender) override;
 	virtual void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) override;
-	//virtual void onInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty) override; #todo
+	virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
 
-	//#todo
-	/*	
-	*/
-	
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;
 

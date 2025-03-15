@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Generic.h"
-#include "RDFView.h"
 #include "InstancesList.h"
+
+#include "_rdf_mvc.h"
 
 #include <set>
 using namespace std;
@@ -11,7 +12,7 @@ using namespace std;
 
 class CInstancesDialog
 	: public CDialogEx
-	, public CRDFView
+	, public _rdf_view
 {
 
 private: // Members
@@ -30,10 +31,6 @@ protected: // Methods
 	// _rdf_view
 	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancesDeleted(_view* pSender) override;
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	
 
 	DECLARE_DYNAMIC(CInstancesDialog)
 

@@ -821,7 +821,6 @@
     <ClCompile Include="..\3DEditor\RDFModel.cpp" />
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />
     <ClCompile Include="..\3DEditor\RDFPropertyRestriction.cpp" />
-    <ClCompile Include="..\3DEditor\RDFView.cpp" />
     <ClCompile Include="..\3DEditor\RenameDialog.cpp" />
     <ClCompile Include="..\3DEditor\SearchTreeCtrlDialog.cpp" />
     <ClCompile Include="..\3DEditor\TextBuilder.cpp" />

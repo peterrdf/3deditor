@@ -8,6 +8,8 @@
 #include "afxdialogex.h"
 #include "RDFModel.h"
 
+#include "_ptr.h"
+
 #define USED_SUFFIX L" [used]"
 
 
@@ -76,8 +78,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	UNUSED(iCard);
 	assert(piInstances != nullptr);
 
-	CRDFModel* pModel = m_pController->GetModel();
-	assert(pModel != nullptr);
+	_ptr<CRDFModel> pModel(m_pController->getModel());
 
 	auto& mapInstances = pModel->GetInstances();
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "RDFController.h"
+#include "RDFInstance.h"
+
 #include "_rdf_property.h"
 
 // CSelectInstanceDialog dialog

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "RDFView.h"
 #include "SearchTreeCtrlDialog.h"
 
 // ************************************************************************************************
@@ -19,7 +18,7 @@ class CClassToolBar : public CMFCToolBar
 // ************************************************************************************************
 class CClassView
 	: public CDockablePane
-	, public CRDFView
+	, public _rdf_view
 	, public CSearchTreeCtrlDialogSite
 {
 

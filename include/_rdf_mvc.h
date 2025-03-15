@@ -58,6 +58,7 @@ public: // Methods
 	virtual void onInstanceDeleted(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 	virtual void onInstancesDeleted(_view* /*pSender*/) {}
 	virtual void onMeasurementsAdded(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
+	virtual void onInstancePropertyEdited(_view* /*pSender*/, _rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/) {}
 
 public: // Properties
 

@@ -72,9 +72,6 @@
     <ClInclude Include="RDFController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Generic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -231,9 +228,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFInstance.cpp">

@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "RDFView.h"
 #include "RDFPropertyRestriction.h"
 #include "RDFController.h"
 
@@ -190,7 +189,7 @@ public: // Methods
 // ************************************************************************************************
 class CPropertiesWnd
 	: public CDockablePane
-	, public CRDFView
+	, public _rdf_view
 {
 
 public: // Methods

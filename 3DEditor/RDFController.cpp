@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "RDFController.h"
 #include "RDFModel.h"
-#include "RDFView.h"
 
 // ------------------------------------------------------------------------------------------------
 BOOL TEST_MODE = FALSE;
@@ -9,17 +8,7 @@ BOOL TEST_MODE = FALSE;
 // ------------------------------------------------------------------------------------------------
 CRDFController::CRDFController()
 	: _rdf_controller()
-	//, m_pSceneModel(new CSceneRDFModel())
-	//, m_pNavigatorModel(new CNavigatorRDFModel())
-	//, m_bUpdatingModel(false)
-	//, m_iVisibleValuesCountLimit(10000)
-	//, m_bScaleAndCenter(TRUE)
-	//, m_bModelCoordinateSystem(TRUE)
 {
-	//#todo
-	//m_pSceneModel->CreateDefaultModel();
-	//m_pNavigatorModel->CreateDefaultModel(); 
-
 	wchar_t szAppPath[_MAX_PATH];
 	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
@@ -35,60 +24,13 @@ CRDFController::CRDFController()
 // ------------------------------------------------------------------------------------------------
 CRDFController::~CRDFController()
 {
-	//delete m_pSceneModel;
-	//delete m_pNavigatorModel;	
 }
-
-CRDFModel* CRDFController::GetModel()
-{
-	return dynamic_cast<CRDFModel*>(getModel());
-}
-
 
 // ------------------------------------------------------------------------------------------------
 /*virtual*/ void CRDFController::LoadModel(LPCTSTR /*szFileName*/)
 {
 	assert(false);
 }
-
-// ------------------------------------------------------------------------------------------------
-//void CRDFController::UpdateCoordinateSystem()
-//{
-//	ASSERT(FALSE);//#todo
-//	//auto pModel = GetModel();
-//	//assert(pModel != nullptr);
-//
-//	//if (pModel == nullptr)
-//	//{
-//	//	assert(false);
-//
-//	//	return;
-//	//}
-//	//	
-//	//if (!m_bModelCoordinateSystem)
-//	//{
-//	//	/* Vertex Buffers Offset */
-//	//	double dVertexBuffersOffsetX = 0.;
-//	//	double dVertexBuffersOffsetY = 0.;
-//	//	double dVertexBuffersOffsetZ = 0.;
-//	//	pModel->GetVertexBuffersOffset(dVertexBuffersOffsetX, dVertexBuffersOffsetY, dVertexBuffersOffsetZ);
-//
-//	//	double dBoundingSphereDiameter = pModel->GetOriginalBoundingSphereDiameter();
-//
-//	//	dVertexBuffersOffsetX /= dBoundingSphereDiameter / 2.;
-//	//	dVertexBuffersOffsetY /= dBoundingSphereDiameter / 2.;
-//	//	dVertexBuffersOffsetZ /= dBoundingSphereDiameter / 2.;
-//
-//	//	m_pSceneModel->TranslateModel(
-//	//		dVertexBuffersOffsetX,
-//	//		dVertexBuffersOffsetY,
-//	//		dVertexBuffersOffsetZ);
-//	//}
-//	//else
-//	//{
-//	//	m_pSceneModel->TranslateModel(0.f, 0.f, 0.f);
-//	//}
-//}
 
 // ------------------------------------------------------------------------------------------------
 //void CRDFController::OnInstancePropertyEdited(CRDFInstance* pInstance, _rdf_property* pProperty)
@@ -119,7 +61,7 @@ CRDFModel* CRDFController::GetModel()
 //}
 
 // ------------------------------------------------------------------------------------------------
-//void CRDFController::ImportModel(CRDFView* /*pSender*/, const wchar_t* szPath)
+//void CRDFController::ImportModel(_rdf_view* /*pSender*/, const wchar_t* szPath)
 //{
 //	ASSERT(FALSE);//#todo
 //	/*auto pModel = GetModel();

@@ -2,11 +2,11 @@
 #define _OPEN_GL_IFC_VIEW_H_
 
 #include "Generic.h"
-#include "RDFView.h"
-#include "_oglUtils.h"
 #include "RDFInstance.h"
 #include "RDFModel.h"
 #include <ctime>
+
+#include "_oglUtils.h"
 
 // ------------------------------------------------------------------------------------------------
 class CRDFOpenGLView : public _oglView
@@ -42,6 +42,17 @@ public: // Methods
 	//virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
 	//virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	//virtual void onInstancesDeleted(_view* pSender) override;
+	//virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
+
+	// CRDFView	REMOVE/MOVE!!! #todo
+	/*virtual void OnModelChanged() override;
+	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, _rdf_property * pProperty) override;
+	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
+	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
+	virtual void OnInstancesDeleted(CRDFView * pSender) override;
+	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
+	virtual void OnInstancePropertySelected() override;
+	*/
 
 	// _oglView
 	virtual void _preDraw() override;
@@ -60,17 +71,7 @@ public: // Methods
 	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 
 	// Keyboard
-	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	// CRDFView	
-	/*virtual void OnModelChanged() override;
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, _rdf_property * pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
-	virtual void OnInstancesDeleted(CRDFView * pSender) override;
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstancePropertySelected() override;
-	*/
+	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
 
 private: // Methods
 
