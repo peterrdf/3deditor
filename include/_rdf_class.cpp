@@ -34,7 +34,7 @@ _rdf_class::~_rdf_class()
 	}
 }
 
-void _rdf_class::AddPropertyRestriction(_rdf_property_restriction* pPropertyRestriction)
+void _rdf_class::addPropertyRestriction(_rdf_property_restriction* pPropertyRestriction)
 {
 	assert(pPropertyRestriction != nullptr);
 
@@ -95,15 +95,11 @@ int64_t _rdf_property_restriction::getPropertyInstance() const
 	return m_iPropertyInstance;
 }
 
-// --------------------------------------------------------------------------------------------
-// Getter
 int64_t _rdf_property_restriction::getMinCard() const
 {
 	return m_iMinCard;
 }
 
-// --------------------------------------------------------------------------------------------
-// Getter
 int64_t _rdf_property_restriction::getMaxCard() const
 {
 	return m_iMaxCard;

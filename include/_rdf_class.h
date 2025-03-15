@@ -24,15 +24,15 @@ public: // Methods
 	_rdf_class(OwlClass owlClass);
 	virtual ~_rdf_class();
 
-	void AddPropertyRestriction(_rdf_property_restriction* pPropertyRestriction);
+	void addPropertyRestriction(_rdf_property_restriction* pPropertyRestriction);
 
 	static void GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
 	static wstring GetAncestors(OwlClass owlClass);
 
 	OwlClass getOwlClass() const { return m_owlClass; }
-	const wchar_t* GetName() const { return m_szName; }
+	const wchar_t* getName() const { return m_szName; }
 	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
-	const vector<OwlClass> & getAncestorClasses() const { return m_vecAncestorClasses; }
+	const vector<OwlClass>& getAncestorClasses() const { return m_vecAncestorClasses; }
 	const vector<_rdf_property_restriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
 };
 

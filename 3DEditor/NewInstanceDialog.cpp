@@ -48,9 +48,8 @@ BOOL CNewInstanceDialog::OnInitDialog()
 	auto& mapClasses = pModel->GetClasses();
 
 	auto itClass = mapClasses.begin();
-	for (; itClass != mapClasses.end(); itClass++)
-	{
-		int iItem = m_cmbClasses.AddString(itClass->second->GetName());
+	for (; itClass != mapClasses.end(); itClass++) {
+		int iItem = m_cmbClasses.AddString(itClass->second->getName());
 		m_cmbClasses.SetItemDataPtr(iItem, itClass->second);
 	} // for (; itClass != ...
 
@@ -64,7 +63,7 @@ void CNewInstanceDialog::OnOK()
 {
 	assert(m_cmbClasses.GetCurSel() != CB_ERR);
 
-	m_pNewInstanceRDFClass = (_rdf_class *)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
+	m_pNewInstanceRDFClass = (_rdf_class*)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
 
 	CDialogEx::OnOK();
 }

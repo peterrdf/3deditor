@@ -164,7 +164,7 @@ void CClassView::ClassesAlphabeticalView()
 	for (auto itClass = mapClasses.begin();
 		itClass != mapClasses.end();
 		itClass++) {
-		mapName2Class[itClass->second->GetName()] = itClass->second->getOwlClass();
+		mapName2Class[itClass->second->getName()] = itClass->second->getOwlClass();
 	}
 
 	HTREEITEM hRoot = m_treeCtrl.InsertItem(_T("Classes"), IMAGE_MODEL, IMAGE_MODEL);
@@ -372,7 +372,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddPa
 
 	auto pClass = itClass->second;
 
-	HTREEITEM hClass = m_treeCtrl.InsertItem(pClass->GetName(), IMAGE_CLASS, IMAGE_CLASS, hParent);
+	HTREEITEM hClass = m_treeCtrl.InsertItem(pClass->getName(), IMAGE_CLASS, IMAGE_CLASS, hParent);
 
 	if (bAddParentClasses) {
 		auto& vecParentClasses = pClass->getParentClasses();
@@ -385,7 +385,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddPa
 
 				auto pParentRDFClass = itParentRDFClass->second;
 
-				m_treeCtrl.InsertItem(pParentRDFClass->GetName(), IMAGE_CLASS, IMAGE_CLASS, hParentClasses);
+				m_treeCtrl.InsertItem(pParentRDFClass->getName(), IMAGE_CLASS, IMAGE_CLASS, hParentClasses);
 			} // for (size_t iParentClass = ...
 		} // if (!vecParentClasses.empty())
 	} // if (bAddParentClasses)	
@@ -495,7 +495,7 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 						ASSERT(itRestrictionRDFClass != mapClasses.end());
 						ASSERT(itRestrictionRDFClass->second != nullptr);
 
-						m_treeCtrl.InsertItem(itRestrictionRDFClass->second->GetName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
+						m_treeCtrl.InsertItem(itRestrictionRDFClass->second->getName(), IMAGE_VALUE, IMAGE_VALUE, hRange);
 					}
 				}
 				break;
