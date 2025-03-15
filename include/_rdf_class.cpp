@@ -18,7 +18,7 @@ _rdf_class::_rdf_class(OwlClass owlClass)
 		m_vecParentClasses.push_back(owlParentClass);
 
 		m_vecAncestorClasses.push_back(owlParentClass);
-		GetAncestors(owlParentClass, m_vecAncestorClasses);
+		getAncestors(owlParentClass, m_vecAncestorClasses);
 
 		char* szParentClassName = nullptr;
 		GetNameOfClass(owlParentClass, &szParentClassName);
@@ -44,22 +44,22 @@ void _rdf_class::addPropertyRestriction(_rdf_property_restriction* pPropertyRest
 	m_vecPropertyRestrictions.push_back(pPropertyRestriction);
 }
 
-void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses)
+void _rdf_class::getAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses)
 {
 	OwlClass owlParentClass = GetClassParentsByIterator(owlClass, 0);
 	while (owlParentClass != 0) {
 		vecAncestorClasses.push_back(owlParentClass);
 
-		GetAncestors(owlParentClass, vecAncestorClasses);
+		getAncestors(owlParentClass, vecAncestorClasses);
 
 		owlParentClass = GetClassParentsByIterator(owlClass, owlParentClass);
 	}
 }
 
-/*static*/ wstring _rdf_class::GetAncestors(OwlClass owlClass)
+/*static*/ wstring _rdf_class::getAncestors(OwlClass owlClass)
 {
 	vector<OwlClass> vecAncestors;
-	GetAncestors(owlClass, vecAncestors);
+	getAncestors(owlClass, vecAncestors);
 
 	wstring strAncestors;
 	for (auto iAncestor : vecAncestors) {
@@ -75,7 +75,6 @@ void _rdf_class::GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorCl
 
 	return strAncestors;
 }
-
 
 // ************************************************************************************************
 _rdf_property_restriction::_rdf_property_restriction(RdfProperty rdfProperty, int64_t iMinCard, int64_t iMaxCard)

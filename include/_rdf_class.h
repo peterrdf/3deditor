@@ -26,8 +26,8 @@ public: // Methods
 
 	void addPropertyRestriction(_rdf_property_restriction* pPropertyRestriction);
 
-	static void GetAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
-	static wstring GetAncestors(OwlClass owlClass);
+	static void getAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
+	static wstring getAncestors(OwlClass owlClass);
 
 	OwlClass getOwlClass() const { return m_owlClass; }
 	const wchar_t* getName() const { return m_szName; }
