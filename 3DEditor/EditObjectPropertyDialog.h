@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RDFController.h"
 #include "afxwin.h"
 
+#include "_rdf_mvc.h"
 #include "_rdf_instance.h"
 #include "_rdf_class.h"
 
@@ -13,39 +13,29 @@ class CEditObjectPropertyDialog : public CDialogEx
 
 private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
-	CRDFController * m_pController;
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
+	_rdf_controller* m_pController;
 	_rdf_instance* m_pInstance;
+	_rdf_property* m_pProperty;
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Property
-	_rdf_property * m_pProperty;
+	int m_iMode;
+	_instance* m_pSelectedInstance;
+	OwlClass m_selectedOwlClass;
 
-public: // Fields
+public: // Properties
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
-	_rdf_instance* m_pExisitngRDFInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Class
-	int64_t m_iNewInstanceRDFClass;
-
+	int GetMode() const { return m_iMode; }
+	_instance* GetInstance() const { return m_pSelectedInstance; }
+	OwlClass GetOwlClass() const { return m_selectedOwlClass; }
+	
 private: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Validation
 	void ValidateUI();
 
 public:
-	CEditObjectPropertyDialog(CRDFController * pController, _rdf_instance* pInstance, _rdf_property * pProperty, CWnd* pParent = nullptr);   // standard constructor
+	CEditObjectPropertyDialog(_rdf_controller* pController, _rdf_instance* pInstance, _rdf_property* pProperty, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditObjectPropertyDialog();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DIALOG_EDIT_OBJECT_PROPRTY };
 
 protected:
@@ -53,7 +43,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	int m_iMode;
+
 	virtual BOOL OnInitDialog();
 	CComboBox m_cmbExistingInstance;
 	CComboBox m_cmbNewInstance;

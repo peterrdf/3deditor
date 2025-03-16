@@ -9,6 +9,7 @@
 
 #include "_ptr.h"
 
+// ************************************************************************************************
 void CEditObjectPropertyDialog::ValidateUI()
 {
 	UpdateData(TRUE);
@@ -28,7 +29,7 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 		default:
 		{
-			assert(false);
+			ASSERT(false);
 		}
 		break;
 	} // switch (m_iMode)
@@ -38,18 +39,18 @@ void CEditObjectPropertyDialog::ValidateUI()
 
 IMPLEMENT_DYNAMIC(CEditObjectPropertyDialog, CDialogEx)
 
-CEditObjectPropertyDialog::CEditObjectPropertyDialog(CRDFController* pController, _rdf_instance* pInstance, _rdf_property* pProperty, CWnd* pParent /*=nullptr*/)
+CEditObjectPropertyDialog::CEditObjectPropertyDialog(_rdf_controller* pController, _rdf_instance* pInstance, _rdf_property* pProperty, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CEditObjectPropertyDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)
 	, m_pProperty(pProperty)
-	, m_pExisitngRDFInstance(nullptr)
-	, m_iNewInstanceRDFClass(0)
 	, m_iMode(0)
+	, m_pSelectedInstance(nullptr)
+	, m_selectedOwlClass(0)
 {
-	assert(m_pController != nullptr);
-	assert(m_pInstance != nullptr);
-	assert(m_pProperty != nullptr);
+	ASSERT(m_pController != nullptr);
+	ASSERT(m_pInstance != nullptr);
+	ASSERT(m_pProperty != nullptr);
 }
 
 CEditObjectPropertyDialog::~CEditObjectPropertyDialog()
@@ -85,44 +86,31 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 	int64_t iCard = 0;
 	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->getRdfProperty(), &piInstances, &iCard);
 
-
-	_ptr<CRDFModel> pModel(m_pController->getModel());
-
-	auto& mapInstances = pModel->GetInstances();
-
 	/*
 	* Restrictions
 	*/
 
 	vector<OwlClass> vecRestrictionClasses;
 	m_pProperty->getRangeRestrictions(vecRestrictionClasses);
-	assert(!vecRestrictionClasses.empty());
+	ASSERT(!vecRestrictionClasses.empty());
 
 	/*
 	* Populate Existing instance combo
 	*/
-	map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
-	for (; itRFDInstances != mapInstances.end(); itRFDInstances++) {
+	for (auto pInstance : m_pController->getModel()->getInstances()) {
 		/*
 		* Skip this instance
 		*/
-		if (itRFDInstances->second == m_pInstance) {
-			continue;
-		}
-
-		/*
-		* Skip the instances that belong to a different model
-		*/
-		if (itRFDInstances->second->getOwlModel() != m_pInstance->getOwlModel()) {
+		if (pInstance == m_pInstance) {
 			continue;
 		}
 
 		/*
 		* Check this instance
 		*/
-		if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), itRFDInstances->second->getGeometry()->getOwlClass()) != vecRestrictionClasses.end()) {
-			int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
-			m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
+		if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), pInstance->getGeometry()->getOwlClass()) != vecRestrictionClasses.end()) {
+			int iItem = m_cmbExistingInstance.AddString(pInstance->getUniqueName());
+			m_cmbExistingInstance.SetItemDataPtr(iItem, pInstance);
 
 			continue;
 		}
@@ -132,7 +120,7 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 		*/
 
 		vector<OwlClass> vecAncestorClasses;
-		_rdf_class::getAncestors(itRFDInstances->second->getGeometry()->getOwlClass(), vecAncestorClasses);
+		_rdf_class::getAncestors(pInstance->getGeometry()->getOwlClass(), vecAncestorClasses);
 
 		if (vecAncestorClasses.empty()) {
 			continue;
@@ -140,8 +128,8 @@ BOOL CEditObjectPropertyDialog::OnInitDialog()
 
 		for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++) {
 			if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictionClasses.end()) {
-				int iItem = m_cmbExistingInstance.AddString(itRFDInstances->second->getUniqueName());
-				m_cmbExistingInstance.SetItemDataPtr(iItem, itRFDInstances->second);
+				int iItem = m_cmbExistingInstance.AddString(pInstance->getUniqueName());
+				m_cmbExistingInstance.SetItemDataPtr(iItem, pInstance);
 
 				break;
 			}
@@ -223,27 +211,27 @@ void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 	switch (m_iMode) {
 		case 0: // Existing instance
 		{
-			assert(m_cmbExistingInstance.GetCurSel() != CB_ERR);
+			ASSERT(m_cmbExistingInstance.GetCurSel() != CB_ERR);
 
-			m_pExisitngRDFInstance = (_rdf_instance*)m_cmbExistingInstance.GetItemDataPtr(m_cmbExistingInstance.GetCurSel());
+			m_pSelectedInstance = (_instance*)m_cmbExistingInstance.GetItemDataPtr(m_cmbExistingInstance.GetCurSel());
 		}
 		break;
 
 		case 1: // New instance
 		{
-			assert(m_cmbNewInstance.GetCurSel() != CB_ERR);
+			ASSERT(m_cmbNewInstance.GetCurSel() != CB_ERR);
 
 			CString strClassName;
 			m_cmbNewInstance.GetLBText(m_cmbNewInstance.GetCurSel(), strClassName);
 
-			m_iNewInstanceRDFClass = GetClassByName(m_pInstance->getOwlModel(), CW2A((LPCTSTR)strClassName));
-			assert(m_iNewInstanceRDFClass != 0);
+			m_selectedOwlClass = GetClassByName(m_pInstance->getOwlModel(), CW2A((LPCTSTR)strClassName));
+			ASSERT(m_selectedOwlClass != 0);
 		}
 		break;
 
 		default:
 		{
-			assert(false);
+			ASSERT(false);
 		}
 		break;
 	} // switch (m_iMode)

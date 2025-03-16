@@ -290,7 +290,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());//#todo
+			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -757,12 +757,10 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 	switch (pData->GetProperty()->getType()) {
 		case OBJECTPROPERTY_TYPE:
 		{
-			ASSERT(FALSE);//#todo
-			//CEditObjectPropertyDialog dlgEditObjectProperty(pData->GetController(), pData->GetInstance(), pData->GetProperty(), ::AfxGetMainWnd());
-			//if (dlgEditObjectProperty.DoModal() != IDOK)
-			//{
-			//	return;
-			//}
+			CEditObjectPropertyDialog dlgEditObjectProperty(pData->GetController(), pData->GetInstance(), pData->GetProperty(), ::AfxGetMainWnd());
+			if (dlgEditObjectProperty.DoModal() != IDOK) {
+				return;
+			}
 
 			/*
 			* Read the original values
@@ -781,35 +779,32 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				vecValues.assign(piInstances, piInstances + iCard);
 			}
 
-			ASSERT(FALSE);//#todo
-			//switch (dlgEditObjectProperty.m_iMode)
-			//{
-			//case 0: // Existing instance
-			//{
-			//	ASSERT(dlgEditObjectProperty.m_pExisitngRDFInstance != nullptr);
+			switch (dlgEditObjectProperty.GetMode()) {
+				case 0: // Existing instance
+				{
+					ASSERT(dlgEditObjectProperty.GetInstance() != nullptr);
 
-			//	vecValues.push_back(dlgEditObjectProperty.m_pExisitngRDFInstance->getOwlInstance());
-			//}
-			//break;
+					vecValues.push_back(dlgEditObjectProperty.GetInstance()->getOwlInstance());
+				}
+				break;
 
-			//case 1: // New instance
-			//{
-			//	ASSERT(dlgEditObjectProperty.m_iNewInstanceRDFClass != 0);
+				case 1: // New instance
+				{
+					ASSERT(dlgEditObjectProperty.GetOwlClass() != 0);
 
-			//	ASSERT(FALSE);//#todo
-			//	//_rdf_instance * pNewRDFInstance = pData->GetController()->CreateNewInstance((CPropertiesWnd *)m_pWndList->GetParent(), dlgEditObjectProperty.m_iNewInstanceRDFClass);
-			//	//ASSERT(pNewRDFInstance != nullptr);
+					_rdf_instance* pNewInstance = pData->GetController()->createInstance((CPropertiesWnd*)m_pWndList->GetParent(), dlgEditObjectProperty.GetOwlClass());
+					ASSERT(pNewInstance != nullptr);
 
-			//	//vecValues.push_back(pNewRDFInstance->getOwlInstance());
-			//}
-			//break;
+					vecValues.push_back(pNewInstance->getOwlInstance());
+				}
+				break;
 
-			//default:
-			//{
-			//	ASSERT(false);
-			//}
-			//break;
-			//} // switch (dlgEditObjectProperty.m_iMode)
+				default:
+				{
+					ASSERT(false);
+				}
+				break;
+			} // switch (dlgEditObjectProperty.GetMode())
 
 			SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), vecValues.data(), vecValues.size());
 
