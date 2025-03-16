@@ -23,50 +23,18 @@ CRDFController::~CRDFController()
 {
 }
 
-/*virtual*/ void CRDFController::LoadModel(LPCTSTR /*szFileName*/)
-{
-	assert(false);
-}
-
-//void CRDFController::ImportModel(_rdf_view* /*pSender*/, const wchar_t* szPath)
-//{
-//	/*auto pModel = GetModel();
-//	assert(pModel != nullptr);
-//
-//	if (pModel == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	pModel->ImportModel(szPath);
-//
-//	UpdateCoordinateSystem();
-//
-//	m_bUpdatingModel = true;
-//
-//	auto itView = m_setViews.begin();
-//	for (; itView != m_setViews.end(); itView++)
-//	{
-//		(*itView)->OnModelChanged();
-//	}
-//
-//	m_bUpdatingModel = false;*/
-//}
-
-void CRDFController::BeginTestMode()
+void CRDFController::_test_BeginTestMode()
 {
 	TEST_MODE = TRUE;
 }
 
-void CRDFController::EndTestMode()
+void CRDFController::_test_EndTestMode()
 {
 	// PATCH: see PATCH: AMD 6700 XT - Access violation
 	//TEST_MODE = FALSE;
 }
 
-BOOL CRDFController::IsTestMode()
+BOOL CRDFController::_test_IsTestMode()
 {
 	return TEST_MODE;
 }

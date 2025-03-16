@@ -106,7 +106,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		return;
 	}
 
-	m_pController->BeginTestMode();
+	m_pController->_test_BeginTestMode();
 
 	for (POSITION pos = lsInputFiles.GetHeadPosition(); pos != nullptr;)
 	{
@@ -127,7 +127,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		strInputFilePath += L"\\";
 		strInputFilePath += strInputFileName;
 
-		m_pController->LoadModel((LPCTSTR)strInputFilePath);
+		m_pController->_test_LoadModel((LPCTSTR)strInputFilePath);
 
 		m_pOpenGLView->_reset();
 
@@ -144,7 +144,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the .bin file.", L"Error", MB_ICONERROR | MB_OK);
 
-				m_pController->EndTestMode();
+				m_pController->_test_EndTestMode();
 
 				return;
 			}
@@ -162,7 +162,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
-				m_pController->EndTestMode();
+				m_pController->_test_EndTestMode();
 
 				return;
 			}
@@ -185,7 +185,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
-				m_pController->EndTestMode();
+				m_pController->_test_EndTestMode();
 
 				return;
 			}
@@ -208,7 +208,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
-				m_pController->EndTestMode();
+				m_pController->_test_EndTestMode();
 
 				return;
 			}
@@ -220,5 +220,5 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		}
 	} // for (POSITION pos = ...	
 
-	m_pController->EndTestMode();
+	m_pController->_test_EndTestMode();
 }

@@ -1109,7 +1109,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
-	if (_ptr<CRDFController>(getRDFController())->IsTestMode()) {
+	if (_ptr<CRDFController>(getRDFController())->_test_IsTestMode()) {
 		return;
 	}
 

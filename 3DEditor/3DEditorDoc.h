@@ -18,9 +18,8 @@ class CMy3DEditorDoc
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// CRDFController
-	virtual void LoadModel(LPCTSTR szFileName);
+	virtual void _test_LoadModel(LPCTSTR szFileName) override;
 
 protected: // create from serialization only
 	CMy3DEditorDoc();

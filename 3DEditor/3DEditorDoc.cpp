@@ -21,7 +21,7 @@
 #define new DEBUG_NEW
 #endif
 
-/*virtual*/ void CMy3DEditorDoc::LoadModel(LPCTSTR szFileName)
+/*virtual*/ void CMy3DEditorDoc::_test_LoadModel(LPCTSTR szFileName) /*override*/
 {
 	if (szFileName != nullptr) {
 		OnOpenDocument(szFileName);

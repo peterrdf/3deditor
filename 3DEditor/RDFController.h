@@ -15,14 +15,11 @@ public: // Methods
 	CRDFController();
 	virtual ~CRDFController();
 
-// MOVE !!!	#todo
-	//void ImportModel(_rdf_view* pSender, const wchar_t* szPath);
-
 	// Tests
-	virtual void LoadModel(LPCTSTR szFileName);
-	void BeginTestMode();
-	void EndTestMode();
-	BOOL IsTestMode();
+	virtual void _test_LoadModel(LPCTSTR szFileName) PURE;
+	void _test_BeginTestMode();
+	void _test_EndTestMode();
+	BOOL _test_IsTestMode();
 };
 
 

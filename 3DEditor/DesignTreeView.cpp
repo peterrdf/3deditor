@@ -55,7 +55,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 // ************************************************************************************************
 /*virtual*/ void CDesignTreeView::onModelLoaded() /*override*/
 {
-	if (_ptr<CRDFController>(getRDFController())->IsTestMode()) {
+	if (_ptr<CRDFController>(getRDFController())->_test_IsTestMode()) {
 		return;
 	}
 
