@@ -1911,37 +1911,21 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 			{
-				/*auto itRFDInstances = mapInstances.begin();#todo
-				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
-				{
-					if (pInstance->getOwlModel() != itRFDInstances->second->getOwlModel())
-					{
-						continue;
-					}
-
-					if (itRFDInstances->second == pInstance)
-					{
-						itRFDInstances->second->setEnable(true);
-
-						continue;
-					}
-
-					itRFDInstances->second->setEnable(false);
+				for (auto pInstance2 : getRDFModel()->getInstances()) {
+					pInstance2->setEnable(pInstance2 == pInstance);
 				}
 
-				getController()->onInstancesEnabledStateChanged(this);*/
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
 			case ID_INSTANCES_ENABLE_ALL:
 			{
-				/*auto itRFDInstances = mapInstances.begin();#todo
-				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
-				{
-					itRFDInstances->second->setEnable(true);
+				for (auto pInstance2 : getRDFModel()->getInstances()) {
+					pInstance2->setEnable(true);
 				}
 
-				getController()->onInstancesEnabledStateChanged(this);*/
+				getController()->onInstancesEnabledStateChanged(this);
 			}
 			break;
 
