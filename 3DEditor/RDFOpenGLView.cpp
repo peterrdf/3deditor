@@ -378,43 +378,43 @@ void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 //	}
 //}
 
-void CRDFOpenGLView::DrawNavigatorModel(
-	CRDFModel* pNavigatorModel,
-	int /*iViewportX*/, int iViewportY,
-	int iViewportWidth, int /*iViewportHeight*/)
-{
-	if (pNavigatorModel == nullptr) {
-		return;
-	}
-
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	// Always use Perspective Projection
-	enumProjection enProjection = m_enProjection;
-	m_enProjection = enumProjection::Perspective;
-
-	_prepare(
-		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
-		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
-
-	/* Model */
-	ASSERT(FALSE);//#todo
-	//DrawModel(pNavigatorModel);
-
-	// Restore
-	m_enProjection = enProjection;
-}
+//void CRDFOpenGLView::DrawNavigatorModel(
+//	CRDFModel* pNavigatorModel,
+//	int /*iViewportX*/, int iViewportY,
+//	int iViewportWidth, int /*iViewportHeight*/)
+//{
+//	if (pNavigatorModel == nullptr) {
+//		return;
+//	}
+//
+//	float fXmin = -1.f;
+//	float fXmax = 1.f;
+//	float fYmin = -1.f;
+//	float fYmax = 1.f;
+//	float fZmin = -1.f;
+//	float fZmax = 1.f;
+//	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+//
+//	// Always use Perspective Projection
+//	enumProjection enProjection = m_enProjection;
+//	m_enProjection = enumProjection::Perspective;
+//
+//	_prepare(
+//		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
+//		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
+//		fXmin, fXmax,
+//		fYmin, fYmax,
+//		fZmin, fZmax,
+//		false,
+//		false);
+//
+//	/* Model */
+//	ASSERT(FALSE);
+//	//DrawModel(pNavigatorModel);
+//
+//	// Restore
+//	m_enProjection = enProjection;
+//}
 
 void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
 {
@@ -1263,7 +1263,6 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	_oglUtils::checkForErrors();
 }
 
-//#todo
 //void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
 //	_model* pM,
 //	int /*iViewportX*/, int iViewportY,

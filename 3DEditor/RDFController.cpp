@@ -30,7 +30,6 @@ CRDFController::~CRDFController()
 
 //void CRDFController::ImportModel(_rdf_view* /*pSender*/, const wchar_t* szPath)
 //{
-//	ASSERT(FALSE);//#todo
 //	/*auto pModel = GetModel();
 //	assert(pModel != nullptr);
 //

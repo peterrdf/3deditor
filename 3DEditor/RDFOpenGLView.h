@@ -66,10 +66,11 @@ public: // Methods
 
 private: // Methods
 
-	void DrawNavigatorModel(
+	//#todo
+	/*void DrawNavigatorModel(
 		CRDFModel* pNavigatorModel,
 		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight);
+		int iViewportWidth, int iViewportHeight);*/
 
 	// --------------------------------------------------------------------------------------------
 	// Bounding box for each 3D object
