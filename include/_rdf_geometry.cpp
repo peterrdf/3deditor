@@ -59,10 +59,9 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 	m_pvecAABBMin = new _vector3d();
 
 	assert(m_pvecAABBMax == nullptr);
-	m_pvecAABBMax = new _vector3d();	
+	m_pvecAABBMax = new _vector3d();
 
-	if (!calculateInstance(m_pOriginalVertexBuffer, m_pIndexBuffer))
-	{
+	if (!calculateInstance(m_pOriginalVertexBuffer, m_pIndexBuffer)) {
 		return;
 	}
 
@@ -102,8 +101,7 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 	MATERIALS mapMaterial2ConcFacePoints;
 
 	m_iConceptualFacesCount = GetConceptualFaceCnt(getOwlInstance());
-	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++)
-	{
+	for (int64_t iConceptualFaceIndex = 0; iConceptualFaceIndex < m_iConceptualFacesCount; iConceptualFaceIndex++) {
 		int64_t iStartIndexTriangles = 0;
 		int64_t iIndicesCountTriangles = 0;
 		int64_t iStartIndexLines = 0;
@@ -126,8 +124,7 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 
 		wstring strTexture = getConcFaceTexture(iConceptualFace);
 
-		if (iIndicesCountTriangles > 0)
-		{
+		if (iIndicesCountTriangles > 0) {
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
 			iIndexValue *= VERTEX_LENGTH;
 
@@ -155,18 +152,15 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 			addTriangles(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles, material, mapMaterial2ConcFaces);
 		}
 
-		if (iIndicesCountFacePolygons > 0)
-		{
+		if (iIndicesCountFacePolygons > 0) {
 			addFacePolygons(iStartIndexFacePolygons, iIndicesCountFacePolygons);
 		}
 
-		if (iIndicesCountConceptualFacePolygons > 0)
-		{
+		if (iIndicesCountConceptualFacePolygons > 0) {
 			addConcFacePolygons(iStartIndexConceptualFacePolygons, iIndicesCountConceptualFacePolygons);
 		}
 
-		if (iIndicesCountLines > 0)
-		{
+		if (iIndicesCountLines > 0) {
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexLines);
 			iIndexValue *= VERTEX_LENGTH;
 
@@ -194,8 +188,7 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 			addLines(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines, material, mapMaterial2ConcFaceLines);
 		}
 
-		if (iIndicesCountPoints > 0)
-		{
+		if (iIndicesCountPoints > 0) {
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexPoints);
 			iIndexValue *= VERTEX_LENGTH;
 
@@ -251,19 +244,16 @@ void _rdf_geometry::loadName()
 	wchar_t* szName = nullptr;
 	GetNameOfInstanceW(getOwlInstance(), &szName);
 
-	if (szName == nullptr)
-	{
+	if (szName == nullptr) {
 		RdfProperty iTagProperty = GetPropertyByName(getOwlModel(), "tag");
-		if (iTagProperty != 0)
-		{
+		if (iTagProperty != 0) {
 			SetCharacterSerialization(getOwlModel(), 0, 0, false);
 
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
 			GetDatatypeProperty(getOwlInstance(), iTagProperty, (void**)&szValue, &iCard);
 
-			if (iCard == 1)
-			{
+			if (iCard == 1) {
 				szName = szValue[0];
 			}
 
@@ -273,13 +263,10 @@ void _rdf_geometry::loadName()
 
 	wchar_t szUniqueName[512];
 
-	if (szName != nullptr)
-	{
+	if (szName != nullptr) {
 		m_strName = szName;
 		swprintf(szUniqueName, 512, L"%s (%s)", szName, szClassName);
-	}
-	else
-	{
+	} else {
 		m_strName = szClassName;
 		swprintf(szUniqueName, 512, L"#%lld (%s)", getOwlInstance(), szClassName);
 	}
@@ -289,8 +276,7 @@ void _rdf_geometry::loadName()
 
 void _rdf_geometry::loadOriginalData()
 {
-	if (getVerticesCount() == 0)
-	{
+	if (getVerticesCount() == 0) {
 		return;
 	}
 
@@ -306,14 +292,10 @@ void _rdf_geometry::loadOriginalData()
 
 void _rdf_geometry::recalculate()
 {
-	if (m_bNeedsRefresh)
-	{
-		clean();
+	clean();
+	calculate();
 
-		calculate();
-
-		m_bNeedsRefresh = false;
-	}
+	m_bNeedsRefresh = false;
 }
 
 void _rdf_geometry::setRDFFormatSettings()
