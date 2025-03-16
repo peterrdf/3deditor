@@ -86,8 +86,6 @@ public: // Methods
 	_rdf_instance* GetInstanceByIInstance(int64_t iInstance);
 
 	_rdf_instance* AddNewInstance(int64_t pThing);
-
-	void GetCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pObjectRDFProperty, vector<int64_t>& vecCompatibleInstances) const;
 	
 	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
 	double GetOriginalBoundingSphereDiameter() const;

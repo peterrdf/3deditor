@@ -12,25 +12,23 @@
 
 #define USED_SUFFIX L" [used]"
 
-
-// CSelectInstanceDialog dialog
-
+// ************************************************************************************************
 IMPLEMENT_DYNAMIC(CSelectInstanceDialog, CDialogEx)
 
-CSelectInstanceDialog::CSelectInstanceDialog(CRDFController* pController, _rdf_instance* pInstance,
-	_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
+CSelectInstanceDialog::CSelectInstanceDialog(_rdf_controller* pController, _rdf_instance* pInstance,
+	_rdf_property* pProperty, int64_t iCard, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_SELECT_INSTANCE, pParent)
 	, m_pController(pController)
 	, m_pInstance(pInstance)
-	, m_pObjectRDFProperty(pObjectRDFProperty)
+	, m_pProperty(pProperty)
 	, m_iCard(iCard)
-	, m_iInstance(-1)
+	, m_selectedOwlInstance(0)
 	, m_strInstanceUniqueName(L"")
-	, m_strOldInstanceUniqueName(EMPTY_INSTANCE)
+	, m_strInstanceOldUniqueName(EMPTY_INSTANCE)
 {
-	assert(m_pController != nullptr);
-	assert(m_pInstance != nullptr);
-	assert(m_pObjectRDFProperty != nullptr);
+	ASSERT(m_pController != nullptr);
+	ASSERT(m_pInstance != nullptr);
+	ASSERT(m_pProperty != nullptr);
 }
 
 CSelectInstanceDialog::~CSelectInstanceDialog()
@@ -69,59 +67,54 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	int64_t* piInstances = nullptr;
+	OwlInstance* pOwlInstances = nullptr;
 	int64_t iCard = 0;
-	GetObjectProperty(m_pInstance->getOwlInstance(), m_pObjectRDFProperty->getRdfProperty(), &piInstances, &iCard);
+	GetObjectProperty(m_pInstance->getOwlInstance(), m_pProperty->getRdfProperty(), &pOwlInstances, &iCard);
 
-	assert(iCard > 0);
-	assert((m_iCard >= 0) && (m_iCard < iCard));
+	ASSERT(iCard > 0);
+	ASSERT((m_iCard >= 0) && (m_iCard < iCard));
 	UNUSED(iCard);
-	assert(piInstances != nullptr);
+	ASSERT(pOwlInstances != nullptr);
 
-	_ptr<CRDFModel> pModel(m_pController->getModel());
+	_ptr<_rdf_model> rdfModel(m_pController->getModel());
 
-	auto& mapInstances = pModel->GetInstances();
+	vector<OwlInstance> vecCompatibleInstances;
+	rdfModel->getCompatibleInstances(m_pInstance, m_pProperty, vecCompatibleInstances);
 
-	vector<int64_t> vecCompatibleInstances;
-	pModel->GetCompatibleInstances(m_pInstance, m_pObjectRDFProperty, vecCompatibleInstances);
-		
 	int iInstance = m_cmbInstances.AddString(EMPTY_INSTANCE);
 	m_cmbInstances.SetItemData(iInstance, 0);
 
-	m_strOldInstanceUniqueName = EMPTY_INSTANCE;
-	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++)
-	{
-		map<int64_t, _rdf_instance*>::const_iterator itInstanceValue = mapInstances.find(vecCompatibleInstances[iCompatibleInstance]);
-		assert(itInstanceValue != mapInstances.end());
+	m_strInstanceOldUniqueName = EMPTY_INSTANCE;
+	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++) {
+		auto pCompatibleInstance = rdfModel->getInstance(vecCompatibleInstances[iCompatibleInstance]);
+		ASSERT(pCompatibleInstance != nullptr);
 
-		CString strInstanceUniqueName = itInstanceValue->second->getUniqueName();
+		CString strInstanceUniqueName = pCompatibleInstance->getUniqueName();
 		if ((m_pInstance->getOwlInstance() != vecCompatibleInstances[iCompatibleInstance]) &&
-			IsUsedRecursively(m_pInstance->getOwlInstance(), itInstanceValue->second->getOwlInstance()))
-		{
+			IsUsedRecursively(m_pInstance->getOwlInstance(), pCompatibleInstance->getOwlInstance())) {
 			strInstanceUniqueName += USED_SUFFIX;
 		}
 
 		iInstance = m_cmbInstances.AddString(strInstanceUniqueName);
 		m_cmbInstances.SetItemData(iInstance, vecCompatibleInstances[iCompatibleInstance]);
 
-		if (piInstances[m_iCard] == vecCompatibleInstances[iCompatibleInstance])
-		{
-			m_strOldInstanceUniqueName = strInstanceUniqueName;
+		if (pOwlInstances[m_iCard] == vecCompatibleInstances[iCompatibleInstance]) {
+			m_strInstanceOldUniqueName = strInstanceUniqueName;
 		}
-	} // for (size_t iCompatibleInstance = ...	
+	}
 
-	int iSelectedInstance = m_cmbInstances.FindString(0, m_strOldInstanceUniqueName);
+	int iSelectedInstance = m_cmbInstances.FindStringExact(0, m_strInstanceOldUniqueName);
 	m_cmbInstances.SetCurSel(iSelectedInstance);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
 void CSelectInstanceDialog::OnOK()
 {
 	int iSelectedInstance = m_cmbInstances.GetCurSel();
-	m_iInstance = m_cmbInstances.GetItemData(iSelectedInstance);
+	m_selectedOwlInstance = m_cmbInstances.GetItemData(iSelectedInstance);
 	m_cmbInstances.GetLBText(iSelectedInstance, m_strInstanceUniqueName);
 
 	CDialogEx::OnOK();

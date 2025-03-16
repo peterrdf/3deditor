@@ -24,8 +24,8 @@ private: // Fields
 public: // Properties
 
 	int GetMode() const { return m_iMode; }
-	_instance* GetInstance() const { return m_pSelectedInstance; }
-	OwlClass GetOwlClass() const { return m_selectedOwlClass; }
+	_instance* GetSelectedInstance() const { return m_pSelectedInstance; }
+	OwlClass GetSelectedOwlClass() const { return m_selectedOwlClass; }
 	
 private: // Methods
 

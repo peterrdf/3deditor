@@ -782,17 +782,17 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			switch (dlgEditObjectProperty.GetMode()) {
 				case 0: // Existing instance
 				{
-					ASSERT(dlgEditObjectProperty.GetInstance() != nullptr);
+					ASSERT(dlgEditObjectProperty.GetSelectedInstance() != nullptr);
 
-					vecValues.push_back(dlgEditObjectProperty.GetInstance()->getOwlInstance());
+					vecValues.push_back(dlgEditObjectProperty.GetSelectedInstance()->getOwlInstance());
 				}
 				break;
 
 				case 1: // New instance
 				{
-					ASSERT(dlgEditObjectProperty.GetOwlClass() != 0);
+					ASSERT(dlgEditObjectProperty.GetSelectedOwlClass() != 0);
 
-					_rdf_instance* pNewInstance = pData->GetController()->createInstance((CPropertiesWnd*)m_pWndList->GetParent(), dlgEditObjectProperty.GetOwlClass());
+					_rdf_instance* pNewInstance = pData->GetController()->createInstance((CPropertiesWnd*)m_pWndList->GetParent(), dlgEditObjectProperty.GetSelectedOwlClass());
 					ASSERT(pNewInstance != nullptr);
 
 					vecValues.push_back(pNewInstance->getOwlInstance());
@@ -1085,7 +1085,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	m_bIsModified = bModified;
 }
 
-/*virtual*/ void CPropertiesWnd::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CPropertiesWnd::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -1120,6 +1120,10 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 /*virtual*/ void CPropertiesWnd::onInstanceSelected(_view* pSender) /*override*/
 {
+	if (pSender == this) {
+		return;
+	}
+
 	m_wndObjectCombo.SetCurSel(1/*Properties*/);
 
 	LoadInstanceProperties();
@@ -1169,7 +1173,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	LoadMetaInformation(pInstance);
 }
 
-/*virtual*/ void CPropertiesWnd::onInstanceRenamed(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CPropertiesWnd::onInstanceRenamed(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -1178,7 +1182,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	LoadInstanceProperties();
 }
 
-/*virtual*/ void CPropertiesWnd::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CPropertiesWnd::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -1585,63 +1589,51 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // if (strValue == REMOVE_OBJECT_PROPERTY_COMMAND)
 			else {
-				ASSERT(FALSE);//#todo
-				//if (strValue == SELECT_OBJECT_PROPERTY_COMMAND)
-				//{
-				//	auto pObjectRDFProperty = dynamic_cast<_rdf_property*>(pData->GetProperty());
-				//	ASSERT(pObjectRDFProperty != nullptr);
+				if (strValue == SELECT_OBJECT_PROPERTY_COMMAND) {
+					auto pObjectRDFProperty = dynamic_cast<_rdf_property*>(pData->GetProperty());
+					ASSERT(pObjectRDFProperty != nullptr);
 
-				//	ASSERT(pData->GetController() != nullptr);
-				//	ASSERT(FALSE);//#todo
-				//	CSelectInstanceDialog dlgSelectInstanceDialog(getRDFController(), pData->GetInstance(), pObjectRDFProperty, pData->GetCard());
-				//	if (dlgSelectInstanceDialog.DoModal() == IDOK)
-				//	{
-				//		ASSERT(dlgSelectInstanceDialog.m_iInstance != -1);						
+					CSelectInstanceDialog dlgSelectInstanceDialog(getRDFController(), pData->GetInstance(), pObjectRDFProperty, pData->GetCard());
+					if (dlgSelectInstanceDialog.DoModal() == IDOK) {
+						ASSERT(dlgSelectInstanceDialog.GetSelectedOwlInstance() != 0);
 
-				//		/*
-				//		* Update the value
-				//		*/						
-				//		vecValues[pData->GetCard()] = dlgSelectInstanceDialog.m_iInstance;
+						/*
+						* Update the value
+						*/
+						vecValues[pData->GetCard()] = dlgSelectInstanceDialog.GetSelectedOwlInstance();
+						SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), vecValues.data(), vecValues.size());
 
-				//		SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
+						/*
+						* Notify
+						*/
+						getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
 
-				//		/*
-				//		* Notify
-				//		*/
-				//		getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, (pData->GetInstance(), pData->GetProperty());
+						/*
+						* Value
+						*/
+						ASSERT(!dlgSelectInstanceDialog.GetSelectedInstanceUniqueName().IsEmpty());
+						pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.GetSelectedInstanceUniqueName());
+					} else {
+						/*
+						* Value
+						*/
+						ASSERT(!dlgSelectInstanceDialog.GetSelectedInstanceOldUniqueName().IsEmpty());
+						pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.GetSelectedInstanceOldUniqueName());
+					}
+				} else {
+					/*
+					* Update the value
+					*/
+					int64_t iInstance = pObjectProperty->GetInstance((LPCTSTR)strValue);
+					vecValues[pData->GetCard()] = iInstance;
 
-				//		/*
-				//		* Value
-				//		*/
-				//		ASSERT(!dlgSelectInstanceDialog.m_strInstanceUniqueName.IsEmpty());
+					SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), vecValues.data(), vecValues.size());
 
-				//		pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.m_strInstanceUniqueName);
-				//	}
-				//	else
-				//	{
-				//		/*
-				//		* Value
-				//		*/
-				//		ASSERT(!dlgSelectInstanceDialog.m_strOldInstanceUniqueName.IsEmpty());
-
-				//		pObjectProperty->SetValue((_variant_t)dlgSelectInstanceDialog.m_strOldInstanceUniqueName);
-				//	}
-				//}
-				//else
-				//{
-				//	/*
-				//	* Update the value
-				//	*/
-				//	int64_t iInstance = pObjectProperty->GetInstance((LPCTSTR)strValue);
-				//	vecValues[pData->GetCard()] = iInstance;
-
-				//	SetObjectProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->GetInstance(), vecValues.data(), vecValues.size());
-
-				//	/*
-				//	* Notify
-				//	*/
-				//	getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());//#todo
-				//}				
+					/*
+					* Notify
+					*/
+					getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				}
 			} // else if (strValue == REMOVE_OBJECT_PROPERTY_COMMAND)
 
 			return 0;

@@ -38,6 +38,7 @@ public:  // Methods
 
 	_rdf_instance* getInstance(OwlInstance owlInstance);
 
+	void getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, vector<OwlInstance>& vecCompatibleInstances) const;
 	_rdf_instance* createInstance(OwlClass owlClass);
 	bool deleteInstance(_rdf_instance* pInstance);
 	void recalculate();

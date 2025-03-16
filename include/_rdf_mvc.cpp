@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_rdf_mvc.h"
 #include "_rdf_instance.h"
+#include "_rdf_class.h"
 #include "_ptr.h"
 
 // ************************************************************************************************
@@ -42,6 +43,38 @@ _rdf_instance* _rdf_model::getInstance(OwlInstance owlInstance)
 	}
 
 	return nullptr;
+}
+
+void _rdf_model::getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, vector<OwlInstance>& vecCompatibleInstances) const
+{
+	assert(pInstance != nullptr);
+	assert(pProperty != nullptr);
+
+	vecCompatibleInstances.clear();
+
+	vector<OwlClass> vecRestrictionClasses;
+	_rdf_property::getRangeRestrictions(pProperty->getRdfProperty(), vecRestrictionClasses);
+
+	for (auto pInstance2 : getInstances()) {
+		if (pInstance2 == pInstance) {
+			continue;
+		}
+
+		if (std::find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), pInstance->getGeometry()->getOwlClass()) != vecRestrictionClasses.end()) {
+			vecCompatibleInstances.push_back(pInstance2->getOwlInstance());
+			continue;
+		}
+
+		vector<OwlClass> vecAncestorClasses;
+		_rdf_class::getAncestors(pInstance->getGeometry()->getOwlClass(), vecAncestorClasses);
+
+		for (size_t iAncestorClass = 0; iAncestorClass < vecAncestorClasses.size(); iAncestorClass++) {
+			if (find(vecRestrictionClasses.begin(), vecRestrictionClasses.end(), vecAncestorClasses[iAncestorClass]) != vecRestrictionClasses.end()) {
+				vecCompatibleInstances.push_back(pInstance2->getOwlInstance());
+				break;
+			}
+		}
+	}
 }
 
 _rdf_instance* _rdf_model::createInstance(OwlClass owlClass)
