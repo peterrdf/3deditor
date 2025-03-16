@@ -290,7 +290,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -342,7 +342,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -394,7 +394,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -432,7 +432,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -470,7 +470,7 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -811,7 +811,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update UI
@@ -854,7 +854,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -903,7 +903,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -948,7 +948,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -993,7 +993,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -1028,7 +1028,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -1063,7 +1063,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
-			pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
 
 			/*
 			* Update the values
@@ -1577,7 +1577,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				/*
 				* Notify
 				*/
-				pData->GetController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				pData->GetController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 
 				/*
 				* Delete this item
@@ -1606,7 +1606,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 						/*
 						* Notify
 						*/
-						getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+						getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 
 						/*
 						* Value
@@ -1632,7 +1632,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					/*
 					* Notify
 					*/
-					getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 				}
 			} // else if (strValue == REMOVE_OBJECT_PROPERTY_COMMAND)
 
@@ -1668,7 +1668,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
+			getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), itProperty->second);
 
 			/*
 			* G
@@ -1684,7 +1684,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
+			getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), itProperty->second);
 
 			/*
 			* B
@@ -1700,7 +1700,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
+			getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), itProperty->second);
 
 			/*
 			* Update UI
@@ -1753,7 +1753,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				delete[] pbNewValues;
 				pbNewValues = nullptr;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 			break;
 
@@ -1792,7 +1792,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -1827,7 +1827,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -1862,7 +1862,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -1889,7 +1889,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
@@ -1915,7 +1915,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
+				getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
 			break;
 
