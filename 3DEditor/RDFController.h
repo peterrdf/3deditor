@@ -16,7 +16,7 @@ public: // Methods
 	virtual ~CRDFController();
 
 	// Tests
-	virtual void _test_LoadModel(LPCTSTR szFileName) PURE;
+	virtual void _test_LoadModel(LPCTSTR szFileName) { ASSERT(FALSE); }
 	void _test_BeginTestMode();
 	void _test_EndTestMode();
 	BOOL _test_IsTestMode();

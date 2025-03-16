@@ -87,10 +87,10 @@ public: // Methods
 
 	_rdf_instance* AddNewInstance(int64_t pThing);
 	
-	void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
-	double GetOriginalBoundingSphereDiameter() const;
-	void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	float GetBoundingSphereDiameter() const;
+	//void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
+	//double GetOriginalBoundingSphereDiameter() const;
+	//void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
+	//float GetBoundingSphereDiameter() const;
 
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
 

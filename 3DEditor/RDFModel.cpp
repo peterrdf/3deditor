@@ -489,32 +489,32 @@ _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 	return pInstance;*/
 }
 
-void CRDFModel::GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
-{
-	dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
-	dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
-	dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
-}
+//void CRDFModel::GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
+//{
+//	dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
+//	dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
+//	dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
+//}
 
-double CRDFModel::GetOriginalBoundingSphereDiameter() const
-{
-	return m_dOriginalBoundingSphereDiameter;
-}
+//double CRDFModel::GetOriginalBoundingSphereDiameter() const
+//{
+//	return m_dOriginalBoundingSphereDiameter;
+//}
 
-void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-{
-	fXmin = m_fXmin;
-	fXmax = m_fXmax;
-	fYmin = m_fYmin;
-	fYmax = m_fYmax;
-	fZmin = m_fZmin;
-	fZmax = m_fZmax;
-}
+//void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
+//{
+//	fXmin = m_fXmin;
+//	fXmax = m_fXmax;
+//	fYmin = m_fYmin;
+//	fYmax = m_fYmax;
+//	fZmin = m_fZmin;
+//	fZmax = m_fZmax;
+//}
 
-float CRDFModel::GetBoundingSphereDiameter() const
-{
-	return m_fBoundingSphereDiameter;
-}
+//float CRDFModel::GetBoundingSphereDiameter() const
+//{
+//	return m_fBoundingSphereDiameter;
+//}
 
 /*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
 {
