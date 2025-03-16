@@ -41,7 +41,6 @@ void CSelectInstanceDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_INSTANCES, m_cmbInstances);
 }
 
-
 BEGIN_MESSAGE_MAP(CSelectInstanceDialog, CDialogEx)
 END_MESSAGE_MAP()
 
@@ -62,7 +61,6 @@ bool IsUsedRecursively(int64_t RDFInstanceI, int64_t RDFInstanceII)
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
 BOOL CSelectInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -86,7 +84,7 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 
 	m_strInstanceOldUniqueName = EMPTY_INSTANCE;
 	for (size_t iCompatibleInstance = 0; iCompatibleInstance < vecCompatibleInstances.size(); iCompatibleInstance++) {
-		auto pCompatibleInstance = rdfModel->getInstance(vecCompatibleInstances[iCompatibleInstance]);
+		auto pCompatibleInstance = rdfModel->getInstanceByOwlInstance(vecCompatibleInstances[iCompatibleInstance]);
 		ASSERT(pCompatibleInstance != nullptr);
 
 		CString strInstanceUniqueName = pCompatibleInstance->getUniqueName();
@@ -109,7 +107,6 @@ BOOL CSelectInstanceDialog::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void CSelectInstanceDialog::OnOK()
 {

@@ -36,7 +36,7 @@ protected:
 
 public:  // Methods	
 
-	_rdf_instance* getInstance(OwlInstance owlInstance);
+	_rdf_instance* getInstanceByOwlInstance(OwlInstance owlInstance);
 
 	void getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, vector<OwlInstance>& vecCompatibleInstances) const;
 	_rdf_instance* createInstance(OwlClass owlClass);

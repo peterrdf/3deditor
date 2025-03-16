@@ -65,7 +65,6 @@ void CEditObjectPropertyDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_NEW_INSTANCE, m_cmbNewInstance);
 }
 
-
 BEGIN_MESSAGE_MAP(CEditObjectPropertyDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_EXISTING_INSTANCE, &CEditObjectPropertyDialog::OnBnClickedRadioExistingInstance)
 	ON_BN_CLICKED(IDC_RADIO_NEW_INSTANCE, &CEditObjectPropertyDialog::OnBnClickedRadioNewInstance)
@@ -73,10 +72,6 @@ BEGIN_MESSAGE_MAP(CEditObjectPropertyDialog, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO_NEW_INSTANCE, &CEditObjectPropertyDialog::OnCbnSelchangeComboNewInstance)
 	ON_BN_CLICKED(ID_APPLY_CHANGES, &CEditObjectPropertyDialog::OnBnClickedApplyChanges)
 END_MESSAGE_MAP()
-
-
-// CEditObjectPropertyDialog message handlers
-
 
 BOOL CEditObjectPropertyDialog::OnInitDialog()
 {
@@ -185,24 +180,20 @@ void CEditObjectPropertyDialog::OnBnClickedRadioExistingInstance()
 	ValidateUI();
 }
 
-
 void CEditObjectPropertyDialog::OnBnClickedRadioNewInstance()
 {
 	ValidateUI();
 }
-
 
 void CEditObjectPropertyDialog::OnCbnSelchangeComboExistingInstance()
 {
 	ValidateUI();
 }
 
-
 void CEditObjectPropertyDialog::OnCbnSelchangeComboNewInstance()
 {
 	ValidateUI();
 }
-
 
 void CEditObjectPropertyDialog::OnBnClickedApplyChanges()
 {

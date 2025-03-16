@@ -33,7 +33,7 @@ _rdf_model::_rdf_model()
 	m_mapInstanceDefaultState.clear();
 }
 
-_rdf_instance* _rdf_model::getInstance(OwlInstance owlInstance)
+_rdf_instance* _rdf_model::getInstanceByOwlInstance(OwlInstance owlInstance)
 {
 	assert(owlInstance != 0);
 
@@ -356,8 +356,8 @@ bool _rdf_controller::deleteInstanceTreeRecursive(_view* pSender, _rdf_instance*
 	bool bResult = rdfModel->deleteInstance(pInstance);
 	assert(bResult);
 
-	for (int64_t i = 0; i < iChildrenCount; i++) {
-		auto pChildInstance = rdfModel->getInstance(arChildren[i]);
+	for (i = 0; i < iChildrenCount; i++) {
+		auto pChildInstance = rdfModel->getInstanceByOwlInstance(arChildren[i]);
 		if (pChildInstance) {
 			bResult &= deleteInstanceTreeRecursive(pSender, pChildInstance);
 			assert(bResult);

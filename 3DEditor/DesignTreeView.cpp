@@ -100,7 +100,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (enApplicationProperty)
 }
 
-/*virtual*/ void CDesignTreeView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CDesignTreeView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -109,7 +109,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-/*virtual*/ void CDesignTreeView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CDesignTreeView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -127,7 +127,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
-/*virtual*/ void CDesignTreeView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CDesignTreeView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInstance*/) /*override*/
 {
 	if (pSender == this) {
 		return;
@@ -273,7 +273,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 				int64_t iInstancesCount = iCard;
 				for (int64_t iInstance = 0; iInstance < iInstancesCount; iInstance++) {
 					if (piInstances[iInstance] != 0) {
-						auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
+						auto pChildInstance = pModel->getInstanceByOwlInstance(piInstances[iInstance]);
 						assert(pChildInstance != nullptr);
 
 						AddInstance(hProperty, pChildInstance);
@@ -1362,7 +1362,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 					int64_t iInstancesCount = iCard;
 					for (int64_t iInstance = 0; iInstance < iInstancesCount; iInstance++) {
 						if (piInstances[iInstance] != 0) {
-							auto pChildInstance = pModel->getInstance(piInstances[iInstance]);
+							auto pChildInstance = pModel->getInstanceByOwlInstance(piInstances[iInstance]);
 							assert(pChildInstance != nullptr);
 
 							AddInstance(hProperty, pChildInstance);
@@ -2048,8 +2048,8 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	switch (uiCommand) {
 		case ID_INSTANCES_ENABLE_ALL:
 		{
-			for (auto pInstance : pModel->getInstances()) {
-				pInstance->setEnable(true);
+			for (auto pInstance2 : pModel->getInstances()) {
+				pInstance2->setEnable(true);
 			}
 
 			getController()->onInstancesEnabledStateChanged(this);
