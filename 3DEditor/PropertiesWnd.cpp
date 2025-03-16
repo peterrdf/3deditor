@@ -1668,7 +1668,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);//#todo
+			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
 
 			/*
 			* G
@@ -1684,7 +1684,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);//#todo
+			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
 
 			/*
 			* B
@@ -1700,7 +1700,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 			/*
 			* Notify
 			*/
-			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);//#todo
+			getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), itProperty->second);
 
 			/*
 			* Update UI
@@ -1792,7 +1792,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());//#todo
+				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -1827,7 +1827,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());//#todo
+				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -1862,7 +1862,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				delete[] szNewValues;
 
-				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());//#todo
+				getRDFController()->onInstancePropertyEdited(nullptr/*anonymous*/, pData->GetInstance(), pData->GetProperty());
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
