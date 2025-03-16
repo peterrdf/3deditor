@@ -651,23 +651,6 @@ float CRDFModel::GetBoundingSphereDiameter() const
 	//TRACE(L"\n*** Scale and Center, Bounding sphere II *** =>  %.16f", m_fBoundingSphereDiameter);
 }
 
-void CRDFModel::OnInstancePropertyEdited(_rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/)
-{
-	ASSERT(FALSE); //#todo
-	/*SetFormatSettings(m_iModel);
-
-	map<int64_t, CRDFInstance *>::iterator itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++)
-	{
-		if (itInstance->second->getOwlModel() != m_iModel)
-		{
-			continue;
-		}
-
-		itInstance->second->Recalculate();
-	}*/
-}
-
 /*virtual*/ _texture* CRDFModel::getDefaultTexture() /*override*/
 {
 	if (m_pDefaultTexture == nullptr) {

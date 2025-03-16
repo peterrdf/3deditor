@@ -93,7 +93,6 @@ public: // Methods
 	float GetBoundingSphereDiameter() const;
 
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
-	void OnInstancePropertyEdited(_rdf_instance* pInstance, _rdf_property* pProperty);
 
 	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
 	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }
