@@ -97,7 +97,7 @@ private: // Methods
 	void AddInstance(HTREEITEM hParent, _rdf_instance* pInstance);
 	void AddProperties(HTREEITEM hParent, _rdf_instance* pInstance);
 
-	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
+	void UpdateRootItemsUnreferencedItemsView(HTREEITEM hModel);
 
 	void Clean();
 

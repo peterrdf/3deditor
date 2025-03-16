@@ -103,7 +103,7 @@ public: // Methods
 
 protected: // Methods
 
-	void SetFormatSettings(int64_t iModel) { assert(0); /*#todo*/ }
+	void SetFormatSettings(int64_t /*iModel*/) { assert(0); /*#todo*/ }
 	virtual void PreLoadDRFModel() {}
 	void LoadRDFModel();
 	virtual void PostLoadDRFModel();

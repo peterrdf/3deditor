@@ -183,11 +183,11 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		(pProperty->getType() == OBJECTPROPERTY_TYPE)) {
 		HTREEITEM hModel = m_treeCtrl.GetChildItem(NULL);
 		if (hModel != nullptr) {
-			UpdateRootItemsUnreferencedItemsView(pModel->getOwlModel(), hModel);
+			UpdateRootItemsUnreferencedItemsView(hModel);
 		} else {
 			ASSERT(FALSE);
 		}
-	} // if ((m_nCurrSort == ID_SORTING_INSTANCES_NOT_REFERENCED) && ...
+	}
 
 	auto itInstance2Properties = m_mapInstance2Properties.find(pInstance->getOwlInstance());
 	if (itInstance2Properties == m_mapInstance2Properties.end()) {
@@ -1597,90 +1597,61 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 	} // while (iPropertyInstance != 0)
 }
 
-void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel)
+void CDesignTreeView::UpdateRootItemsUnreferencedItemsView(HTREEITEM hModel)
 {
-	ASSERT(iModel != 0);
 	ASSERT(hModel != nullptr);
-	ASSERT(FALSE); //#todo
 
-	//auto pModel = GetModel();
-	//if (pModel == nullptr)
-	//{
-	//	ASSERT(false);
+	vector<_rdf_instance*> vecInstances;
+	vector<HTREEITEM> vecObsoleteItems;
 
-	//	return;
-	//}
+	HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
+	while (hItem != nullptr) {
+		auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
+		ASSERT(pItem != nullptr);
+		ASSERT(pItem->GetType() == enumItemType::Instance);
 
-	//auto& mapInstances = pModel->GetInstances();
+		auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
+		ASSERT(pInstanceItem != nullptr);
 
-	//vector<_rdf_instance*> vecInstances;
-	//vector<HTREEITEM> vecObsoleteItems;
+		if (pInstanceItem->GetInstance()->getGeometry()->isReferenced()) {
+			vecObsoleteItems.push_back(hItem);
+		} else {
+			vecInstances.push_back(pInstanceItem->GetInstance());
+		}
 
-	//HTREEITEM hItem = m_treeCtrl.GetChildItem(hModel);
-	//while (hItem != nullptr)
-	//{
-	//	auto pItem = (CRDFItem *)m_treeCtrl.GetItemData(hItem);
-	//	ASSERT(pItem != nullptr);
-	//	ASSERT(pItem->GetType() == enumItemType::Instance);
+		hItem = m_treeCtrl.GetNextSiblingItem(hItem);
+	} // while (hChild != nullptr)
 
-	//	auto pInstanceItem = dynamic_cast<CRDFInstanceItem *>(pItem);
-	//	ASSERT(pInstanceItem != nullptr);
+	/*
+	* Delete the items with references
+	*/
+	for (int64_t iItem = 0; iItem < (int64_t)vecObsoleteItems.size(); iItem++) {
+		RemoveItemData(vecObsoleteItems[iItem]);
 
-	//	if (pInstanceItem->GetInstance()->isReferenced())
-	//	{
-	//		vecObsoleteItems.push_back(hItem);
-	//	}
-	//	else
-	//	{
-	//		vecInstances.push_back(pInstanceItem->GetInstance());
-	//	}
+		vector<HTREEITEM> vecDescendants;
+		GetDescendants(vecObsoleteItems[iItem], vecDescendants);
 
-	//	hItem = m_treeCtrl.GetNextSiblingItem(hItem);
-	//} // while (hChild != nullptr)
+		for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++) {
+			RemoveItemData(vecDescendants[iDescendant]);
+		}
 
-	///*
-	//* Delete the items with references
-	//*/
-	//for (int64_t iItem = 0; iItem < (int64_t)vecObsoleteItems.size(); iItem++)
-	//{
-	//	RemoveItemData(vecObsoleteItems[iItem]);
+		m_treeCtrl.DeleteItem(vecObsoleteItems[iItem]);
+	} // for (int64_t iItem = ...
 
-	//	vector<HTREEITEM> vecDescendants;
-	//	GetDescendants(vecObsoleteItems[iItem], vecDescendants);
+	/*
+	* Add the missing items without references
+	*/
+	for (auto pInstance : getRDFModel()->getInstances()) {
+		if (pInstance->getGeometry()->isReferenced()) {
+			continue;
+		}
 
-	//	for (size_t iDescendant = 0; iDescendant < vecDescendants.size(); iDescendant++)
-	//	{
-	//		RemoveItemData(vecDescendants[iDescendant]);
-	//	}
+		if (find(vecInstances.begin(), vecInstances.end(), pInstance) != vecInstances.end()) {
+			continue;
+		}
 
-	//	m_treeCtrl.DeleteItem(vecObsoleteItems[iItem]);
-	//} // for (int64_t iItem = ...
-
-	///*
-	//* Add the missing items without references
-	//*/
-	//auto itRFDInstances = mapInstances.begin();
-	//for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
-	//{
-	//	_rdf_instance * pInstance = itRFDInstances->second;
-
-	//	if (pInstance->isReferenced())
-	//	{
-	//		continue;
-	//	}
-
-	//	if (pInstance->getOwlModel() != iModel)
-	//	{
-	//		continue;
-	//	}
-
-	//	if (find(vecInstances.begin(), vecInstances.end(), pInstance) != vecInstances.end())
-	//	{
-	//		continue;
-	//	}
-
-	//	AddInstance(hModel, pInstance);
-	//} // for (; itRFDInstances != ...
+		AddInstance(hModel, _ptr<_rdf_instance>(pInstance));
+	}
 }
 
 void CDesignTreeView::Clean()
