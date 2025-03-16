@@ -2881,14 +2881,6 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				/*
 				* Compatible instances
 				*/
-				// Moved in CSelectInstanceDialog
-				//_rdf_property * pObjectRDFProperty = dynamic_cast<_rdf_property *>(pProperty);
-				//ASSERT(pObjectRDFProperty != nullptr);
-
-				// Moved in CSelectInstanceDialog
-				//vector<int64_t> vecCompatibleInstances;
-				//pModel->GetCompatibleInstances(pInstance, pObjectRDFProperty, vecCompatibleInstances);
-
 				int64_t iValuesCount = iCard;
 				for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 					CRDFInstanceObjectProperty* pInstanceObjectProperty = nullptr;
