@@ -37,22 +37,13 @@ public: // Methods
 	virtual void onInstanceSelected(_view* pSender) override;
 	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 
-	// _rdf_view #todo???????????????????????????
-	//virtual void onInstancePropertySelected(_view* pSender) override;
-	//virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
-	//virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
-	//virtual void onInstancesDeleted(_view* pSender) override;
-	//virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
-
-	// CRDFView	REMOVE/MOVE!!! #todo
-	/*virtual void OnModelChanged() override;
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, _rdf_property * pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
-	virtual void OnInstancesDeleted(CRDFView * pSender) override;
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstancePropertySelected() override;
-	*/
+	// _rdf_view (owner)
+	void onInstancePropertySelected(_view* pSender);
+	void onInstanceCreated(_view* pSender, _rdf_instance* pInstance);
+	void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance);
+	void onInstancesDeleted(_view* pSender);
+	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
+	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
 	// _oglView
 	virtual void _preDraw() override;
@@ -88,11 +79,12 @@ private: // Methods
 	void DrawTangentVectors(_model* pModel);
 	void DrawBiNormalVectors(_model* pModel);
 
-	void DrawNavigatorModelSelectionBuffers(
+	//#todo
+	/*void DrawNavigatorModelSelectionBuffers(
 		_model* pM,
 		int iViewportX, int iViewportY,
 		int iViewportWidth, int iViewportHeight,
-		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
+		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);*/
 	
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();

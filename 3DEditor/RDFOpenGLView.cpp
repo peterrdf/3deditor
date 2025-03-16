@@ -8,10 +8,8 @@
 
 #include "Resource.h"
 
-// ------------------------------------------------------------------------------------------------
 extern BOOL TEST_MODE;
 
-// ------------------------------------------------------------------------------------------------
 wchar_t FACE_SELECTION_IBO[] = L"FACE_SELECTION_IBO";
 wchar_t BOUNDING_BOX_VAO[] = L"BOUNDING_BOX_VAO";
 wchar_t BOUNDING_BOX_VBO[] = L"BOUNDING_BOX_VBO";
@@ -28,7 +26,6 @@ wchar_t TOOLTIP_INFORMATION[] = L"Information";
 
 int NAVIGATION_VIEW_LENGTH = 200;
 
-// ------------------------------------------------------------------------------------------------
 CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglView()
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
@@ -54,7 +51,6 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 		true);
 }
 
-// ------------------------------------------------------------------------------------------------
 CRDFOpenGLView::~CRDFOpenGLView()
 {
 }
@@ -70,29 +66,64 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::onInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
+	if (pSender == this) {
+		return;
+	}
+
 	_load();
 }
 
-//#todo????????????????
-///*virtual*/ void CRDFOpenGLView::onInstancePropertySelected(_view* pSender) /*override*/
-//{
-//
-//}
-//
-///*virtual*/ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
-//{
-//
-//}
-//
-///*virtual*/ void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
-//{
-//
-//}
-//
-///*virtual*/ void CRDFOpenGLView::onInstancesDeleted(_view* pSender) /*override*/
-//{
-//
-//}
+void CRDFOpenGLView::onInstancePropertySelected(_view* pSender)
+{
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+}
+
+void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance)
+{
+	if (pSender == this) {
+		return;
+	}
+
+	_load();
+}
+
+void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance)
+{
+	if (pSender == this) {
+		return;
+	}
+
+	_load();
+}
+
+void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
+{
+	if (pSender == this) {
+		return;
+	}
+
+	_load();
+}
+
+void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance)
+{
+	if (pSender == this) {
+		return;
+	}
+
+	_load();
+}
+
+void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty)
+{
+	if (pSender == this) {
+		return;
+	}
+
+	_load();
+}
 
 /*virtual*/ void CRDFOpenGLView::_preDraw() /*override*/
 {
@@ -105,8 +136,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
-	for (auto pModel : getController()->getModels())
-	{
+	for (auto pModel : getController()->getModels()) {
 		DrawBoundingBoxes(pModel);
 		DrawNormalVectors(pModel);
 		DrawTangentVectors(pModel);
@@ -118,8 +148,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_drawBuffers() /*override*/
 {
-	if (TEST_MODE)
-	{
+	if (TEST_MODE) {
 		return;
 	}
 
@@ -130,45 +159,42 @@ CRDFOpenGLView::~CRDFOpenGLView()
 
 /*virtual*/ void CRDFOpenGLView::_onMouseMove(const CPoint& point) /*override*/
 {
-	if (m_pPointFaceFrameBuffer->isInitialized())
-	{
+	if (m_pPointFaceFrameBuffer->isInitialized()) {
 		int iWidth = 0;
 		int iHeight = 0;
-		
+
 		BOOL bResult = m_pOGLContext->makeCurrent();
 		VERIFY(bResult);
-		
+
 		CRect rcClient;
 		m_pWnd->GetClientRect(&rcClient);
-		
+
 		iWidth = rcClient.Width();
 		iHeight = rcClient.Height();
-		
+
 		GLubyte arPixels[4];
 		memset(arPixels, 0, sizeof(GLubyte) * 4);
-		
+
 		double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
 		double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-		
-		m_pPointFaceFrameBuffer->bind();		
+
+		m_pPointFaceFrameBuffer->bind();
 		glReadPixels(
 			(GLint)dX,
 			(GLint)dY,
 			1, 1,
 			GL_RGBA,
 			GL_UNSIGNED_BYTE,
-			arPixels);		
+			arPixels);
 		m_pPointFaceFrameBuffer->unbind();
-		
+
 		int64_t iPointedFace = -1;
-		if (arPixels[3] != 0)
-		{
+		if (arPixels[3] != 0) {
 			iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 			assert(m_pPointFaceFrameBuffer->encoding().find(iPointedFace) != m_pPointFaceFrameBuffer->encoding().end());
 		}
-		
-		if (m_iPointedFace != iPointedFace)
-		{
+
+		if (m_iPointedFace != iPointedFace) {
 			m_iPointedFace = iPointedFace;
 			m_iNearestVertex = -1;
 
@@ -177,39 +203,33 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::SetRotation(float fX, float fY, BOOL bRedraw)
 {
 	m_fXAngle = fX;
 	m_fYAngle = fY;
 
-	if (bRedraw)
-	{
+	if (bRedraw) {
 		_redraw();
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::GetRotation(float& fX, float& fY)
 {
 	fX = m_fXAngle;
 	fY = m_fYAngle;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
 {
 	m_fXTranslation = fX;
 	m_fYTranslation = fY;
 	m_fZTranslation = fZ;
 
-	if (bRedraw)
-	{
+	if (bRedraw) {
 		_redraw();
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
 {
 	fX = m_fXTranslation;
@@ -217,7 +237,6 @@ void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
 	fZ = m_fZTranslation;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 {
 	//if (enEvent == enumMouseEvent::LBtnUp)
@@ -285,193 +304,17 @@ void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint po
 	//} // switch (enEvent)
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	_onMouseWheel(nFlags, zDelta, pt);
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	_onKeyUp(nChar, nRepCnt, nFlags);
 }
 
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnModelChanged() /*override*/
-//{
-//	CWaitCursor waitCursor;	
-//
-//	BOOL bResult = m_pOGLContext->makeCurrent();
-//	VERIFY(bResult);
-//
-//	// OpenGL buffers
-//	m_oglBuffers.clear();
-//
-//	m_pSelectInstanceFrameBuffer->encoding().clear();
-//	m_pPointedInstance = nullptr;
-//	m_pSelectedInstance = nullptr;
-//
-//	m_iPointedFace = -1;
-//	m_iNearestVertex = -1;
-//	m_pPointFaceFrameBuffer->encoding().clear();
-//
-//	m_pNavigatorSelectionFrameBuffer->encoding().clear();
-//	m_pNavigatorPointedInstance = nullptr;
-//
-//	auto pController = GetController();
-//	if (pController == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	auto pModel = pController->GetModel();
-//	if (pModel == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	float fXmin = -1.f;
-//	float fXmax = 1.f;
-//	float fYmin = -1.f;
-//	float fYmax = 1.f;
-//	float fZmin = -1.f;
-//	float fZmax = 1.f;
-//	pModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-//
-//	/*
-//	* Center the World
-//	*/
-//	m_fXTranslation = fXmin;
-//	m_fXTranslation += (fXmax - fXmin) / 2.f;
-//	m_fXTranslation = -m_fXTranslation;
-//
-//	m_fYTranslation = fYmin;
-//	m_fYTranslation += (fYmax - fYmin) / 2.f;
-//	m_fYTranslation = -m_fYTranslation;
-//
-//	m_fZTranslation = fZmin;
-//	m_fZTranslation += (fZmax - fZmin) / 2.f;
-//	m_fZTranslation = -m_fZTranslation;
-//	m_fZTranslation -= (pModel->GetBoundingSphereDiameter() * 2.f);
-//
-//	m_fScaleFactor = pModel->GetBoundingSphereDiameter();
-//
-//	LoadModel(pModel);
-//	LoadModel(pController->GetSceneModel());
-//	LoadModel(pController->GetNavigatorModel());
-//	
-//	_redraw();
-//}
 
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstancePropertyEdited(CRDFInstance* /*pInstance*/, _rdf_property* /*pProperty*/) /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	//OnModelChanged();
-//
-//	///*
-//	//* Restore the selection
-//	//*/
-//	//OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnNewInstanceCreated(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	//OnModelChanged();
-//
-//	///*
-//	//* Restore the selection
-//	//*/
-//	//OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstanceDeleted(CRDFView* /*pSender*/, int64_t /*iInstance*/) /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	//OnModelChanged();
-//
-//	///*
-//	//* Restore the selection
-//	//*/
-//	//OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstancesDeleted(CRDFView* /*pSender*/) /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	//OnModelChanged();
-//
-//	///*
-//	//* Restore the selection
-//	//*/
-//	//OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnMeasurementsAdded(CRDFView* /*pSender*/, CRDFInstance* /*pInstance*/) /*override*/
-//{
-//	/*
-//	* Reload model
-//	*/
-//	OnModelChanged();
-//
-//	/*
-//	* Restore the selection
-//	*/
-//	OnInstanceSelected(nullptr);
-//}
-
-// ------------------------------------------------------------------------------------------------
-///*virtual*/ void CRDFOpenGLView::OnInstanceSelected(CRDFView* pSender) /*override*/
-//{
-//	if (pSender == this)
-//	{
-//		return;
-//	}
-//
-//	if (GetController() == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	auto pSelectedInstance = GetController()->GetSelectedInstance();
-//	if ((pSelectedInstance != nullptr) && (!pSelectedInstance->hasGeometry() || pSelectedInstance->getTriangles().empty()))
-//	{
-//		pSelectedInstance = nullptr;
-//	}
-//
-//	if (m_pSelectedInstance != pSelectedInstance)
-//	{
-//		m_pSelectedInstance = pSelectedInstance;
-//
-//		m_iPointedFace = -1;
-//		m_iNearestVertex = -1;
-//		m_pPointFaceFrameBuffer->encoding().clear();
-//
-//		_redraw();
-//	}
-//}
-
-// ------------------------------------------------------------------------------------------------
 ///*virtual*/ void CRDFOpenGLView::OnInstancePropertySelected() /*override*/
 //{
 //	assert(GetController() != nullptr);
@@ -540,8 +383,7 @@ void CRDFOpenGLView::DrawNavigatorModel(
 	int /*iViewportX*/, int iViewportY,
 	int iViewportWidth, int /*iViewportHeight*/)
 {
-	if (pNavigatorModel == nullptr)
-	{
+	if (pNavigatorModel == nullptr) {
 		return;
 	}
 
@@ -592,18 +434,15 @@ void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pB
 
 void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 {
-	if (pModel == nullptr)
-	{
+	if (pModel == nullptr) {
 		return;
 	}
 
-	if (pModel->isDecoration())
-	{
+	if (pModel->isDecoration()) {
 		return;
 	}
 
-	if (!getShowBoundingBoxes())
-	{
+	if (!getShowBoundingBoxes()) {
 		return;
 	}
 
@@ -620,22 +459,19 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 	bool bIsNew = false;
 	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
 
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
-	}	
-	
+	}
+
 	GLuint iVBO = 0;
 
-	if (bIsNew)
-	{
+	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
-		if ((iVBO == 0) || !bIsNew)
-		{
+		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
 			return;
@@ -645,8 +481,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		m_oglBuffers.setVBOAttributes(m_pOGLProgram);
 
 		GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
-		if ((iIBO == 0) || !bIsNew)
-		{
+		if ((iIBO == 0) || !bIsNew) {
 			assert(false);
 
 			return;
@@ -675,24 +510,20 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
-	else
-	{
+	else {
 		iVBO = m_oglBuffers.getBuffer(BOUNDING_BOX_VBO);
-		if (iVBO == 0)
-		{
+		if (iVBO == 0) {
 			assert(false);
 
 			return;
 		}
 	}
 
-	for (auto pGeometry : pModel->getGeometries())
-	{
+	for (auto pGeometry : pModel->getGeometries()) {
 		assert(pGeometry->getInstances().size() == 1);
 		if ((pGeometry->getBBTransformation() == nullptr) ||
 			(pGeometry->getBBMin() == nullptr) ||
-			(pGeometry->getBBMax() == nullptr))
-		{
+			(pGeometry->getBBMax() == nullptr)) {
 			continue;
 		}
 
@@ -717,7 +548,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		Min4						Min3
 		*/
 
-		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };	
+		_vector3d vecMin1 = { vecBoundingBoxMin.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
 		TransformBBVertex(vecMin1, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		_vector3d vecMin2 = { vecBoundingBoxMax.x, vecBoundingBoxMin.y, vecBoundingBoxMin.z };
@@ -755,7 +586,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		TransformBBVertex(vecMax4, pGeometry->getBBTransformation(), vecVertexBufferOffset, dScaleFactor);
 
 		// X, Y, Z, Nx, Ny, Nz, Tx, Ty
-		vector<float> vecVertices = 
+		vector<float> vecVertices =
 		{
 			(GLfloat)vecMin1.x, (GLfloat)vecMin1.y, (GLfloat)vecMin1.z, 0.f, 0.f, 0.f, 0.f, 0.f,
 			(GLfloat)vecMin2.x, (GLfloat)vecMin2.y, (GLfloat)vecMin2.z, 0.f, 0.f, 0.f, 0.f, 0.f,
@@ -786,27 +617,22 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 
 void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 {
-	if (pModel == nullptr)
-	{
+	if (pModel == nullptr) {
 		return;
 	}
 
-	if (pModel->isDecoration())
-	{
+	if (pModel->isDecoration()) {
 		return;
 	}
 
-	if (!getShowNormalVectors())
-	{
+	if (!getShowNormalVectors()) {
 		return;
-	}	
+	}
 
 	_instance* pSelectedInstance = nullptr;
-	if (getController()->getSelectedInstances().size() == 1)
-	{		
+	if (getController()->getSelectedInstances().size() == 1) {
 		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
-		if (pSelectedInstanceModel == pModel)
-		{
+		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
 	}
@@ -837,8 +663,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 	bool bIsNew = false;
 	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
 
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
@@ -846,13 +671,11 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 
 	GLuint iVBO = 0;
 
-	if (bIsNew)
-	{
+	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
-		if ((iVBO == 0) || !bIsNew)
-		{
+		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
 			return;
@@ -865,11 +688,9 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
-	else
-	{
+	else {
 		iVBO = m_oglBuffers.getBuffer(NORMAL_VECS_VBO);
-		if (iVBO == 0)
-		{
+		if (iVBO == 0) {
 			assert(false);
 
 			return;
@@ -879,30 +700,24 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (pSelectedInstance == nullptr)
-	{
-		for (auto pGeometry : pModel->getGeometries())
-		{
+	if (pSelectedInstance == nullptr) {
+		for (auto pGeometry : pModel->getGeometries()) {
 			assert(pGeometry->getInstances().size() == 1);
-			if (!pGeometry->getInstances()[0]->getEnable())
-			{
+			if (!pGeometry->getInstances()[0]->getEnable()) {
 				continue;
 			}
 
 			auto& vecTriangles = pGeometry->getTriangles();
-			if (vecTriangles.empty())
-			{
+			if (vecTriangles.empty()) {
 				continue;
 			}
 
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -929,24 +744,20 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 			} // for (size_t iTriangle = ...
 		} // for (auto pGeometry : ...
 	} // if (pSelectedInstance == nullptr)
-	else
-	{
+	else {
 		auto pGeometry = pSelectedInstance->getGeometry();
 		assert(pGeometry->getInstances().size() == 1);
 
 		auto& vecTriangles = pGeometry->getTriangles();
 		assert(!vecTriangles.empty());
 
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+		if (m_iPointedFace == -1) {
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -972,16 +783,14 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // if (m_iPointedFace == -1)
-		else
-		{
+		else {
 			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 			for (int64_t iIndex = pTriangle->startIndex();
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
+				iIndex++) {
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1008,8 +817,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 		} // else if (m_iPointedFace == -1)
 	} // else if (pSelectedInstance == nullptr)
 
-	if (!vecVertices.empty())
-	{
+	if (!vecVertices.empty()) {
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
@@ -1025,27 +833,22 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 
 void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 {
-	if (pModel == nullptr)
-	{
+	if (pModel == nullptr) {
 		return;
 	}
 
-	if (pModel->isDecoration())
-	{
+	if (pModel->isDecoration()) {
 		return;
 	}
 
-	if (!getShowTangentVectors())
-	{
+	if (!getShowTangentVectors()) {
 		return;
 	}
 
 	_instance* pSelectedInstance = nullptr;
-	if (getController()->getSelectedInstances().size() == 1)
-	{
+	if (getController()->getSelectedInstances().size() == 1) {
 		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
-		if (pSelectedInstanceModel == pModel)
-		{
+		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
 	}
@@ -1076,8 +879,7 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 	bool bIsNew = false;
 	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(TANGENT_VECS_VAO, bIsNew);
 
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
@@ -1085,13 +887,11 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 
 	GLuint iVBO = 0;
 
-	if (bIsNew)
-	{
+	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(TANGENT_VECS_VBO, bIsNew);
-		if ((iVBO == 0) || !bIsNew)
-		{
+		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
 			return;
@@ -1104,11 +904,9 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
-	else
-	{
+	else {
 		iVBO = m_oglBuffers.getBuffer(TANGENT_VECS_VBO);
-		if (iVBO == 0)
-		{
+		if (iVBO == 0) {
 			assert(false);
 
 			return;
@@ -1118,30 +916,24 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (pSelectedInstance == nullptr)
-	{
-		for (auto pGeometry : pModel->getGeometries())
-		{
+	if (pSelectedInstance == nullptr) {
+		for (auto pGeometry : pModel->getGeometries()) {
 			assert(pGeometry->getInstances().size() == 1);
-			if (!pGeometry->getInstances()[0]->getEnable())
-			{
+			if (!pGeometry->getInstances()[0]->getEnable()) {
 				continue;
 			}
 
 			auto& vecTriangles = pGeometry->getTriangles();
-			if (vecTriangles.empty())
-			{
+			if (vecTriangles.empty()) {
 				continue;
 			}
 
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1168,24 +960,20 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 			} // for (size_t iTriangle = ...
 		} // for (auto pGeometry : ...
 	} // if (pSelectedInstance == nullptr)
-	else
-	{
+	else {
 		auto pGeometry = pSelectedInstance->getGeometry();
 		assert(pGeometry->getInstances().size() == 1);
 
 		auto& vecTriangles = pGeometry->getTriangles();
 		assert(!vecTriangles.empty());
 
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+		if (m_iPointedFace == -1) {
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1211,16 +999,14 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // if (m_iPointedFace == -1)
-		else
-		{
+		else {
 			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 			for (int64_t iIndex = pTriangle->startIndex();
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
+				iIndex++) {
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1247,8 +1033,7 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 		} // else if (m_iPointedFace == -1)
 	} // else if (pSelectedInstance == nullptr)
 
-	if (!vecVertices.empty())
-	{
+	if (!vecVertices.empty()) {
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
@@ -1264,27 +1049,22 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 
 void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 {
-	if (pModel == nullptr)
-	{
+	if (pModel == nullptr) {
 		return;
 	}
 
-	if (pModel->isDecoration())
-	{
+	if (pModel->isDecoration()) {
 		return;
 	}
 
-	if (!getShowBiNormalVectors())
-	{
+	if (!getShowBiNormalVectors()) {
 		return;
 	}
 
 	_instance* pSelectedInstance = nullptr;
-	if (getController()->getSelectedInstances().size() == 1)
-	{
+	if (getController()->getSelectedInstances().size() == 1) {
 		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
-		if (pSelectedInstanceModel == pModel)
-		{
+		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
 	}
@@ -1315,8 +1095,7 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	bool bIsNew = false;
 	GLuint iVAO = m_oglBuffers.getVAOcreateNewIfNeeded(BINORMAL_VECS_VAO, bIsNew);
 
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
@@ -1324,13 +1103,11 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 
 	GLuint iVBO = 0;
 
-	if (bIsNew)
-	{
+	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
 		iVBO = m_oglBuffers.getBufferCreateNewIfNeeded(BINORMAL_VECS_VBO, bIsNew);
-		if ((iVBO == 0) || !bIsNew)
-		{
+		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
 			return;
@@ -1343,11 +1120,9 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
-	else
-	{
+	else {
 		iVBO = m_oglBuffers.getBuffer(BINORMAL_VECS_VBO);
-		if (iVBO == 0)
-		{
+		if (iVBO == 0) {
 			assert(false);
 
 			return;
@@ -1357,30 +1132,24 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	// X, Y, Z, Nx, Ny, Nz, Tx, Ty
 	vector<float> vecVertices;
 
-	if (pSelectedInstance == nullptr)
-	{
-		for (auto pGeometry : pModel->getGeometries())
-		{
+	if (pSelectedInstance == nullptr) {
+		for (auto pGeometry : pModel->getGeometries()) {
 			assert(pGeometry->getInstances().size() == 1);
-			if (!pGeometry->getInstances()[0]->getEnable())
-			{
+			if (!pGeometry->getInstances()[0]->getEnable()) {
 				continue;
 			}
 
 			auto& vecTriangles = pGeometry->getTriangles();
-			if (vecTriangles.empty())
-			{
+			if (vecTriangles.empty()) {
 				continue;
 			}
 
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1407,24 +1176,20 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 			} // for (size_t iTriangle = ...
 		} // for (auto pGeometry : ...
 	} // if (pSelectedInstance == nullptr)
-	else
-	{
+	else {
 		auto pGeometry = pSelectedInstance->getGeometry();
 		assert(pGeometry->getInstances().size() == 1);
 
 		auto& vecTriangles = pGeometry->getTriangles();
 		assert(!vecTriangles.empty());
 
-		if (m_iPointedFace == -1)
-		{
-			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-			{
+		if (m_iPointedFace == -1) {
+			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 				for (int64_t iIndex = pTriangle->startIndex();
 					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-					iIndex++)
-				{
+					iIndex++) {
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1450,16 +1215,14 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
 		} // if (m_iPointedFace == -1)
-		else
-		{
+		else {
 			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 			for (int64_t iIndex = pTriangle->startIndex();
 				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++)
-			{
+				iIndex++) {
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
 				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
@@ -1486,8 +1249,7 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 		} // else if (m_iPointedFace == -1)
 	} // else if (pSelectedInstance == nullptr)
 
-	if (!vecVertices.empty())
-	{
+	if (!vecVertices.empty()) {
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vecVertices.size(), vecVertices.data(), GL_DYNAMIC_DRAW);
 
@@ -1501,41 +1263,42 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	_oglUtils::checkForErrors();
 }
 
-void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
-	_model* pM,
-	int /*iViewportX*/, int iViewportY,
-	int iViewportWidth, int /*iViewportHeight*/,
-	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
-{
-	auto pNavigatorModel = dynamic_cast<CRDFModel*>(pM);
-	if (pNavigatorModel == nullptr)
-	{
-		return;
-	}
+//#todo
+//void CRDFOpenGLView::DrawNavigatorModelSelectionBuffers(
+//	_model* pM,
+//	int /*iViewportX*/, int iViewportY,
+//	int iViewportWidth, int /*iViewportHeight*/,
+//	_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer)
+//{
+//	auto pNavigatorModel = dynamic_cast<CRDFModel*>(pM);
+//	if (pNavigatorModel == nullptr)
+//	{
+//		return;
+//	}
+//
+//	float fXmin = -1.f;
+//	float fXmax = 1.f;
+//	float fYmin = -1.f;
+//	float fYmax = 1.f;
+//	float fZmin = -1.f;
+//	float fZmax = 1.f;
+//	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+//
+//	_prepare(
+//		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
+//		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
+//		fXmin, fXmax,
+//		fYmin, fYmax,
+//		fZmin, fZmax,
+//		true,
+//		false);
+//
+//	//DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
+//}
 
-	float fXmin = -1.f;
-	float fXmax = 1.f;
-	float fYmin = -1.f;
-	float fYmax = 1.f;
-	float fZmin = -1.f;
-	float fZmax = 1.f;
-	pNavigatorModel->GetWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	_prepare(
-		iViewportWidth - NAVIGATION_VIEW_LENGTH, iViewportY,
-		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		true,
-		false);
-
-	//DrawInstancesFrameBuffer(pNavigatorModel, pInstanceSelectionFrameBuffer);
-}
 void CRDFOpenGLView::DrawFacesFrameBuffer()
 {
-	if (getController()->getSelectedInstances().size() != 1)
-	{
+	if (getController()->getSelectedInstances().size() != 1) {
 		return;
 	}
 
@@ -1554,13 +1317,11 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	m_pPointFaceFrameBuffer->create();
 
 	// Selection colors
-	if (m_pPointFaceFrameBuffer->encoding().empty())
-	{
+	if (m_pPointFaceFrameBuffer->encoding().empty()) {
 		auto& vecTriangles = pGeometry->getTriangles();
 		assert(!vecTriangles.empty());
 
-		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++)
-		{
+		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++) {
 			float fR, fG, fB;
 			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
 
@@ -1593,8 +1354,7 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	_oglUtils::checkForErrors();
 
 	GLuint iVAO = m_oglBuffers.findVAO(pGeometry);
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
@@ -1603,15 +1363,13 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	bool bIsNew = false;
 	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
-	if (iIBO == 0)
-	{
+	if (iIBO == 0) {
 		assert(false);
 
 		return;
 	}
 
-	if (bIsNew)
-	{
+	if (bIsNew) {
 		vector<unsigned int> vecIndices(64, 0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
@@ -1627,20 +1385,17 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	auto& vecTriangles = pGeometry->getTriangles();
 	assert(!vecTriangles.empty());
 
-	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++)
-	{
+	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 		auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
 		vector<unsigned int> vecIndices;
 		for (int64_t iIndex = pTriangle->startIndex();
 			iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-			iIndex++)
-		{
+			iIndex++) {
 			vecIndices.push_back(pGeometry->getIndices()[iIndex]);
 		}
 
-		if (!vecIndices.empty())
-		{
+		if (!vecIndices.empty()) {
 			auto itSelectionColor = m_pPointFaceFrameBuffer->encoding().find(iTriangle);
 			assert(itSelectionColor != m_pPointFaceFrameBuffer->encoding().end());
 
@@ -1668,18 +1423,15 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 
 void CRDFOpenGLView::DrawPointedFace()
 {
-	if (!getShowFaces())
-	{
-		return;
-	}
-	
-	if (getController()->getSelectedInstances().size() != 1)
-	{
+	if (!getShowFaces()) {
 		return;
 	}
 
-	if (m_iPointedFace == -1)
-	{
+	if (getController()->getSelectedInstances().size() != 1) {
+		return;
+	}
+
+	if (m_iPointedFace == -1) {
 		return;
 	}
 
@@ -1704,11 +1456,10 @@ void CRDFOpenGLView::DrawPointedFace()
 	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
 	m_pOGLProgram->_setTransparency(1.f);
 
-	_oglUtils::checkForErrors();	
+	_oglUtils::checkForErrors();
 
 	GLuint iVAO = m_oglBuffers.findVAO(pGeometry);
-	if (iVAO == 0)
-	{
+	if (iVAO == 0) {
 		assert(false);
 
 		return;
@@ -1717,28 +1468,25 @@ void CRDFOpenGLView::DrawPointedFace()
 	bool bIsNew = false;
 	GLuint iIBO = m_oglBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
-	if (iIBO == 0)
-	{
+	if (iIBO == 0) {
 		assert(false);
 
 		return;
 	}
 
 	glBindVertexArray(iVAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
 
 	vector<unsigned int> vecIndices;
 	for (int64_t iIndex = pTriangle->startIndex();
 		iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-		iIndex++)
-	{
+		iIndex++) {
 		vecIndices.push_back(pGeometry->getIndices()[iIndex]);
 	}
 
-	if (!vecIndices.empty())
-	{
+	if (!vecIndices.empty()) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			(GLsizei)vecIndices.size(),
@@ -1746,14 +1494,13 @@ void CRDFOpenGLView::DrawPointedFace()
 			(void*)(sizeof(GLuint) * 0),
 			pGeometry->VBOOffset());
 
-		if (m_iNearestVertex != -1)
-		{
+		if (m_iNearestVertex != -1) {
 			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
 
 			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
 
 			glDisable(GL_DEPTH_TEST);
-			glEnable(GL_PROGRAM_POINT_SIZE);			
+			glEnable(GL_PROGRAM_POINT_SIZE);
 
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vecIndices.size(), vecIndices.data(), GL_DYNAMIC_DRAW);
 			glDrawElementsBaseVertex(GL_POINTS,
@@ -1761,7 +1508,7 @@ void CRDFOpenGLView::DrawPointedFace()
 				GL_UNSIGNED_INT,
 				(void*)(sizeof(GLuint) * 0),
 				pGeometry->VBOOffset());
-			
+
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_PROGRAM_POINT_SIZE);
 		} // if (m_iNearestVertex != -1)
@@ -1774,7 +1521,7 @@ void CRDFOpenGLView::DrawPointedFace()
 }
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
-{	
+{
 	//if (pM == nullptr)
 	//{
 	//	return pair<int64_t, int64_t>(-1, -1);
@@ -1910,92 +1657,64 @@ void CRDFOpenGLView::PointNavigatorInstance(const CPoint& point)
 
 bool CRDFOpenGLView::SelectNavigatorInstance()
 {
-	if (m_pNavigatorPointedInstance == nullptr)
-	{
+	if (m_pNavigatorPointedInstance == nullptr) {
 		return false;
 	}
 
 	wstring strInstanceName = m_pNavigatorPointedInstance->getName();
-	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label"))
-	{
-		_setView(enumView::Front); 
-		
+	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label")) {
+		_setView(enumView::Front);
+
 		return true;
-	}
-	else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label"))
-	{
+	} else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label")) {
 		_setView(enumView::Back);
 
 		return true;
-	}
-	else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label"))
-	{
+	} else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label")) {
 		_setView(enumView::Top);
 
 		return true;
-	}
-	else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label"))
-	{
+	} else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label")) {
 		_setView(enumView::Bottom);
 
 		return true;
-	}
-	else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label"))
-	{
+	} else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label")) {
 		_setView(enumView::Left);
 
 		return true;
-	}
-	else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label"))
-	{
+	} else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label")) {
 		_setView(enumView::Right);
 
 		return true;
-	}
-	else if (strInstanceName == L"#front-top-left")
-	{
+	} else if (strInstanceName == L"#front-top-left") {
 		_setView(enumView::FrontTopLeft);
 
 		return true;
-	}
-	else if (strInstanceName == L"#front-top-right")
-	{
+	} else if (strInstanceName == L"#front-top-right") {
 		_setView(enumView::FrontTopRight);
 
 		return true;
-	}
-	else if (strInstanceName == L"#front-bottom-left")
-	{
+	} else if (strInstanceName == L"#front-bottom-left") {
 		_setView(enumView::FrontBottomLeft);
 
 		return true;
-	}
-	else if (strInstanceName == L"#front-bottom-right")
-	{
+	} else if (strInstanceName == L"#front-bottom-right") {
 		_setView(enumView::FrontBottomRight);
 
 		return true;
-	}
-	else if (strInstanceName == L"#back-top-left")
-	{
+	} else if (strInstanceName == L"#back-top-left") {
 		_setView(enumView::BackTopLeft);
 
 		return true;
-	}
-	else if (strInstanceName == L"#back-top-right")
-	{
+	} else if (strInstanceName == L"#back-top-right") {
 		_setView(enumView::BackTopRight);
 
 		return true;
-	}
-	else if (strInstanceName == L"#back-bottom-left")
-	{
+	} else if (strInstanceName == L"#back-bottom-left") {
 		_setView(enumView::BackBottomLeft);
 
 		return true;
-	}
-	else if (strInstanceName == L"#back-bottom-right")
-	{
+	} else if (strInstanceName == L"#back-bottom-right") {
 		_setView(enumView::BackBottomRight);
 
 		return true;
@@ -2004,255 +1723,253 @@ bool CRDFOpenGLView::SelectNavigatorInstance()
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
 void CRDFOpenGLView::OnMouseMoveEvent(UINT nFlags, const CPoint& point)
 {
-//	auto pController = GetController();
-//	if (pController == nullptr)
-//	{
-//		assert(false);
-//
-//		return;
-//	}
-//
-//	auto pModel = pController->GetModel();
-//	if (pModel == nullptr)
-//	{
-//		return;
-//	}
-//
-//	/*
-//	* Selection
-//	*/
-//	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ((nFlags & MK_MBUTTON) != MK_MBUTTON) && ((nFlags & MK_RBUTTON) != MK_RBUTTON))
-//	{
-//		/*
-//		* Select an instance
-//		*/
-//		if (m_pSelectInstanceFrameBuffer->isInitialized())
-//		{
-//			int iWidth = 0;
-//			int iHeight = 0;
-//
-//			BOOL bResult = m_pOGLContext->makeCurrent();
-//			VERIFY(bResult);
-//
-//			CRect rcClient;
-//			m_pWnd->GetClientRect(&rcClient);
-//
-//			iWidth = rcClient.Width();
-//			iHeight = rcClient.Height();
-//
-//			GLubyte arPixels[4];
-//			memset(arPixels, 0, sizeof(GLubyte) * 4);
-//
-//			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-//			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-//
-//			m_pSelectInstanceFrameBuffer->bind();
-//
-//			glReadPixels(
-//				(GLint)dX,
-//				(GLint)dY,
-//				1, 1,
-//				GL_RGBA,
-//				GL_UNSIGNED_BYTE,
-//				arPixels);
-//
-//			m_pSelectInstanceFrameBuffer->unbind();
-//
-//			CRDFInstance* pPointedInstance = nullptr;
-//			if (arPixels[3] != 0)
-//			{
-//				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-//				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
-//				assert(pPointedInstance != nullptr);
-//			}
-//
-//			if (m_pPointedInstance != pPointedInstance)
-//			{
-//				m_pPointedInstance = pPointedInstance;
-//
-//				_redraw();
-//			}
-//			
-//			if (m_pPointedInstance == nullptr)
-//			{
-//				PointNavigatorInstance(point);
-//			}
-//		} // if (m_pSelectInstanceFrameBuffer->isInitialized())
-//
-//		/*
-//		* Select a face
-//		*/
-//		if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && 
-//			(m_pSelectedInstance != nullptr) && 
-//			m_pSelectedInstance->getEnable())
-//		{
-//			int iWidth = 0;
-//			int iHeight = 0;
-//
-//			BOOL bResult = m_pOGLContext->makeCurrent();
-//			VERIFY(bResult);
-//
-//			CRect rcClient;
-//			m_pWnd->GetClientRect(&rcClient);
-//
-//			iWidth = rcClient.Width();
-//			iHeight = rcClient.Height();
-//
-//			GLubyte arPixels[4];
-//			memset(arPixels, 0, sizeof(GLubyte) * 4);
-//
-//			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-//			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
-//
-//			m_pPointFaceFrameBuffer->bind();
-//
-//			glReadPixels(
-//				(GLint)dX,
-//				(GLint)dY,
-//				1, 1,
-//				GL_RGBA,
-//				GL_UNSIGNED_BYTE,
-//				arPixels);
-//
-//			m_pPointFaceFrameBuffer->unbind();
-//
-//			int64_t iPointedFace = -1;
-//			if (arPixels[3] != 0)
-//			{
-//				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-//				assert(m_pPointFaceFrameBuffer->encoding().find(iPointedFace) != m_pPointFaceFrameBuffer->encoding().end());
-//			}
-//
-//			if (m_iPointedFace != iPointedFace)
-//			{
-//				m_iPointedFace = iPointedFace;
-//				m_iNearestVertex = -1;
-//
-//				_redraw();
-//			}
-//		} // if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && ...
-//	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
-//
-//#ifdef _TOOLTIPS_SUPPORT
-//	if (m_pPointedInstance != nullptr)
-//	{
-//		clock_t timeSpan = clock() - m_tmShowTooltip;
-//		if (timeSpan >= 200)
-//		{
-//			CString strInstanceMetaData = pModel->GetInstanceMetaData(m_pPointedInstance);
-//
-//			GLdouble dX = 0.;
-//			GLdouble dY = 0.;
-//			GLdouble dZ = 0.;
-//			//if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
-//			//{
-//			//	_vector3d vecVertexBufferOffset;
-//			//	GetVertexBufferOffset(pModel->getInstance(), (double*)&vecVertexBufferOffset);
-//
-//			//	auto dScaleFactor = pModel->GetOriginalBoundingSphereDiameter() / 2.;
-//
-//			//	GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-//			//	GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-//			//	GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-//
-//			//	strInstanceMetaData += L"\n\n";
-//			//	strInstanceMetaData += L"X/Y/Z: ";
-//			//	strInstanceMetaData += to_wstring(dWorldX).c_str();
-//			//	strInstanceMetaData += L", ";
-//			//	strInstanceMetaData += to_wstring(dWorldY).c_str();
-//			//	strInstanceMetaData += L", ";
-//			//	strInstanceMetaData += to_wstring(dWorldZ).c_str();
-//
-//			//	if (m_iPointedFace != -1)
-//			//	{
-//			//		strInstanceMetaData += L"\n";
-//			//		strInstanceMetaData += L"Conceptual Face: ";
-//			//		strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
-//
-//			//		float fVertexX = 0.f;
-//			//		float fVertexY = 0.f;
-//			//		float fVertexZ = 0.f;
-//			//		pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
-//			//		if (prVertexIndex.first != -1)
-//			//		{
-//			//			strInstanceMetaData += L"\n";
-//			//			strInstanceMetaData += L"Nearest Vertex: ";
-//			//			strInstanceMetaData += to_wstring(prVertexIndex.first).c_str();
-//			//			strInstanceMetaData += L" (";
-//			//			strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
-//			//			strInstanceMetaData += L")";
-//
-//			//			m_iNearestVertex = prVertexIndex.second;
-//
-//			//			_redraw();
-//			//		}
-//			//	} // if (m_iPointedFace != -1)
-//			//} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
-//
-//			m_tmShowTooltip = clock();
-//
-//			_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
-//		} // if (timeSpan >= ...
-//	} // if (m_pPointedInstance != nullptr)
-//	else
-//	{
-//		_hideTooltip();
-//	}
-//#endif
-//
-//	if (m_ptPrevMousePosition.x == -1)
-//	{
-//		return;
-//	}
-//
-//	/*
-//	* Rotate
-//	*/
-//	if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
-//	{
-//		_rotateMouseLButton(
-//			(float)point.y - (float)m_ptPrevMousePosition.y,
-//			(float)point.x - (float)m_ptPrevMousePosition.x);
-//
-//		m_ptPrevMousePosition = point;
-//
-//		return;
-//	}
-//
-//	/*
-//	* Zoom
-//	*/
-//	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
-//	{
-//		_zoomMouseMButton(point.y - m_ptPrevMousePosition.y);
-//
-//		m_ptPrevMousePosition = point;
-//
-//		return;
-//	}
-//
-//	/*
-//	* Pan
-//	*/
-//	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
-//	{
-//		CRect rcClient;
-//		m_pWnd->GetClientRect(&rcClient);
-//
-//		_panMouseRButton(
-//			((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width(),
-//			((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
-//
-//		m_ptPrevMousePosition = point;
-//
-//		return;
-//	}
+	//	auto pController = GetController();
+	//	if (pController == nullptr)
+	//	{
+	//		assert(false);
+	//
+	//		return;
+	//	}
+	//
+	//	auto pModel = pController->GetModel();
+	//	if (pModel == nullptr)
+	//	{
+	//		return;
+	//	}
+	//
+	//	/*
+	//	* Selection
+	//	*/
+	//	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ((nFlags & MK_MBUTTON) != MK_MBUTTON) && ((nFlags & MK_RBUTTON) != MK_RBUTTON))
+	//	{
+	//		/*
+	//		* Select an instance
+	//		*/
+	//		if (m_pSelectInstanceFrameBuffer->isInitialized())
+	//		{
+	//			int iWidth = 0;
+	//			int iHeight = 0;
+	//
+	//			BOOL bResult = m_pOGLContext->makeCurrent();
+	//			VERIFY(bResult);
+	//
+	//			CRect rcClient;
+	//			m_pWnd->GetClientRect(&rcClient);
+	//
+	//			iWidth = rcClient.Width();
+	//			iHeight = rcClient.Height();
+	//
+	//			GLubyte arPixels[4];
+	//			memset(arPixels, 0, sizeof(GLubyte) * 4);
+	//
+	//			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+	//			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+	//
+	//			m_pSelectInstanceFrameBuffer->bind();
+	//
+	//			glReadPixels(
+	//				(GLint)dX,
+	//				(GLint)dY,
+	//				1, 1,
+	//				GL_RGBA,
+	//				GL_UNSIGNED_BYTE,
+	//				arPixels);
+	//
+	//			m_pSelectInstanceFrameBuffer->unbind();
+	//
+	//			CRDFInstance* pPointedInstance = nullptr;
+	//			if (arPixels[3] != 0)
+	//			{
+	//				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+	//				pPointedInstance = pModel->GetInstanceByID(iInstanceID);
+	//				assert(pPointedInstance != nullptr);
+	//			}
+	//
+	//			if (m_pPointedInstance != pPointedInstance)
+	//			{
+	//				m_pPointedInstance = pPointedInstance;
+	//
+	//				_redraw();
+	//			}
+	//			
+	//			if (m_pPointedInstance == nullptr)
+	//			{
+	//				PointNavigatorInstance(point);
+	//			}
+	//		} // if (m_pSelectInstanceFrameBuffer->isInitialized())
+	//
+	//		/*
+	//		* Select a face
+	//		*/
+	//		if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && 
+	//			(m_pSelectedInstance != nullptr) && 
+	//			m_pSelectedInstance->getEnable())
+	//		{
+	//			int iWidth = 0;
+	//			int iHeight = 0;
+	//
+	//			BOOL bResult = m_pOGLContext->makeCurrent();
+	//			VERIFY(bResult);
+	//
+	//			CRect rcClient;
+	//			m_pWnd->GetClientRect(&rcClient);
+	//
+	//			iWidth = rcClient.Width();
+	//			iHeight = rcClient.Height();
+	//
+	//			GLubyte arPixels[4];
+	//			memset(arPixels, 0, sizeof(GLubyte) * 4);
+	//
+	//			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+	//			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+	//
+	//			m_pPointFaceFrameBuffer->bind();
+	//
+	//			glReadPixels(
+	//				(GLint)dX,
+	//				(GLint)dY,
+	//				1, 1,
+	//				GL_RGBA,
+	//				GL_UNSIGNED_BYTE,
+	//				arPixels);
+	//
+	//			m_pPointFaceFrameBuffer->unbind();
+	//
+	//			int64_t iPointedFace = -1;
+	//			if (arPixels[3] != 0)
+	//			{
+	//				iPointedFace = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+	//				assert(m_pPointFaceFrameBuffer->encoding().find(iPointedFace) != m_pPointFaceFrameBuffer->encoding().end());
+	//			}
+	//
+	//			if (m_iPointedFace != iPointedFace)
+	//			{
+	//				m_iPointedFace = iPointedFace;
+	//				m_iNearestVertex = -1;
+	//
+	//				_redraw();
+	//			}
+	//		} // if ((m_pPointFaceFrameBuffer->isInitialized() != 0) && ...
+	//	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...
+	//
+	//#ifdef _TOOLTIPS_SUPPORT
+	//	if (m_pPointedInstance != nullptr)
+	//	{
+	//		clock_t timeSpan = clock() - m_tmShowTooltip;
+	//		if (timeSpan >= 200)
+	//		{
+	//			CString strInstanceMetaData = pModel->GetInstanceMetaData(m_pPointedInstance);
+	//
+	//			GLdouble dX = 0.;
+	//			GLdouble dY = 0.;
+	//			GLdouble dZ = 0.;
+	//			//if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+	//			//{
+	//			//	_vector3d vecVertexBufferOffset;
+	//			//	GetVertexBufferOffset(pModel->getInstance(), (double*)&vecVertexBufferOffset);
+	//
+	//			//	auto dScaleFactor = pModel->GetOriginalBoundingSphereDiameter() / 2.;
+	//
+	//			//	GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+	//			//	GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+	//			//	GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+	//
+	//			//	strInstanceMetaData += L"\n\n";
+	//			//	strInstanceMetaData += L"X/Y/Z: ";
+	//			//	strInstanceMetaData += to_wstring(dWorldX).c_str();
+	//			//	strInstanceMetaData += L", ";
+	//			//	strInstanceMetaData += to_wstring(dWorldY).c_str();
+	//			//	strInstanceMetaData += L", ";
+	//			//	strInstanceMetaData += to_wstring(dWorldZ).c_str();
+	//
+	//			//	if (m_iPointedFace != -1)
+	//			//	{
+	//			//		strInstanceMetaData += L"\n";
+	//			//		strInstanceMetaData += L"Conceptual Face: ";
+	//			//		strInstanceMetaData += to_wstring(m_iPointedFace).c_str();
+	//
+	//			//		float fVertexX = 0.f;
+	//			//		float fVertexY = 0.f;
+	//			//		float fVertexZ = 0.f;
+	//			//		pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(pModel, dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
+	//			//		if (prVertexIndex.first != -1)
+	//			//		{
+	//			//			strInstanceMetaData += L"\n";
+	//			//			strInstanceMetaData += L"Nearest Vertex: ";
+	//			//			strInstanceMetaData += to_wstring(prVertexIndex.first).c_str();
+	//			//			strInstanceMetaData += L" (";
+	//			//			strInstanceMetaData += to_wstring(prVertexIndex.second).c_str();
+	//			//			strInstanceMetaData += L")";
+	//
+	//			//			m_iNearestVertex = prVertexIndex.second;
+	//
+	//			//			_redraw();
+	//			//		}
+	//			//	} // if (m_iPointedFace != -1)
+	//			//} // if (GetOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ))
+	//
+	//			m_tmShowTooltip = clock();
+	//
+	//			_showTooltip(TOOLTIP_INFORMATION, strInstanceMetaData);
+	//		} // if (timeSpan >= ...
+	//	} // if (m_pPointedInstance != nullptr)
+	//	else
+	//	{
+	//		_hideTooltip();
+	//	}
+	//#endif
+	//
+	//	if (m_ptPrevMousePosition.x == -1)
+	//	{
+	//		return;
+	//	}
+	//
+	//	/*
+	//	* Rotate
+	//	*/
+	//	if ((nFlags & MK_LBUTTON) == MK_LBUTTON)
+	//	{
+	//		_rotateMouseLButton(
+	//			(float)point.y - (float)m_ptPrevMousePosition.y,
+	//			(float)point.x - (float)m_ptPrevMousePosition.x);
+	//
+	//		m_ptPrevMousePosition = point;
+	//
+	//		return;
+	//	}
+	//
+	//	/*
+	//	* Zoom
+	//	*/
+	//	if ((nFlags & MK_MBUTTON) == MK_MBUTTON)
+	//	{
+	//		_zoomMouseMButton(point.y - m_ptPrevMousePosition.y);
+	//
+	//		m_ptPrevMousePosition = point;
+	//
+	//		return;
+	//	}
+	//
+	//	/*
+	//	* Pan
+	//	*/
+	//	if ((nFlags & MK_RBUTTON) == MK_RBUTTON)
+	//	{
+	//		CRect rcClient;
+	//		m_pWnd->GetClientRect(&rcClient);
+	//
+	//		_panMouseRButton(
+	//			((float)point.x - (float)m_ptPrevMousePosition.x) / rcClient.Width(),
+	//			((float)point.y - (float)m_ptPrevMousePosition.y) / rcClient.Height());
+	//
+	//		m_ptPrevMousePosition = point;
+	//
+	//		return;
+	//	}
 }
 
-// ------------------------------------------------------------------------------------------------
 // http://nehe.gamedev.net/article/using_gluunproject/16013/
 bool CRDFOpenGLView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
@@ -2339,8 +2056,7 @@ bool CRDFOpenGLView::GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdou
 	return false;
 }
 
-// ------------------------------------------------------------------------------------------------
-void CRDFOpenGLView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble & dOutX, GLdouble & dOutY, GLdouble & dOutZ) const
+void CRDFOpenGLView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble& dOutX, GLdouble& dOutY, GLdouble& dOutZ) const
 {
 	GLint arViewport[4];
 	GLdouble arModelView[16];
@@ -2354,7 +2070,6 @@ void CRDFOpenGLView::OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLd
 	VERIFY(iResult == GL_TRUE);
 }
 
-// ------------------------------------------------------------------------------------------------
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
 void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)
 {
@@ -2362,7 +2077,7 @@ void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWid
 	m_pWnd->GetClientRect(&rcClient);
 
 	iWidth = rcClient.Width();
-	iHeight = rcClient.Height();	
+	iHeight = rcClient.Height();
 
 	arPixels = (unsigned char*)malloc(iWidth * iHeight * 3);
 
@@ -2372,15 +2087,13 @@ void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWid
 	glReadPixels(0, 0, iWidth, iHeight, GL_RGB, GL_UNSIGNED_BYTE, arPixels);
 
 	unsigned char temp;
-	for (unsigned int i = 0; i < iWidth * iHeight * 3; i += 3)
-	{
+	for (unsigned int i = 0; i < iWidth * iHeight * 3; i += 3) {
 		temp = arPixels[i];
 		arPixels[i] = arPixels[i + 2];
 		arPixels[i + 2] = temp;
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
 bool CRDFOpenGLView::SaveScreenshot(const wchar_t* szFilePath)
 {
