@@ -27,10 +27,8 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	auto pModel = getRDFController()->getModel();
 
 	vector<_rdf_instance*> vecModel;
-	for (auto pInstance : pModel->getInstances())
-	{
-		if (pInstance->getGeometry()->isReferenced())
-		{
+	for (auto pInstance : pModel->getInstances()) {
+		if (pInstance->getGeometry()->isReferenced()) {
 			continue;
 		}
 
@@ -42,8 +40,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	*/
 	sort(vecModel.begin(), vecModel.end(), _instancesComparator());
 
-	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++)
-	{
+	for (size_t iInstance = 0; iInstance < vecModel.size(); iInstance++) {
 		int iItem = m_lcInstances.InsertItem((int)iInstance, vecModel[iInstance]->getUniqueName());
 
 		m_lcInstances.SetItemData(iItem, (DWORD_PTR)vecModel[iInstance]);
@@ -56,8 +53,7 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
 /*virtual*/ void CInstancesDialog::onInstanceSelected(_view* pSender) /*override*/
 {
-	if (pSender == this)
-	{
+	if (pSender == this) {
 		return;
 	}
 
@@ -65,23 +61,20 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 
 	// Unselect
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
-	while (pos)
-	{
+	while (pos) {
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 		m_lcInstances.SetItemState(iItem, 0, LVIS_SELECTED);
 	}
 
 	auto pSelectedInstance = getRDFController()->getSelectedInstance();
-	if (pSelectedInstance == nullptr)
-	{
+	if (pSelectedInstance == nullptr) {
 		return;
 	}
 
 	_ptr<_rdf_instance> rdfInstance(pSelectedInstance);
 
 	auto itInstance2Item = m_mapInstance2Item.find(rdfInstance);
-	if (itInstance2Item != m_mapInstance2Item.end())
-	{
+	if (itInstance2Item != m_mapInstance2Item.end()) {
 		m_lcInstances.EnsureVisible(itInstance2Item->second, TRUE);
 		m_lcInstances.SetItemState(itInstance2Item->second, LVIS_SELECTED, LVIS_SELECTED);
 	}
@@ -111,16 +104,14 @@ void CInstancesDialog::OnSelectedInstanceChanged(NMHDR* /*pNMHDR*/, LRESULT* pRe
 {
 	*pResult = 0;
 
-	if (m_bUpdateInProgress)
-	{
+	if (m_bUpdateInProgress) {
 		return;
 	}
 
 	vector<_rdf_instance*> vecSelectedInstances;
 
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
-	while (pos)
-	{
+	while (pos) {
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
 		_rdf_instance* pInstance = (_rdf_instance*)m_lcInstances.GetItemData(iItem);
@@ -173,8 +164,7 @@ int CInstancesDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rcClient.DeflateRect(10, 10);
 
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_REPORT | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_SHOWSELALWAYS;
-	if (!m_lcInstances.Create(dwViewStyle, rcClient, this, IDC_TREE_INSTANCE_VIEW))
-	{
+	if (!m_lcInstances.Create(dwViewStyle, rcClient, this, IDC_TREE_INSTANCE_VIEW)) {
 		TRACE0("Failed to create Instances list\n");
 
 		return -1; // fail to create
@@ -203,16 +193,14 @@ void CInstancesDialog::OnSize(UINT nType, int cx, int cy)
 
 void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if (point == CPoint(-1, -1))
-	{
+	if (point == CPoint(-1, -1)) {
 		return;
 	}
 
 	vector<_rdf_instance*> vecSelectedInstances;
 
 	POSITION pos = m_lcInstances.GetFirstSelectedItemPosition();
-	while (pos)
-	{
+	while (pos) {
 		int iItem = m_lcInstances.GetNextSelectedItem(pos);
 
 		_rdf_instance* pInstance = (_rdf_instance*)m_lcInstances.GetItemData(iItem);
@@ -225,21 +213,17 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	* Multi selection
 	*/
 
-	if (vecSelectedInstances.size() > 1)
-	{
+	if (vecSelectedInstances.size() > 1) {
 		bool bIsGeometryInstanceSelected = false;
-		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
-		{
-			if (vecSelectedInstances[iInstance]->hasGeometry())
-			{
+		for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++) {
+			if (vecSelectedInstances[iInstance]->hasGeometry()) {
 				bIsGeometryInstanceSelected = true;
 
 				break;
 			}
 		}
 
-		if (bIsGeometryInstanceSelected)
-		{
+		if (bIsGeometryInstanceSelected) {
 			/*
 			* At least one instance has a geometry
 			*/
@@ -250,63 +234,56 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu* pPopup = menu.GetSubMenu(0);
 
 			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
-			if (uiCommand == 0)
-			{
+			if (uiCommand == 0) {
 				return;
 			}
 
-			switch (uiCommand)
-			{
-			case ID_INSTANCES_ENABLE:
-			{
-				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
+			switch (uiCommand) {
+				case ID_INSTANCES_ENABLE:
 				{
-					vecSelectedInstances[iInstance]->setEnable(true);
-				}
-
-				getController()->onInstancesEnabledStateChanged(this);
-			}
-			break;
-
-			case ID_INSTANCES_DISABLE:
-			{
-				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
-				{
-					vecSelectedInstances[iInstance]->setEnable(false);
-				}
-
-				getController()->onInstancesEnabledStateChanged(this);
-			}
-			break;
-
-			case ID_INSTANCES_REMOVE:
-			{
-				vector<_rdf_instance*> vecInstances;
-				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
-				{
-					if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced())
-					{
-						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
-
-						continue;
+					for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++) {
+						vecSelectedInstances[iInstance]->setEnable(true);
 					}
 
-					vecInstances.push_back(vecSelectedInstances[iInstance]);
+					getController()->onInstancesEnabledStateChanged(this);
 				}
+				break;
 
-				getRDFController()->deleteInstances(this, vecInstances);
-			}
-			break;
+				case ID_INSTANCES_DISABLE:
+				{
+					for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++) {
+						vecSelectedInstances[iInstance]->setEnable(false);
+					}
 
-			default:
-			{
-				ASSERT(false);
-			}
-			break;
+					getController()->onInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case ID_INSTANCES_REMOVE:
+				{
+					vector<_rdf_instance*> vecInstances;
+					for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++) {
+						if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced()) {
+							MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+
+							continue;
+						}
+
+						vecInstances.push_back(vecSelectedInstances[iInstance]);
+					}
+
+					getRDFController()->deleteInstances(this, vecInstances);
+				}
+				break;
+
+				default:
+				{
+					ASSERT(false);
+				}
+				break;
 			} // switch (uiCommand)	
 		} // if (bIsGeometryInstanceSelected)
-		else
-		{
+		else {
 			/*
 			* Instances with a geometry
 			*/
@@ -317,37 +294,33 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu* pPopup = menu.GetSubMenu(0);
 
 			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
-			if (uiCommand == 0)
-			{
+			if (uiCommand == 0) {
 				return;
 			}
 
-			switch (uiCommand)
-			{
-			case ID_INSTANCES_REMOVE:
-			{
-				vector<_rdf_instance*> vecInstances;
-				for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++)
+			switch (uiCommand) {
+				case ID_INSTANCES_REMOVE:
 				{
-					if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced())
-					{
-						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+					vector<_rdf_instance*> vecInstances;
+					for (size_t iInstance = 0; iInstance < vecSelectedInstances.size(); iInstance++) {
+						if (vecSelectedInstances[iInstance]->getGeometry()->isReferenced()) {
+							MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
-						continue;
+							continue;
+						}
+
+						vecInstances.push_back(vecSelectedInstances[iInstance]);
 					}
 
-					vecInstances.push_back(vecSelectedInstances[iInstance]);
+					getRDFController()->deleteInstances(this, vecInstances);
 				}
+				break;
 
-				getRDFController()->deleteInstances(this, vecInstances);
-			}
-			break;
-
-			default:
-			{
-				ASSERT(false);
-			}
-			break;
+				default:
+				{
+					ASSERT(false);
+				}
+				break;
 			} // switch (uiCommand)
 		} // else if (bIsGeometryInstanceSelected)
 
@@ -357,115 +330,83 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	/*
 	* Single selection
 	*/
-	if (vecSelectedInstances.size() == 1)
-	{
+	if (vecSelectedInstances.size() == 1) {
 		/*
 		* Instances with a geometry
 		*/
-		if (vecSelectedInstances[0]->hasGeometry())
-		{
+		if (vecSelectedInstances[0]->hasGeometry()) {
 			CMenu menu;
 			VERIFY(menu.LoadMenuW(IDR_POPUP_INSTANCES));
 
 			CMenu* pPopup = menu.GetSubMenu(0);
 
-			if (vecSelectedInstances[0]->getEnable())
-			{
+			if (vecSelectedInstances[0]->getEnable()) {
 				pPopup->CheckMenuItem(ID_INSTANCES_ENABLE, MF_BYCOMMAND | MF_CHECKED);
 			}
 
 			UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
-			if (uiCommand == 0)
-			{
+			if (uiCommand == 0) {
 				return;
 			}
 
-			switch (uiCommand)
-			{
-			case ID_INSTANCES_ZOOM_TO:
-			{
-				getController()->zoomToInstance(vecSelectedInstances[0]);
-			}
-			break;
-
-			case ID_VIEW_ZOOM_OUT:
-			{
-				getController()->zoomOut();
-			}
-			break;
-
-			case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
-			{
-				//#todo
-				/*map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
-				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
+			switch (uiCommand) {
+				case ID_INSTANCES_ZOOM_TO:
 				{
-					if (vecSelectedInstances[0]->getOwlModel() != itRFDInstances->second->getOwlModel())
-					{
-						continue;
-					}
-
-					if (itRFDInstances->second == vecSelectedInstances[0])
-					{
-						itRFDInstances->second->setEnable(true);
-
-						continue;
-					}
-
-					itRFDInstances->second->setEnable(false);
+					getController()->zoomToInstance(vecSelectedInstances[0]);
 				}
+				break;
 
-				getController()->onInstancesEnabledStateChanged();*/
-			}
-			break;
-
-			case ID_INSTANCES_ENABLE_ALL:
-			{
-				//#todo
-				/*map<int64_t, _rdf_instance*>::const_iterator itRFDInstances = mapInstances.begin();
-				for (; itRFDInstances != mapInstances.end(); itRFDInstances++)
+				case ID_VIEW_ZOOM_OUT:
 				{
-					if (vecSelectedInstances[0]->getOwlModel() != itRFDInstances->second->getOwlModel())
-					{
-						continue;
-					}
-
-					if (!itRFDInstances->second->getGeometry()->isReferenced())
-					{
-						itRFDInstances->second->setEnable(true);
-					}
+					getController()->zoomOut();
 				}
+				break;
 
-				getController()->onInstancesEnabledStateChanged();*/
-			}
-			break;
-
-			case ID_INSTANCES_ENABLE:
-			{
-				vecSelectedInstances[0]->setEnable(!vecSelectedInstances[0]->getEnable());
-
-				getController()->onInstancesEnabledStateChanged(this);
-			}
-			break;
-
-			case ID_INSTANCES_REMOVE:
-			{
-				if (vecSelectedInstances[0]->getGeometry()->isReferenced())
+				case ID_INSTANCES_DISABLE_ALL_BUT_THIS:
 				{
-					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+					for (auto pInstance : getRDFModel()->getInstances()) {
+						pInstance->setEnable(pInstance == vecSelectedInstances[0]);
+					}
 
-					return;
+					getController()->onInstancesEnabledStateChanged(this);
 				}
+				break;
 
-				getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
-			}
-			break;
+				case ID_INSTANCES_ENABLE_ALL:
+				{
+					for (auto pInstance : getRDFModel()->getInstances()) {
+						pInstance->setEnable(true);
+					}
 
-			default:
-			{
-				ASSERT(false);
-			}
-			break;
+					getController()->onInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case ID_INSTANCES_ENABLE:
+				{
+					vecSelectedInstances[0]->setEnable(!vecSelectedInstances[0]->getEnable());
+
+					getController()->onInstancesEnabledStateChanged(this);
+				}
+				break;
+
+				case ID_INSTANCES_REMOVE:
+				{
+					if (vecSelectedInstances[0]->getGeometry()->isReferenced()) {
+						MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+
+						return;
+					}
+
+					getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
+				}
+				break;
+
+				default:
+				{
+					ASSERT(false);
+				}
+				break;
 			} // switch (uiCommand)	
 
 			return;
@@ -480,31 +421,28 @@ void CInstancesDialog::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		CMenu* pPopup = menu.GetSubMenu(0);
 
 		UINT uiCommand = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD, point.x, point.y, &m_lcInstances);
-		if (uiCommand == 0)
-		{
+		if (uiCommand == 0) {
 			return;
 		}
 
-		switch (uiCommand)
-		{
-		case ID_INSTANCES_REMOVE:
-		{
-			if (vecSelectedInstances[0]->getGeometry()->isReferenced())
+		switch (uiCommand) {
+			case ID_INSTANCES_REMOVE:
 			{
-				MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
+				if (vecSelectedInstances[0]->getGeometry()->isReferenced()) {
+					MessageBox(L"The instance is referenced and can't be removed.", L"Error", MB_ICONERROR | MB_OK);
 
-				return;
+					return;
+				}
+
+				getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
 			}
+			break;
 
-			getRDFController()->deleteInstance(this, vecSelectedInstances[0]);
-		}
-		break;
-
-		default:
-		{
-			ASSERT(false);
-		}
-		break;
+			default:
+			{
+				ASSERT(false);
+			}
+			break;
 		} // switch (uiCommand)
 		return;
 	} // if (vecSelectedInstances.size() == 1)	
