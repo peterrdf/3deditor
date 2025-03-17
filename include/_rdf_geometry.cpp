@@ -7,7 +7,6 @@
 _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 	: _geometry(owlInstance)
 	, m_pOriginalVertexBuffer(nullptr)
-	, m_bNeedsRefresh(false)
 {
 	calculate();
 
@@ -294,8 +293,6 @@ void _rdf_geometry::recalculate()
 {
 	clean();
 	calculate();
-
-	m_bNeedsRefresh = false;
 }
 
 void _rdf_geometry::setRDFFormatSettings()

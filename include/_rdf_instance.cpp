@@ -3,7 +3,8 @@
 
 // ************************************************************************************************
 _rdf_instance::_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTransformationMatrix)
-	: _instance(iID, pGeometry, pTransformationMatrix)	
+	: _instance(iID, pGeometry, pTransformationMatrix)
+	, m_bNeedsRefresh(true)
 {
 }
 
@@ -15,9 +16,11 @@ _rdf_instance::_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTra
 {
 	_instance::setEnable(bEnable);
 
-	if (getEnable() && getGeometryAs<_rdf_geometry>()->needsRefresh())
+	if (getEnable() && m_bNeedsRefresh)
 	{
 		getGeometryAs<_rdf_geometry>()->recalculate();
+
+		m_bNeedsRefresh = false;
 	}
 }
 
@@ -26,7 +29,7 @@ void _rdf_instance::recalculate()
 	if (!getEnable())
 	{
 		// Reloading on demand
-		getGeometryAs<_rdf_geometry>()->needsRefresh() = true;
+		m_bNeedsRefresh = true;
 
 		return;
 	}

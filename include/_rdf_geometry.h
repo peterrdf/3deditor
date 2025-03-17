@@ -7,7 +7,6 @@ class _rdf_geometry : public _geometry
 private: // Fields
 
     _vertices_f* m_pOriginalVertexBuffer; // Vertices
-    bool m_bNeedsRefresh; // Geometry is out of date
 
 public: // Methods
 
@@ -30,8 +29,4 @@ public: // Methods
 private: // Methods
 
     void setRDFFormatSettings();
-
-public: // Properties
-
-    bool& needsRefresh() { return m_bNeedsRefresh; }
 };

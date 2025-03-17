@@ -115,8 +115,8 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 
 void _rdf_model::recalculate()
 {
-	for (auto pGeometry : getGeometries()) {
-		_ptr<_rdf_geometry>(pGeometry)->recalculate();
+	for (auto pInstance : getInstances()) {
+		_ptr<_rdf_instance>(pInstance)->recalculate();
 	}
 }
 

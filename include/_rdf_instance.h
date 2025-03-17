@@ -9,6 +9,9 @@
 // ************************************************************************************************
 class _rdf_instance : public _instance
 {
+private: // Fields
+
+    bool m_bNeedsRefresh; // Geometry is out of date
 
 public:  // Methods
 
