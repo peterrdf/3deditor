@@ -169,7 +169,7 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CRDFViewerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	m_pModel->Save(lpszPathName);
+	SaveModelW(m_pModel->getOwlModel(), lpszPathName);
 
 	return TRUE;
 }

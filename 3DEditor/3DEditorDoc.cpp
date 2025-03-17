@@ -180,8 +180,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	ASSERT(FALSE);//#todo
-	//m_pModel->Save(lpszPathName);
+	SaveModelW(getModel()->getOwlModel(), lpszPathName);
 
 	return TRUE;
 }
@@ -270,7 +269,6 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
-	ASSERT(FALSE); //#todo
 	//#ifdef _GIS_SUPPORT
 	//	pCmdUI->Enable((m_pModel != nullptr) &&
 	//		(m_pModel->getOwlModel() != 0) &&

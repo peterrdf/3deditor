@@ -47,12 +47,13 @@ public: // Methods
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
+	void ImportModel(const wchar_t* szPath);
+
 #ifdef _DXF_SUPPORT
 	void LoadDXF(const wchar_t* szPath);
 #endif
+
 #ifdef _GIS_SUPPORT
 	void LoadGISModel(const wchar_t* szPath);
-#endif
-	void ImportModel(const wchar_t* szPath);
-	void Save(const wchar_t* szPath);
+#endif	
 };

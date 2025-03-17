@@ -289,6 +289,11 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	}
 }
 
+void CRDFModel::ImportModel(const wchar_t* szPath)
+{
+	Load(szPath, false);
+}
+
 #ifdef _DXF_SUPPORT
 void CRDFModel::LoadDXF(const wchar_t* /*szPath*/)
 {
@@ -354,13 +359,3 @@ void CRDFModel::LoadGISModel(const wchar_t* /*szPath*/)
 }
 #endif // _GIS_SUPPORT
 
-void CRDFModel::ImportModel(const wchar_t* szPath)
-{
-	Load(szPath, false);
-}
-
-void CRDFModel::Save(const wchar_t* /*szPath*/)
-{
-	ASSERT(0);//#todo
-	//SaveModelW(m_iModel, szPath);
-}
