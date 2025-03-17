@@ -20,6 +20,151 @@ _rdf_model::_rdf_model()
 	clean();
 }
 
+/*virtual*/ void _rdf_model::scale() /*override*/
+{
+	// World
+	m_dOriginalBoundingSphereDiameter = 2.;
+	m_fBoundingSphereDiameter = 2.f;
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	for (auto pGeometry : getGeometries()) {
+		if (!pGeometry->hasGeometry() ||
+			pGeometry->ignoreBB()) {
+			continue;
+		}
+
+		_ptr<_rdf_geometry>(pGeometry)->loadOriginalData();
+
+		for (auto pInstance : pGeometry->getInstances()) {
+			if (!pInstance->getEnable()) {
+				continue;
+			}
+
+			pGeometry->calculateBB(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	} // for (auto pGeometry : ...
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX)) {
+		// TODO: new status bar for messages
+		return;
+	}
+
+	// World
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
+
+	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale I, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+
+	// Scale
+	for (auto pGeometry : getGeometries()) {
+		if (!pGeometry->hasGeometry()) {
+			continue;
+		}
+
+		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
+	}
+
+	// Min/Max
+	m_fXmin = FLT_MAX;
+	m_fXmax = -FLT_MAX;
+	m_fYmin = FLT_MAX;
+	m_fYmax = -FLT_MAX;
+	m_fZmin = FLT_MAX;
+	m_fZmax = -FLT_MAX;
+
+	int64_t iEnabledInstances = 0;
+	for (auto pGeometry : getGeometries()) {
+		if (!pGeometry->hasGeometry()
+			|| pGeometry->ignoreBB() ||
+			!pGeometry->getShow()) {
+			continue;
+		}
+
+		for (auto pInstance : pGeometry->getInstances()) {
+			if (!pInstance->getEnable()) {
+				continue;
+			}
+
+			iEnabledInstances++;
+
+			pGeometry->calculateBB(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+	}
+
+	// Special case: all instances are disabled
+	if (iEnabledInstances == 0) {
+		for (auto pGeometry : getGeometries()) {
+			if (!pGeometry->hasGeometry()
+				|| pGeometry->ignoreBB() ||
+				!pGeometry->getShow()) {
+				continue;
+			}
+
+			for (auto pInstance : pGeometry->getInstances()) {
+				pGeometry->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+		}
+	} // if (iEnabledInstances == 0)
+
+	if ((m_fXmin == FLT_MAX) ||
+		(m_fXmax == -FLT_MAX) ||
+		(m_fYmin == FLT_MAX) ||
+		(m_fYmax == -FLT_MAX) ||
+		(m_fZmin == FLT_MAX) ||
+		(m_fZmax == -FLT_MAX)) {
+		// TODO: new status bar for messages
+		return;
+	}
+
+	// World
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
+		m_fXmin,
+		m_fXmax,
+		m_fYmin,
+		m_fYmax,
+		m_fZmin,
+		m_fZmax);
+	TRACE(L"\n*** Scale II, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+}
+
 void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 {
 	assert((szPath != nullptr) && (wcslen(szPath) > 0));

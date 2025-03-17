@@ -29,6 +29,7 @@ public:  // Methods
 	virtual ~_rdf_model();
 
 	// _model
+	virtual void scale() override;
 	virtual OwlModel getOwlModel() const override { return m_owlModel; }
 
 	void attachModel(const wchar_t* szPath, OwlModel owlModel);

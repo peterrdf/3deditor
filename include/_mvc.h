@@ -96,7 +96,7 @@ public: // Methods
         return dynamic_cast<T*>(this);
     }
 
-    void scale();
+    virtual void scale();
     virtual void zoomTo(_instance* pInstance);
     virtual void zoomToInstances(const set<_instance*>& setInstances);
     virtual void zoomOut();

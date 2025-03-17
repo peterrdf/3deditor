@@ -27,7 +27,7 @@ _model::_model()
     clean();
 }
 
-void _model::scale()
+/*virtual*/ void _model::scale()
 {
     // World
     m_dOriginalBoundingSphereDiameter = 2.;

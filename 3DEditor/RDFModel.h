@@ -55,6 +55,4 @@ public: // Methods
 #endif
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
-
-	virtual void ScaleAndCenter(bool bLoadingModel = false);
 };
