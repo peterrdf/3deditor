@@ -66,48 +66,18 @@ public: // Methods
 
 private: // Methods
 
-	//#todo
-	/*void DrawNavigatorModel(
-		CRDFModel* pNavigatorModel,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight);*/
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box for each 3D object
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
 	void DrawBoundingBoxes(_model* pModel);
 	void DrawNormalVectors(_model* pModel);
 	void DrawTangentVectors(_model* pModel);
 	void DrawBiNormalVectors(_model* pModel);
-
-	//#todo
-	/*void DrawNavigatorModelSelectionBuffers(
-		_model* pM,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight,
-		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);*/
 	
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
-	void PointNavigatorInstance(const CPoint& point);
-	bool SelectNavigatorInstance();
-
-	// --------------------------------------------------------------------------------------------
-	// Handler
-	void OnMouseMoveEvent(UINT nFlags, const CPoint& point);
-
-	// --------------------------------------------------------------------------------------------
-	// Screen -> Open GL coordinates
-	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Wrapper for gluProject
-	void OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble & dOutX, GLdouble & dOutY, GLdouble & dOutZ) const;
 
 public:
 
-	// --------------------------------------------------------------------------------------------
 	// https://community.khronos.org/t/taking-screenshots-how-to/19154/3
 	void TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight);
 	bool SaveScreenshot(const wchar_t* szFilePath);
