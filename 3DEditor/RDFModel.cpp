@@ -147,17 +147,6 @@ CRDFModel::CRDFModel()
 	, m_iModel(0)
 	, m_bExternalModel(false)
 	, m_mapInstances()
-	, m_dVertexBuffersOffsetX(0.)
-	, m_dVertexBuffersOffsetY(0.)
-	, m_dVertexBuffersOffsetZ(0.)
-	, m_dOriginalBoundingSphereDiameter(2.)
-	, m_fXmin(-1.f)
-	, m_fXmax(1.f)
-	, m_fYmin(-1.f)
-	, m_fYmax(1.f)
-	, m_fZmin(-1.f)
-	, m_fZmax(1.f)
-	, m_fBoundingSphereDiameter(1.f)
 	, m_pDefaultTexture(nullptr)
 	, m_pTextBuilder(new CTextBuilder())
 {
@@ -417,34 +406,7 @@ _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 	return pInstance;*/
 }
 
-//void CRDFModel::GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const
-//{
-//	dVertexBuffersOffsetX = m_dVertexBuffersOffsetX;
-//	dVertexBuffersOffsetY = m_dVertexBuffersOffsetY;
-//	dVertexBuffersOffsetZ = m_dVertexBuffersOffsetZ;
-//}
-
-//double CRDFModel::GetOriginalBoundingSphereDiameter() const
-//{
-//	return m_dOriginalBoundingSphereDiameter;
-//}
-
-//void CRDFModel::GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
-//{
-//	fXmin = m_fXmin;
-//	fXmax = m_fXmax;
-//	fYmin = m_fYmin;
-//	fYmax = m_fYmax;
-//	fZmin = m_fZmin;
-//	fZmax = m_fZmax;
-//}
-
-//float CRDFModel::GetBoundingSphereDiameter() const
-//{
-//	return m_fBoundingSphereDiameter;
-//}
-
-/*virtual*/ void CRDFModel::ScaleAndCenter(bool bLoadingModel/* = false*/)
+/*virtual*/ void CRDFModel::ScaleAndCenter(bool /*bLoadingModel = false*/)
 {
 	ASSERT(FALSE);//#todo
 	//ProgressStatus stat(L"Calculate scene sizes...");
