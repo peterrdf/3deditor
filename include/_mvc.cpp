@@ -670,7 +670,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
     cleanSelection();
 
-    auto pInstance = getModels()[0]->loadInstance(iInstance);
+    auto pInstance = getModel()->loadInstance(iInstance);
 
     auto itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {

@@ -24,26 +24,26 @@ class CRDFModel : public _rdf_model
 {
 	friend class CLoadTask;
 
-protected: // Fields
+private: // Fields
 
-	// Model
-	bool m_bExternalModel;
-
-	// Support for textures
 	_texture* m_pDefaultTexture;
-
-	// Support for text
-	CTextBuilder* m_pTextBuilder;
 
 public: // Methods
 
 	CRDFModel();
-	virtual ~CRDFModel();	
+	virtual ~CRDFModel();
 
-	virtual _instance* loadInstance(int64_t /*iInstance*/) override { ASSERT(FALSE); return nullptr; } //#todo
+public: // Methods
 
-	// _rdf_model
+	// _model
 	virtual _texture* getDefaultTexture() override;
+
+protected: // Methods
+
+	// _model
+	virtual void clean(bool bCloseModel = true) override;
+
+public: // Methods
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
@@ -57,63 +57,5 @@ public: // Methods
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
 
-	_rdf_instance* AddNewInstance(int64_t pThing);
-
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
-
-protected: // Methods
-
-	void Clean();
-
-	OwlInstance Translate(
-		OwlInstance iInstance, 
-		double dX, double dY, double dZ,
-		double d11, double d22, double d33);
-	OwlInstance Scale(OwlInstance iInstance, double dFactor);
-	OwlInstance Rotate(
-		OwlInstance iInstance, 
-		double alpha, double beta, double gamma);
 };
-
-// ************************************************************************************************
-class CSceneRDFModel : public CRDFModel
-{
-
-public: // Methods
-
-	CSceneRDFModel();
-	virtual ~CSceneRDFModel();
-
-	void TranslateModel(float fX, float fY, float fZ);
-
-	// CRDFModel
-	virtual void CreateDefaultModel() override;
-	virtual void ScaleAndCenter(bool /*bLoadingModel = false*/) override {};
-
-protected: // Methods
-
-	// CRDFModel
-	virtual void PostLoadDRFModel() /*override*/;//#todo
-
-	void CreateCoordinateSystem();
-};
-
-// ************************************************************************************************
-class CNavigatorRDFModel : public CSceneRDFModel
-{
-
-public: // Methods
-
-	CNavigatorRDFModel();
-	virtual ~CNavigatorRDFModel();
-
-	virtual void CreateDefaultModel() override;
-
-protected: // Methods
-
-private: // Methods
-
-	void CreateNaigator();
-	void CreateNaigatorLabels();
-};
-

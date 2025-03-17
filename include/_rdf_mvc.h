@@ -37,6 +37,7 @@ protected:
 
 	// _model
 	virtual void addInstance(_instance* pInstance) override;
+	virtual _instance* loadInstance(int64_t /*iInstance*/) override { assert(false); return nullptr; }
 	virtual void clean(bool bCloseModel = true) override;
 
 	void loadClasses();
