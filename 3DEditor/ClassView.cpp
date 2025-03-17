@@ -157,7 +157,7 @@ void CClassView::ClassesAlphabeticalView()
 
 	auto pModel = GetModel();
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	// RDF Classes => Name : OwlClass
 	map<wstring, OwlClass> mapName2Class;
@@ -189,7 +189,7 @@ void CClassView::ClassesHierarchicalView()
 
 	auto pModel = GetModel();
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	vector<OwlClass> vecRootClasses;
 	for (auto itClass = mapClasses.begin();
@@ -219,7 +219,7 @@ void CClassView::PropertiesAlphabeticalView()
 
 	auto pModel = GetModel();
 
-	auto& mapProperties = pModel->GetProperties();
+	auto& mapProperties = pModel->getProperties();
 
 	// RDF Property => Name : Instance
 	map<wstring, OwlClass> mapName2Class;
@@ -365,7 +365,7 @@ HTREEITEM CClassView::AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddPa
 
 	auto pModel = GetModel();
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	auto itClass = mapClasses.find(owlClass);
 	ASSERT(itClass != mapClasses.end());
@@ -401,8 +401,8 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 
 	auto pModel = GetModel();
 
-	auto& mapClasses = pModel->GetClasses();
-	auto& mapProperties = pModel->GetProperties();
+	auto& mapClasses = pModel->getClasses();
+	auto& mapProperties = pModel->getProperties();
 
 	auto itClass = mapClasses.find(owlClass);
 	ASSERT(itClass != mapClasses.end());
@@ -410,7 +410,7 @@ void CClassView::AddProperties(HTREEITEM hParent, OwlClass owlClass)
 	auto pClass = itClass->second;
 
 	vector<OwlClass> vecAncestors;
-	pModel->GetClassAncestors(pClass->getOwlClass(), vecAncestors);
+	pModel->getClassAncestors(pClass->getOwlClass(), vecAncestors);
 
 	vecAncestors.push_back(pClass->getOwlClass());
 
@@ -560,7 +560,7 @@ void CClassView::AddChildClasses(HTREEITEM hParent, OwlClass owlClass)
 
 	auto pModel = GetModel();
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	auto itParentRDFClass = mapClasses.find(owlClass);
 	ASSERT(itParentRDFClass != mapClasses.end());

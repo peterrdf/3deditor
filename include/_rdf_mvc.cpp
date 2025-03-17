@@ -8,6 +8,8 @@
 _rdf_model::_rdf_model()
 	: _model()
 	, m_mapInstances()
+	, m_mapClasses()
+	, m_mapProperties()
 	, m_mapInstanceDefaultState()
 {
 }
@@ -30,7 +32,186 @@ _rdf_model::_rdf_model()
 	_model::clean(bCloseModel);
 
 	m_mapInstances.clear();
+
+	auto itClasses = m_mapClasses.begin();
+	for (; itClasses != m_mapClasses.end(); itClasses++) {
+		delete itClasses->second;
+	}
+	m_mapClasses.clear();
+
+	auto itProperty = m_mapProperties.begin();
+	for (; itProperty != m_mapProperties.end(); itProperty++) {
+		delete itProperty->second;
+	}
+	m_mapProperties.clear();
+
 	m_mapInstanceDefaultState.clear();
+}
+
+void _rdf_model::loadClasses()
+{
+	OwlClass owlClass = GetClassesByIterator(getOwlModel(), 0);
+	while (owlClass != 0) {
+		auto itClass = m_mapClasses.find(owlClass);
+		if (itClass == m_mapClasses.end()) {
+			m_mapClasses[owlClass] = new _rdf_class(owlClass);
+		}
+
+		owlClass = GetClassesByIterator(getOwlModel(), owlClass);
+	}
+}
+
+void _rdf_model::loadProperties()
+{
+	RdfProperty rdfProperty = GetPropertiesByIterator(getOwlModel(), 0);
+	while (rdfProperty != 0) {
+		auto itProperty = m_mapProperties.find(rdfProperty);
+		if (itProperty == m_mapProperties.end()) {
+			m_mapProperties[rdfProperty] = new _rdf_property(rdfProperty);
+
+			auto itClasses = m_mapClasses.begin();
+			for (; itClasses != m_mapClasses.end(); itClasses++) {
+				int64_t	iMinCard = -1;
+				int64_t iMaxCard = -1;
+				GetClassPropertyAggregatedCardinalityRestriction(itClasses->first, rdfProperty, &iMinCard, &iMaxCard);
+
+				if ((iMinCard == -1) && (iMaxCard == -1)) {
+					continue;
+				}
+
+				itClasses->second->addPropertyRestriction(new _rdf_property_restriction(rdfProperty, iMinCard, iMaxCard));
+			}
+		} // if (itProperty == m_mapProperties.end())
+
+		rdfProperty = GetPropertiesByIterator(getOwlModel(), rdfProperty);
+	} // while (rdfProperty != 0)
+}
+
+void _rdf_model::load()
+{
+	preLoad();
+
+	loadClasses();
+	loadProperties();
+
+	postLoad();
+}
+
+/*virtual*/ void  _rdf_model::postLoad()
+{
+	getInstancesDefaultEnableState();
+	updateVertexBufferOffset();
+}
+
+void _rdf_model::getInstancesDefaultEnableState()
+{
+	m_mapInstanceDefaultState.clear();
+
+	// Enable only unreferenced instances
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		m_mapInstanceDefaultState[owlInstance] = GetInstanceInverseReferencesByIterator(owlInstance, 0) == 0;
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	}
+
+	// Enable children/descendants with geometry
+	OwlClass NillOwlClass = GetClassByName(getOwlModel(), "Nill");
+	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState) {
+		if (!itInstanceDefaultState.second) {
+			continue;
+		}
+
+		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
+			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr)) {
+			OwlClass owlClass = GetInstanceClass(itInstanceDefaultState.first);
+			assert(owlClass != 0);
+
+			if ((owlClass != NillOwlClass) && !IsClassAncestor(owlClass, NillOwlClass)) {
+				getInstanceDefaultEnableStateRecursive(itInstanceDefaultState.first);
+			}
+		}
+	}
+}
+
+void _rdf_model::getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance)
+{
+	assert(owlInstance != 0);
+
+	RdfProperty rdfProperty = GetInstancePropertyByIterator(owlInstance, 0);
+	while (rdfProperty != 0) {
+		if (GetPropertyType(rdfProperty) == OBJECTPROPERTY_TYPE) {
+			int64_t iValuesCount = 0;
+			OwlInstance* pValues = nullptr;
+			GetObjectProperty(owlInstance, rdfProperty, &pValues, &iValuesCount);
+
+			for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
+				if ((pValues[iValue] != 0) &&
+					!m_mapInstanceDefaultState.at(pValues[iValue])) {
+					// Enable to avoid infinity recursion
+					m_mapInstanceDefaultState.at(pValues[iValue]) = true;
+
+					if (!GetInstanceGeometryClass(pValues[iValue]) ||
+						!GetBoundingBox(pValues[iValue], nullptr, nullptr)) {
+						getInstanceDefaultEnableStateRecursive(pValues[iValue]);
+					}
+				}
+			}
+		}
+
+		rdfProperty = GetInstancePropertyByIterator(owlInstance, rdfProperty);
+	}
+}
+
+void _rdf_model::updateVertexBufferOffset()
+{
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		if (m_mapInstanceDefaultState.at(owlInstance)) {
+			_geometry::calculateBB(
+				owlInstance,
+				dXmin, dXmax,
+				dYmin, dYmax,
+				dZmin, dZmax);
+		}
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	}
+
+	if ((dXmin == DBL_MAX) ||
+		(dXmax == -DBL_MAX) ||
+		(dYmin == DBL_MAX) ||
+		(dYmax == -DBL_MAX) ||
+		(dZmin == DBL_MAX) ||
+		(dZmax == -DBL_MAX)) {
+		return;
+	}
+
+	double dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
+	double dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
+	double dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
+
+	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+		dVertexBuffersOffsetX,
+		dVertexBuffersOffsetY,
+		dVertexBuffersOffsetZ);
+
+	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+	SetVertexBufferOffset(
+		getOwlModel(),
+		dVertexBuffersOffsetX,
+		dVertexBuffersOffsetY,
+		dVertexBuffersOffsetZ);
+
+	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+	ClearedExternalBuffers(getOwlModel());
 }
 
 _rdf_instance* _rdf_model::getInstanceByOwlInstance(OwlInstance owlInstance)
@@ -77,6 +258,24 @@ void _rdf_model::getCompatibleInstances(_rdf_instance* pInstance, _rdf_property*
 	}
 }
 
+void _rdf_model::getClassAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestors) const
+{
+	assert(owlClass != 0);
+
+	const auto& itClass = m_mapClasses.find(owlClass);
+	assert(itClass != m_mapClasses.end());
+
+	const auto& vecParentClasses = itClass->second->getParentClasses();
+	if (vecParentClasses.empty()) {
+		return;
+	}
+
+	for (size_t iParentClass = 0; iParentClass < vecParentClasses.size(); iParentClass++) {
+		vecAncestors.insert(vecAncestors.begin(), vecParentClasses[iParentClass]);
+		getClassAncestors(vecParentClasses[iParentClass], vecAncestors);
+	}
+}
+
 _rdf_instance* _rdf_model::createInstance(OwlClass owlClass)
 {
 	assert(owlClass != 0);
@@ -111,6 +310,18 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 	_model::deleteGeometry(pInstance->getGeometry());
 
 	return bResult;
+}
+
+void _rdf_model::resetInstancesDefaultEnableState()
+{
+	getInstancesDefaultEnableState();
+
+	auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (m_mapInstanceDefaultState.find(itInstance->second->getOwlInstance()) != m_mapInstanceDefaultState.end()) {
+			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getOwlInstance()));
+		}
+	}
 }
 
 void _rdf_model::recalculate()

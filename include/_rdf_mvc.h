@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_mvc.h"
+#include "_rdf_class.h"
 #include "_rdf_property.h"
 
 #include <map>
@@ -17,10 +18,8 @@ class _rdf_model : public _model
 private: // Fields
 
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
-
-protected: //#todo private
-
-	// Cache
+	map<OwlClass, _rdf_class*> m_mapClasses;
+	map<RdfProperty, _rdf_property*> m_mapProperties;
 	map<OwlInstance, bool> m_mapInstanceDefaultState;
 
 public:  // Methods
@@ -34,14 +33,34 @@ protected:
 	virtual void addInstance(_instance* pInstance) override;
 	virtual void clean(bool bCloseModel = true) override;
 
+	void loadClasses();
+	void loadProperties();
+
+	virtual void preLoad() {}
+	void load();
+	virtual void postLoad();
+
+	void getInstancesDefaultEnableState();
+	void getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance);	
+
+	void updateVertexBufferOffset();
+
 public:  // Methods	
 
 	_rdf_instance* getInstanceByOwlInstance(OwlInstance owlInstance);
 
 	void getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, vector<OwlInstance>& vecCompatibleInstances) const;
+	void getClassAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestors) const;
+
 	_rdf_instance* createInstance(OwlClass owlClass);
 	bool deleteInstance(_rdf_instance* pInstance);
+	void resetInstancesDefaultEnableState();
 	void recalculate();
+
+public: // Properties
+
+	const map<OwlClass, _rdf_class*>& getClasses() const { return m_mapClasses; }
+	const map<RdfProperty, _rdf_property*>& getProperties() const { return m_mapProperties; }
 };
 
 // ************************************************************************************************

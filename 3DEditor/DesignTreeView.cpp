@@ -1275,7 +1275,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 		return;
 	}
 
-	auto& mapProperties = pModel->GetProperties();
+	auto& mapProperties = pModel->getProperties();
 
 	int64_t iPropertyInstance = GetInstancePropertyByIterator(pInstance->getOwlInstance(), 0);
 	while (iPropertyInstance != 0) {
@@ -1931,7 +1931,7 @@ void CDesignTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 			case ID_INSTANCES_ENABLE_RESET:
 			{
-				pModel->ResetInstancesDefaultState();
+				pModel->resetInstancesDefaultEnableState();
 
 				getController()->onInstancesEnabledStateChanged(this);
 			}

@@ -1652,7 +1652,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 			ASSERT(pData->GetInstance()->getGeometry()->getOwlClass() == GetClassByName(pModel->getOwlModel(), "ColorComponent"));
 
-			auto& mapProperties = _ptr<CRDFModel>(pModel)->GetProperties();
+			auto& mapProperties = _ptr<CRDFModel>(pModel)->getProperties();
 
 			/*
 			* R
@@ -2605,7 +2605,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 		_ptr<_rdf_instance> rdfInstance(pSelectedInstance);
 		auto pModel = _ptr<CRDFModel>(getRDFController()->getModel());
 
-		auto& mapProperties = _ptr<CRDFModel>(pModel)->GetProperties();
+		auto& mapProperties = _ptr<CRDFModel>(pModel)->getProperties();
 
 		auto pInstanceGroup = new CMFCPropertyGridProperty(pSelectedInstance->getUniqueName());
 

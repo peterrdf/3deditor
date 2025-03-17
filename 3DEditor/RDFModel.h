@@ -30,8 +30,6 @@ protected: // Fields
 
 	// Model
 	bool m_bExternalModel;
-	map<OwlClass, _rdf_class*> m_mapClasses;
-	map<RdfProperty, _rdf_property*> m_mapProperties;
 	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
@@ -79,34 +77,20 @@ public: // Methods
 #endif
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
-	void ResetInstancesDefaultState();
 		
-	void GetClassAncestors(OwlClass iClassInstance, vector<OwlClass> & vecAncestors) const;
 	_rdf_instance* GetInstanceByID(int64_t iID);
 	_rdf_instance* GetInstanceByIInstance(int64_t iInstance);
 
 	_rdf_instance* AddNewInstance(int64_t pThing);
-	
-	//void GetVertexBuffersOffset(double& dVertexBuffersOffsetX, double& dVertexBuffersOffsetY, double& dVertexBuffersOffsetZ) const;
-	//double GetOriginalBoundingSphereDiameter() const;
-	//void GetWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
-	//float GetBoundingSphereDiameter() const;
 
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
-
-	const map<OwlClass, _rdf_class*>& GetClasses() const { return m_mapClasses; }
-	const map<RdfProperty, _rdf_property*>& GetProperties() const { return m_mapProperties; }
+	
 	const map<OwlInstance, _rdf_instance*>& GetInstances() const { return m_mapInstances; }
 
 protected: // Methods
 
 	void SetFormatSettings(int64_t /*iModel*/) { assert(0); /*#todo*/ }
-	virtual void PreLoadDRFModel() {}
 	void LoadRDFModel();
-	virtual void PostLoadDRFModel();
-	void GetInstancesDefaultState();
-	void GetInstanceDefaultStateRecursive(OwlInstance iInstance);
-	void UpdateVertexBufferOffset();
 	void LoadRDFInstances();
 
 	void Clean();
@@ -119,10 +103,6 @@ protected: // Methods
 	OwlInstance Rotate(
 		OwlInstance iInstance, 
 		double alpha, double beta, double gamma);
-
-private: // Methods	
-
-	void GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t * pMinCard, int64_t * pMaxCard);
 };
 
 // ************************************************************************************************
@@ -143,7 +123,7 @@ public: // Methods
 protected: // Methods
 
 	// CRDFModel
-	virtual void PostLoadDRFModel() override;
+	virtual void PostLoadDRFModel() /*override*/;//#todo
 
 	void CreateCoordinateSystem();
 };

@@ -45,13 +45,13 @@ BOOL CNewInstanceDialog::OnInitDialog()
 
 	_ptr<CRDFModel> pModel(m_pController->getModel());
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	auto itClass = mapClasses.begin();
 	for (; itClass != mapClasses.end(); itClass++) {
 		int iItem = m_cmbClasses.AddString(itClass->second->getName());
 		m_cmbClasses.SetItemDataPtr(iItem, itClass->second);
-	} // for (; itClass != ...
+	}
 
 	m_cmbClasses.SetCurSel(0);
 

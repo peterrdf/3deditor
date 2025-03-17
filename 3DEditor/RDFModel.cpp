@@ -146,8 +146,6 @@ CRDFModel::CRDFModel()
 	: _rdf_model()
 	, m_iModel(0)
 	, m_bExternalModel(false)
-	, m_mapClasses()
-	, m_mapProperties()
 	, m_iID(1)
 	, m_mapInstances()
 	, m_dVertexBuffersOffsetX(0.)
@@ -280,65 +278,29 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 
 void CRDFModel::Load(OwlInstance iInstance)
 {
+	ASSERT(FALSE);//#todo
 	ASSERT(iInstance);
 
-	Clean();
+	//Clean();
 
-	m_strPath = L"";
+	//m_strPath = L"";
 
-	m_iModel = GetModel(iInstance);
-	ASSERT(m_iModel != 0);
+	//m_iModel = GetModel(iInstance);
+	//ASSERT(m_iModel != 0);
 
-	m_bExternalModel = true;
+	//m_bExternalModel = true;
 
-	PreLoadDRFModel();
+	//PreLoadDRFModel();
 
-#ifdef _TOOLTIPS_SUPPORT
-	// Load/Import Model
-	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
-	while (iClassInstance != 0) {
-		auto itClass = m_mapClasses.find(iClassInstance);
-		if (itClass == m_mapClasses.end()) {
-			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
-		}
+	//PostLoadDRFModel();
 
-		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
-	} // while (iClassInstance != 0)
+	//SetFormatSettings(m_iModel);
 
-	// Load/Import Model
-	RdfProperty rdfProperty = GetPropertiesByIterator(m_iModel, 0);
-	while (rdfProperty != 0) {
-		auto itProperty = m_mapProperties.find(rdfProperty);
-		if (itProperty == m_mapProperties.end()) {
-			m_mapProperties[rdfProperty] = new _rdf_property(rdfProperty);
+	////m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
 
-			auto itClasses = m_mapClasses.begin();
-			for (; itClasses != m_mapClasses.end(); itClasses++) {
-				int64_t	iMinCard = -1;
-				int64_t iMaxCard = -1;
-				GetClassPropertyCardinalityRestrictionNested(itClasses->first, rdfProperty, &iMinCard, &iMaxCard);
+	//ScaleAndCenter(true);
 
-				if ((iMinCard == -1) && (iMaxCard == -1)) {
-					continue;
-				}
-
-				itClasses->second->addPropertyRestriction(new _rdf_property_restriction(rdfProperty, iMinCard, iMaxCard));
-			} // for (; itClasses != ...
-		} // if (itProperty == m_mapProperties.end())
-
-		rdfProperty = GetPropertiesByIterator(m_iModel, rdfProperty);
-	} // while (iPropertyInstance != 0)
-#endif // _TOOLTIPS_SUPPORT
-
-	PostLoadDRFModel();
-
-	SetFormatSettings(m_iModel);
-
-	//m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
-
-	ScaleAndCenter(true);
-
-	scale();
+	//scale();
 }
 
 #ifdef _DXF_SUPPORT
@@ -412,39 +374,6 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 void CRDFModel::Save(const wchar_t* szPath)
 {
 	SaveModelW(m_iModel, szPath);
-}
-
-void CRDFModel::ResetInstancesDefaultState()
-{
-	GetInstancesDefaultState();
-
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++) {
-		if (m_mapInstanceDefaultState.find(itInstance->second->getOwlInstance()) != m_mapInstanceDefaultState.end()) {
-			itInstance->second->setEnable(m_mapInstanceDefaultState.at(itInstance->second->getOwlInstance()));
-		}
-	}
-}
-
-void CRDFModel::GetClassAncestors(OwlClass iClassInstance, vector<OwlClass>& vecAncestors) const
-{
-	assert(iClassInstance != 0);
-
-	const auto& itClass = m_mapClasses.find(iClassInstance);
-	assert(itClass != m_mapClasses.end());
-
-	auto pClass = itClass->second;
-
-	const auto& vecParentClasses = pClass->getParentClasses();
-	if (vecParentClasses.empty()) {
-		return;
-	}
-
-	for (size_t iParentClass = 0; iParentClass < vecParentClasses.size(); iParentClass++) {
-		vecAncestors.insert(vecAncestors.begin(), vecParentClasses[iParentClass]);
-
-		GetClassAncestors(vecParentClasses[iParentClass], vecAncestors);
-	}
 }
 
 _rdf_instance* CRDFModel::GetInstanceByID(int64_t iID)
@@ -684,233 +613,10 @@ void CRDFModel::LoadRDFModel()
 		m_pProgress->Log(0/*info*/, "Loading RDF model schema...");
 	}
 
-	PreLoadDRFModel();
-
-	// Load/Import Model
-	int64_t	iClassInstance = GetClassesByIterator(m_iModel, 0);
-	while (iClassInstance != 0) {
-		auto itClass = m_mapClasses.find(iClassInstance);
-		if (itClass == m_mapClasses.end()) {
-			m_mapClasses[iClassInstance] = new _rdf_class(iClassInstance);
-		}
-
-		iClassInstance = GetClassesByIterator(m_iModel, iClassInstance);
-	} // while (iClassInstance != 0)
-
-	// Load/Import Model
-	RdfProperty iPropertyInstance = GetPropertiesByIterator(m_iModel, 0);
-	while (iPropertyInstance != 0) {
-		auto itProperty = m_mapProperties.find(iPropertyInstance);
-		if (itProperty == m_mapProperties.end()) {
-			int64_t iPropertyType = GetPropertyType(iPropertyInstance);
-			switch (iPropertyType) {
-				case OBJECTPROPERTY_TYPE:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_BOOLEAN:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_STRING:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_INTEGER:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case DATATYPEPROPERTY_TYPE_DOUBLE:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				case 0:
-				{
-					m_mapProperties[iPropertyInstance] = new _rdf_property(iPropertyInstance);
-				}
-				break;
-
-				default:
-					assert(false); // Not supported!
-					break;
-			} // switch (iPropertyType)
-
-			auto itClasses = m_mapClasses.begin();
-			for (; itClasses != m_mapClasses.end(); itClasses++) {
-				int64_t	iMinCard = -1;
-				int64_t iMaxCard = -1;
-				GetClassPropertyCardinalityRestrictionNested(itClasses->first, iPropertyInstance, &iMinCard, &iMaxCard);
-
-				if ((iMinCard == -1) && (iMaxCard == -1)) {
-					continue;
-				}
-
-				itClasses->second->addPropertyRestriction(new _rdf_property_restriction(iPropertyInstance, iMinCard, iMaxCard));
-			} // for (; itClasses != ...
-		} // if (itProperty == m_mapProperties.end())
-
-		iPropertyInstance = GetPropertiesByIterator(m_iModel, iPropertyInstance);
-	} // while (iPropertyInstance != 0)
-
-	PostLoadDRFModel();
+	load();
 
 	// Instances
 	LoadRDFInstances();
-}
-
-/*virtual*/ void CRDFModel::PostLoadDRFModel()
-{
-	GetInstancesDefaultState();
-	UpdateVertexBufferOffset();
-}
-
-void CRDFModel::GetInstancesDefaultState()
-{
-	m_mapInstanceDefaultState.clear();
-
-	// Enable only unreferenced instances
-	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0) {
-		m_mapInstanceDefaultState[iInstance] = GetInstanceInverseReferencesByIterator(iInstance, 0) == 0;
-
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	}
-
-	// Enable children/descendants with geometry
-	for (auto& itInstanceDefaultState : m_mapInstanceDefaultState) {
-		if (!itInstanceDefaultState.second) {
-			continue;
-		}
-
-		if (!GetInstanceGeometryClass(itInstanceDefaultState.first) ||
-			!GetBoundingBox(itInstanceDefaultState.first, nullptr, nullptr)) {
-			OwlClass iNillClass = GetClassByName(m_iModel, "Nill");
-
-			OwlClass iInstanceClass = GetInstanceClass(itInstanceDefaultState.first);
-			assert(iInstanceClass != 0);
-
-			if ((iInstanceClass != iNillClass) && !IsClassAncestor(iInstanceClass, iNillClass)) {
-				GetInstanceDefaultStateRecursive(itInstanceDefaultState.first);
-			}
-		}
-	}
-}
-
-void CRDFModel::GetInstanceDefaultStateRecursive(OwlInstance iInstance)
-{
-	assert(iInstance != 0);
-
-	RdfProperty iProperty = GetInstancePropertyByIterator(iInstance, 0);
-	while (iProperty != 0) {
-		if (GetPropertyType(iProperty) == OBJECTPROPERTY_TYPE) {
-			int64_t iValuesCount = 0;
-			OwlInstance* piValues = nullptr;
-			GetObjectProperty(iInstance, iProperty, &piValues, &iValuesCount);
-
-			for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
-				if ((piValues[iValue] != 0) &&
-					!m_mapInstanceDefaultState.at(piValues[iValue])) {
-					// Enable to avoid infinity recursion
-					m_mapInstanceDefaultState.at(piValues[iValue]) = true;
-
-					if (!GetInstanceGeometryClass(piValues[iValue]) ||
-						!GetBoundingBox(piValues[iValue], nullptr, nullptr)) {
-						GetInstanceDefaultStateRecursive(piValues[iValue]);
-					}
-				}
-			}
-		}
-
-		iProperty = GetInstancePropertyByIterator(iInstance, iProperty);
-	}
-}
-
-void CRDFModel::UpdateVertexBufferOffset()
-{
-	/* Min/Max/Offset */
-	m_dVertexBuffersOffsetX = 0.;
-	m_dVertexBuffersOffsetY = 0.;
-	m_dVertexBuffersOffsetZ = 0.;
-	m_dOriginalBoundingSphereDiameter = 2.;
-
-	double dXmin = DBL_MAX;
-	double dXmax = -DBL_MAX;
-	double dYmin = DBL_MAX;
-	double dYmax = -DBL_MAX;
-	double dZmin = DBL_MAX;
-	double dZmax = -DBL_MAX;
-
-	OwlInstance iInstance = GetInstancesByIterator(m_iModel, 0);
-	while (iInstance != 0) {
-		if (m_mapInstanceDefaultState.at(iInstance)) {
-			_geometry::calculateBB(
-				iInstance,
-				dXmin, dXmax,
-				dYmin, dYmax,
-				dZmin, dZmax);
-		}
-
-		iInstance = GetInstancesByIterator(m_iModel, iInstance);
-	}
-
-	if ((dXmin == DBL_MAX) ||
-		(dXmax == -DBL_MAX) ||
-		(dYmin == DBL_MAX) ||
-		(dYmax == -DBL_MAX) ||
-		(dZmin == DBL_MAX) ||
-		(dZmax == -DBL_MAX)) {
-		// TODO: new status bar for geometry
-		/*::MessageBox(
-			m_pProgress != nullptr ? m_pProgress->GetSafeHwnd() : ::AfxGetMainWnd()->GetSafeHwnd(),
-			_T("Internal error."), _T("Error"), MB_ICONERROR | MB_OK);*/
-
-		return;
-	}
-
-	m_dVertexBuffersOffsetX = -(dXmin + dXmax) / 2.;
-	m_dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
-	m_dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
-
-	m_dOriginalBoundingSphereDiameter = dXmax - dXmin;
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dYmax - dYmin);
-	m_dOriginalBoundingSphereDiameter = max(m_dOriginalBoundingSphereDiameter, dZmax - dZmin);
-
-	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-		m_dVertexBuffersOffsetX,
-		m_dVertexBuffersOffsetY,
-		m_dVertexBuffersOffsetZ);
-
-	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	SetVertexBufferOffset(
-		m_iModel,
-		m_dVertexBuffersOffsetX,
-		m_dVertexBuffersOffsetY,
-		m_dVertexBuffersOffsetZ);
-
-	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
-	ClearedExternalBuffers(m_iModel);
 }
 
 void CRDFModel::LoadRDFInstances()
@@ -945,7 +651,7 @@ void CRDFModel::LoadRDFInstances()
 			addGeometry(pGeometry);
 
 			auto pInstance = new _rdf_instance(m_iID++, pGeometry, nullptr);
-			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			//pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));//#todo
 			addInstance(pInstance);
 		} else {
 			ASSERT(FALSE);//#todo
@@ -983,27 +689,6 @@ void CRDFModel::Clean()
 		m_bExternalModel = false;
 	}
 
-	/*
-	* RDF Classes
-	*/
-	auto itClasses = m_mapClasses.begin();
-	for (; itClasses != m_mapClasses.end(); itClasses++) {
-		delete itClasses->second;
-	}
-	m_mapClasses.clear();
-
-	/*
-	* RDF Properties
-	*/
-	auto itProperty = m_mapProperties.begin();
-	for (; itProperty != m_mapProperties.end(); itProperty++) {
-		delete itProperty->second;
-	}
-	m_mapProperties.clear();
-
-	/*
-	* RDF Instances
-	*/
 	auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++) {
 		delete itInstance->second;
@@ -1116,11 +801,6 @@ OwlInstance CRDFModel::Rotate(
 	return iTransformationInstance;
 }
 
-void CRDFModel::GetClassPropertyCardinalityRestrictionNested(int64_t iRDFClass, int64_t iRDFProperty, int64_t* pMinCard, int64_t* pMaxCard)
-{
-	GetClassPropertyAggregatedCardinalityRestriction(iRDFClass, iRDFProperty, pMinCard, pMaxCard);
-}
-
 // ************************************************************************************************
 CSceneRDFModel::CSceneRDFModel()
 	: CRDFModel()
@@ -1164,7 +844,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 
 /*virtual*/ void CSceneRDFModel::PostLoadDRFModel() /*override*/
 {
-	GetInstancesDefaultState();
+	//GetInstancesDefaultState();//#todo
 }
 
 void CSceneRDFModel::CreateCoordinateSystem()
