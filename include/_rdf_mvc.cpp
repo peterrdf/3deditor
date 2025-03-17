@@ -172,7 +172,8 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 
 	clean();
 
-	m_owlModel = owlModel;
+	m_strPath = szPath;
+	m_owlModel = owlModel;	
 
 	load();
 }

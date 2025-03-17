@@ -73,14 +73,14 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	_load();
 }
 
-void CRDFOpenGLView::onInstancePropertySelected(_view* pSender)
+void CRDFOpenGLView::onInstancePropertySelected(_view* /*pSender*/)
 {
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
 }
 
-void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance)
+void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/)
 {
 	if (pSender == this) {
 		return;
@@ -89,7 +89,7 @@ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance)
 	_load();
 }
 
-void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance)
+void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstance*/)
 {
 	if (pSender == this) {
 		return;
@@ -107,7 +107,7 @@ void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
 	_load();
 }
 
-void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance)
+void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInstance*/)
 {
 	if (pSender == this) {
 		return;
@@ -116,7 +116,7 @@ void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstanc
 	_load();
 }
 
-void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty)
+void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/)
 {
 	if (pSender == this) {
 		return;
@@ -237,7 +237,7 @@ void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
 	fZ = m_fZTranslation;
 }
 
-void CRDFOpenGLView::OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
+void CRDFOpenGLView::OnMouseEvent(enumMouseEvent /*enEvent*/, UINT /*nFlags*/, CPoint /*point*/)
 {
 	//if (enEvent == enumMouseEvent::LBtnUp)
 	//{
@@ -1388,71 +1388,71 @@ void CRDFOpenGLView::DrawPointedFace()
 	_oglUtils::checkForErrors();
 }
 
-pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
-{
-	//if (pM == nullptr)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if (m_pSelectedInstance == nullptr)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//if (m_iPointedFace == -1)
-	//{
-	//	return pair<int64_t, int64_t>(-1, -1);
-	//}
-
-	//const auto VERTEX_LENGTH = pM->getVertexLength();
-
-	//float* pVertices = m_pSelectedInstance->getVertices();
-	//ASSERT(pVertices != nullptr);
-
-	//int32_t* pIndices = m_pSelectedInstance->getIndices();
-	//ASSERT(pIndices != nullptr);
-
-	///*
-	//* Triangles
-	//*/
-	//auto& vecTriangles = m_pSelectedInstance->getTriangles();
-
-	//assert(!vecTriangles.empty());
-	//assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
-
-	//int64_t iVertexIndex = -1;
-	//int64_t iConcFaceVertexIndex = -1;
-	//double dMinDistance = DBL_MAX;
-
-	//auto pConceptulFace = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-
-	//int64_t iZeroBasedIndex = 0;
-	//for (int64_t iIndex = pConceptulFace->startIndex();
-	//	iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
-	//	iIndex++, iZeroBasedIndex++)
-	//{
-	//	fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
-	//	fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
-	//	fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
-
-	//	double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
-	//	if (dMinDistance > dDistance)
-	//	{
-	//		iConcFaceVertexIndex = iZeroBasedIndex;
-	//		iVertexIndex = pIndices[iIndex];			
-	//		dMinDistance = dDistance;
-	//	}
-	//}
-
-	//return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
-	return pair<int64_t, int64_t>(-1, -1);
-}
+//pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
+//{
+//	//if (pM == nullptr)
+//	//{
+//	//	return pair<int64_t, int64_t>(-1, -1);
+//	//}
+//
+//	//if (m_pSelectedInstance == nullptr)
+//	//{
+//	//	return pair<int64_t, int64_t>(-1, -1);
+//	//}
+//
+//	//if ((m_pSelectedInstance->getModel() != pM->getInstance()) || !m_pSelectedInstance->getEnable())
+//	//{
+//	//	return pair<int64_t, int64_t>(-1, -1);
+//	//}
+//
+//	//if (m_iPointedFace == -1)
+//	//{
+//	//	return pair<int64_t, int64_t>(-1, -1);
+//	//}
+//
+//	//const auto VERTEX_LENGTH = pM->getVertexLength();
+//
+//	//float* pVertices = m_pSelectedInstance->getVertices();
+//	//ASSERT(pVertices != nullptr);
+//
+//	//int32_t* pIndices = m_pSelectedInstance->getIndices();
+//	//ASSERT(pIndices != nullptr);
+//
+//	///*
+//	//* Triangles
+//	//*/
+//	//auto& vecTriangles = m_pSelectedInstance->getTriangles();
+//
+//	//assert(!vecTriangles.empty());
+//	//assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+//
+//	//int64_t iVertexIndex = -1;
+//	//int64_t iConcFaceVertexIndex = -1;
+//	//double dMinDistance = DBL_MAX;
+//
+//	//auto pConceptulFace = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+//
+//	//int64_t iZeroBasedIndex = 0;
+//	//for (int64_t iIndex = pConceptulFace->startIndex();
+//	//	iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
+//	//	iIndex++, iZeroBasedIndex++)
+//	//{
+//	//	fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
+//	//	fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
+//	//	fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
+//
+//	//	double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
+//	//	if (dMinDistance > dDistance)
+//	//	{
+//	//		iConcFaceVertexIndex = iZeroBasedIndex;
+//	//		iVertexIndex = pIndices[iIndex];			
+//	//		dMinDistance = dDistance;
+//	//	}
+//	//}
+//
+//	//return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+//	return pair<int64_t, int64_t>(-1, -1);
+//}
 
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
 void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)

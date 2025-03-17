@@ -89,12 +89,12 @@ IMPLEMENT_DYNAMIC(CInstancesDialog, CDialogEx)
 	m_lcInstances.SetController(getRDFController());
 }
 
-/*virtual*/ void CInstancesDialog::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+/*virtual*/ void CInstancesDialog::onInstanceDeleted(_view* /*pSender*/, _rdf_instance* /*pInstance*/) /*override*/
 {
 	onModelLoaded();
 }
 
-/*virtual*/ void CInstancesDialog::onInstancesDeleted(_view* pSender) /*override*/
+/*virtual*/ void CInstancesDialog::onInstancesDeleted(_view* /*pSender*/) /*override*/
 {
 	onModelLoaded();
 }

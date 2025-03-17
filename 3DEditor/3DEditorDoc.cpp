@@ -267,7 +267,7 @@ void CMy3DEditorDoc::OnExportAsCitygml()
 #endif*/
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
+void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* /*pCmdUI*/)
 {
 	//#ifdef _GIS_SUPPORT
 	//	pCmdUI->Enable((m_pModel != nullptr) &&
@@ -298,7 +298,7 @@ void CMy3DEditorDoc::OnExportAsInfragml()
 #endif*/
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
+void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* /*pCmdUI*/)
 {
 	ASSERT(FALSE); //#todo
 	//#ifdef _GIS_SUPPORT
@@ -330,7 +330,7 @@ void CMy3DEditorDoc::OnExportAsLandxml()
 #endif*/
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
+void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* /*pCmdUI*/)
 {
 	ASSERT(FALSE); //#todo
 	//#ifdef _GIS_SUPPORT

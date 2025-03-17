@@ -74,7 +74,7 @@ private: // Methods
 	
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();
-	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
+	//pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
 public:
 
