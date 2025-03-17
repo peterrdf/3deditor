@@ -30,7 +30,6 @@ protected: // Fields
 
 	// Model
 	bool m_bExternalModel;
-	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
 	// Support for textures
 	_texture* m_pDefaultTexture;
@@ -61,15 +60,10 @@ public: // Methods
 #endif
 	void ImportModel(const wchar_t* szPath);
 	void Save(const wchar_t* szPath);
-		
-	_rdf_instance* GetInstanceByID(int64_t iID);
-	_rdf_instance* GetInstanceByIInstance(int64_t iInstance);
 
 	_rdf_instance* AddNewInstance(int64_t pThing);
 
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
-	
-	const map<OwlInstance, _rdf_instance*>& GetInstances() const { return m_mapInstances; }
 
 protected: // Methods
 

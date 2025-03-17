@@ -146,7 +146,6 @@ CRDFModel::CRDFModel()
 	: _rdf_model()
 	, m_iModel(0)
 	, m_bExternalModel(false)
-	, m_mapInstances()
 	, m_pDefaultTexture(nullptr)
 	, m_pTextBuilder(new CTextBuilder())
 {
@@ -364,36 +363,6 @@ void CRDFModel::Save(const wchar_t* szPath)
 	SaveModelW(m_iModel, szPath);
 }
 
-_rdf_instance* CRDFModel::GetInstanceByID(int64_t iID)
-{
-	assert(iID != 0);
-
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++) {
-		if (itInstance->second->getID() == iID) {
-			return itInstance->second;
-		}
-	}
-
-	assert(false);
-
-	return nullptr;
-}
-
-_rdf_instance* CRDFModel::GetInstanceByIInstance(int64_t iInstance)
-{
-	assert(iInstance != 0);
-
-	map<int64_t, _rdf_instance*>::iterator itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++) {
-		if (itInstance->first == iInstance) {
-			return itInstance->second;
-		}
-	}
-
-	return nullptr;
-}
-
 _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 {
 	ASSERT(FALSE);//#todo
@@ -583,12 +552,6 @@ void CRDFModel::Clean()
 		m_bExternalModel = false;
 	}
 
-	auto itInstance = m_mapInstances.begin();
-	for (; itInstance != m_mapInstances.end(); itInstance++) {
-		delete itInstance->second;
-	}
-	m_mapInstances.clear();
-
 	/*
 	* Texture
 	*/
@@ -705,16 +668,17 @@ CSceneRDFModel::CSceneRDFModel()
 
 void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 {
-	auto itInstance = m_mapInstances.begin();
+	ASSERT(FALSE);//#todo
+	/*auto itInstance = m_mapInstances.begin();
 	for (; itInstance != m_mapInstances.end(); itInstance++) {
 		if (!itInstance->second->getEnable()) {
 			continue;
 		}
 
-		ASSERT(FALSE);//#todo
-		/*itInstance->second->LoadOriginalData();
-		itInstance->second->_geometry::translate(fX, fY, fZ);*/
-	}
+		
+		itInstance->second->LoadOriginalData();
+		itInstance->second->_geometry::translate(fX, fY, fZ);
+	}*/
 }
 
 /*virtual*/ void CSceneRDFModel::CreateDefaultModel() /*override*/
