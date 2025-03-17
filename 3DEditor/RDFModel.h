@@ -47,7 +47,6 @@ public: // Methods
 	
 	virtual void CreateDefaultModel();
 	void Load(const wchar_t* szPath, bool bLoading);
-	void Load(OwlInstance iInstance);
 #ifdef _DXF_SUPPORT
 	void LoadDXF(const wchar_t* szPath);
 #endif

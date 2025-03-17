@@ -289,33 +289,6 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	}
 }
 
-void CRDFModel::Load(OwlInstance iInstance)
-{
-	ASSERT(FALSE);//#todo
-	ASSERT(iInstance);
-
-	//Clean();
-
-	//m_strPath = L"";
-
-	//m_iModel = GetModel(iInstance);
-	//ASSERT(m_iModel != 0);
-
-	//m_bExternalModel = true;
-
-	//PreLoadDRFModel();
-
-	//PostLoadDRFModel();
-
-	//SetFormatSettings(m_iModel);
-
-	////m_mapInstances[iInstance] = new CRDFInstance(m_iID++, iInstance);
-
-	//ScaleAndCenter(true);
-
-	//scale();
-}
-
 #ifdef _DXF_SUPPORT
 void CRDFModel::LoadDXF(const wchar_t* /*szPath*/)
 {
