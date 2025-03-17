@@ -26,8 +26,6 @@ class CRDFModel : public _rdf_model
 
 protected: // Fields
 
-	OwlModel m_iModel;
-
 	// Model
 	bool m_bExternalModel;
 
@@ -42,8 +40,6 @@ public: // Methods
 	CRDFModel();
 	virtual ~CRDFModel();	
 
-	// _model
-	virtual OwlModel getOwlModel() const override { return m_iModel; }
 	virtual _instance* loadInstance(int64_t /*iInstance*/) override { ASSERT(FALSE); return nullptr; } //#todo
 
 	// _rdf_model
@@ -66,8 +62,6 @@ public: // Methods
 	virtual void ScaleAndCenter(bool bLoadingModel = false);
 
 protected: // Methods
-
-	void SetFormatSettings(int64_t /*iModel*/) { assert(0); /*#todo*/ }
 
 	void Clean();
 

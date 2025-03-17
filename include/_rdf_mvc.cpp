@@ -7,6 +7,7 @@
 // ************************************************************************************************
 _rdf_model::_rdf_model()
 	: _model()
+	, m_owlModel(0)
 	, m_mapInstances()
 	, m_mapClasses()
 	, m_mapProperties()
@@ -17,6 +18,18 @@ _rdf_model::_rdf_model()
 /*virtual*/ _rdf_model::~_rdf_model()
 {
 	clean();
+}
+
+void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
+{
+	assert((szPath != nullptr) && (wcslen(szPath) > 0));
+	assert(owlModel != 0);
+
+	clean();
+
+	m_owlModel = owlModel;
+
+	load();
 }
 
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
@@ -30,6 +43,11 @@ _rdf_model::_rdf_model()
 /*virtual*/ void _rdf_model::clean(bool bCloseModel/* = true*/) /*override*/
 {
 	_model::clean(bCloseModel);
+
+	if (m_owlModel != 0) {
+		::CloseModel(m_owlModel);
+		m_owlModel = 0;
+	}	
 
 	m_mapInstances.clear();
 
@@ -109,24 +127,23 @@ void _rdf_model::loadInstances()
 	} // while (owlInstance != 0)
 }
 
+/*virtual*/ void  _rdf_model::preLoad()
+{
+	getInstancesDefaultEnableState();
+	updateVertexBufferOffset();
+}
+
 void _rdf_model::load()
 {
 	preLoad();
 
 	loadClasses();
 	loadProperties();
-
-	postLoad();
-
 	loadInstances();
 
-	scale();
-}
+	postLoad();	
 
-/*virtual*/ void  _rdf_model::postLoad()
-{
-	getInstancesDefaultEnableState();
-	updateVertexBufferOffset();
+	scale();
 }
 
 void _rdf_model::getInstancesDefaultEnableState()

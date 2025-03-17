@@ -101,50 +101,48 @@ public: // Methods
 #endif		
 		{
 			if (m_bLoading) {
-				m_pModel->m_iModel = OpenModelW(m_szPath);
-				if (m_pModel->m_iModel != 0) {
-					m_pModel->SetFormatSettings(m_pModel->m_iModel);
-
-					m_pModel->load();
+				OwlModel owlModel = OpenModelW(m_szPath);
+				if (owlModel) {
+					m_pModel->attachModel(m_szPath, owlModel);
 				}
 			} else {
-				assert(m_pModel->m_iModel != 0);
-
-				ImportModelW(m_pModel->m_iModel, m_szPath);
+				assert(m_pModel->getOwlModel() != 0);
+				ASSERT(FALSE);//#todo
+				ImportModelW(m_pModel->getOwlModel(), m_szPath);
 
 				m_pModel->load();
 			}
 		}
 
-		if (m_pModel->m_iModel == 0) {
-			CString strError;
-			strError.Format(L"Failed to open '%s'.", m_szPath);
+		//#todo
+		//if (m_pModel->m_iModel == 0) {
+		//	CString strError;
+		//	strError.Format(L"Failed to open '%s'.", m_szPath);
 
-			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(2/*error*/, CW2A(strError));
-				}
+		//	if (!TEST_MODE) {
+		//		if (m_pProgress != nullptr) {
+		//			m_pProgress->Log(2/*error*/, CW2A(strError));
+		//		}
 
-				::MessageBox(
-					::AfxGetMainWnd()->GetSafeHwnd(),
-					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-			} else {
-				TRACE(L"\nError: %s", (LPCTSTR)strError);
-			}
-		} else {
-			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(0/*info*/, "*** Done. ***");
-				}
-			}
-		}
+		//		::MessageBox(
+		//			::AfxGetMainWnd()->GetSafeHwnd(),
+		//			strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+		//	} else {
+		//		TRACE(L"\nError: %s", (LPCTSTR)strError);
+		//	}
+		//} else {
+		//	if (!TEST_MODE) {
+		//		if (m_pProgress != nullptr) {
+		//			m_pProgress->Log(0/*info*/, "*** Done. ***");
+		//		}
+		//	}
+		//}
 	}
 };
 
 // ************************************************************************************************
 CRDFModel::CRDFModel()
 	: _rdf_model()
-	, m_iModel(0)
 	, m_bExternalModel(false)
 	, m_pDefaultTexture(nullptr)
 	, m_pTextBuilder(new CTextBuilder())
@@ -164,52 +162,50 @@ CRDFModel::~CRDFModel()
 
 	Clean();
 
-	m_iModel = CreateModel();
-	assert(m_iModel != 0);
-
-	//SetFormatSettings(m_iModel);
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
 
 	// Cube 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(1.);
 		pAmbient.set_B(0.);
 		pAmbient.set_W(1.);
 
-		auto pColor = GEOM::Color::Create(m_iModel);
+		auto pColor = GEOM::Color::Create(owlModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pTexture = GEOM::Texture::Create(m_iModel);
+		auto pTexture = GEOM::Texture::Create(owlModel);
 		pTexture.set_scalingX(1.);
 		pTexture.set_scalingY(1.);
 		pTexture.set_name("data\\texture.jpg");
 		vector<GEOM::Texture> vecTexures = { pTexture };
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
+		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 		pMaterial.set_textures(&vecTexures[0], 1);
 
-		auto pCube = GEOM::Cube::Create(m_iModel, "Cube 1");
+		auto pCube = GEOM::Cube::Create(owlModel, "Cube 1");
 		pCube.set_material(pMaterial);
 		pCube.set_length(7.);
 	}
 
 	// Cone 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(0.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(1.);
 		pAmbient.set_W(1.);
 
-		auto pColor = GEOM::Color::Create(m_iModel);
+		auto pColor = GEOM::Color::Create(owlModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
+		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 
-		auto pCone = GEOM::Cone::Create(m_iModel, "Cone 1");
+		auto pCone = GEOM::Cone::Create(owlModel, "Cone 1");
 		pCone.set_material(pMaterial);
 		pCone.set_radius(4.);
 		pCone.set_height(12.);
@@ -218,26 +214,26 @@ CRDFModel::~CRDFModel()
 
 	// Cylinder 1
 	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(1.);
 		pAmbient.set_G(0.);
 		pAmbient.set_B(0.);
 		pAmbient.set_W(.5);
 
-		auto pColor = GEOM::Color::Create(m_iModel);
+		auto pColor = GEOM::Color::Create(owlModel);
 		pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
+		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 
-		auto pCylinder = GEOM::Cylinder::Create(m_iModel, "Cylinder 1");
+		auto pCylinder = GEOM::Cylinder::Create(owlModel, "Cylinder 1");
 		pCylinder.set_material(pMaterial);
 		pCylinder.set_radius(6.);
 		pCylinder.set_length(6.);
 		pCylinder.set_segmentationParts(36);
 	}
 
-	load();
+	attachModel(L"_DEFAULT_", owlModel);
 }
 
 void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
@@ -291,9 +287,10 @@ void CRDFModel::Load(OwlInstance iInstance)
 }
 
 #ifdef _DXF_SUPPORT
-void CRDFModel::LoadDXF(const wchar_t* szPath)
+void CRDFModel::LoadDXF(const wchar_t* /*szPath*/)
 {
-	if (m_iModel == 0) {
+	ASSERT(FALSE);//#todo
+	/*if (m_iModel == 0) {
 		m_iModel = CreateModel();
 		assert(m_iModel != 0);
 
@@ -311,14 +308,15 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 		return;
 	}
 
-	load();
+	load();*/
 }
 #endif
 
 #ifdef _GIS_SUPPORT
-void CRDFModel::LoadGISModel(const wchar_t* szPath)
+void CRDFModel::LoadGISModel(const wchar_t* /*szPath*/)
 {
-	if (m_iModel == 0) {
+	ASSERT(FALSE);//#todo
+	/*if (m_iModel == 0) {
 		m_iModel = CreateModel();
 		assert(m_iModel != 0);
 
@@ -349,7 +347,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 	}
 
-	load();
+	load();*/
 }
 #endif // _GIS_SUPPORT
 
@@ -358,9 +356,10 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 	Load(szPath, false);
 }
 
-void CRDFModel::Save(const wchar_t* szPath)
+void CRDFModel::Save(const wchar_t* /*szPath*/)
 {
-	SaveModelW(m_iModel, szPath);
+	ASSERT(0);//#todo
+	//SaveModelW(m_iModel, szPath);
 }
 
 _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
@@ -538,19 +537,19 @@ _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 
 void CRDFModel::Clean()
 {
-	/*
-	* Model
-	*/
-	if (!m_bExternalModel) {
-		if (m_iModel != 0) {
-			CloseModel(m_iModel);
-			m_iModel = 0;
-		}
-	} else {
-		m_iModel = 0;
+	///*
+	//* Model
+	//*/
+	//if (!m_bExternalModel) {
+	//	if (m_iModel != 0) {
+	//		CloseModel(m_iModel);
+	//		m_iModel = 0;
+	//	}
+	//} else {
+	//	m_iModel = 0;
 
-		m_bExternalModel = false;
-	}
+	//	m_bExternalModel = false;
+	//}
 
 	/*
 	* Texture
@@ -564,7 +563,9 @@ OwlInstance CRDFModel::Translate(
 	double dX, double dY, double dZ,
 	double d11, double d22, double d33)
 {
-	assert(iInstance != 0);
+	ASSERT(FALSE); //#todo
+	return 0;
+	/*assert(iInstance != 0);
 
 	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
 	assert(iMatrixInstance != 0);
@@ -589,14 +590,15 @@ OwlInstance CRDFModel::Translate(
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
 
-	return iTransformationInstance;
+	return iTransformationInstance;*/
 }
 
 OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 {
 	assert(iInstance != 0);
-
-	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
+	ASSERT(FALSE);//#todo
+	return 0;
+	/*int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
 	assert(iMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
@@ -619,7 +621,7 @@ OwlInstance CRDFModel::Scale(OwlInstance iInstance, double dFactor)
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
 
-	return iTransformationInstance;
+	return iTransformationInstance;*/
 }
 
 OwlInstance CRDFModel::Rotate(
@@ -627,8 +629,9 @@ OwlInstance CRDFModel::Rotate(
 	double alpha, double beta, double gamma)
 {
 	assert(iInstance != 0);
-
-	int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
+	ASSERT(FALSE);//#todo
+	return 0;
+	/*int64_t iMatrixInstance = CreateInstance(GetClassByName(m_iModel, "Matrix"));
 	assert(iMatrixInstance != 0);
 
 	_matrix matrix;
@@ -653,7 +656,7 @@ OwlInstance CRDFModel::Rotate(
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "matrix"), &iMatrixInstance, 1);
 	SetObjectProperty(iTransformationInstance, GetPropertyByName(m_iModel, "object"), &iInstance, 1);
 
-	return iTransformationInstance;
+	return iTransformationInstance;*/
 }
 
 // ************************************************************************************************
@@ -685,15 +688,13 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 {
 	Clean();
 
-	m_iModel = CreateModel();
-	assert(m_iModel != 0);
-
-	SetFormatSettings(m_iModel);
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
 
 	// ASCII Chars
-	m_pTextBuilder->Initialize(m_iModel);
+	m_pTextBuilder->Initialize(owlModel);
 
-	//CreateCoordinateSystem();
+	//CreateCoordinateSystem();ASSERT(FALSE); //#todo
 
 	load();
 }
@@ -971,181 +972,183 @@ CNavigatorRDFModel::CNavigatorRDFModel()
 
 /*virtual*/ void CNavigatorRDFModel::CreateDefaultModel() /*override*/
 {
-	Clean();
+	ASSERT(FALSE); //#todo
+	//Clean();
 
-	m_iModel = CreateModel();
-	assert(m_iModel != 0);
+	//m_iModel = CreateModel();
+	//assert(m_iModel != 0);
 
-	SetFormatSettings(m_iModel);
+	//SetFormatSettings(m_iModel);
 
-	// ASCII Chars
-	m_pTextBuilder->Initialize(m_iModel);
+	//// ASCII Chars
+	//m_pTextBuilder->Initialize(m_iModel);
 
-	CreateCoordinateSystem();
+	//CreateCoordinateSystem();
 
-	CreateNaigator();
+	//CreateNaigator();
 
-	CreateNaigatorLabels();
+	//CreateNaigatorLabels();
 
-	load();
+	//load();
 }
 
 void CNavigatorRDFModel::CreateNaigator()
 {
-	// Cube (BoundaryRepresentations)
-	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(.1);
-		pAmbient.set_G(.1);
-		pAmbient.set_B(.1);
-		pAmbient.set_W(.05);
+	ASSERT(FALSE); //#todo
+	//// Cube (BoundaryRepresentations)
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(.1);
+	//	pAmbient.set_G(.1);
+	//	pAmbient.set_B(.1);
+	//	pAmbient.set_W(.05);
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
 
-		vector<double> vecVertices =
-		{
-			-.75, -.75, 0, // 1 (Bottom/Left)
-			.75, -.75, 0,  // 2 (Bottom/Right)
-			.75, .75, 0,   // 3 (Top/Right)
-			-.75, .75, 0,  // 4 (Top/Left)
-		};
-		vector<int64_t> vecIndices =
-		{
-			0, 1, 2, 3, -1,
-		};
+	//	vector<double> vecVertices =
+	//	{
+	//		-.75, -.75, 0, // 1 (Bottom/Left)
+	//		.75, -.75, 0,  // 2 (Bottom/Right)
+	//		.75, .75, 0,   // 3 (Top/Right)
+	//		-.75, .75, 0,  // 4 (Top/Left)
+	//	};
+	//	vector<int64_t> vecIndices =
+	//	{
+	//		0, 1, 2, 3, -1,
+	//	};
 
-		auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
-		pBoundaryRepresentation.set_material(pMaterial);
-		pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
-		pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
+	//	auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(m_iModel);
+	//	pBoundaryRepresentation.set_material(pMaterial);
+	//	pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
+	//	pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
 
-		// Front
-		OwlInstance iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
-			0., -.75, 0.,
-			1., -1., 1.);
-		SetNameOfInstance(iInstance, "#front");
+	//	// Front
+	//	OwlInstance iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+	//		0., -.75, 0.,
+	//		1., -1., 1.);
+	//	SetNameOfInstance(iInstance, "#front");
 
-		// Back
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
-			0., .75, 0.,
-			-1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back");
+	//	// Back
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+	//		0., .75, 0.,
+	//		-1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back");
 
-		// Top
-		iInstance = Translate(
-			(int64_t)pBoundaryRepresentation,
-			0., 0., .75,
-			1., 1., -1.);
-		SetNameOfInstance(iInstance, "#top");
+	//	// Top
+	//	iInstance = Translate(
+	//		(int64_t)pBoundaryRepresentation,
+	//		0., 0., .75,
+	//		1., 1., -1.);
+	//	SetNameOfInstance(iInstance, "#top");
 
-		// Bottom
-		iInstance = Translate(
-			(int64_t)pBoundaryRepresentation,
-			0., 0., -.75,
-			1, 1., 1.);
-		SetNameOfInstance(iInstance, "#bottom");
+	//	// Bottom
+	//	iInstance = Translate(
+	//		(int64_t)pBoundaryRepresentation,
+	//		0., 0., -.75,
+	//		1, 1., 1.);
+	//	SetNameOfInstance(iInstance, "#bottom");
 
-		// Left
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-			-.75, 0., 0.,
-			1., -1., 1.);
-		SetNameOfInstance(iInstance, "#left");
+	//	// Left
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//		-.75, 0., 0.,
+	//		1., -1., 1.);
+	//	SetNameOfInstance(iInstance, "#left");
 
-		// Right
-		iInstance = Translate(
-			Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
-			.75, 0., 0.,
-			-1., 1., 1.);
-		SetNameOfInstance(iInstance, "#right");
-	}
+	//	// Right
+	//	iInstance = Translate(
+	//		Rotate((int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//		.75, 0., 0.,
+	//		-1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#right");
+	//}
 
-	// Sphere (Sphere)
-	{
-		auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
-		pAmbient.set_R(0.);
-		pAmbient.set_G(0.);
-		pAmbient.set_B(1.);
-		pAmbient.set_W(1.);
+	//// Sphere (Sphere)
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(m_iModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(1.);
+	//	pAmbient.set_W(1.);
 
-		auto pColor = GEOM::Color::Create(m_iModel);
-		pColor.set_ambient(pAmbient);
+	//	auto pColor = GEOM::Color::Create(m_iModel);
+	//	pColor.set_ambient(pAmbient);
 
-		auto pMaterial = GEOM::Material::Create(m_iModel);
-		pMaterial.set_color(pColor);
+	//	auto pMaterial = GEOM::Material::Create(m_iModel);
+	//	pMaterial.set_color(pColor);
 
-		auto pSphere = GEOM::Sphere::Create(m_iModel);
-		pSphere.set_material(pMaterial);
-		pSphere.set_radius(.1);
-		pSphere.set_segmentationParts(36);
+	//	auto pSphere = GEOM::Sphere::Create(m_iModel);
+	//	pSphere.set_material(pMaterial);
+	//	pSphere.set_radius(.1);
+	//	pSphere.set_segmentationParts(36);
 
-		// Front/Top/Left
-		OwlInstance iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, -.75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-top-left");
+	//	// Front/Top/Left
+	//	OwlInstance iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, -.75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-top-left");
 
-		// Front/Top/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, -.75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-top-right");
+	//	// Front/Top/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, -.75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-top-right");
 
-		// Front/Bottom/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, -.75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-bottom-left");
+	//	// Front/Bottom/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, -.75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-bottom-left");
 
-		// Front/Bottom/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, -.75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#front-bottom-right");
+	//	// Front/Bottom/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, -.75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#front-bottom-right");
 
-		// Back/Top/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, .75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-top-left");
+	//	// Back/Top/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, .75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-top-left");
 
-		// Back/Top/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, .75, .75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-top-right");
+	//	// Back/Top/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, .75, .75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-top-right");
 
-		// Back/Bottom/Left
-		iInstance = Translate(
-			(int64_t)pSphere,
-			.75, .75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-left");
+	//	// Back/Bottom/Left
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		.75, .75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-bottom-left");
 
-		// Back/Bottom/Right
-		iInstance = Translate(
-			(int64_t)pSphere,
-			-.75, .75, -.75,
-			1., 1., 1.);
-		SetNameOfInstance(iInstance, "#back-bottom-right");
-	}
+	//	// Back/Bottom/Right
+	//	iInstance = Translate(
+	//		(int64_t)pSphere,
+	//		-.75, .75, -.75,
+	//		1., 1., 1.);
+	//	SetNameOfInstance(iInstance, "#back-bottom-right");
+	//}
 }
 
 void CNavigatorRDFModel::CreateNaigatorLabels()
 {
-	//#todo
+	ASSERT(FALSE); //#todo
 	//double dXmin = DBL_MAX;
 	//double dXmax = -DBL_MAX;
 	//double dYmin = DBL_MAX;

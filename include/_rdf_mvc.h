@@ -17,6 +17,7 @@ class _rdf_model : public _model
 
 private: // Fields
 
+	OwlModel m_owlModel;
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 	map<OwlClass, _rdf_class*> m_mapClasses;
 	map<RdfProperty, _rdf_property*> m_mapProperties;
@@ -26,6 +27,11 @@ public:  // Methods
 
 	_rdf_model();
 	virtual ~_rdf_model();
+
+	// _model
+	virtual OwlModel getOwlModel() const override { return m_owlModel; }
+
+	void attachModel(const wchar_t* szPath, OwlModel owlModel);
 
 protected:
 
@@ -37,9 +43,9 @@ protected:
 	void loadProperties();
 	void loadInstances();
 
-	virtual void preLoad() {}
+	virtual void preLoad();
 	void load();
-	virtual void postLoad();
+	virtual void postLoad() {}
 
 	void getInstancesDefaultEnableState();
 	void getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance);
