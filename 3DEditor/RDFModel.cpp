@@ -146,7 +146,6 @@ CRDFModel::CRDFModel()
 	: _rdf_model()
 	, m_iModel(0)
 	, m_bExternalModel(false)
-	, m_iID(1)
 	, m_mapInstances()
 	, m_dVertexBuffersOffsetX(0.)
 	, m_dVertexBuffersOffsetY(0.)
@@ -633,8 +632,6 @@ void CRDFModel::Clean()
 	*/
 	delete m_pDefaultTexture;
 	m_pDefaultTexture = nullptr;
-
-	m_iID = 1;
 }
 
 OwlInstance CRDFModel::Translate(

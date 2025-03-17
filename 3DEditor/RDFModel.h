@@ -30,7 +30,6 @@ protected: // Fields
 
 	// Model
 	bool m_bExternalModel;
-	int64_t m_iID; // ID (1-based index)
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
