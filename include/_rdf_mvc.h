@@ -35,14 +35,14 @@ protected:
 
 	void loadClasses();
 	void loadProperties();
+	void loadInstances();
 
 	virtual void preLoad() {}
 	void load();
 	virtual void postLoad();
 
 	void getInstancesDefaultEnableState();
-	void getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance);	
-
+	void getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance);
 	void updateVertexBufferOffset();
 
 public:  // Methods	

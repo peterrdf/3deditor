@@ -90,8 +90,6 @@ public: // Methods
 protected: // Methods
 
 	void SetFormatSettings(int64_t /*iModel*/) { assert(0); /*#todo*/ }
-	void LoadRDFModel();
-	void LoadRDFInstances();
 
 	void Clean();
 

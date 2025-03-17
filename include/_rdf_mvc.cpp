@@ -87,6 +87,28 @@ void _rdf_model::loadProperties()
 	} // while (rdfProperty != 0)
 }
 
+void _rdf_model::loadInstances()
+{
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		auto itInstance = m_mapInstances.find(owlInstance);
+		if (itInstance == m_mapInstances.end()) {
+			auto pGeometry = new _rdf_geometry(owlInstance);
+			addGeometry(pGeometry);
+
+			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			addInstance(pInstance);
+		} else {
+			assert(FALSE);//#todo
+			// Import Model
+			//itInstance->second->recalculate();
+		}
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	} // while (owlInstance != 0)
+}
+
 void _rdf_model::load()
 {
 	preLoad();
@@ -95,6 +117,10 @@ void _rdf_model::load()
 	loadProperties();
 
 	postLoad();
+
+	loadInstances();
+
+	scale();
 }
 
 /*virtual*/ void  _rdf_model::postLoad()

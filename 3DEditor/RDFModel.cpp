@@ -105,14 +105,14 @@ public: // Methods
 				if (m_pModel->m_iModel != 0) {
 					m_pModel->SetFormatSettings(m_pModel->m_iModel);
 
-					m_pModel->LoadRDFModel();
+					m_pModel->load();
 				}
 			} else {
 				assert(m_pModel->m_iModel != 0);
 
 				ImportModelW(m_pModel->m_iModel, m_szPath);
 
-				m_pModel->LoadRDFModel();
+				m_pModel->load();
 			}
 		}
 
@@ -250,7 +250,7 @@ CRDFModel::~CRDFModel()
 		pCylinder.set_segmentationParts(36);
 	}
 
-	LoadRDFModel();
+	load();
 }
 
 void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
@@ -324,7 +324,7 @@ void CRDFModel::LoadDXF(const wchar_t* szPath)
 		return;
 	}
 
-	LoadRDFModel();
+	load();
 }
 #endif
 
@@ -362,7 +362,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 	}
 
-	LoadRDFModel();
+	load();
 }
 #endif // _GIS_SUPPORT
 
@@ -606,73 +606,6 @@ _rdf_instance* CRDFModel::AddNewInstance(int64_t /*pThing*/)
 	return m_pDefaultTexture;
 }
 
-void CRDFModel::LoadRDFModel()
-{
-	ProgressStatus(L"Loading RDF model schema...");
-	if (m_pProgress != nullptr) {
-		m_pProgress->Log(0/*info*/, "Loading RDF model schema...");
-	}
-
-	load();
-
-	// Instances
-	LoadRDFInstances();
-}
-
-void CRDFModel::LoadRDFInstances()
-{
-	/*
-	* Default instances
-	*/
-	ProgressStatus prgs(L"Loading RDF instances...");
-	if (m_pProgress != nullptr) {
-		m_pProgress->Log(0/*info*/, "Loading RDF instances...");
-	}
-
-	OwlInstance owlInstance = GetInstancesByIterator(m_iModel, 0);
-
-	int64_t cntTotal = 0;
-	for (auto i = owlInstance; i; i = GetInstancesByIterator(m_iModel, i)) {
-		cntTotal++;
-	}
-
-	prgs.Start(cntTotal);
-
-	while (owlInstance != 0) {
-		prgs.Step();
-
-		auto itInstance = m_mapInstances.find(owlInstance);
-		if (itInstance == m_mapInstances.end()) {
-			// Load Model
-			//m_mapInstances[owlInstance] = new CRDFInstance(m_iID++, owlInstance);
-			//m_mapInstances.at(owlInstance)->setEnable(m_mapInstanceDefaultState.at(owlInstance));
-
-			auto pGeometry = new _rdf_geometry(owlInstance);
-			addGeometry(pGeometry);
-
-			auto pInstance = new _rdf_instance(m_iID++, pGeometry, nullptr);
-			//pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));//#todo
-			addInstance(pInstance);
-		} else {
-			ASSERT(FALSE);//#todo
-			// Import Model
-			//itInstance->second->Recalculate();
-		}
-
-		owlInstance = GetInstancesByIterator(m_iModel, owlInstance);
-	} // while (iInstance != 0)
-
-	prgs.Finish();
-
-	/**
-	* Scale and Center
-	*/
-
-	//ScaleAndCenter(true);
-
-	scale();
-}
-
 void CRDFModel::Clean()
 {
 	/*
@@ -839,7 +772,7 @@ void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
 
 	//CreateCoordinateSystem();
 
-	LoadRDFModel();
+	load();
 }
 
 /*virtual*/ void CSceneRDFModel::PostLoadDRFModel() /*override*/
@@ -1131,7 +1064,7 @@ CNavigatorRDFModel::CNavigatorRDFModel()
 
 	CreateNaigatorLabels();
 
-	LoadRDFModel();
+	load();
 }
 
 void CNavigatorRDFModel::CreateNaigator()
