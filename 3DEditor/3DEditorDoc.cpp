@@ -162,8 +162,6 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	setModel(nullptr);
-
 	auto pModel = new CRDFModel();
 	pModel->Load(lpszPathName, false);
 
