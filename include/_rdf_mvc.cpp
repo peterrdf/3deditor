@@ -511,10 +511,16 @@ void _rdf_model::resetInstancesDefaultEnableState()
 	}
 }
 
-void _rdf_model::recalculate()
+void _rdf_model::reloadGeometries() {
+	for (auto pGeometry : getGeometries()) {
+		_ptr<_rdf_geometry>(pGeometry)->reload();
+	}
+}
+
+void _rdf_model::recalculateGeometries()
 {
-	for (auto pInstance : getInstances()) {
-		_ptr<_rdf_instance>(pInstance)->recalculate();
+	for (auto pGeometry : getGeometries()) {
+		_ptr<_rdf_geometry>(pGeometry)->recalculate();
 	}
 }
 
@@ -547,7 +553,7 @@ _rdf_controller::_rdf_controller()
 	: _controller()
 	, m_pSelectedProperty(nullptr)
 	, m_iVisibleValuesCountLimit(10000)
-	, m_bScaleAndCenter(true)
+	, m_bScaleAndCenterAllVisibleGeometry(true)
 	, m_bModelCoordinateSystem(true)
 {
 }
@@ -569,9 +575,9 @@ _rdf_controller::_rdf_controller()
 		assert(false);
 		return;
 	}
-
-	_ptr<_rdf_model>(getModel())->recalculate();
-	if (m_bScaleAndCenter) {
+	
+	if (m_bScaleAndCenterAllVisibleGeometry) {
+		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
 
@@ -821,13 +827,18 @@ void _rdf_controller::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstan
 
 void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
+	assert(pInstance != nullptr);
+	assert(pProperty != nullptr);
+
 	if (getModel() == nullptr) {
 		assert(false);
 		return;
 	}
 
-	_ptr<_rdf_model>(getModel())->recalculate();
-	if (m_bScaleAndCenter) {
+	pInstance->recalculate();
+
+	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable() ) {
+		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
 

@@ -23,7 +23,7 @@ protected: // Methods
 public: // Methods
 
     void loadName();
-    void loadOriginalData();
+    void reload();
     void recalculate();
 
 private: // Methods

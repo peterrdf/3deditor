@@ -273,7 +273,7 @@ void _rdf_geometry::loadName()
 	m_strUniqueName = szUniqueName;
 }
 
-void _rdf_geometry::loadOriginalData()
+void _rdf_geometry::reload()
 {
 	if (getVerticesCount() == 0) {
 		return;
@@ -283,10 +283,35 @@ void _rdf_geometry::loadOriginalData()
 	assert(m_pVertexBuffer != nullptr);
 	m_pVertexBuffer->copyFrom(m_pOriginalVertexBuffer);
 
-	// Bounding box
+	assert(m_pmtxBBTransformation != nullptr);
+	assert(m_pvecBBMin != nullptr);
+	assert(m_pvecBBMax != nullptr);
+
+	GetBoundingBox(
+		getOwlInstance(),
+		(double*)m_pmtxOriginalBBTransformation,
+		(double*)m_pvecOriginalBBMin,
+		(double*)m_pvecOriginalBBMax);
+
 	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
 	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
 	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+
+	GetBoundingBox(
+		getOwlInstance(),
+		(double*)m_pvecAABBMin,
+		(double*)m_pvecAABBMax);
+
+	double arOffset[3];
+	GetVertexBufferOffset(getOwlModel(), arOffset);
+
+	m_pvecAABBMin->x += arOffset[0];
+	m_pvecAABBMin->y += arOffset[1];
+	m_pvecAABBMin->z += arOffset[2];
+
+	m_pvecAABBMax->x += arOffset[0];
+	m_pvecAABBMax->y += arOffset[1];
+	m_pvecAABBMax->z += arOffset[2];
 }
 
 void _rdf_geometry::recalculate()

@@ -1317,11 +1317,11 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
-				case enumApplicationProperty::ScalelAndCenter:
+				case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
 				{
-					getRDFController()->setScaleAndCenter(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					getRDFController()->setScaleAndCenterAllVisibleGeometry(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
-					getRDFController()->onApplicationPropertyChanged(this, enumApplicationProperty::ScalelAndCenter);
+					getRDFController()->onApplicationPropertyChanged(this, enumApplicationProperty::ScalelAndCenterAllVisibleGeometry);
 				}
 				break;
 
@@ -2329,9 +2329,9 @@ void CPropertiesWnd::LoadApplicationProperties()
 		// Scale and Center
 		{
 			auto pProperty = new CApplicationProperty(_T("Scale and Center all Visible Geometry"),
-				getRDFController()->getScaleAndCenter() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+				getRDFController()->getScaleAndCenterAllVisibleGeometry() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
 				_T("Scale and Center all Visible Geometry"),
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScalelAndCenter));
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ScalelAndCenterAllVisibleGeometry));
 			pProperty->AddOption(TRUE_VALUE_PROPERTY);
 			pProperty->AddOption(FALSE_VALUE_PROPERTY);
 			pProperty->AllowEdit(FALSE);

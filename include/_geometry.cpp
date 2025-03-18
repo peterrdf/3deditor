@@ -340,12 +340,10 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
     memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
     memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
 
-    if (!GetBoundingBox(
+    GetBoundingBox(
         getOwlInstance(),
         (double*)m_pvecAABBMin,
-        (double*)m_pvecAABBMax)) {
-        return;
-    }
+        (double*)m_pvecAABBMax);
 
     double arOffset[3];
     GetVertexBufferOffset(getOwlModel(), arOffset);

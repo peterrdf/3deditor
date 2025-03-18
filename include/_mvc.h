@@ -40,7 +40,7 @@ enum class enumApplicationProperty : int
     Brightness,
     Gamma,
     VisibleValuesCountLimit,
-    ScalelAndCenter,
+    ScalelAndCenterAllVisibleGeometry,
 };
 
 // ************************************************************************************************
