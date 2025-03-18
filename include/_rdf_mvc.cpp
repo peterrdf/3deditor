@@ -255,6 +255,7 @@ void _rdf_model::loadInstances()
 	while (owlInstance != 0) {
 		auto itInstance = m_mapInstances.find(owlInstance);
 		if (itInstance == m_mapInstances.end()) {
+			// Load Model
 			auto pGeometry = new _rdf_geometry(owlInstance);
 			addGeometry(pGeometry);
 
@@ -262,9 +263,8 @@ void _rdf_model::loadInstances()
 			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
 		} else {
-			assert(FALSE);//#todo
 			// Import Model
-			//itInstance->second->recalculate();
+			itInstance->second->recalculate();
 		}
 
 		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);

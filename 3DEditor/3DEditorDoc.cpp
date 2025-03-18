@@ -17,6 +17,8 @@
 
 #include <propkey.h>
 
+#include "_ptr.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -161,7 +163,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 
 	auto pModel = new CRDFModel();
-	pModel->Load(lpszPathName, true);
+	pModel->Load(lpszPathName, false);
 
 	setModel(pModel);
 
@@ -184,6 +186,7 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 	return TRUE;
 }
+
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 {
 	//#todo
@@ -208,13 +211,12 @@ void CMy3DEditorDoc::OnFileImport()
 		return;
 	}
 
-	ASSERT(0);//#todo
-	//ImportModel(nullptr, dlgFile.GetPathName().GetString());
+	_ptr<CRDFModel>(getModel())->Load(dlgFile.GetPathName().GetString(), true);
 }
 
 void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable();
+	pCmdUI->Enable(getModel() != nullptr);
 }
 
 void CMy3DEditorDoc::OnViewZoomOut()

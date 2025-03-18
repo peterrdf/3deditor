@@ -46,15 +46,15 @@ private: // Fields
 
 	CRDFModel* m_pModel;
 	const wchar_t* m_szPath;
-	bool m_bLoading;
+	bool m_bAdd;
 
 public: // Methods
 
-	CLoadTask(CRDFModel* pModel, const wchar_t* szPath, bool bLoading)
+	CLoadTask(CRDFModel* pModel, const wchar_t* szPath, bool bAdd)
 		: CTask()
 		, m_pModel(pModel)
 		, m_szPath(szPath)
-		, m_bLoading(bLoading)
+		, m_bAdd(bAdd)
 	{
 		assert(m_pModel != nullptr);
 		assert(szPath != nullptr);
@@ -68,10 +68,10 @@ public: // Methods
 	{
 		if (m_pProgress != nullptr) {
 			CString strLog;
-			if (m_bLoading) {
-				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
-			} else {
+			if (m_bAdd) {
 				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
+			} else {
+				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
 			}
 
 			if (!TEST_MODE) {
@@ -100,17 +100,15 @@ public: // Methods
 		} else
 #endif		
 		{
-			if (m_bLoading) {
+			if (m_bAdd) {
+				assert(m_pModel->getOwlModel() != 0);
+				ImportModelW(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
 				OwlModel owlModel = OpenModelW(m_szPath);
 				if (owlModel) {
 					m_pModel->attachModel(m_szPath, owlModel);
 				}
-			} else {
-				assert(m_pModel->getOwlModel() != 0);
-				ASSERT(FALSE);//#todo
-				ImportModelW(m_pModel->getOwlModel(), m_szPath);
-
-				m_pModel->load();
 			}
 		}
 
@@ -266,15 +264,9 @@ CRDFModel::~CRDFModel()
 	attachModel(L"_DEFAULT_", owlModel);
 }
 
-void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
+void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 {
-	if (bLoading) {
-		clean();
-
-		m_strPath = szPath;
-	}
-
-	CLoadTask loadTask(this, szPath, bLoading);
+	CLoadTask loadTask(this, szPath, bAdd);
 #ifdef _PROGRESS_UI_SUPPORT
 	if (!TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
@@ -287,11 +279,6 @@ void CRDFModel::Load(const wchar_t* szPath, bool bLoading)
 	{
 		loadTask.Run();
 	}
-}
-
-void CRDFModel::ImportModel(const wchar_t* szPath)
-{
-	Load(szPath, false);
 }
 
 #ifdef _DXF_SUPPORT
@@ -341,7 +328,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	}	
+	}
 }
 #endif // _GIS_SUPPORT
 

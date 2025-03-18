@@ -46,8 +46,7 @@ protected: // Methods
 public: // Methods
 	
 	virtual void CreateDefaultModel();
-	void Load(const wchar_t* szPath, bool bLoading);
-	void ImportModel(const wchar_t* szPath);
+	void Load(const wchar_t* szPath, bool bAdd);
 
 #ifdef _DXF_SUPPORT
 	void LoadDXF(const wchar_t* szPath);
