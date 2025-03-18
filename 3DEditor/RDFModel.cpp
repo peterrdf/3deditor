@@ -101,9 +101,7 @@ public: // Methods
 #endif		
 		{
 			if (m_bAdd) {
-				assert(m_pModel->getOwlModel() != 0);
-				ImportModelW(m_pModel->getOwlModel(), m_szPath);
-				m_pModel->load();
+				m_pModel->importModel(m_szPath);
 			} else {
 				OwlModel owlModel = OpenModelW(m_szPath);
 				if (owlModel) {
@@ -268,7 +266,6 @@ void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 #ifdef _PROGRESS_UI_SUPPORT
 	if (!TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
-
 		m_pProgress = &dlgProgress;
 		dlgProgress.DoModal();
 		m_pProgress = nullptr;

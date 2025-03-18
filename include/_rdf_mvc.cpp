@@ -176,6 +176,18 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	load();
 }
 
+void _rdf_model::importModel(const wchar_t* szPath)
+{
+	if (m_owlModel == 0) {
+		assert(false);
+		return;
+	}
+
+	ImportModelW(m_owlModel, szPath);
+
+	load();
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);

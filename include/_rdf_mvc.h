@@ -33,6 +33,7 @@ public:  // Methods
 	virtual OwlModel getOwlModel() const override { return m_owlModel; }
 
 	void attachModel(const wchar_t* szPath, OwlModel owlModel);
+	void importModel(const wchar_t* szPath);
 
 protected:
 
