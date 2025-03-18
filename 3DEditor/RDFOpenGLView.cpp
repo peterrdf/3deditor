@@ -1172,7 +1172,7 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	}
 
 	auto pSelectedInstance = getController()->getSelectedInstances().front();
-	if (!pSelectedInstance->hasGeometry()) {
+	if (!pSelectedInstance->hasGeometry() || !pSelectedInstance->getEnable()) {
 		return;
 	}
 
@@ -1303,11 +1303,14 @@ void CRDFOpenGLView::DrawPointedFace()
 		return;
 	}
 
-	if (m_iPointedFace == -1) {
+	auto pSelectedInstance = getController()->getSelectedInstances().front();
+	if (!pSelectedInstance->getEnable()) {
 		return;
 	}
 
-	auto pSelectedInstance = getController()->getSelectedInstances().front();
+	if (m_iPointedFace == -1) {
+		return;
+	}	
 
 	/*
 	* Triangles
