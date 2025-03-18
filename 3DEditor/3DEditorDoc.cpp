@@ -189,8 +189,8 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 {
-	//#todo
-	//ScaleAndCenter();
+	_ptr<_rdf_model>(getModel())->reloadGeometries();
+	getModel()->scale();
 }
 
 void CMy3DEditorDoc::OnFileOpen()
