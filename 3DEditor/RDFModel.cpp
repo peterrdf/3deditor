@@ -112,29 +112,27 @@ public: // Methods
 			}
 		}
 
-		//#todo
-		//if (m_pModel->m_iModel == 0) {
-		//	CString strError;
-		//	strError.Format(L"Failed to open '%s'.", m_szPath);
+		if (m_pModel->getOwlModel() == 0) {
+			CString strError;
+			strError.Format(L"Failed to open '%s'.", m_szPath);
 
-		//	if (!TEST_MODE) {
-		//		if (m_pProgress != nullptr) {
-		//			m_pProgress->Log(2/*error*/, CW2A(strError));
-		//		}
-
-		//		::MessageBox(
-		//			::AfxGetMainWnd()->GetSafeHwnd(),
-		//			strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-		//	} else {
-		//		TRACE(L"\nError: %s", (LPCTSTR)strError);
-		//	}
-		//} else {
-		//	if (!TEST_MODE) {
-		//		if (m_pProgress != nullptr) {
-		//			m_pProgress->Log(0/*info*/, "*** Done. ***");
-		//		}
-		//	}
-		//}
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(2/*error*/, CW2A(strError));
+				}
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(),
+					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+			} else {
+				TRACE(L"\nError: %s", (LPCTSTR)strError);
+			}
+		} else {
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(0/*info*/, "*** Done. ***");
+				}
+			}
+		}
 	}
 };
 
