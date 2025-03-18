@@ -295,28 +295,21 @@ void CRDFModel::ImportModel(const wchar_t* szPath)
 }
 
 #ifdef _DXF_SUPPORT
-void CRDFModel::LoadDXF(const wchar_t* /*szPath*/)
+void CRDFModel::LoadDXF(const wchar_t* szPath)
 {
-	ASSERT(FALSE);//#todo
-	/*if (m_iModel == 0) {
-		m_iModel = CreateModel();
-		assert(m_iModel != 0);
-
-		SetFormatSettings(m_iModel);
-	}
-
 	try {
-		_dxf::_parser parser(m_iModel);
+		OwlModel owlModel = CreateModel();
+		ASSERT(owlModel != 0);
+
+		_dxf::_parser parser(owlModel);
 		parser.load(CW2A(szPath));
+
+		attachModel(szPath, owlModel);
 	} catch (const std::runtime_error& ex) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-
-		return;
 	}
-
-	load();*/
 }
 #endif
 
@@ -334,18 +327,16 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
 
-		OwlModel olwModel = CreateModel();
-		ASSERT(olwModel != 0);
+		OwlModel owlModel = CreateModel();
+		ASSERT(owlModel != 0);
 
-		ImportGISModel(olwModel, CW2A(szPath));
+		ImportGISModel(owlModel, CW2A(szPath));
 
-		attachModel(szPath, olwModel);
+		attachModel(szPath, owlModel);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-
-		return;
 	} catch (...) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
