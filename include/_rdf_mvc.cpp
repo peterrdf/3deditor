@@ -529,13 +529,6 @@ void _rdf_model::reloadGeometries() {
 	}
 }
 
-void _rdf_model::recalculateGeometries()
-{
-	for (auto pGeometry : getGeometries()) {
-		_ptr<_rdf_geometry>(pGeometry)->recalculate();
-	}
-}
-
 // ************************************************************************************************
 _rdf_view::_rdf_view()
 	: _view()

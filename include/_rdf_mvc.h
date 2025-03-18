@@ -66,7 +66,6 @@ public:  // Methods
 	void resetInstancesDefaultEnableState();
 
 	void reloadGeometries();
-	void recalculateGeometries();
 
 public: // Properties
 
