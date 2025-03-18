@@ -251,95 +251,84 @@ void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
-	ASSERT(FALSE); //#todo
-	/*wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.citygml";
 
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsCityGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif*/
+	SaveAsCityGMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
+#endif
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* /*pCmdUI*/)
+void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
-	//#ifdef _GIS_SUPPORT
-	//	pCmdUI->Enable((m_pModel != nullptr) &&
-	//		(m_pModel->getOwlModel() != 0) &&
-	//		IsCityGML(m_pModel->getOwlModel()));
-	//#else
-	//	pCmdUI->Enable(FALSE);
-	//#endif
+#ifdef _GIS_SUPPORT
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsCityGML(getModel()->getOwlModel()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
 
 void CMy3DEditorDoc::OnExportAsInfragml()
 {
-	ASSERT(FALSE); //#todo
-	/*wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsInfraGMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif*/
+	SaveAsInfraGMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
+#endif
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* /*pCmdUI*/)
+void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
-	ASSERT(FALSE); //#todo
-	//#ifdef _GIS_SUPPORT
-	//	pCmdUI->Enable((m_pModel != nullptr) &&
-	//		(m_pModel->getOwlModel() != 0) &&
-	//		IsInfraGML(m_pModel->getOwlModel()));
-	//#else
-	//	pCmdUI->Enable(FALSE);
-	//#endif
+#ifdef _GIS_SUPPORT
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsInfraGML(getModel()->getOwlModel()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
 
 void CMy3DEditorDoc::OnExportAsLandxml()
 {
-	ASSERT(FALSE); //#todo
-	/*wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsLandXMLW(m_pModel->getOwlModel(), dlgFile.GetPathName().GetString());
-#endif*/
+	SaveAsLandXMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
+#endif
 }
 
-void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* /*pCmdUI*/)
+void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
-	ASSERT(FALSE); //#todo
-	//#ifdef _GIS_SUPPORT
-	//	pCmdUI->Enable((m_pModel != nullptr) &&
-	//		(m_pModel->getOwlModel() != 0) &&
-	//		IsLandXML(m_pModel->getOwlModel()));
-	//#else
-	//	pCmdUI->Enable(FALSE);
-	//#endif
+#ifdef _GIS_SUPPORT
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsLandXML(getModel()->getOwlModel()));
+#else
+	pCmdUI->Enable(FALSE);
+#endif
 }
