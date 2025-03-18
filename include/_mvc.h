@@ -267,6 +267,7 @@ public: // Methods
     static wstring validateFileName(const wchar_t* szFileName);
 
     // Events
+    void onModelUpdated();
     void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }
     void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
     void resetInstancesEnabledState(_view* pSender);

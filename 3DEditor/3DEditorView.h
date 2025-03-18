@@ -20,6 +20,7 @@ public: // Methods
 
 	// _view
 	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
 
 	// _rdf_view
 	virtual void onInstancePropertySelected(_view* pSender) override;

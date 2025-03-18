@@ -25,7 +25,7 @@ CRDFController* CMy3DEditorView::GetController()
 	return pDoc;
 }
 
-/*virtual*/ void CMy3DEditorView::onModelLoaded()
+/*virtual*/ void CMy3DEditorView::onModelLoaded() /*override*/
 {
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
@@ -33,13 +33,19 @@ CRDFController* CMy3DEditorView::GetController()
 	auto pController = GetController();
 	if (pController == nullptr) {
 		ASSERT(FALSE);
-
 		return;
 	}
 
 	m_pOpenGLView = new CRDFOpenGLView(this);
 	m_pOpenGLView->setController(pController);
 	m_pOpenGLView->_load();
+}
+
+/*virtual*/ void CMy3DEditorView::onModelUpdated() /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_load();
+	}
 }
 
 /*virtual*/ void CMy3DEditorView::onInstancePropertySelected(_view* pSender) /*override*/

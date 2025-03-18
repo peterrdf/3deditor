@@ -953,6 +953,14 @@ void _controller::saveInstance(OwlInstance owlInstance)
     return (LPCWSTR)strValidFileName;
 }
 
+void _controller::onModelUpdated()
+{
+    auto itView = m_setViews.begin();
+    for (; itView != m_setViews.end(); itView++) {
+        (*itView)->onModelUpdated();
+    }
+}
+
 void _controller::onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag)
 {
     auto itView = m_setViews.begin();

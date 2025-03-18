@@ -65,6 +65,11 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	UpdateView();
 }
 
+/*virtual*/ void CDesignTreeView::onModelUpdated()
+{
+	onModelLoaded();
+}
+
 /*virtual*/ void CDesignTreeView::onInstanceSelected(_view* pSender) /*override*/
 {
 	if (pSender == this) {

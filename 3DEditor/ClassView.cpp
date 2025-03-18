@@ -41,13 +41,18 @@ public:
 IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 
 // ************************************************************************************************
-/*virtual*/ void CClassView::onModelLoaded()
+/*virtual*/ void CClassView::onModelLoaded() /*override*/
 {
 	if (_ptr<CRDFController>(getRDFController())->_test_IsTestMode()) {
 		return;
 	}
 
 	UpdateView();
+}
+
+/*virtual*/ void CClassView::onModelUpdated() /*override*/
+{
+	onModelLoaded();
 }
 
 /*virtual*/ CTreeCtrlEx* CClassView::GetTreeView() /*override*/

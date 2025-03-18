@@ -162,6 +162,8 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
+	setModel(nullptr);
+
 	auto pModel = new CRDFModel();
 	pModel->Load(lpszPathName, false);
 
@@ -212,6 +214,11 @@ void CMy3DEditorDoc::OnFileImport()
 	}
 
 	_ptr<CRDFModel>(getModel())->Load(dlgFile.GetPathName().GetString(), true);
+
+	onModelUpdated();
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)

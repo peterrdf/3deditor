@@ -39,6 +39,7 @@ public: // Methods
 
 	// _view
 	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
