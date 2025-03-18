@@ -36,15 +36,6 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 
 	/* BBs/AABBs */
 
-	assert(m_pmtxOriginalBBTransformation == nullptr);
-	m_pmtxOriginalBBTransformation = new _matrix();
-
-	assert(m_pvecOriginalBBMin == nullptr);
-	m_pvecOriginalBBMin = new _vector3d();
-
-	assert(m_pvecOriginalBBMax == nullptr);
-	m_pvecOriginalBBMax = new _vector3d();
-
 	assert(m_pmtxBBTransformation == nullptr);
 	m_pmtxBBTransformation = new _matrix();
 
@@ -71,13 +62,9 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 
 	GetBoundingBox(
 		getOwlInstance(),
-		(double*)m_pmtxOriginalBBTransformation,
-		(double*)m_pvecOriginalBBMin,
-		(double*)m_pvecOriginalBBMax);
-
-	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
-	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
-	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+		(double*)m_pmtxBBTransformation,
+		(double*)m_pvecBBMin,
+		(double*)m_pvecBBMax);
 
 	GetBoundingBox(
 		getOwlInstance(),
@@ -289,13 +276,9 @@ void _rdf_geometry::reload()
 
 	GetBoundingBox(
 		getOwlInstance(),
-		(double*)m_pmtxOriginalBBTransformation,
-		(double*)m_pvecOriginalBBMin,
-		(double*)m_pvecOriginalBBMax);
-
-	memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
-	memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
-	memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+		(double*)m_pmtxBBTransformation,
+		(double*)m_pvecBBMin,
+		(double*)m_pvecBBMax);
 
 	GetBoundingBox(
 		getOwlInstance(),

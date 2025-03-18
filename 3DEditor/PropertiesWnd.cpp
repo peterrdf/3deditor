@@ -3143,7 +3143,7 @@ void CPropertiesWnd::LoadBaseInformation(_rdf_instance* pInstance)
 	* Bounding box min
 	*/
 	{
-		auto pBBMin = pInstance->getGeometry()->getOriginalBBMin();
+		auto pBBMin = pInstance->getGeometry()->getBBMin();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -3159,7 +3159,7 @@ void CPropertiesWnd::LoadBaseInformation(_rdf_instance* pInstance)
 	* Bounding box max
 	*/
 	{
-		auto pBBMax = pInstance->getGeometry()->getOriginalBBMax();
+		auto pBBMax = pInstance->getGeometry()->getBBMax();
 
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
@@ -3850,7 +3850,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 	wstring strCardinality = pProperty->getCardinality(pInstance->getOwlInstance());
 
 	pCardinalityProperty->SetValue((_variant_t)strCardinality.c_str());
-	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetOriginalValue());
+	pCardinalityProperty->SetModified((_variant_t)strCardinality.c_str() != pCardinalityProperty->GetValue());
 
 	/*
 	* Disable the drawing

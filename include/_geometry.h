@@ -143,7 +143,6 @@ class _geometry
 
 private: // Fields
 
-    // Metadata
     OwlInstance m_owlInstance;
 
 protected: // Fields
@@ -154,13 +153,11 @@ protected: // Fields
     // Geometry
     _vertices_f* m_pVertexBuffer; // Vertices
     _indices_i32* m_pIndexBuffer; // Indices
-    int64_t m_iConceptualFacesCount; // Conceptual faces	
+    int64_t m_iConceptualFacesCount; // Conceptual faces
+    bool m_bHasGeometry;
     bool m_bShow;
 
     // BB/AABB
-    _matrix* m_pmtxOriginalBBTransformation;
-    _vector3d* m_pvecOriginalBBMin;
-    _vector3d* m_pvecOriginalBBMax;
     _matrix* m_pmtxBBTransformation;
     _vector3d* m_pvecBBMin;
     _vector3d* m_pvecBBMax;
@@ -322,8 +319,6 @@ public: // Properties
     virtual bool hasGeometry() const { return (getVerticesCount() > 0) && (getIndicesCount() > 0); }
 
     // BB
-    _vector3d* getOriginalBBMin() const { return m_pvecOriginalBBMin; }
-    _vector3d* getOriginalBBMax() const { return m_pvecOriginalBBMax; }
     _matrix* getBBTransformation() const { return m_pmtxBBTransformation; }
     _vector3d* getBBMin() const { return m_pvecBBMin; }
     _vector3d* getBBMax() const { return m_pvecBBMax; }

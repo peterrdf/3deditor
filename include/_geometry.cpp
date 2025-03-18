@@ -36,10 +36,8 @@ _geometry::_geometry(OwlInstance owlInstance)
     , m_pVertexBuffer(nullptr)
     , m_pIndexBuffer(nullptr)
     , m_iConceptualFacesCount(0)
+    , m_bHasGeometry(false)
     , m_bShow(true)
-    , m_pmtxOriginalBBTransformation(nullptr)
-    , m_pvecOriginalBBMin(nullptr)
-    , m_pvecOriginalBBMax(nullptr)
     , m_pmtxBBTransformation(nullptr)
     , m_pvecBBMin(nullptr)
     , m_pvecBBMax(nullptr)
@@ -291,6 +289,8 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     UpdateInstanceIndexBuffer(getOwlInstance(), pIndexBuffer->data());
 
+    m_bHasGeometry = true;
+
     return true;
 }
 
@@ -301,15 +301,6 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     assert(m_pIndexBuffer == nullptr);
     m_pIndexBuffer = new _indices_i32();
-
-    assert(m_pmtxOriginalBBTransformation == nullptr);
-    m_pmtxOriginalBBTransformation = new _matrix();
-
-    assert(m_pvecOriginalBBMin == nullptr);
-    m_pvecOriginalBBMin = new _vector3d();
-
-    assert(m_pvecOriginalBBMax == nullptr);
-    m_pvecOriginalBBMax = new _vector3d();
 
     assert(m_pmtxBBTransformation == nullptr);
     m_pmtxBBTransformation = new _matrix();
@@ -332,13 +323,9 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
 
     GetBoundingBox(
         getOwlInstance(),
-        (double*)m_pmtxOriginalBBTransformation,
-        (double*)m_pvecOriginalBBMin,
-        (double*)m_pvecOriginalBBMax);
-
-    memcpy(m_pmtxBBTransformation, m_pmtxOriginalBBTransformation, sizeof(_matrix));
-    memcpy(m_pvecBBMin, m_pvecOriginalBBMin, sizeof(_vector3d));
-    memcpy(m_pvecBBMax, m_pvecOriginalBBMax, sizeof(_vector3d));
+        (double*)m_pmtxBBTransformation,
+        (double*)m_pvecBBMin,
+        (double*)m_pvecBBMax);
 
     GetBoundingBox(
         getOwlInstance(),
@@ -940,14 +927,9 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
     delete m_pIndexBuffer;
     m_pIndexBuffer = nullptr;
 
-    delete m_pmtxOriginalBBTransformation;
-    m_pmtxOriginalBBTransformation = nullptr;
+    m_iConceptualFacesCount = 0;
 
-    delete m_pvecOriginalBBMin;
-    m_pvecOriginalBBMin = nullptr;
-
-    delete m_pvecOriginalBBMax;
-    m_pvecOriginalBBMax = nullptr;
+    m_bHasGeometry = false;
 
     delete m_pmtxBBTransformation;
     m_pmtxBBTransformation = nullptr;
@@ -962,7 +944,7 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
     m_pvecAABBMin = nullptr;
 
     delete m_pvecAABBMax;
-    m_pvecAABBMax = nullptr;
+    m_pvecAABBMax = nullptr;    
 
     m_vecTriangles.clear();
     m_vecFacePolygons.clear();
