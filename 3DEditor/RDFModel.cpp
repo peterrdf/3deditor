@@ -321,16 +321,8 @@ void CRDFModel::LoadDXF(const wchar_t* /*szPath*/)
 #endif
 
 #ifdef _GIS_SUPPORT
-void CRDFModel::LoadGISModel(const wchar_t* /*szPath*/)
+void CRDFModel::LoadGISModel(const wchar_t* szPath)
 {
-	ASSERT(FALSE);//#todo
-	/*if (m_iModel == 0) {
-		m_iModel = CreateModel();
-		assert(m_iModel != 0);
-
-		SetFormatSettings(m_iModel);
-	}
-
 	try {
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
@@ -342,7 +334,12 @@ void CRDFModel::LoadGISModel(const wchar_t* /*szPath*/)
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
 
-		ImportGISModel(m_iModel, CW2A(szPath));
+		OwlModel olwModel = CreateModel();
+		ASSERT(olwModel != 0);
+
+		ImportGISModel(olwModel, CW2A(szPath));
+
+		attachModel(szPath, olwModel);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
@@ -353,9 +350,7 @@ void CRDFModel::LoadGISModel(const wchar_t* /*szPath*/)
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	}
-
-	load();*/
+	}	
 }
 #endif // _GIS_SUPPORT
 
