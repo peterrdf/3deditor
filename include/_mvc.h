@@ -270,9 +270,9 @@ public: // Methods
     void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }
     void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
     void resetInstancesEnabledState(_view* pSender);
-    void onInstancesEnabledStateChanged(_view* pSender);
-    void onInstancesShowStateChanged(_view* pSender);
-    void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
+    virtual void onInstancesEnabledStateChanged(_view* pSender);
+    virtual void onInstancesShowStateChanged(_view* pSender);
+    virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty);
 
 protected: // Methods
 

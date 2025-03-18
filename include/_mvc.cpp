@@ -972,7 +972,7 @@ void _controller::resetInstancesEnabledState(_view* pSender)
     onInstancesEnabledStateChanged(pSender);
 }
 
-void _controller::onInstancesEnabledStateChanged(_view* pSender)
+/*virtual*/ void _controller::onInstancesEnabledStateChanged(_view* pSender)
 {
     auto itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {
@@ -980,7 +980,7 @@ void _controller::onInstancesEnabledStateChanged(_view* pSender)
     }
 }
 
-void _controller::onInstancesShowStateChanged(_view* pSender)
+/*virtual*/ void _controller::onInstancesShowStateChanged(_view* pSender)
 {
     auto itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {
@@ -988,7 +988,7 @@ void _controller::onInstancesShowStateChanged(_view* pSender)
     }
 }
 
-void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
+/*virtual*/ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
     auto itView = m_setViews.begin();
     for (; itView != m_setViews.end(); itView++) {

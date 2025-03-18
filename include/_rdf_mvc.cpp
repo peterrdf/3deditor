@@ -40,8 +40,6 @@ _rdf_model::_rdf_model()
 			continue;
 		}
 
-		_ptr<_rdf_geometry>(pGeometry)->loadOriginalData();
-
 		for (auto pInstance : pGeometry->getInstances()) {
 			if (!pInstance->getEnable()) {
 				continue;
@@ -563,6 +561,21 @@ _rdf_controller::_rdf_controller()
 	_controller::selectInstances(pSender, vecInstance, bAdd);
 
 	m_pSelectedProperty = nullptr;
+}
+
+/*virtual*/ void _rdf_controller::onInstancesEnabledStateChanged(_view* pSender) /*override*/
+{
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
+	}
+
+	_ptr<_rdf_model>(getModel())->recalculate();
+	if (m_bScaleAndCenter) {
+		getModel()->scale();
+	}
+
+	_controller::onInstancesEnabledStateChanged(pSender);
 }
 
 /*virtual*/ void _rdf_controller::cleanSelection() /*override*/

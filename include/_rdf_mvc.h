@@ -124,6 +124,7 @@ public: // Methods
 protected: // Methods
 
 	// _controller
+	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 	virtual void cleanSelection() override;
 
 public: // Methods
