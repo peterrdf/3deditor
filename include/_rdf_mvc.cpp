@@ -529,24 +529,27 @@ void _rdf_model::reloadGeometries() {
 	}
 }
 
-OwlInstance _rdf_model::translate(
+/*static*/ OwlInstance _rdf_model::translateTransformation(
+	OwlModel owlModel,
 	OwlInstance owlInstance,
-	double dX, double dY, double dZ) const
+	double dX, double dY, double dZ)
 {
-	return translate(
+	return translateTransformation(
+		owlModel,
 		owlInstance,
 		dX, dY, dZ,
 		1., 1., 1.);
 }
 
-OwlInstance _rdf_model::translate(
+/*static*/ OwlInstance _rdf_model::translateTransformation(
+	OwlModel owlModel,
 	OwlInstance owlInstance,
 	double dX, double dY, double dZ,
-	double d11, double d22, double d33) const
+	double d11, double d22, double d33)
 {
 	assert(owlInstance != 0);
 
-	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
 	assert(owlMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
@@ -559,58 +562,62 @@ OwlInstance _rdf_model::translate(
 
 	SetDatatypeProperty(
 		owlMatrixInstance,
-		GetPropertyByName(getOwlModel(), "coordinates"),
+		GetPropertyByName(owlModel, "coordinates"),
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
 	assert(owlTransformationInstance != 0);
 
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
 
 	return owlTransformationInstance;
 }
 
-OwlInstance _rdf_model::rotate(
+/*static*/ OwlInstance _rdf_model::rotateTransformation(
+	OwlModel owlModel,
 	OwlInstance owlInstance,
-	double alpha, double beta, double gamma) const
+	double alpha, double beta, double gamma)
 {
 	assert(owlInstance != 0);
 
-	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
 	assert(owlMatrixInstance != 0);
 
 	_matrix matrix;
 	memset(&matrix, 0, sizeof(_matrix));
 	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
 
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_11"), &matrix._11, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_12"), &matrix._12, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_13"), &matrix._13, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_11"), &matrix._11, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_12"), &matrix._12, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_13"), &matrix._13, 1);
 
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_21"), &matrix._21, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_22"), &matrix._22, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_23"), &matrix._23, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_21"), &matrix._21, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_22"), &matrix._22, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_23"), &matrix._23, 1);
 
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_31"), &matrix._31, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_32"), &matrix._32, 1);
-	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_33"), &matrix._33, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_31"), &matrix._31, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_32"), &matrix._32, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(owlModel, "_33"), &matrix._33, 1);
 
-	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
 	assert(owlTransformationInstance != 0);
 
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
 
 	return owlTransformationInstance;
 }
 
-OwlInstance _rdf_model::scale(OwlInstance owlInstance, double dFactor) const
+/*static*/ OwlInstance _rdf_model::scaleTransformation(
+	OwlModel owlModel, 
+	OwlInstance owlInstance,
+	double dFactor)
 {
 	assert(owlInstance != 0);
 
-	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(owlModel, "Matrix"));
 	assert(owlMatrixInstance != 0);
 
 	vector<double> vecTransformationMatrix =
@@ -623,15 +630,15 @@ OwlInstance _rdf_model::scale(OwlInstance owlInstance, double dFactor) const
 
 	SetDatatypeProperty(
 		owlMatrixInstance,
-		GetPropertyByName(getOwlModel(), "coordinates"),
+		GetPropertyByName(owlModel, "coordinates"),
 		vecTransformationMatrix.data(),
 		vecTransformationMatrix.size());
 
-	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(owlModel, "Transformation"));
 	assert(owlTransformationInstance != 0);
 
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
-	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(owlModel, "object"), &owlInstance, 1);
 
 	return owlTransformationInstance;
 }

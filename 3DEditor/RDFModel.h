@@ -75,12 +75,14 @@ private: // Methods
 class CSceneRDFModel : public CRDFModel
 {
 
+private: // Members
+
+	CTextBuilder* m_pTextBuilder;
+
 public: // Methods
 
 	CSceneRDFModel();
 	virtual ~CSceneRDFModel();
-
-	void TranslateModel(float fX, float fY, float fZ);
 
 	// _model	
 	virtual void scale() override {};
@@ -90,6 +92,7 @@ protected: // Methods
 	// _rdf_model
 	virtual void postLoad() override;
 
+private: // Methods
+
 	void Create();
-	void CreateCoordinateSystem();
 };

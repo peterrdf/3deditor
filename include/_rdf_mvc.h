@@ -68,17 +68,23 @@ public:  // Methods
 	void reloadGeometries();
 
 	// Helpers
-	OwlInstance translate(
+	static OwlInstance translateTransformation(
+		OwlModel owlModel,
 		OwlInstance owlInstance,
-		double dX, double dY, double dZ) const;
-	OwlInstance translate(
+		double dX, double dY, double dZ);
+	static OwlInstance translateTransformation(
+		OwlModel owlModel,
 		OwlInstance owlInstance,
 		double dX, double dY, double dZ,
-		double d11, double d22, double d33) const;
-	OwlInstance rotate(
+		double d11, double d22, double d33);
+	static OwlInstance rotateTransformation(
+		OwlModel owlModel,
 		OwlInstance owlInstance,
-		double alpha, double beta, double gamma) const;
-	OwlInstance scale(OwlInstance OwlInstance, double dFactor) const;
+		double alpha, double beta, double gamma);
+	static OwlInstance scaleTransformation(
+		OwlModel owlModel,
+		OwlInstance OwlInstance, 
+		double dFactor);
 
 public: // Properties
 
