@@ -12,6 +12,9 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
+#include <atltypes.h>
+#include <afxwin.h>
+
 #include <chrono>
 #include <ctime>
 #define _USE_MATH_DEFINES
