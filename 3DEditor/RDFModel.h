@@ -70,3 +70,26 @@ private: // Methods
 
 	void Create();
 };
+
+// ************************************************************************************************
+class CSceneRDFModel : public CRDFModel
+{
+
+public: // Methods
+
+	CSceneRDFModel();
+	virtual ~CSceneRDFModel();
+
+	void TranslateModel(float fX, float fY, float fZ);
+
+	// _model	
+	virtual void scale() override {};
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void postLoad() override;
+
+	void Create();
+	void CreateCoordinateSystem();
+};

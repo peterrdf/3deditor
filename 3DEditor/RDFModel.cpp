@@ -333,3 +333,299 @@ void CDefaultRDFModel::Create()
 
 	attachModel(L"_DEFAULT_", owlModel);
 }
+
+// ************************************************************************************************
+CSceneRDFModel::CSceneRDFModel()
+	: CRDFModel()
+{
+}
+
+/*virtual*/ CSceneRDFModel::~CSceneRDFModel()
+{
+}
+
+void CSceneRDFModel::TranslateModel(float fX, float fY, float fZ)
+{
+	ASSERT(FALSE); //#todo
+	/*auto itInstance = m_mapInstances.begin();
+	for (; itInstance != m_mapInstances.end(); itInstance++) {
+		if (!itInstance->second->getEnable()) {
+			continue;
+		}
+
+		itInstance->second->LoadOriginalData();
+		itInstance->second->translate(fX, fY, fZ);
+	}*/
+}
+
+/*virtual*/ void CSceneRDFModel::postLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+}
+
+void CSceneRDFModel::Create()
+{
+	//// ASCII Chars
+	//m_pTextBuilder->Initialize(m_iModel);
+
+	//CreateCoordinateSystem();
+
+	//LoadRDFModel();
+}
+
+void CSceneRDFModel::CreateCoordinateSystem()
+{
+	//OwlModel owlModel = CreateModel();
+	//assert(owlModel != 0);
+
+	//const double AXIS_LENGTH = 2.5;
+
+	//// Coordinate System
+	//vector<OwlInstance> vecInstances;
+
+	//// Coordinate System/X (1 Line3D)
+	//OwlInstance iXAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+	//	pAmbient.set_R(1.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(0.);
+	//	pAmbient.set_W(1.);
+
+	//	auto pColor = GEOM::Color::Create(owlModel);
+	//	pColor.set_ambient(pAmbient);
+
+	//	auto pMaterial = GEOM::Material::Create(owlModel);
+	//	pMaterial.set_color(pColor);
+
+	//	iXAxisMaterial = (int64_t)pMaterial;
+
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		AXIS_LENGTH / 2., 0., 0.,
+	//	};
+
+	//	auto pXAxis = GEOM::Line3D::Create(owlModel);
+	//	pXAxis.set_material(pMaterial);
+	//	pXAxis.set_points(vecPoints.data(), vecPoints.size());
+
+	//	vecInstances.push_back((int64_t)pXAxis);
+	//}
+
+	//// Coordinate System/Y (Line3D)
+	//OwlInstance iYAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(1.);
+	//	pAmbient.set_B(0.);
+	//	pAmbient.set_W(1.);
+
+	//	auto pColor = GEOM::Color::Create(owlModel);
+	//	pColor.set_ambient(pAmbient);
+
+	//	auto pMaterial = GEOM::Material::Create(owlModel);
+	//	pMaterial.set_color(pColor);
+
+	//	iYAxisMaterial = (int64_t)pMaterial;
+
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		0., AXIS_LENGTH / 2., 0.,
+	//	};
+
+	//	auto pYAxis = GEOM::Line3D::Create(owlModel);
+	//	pYAxis.set_material(pMaterial);
+	//	pYAxis.set_points(vecPoints.data(), vecPoints.size());
+
+	//	vecInstances.push_back((int64_t)pYAxis);
+	//}
+
+	//// Coordinate System/Z (Line3D)
+	//OwlInstance iZAxisMaterial = 0;
+	//{
+	//	auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+	//	pAmbient.set_R(0.);
+	//	pAmbient.set_G(0.);
+	//	pAmbient.set_B(1.);
+	//	pAmbient.set_W(1.);
+
+	//	auto pColor = GEOM::Color::Create(owlModel);
+	//	pColor.set_ambient(pAmbient);
+
+	//	auto pMaterial = GEOM::Material::Create(owlModel);
+	//	pMaterial.set_color(pColor);
+
+	//	iZAxisMaterial = (int64_t)pMaterial;
+
+	//	vector<double> vecPoints =
+	//	{
+	//		0., 0., 0.,
+	//		0., 0., AXIS_LENGTH / 2.,
+	//	};
+
+	//	auto pZAxis = GEOM::Line3D::Create(owlModel);
+	//	pZAxis.set_material(pMaterial);
+	//	pZAxis.set_points(vecPoints.data(), vecPoints.size());
+
+	//	vecInstances.push_back((int64_t)pZAxis);
+	//}
+
+	//// Arrows (1 Cone => 3 Transformations)
+	//{
+	//	const double ARROW_OFFSET = 2.5;
+
+	//	auto pArrow = GEOM::Cone::Create(owlModel);
+	//	pArrow.set_height(AXIS_LENGTH / 15.);
+	//	pArrow.set_radius(.075);
+
+	//	// +X
+	//	{
+	//		OwlInstance iPlusXInstance = Translate(
+	//			Rotate((int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
+	//			ARROW_OFFSET / 2., 0., 0.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusXInstance, "#(+X)");
+
+	//		SetObjectProperty(
+	//			iPlusXInstance,
+	//			GetPropertyByName(owlModel, "material"),
+	//			&iXAxisMaterial,
+	//			1);
+
+	//		vecInstances.push_back(iPlusXInstance);
+	//	}
+
+	//	// +Y
+	//	{
+	//		OwlInstance iPlusYInstance = Translate(
+	//			Rotate((int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
+	//			0., ARROW_OFFSET / 2., 0.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusYInstance, "#(+Y)");
+
+	//		SetObjectProperty(
+	//			iPlusYInstance,
+	//			GetPropertyByName(owlModel, "material"),
+	//			&iYAxisMaterial,
+	//			1);
+
+	//		vecInstances.push_back(iPlusYInstance);
+	//	}
+
+	//	// +Z
+	//	{
+	//		OwlInstance iPlusZInstance = Translate(
+	//			(int64_t)pArrow,
+	//			0., 0., ARROW_OFFSET / 2.,
+	//			1., 1., 1.);
+	//		SetNameOfInstance(iPlusZInstance, "#(+Z)");
+
+	//		SetObjectProperty(
+	//			iPlusZInstance,
+	//			GetPropertyByName(owlModel, "material"),
+	//			&iZAxisMaterial,
+	//			1);
+
+	//		vecInstances.push_back(iPlusZInstance);
+	//	}
+	//}
+
+	///* Labels */
+	//double dXmin = DBL_MAX;
+	//double dXmax = -DBL_MAX;
+	//double dYmin = DBL_MAX;
+	//double dYmax = -DBL_MAX;
+	//double dZmin = DBL_MAX;
+	//double dZmax = -DBL_MAX;
+
+	//// X-axis
+	//OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	//assert(iPlusXLabelInstance != 0);
+
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusXLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
+
+	//// Y-axis
+	//OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	//assert(iPlusYLabelInstance != 0);
+
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusYLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
+
+	//// Z-axis
+	//OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	//assert(iPlusZLabelInstance != 0);
+
+	//CRDFInstance::calculateBBMinMax(
+	//	iPlusZLabelInstance,
+	//	dXmin, dXmax,
+	//	dYmin, dYmax,
+	//	dZmin, dZmax);
+
+	///* Scale Factor */
+	//double dMaxLength = dXmax - dXmin;
+	//dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	//dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+
+	//double dScaleFactor = ((AXIS_LENGTH / 2.) * .75) / dMaxLength;
+
+	///* Transform Labels */
+
+	//// X-axis
+	//OwlInstance iInstance = Translate(
+	//	Rotate(Scale(iPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
+	//	AXIS_LENGTH / 1.4, 0., 0.,
+	//	-1., 1., 1.);
+
+	//SetNameOfInstance(iInstance, "#X-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(owlModel, "material"),
+	//	&iXAxisMaterial,
+	//	1);
+
+	//// Y-axis
+	//iInstance = Translate(
+	//	Rotate(Scale(iPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+	//	0., AXIS_LENGTH / 1.4, 0.,
+	//	-1., 1., 1.);
+
+	//SetNameOfInstance(iInstance, "#Y-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(owlModel, "material"),
+	//	&iYAxisMaterial,
+	//	1);
+
+	//// Z-axis
+	//iInstance = Translate(
+	//	Rotate(Scale(iPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
+	//	0., 0., AXIS_LENGTH / 1.4,
+	//	1., 1., -1.);
+
+	//SetNameOfInstance(iInstance, "#Z-axis");
+	//SetObjectProperty(
+	//	iInstance,
+	//	GetPropertyByName(owlModel, "material"),
+	//	&iZAxisMaterial,
+	//	1);
+
+	///* Collection */
+	//OwlInstance iCollectionInstance = CreateInstance(GetClassByName(owlModel, "Collection"), "#Coordinate System#");
+	//assert(iCollectionInstance != 0);
+
+	//SetObjectProperty(
+	//	iCollectionInstance,
+	//	GetPropertyByName(owlModel, "objects"),
+	//	vecInstances.data(),
+	//	vecInstances.size());
+}
