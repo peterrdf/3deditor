@@ -30,26 +30,18 @@ END_MESSAGE_MAP()
 // CRDFViewerDoc construction/destruction
 
 CRDFViewerDoc::CRDFViewerDoc()
-	: m_pModel(nullptr)
+	: CRDFController()
 {
 }
 
 CRDFViewerDoc::~CRDFViewerDoc()
 {
-	delete m_pModel;
-	
 }
 
 BOOL CRDFViewerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
 
 	setModel(new CDefaultRDFModel());
 
@@ -60,12 +52,9 @@ BOOL CRDFViewerDoc::OnNewDocument()
 
 void CRDFViewerDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
+	if (ar.IsStoring()) {
 		// TODO: add storing code here
-	}
-	else
-	{
+	} else {
 		// TODO: add loading code here
 	}
 }
@@ -81,7 +70,7 @@ void CRDFViewerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
 	CString strText = _T("TODO: implement thumbnail drawing here");
 	LOGFONT lf;
 
-	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	pDefaultGUIFont->GetLogFont(&lf);
 	lf.lfHeight = 36;
 
@@ -106,16 +95,12 @@ void CRDFViewerDoc::InitializeSearchContent()
 
 void CRDFViewerDoc::SetSearchContent(const CString& value)
 {
-	if (value.IsEmpty())
-	{
+	if (value.IsEmpty()) {
 		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-	}
-	else
-	{
-		CMFCFilterChunkValueImpl *pChunk = nullptr;
+	} else {
+		CMFCFilterChunkValueImpl* pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != nullptr)
-		{
+		if (pChunk != nullptr) {
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
 		}
@@ -166,7 +151,9 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CRDFViewerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	SaveModelW(m_pModel->getOwlModel(), lpszPathName);
+	if (getModel() != nullptr) {
+		SaveModelW(getModel()->getOwlModel(), lpszPathName);
+	}
 
 	return TRUE;
 }
@@ -174,8 +161,7 @@ BOOL CRDFViewerDoc::OnSaveDocument(LPCTSTR lpszPathName)
 void CRDFViewerDoc::OnFileOpen()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
