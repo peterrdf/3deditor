@@ -40,7 +40,7 @@ public: // Methods
         return numeric_limits<GLint>::max();
     }
 
-#if defined _MFC_VER || defined _AFXDLL
+#if defined _WINDOWS
     static void checkForErrors()
     {
         GLenum errLast = GL_NO_ERROR;
@@ -83,10 +83,10 @@ public: // Methods
             PostQuitMessage(0);
         }
     }
-#endif // #if defined(_MFC_VER) || defined(_AFXDLL)
+#endif // _WINDOWS
 };
 
-#if defined _MFC_VER || defined _AFXDLL
+#if defined _WINDOWS
 // ************************************************************************************************
 class _oglShader
 {
@@ -2487,4 +2487,4 @@ public: // Properties
 
     const map<_instance*, _material*>& getUserDefinedMaterials() const { return m_mapUserDefinedMaterials; }
 };
-#endif // #if defined _MFC_VER || defined _AFXDLL
+#endif // _WINDOWS
