@@ -248,17 +248,17 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 #endif // _GIS_SUPPORT
 
 // ************************************************************************************************
-CDefaultRDFModel::CDefaultRDFModel()
+CDefaultModel::CDefaultModel()
 	: CRDFModel()
 {
 	Create();
 }
 
-/*virtual*/ CDefaultRDFModel::~CDefaultRDFModel()
+/*virtual*/ CDefaultModel::~CDefaultModel()
 {
 }
 
-void CDefaultRDFModel::Create()
+void CDefaultModel::Create()
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -335,26 +335,27 @@ void CDefaultRDFModel::Create()
 }
 
 // ************************************************************************************************
-CSceneRDFModel::CSceneRDFModel()
+CCoordinateSystemModel::CCoordinateSystemModel()
 	: CRDFModel()
 	, m_pTextBuilder(new CTextBuilder())
 {
 	Create();
 }
 
-/*virtual*/ CSceneRDFModel::~CSceneRDFModel()
+/*virtual*/ CCoordinateSystemModel::~CCoordinateSystemModel()
 {
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ void CSceneRDFModel::preLoad() /*override*/
+/*virtual*/ void CCoordinateSystemModel::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 }
 
-void CSceneRDFModel::Create()
+void CCoordinateSystemModel::Create()
 {
-	const double AXIS_LENGTH = 2.5;
+	const double AXIS_LENGTH = 3.;
+	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -365,7 +366,7 @@ void CSceneRDFModel::Create()
 	vector<OwlInstance> vecInstances;
 
 	// Coordinate System/X (1 Line3D)
-	OwlInstance iXAxisMaterial = 0;
+	OwlInstance owlXAxisMaterialInstance = 0;
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(1.);
@@ -379,7 +380,7 @@ void CSceneRDFModel::Create()
 		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 
-		iXAxisMaterial = (int64_t)pMaterial;
+		owlXAxisMaterialInstance = (int64_t)pMaterial;
 
 		vector<double> vecPoints =
 		{
@@ -395,7 +396,7 @@ void CSceneRDFModel::Create()
 	}
 
 	// Coordinate System/Y (Line3D)
-	OwlInstance iYAxisMaterial = 0;
+	OwlInstance owlYAxisMaterialInstance = 0;
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(0.);
@@ -409,7 +410,7 @@ void CSceneRDFModel::Create()
 		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 
-		iYAxisMaterial = (int64_t)pMaterial;
+		owlYAxisMaterialInstance = (int64_t)pMaterial;
 
 		vector<double> vecPoints =
 		{
@@ -425,7 +426,7 @@ void CSceneRDFModel::Create()
 	}
 
 	// Coordinate System/Z (Line3D)
-	OwlInstance iZAxisMaterial = 0;
+	OwlInstance owlZAxisMaterialInstance = 0;
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
 		pAmbient.set_R(0.);
@@ -439,7 +440,7 @@ void CSceneRDFModel::Create()
 		auto pMaterial = GEOM::Material::Create(owlModel);
 		pMaterial.set_color(pColor);
 
-		iZAxisMaterial = (int64_t)pMaterial;
+		owlZAxisMaterialInstance = (int64_t)pMaterial;
 
 		vector<double> vecPoints =
 		{
@@ -456,64 +457,62 @@ void CSceneRDFModel::Create()
 
 	// Arrows (1 Cone => 3 Transformations)
 	{
-		const double ARROW_OFFSET = 2.5;
-
 		auto pArrow = GEOM::Cone::Create(owlModel);
 		pArrow.set_height(AXIS_LENGTH / 15.);
 		pArrow.set_radius(.075);
 
 		// +X
 		{
-			OwlInstance iPlusXInstance = translateTransformation(
+			OwlInstance owlPlusXInstance = translateTransformation(
 				owlModel,
 				rotateTransformation(owlModel, (int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
 				ARROW_OFFSET / 2., 0., 0.,
 				1., 1., 1.);
-			SetNameOfInstance(iPlusXInstance, "#(+X)");
+			SetNameOfInstance(owlPlusXInstance, "#(+X)");
 
 			SetObjectProperty(
-				iPlusXInstance,
+				owlPlusXInstance,
 				GetPropertyByName(owlModel, "material"),
-				&iXAxisMaterial,
+				&owlXAxisMaterialInstance,
 				1);
 
-			vecInstances.push_back(iPlusXInstance);
+			vecInstances.push_back(owlPlusXInstance);
 		}
 
 		// +Y
 		{
-			OwlInstance iPlusYInstance = translateTransformation(
+			OwlInstance owlPlusYInstance = translateTransformation(
 				owlModel,
 				rotateTransformation(owlModel, (int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
 				0., ARROW_OFFSET / 2., 0.,
 				1., 1., 1.);
-			SetNameOfInstance(iPlusYInstance, "#(+Y)");
+			SetNameOfInstance(owlPlusYInstance, "#(+Y)");
 
 			SetObjectProperty(
-				iPlusYInstance,
+				owlPlusYInstance,
 				GetPropertyByName(owlModel, "material"),
-				&iYAxisMaterial,
+				&owlYAxisMaterialInstance,
 				1);
 
-			vecInstances.push_back(iPlusYInstance);
+			vecInstances.push_back(owlPlusYInstance);
 		}
 
 		// +Z
 		{
-			OwlInstance iPlusZInstance = translateTransformation(
+			OwlInstance owlPlusZInstance = translateTransformation(
 				owlModel,
 				(int64_t)pArrow,
 				0., 0., ARROW_OFFSET / 2.,
 				1., 1., 1.);
-			SetNameOfInstance(iPlusZInstance, "#(+Z)");
+			SetNameOfInstance(owlPlusZInstance, "#(+Z)");
 
 			SetObjectProperty(
-				iPlusZInstance,
+				owlPlusZInstance,
 				GetPropertyByName(owlModel, "material"),
-				&iZAxisMaterial,
+				&owlZAxisMaterialInstance,
 				1);
 
-			vecInstances.push_back(iPlusZInstance);
+			vecInstances.push_back(owlPlusZInstance);
 		}
 	}
 
@@ -526,31 +525,31 @@ void CSceneRDFModel::Create()
 	double dZmax = -DBL_MAX;
 
 	// X-axis
-	OwlInstance iPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
-	assert(iPlusXLabelInstance != 0);
+	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	assert(owlPlusXLabelInstance != 0);
 
 	_geometry::calculateBB(
-		iPlusXLabelInstance,
+		owlPlusXLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
 		dZmin, dZmax);
 
 	// Y-axis
-	OwlInstance iPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
-	assert(iPlusYLabelInstance != 0);
+	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	assert(owlPlusYLabelInstance != 0);
 
 	_geometry::calculateBB(
-		iPlusYLabelInstance,
+		owlPlusYLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
 		dZmin, dZmax);
 
 	// Z-axis
-	OwlInstance iPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
-	assert(iPlusZLabelInstance != 0);
+	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	assert(owlPlusZLabelInstance != 0);
 
 	_geometry::calculateBB(
-		iPlusZLabelInstance,
+		owlPlusZLabelInstance,
 		dXmin, dXmax,
 		dYmin, dYmax,
 		dZmin, dZmax);
@@ -565,53 +564,53 @@ void CSceneRDFModel::Create()
 	/* Transform Labels */
 
 	// X-axis
-	OwlInstance iInstance = translateTransformation(
+	OwlInstance owlInstance = translateTransformation(
 		owlModel,
-		rotateTransformation(owlModel, scaleTransformation(owlModel, iPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
 		AXIS_LENGTH / 1.4, 0., 0.,
 		-1., 1., 1.);
 
-	SetNameOfInstance(iInstance, "#X-axis");
+	SetNameOfInstance(owlInstance, "#X-axis");
 	SetObjectProperty(
-		iInstance,
+		owlInstance,
 		GetPropertyByName(owlModel, "material"),
-		&iXAxisMaterial,
+		&owlXAxisMaterialInstance,
 		1);
 
 	// Y-axis
-	iInstance = translateTransformation(
+	owlInstance = translateTransformation(
 		owlModel, 
-		rotateTransformation(owlModel, scaleTransformation(owlModel, iPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
 		0., AXIS_LENGTH / 1.4, 0.,
 		-1., 1., 1.);
 
-	SetNameOfInstance(iInstance, "#Y-axis");
+	SetNameOfInstance(owlInstance, "#Y-axis");
 	SetObjectProperty(
-		iInstance,
+		owlInstance,
 		GetPropertyByName(owlModel, "material"),
-		&iYAxisMaterial,
+		&owlYAxisMaterialInstance,
 		1);
 
 	// Z-axis
-	iInstance = translateTransformation(
+	owlInstance = translateTransformation(
 		owlModel, 
-		rotateTransformation(owlModel, scaleTransformation(owlModel, iPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
 		0., 0., AXIS_LENGTH / 1.4,
 		1., 1., -1.);
 
-	SetNameOfInstance(iInstance, "#Z-axis");
+	SetNameOfInstance(owlInstance, "#Z-axis");
 	SetObjectProperty(
-		iInstance,
+		owlInstance,
 		GetPropertyByName(owlModel, "material"),
-		&iZAxisMaterial,
+		&owlZAxisMaterialInstance,
 		1);
 
 	/* Collection */
-	OwlInstance iCollectionInstance = CreateInstance(GetClassByName(owlModel, "Collection"), "#Coordinate System#");
-	assert(iCollectionInstance != 0);
+	OwlInstance owlCollectionInstance = CreateInstance(GetClassByName(owlModel, "Collection"), "#Coordinate System#");
+	assert(owlCollectionInstance != 0);
 
 	SetObjectProperty(
-		iCollectionInstance,
+		owlCollectionInstance,
 		GetPropertyByName(owlModel, "objects"),
 		vecInstances.data(),
 		vecInstances.size());

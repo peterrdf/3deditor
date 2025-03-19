@@ -58,13 +58,13 @@ public: // Methods
 
 
 // ************************************************************************************************
-class CDefaultRDFModel : public CRDFModel
+class CDefaultModel : public CRDFModel
 {
 
 public: // Methods
 
-	CDefaultRDFModel();
-	virtual ~CDefaultRDFModel();
+	CDefaultModel();
+	virtual ~CDefaultModel();
 
 private: // Methods
 
@@ -72,7 +72,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class CSceneRDFModel : public CRDFModel
+class CCoordinateSystemModel : public CRDFModel
 {
 
 private: // Members
@@ -81,8 +81,8 @@ private: // Members
 
 public: // Methods
 
-	CSceneRDFModel();
-	virtual ~CSceneRDFModel();
+	CCoordinateSystemModel();
+	virtual ~CCoordinateSystemModel();
 
 	// _model	
 	virtual void scale() override {};
