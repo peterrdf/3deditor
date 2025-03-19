@@ -529,6 +529,113 @@ void _rdf_model::reloadGeometries() {
 	}
 }
 
+OwlInstance _rdf_model::translate(
+	OwlInstance owlInstance,
+	double dX, double dY, double dZ) const
+{
+	return translate(
+		owlInstance,
+		dX, dY, dZ,
+		1., 1., 1.);
+}
+
+OwlInstance _rdf_model::translate(
+	OwlInstance owlInstance,
+	double dX, double dY, double dZ,
+	double d11, double d22, double d33) const
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	vector<double> vecTransformationMatrix =
+	{
+		d11, 0., 0.,
+		0., d22, 0.,
+		0., 0., d33,
+		dX, dY, dZ,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(getOwlModel(), "coordinates"),
+		vecTransformationMatrix.data(),
+		vecTransformationMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
+}
+
+OwlInstance _rdf_model::rotate(
+	OwlInstance owlInstance,
+	double alpha, double beta, double gamma) const
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	_matrix matrix;
+	memset(&matrix, 0, sizeof(_matrix));
+	_matrixRotateByEulerAngles(&matrix, alpha, beta, gamma);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_11"), &matrix._11, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_12"), &matrix._12, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_13"), &matrix._13, 1);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_21"), &matrix._21, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_22"), &matrix._22, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_23"), &matrix._23, 1);
+
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_31"), &matrix._31, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_32"), &matrix._32, 1);
+	SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(getOwlModel(), "_33"), &matrix._33, 1);
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
+}
+
+OwlInstance _rdf_model::scale(OwlInstance owlInstance, double dFactor) const
+{
+	assert(owlInstance != 0);
+
+	OwlInstance owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	vector<double> vecTransformationMatrix =
+	{
+		dFactor, 0., 0.,
+		0., dFactor, 0.,
+		0., 0., dFactor,
+		0., 0., 0.,
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(getOwlModel(), "coordinates"),
+		vecTransformationMatrix.data(),
+		vecTransformationMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "matrix"), &owlMatrixInstance, 1);
+	SetObjectProperty(owlTransformationInstance, GetPropertyByName(getOwlModel(), "object"), &owlInstance, 1);
+
+	return owlTransformationInstance;
+}
+
 // ************************************************************************************************
 _rdf_view::_rdf_view()
 	: _view()

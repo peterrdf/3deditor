@@ -67,6 +67,19 @@ public:  // Methods
 
 	void reloadGeometries();
 
+	// Helpers
+	OwlInstance translate(
+		OwlInstance owlInstance,
+		double dX, double dY, double dZ) const;
+	OwlInstance translate(
+		OwlInstance owlInstance,
+		double dX, double dY, double dZ,
+		double d11, double d22, double d33) const;
+	OwlInstance rotate(
+		OwlInstance owlInstance,
+		double alpha, double beta, double gamma) const;
+	OwlInstance scale(OwlInstance OwlInstance, double dFactor) const;
+
 public: // Properties
 
 	const map<OwlClass, _rdf_class*>& getClasses() const { return m_mapClasses; }
