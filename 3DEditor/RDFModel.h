@@ -44,8 +44,7 @@ protected: // Methods
 	virtual void clean(bool bCloseModel = true) override;
 
 public: // Methods
-	
-	virtual void CreateDefaultModel();
+
 	void Load(const wchar_t* szPath, bool bAdd);
 
 #ifdef _DXF_SUPPORT
@@ -55,4 +54,19 @@ public: // Methods
 #ifdef _GIS_SUPPORT
 	void LoadGISModel(const wchar_t* szPath);
 #endif	
+};
+
+
+// ************************************************************************************************
+class CDefaultRDFModel : public CRDFModel
+{
+
+public: // Methods
+
+	CDefaultRDFModel();
+	virtual ~CDefaultRDFModel();
+
+private: // Methods
+
+	void Create();
 };

@@ -180,12 +180,86 @@ CRDFModel::~CRDFModel()
 	m_pDefaultTexture = nullptr;
 }
 
-/*virtual*/ void CRDFModel::CreateDefaultModel()
+void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 {
-	m_strPath = L"DEFAULT";
+	CLoadTask loadTask(this, szPath, bAdd);
+#ifdef _PROGRESS_UI_SUPPORT
+	if (!TEST_MODE) {
+		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
+		m_pProgress = &dlgProgress;
+		dlgProgress.DoModal();
+		m_pProgress = nullptr;
+	} else
+#endif
+	{
+		loadTask.Run();
+	}
+}
 
-	clean();
+#ifdef _DXF_SUPPORT
+void CRDFModel::LoadDXF(const wchar_t* szPath)
+{
+	try {
+		OwlModel owlModel = CreateModel();
+		ASSERT(owlModel != 0);
 
+		_dxf::_parser parser(owlModel);
+		parser.load(CW2A(szPath));
+
+		attachModel(szPath, owlModel);
+	} catch (const std::runtime_error& ex) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	}
+}
+#endif
+
+#ifdef _GIS_SUPPORT
+void CRDFModel::LoadGISModel(const wchar_t* szPath)
+{
+	try {
+		wchar_t szAppPath[_MAX_PATH];
+		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+		fs::path pthExe = szAppPath;
+		auto pthRootFolder = pthExe.parent_path();
+		wstring strRootFolder = pthRootFolder.wstring();
+		strRootFolder += L"\\";
+
+		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
+
+		OwlModel owlModel = CreateModel();
+		ASSERT(owlModel != 0);
+
+		ImportGISModel(owlModel, CW2A(szPath));
+
+		attachModel(szPath, owlModel);
+	} catch (const std::runtime_error& err) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	} catch (...) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	}
+}
+#endif // _GIS_SUPPORT
+
+// ************************************************************************************************
+CDefaultRDFModel::CDefaultRDFModel()
+	: CRDFModel()
+{
+	Create();
+}
+
+/*virtual*/ CDefaultRDFModel::~CDefaultRDFModel()
+{
+}
+
+void CDefaultRDFModel::Create()
+{
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
 
@@ -259,71 +333,3 @@ CRDFModel::~CRDFModel()
 
 	attachModel(L"_DEFAULT_", owlModel);
 }
-
-void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
-{
-	CLoadTask loadTask(this, szPath, bAdd);
-#ifdef _PROGRESS_UI_SUPPORT
-	if (!TEST_MODE) {
-		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
-		m_pProgress = &dlgProgress;
-		dlgProgress.DoModal();
-		m_pProgress = nullptr;
-	} else
-#endif
-	{
-		loadTask.Run();
-	}
-}
-
-#ifdef _DXF_SUPPORT
-void CRDFModel::LoadDXF(const wchar_t* szPath)
-{
-	try {
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
-
-		_dxf::_parser parser(owlModel);
-		parser.load(CW2A(szPath));
-
-		attachModel(szPath, owlModel);
-	} catch (const std::runtime_error& ex) {
-		::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	}
-}
-#endif
-
-#ifdef _GIS_SUPPORT
-void CRDFModel::LoadGISModel(const wchar_t* szPath)
-{
-	try {
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-		wstring strRootFolder = pthRootFolder.wstring();
-		strRootFolder += L"\\";
-
-		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
-
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
-
-		ImportGISModel(owlModel, CW2A(szPath));
-
-		attachModel(szPath, owlModel);
-	} catch (const std::runtime_error& err) {
-		::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(),
-			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	} catch (...) {
-		::MessageBox(
-			::AfxGetMainWnd()->GetSafeHwnd(),
-			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	}
-}
-#endif // _GIS_SUPPORT
-

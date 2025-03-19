@@ -70,10 +70,7 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	auto pModel = new CRDFModel();
-	pModel->CreateDefaultModel();
-
-	setModel(pModel);
+	setModel(new CDefaultRDFModel());
 
 	return TRUE;
 }

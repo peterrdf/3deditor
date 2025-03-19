@@ -51,10 +51,7 @@ BOOL CRDFViewerDoc::OnNewDocument()
 		m_pModel = nullptr;
 	}
 
-	auto pModel = new CRDFModel();
-	pModel->CreateDefaultModel();
-
-	setModel(pModel);
+	setModel(new CDefaultRDFModel());
 
 	return TRUE;
 }
