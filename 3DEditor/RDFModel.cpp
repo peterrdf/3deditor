@@ -347,7 +347,7 @@ CSceneRDFModel::CSceneRDFModel()
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ void CSceneRDFModel::postLoad() /*override*/
+/*virtual*/ void CSceneRDFModel::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 }

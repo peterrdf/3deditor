@@ -90,7 +90,7 @@ public: // Methods
 protected: // Methods
 
 	// _rdf_model
-	virtual void postLoad() override;
+	virtual void preLoad() override;
 
 private: // Methods
 
