@@ -8,6 +8,7 @@
 
 #include "_mvc.h"
 #include "_geometry.h"
+#include "_oglScene.h"
 #include "_quaterniond.h"
 
 #include "glew.h"
@@ -2298,7 +2299,9 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _oglRenderer : public _oglRendererSettings
+class _oglRenderer 
+    : public _oglRendererSettings
+    , public _oglScene
 {
 
 protected: // Fields
@@ -2368,6 +2371,17 @@ public: // Methods
     // _oglRendererSettings
     virtual void _reset() override;
 
+    // _oglScene
+    virtual void _prepare(
+        bool bPerspecitve,
+        int iViewportX, int iViewportY,
+        int iViewportWidth, int iViewportHeight,
+        float fXmin, float fXmax,
+        float fYmin, float fYmax,
+        float fZmin, float fZmax,
+        bool bClear,
+        bool bTranslate) override;
+
     void _initialize(CWnd* pWnd,
                      int iSamples,
                      int iVertexShader,
@@ -2375,15 +2389,6 @@ public: // Methods
                      int iResourceType,
                      bool bSupportsTexture);
     void _destroy();
-
-    void _prepare(
-        int iViewportX, int iViewportY,
-        int iViewportWidth, int iViewportHeight,
-        float fXmin, float fXmax,
-        float fYmin, float fYmax,
-        float fZmin, float fZmax,
-        bool bClear,
-        bool bTranslate);
 
     void _redraw() { m_pWnd->RedrawWindow(); }
 
@@ -2488,7 +2493,7 @@ protected: // Methods
 
     void _load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) const;
 
-    virtual bool _prepareScene();
+    virtual bool _prepareScene(bool bClear);
     virtual void _preDraw();
     virtual void _postDraw() {}
     virtual void _drawBuffers();

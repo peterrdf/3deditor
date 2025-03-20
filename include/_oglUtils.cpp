@@ -905,185 +905,6 @@ void _oglRenderer::_destroy()
 	m_pOGLContext = nullptr;
 }
 
-void _oglRenderer::_prepare(
-	int iViewportX, int iViewportY,
-	int iViewportWidth, int iViewportHeight,
-	float fXmin, float fXmax,
-	float fYmin, float fYmax,
-	float fZmin, float fZmax,
-	bool bClear,
-	bool bTranslate)
-{
-	m_fXmin = fXmin;
-	m_fXmax = fXmax;
-	m_fYmin = fYmin;
-	m_fYmax = fYmax;
-	m_fZmin = fZmin;
-	m_fZmax = fZmax;
-
-	float fBoundingSphereDiameter = m_fXmax - m_fXmin;
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
-	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
-
-	// Zoom
-	m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
-	m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
-	m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
-	m_fZoomInterval = m_fZoomMax - m_fZoomMin;
-
-	// Pan X
-	m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
-	m_fPanXMin -= fBoundingSphereDiameter * 1.25f;
-	m_fPanXMax = (m_fXmax - m_fXmin) / 2.f;
-	m_fPanXMax += fBoundingSphereDiameter * 1.25f;
-	m_fPanXInterval = m_fPanXMax - m_fPanXMin;
-
-	// Pan Y
-	m_fPanYMin = -(m_fYmax - m_fYmin) / 2.f;
-	m_fPanYMin -= fBoundingSphereDiameter * .75f;
-	m_fPanYMax = (m_fYmax - m_fYmin) / 2.f;
-	m_fPanYMax += fBoundingSphereDiameter * .75f;
-	m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
-
-	// Scale (Orthographic)
-	m_fScaleFactorMin = 0.f;
-	m_fScaleFactorMax = fBoundingSphereDiameter;
-	m_fScaleFactorInterval = abs(m_fScaleFactorMax - m_fScaleFactorMin);
-
-	BOOL bResult = m_pOGLContext->makeCurrent();
-	VERIFY(bResult);
-
-#ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->enableDebug();
-#endif
-
-	m_pOGLProgram->_use();
-
-	glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
-
-	if (bClear) {
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
-
-		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glDisable(GL_SCISSOR_TEST);
-	}
-
-	// Set up the parameters
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	// Projection Matrix
-	// fovY     - Field of vision in degrees in the y direction
-	// aspect   - Aspect ratio of the viewport
-	// zNear    - The near clipping distance
-	// zFar     - The far clipping distance
-	GLdouble fovY = m_dFieldOfView;
-	if (!m_bCameraSettings) {
-		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
-	}
-	GLdouble aspect = m_dAspectRatio;
-
-	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
-	zNear = min(zNear, abs((double)fZmin));
-	if (zNear != 0.) {
-		zNear /= 25.;
-	} else {
-		zNear = fBoundingSphereDiameter * .1;
-	}
-
-	GLdouble zFar = 100.;
-	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
-	GLdouble fW = fH * aspect;
-
-	// Projection
-	switch (m_enProjection) {
-		case enumProjection::Perspective:
-		{
-			glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
-			m_pOGLProgram->_setProjectionMatrix(matProjection);
-		}
-		break;
-
-		case enumProjection::Orthographic:
-		{
-			glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
-			m_pOGLProgram->_setProjectionMatrix(matProjection);
-		}
-		break;
-
-		default:
-		{
-			assert(false);
-		}
-		break;
-	} // switch (m_enProjection)
-
-	// Model-View Matrix
-	m_matModelView = glm::identity<glm::mat4>();
-
-	if (bTranslate) {
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
-	} else {
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
-	}
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-	if (m_enRotationMode == enumRotationMode::XY) {
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
-	} else if (m_enRotationMode == enumRotationMode::XYZ) {
-		// Apply rotation...
-		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
-		m_rotation.cross(rotation);
-
-		// ... and reset
-		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
-
-		const double* pRotationMatrix = m_rotation.toMatrix();
-		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
-		delete pRotationMatrix;
-
-		m_matModelView = m_matModelView * matTransformation;
-	} else {
-		assert(false);
-	}
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-	glm::mat4 matNormal = m_matModelView;
-	matNormal = glm::inverse(matNormal);
-	matNormal = glm::transpose(matNormal);
-	m_pOGLProgram->_setNormalMatrix(matNormal);
-
-	// Model
-	m_pOGLProgram->_enableBlinnPhongModel(true);
-#else
-	m_pOGLProgram->_setNormalMatrix(m_matModelView);
-
-	// Model
-	m_pOGLProgram->_enableLighting(true);
-#endif
-}
-
 void _oglRenderer::_rotateMouseLButton(float fXAngle, float fYAngle)
 {
 	if (m_enRotationMode == enumRotationMode::XY) {
@@ -1442,6 +1263,172 @@ void _oglRenderer::_reset()
 	m_dAspectRatio = 1.;
 }
 
+void _oglRenderer::_prepare(
+	bool bPerspecitve,
+	int iViewportX, int iViewportY,
+	int iViewportWidth, int iViewportHeight,
+	float fXmin, float fXmax,
+	float fYmin, float fYmax,
+	float fZmin, float fZmax,
+	bool bClear,
+	bool bTranslate)
+{
+	m_fXmin = fXmin;
+	m_fXmax = fXmax;
+	m_fYmin = fYmin;
+	m_fYmax = fYmax;
+	m_fZmin = fZmin;
+	m_fZmax = fZmax;
+
+	float fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	// Zoom
+	m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
+	m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
+	m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
+	m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+
+	// Pan X
+	m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
+	m_fPanXMin -= fBoundingSphereDiameter * 1.25f;
+	m_fPanXMax = (m_fXmax - m_fXmin) / 2.f;
+	m_fPanXMax += fBoundingSphereDiameter * 1.25f;
+	m_fPanXInterval = m_fPanXMax - m_fPanXMin;
+
+	// Pan Y
+	m_fPanYMin = -(m_fYmax - m_fYmin) / 2.f;
+	m_fPanYMin -= fBoundingSphereDiameter * .75f;
+	m_fPanYMax = (m_fYmax - m_fYmin) / 2.f;
+	m_fPanYMax += fBoundingSphereDiameter * .75f;
+	m_fPanYInterval = abs(m_fPanYMax - m_fPanYMin);
+
+	// Scale (Orthographic)
+	m_fScaleFactorMin = 0.f;
+	m_fScaleFactorMax = fBoundingSphereDiameter;
+	m_fScaleFactorInterval = abs(m_fScaleFactorMax - m_fScaleFactorMin);
+
+	BOOL bResult = m_pOGLContext->makeCurrent();
+	VERIFY(bResult);
+
+#ifdef _ENABLE_OPENGL_DEBUG
+	m_pOGLContext->enableDebug();
+#endif
+
+	m_pOGLProgram->_use();
+
+	glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+
+	if (bClear) {
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+
+		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_SCISSOR_TEST);
+	}
+
+	// Set up the parameters
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	// Projection Matrix
+	// fovY     - Field of vision in degrees in the y direction
+	// aspect   - Aspect ratio of the viewport
+	// zNear    - The near clipping distance
+	// zFar     - The far clipping distance
+	GLdouble fovY = m_dFieldOfView;
+	if (!m_bCameraSettings) {
+		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	}
+	GLdouble aspect = m_dAspectRatio;
+
+	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
+	zNear = min(zNear, abs((double)fZmin));
+	if (zNear != 0.) {
+		zNear /= 25.;
+	} else {
+		zNear = fBoundingSphereDiameter * .1;
+	}
+
+	GLdouble zFar = 100.;
+	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
+	GLdouble fW = fH * aspect;
+
+	// Projection
+	if (bPerspecitve) {
+		glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
+		m_pOGLProgram->_setProjectionMatrix(matProjection);
+	} else {
+		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+		m_pOGLProgram->_setProjectionMatrix(matProjection);
+	}	
+
+	// Model-View Matrix
+	m_matModelView = glm::identity<glm::mat4>();
+
+	if (bTranslate) {
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+	} else {
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+	}
+
+	float fXTranslation = fXmin;
+	fXTranslation += (fXmax - fXmin) / 2.f;
+	fXTranslation = -fXTranslation;
+
+	float fYTranslation = fYmin;
+	fYTranslation += (fYmax - fYmin) / 2.f;
+	fYTranslation = -fYTranslation;
+
+	float fZTranslation = fZmin;
+	fZTranslation += (fZmax - fZmin) / 2.f;
+	fZTranslation = -fZTranslation;
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+
+	if (m_enRotationMode == enumRotationMode::XY) {
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+	} else if (m_enRotationMode == enumRotationMode::XYZ) {
+		// Apply rotation...
+		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
+		m_rotation.cross(rotation);
+
+		// ... and reset
+		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+
+		const double* pRotationMatrix = m_rotation.toMatrix();
+		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
+		delete pRotationMatrix;
+
+		m_matModelView = m_matModelView * matTransformation;
+	} else {
+		assert(false);
+	}
+
+	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+#ifdef _BLINN_PHONG_SHADERS
+	glm::mat4 matNormal = m_matModelView;
+	matNormal = glm::inverse(matNormal);
+	matNormal = glm::transpose(matNormal);
+	m_pOGLProgram->_setNormalMatrix(matNormal);
+
+	// Model
+	m_pOGLProgram->_enableBlinnPhongModel(true);
+#else
+	m_pOGLProgram->_setNormalMatrix(m_matModelView);
+
+	// Model
+	m_pOGLProgram->_enableLighting(true);
+#endif
+}
+
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 {
 	assert(m_toolTipCtrl.GetToolCount() <= 1);
@@ -1703,7 +1690,7 @@ _oglView::_oglView()
 /*virtual*/ void _oglView::_draw(CDC* pDC)
 {
 	// Initialize
-	if (!_prepareScene()) {
+	if (!_prepareScene(true)) {
 		return;
 	}
 
@@ -1711,7 +1698,7 @@ _oglView::_oglView()
 	_drawBuffers();
 
 	// Restore
-	if (!_prepareScene()) {
+	if (!_prepareScene(false)) {
 		return;
 	}
 
@@ -1934,7 +1921,7 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 	} // for (auto pModel : ...	
 }
 
-/*virtual*/ bool _oglView::_prepareScene()
+/*virtual*/ bool _oglView::_prepareScene(bool bClear)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -1955,12 +1942,13 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 	getController()->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
 	_prepare(
+		m_enProjection == enumProjection::Perspective,
 		0, 0,
 		iWidth, iHeight,
 		fWorldXmin, fWorldXmax,
 		fWorldYmin, fWorldYmax,
 		fWorldZmin, fWorldZmax,
-		true,
+		bClear,
 		true);
 
 	return true;

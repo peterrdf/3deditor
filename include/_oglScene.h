@@ -14,9 +14,14 @@ public: // Methods
 	{
 	}
 
-	virtual void _update(
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight,
-		bool bClear,
-		bool bTranslate) {}
+	virtual void _prepare(
+		bool /*bPerspecitve*/,
+		int /*iViewportX*/, int /*iViewportY*/,
+		int /*iViewportWidth*/, int /*iViewportHeight*/,
+		float /*fXmin*/, float /*fXmax*/,
+		float /*fYmin*/, float /*fYmax*/,
+		float /*fZmin*/, float /*fZmax*/,
+		bool /*bClear*/,
+		bool /*bTranslate*/) {
+	}
 };
