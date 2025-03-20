@@ -2100,6 +2100,10 @@ public: // Methods
     /*virtual*/ ~_oglBuffersEx()
     {
     }
+
+public: // Properties
+
+    _model* getModel() const { return m_pModel; }
 };
 
 // ************************************************************************************************

@@ -112,6 +112,7 @@ public: // Methods
 	virtual ~CNavigatorModel();
 
 	// _model	
+	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void scale() override {};
 
 protected: // Methods

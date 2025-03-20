@@ -1697,13 +1697,13 @@ _oglView::_oglView()
 	// Off-screen
 	_drawBuffers();
 
+	// Coordinate System, Navigation, etc.
+	_preDraw();
+
 	// Restore
 	if (!_prepareScene(false)) {
 		return;
 	}
-
-	// Coordinate System, Navigation, etc.
-	_preDraw();
 
 	// Models
 	_drawFaces();
@@ -1957,6 +1957,10 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 /*virtual*/ void _oglView::_preDraw()
 {
 	for (auto pBuffer : m_vecDecorationBuffers) {
+		if (!pBuffer->getModel()->prepareScene(this)) {
+			_prepareScene(false);
+		}
+
 		_drawFaces(*pBuffer, false);
 		_drawFaces(*pBuffer, true);
 		_drawConceptualFacesPolygons(*pBuffer);
