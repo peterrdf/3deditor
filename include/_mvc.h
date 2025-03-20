@@ -128,7 +128,6 @@ public: // Properties
 
     virtual OwlModel getOwlModel() const PURE;
 
-    bool isDecoration() const { return m_strPath.empty(); }
     const wchar_t* getPath() const { return m_strPath.c_str(); }
     bool getEnable() const { return m_bEnable; }
     void setEnable(bool bEnable) { m_bEnable = bEnable; }

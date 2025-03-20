@@ -334,10 +334,6 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		return;
 	}
 
-	if (pModel->isDecoration()) {
-		return;
-	}
-
 	if (!getShowBoundingBoxes()) {
 		return;
 	}
@@ -514,10 +510,6 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 {
 	if (pModel == nullptr) {
-		return;
-	}
-
-	if (pModel->isDecoration()) {
 		return;
 	}
 
@@ -733,10 +725,6 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 		return;
 	}
 
-	if (pModel->isDecoration()) {
-		return;
-	}
-
 	if (!getShowTangentVectors()) {
 		return;
 	}
@@ -946,10 +934,6 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 {
 	if (pModel == nullptr) {
-		return;
-	}
-
-	if (pModel->isDecoration()) {
 		return;
 	}
 
