@@ -97,3 +97,30 @@ private: // Methods
 
 	void Create();
 };
+
+// ************************************************************************************************
+class CNavigatorModel : public CRDFModel
+{
+
+private: // Members
+
+	CTextBuilder* m_pTextBuilder;
+
+public: // Methods
+
+	CNavigatorModel();
+	virtual ~CNavigatorModel();
+
+	// _model	
+	virtual void scale() override {};
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
+
+private: // Methods
+
+	void Create();
+	void CreateLabels(OwlModel owlModel);
+};

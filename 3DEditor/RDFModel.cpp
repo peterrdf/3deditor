@@ -640,3 +640,322 @@ void CCoordinateSystemModel::Create()
 
 	attachModel(L"_COORDINATE_SYSTEM_", owlModel);
 }
+
+// ************************************************************************************************
+CNavigatorModel::CNavigatorModel()
+	: CRDFModel()
+	, m_pTextBuilder(new CTextBuilder())
+{
+	Create();
+}
+
+/*virtual*/ CNavigatorModel::~CNavigatorModel()
+{
+	delete m_pTextBuilder;
+}
+
+/*virtual*/ void CNavigatorModel::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+}
+
+void CNavigatorModel::Create()
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->Initialize(owlModel);
+
+	// Cube (BoundaryRepresentations)
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(.1);
+		pAmbient.set_G(.1);
+		pAmbient.set_B(.1);
+		pAmbient.set_W(.05);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		vector<double> vecVertices =
+		{
+			-.75, -.75, 0, // 1 (Bottom/Left)
+			.75, -.75, 0,  // 2 (Bottom/Right)
+			.75, .75, 0,   // 3 (Top/Right)
+			-.75, .75, 0,  // 4 (Top/Left)
+		};
+		vector<int64_t> vecIndices =
+		{
+			0, 1, 2, 3, -1,
+		};
+
+		auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(owlModel);
+		pBoundaryRepresentation.set_material(pMaterial);
+		pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
+		pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
+
+		// Front
+		OwlInstance iInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+			0., -.75, 0.,
+			1., -1., 1.);
+		SetNameOfInstance(iInstance, "#front");
+
+		// Back
+		iInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+			0., .75, 0.,
+			-1., 1., 1.);
+		SetNameOfInstance(iInstance, "#back");
+
+		// Top
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pBoundaryRepresentation,
+			0., 0., .75,
+			1., 1., -1.);
+		SetNameOfInstance(iInstance, "#top");
+
+		// Bottom
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pBoundaryRepresentation,
+			0., 0., -.75,
+			1, 1., 1.);
+		SetNameOfInstance(iInstance, "#bottom");
+
+		// Left
+		iInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+			-.75, 0., 0.,
+			1., -1., 1.);
+		SetNameOfInstance(iInstance, "#left");
+
+		// Right
+		iInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+			.75, 0., 0.,
+			-1., 1., 1.);
+		SetNameOfInstance(iInstance, "#right");
+	}
+
+	// Sphere (Sphere)
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(0.);
+		pAmbient.set_B(1.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		auto pSphere = GEOM::Sphere::Create(owlModel);
+		pSphere.set_material(pMaterial);
+		pSphere.set_radius(.1);
+		pSphere.set_segmentationParts(36);
+
+		// Front/Top/Left
+		OwlInstance iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, -.75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#front-top-left");
+
+		// Front/Top/Right
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, -.75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#front-top-right");
+
+		// Front/Bottom/Left
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, -.75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#front-bottom-left");
+
+		// Front/Bottom/Right
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, -.75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#front-bottom-right");
+
+		// Back/Top/Left
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, .75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#back-top-left");
+
+		// Back/Top/Right
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, .75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#back-top-right");
+
+		// Back/Bottom/Left
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, .75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#back-bottom-left");
+
+		// Back/Bottom/Right
+		iInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, .75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(iInstance, "#back-bottom-right");
+	}
+
+	CreateLabels(owlModel);
+
+	attachModel(L"_NAVIGATOR_", owlModel);
+}
+
+void CNavigatorModel::CreateLabels(OwlModel owlModel)
+{
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	/* Top */
+	OwlInstance iTopLabelInstance = m_pTextBuilder->BuildText("top", true);
+	assert(iTopLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iTopLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Bottom */
+	OwlInstance iBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
+	assert(iBottomLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iBottomLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Front */
+	OwlInstance iFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
+	assert(iFrontLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iFrontLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Back */
+	OwlInstance iBackLabelInstance = m_pTextBuilder->BuildText("back", true);
+	assert(iBackLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iBackLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Left */
+	OwlInstance iLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
+	assert(iLeftLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iLeftLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Right */
+	OwlInstance iRightLabelInstance = m_pTextBuilder->BuildText("right", true);
+	assert(iRightLabelInstance != 0);
+
+	_geometry::calculateBB(
+		iRightLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Scale Factor */
+	double dMaxLength = dXmax - dXmin;
+	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+
+	double dScaleFactor = (1.5 * .9) / dMaxLength;
+
+	// Front
+	OwlInstance iInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, iFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., -.751, 0.,
+		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#front-label");
+
+	// Back
+	iInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, iBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., .751, 0.,
+		-1., 1., 1.);
+	SetNameOfInstance(iInstance, "#back-label");
+
+	// Top
+	iInstance = translateTransformation(
+		owlModel,
+		scaleTransformation(owlModel, iTopLabelInstance, dScaleFactor),
+		0., 0., .751,
+		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#top-label");
+
+	// Bottom
+	iInstance = translateTransformation(
+		owlModel,
+		scaleTransformation(owlModel, iBottomLabelInstance, dScaleFactor),
+		0., 0., -.751,
+		-1, 1., 1.);
+	SetNameOfInstance(iInstance, "#bottom-label");
+
+	// Left
+	iInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, iLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		-.751, 0., 0.,
+		1., -1., 1.);
+	SetNameOfInstance(iInstance, "#left-label");
+
+	// Right
+	iInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, iRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		.751, 0., 0.,
+		1., 1., 1.);
+	SetNameOfInstance(iInstance, "#right-label");
+}
