@@ -183,9 +183,6 @@
     <ClInclude Include="..\include\stb\stb_image.h">
       <Filter>include\stb</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\_ifc_model.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_rdf_class.h">
       <Filter>include</Filter>
     </ClInclude>

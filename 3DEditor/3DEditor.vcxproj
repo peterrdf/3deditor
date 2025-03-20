@@ -800,7 +800,6 @@
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_host.h" />
-    <ClInclude Include="..\include\_ifc_model.h" />
     <ClInclude Include="..\include\_instance.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
