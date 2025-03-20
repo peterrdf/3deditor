@@ -23,6 +23,11 @@ CRDFController::~CRDFController()
 {
 }
 
+/*virtual*/ _model* CRDFController::createWorldCoordinateSystem() /*override*/
+{
+	return new CCoordinateSystemModel();
+}
+
 void CRDFController::_test_BeginTestMode()
 {
 	TEST_MODE = TRUE;

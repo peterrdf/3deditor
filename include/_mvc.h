@@ -198,6 +198,7 @@ class _controller
 private: // Fields
 
     vector<_model*> m_vecModels;
+    vector<_model*> m_vecDecorationModels;
     set<_view*> m_setViews;
     _settings_storage* m_pSettingsStorage;
 
@@ -220,6 +221,10 @@ public: // Methods
     void setModel(_model* pModel);
     void setModels(const vector<_model*>& vecModels);
     void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
+
+    void loadDecorationModels();
+    virtual _model* createWorldCoordinateSystem() { return nullptr; }
+
     _instance* loadInstance(int64_t iInstance);
 
     void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
@@ -284,6 +289,7 @@ public: // Properties
 
     _model* getModel() const; // kept for backward compatibility
     const vector<_model*>& getModels() const { return m_vecModels; }
+    const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
     _settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 

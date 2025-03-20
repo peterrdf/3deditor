@@ -2294,7 +2294,8 @@ protected: // Fields
     glm::mat4 m_matModelView;
 
     // Cache
-    _oglBuffers m_oglBuffers;
+    _oglBuffers m_oglWorldBuffers;
+    _oglBuffers m_oglDecorationBuffers;
 
     // World
     float m_fXmin;
@@ -2460,16 +2461,18 @@ public: // Methods
 
 protected: // Methods
 
+    void _load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) const;
+
     virtual bool _prepareScene();
-    virtual void _preDraw() {}
+    virtual void _preDraw();
     virtual void _postDraw() {}
     virtual void _drawBuffers();
 
     void _drawFaces();
-    void _drawFaces(bool bTransparent);
+    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent);
     void _drawFacesPolygons();
-    void _drawConceptualFacesPolygons();
-    void _drawLines();
+    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers);
+    void _drawLines(_oglBuffers& oglBuffers);
     void _drawPoints();
     void _drawInstancesFrameBuffer();
 

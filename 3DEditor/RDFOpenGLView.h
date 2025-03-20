@@ -46,7 +46,6 @@ public: // Methods
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
 	// _oglView
-	virtual void _preDraw() override;
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
 	virtual void _onMouseMove(const CPoint& point) override;
