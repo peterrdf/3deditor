@@ -353,7 +353,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 	_oglUtils::checkForErrors();
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglWorldBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
+	GLuint iVAO = m_worldBuffers.getVAOcreateNewIfNeeded(BOUNDING_BOX_VAO, bIsNew);
 
 	if (iVAO == 0) {
 		assert(false);
@@ -366,7 +366,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
+		iVBO = m_worldBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
@@ -374,9 +374,9 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_oglWorldBuffers.setVBOAttributes(m_pOGLProgram);
+		m_worldBuffers.setVBOAttributes(m_pOGLProgram);
 
-		GLuint iIBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
+		GLuint iIBO = m_worldBuffers.getBufferCreateNewIfNeeded(BOUNDING_BOX_IBO, bIsNew);
 		if ((iIBO == 0) || !bIsNew) {
 			assert(false);
 
@@ -407,7 +407,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else {
-		iVBO = m_oglWorldBuffers.getBuffer(BOUNDING_BOX_VBO);
+		iVBO = m_worldBuffers.getBuffer(BOUNDING_BOX_VBO);
 		if (iVBO == 0) {
 			assert(false);
 
@@ -557,7 +557,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 	const float SCALE_FACTOR = getScaleVectors() ? sqrt(pow(fWorldXmax - fWorldXmin, 2.f) + pow(fWorldYmax - fWorldYmin, 2.f) + pow(fWorldZmax - fWorldZmin, 2.f)) * 0.1f : 1.f;
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglWorldBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_worldBuffers.getVAOcreateNewIfNeeded(NORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0) {
 		assert(false);
@@ -570,7 +570,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
+		iVBO = m_worldBuffers.getBufferCreateNewIfNeeded(NORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
@@ -578,14 +578,14 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_oglWorldBuffers.setVBOAttributes(m_pOGLProgram);
+		m_worldBuffers.setVBOAttributes(m_pOGLProgram);
 
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else {
-		iVBO = m_oglWorldBuffers.getBuffer(NORMAL_VECS_VBO);
+		iVBO = m_worldBuffers.getBuffer(NORMAL_VECS_VBO);
 		if (iVBO == 0) {
 			assert(false);
 
@@ -773,7 +773,7 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 	const float SCALE_FACTOR = getScaleVectors() ? sqrt(pow(fWorldXmax - fWorldXmin, 2.f) + pow(fWorldYmax - fWorldYmin, 2.f) + pow(fWorldZmax - fWorldZmin, 2.f)) * 0.1f : 1.f;
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglWorldBuffers.getVAOcreateNewIfNeeded(TANGENT_VECS_VAO, bIsNew);
+	GLuint iVAO = m_worldBuffers.getVAOcreateNewIfNeeded(TANGENT_VECS_VAO, bIsNew);
 
 	if (iVAO == 0) {
 		assert(false);
@@ -786,7 +786,7 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(TANGENT_VECS_VBO, bIsNew);
+		iVBO = m_worldBuffers.getBufferCreateNewIfNeeded(TANGENT_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
@@ -794,14 +794,14 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_oglWorldBuffers.setVBOAttributes(m_pOGLProgram);
+		m_worldBuffers.setVBOAttributes(m_pOGLProgram);
 
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else {
-		iVBO = m_oglWorldBuffers.getBuffer(TANGENT_VECS_VBO);
+		iVBO = m_worldBuffers.getBuffer(TANGENT_VECS_VBO);
 		if (iVBO == 0) {
 			assert(false);
 
@@ -989,7 +989,7 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	const float SCALE_FACTOR = getScaleVectors() ? sqrt(pow(fWorldXmax - fWorldXmin, 2.f) + pow(fWorldYmax - fWorldYmin, 2.f) + pow(fWorldZmax - fWorldZmin, 2.f)) * 0.1f : 1.f;
 
 	bool bIsNew = false;
-	GLuint iVAO = m_oglWorldBuffers.getVAOcreateNewIfNeeded(BINORMAL_VECS_VAO, bIsNew);
+	GLuint iVAO = m_worldBuffers.getVAOcreateNewIfNeeded(BINORMAL_VECS_VAO, bIsNew);
 
 	if (iVAO == 0) {
 		assert(false);
@@ -1002,7 +1002,7 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 	if (bIsNew) {
 		glBindVertexArray(iVAO);
 
-		iVBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(BINORMAL_VECS_VBO, bIsNew);
+		iVBO = m_worldBuffers.getBufferCreateNewIfNeeded(BINORMAL_VECS_VBO, bIsNew);
 		if ((iVBO == 0) || !bIsNew) {
 			assert(false);
 
@@ -1010,14 +1010,14 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
-		m_oglWorldBuffers.setVBOAttributes(m_pOGLProgram);
+		m_worldBuffers.setVBOAttributes(m_pOGLProgram);
 
 		glBindVertexArray(0);
 
 		_oglUtils::checkForErrors();
 	} // if (bIsNew)
 	else {
-		iVBO = m_oglWorldBuffers.getBuffer(BINORMAL_VECS_VBO);
+		iVBO = m_worldBuffers.getBuffer(BINORMAL_VECS_VBO);
 		if (iVBO == 0) {
 			assert(false);
 
@@ -1219,7 +1219,7 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 
 	_oglUtils::checkForErrors();
 
-	GLuint iVAO = m_oglWorldBuffers.findVAO(pGeometry);
+	GLuint iVAO = m_worldBuffers.findVAO(pGeometry);
 	if (iVAO == 0) {
 		assert(false);
 
@@ -1227,7 +1227,7 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	}
 
 	bool bIsNew = false;
-	GLuint iIBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_worldBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0) {
 		assert(false);
@@ -1327,7 +1327,7 @@ void CRDFOpenGLView::DrawPointedFace()
 
 	_oglUtils::checkForErrors();
 
-	GLuint iVAO = m_oglWorldBuffers.findVAO(pGeometry);
+	GLuint iVAO = m_worldBuffers.findVAO(pGeometry);
 	if (iVAO == 0) {
 		assert(false);
 
@@ -1335,7 +1335,7 @@ void CRDFOpenGLView::DrawPointedFace()
 	}
 
 	bool bIsNew = false;
-	GLuint iIBO = m_oglWorldBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
+	GLuint iIBO = m_worldBuffers.getBufferCreateNewIfNeeded(FACE_SELECTION_IBO, bIsNew);
 
 	if (iIBO == 0) {
 		assert(false);

@@ -2080,6 +2080,28 @@ public: // Methods
 };
 
 // ************************************************************************************************
+class _oglBuffersEx : public _oglBuffers
+{
+
+private: // Fields
+
+    _model* m_pModel;
+
+public: // Methods
+
+    _oglBuffersEx(_model* pModel)
+        : _oglBuffers()
+        , m_pModel(pModel)
+    {
+        assert(m_pModel != nullptr);
+    }
+
+    /*virtual*/ ~_oglBuffersEx()
+    {
+    }
+};
+
+// ************************************************************************************************
 enum class enumProjection : int
 {
     Perspective = 0,
@@ -2297,8 +2319,8 @@ protected: // Fields
     glm::mat4 m_matModelView;
 
     // Cache
-    _oglBuffers m_oglWorldBuffers;
-    _oglBuffers m_oglDecorationBuffers;
+    _oglBuffers m_worldBuffers;
+    vector<_oglBuffersEx*> m_vecDecorationBuffers;
 
     // World
     float m_fXmin;
