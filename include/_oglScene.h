@@ -14,6 +14,8 @@ public: // Methods
 	{
 	}
 
+	virtual void _getDimensions(int& /*iWidth*/, int& /*iHeight*/) {}
+
 	virtual void _prepare(
 		bool /*bPerspecitve*/,
 		int /*iViewportX*/, int /*iViewportY*/,

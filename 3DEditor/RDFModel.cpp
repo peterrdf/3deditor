@@ -660,6 +660,10 @@ CNavigatorModel::CNavigatorModel()
 
 	const int NAVIGATION_VIEW_LENGTH = 200;
 
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
 	float fXmin = FLT_MAX;
 	float fXmax = -FLT_MAX;
 	float fYmin = FLT_MAX;
@@ -670,7 +674,7 @@ CNavigatorModel::CNavigatorModel()
 
 	pScene->_prepare(
 		true,
-		0, NAVIGATION_VIEW_LENGTH,
+		iWidth - NAVIGATION_VIEW_LENGTH, 0,
 		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
 		fXmin, fXmax,
 		fYmin, fYmax,

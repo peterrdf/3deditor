@@ -1263,6 +1263,15 @@ void _oglRenderer::_reset()
 	m_dAspectRatio = 1.;
 }
 
+void _oglRenderer::_getDimensions(int& iWidth, int& iHeight) /*override*/
+{
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	iWidth = rcClient.Width();
+	iHeight = rcClient.Height();
+}
+
 void _oglRenderer::_prepare(
 	bool bPerspecitve,
 	int iViewportX, int iViewportY,

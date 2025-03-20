@@ -2376,6 +2376,7 @@ public: // Methods
     virtual void _reset() override;
 
     // _oglScene
+    virtual void _getDimensions(int& iWidth, int& iHeight) override;
     virtual void _prepare(
         bool bPerspecitve,
         int iViewportX, int iViewportY,
