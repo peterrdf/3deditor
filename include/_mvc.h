@@ -222,8 +222,8 @@ public: // Methods
     void setModels(const vector<_model*>& vecModels);
     void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
 
-    void loadDecorationModels();
-    virtual _model* createWorldCoordinateSystem() { return nullptr; }
+    virtual void loadDecorationModels() {}
+    void addDecorationModel(_model* pModel);
 
     _instance* loadInstance(int64_t iInstance);
 

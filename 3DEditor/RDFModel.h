@@ -77,11 +77,12 @@ class CCoordinateSystemModel : public CRDFModel
 
 private: // Members
 
+	_model* m_pWorld;
 	CTextBuilder* m_pTextBuilder;
 
 public: // Methods
 
-	CCoordinateSystemModel();
+	CCoordinateSystemModel(_model* pWorld);
 	virtual ~CCoordinateSystemModel();
 
 	// _model	

@@ -16,7 +16,7 @@ public: // Methods
 	virtual ~CRDFController();
 
 	// _rdf_controller
-	virtual _model* createWorldCoordinateSystem() override;
+	virtual void loadDecorationModels() override;
 
 	// Tests
 	virtual void _test_LoadModel(LPCTSTR /*szFileName*/) { ASSERT(FALSE); }

@@ -335,8 +335,9 @@ void CDefaultModel::Create()
 }
 
 // ************************************************************************************************
-CCoordinateSystemModel::CCoordinateSystemModel()
+CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 	: CRDFModel()
+	, m_pWorld(pWorld)
 	, m_pTextBuilder(new CTextBuilder())
 {
 	Create();
@@ -350,6 +351,26 @@ CCoordinateSystemModel::CCoordinateSystemModel()
 /*virtual*/ void CCoordinateSystemModel::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
+
+	if (m_pWorld != nullptr) {
+		double arOffset[3];
+		GetVertexBufferOffset(m_pWorld->getOwlModel(), arOffset);
+
+		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+			arOffset[0],
+			arOffset[1],
+			arOffset[2]);
+
+		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+		SetVertexBufferOffset(
+			getOwlModel(),
+			arOffset[0],
+			arOffset[1],
+			arOffset[2]);
+
+		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+		ClearedExternalBuffers(getOwlModel());
+	}
 }
 
 void CCoordinateSystemModel::Create()

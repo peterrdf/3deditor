@@ -660,12 +660,11 @@ void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 	m_bUpdatingModel = false;
 }
 
-void _controller::loadDecorationModels() 
+void _controller::addDecorationModel(_model* pModel)
 {
-	auto pWorldCoordinateSystem = createWorldCoordinateSystem();
-	if (pWorldCoordinateSystem != nullptr) {
-		m_vecDecorationModels.push_back(pWorldCoordinateSystem);
-	}
+	assert(pModel != nullptr);
+
+	m_vecDecorationModels.push_back(pModel);
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)

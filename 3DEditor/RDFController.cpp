@@ -23,9 +23,10 @@ CRDFController::~CRDFController()
 {
 }
 
-/*virtual*/ _model* CRDFController::createWorldCoordinateSystem() /*override*/
+/*virtual*/ void CRDFController::loadDecorationModels() /*override*/
 {
-	return new CCoordinateSystemModel();
+	addDecorationModel(new CCoordinateSystemModel(nullptr));
+	addDecorationModel(new CCoordinateSystemModel(getModel()));
 }
 
 void CRDFController::_test_BeginTestMode()
