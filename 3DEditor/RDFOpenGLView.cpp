@@ -429,7 +429,7 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(pGeometry->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-		double dScaleFactor = (double)pModel->getOriginalBoundingSphereDiameter() / 2.;
+		double dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
 
 		// Bottom face
 		/*

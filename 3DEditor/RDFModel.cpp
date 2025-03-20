@@ -356,17 +356,19 @@ CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 		double arOffset[3];
 		GetVertexBufferOffset(m_pWorld->getOwlModel(), arOffset);
 
+		double dScaleFactor = m_pWorld->getOriginalBoundingSphereDiameter() / 2.;
+
 		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-			arOffset[0],
-			arOffset[1],
-			arOffset[2]);
+			arOffset[0] / dScaleFactor,
+			arOffset[1] / dScaleFactor,
+			arOffset[2] / dScaleFactor);
 
 		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 		SetVertexBufferOffset(
 			getOwlModel(),
-			arOffset[0],
-			arOffset[1],
-			arOffset[2]);
+			arOffset[0] / dScaleFactor,
+			arOffset[1] / dScaleFactor,
+			arOffset[2] / dScaleFactor);
 
 		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 		ClearedExternalBuffers(getOwlModel());
