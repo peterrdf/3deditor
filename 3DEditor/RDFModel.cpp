@@ -408,7 +408,7 @@ CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 
 void CCoordinateSystemModel::Create()
 {
-	const double AXIS_LENGTH = 3.;
+	const double AXIS_LENGTH = 5.;
 	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	OwlModel owlModel = CreateModel();
