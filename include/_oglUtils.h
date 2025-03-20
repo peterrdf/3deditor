@@ -2382,8 +2382,8 @@ public: // Methods
         float fXmin, float fXmax,
         float fYmin, float fYmax,
         float fZmin, float fZmax,
-        bool bClearScene,
-        bool bApplyTranslations);
+        bool bClear,
+        bool bTranslate);
 
     void _redraw() { m_pWnd->RedrawWindow(); }
 

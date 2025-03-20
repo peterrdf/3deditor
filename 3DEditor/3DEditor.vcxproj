@@ -803,6 +803,7 @@
     <ClInclude Include="..\include\_instance.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
+    <ClInclude Include="..\include\_oglScene.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
     <ClInclude Include="..\include\_ptr.h" />
     <ClInclude Include="..\include\_quaterniond.h" />

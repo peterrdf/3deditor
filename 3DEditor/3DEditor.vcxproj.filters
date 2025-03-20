@@ -186,6 +186,9 @@
     <ClInclude Include="..\include\_rdf_class.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_oglScene.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

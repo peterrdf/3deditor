@@ -911,8 +911,8 @@ void _oglRenderer::_prepare(
 	float fXmin, float fXmax,
 	float fYmin, float fYmax,
 	float fZmin, float fZmax,
-	bool bClearScene,
-	bool bApplyTranslations)
+	bool bClear,
+	bool bTranslate)
 {
 	m_fXmin = fXmin;
 	m_fXmax = fXmax;
@@ -961,7 +961,7 @@ void _oglRenderer::_prepare(
 
 	glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
-	if (bClearScene) {
+	if (bClear) {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
@@ -1024,7 +1024,7 @@ void _oglRenderer::_prepare(
 	// Model-View Matrix
 	m_matModelView = glm::identity<glm::mat4>();
 
-	if (bApplyTranslations) {
+	if (bTranslate) {
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
 	} else {
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
