@@ -85,7 +85,8 @@ public: // Methods
 	CCoordinateSystemModel(_model* pWorld);
 	virtual ~CCoordinateSystemModel();
 
-	// _model	
+	// _model
+	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void scale() override {};
 
 protected: // Methods

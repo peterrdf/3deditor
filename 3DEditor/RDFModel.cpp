@@ -348,6 +348,37 @@ CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 	delete m_pTextBuilder;
 }
 
+/*virtual*/ bool CCoordinateSystemModel::prepareScene(_oglScene* pScene) /*override*/
+{
+	if (m_pWorld == nullptr) {
+		int iWidth = 0;
+		int iHeight = 0;
+		pScene->_getDimensions(iWidth, iHeight);
+
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		pScene->_prepare(
+			true,
+			0, 0,
+			iWidth, iHeight,
+			fXmin, fXmax,
+			fYmin, fYmax,
+			fZmin, fZmax,
+			false,
+			false);
+
+		return true;
+	}
+
+	return false;
+}
+
 /*virtual*/ void CCoordinateSystemModel::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
