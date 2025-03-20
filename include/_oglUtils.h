@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include <afxwin.h>
+#include <atltypes.h>
+#include <afxtooltipctrl.h>
+#endif
+
 #include "_mvc.h"
 #include "_geometry.h"
 #include "_quaterniond.h"
@@ -11,9 +17,6 @@
 #include "mat4x4.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
-
-#include <atltypes.h>
-#include <afxwin.h>
 
 #include <chrono>
 #include <ctime>
@@ -89,7 +92,7 @@ public: // Methods
 #endif // _WINDOWS
 };
 
-#if defined _WINDOWS
+#ifdef _WINDOWS
 // ************************************************************************************************
 class _oglShader
 {
@@ -1764,7 +1767,9 @@ public: // Methods
     {}
 
     virtual ~_oglBuffers()
-    {}
+    {
+        clear();
+    }
 
     map<GLuint, vector<_geometry*>>& cohorts() { return m_mapCohorts; }
     map<wstring, GLuint>& VAOs() { return m_mapVAOs; }
@@ -2071,8 +2076,6 @@ public: // Methods
             glDeleteBuffers(1, &(itBuffer->second));
         }
         m_mapBuffers.clear();
-
-        _oglUtils::checkForErrors();
     }
 };
 

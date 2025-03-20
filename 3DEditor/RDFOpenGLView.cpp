@@ -53,6 +53,9 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 
 CRDFOpenGLView::~CRDFOpenGLView()
 {
+	delete m_pPointFaceFrameBuffer;
+	delete m_pNavigatorSelectionFrameBuffer;
+	delete m_pNavigatorPointedInstanceMaterial;
 }
 
 /*virtual*/ void CRDFOpenGLView::onInstanceSelected(_view* pSender) /*override*/

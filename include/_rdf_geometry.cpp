@@ -15,6 +15,7 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 
 /*virtual*/ _rdf_geometry::~_rdf_geometry()
 {
+	clean();
 }
 
 /*virtual*/ void _rdf_geometry::preCalculate() /*override*/
