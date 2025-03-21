@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Texture.h"
-
 #include "_rdf_mvc.h"
 #include "_rdf_instance.h"
 #include "_rdf_class.h"

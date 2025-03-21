@@ -69,9 +69,6 @@
     <ClInclude Include="..\stb\stb_image.h">
       <Filter>stb</Filter>
     </ClInclude>
-    <ClInclude Include="..\3DEditor\TextBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\_3DUtils.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -162,9 +159,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\RDFController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3DEditor\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InstancesDialog.cpp">

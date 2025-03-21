@@ -778,7 +778,6 @@
     <ClInclude Include="..\3DEditor\ProgressIndicator.h" />
     <ClInclude Include="..\3DEditor\RDFItem.h" />
     <ClInclude Include="..\3DEditor\SearchTreeCtrlDialog.h" />
-    <ClInclude Include="..\3DEditor\TextBuilder.h" />
     <ClInclude Include="..\3DEditor\TreeCtrlEx.h" />
     <ClInclude Include="..\include\ascii.h" />
     <ClInclude Include="..\include\Text2RDF.h" />
@@ -821,7 +820,6 @@
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />
     <ClCompile Include="..\3DEditor\RenameDialog.cpp" />
     <ClCompile Include="..\3DEditor\SearchTreeCtrlDialog.cpp" />
-    <ClCompile Include="..\3DEditor\Texture.cpp" />
     <ClCompile Include="..\3DEditor\TreeCtrlEx.cpp" />
     <ClCompile Include="..\3DEditor\_dxf_parser.cpp" />
     <ClCompile Include="..\include\_geometry.cpp">

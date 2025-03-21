@@ -230,9 +230,6 @@
     <ClCompile Include="NewInstanceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SelectInstanceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
