@@ -16,7 +16,39 @@
 #define new DEBUG_NEW
 #endif
 
+// ************************************************************************************************
+CRDFController* CRDFViewerView::GetController()
+{
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
 
+	return pDoc;
+}
+
+/*virtual*/ void CRDFViewerView::onModelLoaded() /*override*/
+{
+	delete m_pOpenGLView;
+	m_pOpenGLView = nullptr;
+
+	auto pController = GetController();
+	if (pController == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	m_pOpenGLView = new CRDFOpenGLView(this);
+	m_pOpenGLView->setController(pController);
+	m_pOpenGLView->_load();
+}
+
+/*virtual*/ void CRDFViewerView::onModelUpdated() /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_load();
+	}
+}
+
+// ************************************************************************************************
 // CRDFViewerView
 
 IMPLEMENT_DYNCREATE(CRDFViewerView, CView)
@@ -38,6 +70,7 @@ BEGIN_MESSAGE_MAP(CRDFViewerView, CView)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_DROPFILES()
+	ON_WM_MOUSEWHEEL()
 	ON_COMMAND(ID_VIEW_INSTANCES, &CRDFViewerView::OnViewInstances)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_INSTANCES, &CRDFViewerView::OnUpdateViewInstances)
 END_MESSAGE_MAP()
@@ -51,7 +84,7 @@ CRDFViewerView::CRDFViewerView()
 }
 
 CRDFViewerView::~CRDFViewerView()
-{	
+{
 }
 
 BOOL CRDFViewerView::PreCreateWindow(CREATESTRUCT& cs)
@@ -67,8 +100,7 @@ BOOL CRDFViewerView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CRDFViewerView::OnDraw(CDC* pDC)
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_draw(pDC);
 	}
 }
@@ -143,12 +175,11 @@ int CRDFViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!pDoc)
 		return -1;
 
-	m_pOpenGLView = new CRDFOpenGLView(this);
-	m_pOpenGLView->setController(pDoc);
+	pDoc->registerView(this);
 
 	m_pInstancesDialog = new CInstancesDialog();
 	m_pInstancesDialog->setController(pDoc);
-	m_pInstancesDialog->Create(CInstancesDialog::IDD, this);	
+	m_pInstancesDialog->Create(CInstancesDialog::IDD, this);
 	m_pInstancesDialog->ShowWindow(SW_SHOW);
 
 	return 0;
@@ -156,6 +187,13 @@ int CRDFViewerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CRDFViewerView::OnDestroy()
 {
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	if (!pDoc) {
+		return;
+	}
+
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
 
@@ -172,9 +210,8 @@ BOOL CRDFViewerView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CRDFViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -183,9 +220,8 @@ void CRDFViewerView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -194,9 +230,8 @@ void CRDFViewerView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -205,9 +240,8 @@ void CRDFViewerView::OnMButtonDown(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -216,9 +250,8 @@ void CRDFViewerView::OnMButtonUp(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -226,9 +259,8 @@ void CRDFViewerView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -237,9 +269,8 @@ void CRDFViewerView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CRDFViewerView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -250,8 +281,7 @@ void CRDFViewerView::OnDropFiles(HDROP hDropInfo)
 {
 	// Get the number of files dropped 
 	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
-	if (iFilesDropped != 1)
-	{
+	if (iFilesDropped != 1) {
 		return;
 	}
 
@@ -274,12 +304,21 @@ void CRDFViewerView::OnDropFiles(HDROP hDropInfo)
 	DragFinish(hDropInfo);
 }
 
+BOOL CRDFViewerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseWheel(nFlags, zDelta, pt);
+	}
+
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
 void CRDFViewerView::OnViewInstances()
 {
 	m_pInstancesDialog->ShowWindow(m_pInstancesDialog->IsWindowVisible() ? SW_HIDE : SW_SHOW);
 }
 
-void CRDFViewerView::OnUpdateViewInstances(CCmdUI *pCmdUI)
+void CRDFViewerView::OnUpdateViewInstances(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_pInstancesDialog->IsWindowVisible());
 }

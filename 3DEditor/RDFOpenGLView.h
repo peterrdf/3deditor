@@ -56,13 +56,6 @@ public: // Methods
 	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
 	void GetTranslation(float& fX, float& fY, float& fZ);
 
-	// Mouse
-	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-
-	// Keyboard
-	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);	
-
 private: // Methods
 
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);

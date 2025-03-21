@@ -7,18 +7,23 @@
 #include "RDFOpenGLView.h"
 #include "InstancesDialog.h"
 
-class CRDFViewerView : public CView
+class CRDFViewerView 
+	: public CView
+	, public _rdf_view
 {
 
 private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// OpenGL View
 	CRDFOpenGLView* m_pOpenGLView;
-
-	// --------------------------------------------------------------------------------------------
-	// Instances UI
 	CInstancesDialog * m_pInstancesDialog;
+
+public: // Methods
+
+	// _view
+	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
+
+	CRDFController* GetController();
 
 protected: // create from serialization only
 	CRDFViewerView();
@@ -65,6 +70,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnDropFiles(HDROP hDropInfo);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnViewInstances();
