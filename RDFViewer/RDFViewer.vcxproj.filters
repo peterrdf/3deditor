@@ -188,9 +188,6 @@
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\TextBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -2,6 +2,7 @@
 #include "_rdf_mvc.h"
 #include "_rdf_instance.h"
 #include "_rdf_class.h"
+#include "_text_builder.h"
 #include "_ptr.h"
 
 // ************************************************************************************************

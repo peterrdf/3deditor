@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Texture.h"
-#include "TextBuilder.h"
 
 #include "_rdf_mvc.h"
 #include "_rdf_instance.h"
@@ -56,7 +55,6 @@ public: // Methods
 #endif	
 };
 
-
 // ************************************************************************************************
 class CDefaultModel : public CRDFModel
 {
@@ -78,7 +76,7 @@ class CCoordinateSystemModel : public _rdf_model
 private: // Fields
 
 	_model* m_pWorld;
-	CTextBuilder* m_pTextBuilder;
+	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
@@ -109,7 +107,7 @@ public: // Constants
 
 private: // Fields
 
-	CTextBuilder* m_pTextBuilder;
+	_text_builder* m_pTextBuilder;
 
 public: // Methods
 

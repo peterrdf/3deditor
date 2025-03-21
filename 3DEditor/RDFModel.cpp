@@ -5,6 +5,8 @@
 #include "ProgressIndicator.h"
 #include "ProgressDialog.h"
 
+#include "_text_builder.h"
+
 #ifdef _GIS_SUPPORT
 #include "gisengine.h"
 #endif
@@ -338,7 +340,7 @@ void CDefaultModel::Create()
 CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 	: _rdf_model()
 	, m_pWorld(pWorld)
-	, m_pTextBuilder(new CTextBuilder())
+	, m_pTextBuilder(new _text_builder())
 {
 	Create();
 }
@@ -677,7 +679,7 @@ void CCoordinateSystemModel::Create()
 
 CNavigatorModel::CNavigatorModel()
 	: _rdf_model()
-	, m_pTextBuilder(new CTextBuilder())
+	, m_pTextBuilder(new _text_builder())
 {
 	Create();
 }
