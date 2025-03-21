@@ -1021,3 +1021,41 @@ void CNavigatorModel::CreateLabels(OwlModel owlModel)
 		1., 1., 1.);
 	SetNameOfInstance(owlInstance, "#right-label");
 }
+
+CNavigatorCoordinateSystemModel::CNavigatorCoordinateSystemModel()
+	: CCoordinateSystemModel(nullptr)
+{
+}
+
+/*virtual*/ CNavigatorCoordinateSystemModel::~CNavigatorCoordinateSystemModel()
+{
+}
+
+/*virtual*/ bool CNavigatorCoordinateSystemModel::prepareScene(_oglScene* pScene) /*override*/
+{
+	const int NAVIGATION_VIEW_LENGTH = 200;
+
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
+	float fXmin = FLT_MAX;
+	float fXmax = -FLT_MAX;
+	float fYmin = FLT_MAX;
+	float fYmax = -FLT_MAX;
+	float fZmin = FLT_MAX;
+	float fZmax = -FLT_MAX;
+	getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	pScene->_prepare(
+		true,
+		iWidth - NAVIGATION_VIEW_LENGTH, 0,
+		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	return true;
+}

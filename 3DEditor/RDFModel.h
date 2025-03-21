@@ -126,3 +126,16 @@ private: // Methods
 	void Create();
 	void CreateLabels(OwlModel owlModel);
 };
+
+// ************************************************************************************************
+class CNavigatorCoordinateSystemModel : public CCoordinateSystemModel
+{
+
+public: // Methods
+
+	CNavigatorCoordinateSystemModel();
+	virtual ~CNavigatorCoordinateSystemModel();
+
+	// _model	
+	virtual bool prepareScene(_oglScene* pScene) override;
+};
