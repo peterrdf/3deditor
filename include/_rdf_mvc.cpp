@@ -1310,21 +1310,21 @@ void _coordinate_system_model::Create()
 }
 
 // ************************************************************************************************
-/*static*/ const int CNavigatorModel::NAVIGATION_VIEW_LENGTH = 250;
+/*static*/ const int _navigator_model::NAVIGATION_VIEW_LENGTH = 250;
 
-CNavigatorModel::CNavigatorModel()
+_navigator_model::_navigator_model()
 	: _rdf_model()
 	, m_pTextBuilder(new _text_builder())
 {
 	Create();
 }
 
-/*virtual*/ CNavigatorModel::~CNavigatorModel()
+/*virtual*/ _navigator_model::~_navigator_model()
 {
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ bool CNavigatorModel::prepareScene(_oglScene* pScene) /*override*/
+/*virtual*/ bool _navigator_model::prepareScene(_oglScene* pScene) /*override*/
 {
 	assert(pScene != nullptr);
 
@@ -1353,12 +1353,12 @@ CNavigatorModel::CNavigatorModel()
 	return true;
 }
 
-/*virtual*/ void CNavigatorModel::preLoad() /*override*/
+/*virtual*/ void _navigator_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 }
 
-void CNavigatorModel::Create()
+void _navigator_model::Create()
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -1534,7 +1534,7 @@ void CNavigatorModel::Create()
 	attachModel(L"_NAVIGATOR_", owlModel);
 }
 
-void CNavigatorModel::CreateLabels(OwlModel owlModel)
+void _navigator_model::CreateLabels(OwlModel owlModel)
 {
 	double dXmin = DBL_MAX;
 	double dXmax = -DBL_MAX;
@@ -1659,18 +1659,18 @@ void CNavigatorModel::CreateLabels(OwlModel owlModel)
 	SetNameOfInstance(owlInstance, "#right-label");
 }
 
-CNavigatorCoordinateSystemModel::CNavigatorCoordinateSystemModel()
+_navigator_coordinate_system_model::_navigator_coordinate_system_model()
 	: _coordinate_system_model(nullptr)
 {
 }
 
-/*virtual*/ CNavigatorCoordinateSystemModel::~CNavigatorCoordinateSystemModel()
+/*virtual*/ _navigator_coordinate_system_model::~_navigator_coordinate_system_model()
 {
 }
 
-/*virtual*/ bool CNavigatorCoordinateSystemModel::prepareScene(_oglScene* pScene) /*override*/
+/*virtual*/ bool _navigator_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
 {
-	const int NAVIGATION_VIEW_LENGTH = CNavigatorModel::NAVIGATION_VIEW_LENGTH;
+	const int NAVIGATION_VIEW_LENGTH = _navigator_model::NAVIGATION_VIEW_LENGTH;
 
 	int iWidth = 0;
 	int iHeight = 0;

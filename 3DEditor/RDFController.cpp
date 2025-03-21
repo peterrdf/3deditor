@@ -27,8 +27,8 @@ CRDFController::~CRDFController()
 {
 	addDecorationModel(new _coordinate_system_model(nullptr));
 	addDecorationModel(new _coordinate_system_model(getModel()));
-	addDecorationModel(new CNavigatorModel()); 
-	addDecorationModel(new CNavigatorCoordinateSystemModel());
+	addDecorationModel(new _navigator_model()); 
+	addDecorationModel(new _navigator_coordinate_system_model());
 }
 
 void CRDFController::_test_BeginTestMode()

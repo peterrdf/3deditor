@@ -206,7 +206,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class CNavigatorModel : public _rdf_model
+class _navigator_model : public _rdf_model
 {
 
 public: // Constants
@@ -219,8 +219,8 @@ private: // Fields
 
 public: // Methods
 
-	CNavigatorModel();
-	virtual ~CNavigatorModel();
+	_navigator_model();
+	virtual ~_navigator_model();
 
 	// _model	
 	virtual bool prepareScene(_oglScene* pScene) override;
@@ -238,13 +238,13 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class CNavigatorCoordinateSystemModel : public _coordinate_system_model
+class _navigator_coordinate_system_model : public _coordinate_system_model
 {
 
 public: // Methods
 
-	CNavigatorCoordinateSystemModel();
-	virtual ~CNavigatorCoordinateSystemModel();
+	_navigator_coordinate_system_model();
+	virtual ~_navigator_coordinate_system_model();
 
 	// _model	
 	virtual bool prepareScene(_oglScene* pScene) override;
