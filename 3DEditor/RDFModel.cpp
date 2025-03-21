@@ -32,9 +32,9 @@ CProgress* m_pProgress = nullptr;
 #ifdef _GIS_SUPPORT
 void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 {
-	assert(m_pProgress != nullptr);
-
-	m_pProgress->Log((int)iEvent, szEvent);
+	if (m_pProgress != nullptr) {
+		m_pProgress->Log((int)iEvent, szEvent);
+	}
 }
 #endif
 
