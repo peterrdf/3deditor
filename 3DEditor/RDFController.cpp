@@ -25,8 +25,8 @@ CRDFController::~CRDFController()
 
 /*virtual*/ void CRDFController::loadDecorationModels() /*override*/
 {
-	addDecorationModel(new CCoordinateSystemModel(nullptr));
-	addDecorationModel(new CCoordinateSystemModel(getModel()));
+	addDecorationModel(new _coordinate_system_model(nullptr));
+	addDecorationModel(new _coordinate_system_model(getModel()));
 	addDecorationModel(new CNavigatorModel()); 
 	addDecorationModel(new CNavigatorCoordinateSystemModel());
 }

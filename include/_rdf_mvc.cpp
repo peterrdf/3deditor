@@ -970,3 +970,729 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		}
 	}
 }
+
+// ************************************************************************************************
+_coordinate_system_model::_coordinate_system_model(_model* pWorld)
+	: _rdf_model()
+	, m_pWorld(pWorld)
+	, m_pTextBuilder(new _text_builder())
+{
+	Create();
+}
+
+/*virtual*/ _coordinate_system_model::~_coordinate_system_model()
+{
+	delete m_pTextBuilder;
+}
+
+/*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
+{
+	if (m_pWorld == nullptr) {
+		int iWidth = 0;
+		int iHeight = 0;
+		pScene->_getDimensions(iWidth, iHeight);
+
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+		pScene->_prepare(
+			true,
+			0, 0,
+			iWidth, iHeight,
+			fXmin, fXmax,
+			fYmin, fYmax,
+			fZmin, fZmax,
+			false,
+			false);
+
+		return true;
+	}
+
+	return false;
+}
+
+/*virtual*/ void _coordinate_system_model::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+
+	if (m_pWorld != nullptr) {
+		double arOffset[3];
+		GetVertexBufferOffset(m_pWorld->getOwlModel(), arOffset);
+
+		double dScaleFactor = m_pWorld->getOriginalBoundingSphereDiameter() / 2.;
+
+		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
+			arOffset[0] / dScaleFactor,
+			arOffset[1] / dScaleFactor,
+			arOffset[2] / dScaleFactor);
+
+		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
+		SetVertexBufferOffset(
+			getOwlModel(),
+			arOffset[0] / dScaleFactor,
+			arOffset[1] / dScaleFactor,
+			arOffset[2] / dScaleFactor);
+
+		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
+		ClearedExternalBuffers(getOwlModel());
+	}
+}
+
+void _coordinate_system_model::Create()
+{
+	const double AXIS_LENGTH = 4.;
+	const double ARROW_OFFSET = AXIS_LENGTH;
+
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->Initialize(owlModel);
+
+	// Coordinate System
+	vector<OwlInstance> vecInstances;
+
+	// Coordinate System/X (1 Line3D)
+	OwlInstance owlXAxisMaterialInstance = 0;
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(1.);
+		pAmbient.set_G(0.);
+		pAmbient.set_B(0.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		owlXAxisMaterialInstance = (int64_t)pMaterial;
+
+		vector<double> vecPoints =
+		{
+			0., 0., 0.,
+			AXIS_LENGTH / 2., 0., 0.,
+		};
+
+		auto pXAxis = GEOM::Line3D::Create(owlModel);
+		pXAxis.set_material(pMaterial);
+		pXAxis.set_points(vecPoints.data(), vecPoints.size());
+
+		vecInstances.push_back((int64_t)pXAxis);
+	}
+
+	// Coordinate System/Y (Line3D)
+	OwlInstance owlYAxisMaterialInstance = 0;
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(1.);
+		pAmbient.set_B(0.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		owlYAxisMaterialInstance = (int64_t)pMaterial;
+
+		vector<double> vecPoints =
+		{
+			0., 0., 0.,
+			0., AXIS_LENGTH / 2., 0.,
+		};
+
+		auto pYAxis = GEOM::Line3D::Create(owlModel);
+		pYAxis.set_material(pMaterial);
+		pYAxis.set_points(vecPoints.data(), vecPoints.size());
+
+		vecInstances.push_back((int64_t)pYAxis);
+	}
+
+	// Coordinate System/Z (Line3D)
+	OwlInstance owlZAxisMaterialInstance = 0;
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(0.);
+		pAmbient.set_B(1.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		owlZAxisMaterialInstance = (int64_t)pMaterial;
+
+		vector<double> vecPoints =
+		{
+			0., 0., 0.,
+			0., 0., AXIS_LENGTH / 2.,
+		};
+
+		auto pZAxis = GEOM::Line3D::Create(owlModel);
+		pZAxis.set_material(pMaterial);
+		pZAxis.set_points(vecPoints.data(), vecPoints.size());
+
+		vecInstances.push_back((int64_t)pZAxis);
+	}
+
+	// Arrows (1 Cone => 3 Transformations)
+	{
+		auto pArrow = GEOM::Cone::Create(owlModel);
+		pArrow.set_height(AXIS_LENGTH / 15.);
+		pArrow.set_radius(.075);
+
+		// +X
+		{
+			OwlInstance owlPlusXInstance = translateTransformation(
+				owlModel,
+				rotateTransformation(owlModel, (int64_t)pArrow, 0., 2 * PI * 90. / 360., 0.),
+				ARROW_OFFSET / 2., 0., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(owlPlusXInstance, "#(+X)");
+
+			SetObjectProperty(
+				owlPlusXInstance,
+				GetPropertyByName(owlModel, "material"),
+				&owlXAxisMaterialInstance,
+				1);
+
+			vecInstances.push_back(owlPlusXInstance);
+		}
+
+		// +Y
+		{
+			OwlInstance owlPlusYInstance = translateTransformation(
+				owlModel,
+				rotateTransformation(owlModel, (int64_t)pArrow, 2 * PI * 270. / 360., 0., 0.),
+				0., ARROW_OFFSET / 2., 0.,
+				1., 1., 1.);
+			SetNameOfInstance(owlPlusYInstance, "#(+Y)");
+
+			SetObjectProperty(
+				owlPlusYInstance,
+				GetPropertyByName(owlModel, "material"),
+				&owlYAxisMaterialInstance,
+				1);
+
+			vecInstances.push_back(owlPlusYInstance);
+		}
+
+		// +Z
+		{
+			OwlInstance owlPlusZInstance = translateTransformation(
+				owlModel,
+				(int64_t)pArrow,
+				0., 0., ARROW_OFFSET / 2.,
+				1., 1., 1.);
+			SetNameOfInstance(owlPlusZInstance, "#(+Z)");
+
+			SetObjectProperty(
+				owlPlusZInstance,
+				GetPropertyByName(owlModel, "material"),
+				&owlZAxisMaterialInstance,
+				1);
+
+			vecInstances.push_back(owlPlusZInstance);
+		}
+	}
+
+	/* Labels */
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	// X-axis
+	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->BuildText("X-axis", true);
+	assert(owlPlusXLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlPlusXLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	// Y-axis
+	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->BuildText("Y-axis", true);
+	assert(owlPlusYLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlPlusYLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	// Z-axis
+	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->BuildText("Z-axis", true);
+	assert(owlPlusZLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlPlusZLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Scale Factor */
+	double dMaxLength = dXmax - dXmin;
+	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+
+	double dScaleFactor = ((AXIS_LENGTH / 2.) * .75) / dMaxLength;
+
+	/* Transform Labels */
+
+	// X-axis
+	OwlInstance owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusXLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 180.),
+		AXIS_LENGTH / 1.4, 0., 0.,
+		-1., 1., 1.);
+
+	SetNameOfInstance(owlInstance, "#X-axis");
+	SetObjectProperty(
+		owlInstance,
+		GetPropertyByName(owlModel, "material"),
+		&owlXAxisMaterialInstance,
+		1);
+
+	// Y-axis
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusYLabelInstance, dScaleFactor / 2.), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		0., AXIS_LENGTH / 1.4, 0.,
+		-1., 1., 1.);
+
+	SetNameOfInstance(owlInstance, "#Y-axis");
+	SetObjectProperty(
+		owlInstance,
+		GetPropertyByName(owlModel, "material"),
+		&owlYAxisMaterialInstance,
+		1);
+
+	// Z-axis
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlPlusZLabelInstance, dScaleFactor / 2.), 2 * PI * 270. / 360., 2 * PI * 90. / 360., 0.),
+		0., 0., AXIS_LENGTH / 1.4,
+		1., 1., -1.);
+
+	SetNameOfInstance(owlInstance, "#Z-axis");
+	SetObjectProperty(
+		owlInstance,
+		GetPropertyByName(owlModel, "material"),
+		&owlZAxisMaterialInstance,
+		1);
+
+	/* Collection */
+	OwlInstance owlCollectionInstance = CreateInstance(GetClassByName(owlModel, "Collection"), "#Coordinate System#");
+	assert(owlCollectionInstance != 0);
+
+	SetObjectProperty(
+		owlCollectionInstance,
+		GetPropertyByName(owlModel, "objects"),
+		vecInstances.data(),
+		vecInstances.size());
+
+	attachModel(L"_COORDINATE_SYSTEM_", owlModel);
+}
+
+// ************************************************************************************************
+/*static*/ const int CNavigatorModel::NAVIGATION_VIEW_LENGTH = 250;
+
+CNavigatorModel::CNavigatorModel()
+	: _rdf_model()
+	, m_pTextBuilder(new _text_builder())
+{
+	Create();
+}
+
+/*virtual*/ CNavigatorModel::~CNavigatorModel()
+{
+	delete m_pTextBuilder;
+}
+
+/*virtual*/ bool CNavigatorModel::prepareScene(_oglScene* pScene) /*override*/
+{
+	assert(pScene != nullptr);
+
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
+	float fXmin = FLT_MAX;
+	float fXmax = -FLT_MAX;
+	float fYmin = FLT_MAX;
+	float fYmax = -FLT_MAX;
+	float fZmin = FLT_MAX;
+	float fZmax = -FLT_MAX;
+	getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	pScene->_prepare(
+		true,
+		iWidth - NAVIGATION_VIEW_LENGTH, 0,
+		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	return true;
+}
+
+/*virtual*/ void CNavigatorModel::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
+}
+
+void CNavigatorModel::Create()
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->Initialize(owlModel);
+
+	// Cube (BoundaryRepresentations)
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(.1);
+		pAmbient.set_G(.1);
+		pAmbient.set_B(.1);
+		pAmbient.set_W(.05);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		vector<double> vecVertices =
+		{
+			-.75, -.75, 0, // 1 (Bottom/Left)
+			.75, -.75, 0,  // 2 (Bottom/Right)
+			.75, .75, 0,   // 3 (Top/Right)
+			-.75, .75, 0,  // 4 (Top/Left)
+		};
+		vector<int64_t> vecIndices =
+		{
+			0, 1, 2, 3, -1,
+		};
+
+		auto pBoundaryRepresentation = GEOM::BoundaryRepresentation::Create(owlModel);
+		pBoundaryRepresentation.set_material(pMaterial);
+		pBoundaryRepresentation.set_vertices(vecVertices.data(), vecVertices.size());
+		pBoundaryRepresentation.set_indices(vecIndices.data(), vecIndices.size());
+
+		// Front
+		OwlInstance owlInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+			0., -.75, 0.,
+			1., -1., 1.);
+		SetNameOfInstance(owlInstance, "#front");
+
+		// Back
+		owlInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 0.),
+			0., .75, 0.,
+			-1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#back");
+
+		// Top
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pBoundaryRepresentation,
+			0., 0., .75,
+			1., 1., -1.);
+		SetNameOfInstance(owlInstance, "#top");
+
+		// Bottom
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pBoundaryRepresentation,
+			0., 0., -.75,
+			1, 1., 1.);
+		SetNameOfInstance(owlInstance, "#bottom");
+
+		// Left
+		owlInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+			-.75, 0., 0.,
+			1., -1., 1.);
+		SetNameOfInstance(owlInstance, "#left");
+
+		// Right
+		owlInstance = translateTransformation(
+			owlModel,
+			rotateTransformation(owlModel, (int64_t)pBoundaryRepresentation, 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+			.75, 0., 0.,
+			-1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#right");
+	}
+
+	// Sphere (Sphere)
+	{
+		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
+		pAmbient.set_R(0.);
+		pAmbient.set_G(0.);
+		pAmbient.set_B(1.);
+		pAmbient.set_W(1.);
+
+		auto pColor = GEOM::Color::Create(owlModel);
+		pColor.set_ambient(pAmbient);
+
+		auto pMaterial = GEOM::Material::Create(owlModel);
+		pMaterial.set_color(pColor);
+
+		auto pSphere = GEOM::Sphere::Create(owlModel);
+		pSphere.set_material(pMaterial);
+		pSphere.set_radius(.1);
+		pSphere.set_segmentationParts(36);
+
+		// Front/Top/Left
+		OwlInstance owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, -.75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#front-top-left");
+
+		// Front/Top/Right
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, -.75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#front-top-right");
+
+		// Front/Bottom/Left
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, -.75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#front-bottom-left");
+
+		// Front/Bottom/Right
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, -.75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#front-bottom-right");
+
+		// Back/Top/Left
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, .75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#back-top-left");
+
+		// Back/Top/Right
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, .75, .75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#back-top-right");
+
+		// Back/Bottom/Left
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			.75, .75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#back-bottom-left");
+
+		// Back/Bottom/Right
+		owlInstance = translateTransformation(
+			owlModel,
+			(int64_t)pSphere,
+			-.75, .75, -.75,
+			1., 1., 1.);
+		SetNameOfInstance(owlInstance, "#back-bottom-right");
+	}
+
+	CreateLabels(owlModel);
+
+	attachModel(L"_NAVIGATOR_", owlModel);
+}
+
+void CNavigatorModel::CreateLabels(OwlModel owlModel)
+{
+	double dXmin = DBL_MAX;
+	double dXmax = -DBL_MAX;
+	double dYmin = DBL_MAX;
+	double dYmax = -DBL_MAX;
+	double dZmin = DBL_MAX;
+	double dZmax = -DBL_MAX;
+
+	/* Top */
+	OwlInstance owlTopLabelInstance = m_pTextBuilder->BuildText("top", true);
+	assert(owlTopLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlTopLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Bottom */
+	OwlInstance owlBottomLabelInstance = m_pTextBuilder->BuildText("bottom", true);
+	assert(owlBottomLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlBottomLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Front */
+	OwlInstance owlFrontLabelInstance = m_pTextBuilder->BuildText("front", true);
+	assert(owlFrontLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlFrontLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Back */
+	OwlInstance owlBackLabelInstance = m_pTextBuilder->BuildText("back", true);
+	assert(owlBackLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlBackLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Left */
+	OwlInstance owlLeftLabelInstance = m_pTextBuilder->BuildText("left", true);
+	assert(owlLeftLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlLeftLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Right */
+	OwlInstance owlRightLabelInstance = m_pTextBuilder->BuildText("right", true);
+	assert(owlRightLabelInstance != 0);
+
+	_geometry::calculateBB(
+		owlRightLabelInstance,
+		dXmin, dXmax,
+		dYmin, dYmax,
+		dZmin, dZmax);
+
+	/* Scale Factor */
+	double dMaxLength = dXmax - dXmin;
+	dMaxLength = fmax(dMaxLength, dYmax - dYmin);
+	dMaxLength = fmax(dMaxLength, dZmax - dZmin);
+
+	double dScaleFactor = (1.5 * .9) / dMaxLength;
+
+	// Front
+	OwlInstance owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlFrontLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., -.751, 0.,
+		1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#front-label");
+
+	// Back
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlBackLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 0.),
+		0., .751, 0.,
+		-1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#back-label");
+
+	// Top
+	owlInstance = translateTransformation(
+		owlModel,
+		scaleTransformation(owlModel, owlTopLabelInstance, dScaleFactor),
+		0., 0., .751,
+		1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#top-label");
+
+	// Bottom
+	owlInstance = translateTransformation(
+		owlModel,
+		scaleTransformation(owlModel, owlBottomLabelInstance, dScaleFactor),
+		0., 0., -.751,
+		-1, 1., 1.);
+	SetNameOfInstance(owlInstance, "#bottom-label");
+
+	// Left
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlLeftLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		-.751, 0., 0.,
+		1., -1., 1.);
+	SetNameOfInstance(owlInstance, "#left-label");
+
+	// Right
+	owlInstance = translateTransformation(
+		owlModel,
+		rotateTransformation(owlModel, scaleTransformation(owlModel, owlRightLabelInstance, dScaleFactor), 2 * PI * 90. / 360., 0., 2 * PI * 90. / 360.),
+		.751, 0., 0.,
+		1., 1., 1.);
+	SetNameOfInstance(owlInstance, "#right-label");
+}
+
+CNavigatorCoordinateSystemModel::CNavigatorCoordinateSystemModel()
+	: _coordinate_system_model(nullptr)
+{
+}
+
+/*virtual*/ CNavigatorCoordinateSystemModel::~CNavigatorCoordinateSystemModel()
+{
+}
+
+/*virtual*/ bool CNavigatorCoordinateSystemModel::prepareScene(_oglScene* pScene) /*override*/
+{
+	const int NAVIGATION_VIEW_LENGTH = CNavigatorModel::NAVIGATION_VIEW_LENGTH;
+
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
+	float fXmin = FLT_MAX;
+	float fXmax = -FLT_MAX;
+	float fYmin = FLT_MAX;
+	float fYmax = -FLT_MAX;
+	float fZmin = FLT_MAX;
+	float fZmax = -FLT_MAX;
+	getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	pScene->_prepare(
+		true,
+		iWidth - NAVIGATION_VIEW_LENGTH, 0,
+		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
+		fXmin, fXmax,
+		fYmin, fYmax,
+		fZmin, fZmax,
+		false,
+		false);
+
+	return true;
+}
