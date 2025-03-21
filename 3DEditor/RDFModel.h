@@ -72,7 +72,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class CCoordinateSystemModel : public CRDFModel
+class CCoordinateSystemModel : public _rdf_model
 {
 
 private: // Fields
@@ -100,7 +100,7 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class CNavigatorModel : public CRDFModel
+class CNavigatorModel : public _rdf_model
 {
 
 public: // Constants

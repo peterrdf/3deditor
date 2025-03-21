@@ -336,7 +336,7 @@ void CDefaultModel::Create()
 
 // ************************************************************************************************
 CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
-	: CRDFModel()
+	: _rdf_model()
 	, m_pWorld(pWorld)
 	, m_pTextBuilder(new CTextBuilder())
 {
@@ -676,7 +676,7 @@ void CCoordinateSystemModel::Create()
 /*static*/ const int CNavigatorModel::NAVIGATION_VIEW_LENGTH = 250;
 
 CNavigatorModel::CNavigatorModel()
-	: CRDFModel()
+	: _rdf_model()
 	, m_pTextBuilder(new CTextBuilder())
 {
 	Create();
