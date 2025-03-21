@@ -103,6 +103,10 @@ private: // Methods
 class CNavigatorModel : public CRDFModel
 {
 
+public: // Constants
+	
+	static const int NAVIGATION_VIEW_LENGTH;
+
 private: // Members
 
 	CTextBuilder* m_pTextBuilder;

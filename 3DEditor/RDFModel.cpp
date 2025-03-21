@@ -408,7 +408,7 @@ CCoordinateSystemModel::CCoordinateSystemModel(_model* pWorld)
 
 void CCoordinateSystemModel::Create()
 {
-	const double AXIS_LENGTH = 5.;
+	const double AXIS_LENGTH = 4.;
 	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	OwlModel owlModel = CreateModel();
@@ -673,6 +673,8 @@ void CCoordinateSystemModel::Create()
 }
 
 // ************************************************************************************************
+/*static*/ const int CNavigatorModel::NAVIGATION_VIEW_LENGTH = 250;
+
 CNavigatorModel::CNavigatorModel()
 	: CRDFModel()
 	, m_pTextBuilder(new CTextBuilder())
@@ -688,8 +690,6 @@ CNavigatorModel::CNavigatorModel()
 /*virtual*/ bool CNavigatorModel::prepareScene(_oglScene* pScene) /*override*/
 {
 	assert(pScene != nullptr);
-
-	const int NAVIGATION_VIEW_LENGTH = 200;
 
 	int iWidth = 0;
 	int iHeight = 0;
@@ -1033,7 +1033,7 @@ CNavigatorCoordinateSystemModel::CNavigatorCoordinateSystemModel()
 
 /*virtual*/ bool CNavigatorCoordinateSystemModel::prepareScene(_oglScene* pScene) /*override*/
 {
-	const int NAVIGATION_VIEW_LENGTH = 200;
+	const int NAVIGATION_VIEW_LENGTH = CNavigatorModel::NAVIGATION_VIEW_LENGTH;
 
 	int iWidth = 0;
 	int iHeight = 0;
