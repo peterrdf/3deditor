@@ -797,6 +797,7 @@
     <ClInclude Include="..\include\_rdf_mvc.h" />
     <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
+    <ClInclude Include="..\include\_text_builder.h" />
     <ClInclude Include="..\stb\stb_image.h" />
     <ClInclude Include="InstancesDialog.h" />
     <ClInclude Include="InstancesList.h" />

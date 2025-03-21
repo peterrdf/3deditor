@@ -138,6 +138,9 @@
     <ClInclude Include="..\include\_rdf_class.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_text_builder.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
