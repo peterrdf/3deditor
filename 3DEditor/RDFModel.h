@@ -75,7 +75,7 @@ private: // Methods
 class CCoordinateSystemModel : public CRDFModel
 {
 
-private: // Members
+private: // Fields
 
 	_model* m_pWorld;
 	CTextBuilder* m_pTextBuilder;
@@ -107,7 +107,7 @@ public: // Constants
 	
 	static const int NAVIGATION_VIEW_LENGTH;
 
-private: // Members
+private: // Fields
 
 	CTextBuilder* m_pTextBuilder;
 

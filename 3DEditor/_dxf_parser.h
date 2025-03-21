@@ -181,7 +181,7 @@ namespace _dxf
 	class _entry : public _group
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		_entry* m_pParent;
@@ -223,7 +223,7 @@ namespace _dxf
 	class _entity : public _entry
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_entity*> m_vecEntities;
@@ -250,7 +250,7 @@ namespace _dxf
 	class _extrusion
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		_entity* m_pEntity;

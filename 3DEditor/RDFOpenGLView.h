@@ -12,7 +12,7 @@
 class CRDFOpenGLView : public _oglView
 {
 
-#pragma region Members
+#pragma region Fields
 
 private: // Fields
 

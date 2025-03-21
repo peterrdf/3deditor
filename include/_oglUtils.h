@@ -541,7 +541,7 @@ protected: // Methods
 class _oglBlinnPhongProgram : public _oglProgram
 {
 
-#pragma region Members
+#pragma region Fields
 
 private: // Fields
 
@@ -963,7 +963,7 @@ public: // Methods
 class _oglPerPixelProgram : public _oglProgram
 {
 
-#pragma region Members
+#pragma region Fields
 
 private: // Fields
 
