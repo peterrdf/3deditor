@@ -54,7 +54,7 @@ bool CTest::Save(const wchar_t* szTestFilePath, const wchar_t* szScreenshotFileN
 	float fXTranslation = 0.f;
 	float fYTranslation = 0.f;
 	float fZTranslation = 0.f;
-	m_pOpenGLView->GetTranslation(fXTranslation, fYTranslation, fZTranslation);
+	m_pOpenGLView->_test_GetTranslation(fXTranslation, fYTranslation, fZTranslation);
 
 	streamTest << fXTranslation << endl;
 	streamTest << fYTranslation << endl;
@@ -63,7 +63,7 @@ bool CTest::Save(const wchar_t* szTestFilePath, const wchar_t* szScreenshotFileN
 	// View settings - Rotation
 	float fXRotation = 0.f;
 	float fYRotation = 0.f;
-	m_pOpenGLView->GetRotation(fXRotation, fYRotation);
+	m_pOpenGLView->_test_GetRotation(fXRotation, fYRotation);
 
 	streamTest << fXRotation << endl;
 	streamTest << fYRotation << endl;
@@ -150,8 +150,8 @@ bool CTest::Load(const wchar_t* szTestFilePath)
 	float fYRotation = (float)_wtof(strValue.c_str());
 
 	// Apply
-	m_pOpenGLView->SetTranslation(fXTranslation, fYTranslation, fZTranslation, FALSE);
-	m_pOpenGLView->SetRotation(fXRotation, fYRotation, TRUE);
+	m_pOpenGLView->_test_SetTranslation(fXTranslation, fYTranslation, fZTranslation, FALSE);
+	m_pOpenGLView->_test_SetRotation(fXRotation, fYRotation, TRUE);
 
 	return true;
 }

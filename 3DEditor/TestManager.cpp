@@ -152,13 +152,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		// Test 1	
 		{
-			m_pOpenGLView->SetRotation(30.f, 30.f, TRUE);
+			m_pOpenGLView->_test_SetRotation(30.f, 30.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 			
-			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -175,13 +175,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		// Test 2
 		{
-			m_pOpenGLView->SetRotation(120.f, 120.f, TRUE);
+			m_pOpenGLView->_test_SetRotation(120.f, 120.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 
-			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -198,13 +198,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		
 		// Test 3
 		{
-			m_pOpenGLView->SetRotation(210.f, 210.f, TRUE);
+			m_pOpenGLView->_test_SetRotation(210.f, 210.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 
-			if (!m_pOpenGLView->SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 

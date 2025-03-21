@@ -81,9 +81,6 @@
     <ClInclude Include="NewInstanceDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DesignTreeViewConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>

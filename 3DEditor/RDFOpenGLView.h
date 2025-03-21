@@ -12,8 +12,6 @@
 class CRDFOpenGLView : public _oglView
 {
 
-#pragma region Fields
-
 private: // Fields
 
 	// Point Face	
@@ -25,8 +23,6 @@ private: // Fields
 	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
 	_rdf_instance* m_pNavigatorPointedInstance;
 	_material* m_pNavigatorPointedInstanceMaterial;
-
-#pragma endregion // Fields
 
 public: // Methods
 	
@@ -48,13 +44,7 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
-	virtual void _onMouseMove(const CPoint& point) override;
-
-	// Test
-	void SetRotation(float fX, float fY, BOOL bRedraw);
-	void GetRotation(float& fX, float& fY);
-	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
-	void GetTranslation(float& fX, float& fY, float& fZ);
+	virtual void _onMouseMove(const CPoint& point) override;	
 
 private: // Methods
 
@@ -70,9 +60,14 @@ private: // Methods
 
 public:
 
+	// Test
+	void _test_SetRotation(float fX, float fY, BOOL bRedraw);
+	void _test_GetRotation(float& fX, float& fY);
+	void _test_SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
+	void _test_GetTranslation(float& fX, float& fY, float& fZ);
 	// https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-	void TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight);
-	bool SaveScreenshot(const wchar_t* szFilePath);
+	void _test_TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight);
+	bool _test_SaveScreenshot(const wchar_t* szFilePath);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

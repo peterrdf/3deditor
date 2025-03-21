@@ -842,7 +842,6 @@
     <ClInclude Include="Test.h" />
     <ClInclude Include="TestHtmlReport.h" />
     <ClInclude Include="TestManager.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="_dxf_parser.h" />

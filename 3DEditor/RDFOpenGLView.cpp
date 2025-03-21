@@ -199,40 +199,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* pIn
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 }
 
-void CRDFOpenGLView::SetRotation(float fX, float fY, BOOL bRedraw)
-{
-	m_fXAngle = fX;
-	m_fYAngle = fY;
-
-	if (bRedraw) {
-		_redraw();
-	}
-}
-
-void CRDFOpenGLView::GetRotation(float& fX, float& fY)
-{
-	fX = m_fXAngle;
-	fY = m_fYAngle;
-}
-
-void CRDFOpenGLView::SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
-{
-	m_fXTranslation = fX;
-	m_fYTranslation = fY;
-	m_fZTranslation = fZ;
-
-	if (bRedraw) {
-		_redraw();
-	}
-}
-
-void CRDFOpenGLView::GetTranslation(float& fX, float& fY, float& fZ)
-{
-	fX = m_fXTranslation;
-	fY = m_fYTranslation;
-	fZ = m_fZTranslation;
-}
-
 void CRDFOpenGLView::TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor)
 {
 	// Transformation
@@ -1360,8 +1326,42 @@ void CRDFOpenGLView::DrawPointedFace()
 //	return pair<int64_t, int64_t>(-1, -1);
 //}
 
+void CRDFOpenGLView::_test_SetRotation(float fX, float fY, BOOL bRedraw)
+{
+	m_fXAngle = fX;
+	m_fYAngle = fY;
+
+	if (bRedraw) {
+		_redraw();
+	}
+}
+
+void CRDFOpenGLView::_test_GetRotation(float& fX, float& fY)
+{
+	fX = m_fXAngle;
+	fY = m_fYAngle;
+}
+
+void CRDFOpenGLView::_test_SetTranslation(float fX, float fY, float fZ, BOOL bRedraw)
+{
+	m_fXTranslation = fX;
+	m_fYTranslation = fY;
+	m_fZTranslation = fZ;
+
+	if (bRedraw) {
+		_redraw();
+	}
+}
+
+void CRDFOpenGLView::_test_GetTranslation(float& fX, float& fY, float& fZ)
+{
+	fX = m_fXTranslation;
+	fY = m_fYTranslation;
+	fZ = m_fZTranslation;
+}
+
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)
+void CRDFOpenGLView::_test_TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -1385,12 +1385,12 @@ void CRDFOpenGLView::TakeScreenshot(unsigned char*& arPixels, unsigned int& iWid
 }
 
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-bool CRDFOpenGLView::SaveScreenshot(const wchar_t* szFilePath)
+bool CRDFOpenGLView::_test_SaveScreenshot(const wchar_t* szFilePath)
 {
 	unsigned char* arPixels;
 	unsigned int iWidth;
 	unsigned int iHeight;
-	TakeScreenshot(arPixels, iWidth, iHeight);
+	_test_TakeScreenshot(arPixels, iWidth, iHeight);
 
 	bool bResult = ::SaveScreenshot(arPixels, iWidth, iHeight, szFilePath);
 
