@@ -3,6 +3,7 @@
 #include "_rdf_instance.h"
 #include "_rdf_class.h"
 #include "_text_builder.h"
+#include "geom.h"
 #include "_ptr.h"
 
 // ************************************************************************************************
@@ -972,12 +973,15 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_model* pWorld)
+_coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers/* = true*/)
 	: _rdf_model()
-	, m_pWorld(pWorld)
+	, m_pController(pController)
+	, m_bUpdateVertexBuffers(bUpdateVertexBuffers)
 	, m_pTextBuilder(new _text_builder())
 {
-	Create();
+	assert(m_pController != nullptr);
+
+	create();
 }
 
 /*virtual*/ _coordinate_system_model::~_coordinate_system_model()
@@ -985,68 +989,37 @@ _coordinate_system_model::_coordinate_system_model(_model* pWorld)
 	delete m_pTextBuilder;
 }
 
-/*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
-{
-	if (m_pWorld == nullptr) {
-		int iWidth = 0;
-		int iHeight = 0;
-		pScene->_getDimensions(iWidth, iHeight);
-
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-		pScene->_prepare(
-			true,
-			0, 0,
-			iWidth, iHeight,
-			fXmin, fXmax,
-			fYmin, fYmax,
-			fZmin, fZmax,
-			false,
-			false);
-
-		return true;
-	}
-
-	return false;
-}
-
 /*virtual*/ void _coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 
-	if (m_pWorld != nullptr) {
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		m_pWorld->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+	if (m_bUpdateVertexBuffers) {
+		float fWorldXmin = FLT_MAX;
+		float fWorldXmax = -FLT_MAX;
+		float fWorldYmin = FLT_MAX;
+		float fWorldYmax = -FLT_MAX;
+		float fWorldZmin = FLT_MAX;
+		float fWorldZmax = -FLT_MAX;
+		m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
 		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-			fXmin,
-			fYmin,
-			fZmin);
+			fWorldXmin,
+			fWorldYmin,
+			fWorldZmin);
 
 		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 		SetVertexBufferOffset(
 			getOwlModel(),
-			fXmin,
-			fYmin,
-			fZmin);
+			fWorldXmin,
+			fWorldYmin,
+			fWorldZmin);
 
 		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 		ClearedExternalBuffers(getOwlModel());
-	}
+	}	
 }
 
-void _coordinate_system_model::Create()
+void _coordinate_system_model::create()
 {
 	const double AXIS_LENGTH = 4.;
 	const double ARROW_OFFSET = AXIS_LENGTH;
@@ -1319,7 +1292,7 @@ _navigator_model::_navigator_model()
 	: _rdf_model()
 	, m_pTextBuilder(new _text_builder())
 {
-	Create();
+	create();
 }
 
 /*virtual*/ _navigator_model::~_navigator_model()
@@ -1361,7 +1334,7 @@ _navigator_model::_navigator_model()
 	getInstancesDefaultEnableState();
 }
 
-void _navigator_model::Create()
+void _navigator_model::create()
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -1532,12 +1505,12 @@ void _navigator_model::Create()
 		SetNameOfInstance(owlInstance, "#back-bottom-right");
 	}
 
-	CreateLabels(owlModel);
+	createLabels(owlModel);
 
 	attachModel(L"_NAVIGATOR_", owlModel);
 }
 
-void _navigator_model::CreateLabels(OwlModel owlModel)
+void _navigator_model::createLabels(OwlModel owlModel)
 {
 	double dXmin = DBL_MAX;
 	double dXmax = -DBL_MAX;
@@ -1662,8 +1635,8 @@ void _navigator_model::CreateLabels(OwlModel owlModel)
 	SetNameOfInstance(owlInstance, "#right-label");
 }
 
-_navigator_coordinate_system_model::_navigator_coordinate_system_model()
-	: _coordinate_system_model(nullptr)
+_navigator_coordinate_system_model::_navigator_coordinate_system_model(_controller* pController)
+	: _coordinate_system_model(pController, false)
 {
 }
 

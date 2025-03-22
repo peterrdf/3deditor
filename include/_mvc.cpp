@@ -701,25 +701,35 @@ void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float
 	fWorldYmax = -FLT_MAX;
 	fWorldZmin = FLT_MAX;
 	fWorldZmax = -FLT_MAX;
-	for (auto pModel : getModels()) {
-		if (!pModel->getEnable()) {
-			continue;
+	if (!getModels().empty()) {
+		for (auto pModel : getModels()) {
+			if (!pModel->getEnable()) {
+				continue;
+			}
+
+			float fXmin = FLT_MAX;
+			float fXmax = -FLT_MAX;
+			float fYmin = FLT_MAX;
+			float fYmax = -FLT_MAX;
+			float fZmin = FLT_MAX;
+			float fZmax = -FLT_MAX;
+			pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+			fWorldXmin = (float)fmin(fWorldXmin, fXmin);
+			fWorldXmax = (float)fmax(fWorldXmax, fXmax);
+			fWorldYmin = (float)fmin(fWorldYmin, fYmin);
+			fWorldYmax = (float)fmax(fWorldYmax, fYmax);
+			fWorldZmin = (float)fmin(fWorldZmin, fZmin);
+			fWorldZmax = (float)fmax(fWorldZmax, fZmax);
 		}
-
-		float fXmin = FLT_MAX;
-		float fXmax = -FLT_MAX;
-		float fYmin = FLT_MAX;
-		float fYmax = -FLT_MAX;
-		float fZmin = FLT_MAX;
-		float fZmax = -FLT_MAX;
-		pModel->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-		fWorldXmin = (float)fmin(fWorldXmin, fXmin);
-		fWorldXmax = (float)fmax(fWorldXmax, fXmax);
-		fWorldYmin = (float)fmin(fWorldYmin, fYmin);
-		fWorldYmax = (float)fmax(fWorldYmax, fYmax);
-		fWorldZmin = (float)fmin(fWorldZmin, fZmin);
-		fWorldZmax = (float)fmax(fWorldZmax, fZmax);
+	} // if (!getModels().empty())
+	else {
+		fWorldXmin = -1.f;
+		fWorldXmax = 1.f;
+		fWorldYmin = -1.f;
+		fWorldYmax = 1.f;
+		fWorldZmin = -1.f;
+		fWorldZmax = 1.f;
 	}
 }
 
