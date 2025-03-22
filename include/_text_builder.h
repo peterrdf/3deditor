@@ -28,7 +28,7 @@ public: // Methods
 	virtual ~_text_builder()
 	{}
 
-	void Initialize(OwlModel owlModel)
+	void initialize(OwlModel owlModel)
 	{
 		m_owlModel = owlModel;
 		assert(m_owlModel != 0);
@@ -36,7 +36,7 @@ public: // Methods
 		ascii::importChars(m_owlModel);
 	}
 
-	OwlInstance BuildText(const string& strText, bool bCenter)
+	OwlInstance buildText(const string& strText, bool bCenter)
 	{
 		int64_t iOffsetX = 0;
 

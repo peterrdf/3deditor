@@ -179,24 +179,40 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _coordinate_system_model 
-	: public _rdf_model
+class _coordinate_system_model_base : public _rdf_model
+{
+
+private: // Fields
+
+	_text_builder* m_pTextBuilder;
+
+public: // Methods
+
+	_coordinate_system_model_base();
+	virtual ~_coordinate_system_model_base();
+
+	// _model
+	virtual void scale() override {};
+
+protected: // Methods
+
+	void create();
+};
+
+// ************************************************************************************************
+class _coordinate_system_model
+	: public _coordinate_system_model_base
 	, public _decoration
 {
 
 private: // Fields
 
 	_controller* m_pController;
-	bool m_bUpdateVertexBuffers;
-	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
-	_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers = true);
-	virtual ~_coordinate_system_model();
-
-	// _model
-	virtual void scale() override {};
+	_coordinate_system_model(_controller* pController);
+	virtual ~_coordinate_system_model();	
 
 	// _decoration
 	virtual void onModelUpdated() override;
@@ -205,10 +221,30 @@ protected: // Methods
 
 	// _rdf_model
 	virtual void preLoad() override;
+};
 
-private: // Methods
+// ************************************************************************************************
+class _world_coordinate_system_model 
+	: public _coordinate_system_model_base
+	, public _decoration
+{
 
-	void create();
+private: // Fields
+
+	_controller* m_pController;
+
+public: // Methods
+
+	_world_coordinate_system_model(_controller* pController);
+	virtual ~_world_coordinate_system_model();
+
+	// _decoration
+	virtual void onModelUpdated() override;
+
+protected: // Methods
+
+	// _rdf_model
+	virtual void preLoad() override;
 };
 
 // ************************************************************************************************
@@ -248,12 +284,14 @@ private: // Methods
 };
 
 // ************************************************************************************************
-class _navigator_coordinate_system_model : public _coordinate_system_model
+class _navigator_coordinate_system_model 
+	: public _rdf_model
+	, public _decoration
 {
 
 public: // Methods
 
-	_navigator_coordinate_system_model(_controller* pController);
+	_navigator_coordinate_system_model();
 	virtual ~_navigator_coordinate_system_model();
 
 	// _decoration
