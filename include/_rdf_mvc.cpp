@@ -1021,22 +1021,25 @@ _coordinate_system_model::_coordinate_system_model(_model* pWorld)
 	getInstancesDefaultEnableState();
 
 	if (m_pWorld != nullptr) {
-		double arOffset[3];
-		GetVertexBufferOffset(m_pWorld->getOwlModel(), arOffset);
-
-		double dScaleFactor = m_pWorld->getOriginalBoundingSphereDiameter() / 2.;
+		float fXmin = FLT_MAX;
+		float fXmax = -FLT_MAX;
+		float fYmin = FLT_MAX;
+		float fYmax = -FLT_MAX;
+		float fZmin = FLT_MAX;
+		float fZmax = -FLT_MAX;
+		m_pWorld->getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
 
 		TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-			arOffset[0] / dScaleFactor,
-			arOffset[1] / dScaleFactor,
-			arOffset[2] / dScaleFactor);
+			fXmin,
+			fYmin,
+			fZmin);
 
 		// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 		SetVertexBufferOffset(
 			getOwlModel(),
-			arOffset[0] / dScaleFactor,
-			arOffset[1] / dScaleFactor,
-			arOffset[2] / dScaleFactor);
+			fXmin,
+			fYmin,
+			fZmin);
 
 		// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 		ClearedExternalBuffers(getOwlModel());
