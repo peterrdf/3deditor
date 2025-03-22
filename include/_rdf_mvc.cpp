@@ -690,6 +690,15 @@ _rdf_controller::_rdf_controller()
 	m_pSelectedProperty = nullptr;
 }
 
+/*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
+{
+	for (auto pDecoration : getDecorationModels()) {
+		_ptr<_decoration>(pDecoration)->onModelUpdated();
+	}
+
+	_controller::onModelUpdated();
+}
+
 /*virtual*/ void _rdf_controller::onInstancesEnabledStateChanged(_view* pSender) /*override*/
 {
 	if (getModel() == nullptr) {
@@ -700,6 +709,10 @@ _rdf_controller::_rdf_controller()
 	if (m_bScaleAndCenterAllVisibleGeometry) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
+	}
+
+	for (auto pDecoration : getDecorationModels()) {
+		_ptr<_decoration>(pDecoration)->onModelUpdated();
 	}
 
 	_controller::onInstancesEnabledStateChanged(pSender);
@@ -963,6 +976,10 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		getModel()->scale();
 	}
 
+	for (auto pDecoration : getDecorationModels()) {
+		_ptr<_decoration>(pDecoration)->onModelUpdated();
+	}
+
 	auto itView = getViews().begin();
 	for (; itView != getViews().end(); itView++) {
 		_ptr<_rdf_view> rdfView(*itView, false);
@@ -975,6 +992,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 // ************************************************************************************************
 _coordinate_system_model::_coordinate_system_model(_controller* pController, bool bUpdateVertexBuffers/* = true*/)
 	: _rdf_model()
+	, _decoration()
 	, m_pController(pController)
 	, m_bUpdateVertexBuffers(bUpdateVertexBuffers)
 	, m_pTextBuilder(new _text_builder())
@@ -987,6 +1005,11 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController, boo
 /*virtual*/ _coordinate_system_model::~_coordinate_system_model()
 {
 	delete m_pTextBuilder;
+}
+
+/*virtual*/ void _coordinate_system_model::onModelUpdated() /*override*/
+{
+	create();
 }
 
 /*virtual*/ void _coordinate_system_model::preLoad() /*override*/
@@ -1290,6 +1313,7 @@ void _coordinate_system_model::create()
 
 _navigator_model::_navigator_model()
 	: _rdf_model()
+	, _decoration()
 	, m_pTextBuilder(new _text_builder())
 {
 	create();

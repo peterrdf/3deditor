@@ -276,7 +276,7 @@ public: // Methods
 	static wstring validateFileName(const wchar_t* szFileName);
 
 	// Events
-	void onModelUpdated();
+	virtual void onModelUpdated();
 	void onShowMetaInformation(_instance* /*pInstance*/) { assert(false); }
 	void onInstanceEnabledStateChanged(_view* pSender, _instance* pInstance, int iFlag);
 	void resetInstancesEnabledState(_view* pSender);
@@ -297,3 +297,15 @@ public: // Properties
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
 };
 
+// ************************************************************************************************
+class _decoration
+{
+
+public: // Methods
+
+	_decoration();
+	virtual ~_decoration();
+
+	// Events
+	virtual void onModelUpdated() {}
+};

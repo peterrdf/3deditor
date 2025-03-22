@@ -683,10 +683,7 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
 	auto pInstance = getModel()->loadInstance(iInstance);
 
-	auto itView = m_setViews.begin();
-	for (; itView != m_setViews.end(); itView++) {
-		(*itView)->onModelUpdated();
-	}
+	onModelUpdated();
 
 	m_bUpdatingModel = false;
 
@@ -983,7 +980,7 @@ void _controller::saveInstance(OwlInstance owlInstance)
 	return (LPCWSTR)strValidFileName;
 }
 
-void _controller::onModelUpdated()
+/*virtual*/ void _controller::onModelUpdated()
 {
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++) {
@@ -1066,4 +1063,13 @@ _model* _controller::getModel() const
 	}
 
 	return nullptr;
+}
+
+// ************************************************************************************************
+_decoration::_decoration()
+{
+}
+
+/*virtual*/ _decoration::~_decoration()
+{
 }
