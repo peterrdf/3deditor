@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_oglUtils.h"
 #include "_instance.h"
+#include "_ptr.h"
 
 // ************************************************************************************************
 static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
@@ -1966,7 +1967,7 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 /*virtual*/ void _oglView::_preDraw()
 {
 	for (auto pBuffer : m_vecDecorationBuffers) {
-		if (!pBuffer->getModel()->prepareScene(this)) {
+		if (!_ptr<_decoration>(pBuffer->getModel())->prepareScene(this)) {
 			_prepareScene(false);
 		}
 

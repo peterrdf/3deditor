@@ -231,8 +231,10 @@ public: // Methods
 	virtual ~_navigator_model();
 
 	// _model	
-	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void scale() override {};
+
+	// _decoration
+	virtual bool prepareScene(_oglScene* pScene) override;
 
 protected: // Methods
 
@@ -254,6 +256,6 @@ public: // Methods
 	_navigator_coordinate_system_model(_controller* pController);
 	virtual ~_navigator_coordinate_system_model();
 
-	// _model	
+	// _decoration
 	virtual bool prepareScene(_oglScene* pScene) override;
 };

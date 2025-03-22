@@ -95,9 +95,7 @@ public: // Methods
 	T* as()
 	{
 		return dynamic_cast<T*>(this);
-	}
-
-	virtual bool prepareScene(_oglScene* /*pScene*/) { return false; };
+	}	
 
 	virtual void scale();
 	virtual void zoomTo(_instance* pInstance);
@@ -306,6 +304,9 @@ public: // Methods
 	_decoration();
 	virtual ~_decoration();
 
-	// Events
+	// View
+	virtual bool prepareScene(_oglScene* /*pScene*/) { return false; };
+
+	// Events	
 	virtual void onModelUpdated() {}
 };
