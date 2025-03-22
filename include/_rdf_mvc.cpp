@@ -1742,9 +1742,10 @@ void _navigator_model::createLabels(OwlModel owlModel)
 }
 
 _navigator_coordinate_system_model::_navigator_coordinate_system_model()
-	: _rdf_model()
+	: _coordinate_system_model_base()
 	, _decoration()
 {
+	create();
 }
 
 /*virtual*/ _navigator_coordinate_system_model::~_navigator_coordinate_system_model()
@@ -1778,4 +1779,9 @@ _navigator_coordinate_system_model::_navigator_coordinate_system_model()
 		false);
 
 	return true;
+}
+
+/*virtual*/ void _navigator_coordinate_system_model::preLoad() /*override*/
+{
+	getInstancesDefaultEnableState();
 }
