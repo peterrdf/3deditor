@@ -215,6 +215,7 @@ public: // Methods
 	virtual ~_coordinate_system_model();	
 
 	// _decoration
+	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual void onModelUpdated() override;
 
 protected: // Methods

@@ -1281,6 +1281,35 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 {
 }
 
+/*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
+{
+	assert(pScene != nullptr);
+
+	int iWidth = 0;
+	int iHeight = 0;
+	pScene->_getDimensions(iWidth, iHeight);
+
+	float fWorldXmin = FLT_MAX;
+	float fWorldXmax = -FLT_MAX;
+	float fWorldYmin = FLT_MAX;
+	float fWorldYmax = -FLT_MAX;
+	float fWorldZmin = FLT_MAX;
+	float fWorldZmax = -FLT_MAX;
+	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
+
+	pScene->_prepare(
+		true,
+		0, 0,
+		iWidth, iHeight,
+		fWorldXmin, fWorldXmax,
+		fWorldYmin, fWorldYmax,
+		fWorldZmin, fWorldZmax,
+		false,
+		false);
+
+	return true;
+}
+
 /*virtual*/ void _coordinate_system_model::onModelUpdated() /*override*/
 {
 	create();
