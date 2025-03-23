@@ -194,6 +194,8 @@ public: // Methods
 	// _model
 	virtual void scale() override {};
 
+	static void create(OwlModel owlModel, _text_builder* pTextBuilder);
+
 protected: // Methods
 
 	void create();

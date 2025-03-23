@@ -1000,15 +1000,13 @@ _coordinate_system_model_base::_coordinate_system_model_base()
 	delete m_pTextBuilder;
 }
 
-void _coordinate_system_model_base::create()
+/*static*/ void _coordinate_system_model_base::create(OwlModel owlModel, _text_builder* pTextBuilder)
 {
-	const double AXIS_LENGTH = 4.;
-	const double ARROW_OFFSET = AXIS_LENGTH;
-
-	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
+	assert(pTextBuilder != nullptr);
 
-	m_pTextBuilder->initialize(owlModel);
+	const double AXIS_LENGTH = 3.5;
+	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	// Coordinate System
 	vector<OwlInstance> vecInstances;
@@ -1173,7 +1171,7 @@ void _coordinate_system_model_base::create()
 	double dZmax = -DBL_MAX;
 
 	// X-axis
-	OwlInstance owlPlusXLabelInstance = m_pTextBuilder->buildText("X-axis", true);
+	OwlInstance owlPlusXLabelInstance = pTextBuilder->buildText("X-axis", true);
 	assert(owlPlusXLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1183,7 +1181,7 @@ void _coordinate_system_model_base::create()
 		dZmin, dZmax);
 
 	// Y-axis
-	OwlInstance owlPlusYLabelInstance = m_pTextBuilder->buildText("Y-axis", true);
+	OwlInstance owlPlusYLabelInstance = pTextBuilder->buildText("Y-axis", true);
 	assert(owlPlusYLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1193,7 +1191,7 @@ void _coordinate_system_model_base::create()
 		dZmin, dZmax);
 
 	// Z-axis
-	OwlInstance owlPlusZLabelInstance = m_pTextBuilder->buildText("Z-axis", true);
+	OwlInstance owlPlusZLabelInstance = pTextBuilder->buildText("Z-axis", true);
 	assert(owlPlusZLabelInstance != 0);
 
 	_geometry::calculateBB(
@@ -1262,6 +1260,16 @@ void _coordinate_system_model_base::create()
 		GetPropertyByName(owlModel, "objects"),
 		vecInstances.data(),
 		vecInstances.size());
+}
+
+void _coordinate_system_model_base::create()
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	m_pTextBuilder->initialize(owlModel);
+
+	create(owlModel, m_pTextBuilder);
 
 	attachModel(L"_COORDINATE_SYSTEM_", owlModel);
 }
