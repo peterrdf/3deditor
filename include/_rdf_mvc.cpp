@@ -675,7 +675,6 @@ _rdf_controller::_rdf_controller()
 	, m_pSelectedProperty(nullptr)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
-	, m_bModelCoordinateSystem(true)
 {
 }
 

@@ -1028,9 +1028,10 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 {
 	auto pOGLRenderer = getViewAs<_oglRenderer>();
 	if (pOGLRenderer != nullptr) {
-		if (enApplicationProperty == enumApplicationProperty::ShowCoordinateSystem) {
-			showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem());
-			showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem());
+		if ((enApplicationProperty == enumApplicationProperty::ShowCoordinateSystem) ||
+			(enApplicationProperty == enumApplicationProperty::CoordinateSystemType)) {
+			showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
+			showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
 		}
 		else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
 			showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());

@@ -45,6 +45,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bShowBiNormalVectors(FALSE)
 	, m_bScaleVectors(FALSE)
 	, m_bShowCoordinateSystem(TRUE)
+	, m_bModelCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
@@ -86,6 +87,7 @@ _oglRendererSettings::_oglRendererSettings()
 	m_bShowBiNormalVectors = FALSE;
 	m_bScaleVectors = FALSE;
 	m_bShowCoordinateSystem = TRUE;
+	m_bModelCoordinateSystem = TRUE;
 	m_bShowNavigator = TRUE;
 
 	// Selection
@@ -472,6 +474,16 @@ void _oglRendererSettings::_setView(enumView enView)
 			m_bShowCoordinateSystem = strValue == "TRUE";
 		}
 	}
+	
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_bModelCoordinateSystem);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_bModelCoordinateSystem = strValue == "TRUE";
+		}
+	}
 
 	{
 		string strSettingName(typeid(this).raw_name());
@@ -736,6 +748,21 @@ void _oglRendererSettings::setShowCoordinateSystem(BOOL bValue)
 BOOL _oglRendererSettings::getShowCoordinateSystem() const
 {
 	return m_bShowCoordinateSystem;
+}
+
+void _oglRendererSettings::setModelCoordinateSystem(BOOL bValue)
+{
+	m_bModelCoordinateSystem = bValue;
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_bModelCoordinateSystem);
+
+	saveSetting(strSettingName, bValue ? "TRUE" : "FALSE");
+}
+
+BOOL _oglRendererSettings::getModelCoordinateSystem() const
+{
+	return m_bModelCoordinateSystem;
 }
 
 void _oglRendererSettings::setShowNavigator(BOOL bValue)

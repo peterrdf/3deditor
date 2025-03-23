@@ -134,7 +134,6 @@ private: // Fields
 
 	// OpenGL View
 	bool m_bScaleAndCenterAllVisibleGeometry;
-	bool m_bModelCoordinateSystem;
 
 public: // Methods
 
@@ -174,8 +173,6 @@ public: // Properties
 	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
 	void setScaleAndCenterAllVisibleGeometry(bool bNewValue) { m_bScaleAndCenterAllVisibleGeometry = bNewValue; }
-	bool getModelCoordinateSystem() const { return m_bModelCoordinateSystem; }
-	void setModelCoordinateSystem(bool bNewValue) { m_bModelCoordinateSystem = bNewValue; }
 };
 
 // ************************************************************************************************

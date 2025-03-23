@@ -2215,6 +2215,7 @@ protected: // Fields
     BOOL m_bShowBiNormalVectors;
     BOOL m_bScaleVectors;
     BOOL m_bShowCoordinateSystem;
+    BOOL m_bModelCoordinateSystem;
     BOOL m_bShowNavigator;
 
     // Selection
@@ -2294,6 +2295,9 @@ public: // Properties
 
     void setShowCoordinateSystem(BOOL bValue);
     BOOL getShowCoordinateSystem() const;
+
+    void setModelCoordinateSystem(BOOL bValue);
+    BOOL getModelCoordinateSystem() const;
 
     void setShowNavigator(BOOL bValue);
     BOOL getShowNavigator() const;

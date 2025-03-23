@@ -1343,7 +1343,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 				case enumApplicationProperty::CoordinateSystemType:
 				{
-					getRDFController()->setModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+					pOGLRenderer->setModelCoordinateSystem(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
 
 					getRDFController()->onApplicationPropertyChanged(this, enumApplicationProperty::CoordinateSystemType);
 				}
@@ -2289,7 +2289,7 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 	{
 		auto pProperty = new CApplicationProperty(_T("Model Coordinate System"),
-			getRDFController()->getModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
+			pOGLRenderer->getModelCoordinateSystem() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY, _T("Model Coordinate System"),
 			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::CoordinateSystemType));
 		pProperty->AddOption(TRUE_VALUE_PROPERTY);
 		pProperty->AddOption(FALSE_VALUE_PROPERTY);
