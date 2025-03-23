@@ -29,8 +29,7 @@ CRDFController::~CRDFController()
 {
 	addDecorationModel(new _world_coordinate_system_model(this));
 	addDecorationModel(new _model_coordinate_system_model(this));
-	addDecorationModel(new _navigator_model()); 
-	addDecorationModel(new _navigator_coordinate_system_model());
+	addDecorationModel(new _navigator_model());
 }
 
 void CRDFController::_test_BeginTestMode()

@@ -1621,6 +1621,8 @@ void _navigator_model::create()
 
 	createLabels(owlModel);
 
+	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
+
 	attachModel(L"_NAVIGATOR_", owlModel);
 }
 
@@ -1747,49 +1749,4 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		.751, 0., 0.,
 		1., 1., 1.);
 	SetNameOfInstance(owlInstance, "#right-label");
-}
-
-_navigator_coordinate_system_model::_navigator_coordinate_system_model()
-	: _coordinate_system_model_base()
-	, _decoration()
-{
-	create();
-}
-
-/*virtual*/ _navigator_coordinate_system_model::~_navigator_coordinate_system_model()
-{
-}
-
-/*virtual*/ bool _navigator_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
-{
-	const int NAVIGATION_VIEW_LENGTH = _navigator_model::NAVIGATION_VIEW_LENGTH;
-
-	int iWidth = 0;
-	int iHeight = 0;
-	pScene->_getDimensions(iWidth, iHeight);
-
-	float fXmin = FLT_MAX;
-	float fXmax = -FLT_MAX;
-	float fYmin = FLT_MAX;
-	float fYmax = -FLT_MAX;
-	float fZmin = FLT_MAX;
-	float fZmax = -FLT_MAX;
-	getDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-	pScene->_prepare(
-		true,
-		iWidth - NAVIGATION_VIEW_LENGTH, 0,
-		NAVIGATION_VIEW_LENGTH, NAVIGATION_VIEW_LENGTH,
-		fXmin, fXmax,
-		fYmin, fYmax,
-		fZmin, fZmax,
-		false,
-		false);
-
-	return true;
-}
-
-/*virtual*/ void _navigator_coordinate_system_model::preLoad() /*override*/
-{
-	getInstancesDefaultEnableState();
 }

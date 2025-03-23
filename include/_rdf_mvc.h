@@ -285,23 +285,3 @@ private: // Methods
 	void create();
 	void createLabels(OwlModel owlModel);
 };
-
-// ************************************************************************************************
-class _navigator_coordinate_system_model 
-	: public _coordinate_system_model_base
-	, public _decoration
-{
-
-public: // Methods
-
-	_navigator_coordinate_system_model();
-	virtual ~_navigator_coordinate_system_model();
-
-	// _decoration
-	virtual bool prepareScene(_oglScene* pScene) override;
-
-protected: // Methods
-
-	// _rdf_model
-	virtual void preLoad() override;
-};
