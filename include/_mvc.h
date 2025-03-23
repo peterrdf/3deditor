@@ -226,6 +226,7 @@ public: // Methods
 
 	virtual void loadDecorationModels() {}
 	void addDecorationModel(_model* pModel);
+	void updateDecorationModelsState();
 
 	_instance* loadInstance(int64_t iInstance);
 

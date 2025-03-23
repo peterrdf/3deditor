@@ -670,6 +670,16 @@ void _controller::addDecorationModel(_model* pModel)
 	m_vecDecorationModels.push_back(pModel);
 }
 
+void _controller::updateDecorationModelsState()
+{
+	auto pOGLRenderer = getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
+		showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
+		showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
+	}
+}
+
 _instance* _controller::loadInstance(int64_t iInstance)
 {
 	assert(iInstance != 0);
@@ -1055,8 +1065,8 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 		});
 
 	if (itModel != m_vecDecorationModels.end()) {
-		for (auto pInstance : (*itModel)->getInstances()) {
-			pInstance->setEnable(bShow);
+		for (auto pGeometry : (*itModel)->getGeometries()) {
+			pGeometry->setShow(bShow);
 		}
 	}
 }

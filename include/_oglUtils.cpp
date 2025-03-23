@@ -1717,6 +1717,8 @@ _oglView::_oglView()
 	}
 	m_vecDecorationBuffers.clear();
 
+	getController()->updateDecorationModelsState();
+
 	for (auto pModel : getController()->getDecorationModels()) {
 		auto pBuffer = new _oglBuffersEx(pModel);
 		_load(vector<_model*>{ pModel }, *pBuffer);
