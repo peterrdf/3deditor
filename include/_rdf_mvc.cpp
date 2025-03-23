@@ -1328,16 +1328,16 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
 	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
-		-fWorldXmin,
-		-fWorldYmin,
-		-fWorldZmin);
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
 		getOwlModel(),
-		-fWorldXmin,
-		-fWorldYmin,
-		-fWorldZmin);
+		(fWorldXmin + fWorldXmax) / 2.f,
+		(fWorldYmin + fWorldYmax) / 2.f,
+		(fWorldZmin + fWorldZmax) / 2.f);
 
 	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 	ClearedExternalBuffers(getOwlModel());
