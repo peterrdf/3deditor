@@ -21,7 +21,8 @@ _model::_model()
 	, m_vecGeometries()
 	, m_vecInstances()
 	, m_mapTextures()
-{}
+{
+}
 
 /*virtual*/ _model::~_model()
 {
@@ -575,7 +576,8 @@ _controller::_controller()
 	, m_bUpdatingModel(false)
 	, m_vecSelectedInstances()
 	, m_pTargetInstance(nullptr)
-{}
+{
+}
 
 /*virtual*/ _controller::~_controller()
 {
@@ -1032,11 +1034,10 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 			(enApplicationProperty == enumApplicationProperty::CoordinateSystemType)) {
 			showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
 			showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
-		}
-		else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
+		} else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
 			showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
 		}
-	}	
+	}
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++) {
