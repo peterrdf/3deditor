@@ -79,6 +79,8 @@ void CRDFOpenGLView::onInstancePropertySelected(_view* /*pSender*/)
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+
+	_redraw();
 }
 
 void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstance*/)

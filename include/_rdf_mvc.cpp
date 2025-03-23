@@ -684,9 +684,9 @@ _rdf_controller::_rdf_controller()
 
 /*virtual*/ void _rdf_controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/) /*override*/
 {
-	_controller::selectInstances(pSender, vecInstance, bAdd);
-
 	m_pSelectedProperty = nullptr;
+
+	_controller::selectInstances(pSender, vecInstance, bAdd);	
 }
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/

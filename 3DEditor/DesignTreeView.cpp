@@ -778,7 +778,6 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (pPropertyItem->GetProperty()->GetType())
 }
 
-
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
@@ -1738,7 +1737,7 @@ BEGIN_MESSAGE_MAP(CDesignTreeView, CDockablePane)
 	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	ON_COMMAND_RANGE(ID_SORTING_INSTANCES_SORTALPHABETIC, ID_SORTING_INSTANCES_NOT_REFERENCED, OnSort)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORTING_INSTANCES_SORTALPHABETIC, ID_SORTING_INSTANCES_NOT_REFERENCED, OnUpdateSort)
-	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_INSTANCE_VIEW, OnSelectedItemChanged)
+	ON_NOTIFY(NM_CLICK, IDC_TREE_INSTANCE_VIEW, OnNMClickTree)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE_INSTANCE_VIEW, OnItemExpanding)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
@@ -2286,38 +2285,33 @@ void CDesignTreeView::OnDestroy()
 	delete m_pSearchDialog;
 }
 
-void CDesignTreeView::OnSelectedItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+void CDesignTreeView::OnNMClickTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 
-	if (m_bUpdateInProgress) {
-		return;
-	}
+	DWORD dwPosition = GetMessagePos();
+	CPoint point(LOWORD(dwPosition), HIWORD(dwPosition));
+	m_treeCtrl.ScreenToClient(&point);
 
-	auto pNMTreeView = (NM_TREEVIEW*)pNMHDR;
-
-	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(pNMTreeView->itemNew.hItem);
-	if (pItem != nullptr) {
+	UINT uFlags = 0;
+	HTREEITEM hItem = m_treeCtrl.HitTest(point, &uFlags);
+	
+	if ((hItem != nullptr) && (m_treeCtrl.GetItemData(hItem) != NULL)) {
+		auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
 		if (pItem->GetType() == enumItemType::Instance) {
 			auto pInstanceItem = dynamic_cast<CRDFInstanceItem*>(pItem);
-
 			getController()->selectInstance(nullptr/*update this view also*/, pInstanceItem->GetInstance());
 		} else if (pItem->GetType() == enumItemType::Property) {
 			auto pPropertyItem = dynamic_cast<CRDFPropertyItem*>(pItem);
-			auto pSelectedInstance = pPropertyItem->GetInstance();
-			auto pSelectedProperty = pPropertyItem->GetProperty();
-
-			getRDFController()->selectInstanceProperty(this, pSelectedInstance, pSelectedProperty);
-
-			SelectInstance(pSelectedInstance, FALSE);
+			getRDFController()->selectInstanceProperty(this, pPropertyItem->GetInstance(), pPropertyItem->GetProperty());
+			SelectInstance(pPropertyItem->GetInstance(), FALSE);
 		} // else if (pItem->GetType() == enumItemType::Property)
 		else {
-			ASSERT(false); // Internal error!
-		}
-	} // if (pItem != nullptr)
+			ASSERT(FALSE); // Internal error!
+		}			
+	}
 	else {
 		getController()->selectInstance(this, nullptr);
-
 		SelectInstance(nullptr, FALSE);
 	}
 }

@@ -140,7 +140,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSort(UINT id);
 	afx_msg void OnUpdateSort(CCmdUI* pCmdUI);
-	afx_msg void OnSelectedItemChanged(NMHDR * pNMHDR, LRESULT * pResult);
+	afx_msg void OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void OnNewInstance();
 
