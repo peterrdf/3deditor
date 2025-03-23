@@ -284,6 +284,8 @@ public: // Methods
 
 protected: // Methods
 
+	void showDecoration(const wchar_t* szName, bool bShow);
+
 	virtual void clean();
 	virtual void cleanSelection();
 

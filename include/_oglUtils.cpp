@@ -1602,6 +1602,9 @@ _oglView::_oglView()
 		case enumApplicationProperty::ScaleVectors:
 		case enumApplicationProperty::ShowBoundingBoxes:
 		case enumApplicationProperty::RotationMode:
+		case enumApplicationProperty::ShowCoordinateSystem:
+		case enumApplicationProperty::CoordinateSystemType:
+		case enumApplicationProperty::ShowNavigator:
 		case enumApplicationProperty::PointLightingLocation:
 		case enumApplicationProperty::AmbientLightWeighting:
 		case enumApplicationProperty::SpecularLightWeighting:
