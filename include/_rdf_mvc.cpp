@@ -1262,7 +1262,7 @@ _coordinate_system_model_base::_coordinate_system_model_base()
 		vecInstances.size());
 }
 
-void _coordinate_system_model_base::create()
+void _coordinate_system_model_base::create(const wchar_t* szName)
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
@@ -1271,7 +1271,7 @@ void _coordinate_system_model_base::create()
 
 	create(owlModel, m_pTextBuilder);
 
-	attachModel(L"_COORDINATE_SYSTEM_", owlModel);
+	attachModel(szName, owlModel);
 }
 
 // ************************************************************************************************
@@ -1282,7 +1282,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 {
 	assert(m_pController != nullptr);
 
-	create();
+	create(WORLD_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
@@ -1320,7 +1320,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
-	create();
+	create(WORLD_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
@@ -1359,7 +1359,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 {
 	assert(m_pController != nullptr);
 
-	create();
+	create(MODEL_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
@@ -1367,7 +1367,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
-	create();
+	create(MODEL_COORDINATE_SYSTEM);
 }
 
 /*virtual*/ void _model_coordinate_system_model::preLoad() /*override*/
@@ -1623,7 +1623,7 @@ void _navigator_model::create()
 
 	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
 
-	attachModel(L"_NAVIGATOR_", owlModel);
+	attachModel(NAVIGATOR, owlModel);
 }
 
 void _navigator_model::createLabels(OwlModel owlModel)

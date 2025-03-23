@@ -198,7 +198,7 @@ public: // Methods
 
 protected: // Methods
 
-	void create();
+	void create(const wchar_t* szName);
 };
 
 // ************************************************************************************************
