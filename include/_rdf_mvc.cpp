@@ -1267,7 +1267,7 @@ void _coordinate_system_model_base::create()
 }
 
 // ************************************************************************************************
-_coordinate_system_model::_coordinate_system_model(_controller* pController)
+_world_coordinate_system_model::_world_coordinate_system_model(_controller* pController)
 	: _coordinate_system_model_base()
 	, _decoration()
 	, m_pController(pController)
@@ -1277,11 +1277,11 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 	create();
 }
 
-/*virtual*/ _coordinate_system_model::~_coordinate_system_model()
+/*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
 {
 }
 
-/*virtual*/ bool _coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
+/*virtual*/ bool _world_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
 {
 	assert(pScene != nullptr);
 
@@ -1310,12 +1310,12 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 	return true;
 }
 
-/*virtual*/ void _coordinate_system_model::onModelUpdated() /*override*/
+/*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
 	create();
 }
 
-/*virtual*/ void _coordinate_system_model::preLoad() /*override*/
+/*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 
@@ -1344,7 +1344,7 @@ _coordinate_system_model::_coordinate_system_model(_controller* pController)
 }
 
 // ************************************************************************************************
-_world_coordinate_system_model::_world_coordinate_system_model(_controller* pController)
+_model_coordinate_system_model::_model_coordinate_system_model(_controller* pController)
 	: _coordinate_system_model_base()
 	, _decoration()
 	, m_pController(pController)
@@ -1354,15 +1354,15 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 	create();
 }
 
-/*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
+/*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
 {}
 
-/*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
+/*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
 	create();
 }
 
-/*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
+/*virtual*/ void _model_coordinate_system_model::preLoad() /*override*/
 {
 	getInstancesDefaultEnableState();
 

@@ -200,7 +200,7 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-class _coordinate_system_model
+class _world_coordinate_system_model
 	: public _coordinate_system_model_base
 	, public _decoration
 {
@@ -211,8 +211,8 @@ private: // Fields
 
 public: // Methods
 
-	_coordinate_system_model(_controller* pController);
-	virtual ~_coordinate_system_model();	
+	_world_coordinate_system_model(_controller* pController);
+	virtual ~_world_coordinate_system_model();	
 
 	// _decoration
 	virtual bool prepareScene(_oglScene* pScene) override;
@@ -225,7 +225,7 @@ protected: // Methods
 };
 
 // ************************************************************************************************
-class _world_coordinate_system_model 
+class _model_coordinate_system_model 
 	: public _coordinate_system_model_base
 	, public _decoration
 {
@@ -236,8 +236,8 @@ private: // Fields
 
 public: // Methods
 
-	_world_coordinate_system_model(_controller* pController);
-	virtual ~_world_coordinate_system_model();
+	_model_coordinate_system_model(_controller* pController);
+	virtual ~_model_coordinate_system_model();
 
 	// _decoration
 	virtual void onModelUpdated() override;
