@@ -1,6 +1,6 @@
 #include "_host.h"
 #include "_mvc.h"
-#include "_rdf_instance.h"
+#include "_instance.h"
 #include "_oglUtils.h"
 
 // ************************************************************************************************
