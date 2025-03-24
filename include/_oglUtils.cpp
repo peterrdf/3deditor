@@ -2745,7 +2745,9 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				strInstanceMetaData += to_wstring(dWorldY).c_str();
 				strInstanceMetaData += L", ";
 				strInstanceMetaData += to_wstring(dWorldZ).c_str();
-			} // if (getOGLPos( ...
+
+				_onShowTooltip(dX, dY, dZ, strInstanceMetaData);
+			} // if (getOGLPos( ...			
 
 			if (strInstanceMetaData.size() >= 250) {
 				strInstanceMetaData = strInstanceMetaData.substr(0, 250);

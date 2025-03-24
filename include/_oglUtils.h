@@ -2516,6 +2516,7 @@ protected: // Methods
     void _drawInstancesFrameBuffer();
 
     virtual void _onMouseMove(const CPoint& /*point*/) {}
+    virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
 
     // http://nehe.gamedev.net/article/using_gluunproject/16013/
     bool getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);

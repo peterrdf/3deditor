@@ -44,7 +44,8 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
-	virtual void _onMouseMove(const CPoint& point) override;	
+	virtual void _onMouseMove(const CPoint& point) override;
+	virtual void _onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) override;
 
 private: // Methods
 
@@ -56,7 +57,7 @@ private: // Methods
 	
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();
-	//pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
+	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
 public:
 
