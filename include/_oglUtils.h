@@ -2508,10 +2508,10 @@ protected: // Methods
     virtual void _drawBuffers();
 
     void _drawFaces();
-    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent);
+    void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings = true);
     void _drawFacesPolygons();
-    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers);
-    void _drawLines(_oglBuffers& oglBuffers);
+    void _drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
+    void _drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
     void _drawPoints();
     void _drawInstancesFrameBuffer();
 

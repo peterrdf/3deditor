@@ -2003,10 +2003,10 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 			_prepareScene(false);
 		}
 
-		_drawFaces(*pBuffer, false);
-		_drawFaces(*pBuffer, true);
-		_drawConceptualFacesPolygons(*pBuffer);
-		_drawLines(*pBuffer);
+		_drawFaces(*pBuffer, false, false);
+		_drawFaces(*pBuffer, true, false);
+		_drawConceptualFacesPolygons(*pBuffer, false);
+		_drawLines(*pBuffer, false);
 	}
 }
 
@@ -2021,9 +2021,9 @@ void _oglView::_drawFaces()
 	_drawFaces(m_worldBuffers, true);
 }
 
-/*virtual*/ void _oglView::_drawFaces(_oglBuffers& oglBuffers, bool bTransparent)
+/*virtual*/ void _oglView::_drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings/* = true*/)
 {
-	if (!getShowFaces()) {
+	if (bApplyApplicationSettings && !getShowFaces()) {
 		return;
 	}
 
@@ -2253,9 +2253,9 @@ void _oglView::_drawFacesPolygons()
 #endif
 }
 
-void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers)
+void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApplyApplicationSettings/* = true*/)
 {
-	if (!getShowConceptualFacesPolygons()) {
+	if (bApplyApplicationSettings && !getShowConceptualFacesPolygons()) {
 		return;
 	}
 
@@ -2329,9 +2329,9 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers)
 #endif
 }
 
-void _oglView::_drawLines(_oglBuffers& oglBuffers)
+void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSettings/* = true*/)
 {
-	if (!getShowLines()) {
+	if (bApplyApplicationSettings && !getShowLines()) {
 		return;
 	}
 
