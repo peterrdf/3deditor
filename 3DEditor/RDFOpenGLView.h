@@ -9,6 +9,7 @@
 #include "_rdf_mvc.h"
 #include "_oglUtils.h"
 
+// ************************************************************************************************
 class CRDFOpenGLView : public _oglView
 {
 
@@ -18,11 +19,6 @@ private: // Fields
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
-
-	// Navigator
-	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
-	_rdf_instance* m_pNavigatorPointedInstance;
-	_material* m_pNavigatorPointedInstanceMaterial;
 
 public: // Methods
 	

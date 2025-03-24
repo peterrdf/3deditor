@@ -22,16 +22,12 @@ wchar_t TANGENT_VECS_VBO[] = L"TANGENT_VECS_VBO";
 wchar_t BINORMAL_VECS_VAO[] = L"BINORMAL_VECS_VAO";
 wchar_t BINORMAL_VECS_VBO[] = L"BINORMAL_VECS_VBO";
 
-wchar_t TOOLTIP_INFORMATION[] = L"Information";
-
+// ************************************************************************************************
 CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	: _oglView()
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
-	, m_pNavigatorSelectionFrameBuffer(new _oglSelectionFramebuffer())
-	, m_pNavigatorPointedInstance(nullptr)
-	, m_pNavigatorPointedInstanceMaterial(new _material())
 {
 	assert(pWnd != nullptr);
 
@@ -52,8 +48,6 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 CRDFOpenGLView::~CRDFOpenGLView()
 {
 	delete m_pPointFaceFrameBuffer;
-	delete m_pNavigatorSelectionFrameBuffer;
-	delete m_pNavigatorPointedInstanceMaterial;
 }
 
 /*virtual*/ void CRDFOpenGLView::onInstanceSelected(_view* pSender) /*override*/
