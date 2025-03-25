@@ -2,6 +2,7 @@
 #include "_mvc.h"
 #include "_instance.h"
 #include "_oglUtils.h"
+#include "_ptr.h"
 
 // ************************************************************************************************
 _model::_model()
@@ -891,6 +892,21 @@ void _controller::setTargetInstance(_view* pSender, _instance* pInstance)
 
 void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd/* = false*/)
 {
+	// Check for Decoration Instance
+	if (pInstance != nullptr) {
+		auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel)
+			{
+				return pModel->getOwlModel() == pInstance->getOwlModel();
+			});
+
+		if (itModel != m_vecDecorationModels.end()) {
+			assert(!bAdd);
+			if (_ptr<_decoration>(*itModel)->selectInstance(pInstance)) {
+				return;
+			}
+		}
+	}
+
 	vector<_instance*> vecInstance;
 	if (pInstance != nullptr) {
 		vecInstance.push_back(pInstance);

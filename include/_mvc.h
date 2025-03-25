@@ -325,4 +325,5 @@ public: // Properties
 
 	virtual bool getSupportsInstanceSelection() const { return false; }
 	virtual int64_t pointInstance(_oglSelectionFramebuffer* /*pSelectionFramebuffer*/, int /*iX*/, int /*iY*/, int /*iWidth*/, int /*iHeight*/, int /*iBufferSize*/) const { return 0; }
+	virtual bool selectInstance(_instance* /*pInstance*/) { return false; }
 };

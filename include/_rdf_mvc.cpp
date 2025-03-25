@@ -176,7 +176,7 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
-	m_owlModel = owlModel;	
+	m_owlModel = owlModel;
 
 	load();
 }
@@ -208,7 +208,7 @@ void _rdf_model::importModel(const wchar_t* szPath)
 	if (m_owlModel != 0) {
 		::CloseModel(m_owlModel);
 		m_owlModel = 0;
-	}	
+	}
 
 	m_mapInstances.clear();
 
@@ -302,7 +302,7 @@ void _rdf_model::load()
 	loadProperties();
 	loadInstances();
 
-	postLoad();	
+	postLoad();
 
 	scale();
 }
@@ -616,7 +616,7 @@ void _rdf_model::reloadGeometries() {
 }
 
 /*static*/ OwlInstance _rdf_model::scaleTransformation(
-	OwlModel owlModel, 
+	OwlModel owlModel,
 	OwlInstance owlInstance,
 	double dFactor)
 {
@@ -689,7 +689,7 @@ _rdf_controller::_rdf_controller()
 {
 	m_pSelectedProperty = nullptr;
 
-	_controller::selectInstances(pSender, vecInstance, bAdd);	
+	_controller::selectInstances(pSender, vecInstance, bAdd);
 }
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
@@ -707,7 +707,7 @@ _rdf_controller::_rdf_controller()
 		assert(false);
 		return;
 	}
-	
+
 	if (m_bScaleAndCenterAllVisibleGeometry) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
@@ -973,7 +973,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 
 	pInstance->recalculate();
 
-	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable() ) {
+	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable()) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
@@ -995,7 +995,8 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 _coordinate_system_model_base::_coordinate_system_model_base()
 	: _rdf_model()
 	, m_pTextBuilder(new _text_builder())
-{}
+{
+}
 
 /*virtual*/ _coordinate_system_model_base::~_coordinate_system_model_base()
 {
@@ -1365,7 +1366,8 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
-{}
+{
+}
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
@@ -1403,11 +1405,14 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 // ************************************************************************************************
 /*static*/ const int _navigator_model::NAVIGATION_VIEW_LENGTH = 250;
 
-_navigator_model::_navigator_model()
+_navigator_model::_navigator_model(_controller* pController)
 	: _rdf_model()
 	, _decoration()
+	, m_pController(pController)
 	, m_pTextBuilder(new _text_builder())
 {
+	assert(m_pController != 0);
+
 	create();
 }
 
@@ -1470,6 +1475,53 @@ _navigator_model::_navigator_model()
 	}
 
 	return 0;
+}
+
+/*virtual*/ bool _navigator_model::selectInstance(_instance* pInstance) /*override*/
+{
+	assert(pInstance != 0);
+
+	auto pOGLRenderer = m_pController->getViewAs<_oglRenderer>();
+	if (pOGLRenderer == nullptr) {
+		assert(false);
+		return false;
+	}
+
+	wstring strInstanceName = pInstance->getName(); if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label")) {
+		pOGLRenderer->_setView(enumView::Front);
+	} else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label")) {
+		pOGLRenderer->_setView(enumView::Back);
+	} else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label")) {
+		pOGLRenderer->_setView(enumView::Top);
+	} else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label")) {
+		pOGLRenderer->_setView(enumView::Bottom);
+	} else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label")) {
+		pOGLRenderer->_setView(enumView::Left);
+	} else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label")) {
+		pOGLRenderer->_setView(enumView::Right);
+	} else if (strInstanceName == L"#front-top-left") {
+		pOGLRenderer->_setView(enumView::FrontTopLeft);
+	} else if (strInstanceName == L"#front-top-right") {
+		pOGLRenderer->_setView(enumView::FrontTopRight);
+	} else if (strInstanceName == L"#front-bottom-left") {
+		pOGLRenderer->_setView(enumView::FrontBottomLeft);
+	} else if (strInstanceName == L"#front-bottom-right") {
+		pOGLRenderer->_setView(enumView::FrontBottomRight);
+	} else if (strInstanceName == L"#back-top-left") {
+		pOGLRenderer->_setView(enumView::BackTopLeft);
+	} else if (strInstanceName == L"#back-top-right") {
+		pOGLRenderer->_setView(enumView::BackTopRight);
+	} else if (strInstanceName == L"#back-bottom-left") {
+		pOGLRenderer->_setView(enumView::BackBottomLeft);
+	} else if (strInstanceName == L"#back-bottom-right") {
+		pOGLRenderer->_setView(enumView::BackBottomRight);
+	} else {
+		pOGLRenderer->_setView(enumView::Isometric);
+	}
+
+	pOGLRenderer->_redraw();
+
+	return true;
 }
 
 /*virtual*/ void _navigator_model::preLoad() /*override*/

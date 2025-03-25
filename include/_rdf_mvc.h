@@ -259,11 +259,12 @@ public: // Constants
 
 private: // Fields
 
+	_controller* m_pController;
 	_text_builder* m_pTextBuilder;
 
 public: // Methods
 
-	_navigator_model();
+	_navigator_model(_controller* pController);
 	virtual ~_navigator_model();
 
 	// _model	
@@ -273,6 +274,7 @@ public: // Methods
 	virtual bool prepareScene(_oglScene* pScene) override;
 	virtual bool getSupportsInstanceSelection() const override { return true; }
 	virtual int64_t pointInstance(_oglSelectionFramebuffer* pSelectionFramebuffer, int iX, int iY, int iWidth, int iHeight, int iBufferSize) const override;
+	virtual bool selectInstance(_instance* pInstance) override;
 
 protected: // Methods
 
