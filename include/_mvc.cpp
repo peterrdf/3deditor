@@ -794,6 +794,13 @@ _instance* _controller::getInstanceByID(int64_t iID) const
 		}
 	}
 
+	for (auto pModel : m_vecDecorationModels) {
+		auto pInstance = pModel->getInstanceByID(iID);
+		if (pInstance != nullptr) {
+			return pInstance;
+		}
+	}
+
 	return nullptr;
 }
 

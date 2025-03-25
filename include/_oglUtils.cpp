@@ -831,6 +831,7 @@ _oglRenderer::_oglRenderer()
 	, m_vecUpVector({ 0., 0, 0. })
 	, m_dFieldOfView(45.)
 	, m_dAspectRatio(1.)
+	, m_bDrawSelectInstanceBufferInProgress(false)
 {
 	_setView(enumView::Isometric);
 }
@@ -1355,7 +1356,11 @@ void _oglRenderer::_prepare(
 
 	m_pOGLProgram->_use();
 
-	glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+	if (m_bDrawSelectInstanceBufferInProgress) {
+		glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+	} else {
+		glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
+	}	
 
 	if (bClear) {
 		glEnable(GL_SCISSOR_TEST);
@@ -1647,7 +1652,7 @@ _oglView::_oglView()
 
 		default:
 		{
-			ASSERT(FALSE); // Internal error!
+			assert(false); // Internal error!
 		}
 		break;
 	} // switch (enApplicationProperty)
@@ -1671,6 +1676,9 @@ _oglView::_oglView()
 	}
 
 	m_pSelectInstanceFrameBuffer->encoding().clear();
+	for (auto pBuffer : m_vecDecorationBuffers) {
+		pBuffer->getSelectInstanceFrameBuffer()->encoding().clear();
+	}
 	m_pPointedInstance = nullptr;
 
 	float fWorldXmin = FLT_MAX;
@@ -2496,10 +2504,6 @@ void _oglView::_drawPoints()
 
 void _oglView::_drawInstancesFrameBuffer()
 {
-	if (!getShowFaces()) {
-		return;
-	}
-
 	//
 	// Create a frame buffer
 	//
@@ -2507,10 +2511,40 @@ void _oglView::_drawInstancesFrameBuffer()
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
 
-	m_pSelectInstanceFrameBuffer->create();
-
+	//
 	// Selection colors
-	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {
+	//
+
+	// Decorations
+	for (auto pBuffer : m_vecDecorationBuffers) {
+		if (!pBuffer->getModel()->getEnable()) {
+			continue;
+		}
+
+		if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
+			continue;
+		}
+
+		pBuffer->getSelectInstanceFrameBuffer()->create();
+		if (pBuffer->getSelectInstanceFrameBuffer()->encoding().empty()) {
+			for (auto pGeometry : pBuffer->getModel()->getGeometries()) {
+				if (pGeometry->getTriangles().empty()) {
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances()) {
+					float fR, fG, fB;
+					_i64RGBCoder::encode(pInstance->getID(), fR, fG, fB);
+
+					pBuffer->getSelectInstanceFrameBuffer()->encoding()[pInstance->getID()] = _color(fR, fG, fB);
+				}
+			}
+		}
+	}
+
+	// World
+	m_pSelectInstanceFrameBuffer->create();
+	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {		
 		for (auto pModel : getController()->getModels()) {
 			if (!pModel->getEnable()) {
 				continue;
@@ -2528,16 +2562,48 @@ void _oglView::_drawInstancesFrameBuffer()
 					m_pSelectInstanceFrameBuffer->encoding()[pInstance->getID()] = _color(fR, fG, fB);
 				}
 			}
-		} // for (auto pModel : ...
-	} // if (m_pSelectInstanceFrameBuffer->encoding().empty())
+		}
+	}
 
 	//
 	// Draw
 	//
 
-	m_pSelectInstanceFrameBuffer->bind();
+	m_bDrawSelectInstanceBufferInProgress = true;	
 
-	glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
+	// Decorations
+	for (auto pBuffer : m_vecDecorationBuffers) {
+		if (!pBuffer->getModel()->getEnable()) {
+			continue;
+		}
+
+		if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
+			continue;
+		}
+
+		if (!_ptr<_decoration>(pBuffer->getModel())->prepareScene(this)) {
+			_prepareScene(false);
+		}
+
+		_drawInstancesFrameBuffer(*pBuffer, pBuffer->getSelectInstanceFrameBuffer(), false);
+	}
+
+	// World
+	_prepareScene(false);
+	_drawInstancesFrameBuffer(m_worldBuffers, m_pSelectInstanceFrameBuffer);
+
+	m_bDrawSelectInstanceBufferInProgress = false;
+}
+
+void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionFramebuffer* pSelectInstanceFrameBuffer, bool bApplyApplicationSettings/* = true*/)
+{
+	assert(pSelectInstanceFrameBuffer != nullptr);
+
+	if (bApplyApplicationSettings && !getShowFaces()) {
+		return;
+	}	
+
+	pSelectInstanceFrameBuffer->bind();
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2553,7 +2619,7 @@ void _oglView::_drawInstancesFrameBuffer()
 #endif
 	m_pOGLProgram->_setTransparency(1.f);
 
-	for (auto itCohort : m_worldBuffers.cohorts()) {
+	for (auto itCohort : oglBuffers.cohorts()) {
 		glBindVertexArray(itCohort.first);
 
 		for (auto pGeometry : itCohort.second) {
@@ -2587,8 +2653,8 @@ void _oglView::_drawInstancesFrameBuffer()
 				for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++) {
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
-					auto itSelectionColor = m_pSelectInstanceFrameBuffer->encoding().find(pInstance->getID());
-					ASSERT(itSelectionColor != m_pSelectInstanceFrameBuffer->encoding().end());
+					auto itSelectionColor = pSelectInstanceFrameBuffer->encoding().find(pInstance->getID());
+					assert(itSelectionColor != pSelectInstanceFrameBuffer->encoding().end());
 
 					m_pOGLProgram->_setAmbientColor(
 						itSelectionColor->second.r(),
@@ -2609,9 +2675,9 @@ void _oglView::_drawInstancesFrameBuffer()
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);	
 
-	m_pSelectInstanceFrameBuffer->unbind();
+	pSelectInstanceFrameBuffer->unbind();
 
 	_oglUtils::checkForErrors();
 }
@@ -2701,7 +2767,28 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 			if (arPixels[3] != 0) {
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = getController()->getInstanceByID(iInstanceID);
-				ASSERT(pPointedInstance != nullptr);
+				assert(pPointedInstance != nullptr);
+			} else {
+				for (auto pBuffer : m_vecDecorationBuffers) {
+					if (!pBuffer->getModel()->getEnable()) {
+						continue;
+					}
+
+					if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
+						continue;
+					}
+
+					int64_t iInstanceID = _ptr<_decoration>(pBuffer->getModel())->pointInstance(
+						pBuffer->getSelectInstanceFrameBuffer(),
+						point.x, point.y,
+						iWidth, iHeight,
+						BUFFER_SIZE);
+
+					if (iInstanceID != 0) {
+						pPointedInstance = getController()->getInstanceByID(iInstanceID);
+						assert(pPointedInstance != nullptr);
+					}
+				}
 			}
 
 			if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr)) {

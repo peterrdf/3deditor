@@ -1,9 +1,12 @@
 #include "_host.h"
 #include "_rdf_mvc.h"
+
+#include "geom.h"
+
 #include "_rdf_instance.h"
 #include "_rdf_class.h"
 #include "_text_builder.h"
-#include "geom.h"
+#include "_oglUtils.h"
 #include "_ptr.h"
 
 // ************************************************************************************************
@@ -1440,6 +1443,33 @@ _navigator_model::_navigator_model()
 		false);
 
 	return true;
+}
+
+/*virtual*/ int64_t _navigator_model::pointInstance(_oglSelectionFramebuffer* pSelectionFramebuffer, int iX, int iY, int iWidth, int iHeight, int iBufferSize) const /*override*/
+{
+	assert(pSelectionFramebuffer != nullptr);
+
+	double dX = (double)((double)iX - (double)(iWidth - NAVIGATION_VIEW_LENGTH)) * ((double)iBufferSize / (double)NAVIGATION_VIEW_LENGTH);
+	double dY = ((double)(iHeight - (double)iY)) * ((double)iBufferSize / (double)NAVIGATION_VIEW_LENGTH);
+
+	GLubyte arPixels[4];
+	memset(arPixels, 0, sizeof(GLubyte) * 4);
+
+	pSelectionFramebuffer->bind();
+	glReadPixels(
+		(GLint)dX,
+		(GLint)dY,
+		1, 1,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		arPixels);
+	pSelectionFramebuffer->unbind();
+
+	if (arPixels[3] != 0) {
+		return _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
+	}
+
+	return 0;
 }
 
 /*virtual*/ void _navigator_model::preLoad() /*override*/

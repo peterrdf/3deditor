@@ -299,6 +299,14 @@ public: // Properties
 };
 
 // ************************************************************************************************
+static const wchar_t* WORLD_COORDINATE_SYSTEM = L"_WORLD_COORDINATE_SYSTEM_";
+static const wchar_t* MODEL_COORDINATE_SYSTEM = L"_MODEL_COORDINATE_SYSTEM_";
+static const wchar_t* NAVIGATOR = L"_NAVIGATOR_";
+
+// ************************************************************************************************
+class _oglSelectionFramebuffer;
+
+// ************************************************************************************************
 class _decoration
 {
 
@@ -312,8 +320,9 @@ public: // Methods
 
 	// Events	
 	virtual void onModelUpdated() {}
-};
 
-static const wchar_t* WORLD_COORDINATE_SYSTEM = L"_WORLD_COORDINATE_SYSTEM_";
-static const wchar_t* MODEL_COORDINATE_SYSTEM = L"_MODEL_COORDINATE_SYSTEM_";
-static const wchar_t* NAVIGATOR = L"_NAVIGATOR_";
+public: // Properties
+
+	virtual bool getSupportsInstanceSelection() const { return false; }
+	virtual int64_t pointInstance(_oglSelectionFramebuffer* /*pSelectionFramebuffer*/, int /*iX*/, int /*iY*/, int /*iWidth*/, int /*iHeight*/, int /*iBufferSize*/) const { return 0; }
+};

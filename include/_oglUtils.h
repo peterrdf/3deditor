@@ -2087,23 +2087,27 @@ class _oglBuffersEx : public _oglBuffers
 private: // Fields
 
     _model* m_pModel;
+    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
 
 public: // Methods
 
     _oglBuffersEx(_model* pModel)
         : _oglBuffers()
         , m_pModel(pModel)
+        , m_pSelectInstanceFrameBuffer(new _oglSelectionFramebuffer())
     {
         assert(m_pModel != nullptr);
     }
 
     /*virtual*/ ~_oglBuffersEx()
     {
+        delete m_pSelectInstanceFrameBuffer;
     }
 
 public: // Properties
 
     _model* getModel() const { return m_pModel; }
+    _oglSelectionFramebuffer* getSelectInstanceFrameBuffer() const { return m_pSelectInstanceFrameBuffer; }
 };
 
 // ************************************************************************************************
@@ -2371,6 +2375,9 @@ protected: // Fields
     double m_dFieldOfView;
     double m_dAspectRatio;
 
+    // Selection
+    bool m_bDrawSelectInstanceBufferInProgress;
+
 public: // Methods
 
     _oglRenderer();
@@ -2467,7 +2474,7 @@ protected: // Fields
     CPoint m_ptPrevMousePosition;
 
     // Selection
-    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;
+    _oglSelectionFramebuffer* m_pSelectInstanceFrameBuffer;    
     _instance* m_pPointedInstance;
 
     // Tooltip
@@ -2514,6 +2521,7 @@ protected: // Methods
     void _drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSettings = true);
     void _drawPoints();
     void _drawInstancesFrameBuffer();
+    void _drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionFramebuffer* pSelectionFrameBuffer, bool bApplyApplicationSettings = true);
 
     virtual void _onMouseMove(const CPoint& /*point*/) {}
     virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}

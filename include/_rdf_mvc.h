@@ -271,6 +271,8 @@ public: // Methods
 
 	// _decoration
 	virtual bool prepareScene(_oglScene* pScene) override;
+	virtual bool getSupportsInstanceSelection() const override { return true; }
+	virtual int64_t pointInstance(_oglSelectionFramebuffer* pSelectionFramebuffer, int iX, int iY, int iWidth, int iHeight, int iBufferSize) const override;
 
 protected: // Methods
 
