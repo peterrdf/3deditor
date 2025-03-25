@@ -8,23 +8,18 @@
 #include "RDFModel.h"
 #include "RDFController.h"
 
-// ------------------------------------------------------------------------------------------------
+#include "_instance.h"
+
+// ************************************************************************************************
 class CMy3DEditorDoc
 	: public CDocument
 	, public CRDFController
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Model (MVC)
-	CRDFModel * m_pModel;
-
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// CRDFController
-	virtual void LoadModel(LPCTSTR szFileName);
+	virtual void _test_LoadModel(LPCTSTR szFileName) override;
 
 protected: // create from serialization only
 	CMy3DEditorDoc();
@@ -66,7 +61,6 @@ protected:
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-	afx_msg void OnViewCheckForUniqueVertices();
 	afx_msg void OnViewScaleAndCenterAllGeometry();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileImport();

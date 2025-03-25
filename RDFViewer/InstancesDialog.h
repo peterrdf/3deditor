@@ -1,55 +1,36 @@
 #pragma once
 
 #include "Generic.h"
-#include "RDFView.h"
 #include "InstancesList.h"
 
-#include <set>
+#include "_rdf_mvc.h"
 
+#include <set>
 using namespace std;
 
 // CInstancesDialog dialog
 
 class CInstancesDialog
 	: public CDialogEx
-	, public CRDFView
+	, public _rdf_view
 {
 
-private: // Members
+private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// Instances
 	CInstancesList m_lcInstances;
-
-	// --------------------------------------------------------------------------------------------
-	// Don't send notifications while updating the view
 	bool m_bUpdateInProgress;
-
-	// --------------------------------------------------------------------------------------------
-	// Find an item by CRDFInstance *
-	map<CRDFInstance *, int> m_mapInstance2Item;
+	map<_rdf_instance*, int> m_mapInstance2Item;
 
 protected: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Overridden
-	virtual void OnControllerChanged();
+	// _veiw
+	virtual void onModelLoaded() override;
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onControllerChanged() override;
 
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnModelChanged();
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceSelected(CRDFView * pSender);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// CRDFView
-	virtual void OnInstancesDeleted(CRDFView * pSender);
+	// _rdf_view
+	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancesDeleted(_view* pSender) override;
 
 	DECLARE_DYNAMIC(CInstancesDialog)
 

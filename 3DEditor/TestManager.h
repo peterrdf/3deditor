@@ -8,7 +8,7 @@
 class CTestManager
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	CRDFController* m_pController;

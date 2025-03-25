@@ -2,15 +2,17 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "RDFView.h"
-#include "RDFInstance.h"
-#include "RDFInstanceItem.h"
-#include "RDFPropertyItem.h"
+#include "RDFModel.h"
+#include "RDFItem.h"
 #include "SearchTreeCtrlDialog.h"
+
+#include "_rdf_instance.h"
+#include "_rdf_mvc.h"
 
 #include <map>
 using namespace std;
 
+// ************************************************************************************************
 class CDesignTreeViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -21,9 +23,10 @@ class CDesignTreeViewToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ************************************************************************************************
 class CDesignTreeView
 	: public CDockablePane
-	, public CRDFView
+	, public _rdf_view
 	, public CItemStateProvider
 	, public CSearchTreeCtrlDialogSite
 {
@@ -35,14 +38,14 @@ class CDesignTreeView
 		Values,
 	};
 
-private: // Members
+private: // Fields
 
 	// Cache
 	map<int64_t, CRDFInstanceItem*> m_mapInstance2Item; // INSTANCE : CRDFInstanceItem*	
 	map<int64_t, map<int64_t, CRDFPropertyItem*>> m_mapInstance2Properties; // INSTANCE : (PROPERTY INSTANCE : CRDFPropertyItem*)
 
 	// Selection
-	CRDFInstance* m_pSelectedInstance;
+	_rdf_instance* m_pSelectedInstance;
 	HTREEITEM m_hSelectedInstance;
 
 	// UI
@@ -52,17 +55,20 @@ private: // Members
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
+
+	// _view
+	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
 	
-	// CRDFView
-	virtual void OnModelChanged() override;
-	virtual void OnInstanceSelected(CRDFView* pSender) override;
-	virtual void OnInstancePropertyEdited(CRDFInstance* pInstance, CRDFProperty* pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView* pSender, CRDFInstance* pInstance) override;
-	virtual void OnInstanceDeleted(CRDFView* pSender, int64_t iInstance) override;
-	virtual void OnInstancesDeleted(CRDFView* pSender);
-	virtual void OnMeasurementsAdded(CRDFView* pSender, CRDFInstance* pInstance) override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
-	
+	// _rdf_view
+	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;	
+	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancesDeleted(_view* pSender) override;
+	virtual void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
+
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;
 
@@ -76,12 +82,12 @@ private: // Methods
 
 	CRDFModel* GetModel() const;
 
-	void SelectInstance(CRDFInstance* pInstance, BOOL bSelectTreeItem);
+	void SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeItem);
 	
 	void GetAscendants(HTREEITEM hItem, vector<HTREEITEM>& vecAscendants);
 	void GetDescendants(HTREEITEM hItem, vector<HTREEITEM>& vecDescendants);
-	void RemoveInstanceItemData(CRDFInstance* pInstance, HTREEITEM hInstance);
-	void RemovePropertyItemData(CRDFInstance* pInstance, CRDFProperty * pProperty, HTREEITEM hProperty);
+	void RemoveInstanceItemData(_rdf_instance* pInstance, HTREEITEM hInstance);
+	void RemovePropertyItemData(_rdf_instance* pInstance, _rdf_property * pProperty, HTREEITEM hProperty);
 	void RemoveItemData(HTREEITEM hItem);
 	void UpdateView();
 
@@ -89,10 +95,10 @@ private: // Methods
 	void InstancesGroupByClassView();
 	void InstancesUnreferencedItemsView();
 	
-	void AddInstance(HTREEITEM hParent, CRDFInstance* pInstance);
-	void AddProperties(HTREEITEM hParent, CRDFInstance* pInstance);
+	void AddInstance(HTREEITEM hParent, _rdf_instance* pInstance);
+	void AddProperties(HTREEITEM hParent, _rdf_instance* pInstance);
 
-	void UpdateRootItemsUnreferencedItemsView(int64_t iModel, HTREEITEM hModel);
+	void UpdateRootItemsUnreferencedItemsView(HTREEITEM hModel);
 
 	void Clean();
 
@@ -134,7 +140,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSort(UINT id);
 	afx_msg void OnUpdateSort(CCmdUI* pCmdUI);
-	afx_msg void OnSelectedItemChanged(NMHDR * pNMHDR, LRESULT * pResult);
+	afx_msg void OnNMClickTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemExpanding(NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void OnNewInstance();
 

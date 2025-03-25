@@ -1,32 +1,28 @@
 #pragma once
 
-#include "RDFController.h"
-#include "RDFClass.h"
 #include "afxwin.h"
 
-// CNewInstanceDialog dialog
+#include "_rdf_mvc.h"
+#include "_rdf_class.h"
 
+// ************************************************************************************************
 class CNewInstanceDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CNewInstanceDialog)
 
-private: // Members
+private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
-	CRDFController * m_pController;
+	_rdf_controller* m_pController;
 
-public: // Members
+public: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Class
-	CRDFClass * m_pNewInstanceRDFClass;
+	_rdf_class* m_pNewInstanceRDFClass;
 
 public:
-	CNewInstanceDialog(CRDFController * pController, CWnd* pParent = nullptr);   // standard constructor
+	CNewInstanceDialog(_rdf_controller* pController, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CNewInstanceDialog();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DIALOG_NEW_INSTANCE };
 
 protected:

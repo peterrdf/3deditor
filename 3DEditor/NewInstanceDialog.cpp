@@ -7,11 +7,13 @@
 #include "afxdialogex.h"
 #include "RDFModel.h"
 
+#include "_ptr.h"
+
 // CNewInstanceDialog dialog
 
 IMPLEMENT_DYNAMIC(CNewInstanceDialog, CDialogEx)
 
-CNewInstanceDialog::CNewInstanceDialog(CRDFController * pController, CWnd* pParent /*=nullptr*/)
+CNewInstanceDialog::CNewInstanceDialog(_rdf_controller* pController, CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CNewInstanceDialog::IDD, pParent)
 	, m_pController(pController)
 	, m_pNewInstanceRDFClass(nullptr)
@@ -41,17 +43,15 @@ BOOL CNewInstanceDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	CRDFModel * pModel = m_pController->GetModel();
-	assert(pModel != nullptr);
+	_ptr<CRDFModel> pModel(m_pController->getModel());
 
-	auto& mapClasses = pModel->GetClasses();
+	auto& mapClasses = pModel->getClasses();
 
 	auto itClass = mapClasses.begin();
-	for (; itClass != mapClasses.end(); itClass++)
-	{
-		int iItem = m_cmbClasses.AddString(itClass->second->GetName());
+	for (; itClass != mapClasses.end(); itClass++) {
+		int iItem = m_cmbClasses.AddString(itClass->second->getName());
 		m_cmbClasses.SetItemDataPtr(iItem, itClass->second);
-	} // for (; itClass != ...
+	}
 
 	m_cmbClasses.SetCurSel(0);
 
@@ -63,7 +63,7 @@ void CNewInstanceDialog::OnOK()
 {
 	assert(m_cmbClasses.GetCurSel() != CB_ERR);
 
-	m_pNewInstanceRDFClass = (CRDFClass *)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
+	m_pNewInstanceRDFClass = (_rdf_class*)m_cmbClasses.GetItemDataPtr(m_cmbClasses.GetCurSel());
 
 	CDialogEx::OnOK();
 }

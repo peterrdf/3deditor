@@ -59,11 +59,10 @@ static bool AreTestIdentical(const TEST& test1, const TEST& test2)
 	return true;
 }
 
-// ------------------------------------------------------------------------------------------------
 class CCompareResults
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	int m_iComparisonIndex;

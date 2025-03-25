@@ -2,9 +2,9 @@
 #pragma once
 
 #include "TreeCtrlEx.h"
-#include "RDFView.h"
 #include "SearchTreeCtrlDialog.h"
 
+// ************************************************************************************************
 class CClassToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -15,9 +15,10 @@ class CClassToolBar : public CMFCToolBar
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
 
+// ************************************************************************************************
 class CClassView
 	: public CDockablePane
-	, public CRDFView
+	, public _rdf_view
 	, public CSearchTreeCtrlDialogSite
 {
 
@@ -30,14 +31,15 @@ private: // Classes
 		Values = 3,
 	};
 
-private: // Members
+private: // Fields
 
 	CSearchTreeCtrlDialog* m_pSearchDialog;
 
 public: // Methods
 
-	// CRDFView
-	virtual void OnModelChanged() override;
+	// _view
+	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
 
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
@@ -47,35 +49,15 @@ public: // Methods
 
 private: // Methods
 
-	CRDFModel* GetModel() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Reloads the tree
 	void UpdateView();
-
-	// --------------------------------------------------------------------------------------------
-	// Alphabetical View   
 	void ClassesAlphabeticalView();
-
-	// --------------------------------------------------------------------------------------------
-	// Hierarchical View   
 	void ClassesHierarchicalView();
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	HTREEITEM AddClass(HTREEITEM hParent, int64_t iClassInstance, bool bAddParentClasses);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	void AddProperties(HTREEITEM hParent, int64_t iClassInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Helper
-	void AddChildClasses(HTREEITEM hParent, int64_t iClassInstance);
-
-	// --------------------------------------------------------------------------------------------
-	// Alphabetical View   
 	void PropertiesAlphabeticalView();
+	HTREEITEM AddClass(HTREEITEM hParent, OwlClass owlClass, bool bAddParentClasses);
+	void AddProperties(HTREEITEM hParent, OwlClass owlClass);
+	void AddChildClasses(HTREEITEM hParent, OwlClass owlClass);
+
+	CRDFModel* GetModel() const;
 
 public:
 	CClassView();
@@ -105,7 +87,6 @@ protected:
 	afx_msg void OnNewFolder();
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg LRESULT OnChangeActiveTab(WPARAM, LPARAM);
 	afx_msg void OnSort(UINT id);
 	afx_msg void OnUpdateSort(CCmdUI* pCmdUI);
 

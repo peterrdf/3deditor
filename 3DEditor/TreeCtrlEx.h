@@ -22,7 +22,7 @@ public: // Methods
 class CTreeCtrlEx : public CTreeCtrl
 {
 
-private: // Members
+private: // Fields
 	
 	CItemStateProvider* m_pItemStateProvider;
 

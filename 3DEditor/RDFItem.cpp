@@ -1,34 +1,41 @@
 #include "stdafx.h"
 #include "RDFItem.h"
 
-// ------------------------------------------------------------------------------------------------
-CRDFItem::CRDFItem(CRDFInstance * pInstance)
-	: m_vecItems()
-	, m_pInstance(pInstance)
+// ************************************************************************************************
+CRDFItem::CRDFItem(_rdf_instance* pInstance)
+	: m_pInstance(pInstance) 
 	, m_enItemType(enumItemType::Unknown)
+	, m_vecItems()
 {
-	assert(m_pInstance != nullptr);
+	ASSERT(m_pInstance != nullptr);
 }
 
-// ------------------------------------------------------------------------------------------------
 CRDFItem::~CRDFItem()
 {
 }
 
-// ------------------------------------------------------------------------------------------------
-CRDFInstance * CRDFItem::GetInstance() const
+// ************************************************************************************************
+CRDFInstanceItem::CRDFInstanceItem(_rdf_instance* pInstance)
+	: CRDFItem(pInstance)
 {
-	return m_pInstance;
+	m_enItemType = enumItemType::Instance;
 }
 
-// ------------------------------------------------------------------------------------------------
-enumItemType CRDFItem::getType() const
+CRDFInstanceItem::~CRDFInstanceItem()
 {
-	return m_enItemType;
 }
 
-// ------------------------------------------------------------------------------------------------
-vector<HTREEITEM> & CRDFItem::items()
+
+// ************************************************************************************************
+CRDFPropertyItem::CRDFPropertyItem(_rdf_instance* pInstance, _rdf_property* pProperty)
+	: CRDFItem(pInstance)
+	, m_pProperty(pProperty)
 {
-	return m_vecItems;
+	assert(m_pProperty != nullptr);
+
+	m_enItemType = enumItemType::Property;
+}
+
+CRDFPropertyItem::~CRDFPropertyItem()
+{
 }

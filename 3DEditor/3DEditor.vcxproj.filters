@@ -13,8 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="stb">
-      <UniqueIdentifier>{a8a477c5-cceb-42de-b704-85cdf4ba14bc}</UniqueIdentifier>
+    <Filter Include="include">
+      <UniqueIdentifier>{7e69532a-2079-46d3-9431-3e970ddf8ec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\stb">
+      <UniqueIdentifier>{3ecbe9d0-4c86-4a94-9179-01cfb8129e68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,25 +63,10 @@
     <ClInclude Include="RDFModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFPropertyRestriction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Generic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RDFOpenGLView.h">
@@ -87,19 +75,10 @@
     <ClInclude Include="RDFItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RDFPropertyItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RDFInstanceItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EditObjectPropertyDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NewInstanceDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DesignTreeViewConsts.h">
@@ -129,23 +108,8 @@
     <ClInclude Include="_dxf_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="_material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="_oglUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ProgressIndicator.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\stb\stb_image.h">
-      <Filter>stb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\stb\stb_easy_font.h">
-      <Filter>stb</Filter>
     </ClInclude>
     <ClInclude Include="SearchTreeCtrlDialog.h">
       <Filter>Header Files</Filter>
@@ -159,14 +123,65 @@
     <ClInclude Include="ProgressDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextBuilder.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_3DUtils.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="_settings_storage.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_geometry.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="_mvc.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\_material.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_oglUtils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_quaterniond.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_settings_storage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ascii.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_geometry.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_instance.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_property.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_host.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_mvc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_texture.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_easy_font.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb\stb_image.h">
+      <Filter>include\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_rdf_class.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_oglScene.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -197,22 +212,7 @@
     <ClCompile Include="RDFModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RDFClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFPropertyRestriction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RDFController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RDFOpenGLView.cpp">
@@ -221,19 +221,10 @@
     <ClCompile Include="RDFItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RDFPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RDFInstanceItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EditObjectPropertyDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NewInstanceDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SelectInstanceDialog.cpp">
@@ -257,9 +248,6 @@
     <ClCompile Include="ProgressIndicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\stb\stb_image.cpp">
-      <Filter>stb</Filter>
-    </ClCompile>
     <ClCompile Include="SearchTreeCtrlDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -272,8 +260,32 @@
     <ClCompile Include="ProgressDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextBuilder.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\include\_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_oglUtils.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_property.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_geometry.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_instance.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_mvc.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image.cpp">
+      <Filter>include\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\_rdf_class.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,14 +374,14 @@
     <None Include="res\My3DEditor.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\stb\.editorconfig">
-      <Filter>stb</Filter>
-    </None>
     <None Include="res\Shader.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\Shader.vert">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\include\stb\.editorconfig">
+      <Filter>include\stb</Filter>
     </None>
   </ItemGroup>
 </Project>

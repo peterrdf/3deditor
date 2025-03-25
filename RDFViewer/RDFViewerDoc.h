@@ -8,29 +8,25 @@
 #include "RDFModel.h"
 #include "RDFController.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CRDFViewerDoc
 	: public CDocument
 	, public CRDFController
 {
 
-private: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// Model (MVC)
-	CRDFModel * m_pModel;
+private: // Fields
 
 protected: // create from serialization only
 	CRDFViewerDoc();
 	DECLARE_DYNCREATE(CRDFViewerDoc)
 
-// Attributes
+	// Attributes
 public:
 
-// Operations
+	// Operations
 public:
 
-// Overrides
+	// Overrides
 public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
@@ -39,7 +35,7 @@ public:
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
 #endif // SHARED_HANDLERS
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CRDFViewerDoc();
 #ifdef _DEBUG
@@ -49,7 +45,7 @@ public:
 
 protected:
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
 

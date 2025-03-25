@@ -6,12 +6,29 @@
 
 #include "RDFOpenGLView.h"
 
-class CMy3DEditorView : public CView
+// ************************************************************************************************
+class CMy3DEditorView 
+	: public CView
+	, public _rdf_view
 {
 
-private: // Members
+private: // Fields
 
 	CRDFOpenGLView* m_pOpenGLView;
+
+public: // Methods
+
+	// _view
+	virtual void onModelLoaded() override;
+	virtual void onModelUpdated() override;
+
+	// _rdf_view
+	virtual void onInstancePropertySelected(_view* pSender) override;
+	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancesDeleted(_view* pSender) override;
+	virtual void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) override;
+	virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
 
 private: // Methods
 

@@ -17,19 +17,17 @@
 
 #include <propkey.h>
 
+#include "_ptr.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// ------------------------------------------------------------------------------------------------
-/*virtual*/ void CMy3DEditorDoc::LoadModel(LPCTSTR szFileName)
+/*virtual*/ void CMy3DEditorDoc::_test_LoadModel(LPCTSTR szFileName) /*override*/
 {
-	if (szFileName != nullptr)
-	{
+	if (szFileName != nullptr) {
 		OnOpenDocument(szFileName);
-	}	
-	else
-	{
+	} else {
 		OnNewDocument();
 	}
 }
@@ -39,7 +37,6 @@
 IMPLEMENT_DYNCREATE(CMy3DEditorDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
-	ON_COMMAND(ID_VIEW_CHECKFORUNIQUEVERTICES, &CMy3DEditorDoc::OnViewCheckForUniqueVertices)
 	ON_COMMAND(ID_VIEW_SCALE_AND_CENTER_ALL_GEOMETRY, &CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry)
 	ON_COMMAND(ID_FILE_OPEN, &CMy3DEditorDoc::OnFileOpen)
 	ON_COMMAND(ID_FILE_IMPORT, &CMy3DEditorDoc::OnFileImport)
@@ -61,13 +58,11 @@ END_MESSAGE_MAP()
 // CMy3DEditorDoc construction/destruction
 
 CMy3DEditorDoc::CMy3DEditorDoc()
-	: m_pModel(nullptr)
 {
 }
 
 CMy3DEditorDoc::~CMy3DEditorDoc()
 {
-	delete m_pModel;
 }
 
 BOOL CMy3DEditorDoc::OnNewDocument()
@@ -75,16 +70,7 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
-
-	m_pModel = new CRDFModel();
-	m_pModel->CreateDefaultModel();	
-
-	SetModel(m_pModel);	
+	setModel(new CDefaultModel());
 
 	return TRUE;
 }
@@ -93,12 +79,9 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 
 void CMy3DEditorDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
+	if (ar.IsStoring()) {
 		// TODO: add storing code here
-	}
-	else
-	{
+	} else {
 		// TODO: add loading code here
 	}
 }
@@ -114,7 +97,7 @@ void CMy3DEditorDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
 	CString strText = _T("TODO: implement thumbnail drawing here");
 	LOGFONT lf;
 
-	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	pDefaultGUIFont->GetLogFont(&lf);
 	lf.lfHeight = 36;
 
@@ -139,16 +122,12 @@ void CMy3DEditorDoc::InitializeSearchContent()
 
 void CMy3DEditorDoc::SetSearchContent(const CString& value)
 {
-	if (value.IsEmpty())
-	{
+	if (value.IsEmpty()) {
 		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-	}
-	else
-	{
-		CMFCFilterChunkValueImpl *pChunk = nullptr;
+	} else {
+		CMFCFilterChunkValueImpl* pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != nullptr)
-		{
+		if (pChunk != nullptr) {
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
 		}
@@ -180,16 +159,10 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	if (m_pModel != nullptr)
-	{
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
+	auto pModel = new CRDFModel();
+	pModel->Load(lpszPathName, false);
 
-	m_pModel = new CRDFModel();
-	m_pModel->Load(lpszPathName, true);
-		
-	SetModel(m_pModel);
+	setModel(pModel);
 
 	// Title
 	CString strTitle = AfxGetAppName();
@@ -206,87 +179,21 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	m_pModel->Save(lpszPathName);
+	SaveModelW(getModel()->getOwlModel(), lpszPathName);
 
 	return TRUE;
 }
 
-void CMy3DEditorDoc::OnViewCheckForUniqueVertices()
-{	
-	assert(false); // TODO
-
-//	TCHAR szFilters[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-//
-//	CFileDialog dlgFile(FALSE, _T("txt"), _T(" Report - Check for unique vertices"),
-//		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-//
-//	if (dlgFile.DoModal() != IDOK)
-//	{
-//		return;
-//	}
-//
-//
-//	// Binning algorithm
-//	//CUniqueVerticesCheck * pUniqueVerticesCheck = new CUniqueVerticesCheck();
-//
-//	// Exact match - Epsilon = 0
-//	CUniqueVerticesCheckE0 * pUniqueVerticesCheckE0 = new CUniqueVerticesCheckE0();
-//
-//	CString strReportFile = dlgFile.GetPathName();
-//
-//	wofstream output((LPCTSTR)strReportFile);
-//	output << "****************************************************************************************************\n";
-//	output << "*** Unique vertices check ***\n";
-//	output << "****************************************************************************************************\n\n";
-//
-//	const auto VERTEX_LENGTH = m_pModel->GetVertexLength();
-//
-//	auto& mapInstances = m_pModel->GetInstances();
-//
-//	auto itInstance = mapInstances.begin();
-//	for (; itInstance != mapInstances.end(); itInstance++)
-//	{
-//		auto pInstance = itInstance->second;
-//		if (!pInstance->hasGeometry())
-//		{
-//			continue;
-//		}
-//
-//		// Binning algorithm
-//		/*int32_t iDuplicatesCount1 =  pUniqueVerticesCheck->Check(pInstance, output);*/
-//
-//		// Exact match - Epsilon = 0
-//		/*int32_t iDuplicatesCount2 = */pUniqueVerticesCheckE0->Check(pInstance, VERTEX_LENGTH, output);
-//
-//		/*if (iDuplicatesCount2 > 0)
-//		{
-//			tuple<float *, int64_t, int32_t *> tpUniqueVertices = pUniqueVerticesCheck->RemoveDuplicates(pInstance, VERTEX_LENGTH);
-//			pInstance->UpdateVertices(get<0>(tpUniqueVertices), get<1>(tpUniqueVertices), get<2>(tpUniqueVertices));
-//		}*/
-//
-//		/*if (iDuplicatesCount1 != iDuplicatesCount2)
-//		{
-//			output << "ERROR!\n";
-//		}*/
-//	} // for (; itInstance != ...
-//
-//
-//	output.close();
-//
-//	//delete pUniqueVerticesCheck;
-//	delete pUniqueVerticesCheckE0;
-}
-
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 {
-	ScaleAndCenter();
+	_ptr<_rdf_model>(getModel())->reloadGeometries();
+	getModel()->scale();
 }
 
 void CMy3DEditorDoc::OnFileOpen()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
@@ -297,74 +204,76 @@ void CMy3DEditorDoc::OnFileImport()
 {
 	CFileDialog dlgFile(TRUE, nullptr, _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, SUPPORTED_FILES);
 
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-	ImportModel(nullptr, dlgFile.GetPathName().GetString());
+	_ptr<CRDFModel>(getModel())->Load(dlgFile.GetPathName().GetString(), true);
+
+	onModelUpdated();
+
+	// MRU
+	AfxGetApp()->AddToRecentFileList(dlgFile.GetPathName().GetString());
 }
 
 void CMy3DEditorDoc::OnUpdateFileImport(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable();
+	pCmdUI->Enable(getModel() != nullptr);
 }
 
 void CMy3DEditorDoc::OnViewZoomOut()
 {
-	ZoomOut();
+	zoomOut();
 }
 
 void CMy3DEditorDoc::OnInstancesZoomTo()
 {
-	auto pInstance = GetSelectedInstance();
+	auto pInstance = getSelectedInstance();
 	assert((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 
-	ZoomToInstance(pInstance->getInstance());
+	zoomToInstance(pInstance);
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesZoomTo(CCmdUI* pCmdUI)
 {
-	auto pInstance = GetSelectedInstance();
+	auto pInstance = getSelectedInstance();
 	pCmdUI->Enable((pInstance != nullptr) && pInstance->getEnable() && pInstance->hasGeometry());
 }
 
 void CMy3DEditorDoc::OnInstancesSave()
 {
-	assert(GetSelectedInstance() != nullptr);
-	Save(GetSelectedInstance());
+	assert(getSelectedInstance() != nullptr);
+	saveInstance(getSelectedInstance());
 }
 
 void CMy3DEditorDoc::OnUpdateInstancesSave(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetSelectedInstance() != nullptr);
+	pCmdUI->Enable(getSelectedInstance() != nullptr);
 }
 
 void CMy3DEditorDoc::OnExportAsCitygml()
 {
-	wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.citygml";
 
 	TCHAR szFilters[] = _T("CityGML Files (*.citygml)|*.citygml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsCityGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsCityGMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsCityGML(m_pModel->getInstance()));
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsCityGML(getModel()->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif
@@ -372,29 +281,27 @@ void CMy3DEditorDoc::OnUpdateExportAsCitygml(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsInfragml()
 {
-	wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("InfraGML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsInfraGMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsInfraGMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsInfraGML(m_pModel->getInstance()));
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsInfraGML(getModel()->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif
@@ -402,29 +309,27 @@ void CMy3DEditorDoc::OnUpdateExportAsInfragml(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsLandxml()
 {
-	wstring strFileName = m_pModel->getPath();
+#ifdef _GIS_SUPPORT
+	wstring strFileName = getModel()->getPath();
 	strFileName += L".bin.xml";
 
 	TCHAR szFilters[] = _T("LandXML Files (*.xml)|*.xml|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), strFileName.c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
-
-	if (dlgFile.DoModal() != IDOK)
-	{
+	if (dlgFile.DoModal() != IDOK) {
 		return;
 	}
 
-#ifdef _GIS_SUPPORT
-	SaveAsLandXMLW(m_pModel->getInstance(), dlgFile.GetPathName().GetString());
+	SaveAsLandXMLW(getModel()->getOwlModel(), dlgFile.GetPathName().GetString());
 #endif
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 {
 #ifdef _GIS_SUPPORT
-	pCmdUI->Enable((m_pModel != nullptr) &&
-		(m_pModel->getInstance() != 0) &&
-		IsLandXML(m_pModel->getInstance()));
+	pCmdUI->Enable((getModel() != nullptr) &&
+		(getModel()->getOwlModel() != 0) &&
+		IsLandXML(getModel()->getOwlModel()));
 #else
 	pCmdUI->Enable(FALSE);
 #endif

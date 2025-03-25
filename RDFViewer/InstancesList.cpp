@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "InstancesList.h"
-#include "RDFInstance.h"
-#include "RDFController.h"
+
+#include "_rdf_mvc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,7 +43,7 @@ BOOL CInstancesList::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 }
 
 // ------------------------------------------------------------------------------------------------
-void CInstancesList::SetController(CRDFController* pController)
+void CInstancesList::SetController(_rdf_controller* pController)
 {
     m_pController = pController;
 }
@@ -65,8 +65,8 @@ void CInstancesList::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
         {
             if ((m_pController != nullptr) && (pNMCD->nmcd.lItemlParam != 0))
             {
-                CRDFInstance* pInstance = (CRDFInstance*)pNMCD->nmcd.lItemlParam;
-                if (m_pController->GetSelectedInstance() == pInstance)
+                auto pInstance = (_instance*)pNMCD->nmcd.lItemlParam;
+                if (m_pController->getSelectedInstance() == pInstance)
                 {
                     if (CDIS_SELECTED == (pNMCD->nmcd.uItemState & CDIS_SELECTED))
                     {

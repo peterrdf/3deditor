@@ -16,6 +16,7 @@
 #define new DEBUG_NEW
 #endif
 
+// ************************************************************************************************
 CRDFController* CMy3DEditorView::GetController()
 {
 	auto pDoc = GetDocument();
@@ -24,8 +25,72 @@ CRDFController* CMy3DEditorView::GetController()
 	return pDoc;
 }
 
-// CMy3DEditorView
+/*virtual*/ void CMy3DEditorView::onModelLoaded() /*override*/
+{
+	delete m_pOpenGLView;
+	m_pOpenGLView = nullptr;
 
+	auto pController = GetController();
+	if (pController == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	m_pOpenGLView = new CRDFOpenGLView(this);
+	m_pOpenGLView->setController(pController);
+	m_pOpenGLView->_load();
+}
+
+/*virtual*/ void CMy3DEditorView::onModelUpdated() /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_load();
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInstancePropertySelected(_view* pSender) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInstancePropertySelected(pSender);
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInstanceCreated(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInstanceCreated(pSender, pInstance);
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInstanceDeleted(pSender, pInstance);
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInstancesDeleted(_view* pSender) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInstancesDeleted(pSender);
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onMeasurementsAdded(pSender, pInstance);
+	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInstancePropertyEdited(pSender, pInstance, pProperty);
+	}
+}
+
+// ************************************************************************************************
 IMPLEMENT_DYNCREATE(CMy3DEditorView, CView)
 
 BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
@@ -81,10 +146,10 @@ END_MESSAGE_MAP()
 // CMy3DEditorView construction/destruction
 
 CMy3DEditorView::CMy3DEditorView()
-	: m_pOpenGLView(nullptr)
+	: CView()
+	, _rdf_view()
+	, m_pOpenGLView(nullptr)
 {
-	// TODO: add construction code here
-
 }
 
 CMy3DEditorView::~CMy3DEditorView()
@@ -104,9 +169,8 @@ BOOL CMy3DEditorView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CMy3DEditorView::OnDraw(CDC* pDC)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->Draw(pDC);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_draw(pDC);
 	}
 }
 
@@ -182,13 +246,14 @@ int CMy3DEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	DragAcceptFiles(TRUE);
 
-	CMy3DEditorDoc* pDoc = GetDocument();
+	auto pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return -1;
 
-	m_pOpenGLView = new CRDFOpenGLView(this);
-	m_pOpenGLView->SetController(pDoc);
+	if (!pDoc) {
+		return -1;
+	}
+
+	pDoc->registerView(this);
 
 	return 0;
 }
@@ -196,6 +261,15 @@ int CMy3DEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMy3DEditorView::OnDestroy()
 {
+	auto pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	if (!pDoc) {
+		return;
+	}
+
+	pDoc->unRegisterView(this);
+
 	delete m_pOpenGLView;
 	m_pOpenGLView = nullptr;
 
@@ -211,9 +285,8 @@ BOOL CMy3DEditorView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnDown, nFlags, point);
 	}
 
 	CView::OnLButtonDown(nFlags, point);
@@ -222,9 +295,8 @@ void CMy3DEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::LBtnUp, nFlags, point);
 	}
 
 	CView::OnLButtonUp(nFlags, point);
@@ -233,9 +305,8 @@ void CMy3DEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnDown, nFlags, point);
 	}
 
 	CView::OnMButtonDown(nFlags, point);
@@ -244,9 +315,8 @@ void CMy3DEditorView::OnMButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::MBtnUp, nFlags, point);
 	}
 
 	CView::OnMButtonUp(nFlags, point);
@@ -254,9 +324,8 @@ void CMy3DEditorView::OnMButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnDown, nFlags, point);
 	}
 
 	CView::OnRButtonDown(nFlags, point);
@@ -264,9 +333,8 @@ void CMy3DEditorView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::RBtnUp, nFlags, point);
 	}
 
 	ClientToScreen(&point);
@@ -275,9 +343,8 @@ void CMy3DEditorView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CMy3DEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseEvent(enumMouseEvent::Move, nFlags, point);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseEvent(enumMouseEvent::Move, nFlags, point);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -288,8 +355,7 @@ void CMy3DEditorView::OnDropFiles(HDROP hDropInfo)
 {
 	// Get the number of files dropped 
 	int iFilesDropped = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
-	if (iFilesDropped != 1)
-	{
+	if (iFilesDropped != 1) {
 		return;
 	}
 
@@ -314,9 +380,8 @@ void CMy3DEditorView::OnDropFiles(HDROP hDropInfo)
 
 BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnMouseWheel(nFlags, zDelta, pt);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onMouseWheel(nFlags, zDelta, pt);
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
@@ -324,9 +389,8 @@ BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->OnKeyUp(nChar, nRepCnt, nFlags);
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onKeyUp(nChar, nRepCnt, nFlags);
 	}
 
 	CView::OnKeyUp(nChar, nRepCnt, nFlags);
@@ -334,81 +398,73 @@ void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CMy3DEditorView::OnViewTop()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Top);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewLeft()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Left);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewRight()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Right);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewBottom()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Bottom);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewFront()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Front);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewBack()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Back);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnViewIsometric()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setView(enumView::Isometric);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::View);
 	}
 }
 
 void CMy3DEditorView::OnProjectionPerspective()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setProjection(enumProjection::Perspective);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -420,11 +476,10 @@ void CMy3DEditorView::OnUpdateProjectionPerspective(CCmdUI* pCmdUI)
 
 void CMy3DEditorView::OnProjectionOrthographic()
 {
-	if (m_pOpenGLView != nullptr)
-	{
+	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->_setProjection(enumProjection::Orthographic);
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::Projection);
 	}
 }
 
@@ -436,144 +491,135 @@ void CMy3DEditorView::OnUpdateProjectionOrthographic(CCmdUI* pCmdUI)
 
 void CMy3DEditorView::OnShowFaces()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowFaces(!m_pOpenGLView->getShowFaces(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowFaces(!m_pOpenGLView->getShowFaces());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFaces);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFaces);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowFaces(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFaces(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFaces());
 }
 
 void CMy3DEditorView::OnShowFacesWireframes()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowFacesPolygons(!m_pOpenGLView->getShowFacesPolygons(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowFacesPolygons(!m_pOpenGLView->getShowFacesPolygons());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFacesWireframes);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowFacesWireframes);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowFacesWireframes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFacesPolygons(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowFacesPolygons());
 }
 
 void CMy3DEditorView::OnShowConcFacesWireframes()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowConceptualFacesPolygons(!m_pOpenGLView->getShowConceptualFacesPolygons(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowConceptualFacesPolygons(!m_pOpenGLView->getShowConceptualFacesPolygons());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowConceptualFacesWireframes);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowConceptualFacesWireframes);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowConcFacesWireframes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowConceptualFacesPolygons(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowConceptualFacesPolygons());
 }
 
 void CMy3DEditorView::OnShowLines()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowLines(!m_pOpenGLView->getShowLines(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowLines(!m_pOpenGLView->getShowLines());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowLines);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowLines);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowLines(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowLines(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowLines());
 }
 
 void CMy3DEditorView::OnShowPoints()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowPoints(!m_pOpenGLView->getShowPoints(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowPoints(!m_pOpenGLView->getShowPoints());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowPoints);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowPoints);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowPoints(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowPoints(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowPoints());
 }
 
 void CMy3DEditorView::OnNormalVectors()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowNormalVectors(!m_pOpenGLView->getShowNormalVectors(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowNormalVectors(!m_pOpenGLView->getShowNormalVectors());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowNormalVectors);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowNormalVectors);
 	}
 }
 
 void CMy3DEditorView::OnUpdateNormalVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowNormalVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowNormalVectors());
 }
 
 void CMy3DEditorView::OnShowTangentVectors()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowTangentVectors(!m_pOpenGLView->getShowTangentVectors(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowTangentVectors(!m_pOpenGLView->getShowTangentVectors());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowTangenVectors);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowTangenVectors);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowTangentVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowTangentVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowTangentVectors());
 }
 
 void CMy3DEditorView::OnShowBiNormalVectors()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowBiNormalVectors(!m_pOpenGLView->getShowBiNormalVectors(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowBiNormalVectors(!m_pOpenGLView->getShowBiNormalVectors());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBiNormalVectors);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBiNormalVectors);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowBiNormalVectors(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBiNormalVectors(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBiNormalVectors());
 }
 
 void CMy3DEditorView::OnShowBoundingBoxes()
 {
-	if (m_pOpenGLView != nullptr)
-	{
-		m_pOpenGLView->setShowBoundingBoxes(!m_pOpenGLView->getShowBoundingBoxes(nullptr));
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->setShowBoundingBoxes(!m_pOpenGLView->getShowBoundingBoxes());
 
-		GetController()->OnApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBoundingBoxes);
+		GetController()->onApplicationPropertyChanged(nullptr, enumApplicationProperty::ShowBoundingBoxes);
 	}
 }
 
 void CMy3DEditorView::OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
-	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBoundingBoxes(nullptr));
+	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBoundingBoxes());
 }

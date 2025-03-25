@@ -91,7 +91,7 @@ public:
 class CTestLayout
 {
 
-private: // Members
+private: // Fields
 
 	// --------------------------------------------------------------------------------------------
 	CMainFrame* m_pMainFrame;

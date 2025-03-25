@@ -1,50 +1,41 @@
 #pragma once
 
-#include "RDFController.h"
-#include "RDFClass.h"
 #include "afxwin.h"
 
-// CEditObjectPropertyDialog dialog
+#include "_rdf_mvc.h"
+#include "_rdf_instance.h"
+#include "_rdf_class.h"
 
+// ************************************************************************************************
 class CEditObjectPropertyDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CEditObjectPropertyDialog)
 
-private: // Members
+private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	// Controller
-	CRDFController * m_pController;
+	_rdf_controller* m_pController;
+	_rdf_instance* m_pInstance;
+	_rdf_property* m_pProperty;
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
-	CRDFInstance * m_pInstance;
+	int m_iMode;
+	_instance* m_pSelectedInstance;
+	OwlClass m_selectedOwlClass;
 
-	// --------------------------------------------------------------------------------------------
-	// RDF Property
-	CRDFProperty * m_pProperty;
+public: // Properties
 
-public: // Members
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Instance
-	CRDFInstance * m_pExisitngRDFInstance;
-
-	// --------------------------------------------------------------------------------------------
-	// RDF Class
-	int64_t m_iNewInstanceRDFClass;
-
+	int GetMode() const { return m_iMode; }
+	_instance* GetSelectedInstance() const { return m_pSelectedInstance; }
+	OwlClass GetSelectedOwlClass() const { return m_selectedOwlClass; }
+	
 private: // Methods
 
-	// --------------------------------------------------------------------------------------------
-	// Validation
 	void ValidateUI();
 
 public:
-	CEditObjectPropertyDialog(CRDFController * pController, CRDFInstance * pInstance, CRDFProperty * pProperty, CWnd* pParent = nullptr);   // standard constructor
+	CEditObjectPropertyDialog(_rdf_controller* pController, _rdf_instance* pInstance, _rdf_property* pProperty, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CEditObjectPropertyDialog();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_DIALOG_EDIT_OBJECT_PROPRTY };
 
 protected:
@@ -52,7 +43,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	int m_iMode;
+
 	virtual BOOL OnInitDialog();
 	CComboBox m_cmbExistingInstance;
 	CComboBox m_cmbNewInstance;

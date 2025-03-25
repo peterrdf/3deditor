@@ -2,157 +2,69 @@
 #define _OPEN_GL_IFC_VIEW_H_
 
 #include "Generic.h"
-#include "RDFView.h"
-#include "_oglUtils.h"
-#include "RDFInstance.h"
 #include "RDFModel.h"
 #include <ctime>
 
-// ------------------------------------------------------------------------------------------------
-class CRDFOpenGLView 
-	: public _oglRenderer
-	, public CRDFView
+#include "_rdf_instance.h"
+#include "_rdf_mvc.h"
+#include "_oglUtils.h"
+
+// ************************************************************************************************
+class CRDFOpenGLView : public _oglView
 {
 
-#pragma region Members
+private: // Fields
 
-private: // Members
-
-	// Mouse
-	CPoint m_ptStartMousePosition;
-	CPoint m_ptPrevMousePosition;
-
-	// Selection
-	_oglSelectionFramebuffer* m_pInstanceSelectionFrameBuffer;	
-	CRDFInstance* m_pPointedInstance;
-	CRDFInstance* m_pSelectedInstance;
-
-	// Selection	
-	_oglSelectionFramebuffer* m_pFaceSelectionFrameBuffer;
+	// Point Face	
+	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
-
-	_oglSelectionFramebuffer* m_pNavigatorSelectionFrameBuffer;
-	CRDFInstance* m_pNavigatorPointedInstance;
-	
-	// Materials
-	_material* m_pSelectedInstanceMaterial;
-	_material* m_pPointedInstanceMaterial;
-	_material* m_pNavigatorPointedInstanceMaterial;
-
-	// Tooltip
-	clock_t m_tmShowTooltip;
-
-#pragma endregion // Members
 
 public: // Methods
 	
 	CRDFOpenGLView(CWnd* pWnd);	
 	virtual ~CRDFOpenGLView();
 
-	// _oglRendererSettings
-	virtual _controller* getController() const override;
-	virtual _model* getModel() const override;
-	virtual void saveSetting(const string& strName, const string& strValue) override;
-	virtual string loadSetting(const string& strName) override;
+	// _view
+	virtual void onInstanceSelected(_view* pSender) override;
+	virtual void onInstancesEnabledStateChanged(_view* pSender) override;
 
-	// Test
-	void SetRotation(float fX, float fY, BOOL bRedraw);
-	void GetRotation(float& fX, float& fY);
-	void SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
-	void GetTranslation(float& fX, float& fY, float& fZ);
-	
-	// Draw
-	void Draw(CDC* pDC);
+	// _rdf_view (owner)
+	void onInstancePropertySelected(_view* pSender);
+	void onInstanceCreated(_view* pSender, _rdf_instance* pInstance);
+	void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance);
+	void onInstancesDeleted(_view* pSender);
+	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
+	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
-	// Mouse
-	void OnMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point);
-	void OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-
-	// Keyboard
-	void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	// CRDFView	
-	virtual void OnModelChanged() override;
-	virtual void OnWorldDimensionsChanged() override;
-	virtual void OnInstancePropertyEdited(CRDFInstance * pInstance, CRDFProperty * pProperty) override;
-	virtual void OnNewInstanceCreated(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstanceDeleted(CRDFView * pSender, int64_t iInstance) override;
-	virtual void OnInstancesDeleted(CRDFView * pSender) override;
-	virtual void OnMeasurementsAdded(CRDFView * pSender, CRDFInstance * pInstance) override;
-	virtual void OnInstanceSelected(CRDFView * pSender) override;
-	virtual void OnInstancePropertySelected() override;
-	virtual void OnInstancesEnabledStateChanged() override;
-	virtual void OnApplicationPropertyChanged(CRDFView* pSender, enumApplicationProperty enApplicationProperty) override;
-
-protected: // Methods
-
-	// Overridden
-	virtual void OnControllerChanged() override;
+	// _oglView
+	virtual void _postDraw() override;
+	virtual void _drawBuffers() override;
+	virtual void _onMouseMove(const CPoint& point) override;
+	virtual void _onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) override;
 
 private: // Methods
 
-	void LoadModel(CRDFModel* pModel);
-
-	void DrawMainModel(
-		CRDFModel* pMainModel,
-		CRDFModel* pSceneModel,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight);
-	void DrawNavigatorModel(
-		CRDFModel* pNavigatorModel,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight);
-	void DrawModel(_model* pM);
-	void DrawFaces(_model* pM, bool bTransparent);
-	void DrawFacesPolygons(_model* pM);
-	void DrawConceptualFacesPolygons(_model* pM);
-	void DrawLines(_model* pM);
-	void DrawPoints(_model* pM);
-
-	// --------------------------------------------------------------------------------------------
-	// Bounding box for each 3D object
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
-
-	void DrawBoundingBoxes(_model* pM);
-	void DrawNormalVectors(_model* pM);
-	void DrawTangentVectors(_model* pM);
-	void DrawBiNormalVectors(_model* pM);
-	void DrawMainModelSelectionBuffers(
-		_model* pM,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight,
-		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawNavigatorModelSelectionBuffers(
-		_model* pM,
-		int iViewportX, int iViewportY,
-		int iViewportWidth, int iViewportHeight,
-		_oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawInstancesFrameBuffer(_model* pM, _oglSelectionFramebuffer* pInstanceSelectionFrameBuffer);
-	void DrawFacesFrameBuffer(_model* pM);
-	void DrawPointedFace(_model* pM);
-	pair<int64_t, int64_t> GetNearestVertex(_model* pM, float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
-	void PointNavigatorInstance(const CPoint& point);
-	bool SelectNavigatorInstance();
-
-	// --------------------------------------------------------------------------------------------
-	// Handler
-	void OnMouseMoveEvent(UINT nFlags, const CPoint& point);
-
-	// --------------------------------------------------------------------------------------------
-	// Screen -> Open GL coordinates
-	bool GetOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
-
-	// --------------------------------------------------------------------------------------------
-	// Wrapper for gluProject
-	void OGLProject(GLdouble dInX, GLdouble dInY, GLdouble dInZ, GLdouble & dOutX, GLdouble & dOutY, GLdouble & dOutZ) const;
+	void DrawBoundingBoxes(_model* pModel);
+	void DrawNormalVectors(_model* pModel);
+	void DrawTangentVectors(_model* pModel);
+	void DrawBiNormalVectors(_model* pModel);
+	
+	void DrawFacesFrameBuffer();
+	void DrawPointedFace();
+	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
 public:
 
-	// --------------------------------------------------------------------------------------------
+	// Test
+	void _test_SetRotation(float fX, float fY, BOOL bRedraw);
+	void _test_GetRotation(float& fX, float& fY);
+	void _test_SetTranslation(float fX, float fY, float fZ, BOOL bRedraw);
+	void _test_GetTranslation(float& fX, float& fY, float& fZ);
 	// https://community.khronos.org/t/taking-screenshots-how-to/19154/3
-	void TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight);
-	bool SaveScreenshot(const wchar_t* szFilePath);
+	void _test_TakeScreenshot(unsigned char*& arPixels, unsigned int& iWidth, unsigned int& iHeight);
+	bool _test_SaveScreenshot(const wchar_t* szFilePath);
 };
 
 #endif // _OPEN_GL_IFC_VIEW_H_

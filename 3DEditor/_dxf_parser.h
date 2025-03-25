@@ -29,7 +29,7 @@ namespace _dxf
 	class _error : public runtime_error
 	{
 
-	public: // Members		
+	public: // Fields		
 
 		// ----------------------------------------------------------------------------------------
 		static const string file_not_found;
@@ -51,7 +51,7 @@ namespace _dxf
 	class _reader
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		// .dxf file
@@ -99,7 +99,7 @@ namespace _dxf
 	class _group_codes
 	{
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string start;
@@ -157,7 +157,7 @@ namespace _dxf
 	class _group
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		string m_strType;
@@ -181,7 +181,7 @@ namespace _dxf
 	class _entry : public _group
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		_entry* m_pParent;
@@ -223,7 +223,7 @@ namespace _dxf
 	class _entity : public _entry
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_entity*> m_vecEntities;
@@ -250,7 +250,7 @@ namespace _dxf
 	class _extrusion
 	{
 
-	protected: //  Members
+	protected: //  Fields
 
 		// ----------------------------------------------------------------------------------------
 		_entity* m_pEntity;
@@ -312,7 +312,7 @@ namespace _dxf
 	class _arc : public _entity
 	{
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string start_angle;
@@ -337,7 +337,7 @@ namespace _dxf
 	class _ellipse : public _entity
 	{
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string endpoint_x;
@@ -443,7 +443,7 @@ namespace _dxf
 	class _vertex : public _entity
 	{	
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string flag;
@@ -528,14 +528,14 @@ namespace _dxf
 	class _polyline : public _entity
 	{
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string flag;
 		static const string m;
 		static const string n;
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		_seqend* m_pSeqend;
@@ -578,7 +578,7 @@ namespace _dxf
 	class _block : public _entity
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		int64_t m_iInstance;
@@ -643,7 +643,7 @@ namespace _dxf
 	class _entities_section : public _section
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_entity*> m_vecEntities;
@@ -743,7 +743,7 @@ namespace _dxf
 	class _layer : public _entry
 	{
 
-	public: // Members
+	public: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		static const string color_number;
@@ -764,7 +764,7 @@ namespace _dxf
 	class _table : public _entry
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_entry*> m_vecEntries;
@@ -794,7 +794,7 @@ namespace _dxf
 	class _tables_section : public _section
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_table*> m_vecTables;
@@ -821,7 +821,7 @@ namespace _dxf
 	class _blocks_section : public _section
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		vector<_block*> m_vecBlocks;
@@ -848,7 +848,7 @@ namespace _dxf
 	class _parser
 	{
 
-	private: // Members
+	private: // Fields
 
 		// ----------------------------------------------------------------------------------------
 		int64_t m_iModel;

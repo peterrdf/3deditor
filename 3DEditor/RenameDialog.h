@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RDFInstance.h"
+#include "_rdf_mvc.h"
 
 
 // CRenameDialog dialog

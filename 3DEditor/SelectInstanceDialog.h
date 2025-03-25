@@ -1,45 +1,36 @@
 #pragma once
 
-#include "RDFController.h"
-#include "RDFProperty.h"
+#include "_rdf_mvc.h"
+#include "_rdf_property.h"
 
-// CSelectInstanceDialog dialog
-
+// ************************************************************************************************
 class CSelectInstanceDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(CSelectInstanceDialog)
 
-private: // Members
+private: // Fields
 
-	// --------------------------------------------------------------------------------------------
-	CRDFController* m_pController;
-
-	// --------------------------------------------------------------------------------------------
-	CRDFInstance* m_pInstance;
-
-	// --------------------------------------------------------------------------------------------
-	CObjectRDFProperty* m_pObjectRDFProperty;
-
-	// --------------------------------------------------------------------------------------------
+	_rdf_controller* m_pController;
+	_rdf_instance* m_pInstance;
+	_rdf_property* m_pProperty;
 	int64_t m_iCard;
 
-public: // Members
-
-	// --------------------------------------------------------------------------------------------
-	int64_t m_iInstance;
-
-	// --------------------------------------------------------------------------------------------
+	OwlInstance m_selectedOwlInstance;
 	CString m_strInstanceUniqueName;
+	CString m_strInstanceOldUniqueName;
 
-	// --------------------------------------------------------------------------------------------
-	CString m_strOldInstanceUniqueName;
+public: // Properties
+
+	OwlInstance GetSelectedOwlInstance() const { return m_selectedOwlInstance; }
+	const CString& GetSelectedInstanceUniqueName() const { return m_strInstanceUniqueName; }
+	const CString& GetSelectedInstanceOldUniqueName() const { return m_strInstanceOldUniqueName; }
 
 public:
-	CSelectInstanceDialog(CRDFController* pController, CRDFInstance* pInstance, 
-		CObjectRDFProperty* pObjectRDFProperty, int64_t iCard, CWnd* pParent = nullptr);   // standard constructor
+	CSelectInstanceDialog(_rdf_controller* pController, _rdf_instance* pInstance,
+		_rdf_property* pObjectRDFProperty, int64_t iCard, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSelectInstanceDialog();
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_SELECT_INSTANCE };
 #endif
