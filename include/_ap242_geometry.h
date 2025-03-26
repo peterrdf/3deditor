@@ -15,4 +15,5 @@ protected: // Methods
 
     // _geometry
     virtual void preCalculate() override;
+    virtual void postCalculate() override;
 };

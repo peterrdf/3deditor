@@ -19,3 +19,8 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
     // Extra settings
     setSegmentation(getSdaiModel(), 16, 0.);
 }
+
+/*virtual*/ void _ap242_geometry::postCalculate() /*override*/
+{
+    cleanCachedGeometry();
+}
