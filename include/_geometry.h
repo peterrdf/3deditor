@@ -14,8 +14,6 @@
 #include "_3DUtils.h"
 #include "_material.h"
 
-#include <atlbase.h>
-
 #include <string>
 #include <vector>
 #include <map>

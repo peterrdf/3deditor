@@ -426,8 +426,8 @@ public: // Methods
         : m_iVertexLength(iVertexLength)
     {
         static_assert(
-            is_same<V, float>::value ||
-            is_same<V, double>::value,
+            std::is_same<V, float>::value ||
+            std::is_same<V, double>::value,
             "V must be float or double type.");
         assert(iVertexLength >= 3);
     }
@@ -463,8 +463,8 @@ public: // Methods
     _indexBuffer()
     {
         static_assert(
-            is_same<I, int32_t>::value ||
-            is_same<I, int64_t>::value,
+            std::is_same<I, int32_t>::value ||
+            std::is_same<I, int64_t>::value,
             "I must be int32_t or int64_t type.");
     }
 
