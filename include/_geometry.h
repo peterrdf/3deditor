@@ -1,9 +1,15 @@
 #pragma once
 
+#ifdef _WINDOWS
 #include "engine.h"
+#else
+#include "../include/engine.h"
+#endif
 
 #include "glew.h"
+#ifdef _WINDOWS
 #include "wglew.h"
+#endif
 
 #include "_3DUtils.h"
 #include "_material.h"

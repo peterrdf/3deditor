@@ -1,7 +1,11 @@
 #ifndef IFCUNIT_H
 #define IFCUNIT_H
 
+#ifdef _WINDOWS
 #include "engine.h"
+#else
+#include "../include/engine.h"
+#endif
 
 #include <string>
 #include <map>

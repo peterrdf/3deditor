@@ -12,7 +12,10 @@
 #include "_quaterniond.h"
 
 #include "glew.h"
+#ifdef _WINDOWS
 #include "wglew.h"
+#endif
+
 #include "vec3.hpp"
 #include "vec4.hpp"
 #include "mat4x4.hpp"

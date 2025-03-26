@@ -1,3 +1,3 @@
+#ifdef _WINDOWS
 #include "stdafx.h"
-#include "engine.h"
-#include "geom.h"
+#endif
