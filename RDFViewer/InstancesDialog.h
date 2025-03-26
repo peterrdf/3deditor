@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Generic.h"
 #include "InstancesList.h"
 
 #include "_rdf_mvc.h"

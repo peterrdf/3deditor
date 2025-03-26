@@ -5,7 +5,6 @@
 #include "Resource.h"
 #include "3DEditor.h"
 #include "RDFModel.h"
-#include "Generic.h"
 #include "NewInstanceDialog.h"
 #include "DesignTreeViewConsts.h"
 #include "ProgressIndicator.h"

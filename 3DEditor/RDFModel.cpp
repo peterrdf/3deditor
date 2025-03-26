@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "RDFModel.h"
-#include "Generic.h"
 #include "ProgressIndicator.h"
 #include "ProgressDialog.h"
 

@@ -3,6 +3,7 @@
 #include "RDFOpenGLView.h"
 #include "RDFController.h"
 #include "ProgressIndicator.h"
+#include "_test.h"
 
 #include <chrono>
 

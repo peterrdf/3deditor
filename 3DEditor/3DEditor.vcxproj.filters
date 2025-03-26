@@ -66,9 +66,6 @@
     <ClInclude Include="RDFController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Generic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RDFOpenGLView.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CompareResults.h"
-#include "Generic.h"
+#include "_test.h"
 
 #include <string>
 #include <vector>

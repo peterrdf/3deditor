@@ -10,7 +10,6 @@
 #endif
 
 #include "RDFViewerDoc.h"
-#include "Generic.h"
 
 #include <propkey.h>
 

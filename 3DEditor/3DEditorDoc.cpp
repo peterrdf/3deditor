@@ -10,7 +10,6 @@
 #endif
 
 #include "3DEditorDoc.h"
-#include "Generic.h"
 #ifdef _GIS_SUPPORT
 #include "gisengine.h"
 #endif

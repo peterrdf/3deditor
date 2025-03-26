@@ -825,7 +825,6 @@
     <ClInclude Include="EditObjectPropertyDialog.h" />
     <ClInclude Include="DesignTreeView.h" />
     <ClInclude Include="DesignTreeViewConsts.h" />
-    <ClInclude Include="Generic.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="NewInstanceDialog.h" />
     <ClInclude Include="RDFOpenGLView.h" />
