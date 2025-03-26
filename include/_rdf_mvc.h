@@ -20,6 +20,7 @@ class _rdf_model : public _model
 private: // Fields
 
 	OwlModel m_owlModel;
+	bool m_bExternalModel;
 	map<OwlInstance, _rdf_instance*> m_mapInstances;
 	map<OwlClass, _rdf_class*> m_mapClasses;
 	map<RdfProperty, _rdf_property*> m_mapProperties;
@@ -31,17 +32,18 @@ public:  // Methods
 	virtual ~_rdf_model();
 
 	// _model
+	virtual _instance* loadInstance(int64_t iInstance) override;
 	virtual void scale() override;
 	virtual OwlModel getOwlModel() const override { return m_owlModel; }
 
 	void attachModel(const wchar_t* szPath, OwlModel owlModel);
-	void importModel(const wchar_t* szPath);
+	void assignModel(const wchar_t* szPath, OwlModel owlModel);
+	void importModel(const wchar_t* szPath);	
 
 protected:
 
 	// _model
-	virtual void addInstance(_instance* pInstance) override;
-	virtual _instance* loadInstance(int64_t /*iInstance*/) override { assert(false); return nullptr; }
+	virtual void addInstance(_instance* pInstance) override;	
 	virtual void clean(bool bCloseModel = true) override;
 
 	void loadClasses();

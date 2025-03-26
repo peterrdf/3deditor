@@ -13,6 +13,7 @@
 _rdf_model::_rdf_model()
 	: _model()
 	, m_owlModel(0)
+	, m_bExternalModel(false)
 	, m_mapInstances()
 	, m_mapClasses()
 	, m_mapProperties()
@@ -23,6 +24,27 @@ _rdf_model::_rdf_model()
 /*virtual*/ _rdf_model::~_rdf_model()
 {
 	clean();
+}
+
+/*virtual*/ _instance* _rdf_model::loadInstance(int64_t iInstance) /*override*/
+{
+	assert(iInstance != 0);	
+
+	clean(false);	
+
+	preLoad();
+
+	auto pGeometry = new _rdf_geometry(iInstance);
+	addGeometry(pGeometry);
+
+	auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+	addInstance(pInstance);
+
+	postLoad();
+
+	scale();
+
+	return pInstance;
 }
 
 /*virtual*/ void _rdf_model::scale() /*override*/
@@ -181,6 +203,18 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	load();
 }
 
+void _rdf_model::assignModel(const wchar_t* szPath, OwlModel owlModel)
+{
+	assert((szPath != nullptr) && (wcslen(szPath) > 0));
+	assert(owlModel != 0);
+
+	clean();
+
+	m_strPath = szPath;
+	m_owlModel = owlModel;
+	m_bExternalModel = true;
+}
+
 void _rdf_model::importModel(const wchar_t* szPath)
 {
 	if (m_owlModel == 0) {
@@ -205,10 +239,15 @@ void _rdf_model::importModel(const wchar_t* szPath)
 {
 	_model::clean(bCloseModel);
 
-	if (m_owlModel != 0) {
-		::CloseModel(m_owlModel);
-		m_owlModel = 0;
-	}
+	if (bCloseModel) {
+		if (m_owlModel != 0) {
+			if (!m_bExternalModel) {
+				::CloseModel(m_owlModel);
+			}			
+			m_owlModel = 0;
+			m_bExternalModel = false;
+		}
+	}	
 
 	m_mapInstances.clear();
 
