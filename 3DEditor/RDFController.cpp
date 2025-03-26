@@ -10,7 +10,7 @@ CRDFController::CRDFController()
 	: _rdf_controller()
 {
 	wchar_t szAppPath[_MAX_PATH];
-	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(wchar_t) * _MAX_PATH);
 
 	fs::path pthExe = szAppPath;
 	auto pthRootFolder = pthExe.parent_path();
