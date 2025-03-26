@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include "stepengine.h"
+#else
+#include "../include/stepengine.h"
+#endif
+
 #include "_geometry.h"
 
 // ************************************************************************************************
@@ -98,10 +104,10 @@ public: // Properties
 
         int64_t iExpressID = internalGetP21Line(sdaiInstance);
         if (iExpressID != 0) {
-            CString strID;
-            strID.Format(_T("#%lld"), iExpressID);
+            wchar_t szBuffer[512];
+            swprintf(szBuffer, 512, L"#%lld", iExpressID);
 
-            strUniqueName = strID;
+            strUniqueName = szBuffer;
             strUniqueName += L" ";
             strUniqueName += getEntityName(sdaiInstance);
         }

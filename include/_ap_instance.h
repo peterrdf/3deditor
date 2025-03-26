@@ -21,11 +21,11 @@ public:  // Methods
         OwlInstance owlInstance = getOwlInstance();
         if (owlInstance == 0) {
             owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
-            ASSERT(owlInstance != 0);
+            assert(owlInstance != 0);
         }
 
         OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
-        ASSERT(owlMatrixInstance != 0);
+        assert(owlMatrixInstance != 0);
 
         vector<double> vecMatrix
         {
@@ -50,7 +50,7 @@ public:  // Methods
             vecMatrix.size());
 
         OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
-        ASSERT(owlTransformationInstance != 0);
+        assert(owlTransformationInstance != 0);
 
         SetObjectProperty(
             owlTransformationInstance,

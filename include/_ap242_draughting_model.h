@@ -37,8 +37,8 @@ public: // Properties
     ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
     const wchar_t* getName() { return m_strName.c_str(); }
 
-    const vector<_ap242_annotation_plane*>& _ap242_draughting_model::getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
-    const vector<_ap242_draughting_callout*> _ap242_draughting_model::getDraughtingCallouts() const { return m_vecDraughtingCallouts; }
+    const vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
+    const vector<_ap242_draughting_callout*> getDraughtingCallouts() const { return m_vecDraughtingCallouts; }
 };
 
 // ************************************************************************************************
