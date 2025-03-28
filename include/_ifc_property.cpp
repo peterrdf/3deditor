@@ -288,7 +288,7 @@ void _ifc_property_provider::loadQuantites(SdaiInstance sdaiElementQuantityInsta
         }
         else {
 #ifdef _WINDOWS
-            TRACE(L"\nTODO: Quantity") //#todo
+            TRACE(L"\nTODO: Quantity"); //#todo
 #endif
         }
     } // for (SdaiInteger iMember = ...
