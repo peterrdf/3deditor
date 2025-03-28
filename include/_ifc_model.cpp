@@ -4,6 +4,12 @@
 #include "_ifc_instance.h"
 #include "_ptr.h"
 
+#ifdef __EMSCRIPTEN__
+#include "../../gisengine/Parsers/_string.h"
+#endif
+
+#include <cfloat>
+
 // ************************************************************************************************
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
@@ -478,7 +484,7 @@ void _ifc_model::getObjectsReferencedStateRecursively(SdaiInstance sdaiInstance)
         getObjectsReferencedStateHasOpenings(sdaiInstance);
     }
     else {
-        ASSERT(!sdaiIsKindOfBN(sdaiInstance, "IFCPRODUCT"));
+        assert(!sdaiIsKindOfBN(sdaiInstance, "IFCPRODUCT"));
     }
 }
 
@@ -540,7 +546,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
         return pGeometry;
     }
 
-    wstring strEntity = (LPWSTR)CA2W(szEntityName);
+    wstring strEntity = (const wchar_t*)CA2W(szEntityName);
     std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
 
     auto pProduct = recognizeMappedItems(sdaiInstance);

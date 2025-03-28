@@ -7,8 +7,13 @@
 #include <iostream>
 using namespace std;
 
+#ifdef _WINDOWS
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
 
 // ************************************************************************************************
 #define NAMEOFVAR(variable) ((decltype(&variable))nullptr, #variable)

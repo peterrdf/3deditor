@@ -3,7 +3,7 @@
 #ifdef _WINDOWS
 #include "stepengine.h"
 #else
-#include "../include/stepengine.h"
+#include "../../include/stepengine.h"
 #endif
 
 #include "_geometry.h"

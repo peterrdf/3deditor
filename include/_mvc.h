@@ -5,6 +5,8 @@
 #include "_texture.h"
 #include "_settings_storage.h"
 
+#include <cfloat>
+
 #include <set>
 #include <string>
 using namespace std;
@@ -89,7 +91,7 @@ public: // Methods
 	_model();
 	virtual ~_model();
 
-	virtual _instance* loadInstance(int64_t /*iInstance*/) PURE;
+	virtual _instance* loadInstance(int64_t /*iInstance*/) = 0;
 
 	template<typename T>
 	T* as()
@@ -107,8 +109,8 @@ public: // Methods
 	static int64_t getNextInstanceID() { return s_iInstanceID++; }
 	static wstring getInstanceName(OwlInstance owlInstance);
 	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
-	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName);
-	static double getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName);
+	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName);
+	static double getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName);
 
 	_texture* getTexture(const wstring& strTexture);
 	virtual _texture* getDefaultTexture() { return nullptr; };
@@ -127,7 +129,7 @@ protected: // Methods
 
 public: // Properties
 
-	virtual OwlModel getOwlModel() const PURE;
+	virtual OwlModel getOwlModel() const = 0;
 
 	const wchar_t* getPath() const { return m_strPath.c_str(); }
 	bool getEnable() const { return m_bEnable; }

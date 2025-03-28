@@ -78,6 +78,7 @@ _model::_model()
 
 		m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
+#ifdef _WINDOWS
 		TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 			m_fXmin,
 			m_fXmax,
@@ -86,6 +87,7 @@ _model::_model()
 			m_fZmin,
 			m_fZmax);
 		TRACE(L"\n*** Scale I, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 	} // if (m_pWorld == nullptr)
 	else {
 		m_dOriginalBoundingSphereDiameter = m_pWorld->getOriginalBoundingSphereDiameter();
@@ -166,6 +168,7 @@ _model::_model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -174,6 +177,7 @@ _model::_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** Scale II, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 }
 
 /*virtual*/ void _model::zoomToInstances(const set<_instance*>& setInstances)
@@ -217,6 +221,7 @@ _model::_model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** zoomToInstances *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -225,6 +230,7 @@ _model::_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** zoomToInstances, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 }
 
 /*virtual*/ void _model::zoomTo(_instance* pInstance)
@@ -267,6 +273,7 @@ _model::_model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** zoomTo *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -275,6 +282,7 @@ _model::_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** zoomTo, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 }
 
 /*virtual*/ void _model::zoomOut()
@@ -322,6 +330,7 @@ _model::_model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** zoomOut *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -330,6 +339,7 @@ _model::_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** zoomOut, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 }
 
 _instance* _model::getInstanceByID(int64_t iID) const
@@ -344,13 +354,14 @@ _instance* _model::getInstanceByID(int64_t iID) const
 
 /*static*/ wstring _model::getInstanceName(OwlInstance owlInstance)
 {
-	CString strName;
-	strName.Format(_T("#%lld"), owlInstance);
+	wchar_t szBuffer[512];
+	swprintf(szBuffer, 512, L"#%lld", owlInstance);
 
+	wstring strName = szBuffer;
 	strName += L" ";
 	strName += getInstanceClassName(owlInstance);
 
-	return (LPCWSTR)strName;
+	return strName;
 }
 
 /*static*/ const wchar_t* _model::getInstanceClassName(OwlInstance owlInstance)
@@ -361,7 +372,7 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return szClassName;
 }
 
-/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, char* szPropertyName)
+/*static*/ int64_t _model::getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName)
 {
 	OwlInstance* piValues = nullptr;
 	int64_t	iCard = 0;
@@ -374,7 +385,7 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? piValues[0] : 0;
 }
 
-/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, char* szPropertyName)
+/*static*/ double _model::getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName)
 {
 	double* pdValues = nullptr;
 	int64_t	iCard = 0;
@@ -429,12 +440,12 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 				double dVertexBuffersOffsetX = -(vecOriginalBBMin.x + vecOriginalBBMax.x) / 2.;
 				double dVertexBuffersOffsetY = -(vecOriginalBBMin.y + vecOriginalBBMax.y) / 2.;
 				double dVertexBuffersOffsetZ = -(vecOriginalBBMin.z + vecOriginalBBMax.z) / 2.;
-
+#ifdef _WINDOWS
 				TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 					dVertexBuffersOffsetX,
 					dVertexBuffersOffsetY,
 					dVertexBuffersOffsetZ);
-
+#endif
 				// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 				SetVertexBufferOffset(
 					getOwlModel(),
@@ -455,12 +466,12 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 			double dVertexBuffersOffsetX = vecVertexBufferOffset.x;
 			double dVertexBuffersOffsetY = vecVertexBufferOffset.y;
 			double dVertexBuffersOffsetZ = vecVertexBufferOffset.z;
-
+#ifdef _WINDOWS
 			TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 				dVertexBuffersOffsetX,
 				dVertexBuffersOffsetY,
 				dVertexBuffersOffsetZ);
-
+#endif
 			// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 			SetVertexBufferOffset(
 				getOwlModel(),
@@ -673,12 +684,14 @@ void _controller::addDecorationModel(_model* pModel)
 
 void _controller::updateDecorationModelsState()
 {
+#ifdef _WINDOWS
 	auto pOGLRenderer = getViewAs<_oglRenderer>();
 	if (pOGLRenderer != nullptr) {
 		showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
 		showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
 		showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
 	}
+#endif
 }
 
 _instance* _controller::loadInstance(int64_t iInstance)
@@ -972,6 +985,7 @@ bool _controller::isInstanceSelected(_instance* pInstance) const
 
 void _controller::saveInstance(OwlInstance owlInstance)
 {
+#ifdef _WINDOWS
 	assert(owlInstance != 0);
 
 	wstring strName = _model::getInstanceName(owlInstance);
@@ -985,7 +999,8 @@ void _controller::saveInstance(OwlInstance owlInstance)
 		return;
 	}
 
-	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName());
+	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName()); 
+#endif
 }
 
 /*virtual*/ void _controller::saveInstance(_instance* pInstance)
@@ -998,7 +1013,7 @@ void _controller::saveInstance(OwlInstance owlInstance)
 /*static*/ wstring _controller::validateFileName(const wchar_t* szFileName)
 {
 	assert((szFileName != nullptr) && (wcslen(szFileName) > 0));
-
+#ifdef _WINDOWS
 	CStringW strValidFileName = szFileName;
 	strValidFileName.Replace(_T("\\"), _T("-"));
 	strValidFileName.Replace(_T("/"), _T("-"));
@@ -1014,6 +1029,9 @@ void _controller::saveInstance(OwlInstance owlInstance)
 	strValidFileName.Replace(_T("\t"), _T("-"));
 
 	return (LPCWSTR)strValidFileName;
+#else
+	return szFileName;
+#endif
 }
 
 /*virtual*/ void _controller::onModelUpdated()
@@ -1061,6 +1079,7 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 
 /*virtual*/ void _controller::onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty)
 {
+#ifdef _WINDOWS
 	auto pOGLRenderer = getViewAs<_oglRenderer>();
 	if (pOGLRenderer != nullptr) {
 		if ((enApplicationProperty == enumApplicationProperty::ShowCoordinateSystem) ||
@@ -1071,6 +1090,7 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 			showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
 		}
 	}
+#endif
 
 	auto itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++) {

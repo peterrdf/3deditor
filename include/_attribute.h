@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include "stepengine.h"
+#else
+#include "../../include/stepengine.h"
+#endif
+
 #include <map>
 #include <vector>
 using namespace std;

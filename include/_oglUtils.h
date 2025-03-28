@@ -11,16 +11,16 @@
 #include "_oglScene.h"
 #include "_quaterniond.h"
 
-#include "glew.h"
+#include "../glew-2.2.0/include/GL/glew.h"
 #ifdef _WINDOWS
 #include "wglew.h"
 #endif
 
-#include "vec3.hpp"
-#include "vec4.hpp"
-#include "mat4x4.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
+#include "../glm/glm/vec3.hpp"
+#include "../glm/glm/vec4.hpp"
+#include "../glm/glm/mat4x4.hpp"
+#include "../glm/glm/gtc/matrix_transform.hpp"
+#include "../glm/glm/gtc/type_ptr.hpp"
 
 #include <chrono>
 #include <ctime>
@@ -2245,7 +2245,7 @@ public: // Methods
 
 protected: // Properties
 
-    virtual _controller* _getController() const PURE;
+    virtual _controller* _getController() const = 0;
 
 public: // Properties
 

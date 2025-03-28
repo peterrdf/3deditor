@@ -1,7 +1,9 @@
 #include "_host.h"
 #include "_rdf_mvc.h"
 
+#ifdef _WINDOWS
 #include "geom.h"
+#endif
 
 #include "_rdf_instance.h"
 #include "_rdf_class.h"
@@ -97,6 +99,7 @@ _rdf_model::_rdf_model()
 
 	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** Scale I *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -105,6 +108,7 @@ _rdf_model::_rdf_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** Scale I, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 
 	// Scale
 	for (auto pGeometry : getGeometries()) {
@@ -180,6 +184,7 @@ _rdf_model::_rdf_model()
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",
 		m_fXmin,
 		m_fXmax,
@@ -188,6 +193,7 @@ _rdf_model::_rdf_model()
 		m_fZmin,
 		m_fZmax);
 	TRACE(L"\n*** Scale II, Bounding sphere *** =>  %.16f", m_fBoundingSphereDiameter);
+#endif
 }
 
 void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
@@ -441,10 +447,12 @@ void _rdf_model::updateVertexBufferOffset()
 	double dVertexBuffersOffsetY = -(dYmin + dYmax) / 2.;
 	double dVertexBuffersOffsetZ = -(dZmin + dZmax) / 2.;
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 		dVertexBuffersOffsetX,
 		dVertexBuffersOffsetY,
 		dVertexBuffersOffsetZ);
+#endif
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
@@ -1047,6 +1055,7 @@ _coordinate_system_model_base::_coordinate_system_model_base()
 	assert(owlModel != 0);
 	assert(pTextBuilder != nullptr);
 
+#ifdef _WINDOWS
 	const double AXIS_LENGTH = 3.5;
 	const double ARROW_OFFSET = AXIS_LENGTH;
 
@@ -1302,6 +1311,7 @@ _coordinate_system_model_base::_coordinate_system_model_base()
 		GetPropertyByName(owlModel, "objects"),
 		vecInstances.data(),
 		vecInstances.size());
+#endif
 }
 
 void _coordinate_system_model_base::create(const wchar_t* szName)
@@ -1377,10 +1387,12 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 	float fWorldZmax = -FLT_MAX;
 	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 		(fWorldXmin + fWorldXmax) / 2.f,
 		(fWorldYmin + fWorldYmax) / 2.f,
 		(fWorldZmin + fWorldZmax) / 2.f);
+#endif
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
@@ -1425,10 +1437,12 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 	float fWorldZmax = -FLT_MAX;
 	m_pController->getWorldDimensions(fWorldXmin, fWorldXmax, fWorldYmin, fWorldYmax, fWorldZmin, fWorldZmax);
 
+#ifdef _WINDOWS
 	TRACE(L"\n*** SetVertexBufferOffset *** => x/y/z: %.16f, %.16f, %.16f",
 		fWorldXmin,
 		fWorldYmin,
 		fWorldZmin);
+#endif
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
 	SetVertexBufferOffset(
@@ -1493,6 +1507,7 @@ _navigator_model::_navigator_model(_controller* pController)
 {
 	assert(pSelectionFramebuffer != nullptr);
 
+#ifdef _WINDOWS
 	double dX = (double)((double)iX - (double)(iWidth - NAVIGATION_VIEW_LENGTH)) * ((double)iBufferSize / (double)NAVIGATION_VIEW_LENGTH);
 	double dY = ((double)(iHeight - (double)iY)) * ((double)iBufferSize / (double)NAVIGATION_VIEW_LENGTH);
 
@@ -1512,6 +1527,7 @@ _navigator_model::_navigator_model(_controller* pController)
 	if (arPixels[3] != 0) {
 		return _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 	}
+#endif
 
 	return 0;
 }
@@ -1520,13 +1536,15 @@ _navigator_model::_navigator_model(_controller* pController)
 {
 	assert(pInstance != 0);
 
+#ifdef _WINDOWS
 	auto pOGLRenderer = m_pController->getViewAs<_oglRenderer>();
 	if (pOGLRenderer == nullptr) {
 		assert(false);
 		return false;
 	}
 
-	wstring strInstanceName = pInstance->getName(); if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label")) {
+	wstring strInstanceName = pInstance->getName(); 
+	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label")) {
 		pOGLRenderer->_setView(enumView::Front);
 	} else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label")) {
 		pOGLRenderer->_setView(enumView::Back);
@@ -1559,6 +1577,7 @@ _navigator_model::_navigator_model(_controller* pController)
 	}
 
 	pOGLRenderer->_redraw();
+#endif
 
 	return true;
 }
@@ -1575,6 +1594,7 @@ void _navigator_model::create()
 
 	m_pTextBuilder->initialize(owlModel);
 
+#ifdef _WINDOWS
 	// Cube (BoundaryRepresentations)
 	{
 		auto pAmbient = GEOM::ColorComponent::Create(owlModel);
@@ -1738,6 +1758,7 @@ void _navigator_model::create()
 			1., 1., 1.);
 		SetNameOfInstance(owlInstance, "#back-bottom-right");
 	}
+#endif
 
 	createLabels(owlModel);
 

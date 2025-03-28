@@ -7,8 +7,13 @@
 #include "CIS2Model.h"
 #endif
 
+#ifdef _WINDOWS
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
 
 #ifdef _USE_LIBZIP
 #include "zip.h"

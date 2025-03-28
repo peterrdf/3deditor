@@ -3,6 +3,10 @@
 #include "_instance.h"
 #include "_oglUtils.h"
 
+#ifdef __EMSCRIPTEN__
+#include "../../gisengine/Parsers/_string.h"
+#endif
+
 // ************************************************************************************************
 /*static*/ unsigned int* _cohort::merge(const vector<_cohort*>& vecCohorts, uint32_t& iIndicesCount)
 {

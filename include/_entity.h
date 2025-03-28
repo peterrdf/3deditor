@@ -1,6 +1,10 @@
 #pragma once
 
-#include "engdef.h"
+#ifdef _WINDOWS
+#include "stepengine.h"
+#else
+#include "../../include/stepengine.h"
+#endif
 
 #include <vector>
 #include <string>

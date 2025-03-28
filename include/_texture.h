@@ -2,13 +2,18 @@
 
 #include <fstream>
 
-#include "glew.h"
+#include "../glew-2.2.0/include/GL/glew.h"
 #include <GL/glu.h>
 
 #include "stb/stb_image.h"
 
+#ifdef _WINDOWS
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
 
 // ************************************************************************************************
 class _texture
@@ -45,6 +50,7 @@ public: // Methods
 
 	bool load(const wchar_t* lpszPathName)
 	{
+#ifdef _WINDOWS
 		fs::path pthFile = lpszPathName;
 		if ((pthFile.extension() == ".jpg") ||
 			(pthFile.extension() == ".jpeg") ||
@@ -93,6 +99,7 @@ public: // Methods
 		} // if (pData != nullptr)
 
 		assert(false); // Unknown file type
+#endif // _WINDOWS
 
 		return false;
 	}

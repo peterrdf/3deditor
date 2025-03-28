@@ -3,10 +3,10 @@
 #ifdef _WINDOWS
 #include "engine.h"
 #else
-#include "../include/engine.h"
+#include "../../include/engine.h"
 #endif
 
-#include "glew.h"
+#include "../glew-2.2.0/include/GL/glew.h"
 #ifdef _WINDOWS
 #include "wglew.h"
 #endif

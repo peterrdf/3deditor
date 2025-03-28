@@ -3,6 +3,10 @@
 #include "_instance.h"
 #include "_ptr.h"
 
+#ifdef __EMSCRIPTEN__
+#include "../../gisengine/Parsers/_string.h"
+#endif
+
 // ************************************************************************************************
 static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
 {
@@ -21,6 +25,7 @@ static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::v
 	return eulerAngles;
 }
 
+#ifdef _WINDOWS
 // ************************************************************************************************
 _oglRendererSettings::_oglRendererSettings()
 	: m_enProjection(enumProjection::Perspective)
@@ -1473,6 +1478,7 @@ void _oglRenderer::_prepare(
 
 void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 {
+#ifdef _WINDOWS
 	assert(m_toolTipCtrl.GetToolCount() <= 1);
 
 	if (m_toolTipCtrl.GetToolCount() == 1) {
@@ -1505,6 +1511,7 @@ void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 	}
 
 	m_toolTipCtrl.Popup();
+#endif
 }
 
 void _oglRenderer::_hideTooltip()
@@ -2972,3 +2979,4 @@ void _oglView::removeUserDefinedMaterials()
 		_redraw();
 	}
 }
+#endif // _WINDOWS

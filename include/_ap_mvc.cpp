@@ -101,7 +101,7 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
     vecGeometries.clear();
 
     SdaiAggr sdaiGroupAggr = xxxxGetEntityAndSubTypesExtentBN(getSdaiModel(), szType);
-    ASSERT(sdaiGroupAggr != nullptr);
+    assert(sdaiGroupAggr != nullptr);
 
     SdaiInteger iInstancesCount = sdaiGetMemberCount(sdaiGroupAggr);
     for (SdaiInteger i = 0; i < iInstancesCount; i++) {

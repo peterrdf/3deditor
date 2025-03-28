@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include "stepengine.h"
+#else
+#include "../../include/stepengine.h"
+#endif
+
 #include "_ptr.h"
 #include "_mvc.h"
 #include "_entity.h"
@@ -59,7 +65,7 @@ public: // Methods
 
 protected: // Methods
 
-    virtual void attachModelCore() PURE;
+    virtual void attachModelCore() = 0;
     virtual void preLoadInstance(OwlInstance owlInstance);
     void addGeometry(_ap_geometry* pGeometry);
 
