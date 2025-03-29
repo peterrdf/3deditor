@@ -10,11 +10,14 @@
 #endif
 
 #include "3DEditorDoc.h"
+
+#include <propkey.h>
+
 #ifdef _GIS_SUPPORT
 #include "gisengine.h"
 #endif
 
-#include <propkey.h>
+#include "bin2gltf.h"
 
 #include "_ptr.h"
 
@@ -51,6 +54,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_INFRAGML, &CMy3DEditorDoc::OnUpdateExportAsInfragml)
 	ON_COMMAND(ID_EXPORT_AS_LANDXML, &CMy3DEditorDoc::OnExportAsLandxml)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_LANDXML, &CMy3DEditorDoc::OnUpdateExportAsLandxml)
+	ON_COMMAND(ID_EXPORT_AS_GLTF, &CMy3DEditorDoc::OnExportAsGltf)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_GLTF, &CMy3DEditorDoc::OnUpdateExportAsGltf)
 END_MESSAGE_MAP()
 
 
@@ -332,4 +337,26 @@ void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 #else
 	pCmdUI->Enable(FALSE);
 #endif
+}
+
+void CMy3DEditorDoc::OnExportAsGltf()
+{
+	fs::path pthInputFile = getModel()->getPath();
+
+	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("gltf"), pthInputFile.wstring().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK) {
+		return;
+	}
+
+	fs::path pthOutputFile = (LPCWSTR)dlgFile.GetPathName();
+
+	SaveAsGLTF(getModel()->getOwlModel(), pthOutputFile.string().c_str(), true);
+}
+
+void CMy3DEditorDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModel() != nullptr);
 }

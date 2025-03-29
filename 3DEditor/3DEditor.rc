@@ -432,6 +432,7 @@ BEGIN
             MENUITEM "CityGML",                     ID_EXPORT_AS_CITYGML
             MENUITEM "InfraGML",                    ID_EXPORT_AS_INFRAGML
             MENUITEM "LandXML",                     ID_EXPORT_AS_LANDXML
+            MENUITEM "glTF",                        ID_EXPORT_AS_GLTF
         END
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
@@ -731,11 +732,14 @@ END
 // 312
 //
 
-IDR_TEXTFILE_VERTEX_SHADER2   312                     "res\\vertex_shader2.txt"
+IDR_TEXTFILE_VERTEX_SHADER2 312                     "res\\vertex_shader2.txt"
+
 IDR_TEXTFILE_FRAGMENT_SHADER2 312                     "res\\fragment_shader2.txt"
 
-IDR_TEXTFILE_VERTEX_SHADER3   312                     "res\\Shader.vert"
+IDR_TEXTFILE_VERTEX_SHADER3 312                     "res\\Shader.vert"
+
 IDR_TEXTFILE_FRAGMENT_SHADER3 312                     "res\\Shader.frag"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
