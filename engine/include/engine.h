@@ -5583,20 +5583,10 @@ static	inline	bool	IsKindOfClass(
 //
 static	inline	bool	IsInstanceOfClass(
 								OwlInstance				owlInstance,
-								OwlClass				owlClass
-							)
-{
-	return	IsKindOfClass(GetInstanceClass(owlInstance), owlClass);
-}
-
-//
-//
-static	inline	bool	IsInstanceOfClass(
-								OwlInstance				owlInstance,
 								const char				* name
 							)
 {
-	return	IsInstanceOfClass(owlInstance, GetClassByName(GetModel(owlInstance), name));
+	return	IsKindOfClass(GetInstanceClass(owlInstance), GetClassByName(GetModel(owlInstance), name));
 }
 
 //
@@ -7085,19 +7075,6 @@ static	inline	bool	GetBoundingBox(
 					nullptr,							//	transformationMatrix
 					startVector,
 					endVector
-				);
-}
-
-//
-//
-static	inline	bool	GetBoundingBox(
-								OwlInstance				owlInstance
-							)
-{
-	return	GetBoundingBox(
-					owlInstance,
-					nullptr,							//	startVector
-					nullptr								//	endVector
 				);
 }
 
