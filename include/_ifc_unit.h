@@ -3,10 +3,10 @@
 
 #ifdef _WINDOWS
 #include "engine.h"
-#include "stepengine.h"
+#include "ifcengine.h"
 #else
 #include "../../include/engine.h"
-#include "../../include/stepengine.h"
+#include "../../include/ifcengine.h"
 #endif
 
 #include <string>

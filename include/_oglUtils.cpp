@@ -2741,19 +2741,17 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 	if (((nFlags & MK_LBUTTON) != MK_LBUTTON) &&
 		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
 		((nFlags & MK_RBUTTON) != MK_RBUTTON)) {
+		BOOL bResult = m_pOGLContext->makeCurrent();
+		VERIFY(bResult);
+
+		CRect rcClient;
+		m_pWnd->GetClientRect(&rcClient);
+
+		int iWidth = rcClient.Width();
+		int iHeight = rcClient.Height();
+
+		_instance* pPointedInstance = nullptr;
 		if (m_pSelectInstanceFrameBuffer->isInitialized()) {
-			int iWidth = 0;
-			int iHeight = 0;
-
-			BOOL bResult = m_pOGLContext->makeCurrent();
-			VERIFY(bResult);
-
-			CRect rcClient;
-			m_pWnd->GetClientRect(&rcClient);
-
-			iWidth = rcClient.Width();
-			iHeight = rcClient.Height();
-
 			GLubyte arPixels[4];
 			memset(arPixels, 0, sizeof(GLubyte) * 4);
 
@@ -2769,45 +2767,46 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 			m_pSelectInstanceFrameBuffer->unbind();
-
-			_instance* pPointedInstance = nullptr;
+			
 			if (arPixels[3] != 0) {
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = getController()->getInstanceByID(iInstanceID);
 				assert(pPointedInstance != nullptr);
-			} else {
-				for (auto pBuffer : m_vecDecorationBuffers) {
-					if (!pBuffer->getModel()->getEnable()) {
-						continue;
-					}
+			}
+		} // if (m_pSelectInstanceFrameBuffer->isInitialized())
 
-					if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
-						continue;
-					}
+		if (pPointedInstance == nullptr) {
+			for (auto pBuffer : m_vecDecorationBuffers) {
+				if (!pBuffer->getModel()->getEnable()) {
+					continue;
+				}
 
-					int64_t iInstanceID = _ptr<_decoration>(pBuffer->getModel())->pointInstance(
-						pBuffer->getSelectInstanceFrameBuffer(),
-						point.x, point.y,
-						iWidth, iHeight,
-						BUFFER_SIZE);
+				if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
+					continue;
+				}
 
-					if (iInstanceID != 0) {
-						pPointedInstance = getController()->getInstanceByID(iInstanceID);
-						assert(pPointedInstance != nullptr);
-					}
+				int64_t iInstanceID = _ptr<_decoration>(pBuffer->getModel())->pointInstance(
+					pBuffer->getSelectInstanceFrameBuffer(),
+					point.x, point.y,
+					iWidth, iHeight,
+					BUFFER_SIZE);
+
+				if (iInstanceID != 0) {
+					pPointedInstance = getController()->getInstanceByID(iInstanceID);
+					assert(pPointedInstance != nullptr);
 				}
 			}
+		} // if (pPointedInstance == nullptr)
 
-			if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr)) {
-				pPointedInstance = pPointedInstance->getOwner();
-			}
+		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr)) {
+			pPointedInstance = pPointedInstance->getOwner();
+		}
 
-			if (m_pPointedInstance != pPointedInstance) {
-				m_pPointedInstance = pPointedInstance;
+		if (m_pPointedInstance != pPointedInstance) {
+			m_pPointedInstance = pPointedInstance;
 
-				_redraw();
-			}
-		} // if (m_pSelectInstanceFrameBuffer->isInitialized())		
+			_redraw();
+		}
 
 		_onMouseMove(point);
 	} // if (((nFlags & MK_LBUTTON) != MK_LBUTTON) && ...

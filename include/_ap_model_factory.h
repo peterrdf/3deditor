@@ -48,11 +48,13 @@ public: // Methods
     {
 #ifdef _USE_LIBZIP
         fs::path pathModel = szModel;
+        string strExtension = pathModel.extension().string();
+        std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
         /*
         * IFCZIP
         */
-        if (pathModel.extension().string() == ".ifczip") {
+        if (strExtension == ".ifczip") {
             auto sdaiModel = openIFCZipModel(pathModel);
             if (sdaiModel == 0) {
                 MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -69,7 +71,7 @@ public: // Methods
         /*
         * STEPGZip
         */
-        if (pathModel.extension().string() == ".stpz") {
+        if (strExtension == ".stpz") {
             auto sdaiModel = openSTEPGZipModel(pathModel);
             if (sdaiModel == 0) {
                 MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
@@ -144,9 +146,24 @@ public: // Methods
 #endif // _CIS2_EXPERIMENTAL
 
         return nullptr;
-    }
+    }    
 
 #ifdef _USE_LIBZIP
+    static vector<_model*> loadIFCZIP(const wchar_t* szIFCZIP)
+    {
+        vector<_model*> vecModels;
+
+        auto vecSdaiModels = openIFCZip(szIFCZIP);
+        for (auto prSdaiModel : vecSdaiModels) {
+            auto pModel = new _ifc_model(vecSdaiModels.size() > 1, false);
+            pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
+
+            vecModels.push_back(pModel);
+        }
+
+        return vecModels;
+    }
+
     // ********************************************************************************************
     // Zip support
     // ********************************************************************************************
@@ -177,6 +194,56 @@ public: // Methods
         zip_close(pZip);
 
         return sdaiModel;
+    }
+
+    // ********************************************************************************************
+    // Zip support
+    // ********************************************************************************************
+    static vector<pair<fs::path, SdaiModel>> openIFCZip(const wchar_t* szIFCZIP)
+    {
+        vector<pair<fs::path, SdaiModel>> vecSdaiModels;
+
+        fs::path pathIfcZip = szIFCZIP;
+
+        int iError = 0;
+        zip* pZip = zip_open(pathIfcZip.string().c_str(), 0, &iError);
+        if (iError != 0) {
+            return vecSdaiModels;
+        }
+
+        {
+            auto iEntries = zip_get_num_entries(pZip, 0);
+            for (auto i = 0; i < iEntries; ++i) {
+                const char* szName = zip_get_name(pZip, i, 0);
+                if (szName == nullptr) {
+                    continue;
+                }
+
+                fs::path pathEntry = szName;
+                string strExtension = pathEntry.extension().string();
+                std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+                if (strExtension != ".ifc") {
+                    continue;
+                }
+
+                struct zip_stat zipStat;
+                zip_stat_init(&zipStat);
+                zip_stat(pZip, pathEntry.string().c_str(), 0, &zipStat);
+
+                g_pZipFile = zip_fopen(pZip, pathEntry.string().c_str(), 0);
+                if (g_pZipFile == nullptr) {
+                    continue;
+                }
+
+                vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, ReadCallBackFunction, "") });
+            }
+        }
+
+        zip_fclose(g_pZipFile);
+        g_pZipFile = nullptr;
+        zip_close(pZip);
+
+        return vecSdaiModels;
     }
 
     // ********************************************************************************************

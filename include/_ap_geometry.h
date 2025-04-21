@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef _WINDOWS
-#include "stepengine.h"
+#include "ifcengine.h"
 #else
-#include "../../include/stepengine.h"
+#include "../../include/ifcengine.h"
 #endif
 
 #include "_geometry.h"
