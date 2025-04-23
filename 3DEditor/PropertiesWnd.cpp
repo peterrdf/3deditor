@@ -2885,11 +2885,11 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 				for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 					CRDFInstanceObjectProperty* pInstanceObjectProperty = nullptr;
 					if (pOwlInstances[iValue] != 0) {
-						auto pInstance2 = getRDFModel()->getInstanceByOwlInstance(pOwlInstances[iValue]);
-						ASSERT(pInstance2 != nullptr);
+						auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(pOwlInstances[iValue]);
+						ASSERT(pObjectPropertyInstance != nullptr);
 
-						pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)pInstance2->getUniqueName(), pProperty->getName(),
-							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance2, pProperty, iValue));
+						pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)pObjectPropertyInstance->getUniqueName(), pProperty->getName(),
+							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 					} else {
 						pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)EMPTY_INSTANCE, pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
