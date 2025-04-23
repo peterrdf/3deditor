@@ -114,13 +114,9 @@ void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInsta
 	_load();
 }
 
-void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* /*pProperty*/)
+void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/)
 {
 	if (pSender == this) {
-		return;
-	}
-
-	if (!pInstance->getEnable()) {
 		return;
 	}
 

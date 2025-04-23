@@ -1763,29 +1763,24 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				* Read the original values
 				*/
 				int64_t iCard = 0;
-				wchar_t** szValue = nullptr;
-				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
+				char** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
-				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
-				ASSERT(iCard > 0);
-
-				wchar_t** szNewValues = (wchar_t**)new size_t[iCard];
+				ASSERT(iCard > 0);				
+				char** szNewValues = new char*[iCard];
 				for (int iValue = 0; iValue < iCard; iValue++) {
-					szNewValues[iValue] = new wchar_t[wcslen(szValue[iValue]) + 1];
-					wcscpy(szNewValues[iValue], szValue[iValue]);
+					szNewValues[iValue] = new char[strlen(szValue[iValue]) + 1];
+					strcpy(szNewValues[iValue], szValue[iValue]);
 				}
 
 				/*
 				* Update the modified value
 				*/
 				delete[] szNewValues[pData->GetCard()];
-				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
-				wcscpy(szNewValues[pData->GetCard()], (LPCWSTR)strValue);
+				szNewValues[pData->GetCard()] = new char[strlen(CW2A(strValue)) + 1];
+				strcpy(szNewValues[pData->GetCard()], CW2A(strValue));
 
-				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
 				SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard);
-				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 				for (int iValue = 0; iValue < iCard; iValue++) {
 					delete[] szNewValues[iValue];
