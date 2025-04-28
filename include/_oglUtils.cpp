@@ -320,7 +320,7 @@ void _oglRendererSettings::_setView(enumView enView)
 	} // switch (enView)
 }
 
-/*virtual*/ void _oglRendererSettings::_oglRendererSettings::saveSetting(const string& strName, const string& strValue)
+/*virtual*/ void _oglRendererSettings::saveSetting(const string& strName, const string& strValue)
 {
 	auto pController = _getController();
 	if (pController != nullptr) {
