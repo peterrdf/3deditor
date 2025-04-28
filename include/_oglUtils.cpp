@@ -1657,6 +1657,13 @@ _oglView::_oglView()
 		}
 		break;
 
+		case enumApplicationProperty::VisibleValuesCountLimit:
+		case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
+		{
+			// NA
+			break;
+		}
+
 		default:
 		{
 			assert(false); // Internal error!

@@ -19,6 +19,8 @@ CRDFController::CRDFController()
 	strSettingsFile += L"\\3DEditor.settings";
 
 	getSettingsStorage()->loadSettings(strSettingsFile);
+
+	loadSettings();
 }
 
 CRDFController::~CRDFController()

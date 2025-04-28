@@ -167,14 +167,18 @@ public: // Methods
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
+protected: // Methods
+
+	void loadSettings();
+
 public: // Properties
 
 	_rdf_property* getSelectedInstanceProperty() const { return m_pSelectedProperty; }
 
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
-	void setVisibleValuesCountLimit(int iNewValue) { m_iVisibleValuesCountLimit = iNewValue; }
+	void setVisibleValuesCountLimit(int iNewValue);
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
-	void setScaleAndCenterAllVisibleGeometry(bool bNewValue) { m_bScaleAndCenterAllVisibleGeometry = bNewValue; }
+	void setScaleAndCenterAllVisibleGeometry(bool bNewValue);
 };
 
 // ************************************************************************************************
