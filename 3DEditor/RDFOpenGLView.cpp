@@ -537,7 +537,6 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 		assert(pGeometry->getInstances().size() == 1);
 
 		auto& vecTriangles = pGeometry->getTriangles();
-		assert(!vecTriangles.empty());
 
 		if (m_iPointedFace == -1) {
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
@@ -1069,8 +1068,6 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	// Selection colors
 	if (m_pPointFaceFrameBuffer->encoding().empty()) {
 		auto& vecTriangles = pGeometry->getTriangles();
-		assert(!vecTriangles.empty());
-
 		for (int64_t iTriangle = 0; iTriangle < (int64_t)vecTriangles.size(); iTriangle++) {
 			float fR, fG, fB;
 			_i64RGBCoder::encode(iTriangle, fR, fG, fB);
@@ -1133,8 +1130,6 @@ void CRDFOpenGLView::DrawFacesFrameBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iIBO);
 
 	auto& vecTriangles = pGeometry->getTriangles();
-	assert(!vecTriangles.empty());
-
 	for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 		auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
