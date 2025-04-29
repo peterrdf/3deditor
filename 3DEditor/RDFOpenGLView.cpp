@@ -651,69 +651,69 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 			// Triangles
 			//
 
-			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+			if ((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size())) {
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+				for (int64_t iIndex = pTriangle->startIndex();
+					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
-			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
-			for (int64_t iIndex = pTriangle->startIndex();
-				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++) {
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // if ((m_iPointedFace >= 0) && ...
 
 			//
 			// Points
 			//
 
-			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecPoints.size()));
+			if ((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecPoints.size())) {
+				auto pPoint = const_cast<_primitives*>(&vecPoints[m_iPointedFace]);
+				for (int64_t iIndex = pPoint->startIndex();
+					iIndex < pPoint->startIndex() + pPoint->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
-			auto pPoint = const_cast<_primitives*>(&vecPoints[m_iPointedFace]);
-			for (int64_t iIndex = pPoint->startIndex();
-				iIndex < pPoint->startIndex() + pPoint->indicesCount();
-				iIndex++) {
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
 
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 3] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 4] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 5] * SCALE_FACTOR);
-
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // if ((m_iPointedFace >= 0) && ...
 		} // else if (m_iPointedFace == -1)
 	} // else if (pSelectedInstance == nullptr)
 
@@ -819,11 +819,11 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 				continue;
 			}
 
-			auto& vecTriangles = pGeometry->getTriangles();
-			if (vecTriangles.empty()) {
-				continue;
-			}
+			//
+			// Triangles
+			//
 
+			auto& vecTriangles = pGeometry->getTriangles();
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
@@ -854,6 +854,42 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
+
+			//
+			// Points
+			//
+
+			auto& vecPoints = pGeometry->getPoints();
+			for (size_t iPoint = 0; iPoint < vecPoints.size(); iPoint++) {
+				auto pPoint = const_cast<_primitives*>(&vecPoints[iPoint]);
+
+				for (int64_t iIndex = pPoint->startIndex();
+					iIndex < pPoint->startIndex() + pPoint->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // for (size_t iPoint = ...
 		} // for (auto pGeometry : ...
 	} // if (pSelectedInstance == nullptr)
 	else {
@@ -861,9 +897,13 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 		assert(pGeometry->getInstances().size() == 1);
 
 		auto& vecTriangles = pGeometry->getTriangles();
-		assert(!vecTriangles.empty());
+		auto& vecPoints = pGeometry->getPoints();
 
 		if (m_iPointedFace == -1) {
+			//
+			// Triangles
+			//
+
 			for (size_t iTriangle = 0; iTriangle < vecTriangles.size(); iTriangle++) {
 				auto pTriangle = const_cast<_primitives*>(&vecTriangles[iTriangle]);
 
@@ -894,38 +934,110 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 					vecVertices.push_back(0.f); // Ty
 				} // for (size_t iIndex = ...
 			} // for (size_t iTriangle = ...
+
+			//
+			// Points
+			//
+
+			for (size_t iPoint = 0; iPoint < vecPoints.size(); iPoint++) {
+				auto pPoint = const_cast<_primitives*>(&vecPoints[iPoint]);
+
+				for (int64_t iIndex = pPoint->startIndex();
+					iIndex < pPoint->startIndex() + pPoint->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // for (size_t iPoint = ...
 		} // if (m_iPointedFace == -1)
 		else {
-			assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
+			//
+			// Triangles
+			//
 
-			auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+			if ((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size())) {
+				auto pTriangle = const_cast<_primitives*>(&vecTriangles[m_iPointedFace]);
+				for (int64_t iIndex = pTriangle->startIndex();
+					iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
 
-			for (int64_t iIndex = pTriangle->startIndex();
-				iIndex < pTriangle->startIndex() + pTriangle->indicesCount();
-				iIndex++) {
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
 
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
 
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
-				vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
-					pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // if ((m_iPointedFace >= 0) && ...
 
-				vecVertices.push_back(0.f); // Nx
-				vecVertices.push_back(0.f); // Ny
-				vecVertices.push_back(0.f); // Nz
-				vecVertices.push_back(0.f); // Tx
-				vecVertices.push_back(0.f); // Ty
-			} // for (size_t iIndex = ...
+			//
+			// Points
+			//
+
+			if ((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecPoints.size())) {
+				auto pPoint = const_cast<_primitives*>(&vecPoints[m_iPointedFace]);
+				for (int64_t iIndex = pPoint->startIndex();
+					iIndex < pPoint->startIndex() + pPoint->indicesCount();
+					iIndex++) {
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1]);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2]);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 0] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 12] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 1] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 13] * SCALE_FACTOR);
+					vecVertices.push_back(pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 2] +
+						pGeometry->getVertices()[(pGeometry->getIndices()[iIndex] * VERTEX_LENGTH) + 14] * SCALE_FACTOR);
+
+					vecVertices.push_back(0.f); // Nx
+					vecVertices.push_back(0.f); // Ny
+					vecVertices.push_back(0.f); // Nz
+					vecVertices.push_back(0.f); // Tx
+					vecVertices.push_back(0.f); // Ty
+				} // for (size_t iIndex = ...
+			} // if ((m_iPointedFace >= 0) && ...
 		} // else if (m_iPointedFace == -1)
 	} // else if (pSelectedInstance == nullptr)
 
