@@ -17,7 +17,8 @@
 #include "gisengine.h"
 #endif
 
-#include "bin2gltf.h"
+#include "_gltf.h"
+#include "_log.h"
 
 #include "_ptr.h"
 
@@ -341,7 +342,7 @@ void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 
 void CMy3DEditorDoc::OnExportAsGltf()
 {
-	fs::path pthInputFile = getModel()->getPath();
+	fs::path pthInputFile = getModels()[0]->getPath();
 
 	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T("gltf"), pthInputFile.wstring().c_str(),
@@ -351,9 +352,11 @@ void CMy3DEditorDoc::OnExportAsGltf()
 		return;
 	}
 
-	fs::path pthOutputFile = (LPCWSTR)dlgFile.GetPathName();
+	_c_log log(nullptr);
 
-	SaveAsGLTF(getModel()->getOwlModel(), pthOutputFile.string().c_str(), true);
+	_gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	exporter.setLog(&log);
+	exporter.execute();
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)

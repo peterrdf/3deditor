@@ -19,6 +19,9 @@
     <Filter Include="include\stb">
       <UniqueIdentifier>{3ecbe9d0-4c86-4a94-9179-01cfb8129e68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="glTF">
+      <UniqueIdentifier>{cb4388bf-a302-4421-9fdb-7b42d6846606}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -180,6 +183,30 @@
     <ClInclude Include="..\include\_oglScene.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_base64.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_errors.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_gltf.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_io.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_log.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_node.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_string.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_time.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -283,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_node.cpp">
+      <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
