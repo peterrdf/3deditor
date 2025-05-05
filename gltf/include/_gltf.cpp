@@ -687,6 +687,9 @@ namespace _gltf
 
 	void _exporter::writeAccessorsProperty()
 	{
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
 		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
 
 		*getOutputStream() << "\n";
@@ -732,18 +735,18 @@ namespace _gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMin()->x / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMin()->y / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMin()->z / dScaleFactor)
+					to_string((pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				*getOutputStream() << "\n";
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string(pNode->getGeometry()->getBBMax()->x / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMax()->y / dScaleFactor),
-						to_string(pNode->getGeometry()->getBBMax()->z / dScaleFactor)
+					to_string((pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*m_pOutputStream << COMMA;
 				writeStringProperty("type", "VEC3");
