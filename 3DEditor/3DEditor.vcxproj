@@ -821,7 +821,6 @@
     <ClInclude Include="..\gltf\include\_base64.h" />
     <ClInclude Include="..\gltf\include\_errors.h" />
     <ClInclude Include="..\gltf\include\_gltf.h" />
-    <ClInclude Include="..\gltf\include\_io.h" />
     <ClInclude Include="..\gltf\include\_log.h" />
     <ClInclude Include="..\gltf\include\_node.h" />
     <ClInclude Include="..\gltf\include\_string.h" />

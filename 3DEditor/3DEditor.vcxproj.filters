@@ -192,9 +192,6 @@
     <ClInclude Include="..\gltf\include\_gltf.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_io.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
     <ClInclude Include="..\gltf\include\_log.h">
       <Filter>glTF</Filter>
     </ClInclude>
