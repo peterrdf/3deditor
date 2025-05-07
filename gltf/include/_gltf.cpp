@@ -1758,9 +1758,7 @@ namespace _gltf
 
 		size_t iMaterialIndex = m_vecMaterials.size();
 
-		const auto& prResult = m_mapMaterials.insert(pair<_material, size_t>(*pMaterial, iMaterialIndex));
-		assert(prResult.second);
-
+		m_mapMaterials.insert(pair<_material, size_t>(*pMaterial, iMaterialIndex));
 		m_vecMaterials.push_back(pMaterial);
 
 		return iMaterialIndex;
