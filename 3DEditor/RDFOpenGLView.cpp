@@ -66,6 +66,10 @@ CRDFOpenGLView::~CRDFOpenGLView()
 		return;
 	}
 
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+
 	_load();
 }
 
@@ -84,6 +88,10 @@ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstanc
 		return;
 	}
 
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+
 	_load();
 }
 
@@ -92,6 +100,10 @@ void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstanc
 	if (pSender == this) {
 		return;
 	}
+
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
 
 	_load();
 }
@@ -102,6 +114,10 @@ void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
 		return;
 	}
 
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+
 	_load();
 }
 
@@ -111,6 +127,10 @@ void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInsta
 		return;
 	}
 
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+
 	_load();
 }
 
@@ -119,6 +139,10 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	if (pSender == this) {
 		return;
 	}
+
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
 
 	_load();
 }
