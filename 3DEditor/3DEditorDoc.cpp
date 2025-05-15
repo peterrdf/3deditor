@@ -19,7 +19,6 @@
 
 #include "_gltf.h"
 #include "_log.h"
-
 #include "_ptr.h"
 
 #ifdef _DEBUG

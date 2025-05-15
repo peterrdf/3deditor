@@ -9,7 +9,8 @@ namespace _err
 	// Arguments
 	const string _pointer = "Invalid pointer.";
 	const string _std_object = "Invalid std object.";
-	const string _argument = "Invalid argument.";	
+	const string _argument = "Invalid argument.";
+	const string _expression = "Expression is FALSE.";
 
 	// File
 	const string _file = "Invalid file.";
@@ -27,6 +28,9 @@ namespace _err
 
 #define THROW_ERROR(message) \
 	throw runtime_error(message)
+
+#define VERIFY_EXPRESSION(expr) \
+	if (!(expr)) THROW_ERROR(_err::_expression)
 
 #define VERIFY_POINTER(pointer) \
 	if (pointer == nullptr) THROW_ERROR(_err::_pointer)

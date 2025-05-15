@@ -6,12 +6,24 @@
 #include <string>
 
 // ************************************************************************************************
-enum class enumLogEvent
+#ifndef STDCALL
+#ifdef _WINDOWS
+#define STDCALL __stdcall
+#else
+#define STDCALL /*nothing*/
+#endif // _WINDOWS
+#endif // STDCALL
+
+// ************************************************************************************************
+enum class enumLogEvent : int
 {
 	info = 0,
 	warning,
 	error,
 };
+
+// ************************************************************************************************
+typedef void(STDCALL* _log_callback)(enumLogEvent enLogEvent, const char* szEvent);
 
 // ************************************************************************************************
 class _log
@@ -31,12 +43,10 @@ public: // Methods
 };
 
 // ************************************************************************************************
-typedef void(__stdcall* _log_callback)(enumLogEvent enLogEvent, const char* szEvent);
-
 class _c_log : public _log
 {
 
-private: // _log_callback
+private: // Members
 
 	_log_callback m_pLogCallback;
 

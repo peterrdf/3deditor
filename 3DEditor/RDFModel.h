@@ -13,6 +13,7 @@ static TCHAR SUPPORTED_FILES[] = _T("BIN Files (*.bin)|*.bin|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
+Wavefront OBJ Files (*.obj)|*.obj|\
 Autocad DXF Files (*.dxf)|*.dxf|\
 All Files (*.*)|*.*||");
 
@@ -45,12 +46,14 @@ public: // Methods
 	void Load(const wchar_t* szPath, bool bAdd);
 
 #ifdef _DXF_SUPPORT
-	void LoadDXF(const wchar_t* szPath);
+	void LoadDXFModel(const wchar_t* szPath);
 #endif
 
 #ifdef _GIS_SUPPORT
 	void LoadGISModel(const wchar_t* szPath);
 #endif	
+
+	void LoadOBJModel(const wchar_t* szPath);
 };
 
 // ************************************************************************************************

@@ -13,6 +13,8 @@
 #include "_dxf_parser.h"
 #endif
 
+#include "_obj.h"
+
 #include <bitset>
 #include <algorithm>
 #include <iostream>
@@ -87,7 +89,9 @@ public: // Methods
 
 #ifdef _DXF_SUPPORT
 		if (strExtension == L".DXF") {
-			m_pModel->LoadDXF(m_szPath);
+			m_pModel->LoadDXFModel(m_szPath);
+		} else if (strExtension == L".OBJ") {
+			m_pModel->LoadOBJModel(m_szPath);
 		}
 #endif
 #ifdef _GIS_SUPPORT
@@ -198,7 +202,7 @@ void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 }
 
 #ifdef _DXF_SUPPORT
-void CRDFModel::LoadDXF(const wchar_t* szPath)
+void CRDFModel::LoadDXFModel(const wchar_t* szPath)
 {
 	try {
 		OwlModel owlModel = CreateModel();
@@ -247,6 +251,40 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 	}
 }
 #endif // _GIS_SUPPORT
+
+void CRDFModel::LoadOBJModel(const wchar_t* szPath)
+{
+	try {
+		wchar_t szAppPath[_MAX_PATH];
+		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+		fs::path pthExe = szAppPath;
+		auto pthRootFolder = pthExe.parent_path();
+		wstring strRootFolder = pthRootFolder.wstring();
+		strRootFolder += L"\\";
+
+		OwlModel owlModel = CreateModel();
+		ASSERT(owlModel != 0);
+
+		_c_log log((_log_callback)LogCallbackImpl);
+
+		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false/*3DEditor*/);
+		exporter.setLog(&log);
+		exporter.execute();
+
+		ImportGISModel(owlModel, CW2A(szPath));
+
+		attachModel(szPath, owlModel);
+	} catch (const std::runtime_error& err) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	} catch (...) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	}
+}
 
 // ************************************************************************************************
 CDefaultModel::CDefaultModel()

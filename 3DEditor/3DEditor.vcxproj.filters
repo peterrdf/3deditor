@@ -22,6 +22,9 @@
     <Filter Include="glTF">
       <UniqueIdentifier>{cb4388bf-a302-4421-9fdb-7b42d6846606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="obj">
+      <UniqueIdentifier>{4d0e0385-dabf-465d-b19d-bc9952c7dd70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -204,6 +207,15 @@
     <ClInclude Include="..\gltf\include\_time.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\obj\_obj.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\_io.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\_reader.h">
+      <Filter>obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -313,6 +325,12 @@
     </ClCompile>
     <ClCompile Include="..\gltf\include\_node.cpp">
       <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_obj.cpp">
+      <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_reader.cpp">
+      <Filter>obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

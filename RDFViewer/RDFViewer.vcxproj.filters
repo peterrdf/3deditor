@@ -138,6 +138,12 @@
     <ClInclude Include="..\include\_text_builder.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\obj\_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\_obj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -226,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_obj.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
