@@ -10,6 +10,7 @@ using namespace std;
 
 // ************************************************************************************************
 static TCHAR SUPPORTED_FILES[] = _T("BIN Files (*.bin)|*.bin|\
+BIN Zip Files (*.binz)|*.binz|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
@@ -51,7 +52,7 @@ public: // Methods
 
 #ifdef _GIS_SUPPORT
 	void LoadGISModel(const wchar_t* szPath);
-#endif	
+#endif
 
 	void LoadOBJModel(const wchar_t* szPath);
 };

@@ -103,39 +103,39 @@ public: // Methods
 			(strExtension == L".JSON")) {
 			m_pModel->LoadGISModel(m_szPath);
 		} else
-#endif		
-		{
-			if (m_bAdd) {
-				m_pModel->importModel(m_szPath);
-			} else {
-				OwlModel owlModel = OpenModelW(m_szPath);
-				if (owlModel) {
-					m_pModel->attachModel(m_szPath, owlModel);
+#endif
+			{
+				if (m_bAdd) {
+					m_pModel->importModel(m_szPath);
+				} else {
+					OwlModel owlModel = OpenModelW(m_szPath);
+					if (owlModel) {
+						m_pModel->attachModel(m_szPath, owlModel);
+					}
 				}
 			}
-		}
 
-		if (m_pModel->getOwlModel() == 0) {
-			CString strError;
-			strError.Format(L"Failed to open '%s'.", m_szPath);
+			if (m_pModel->getOwlModel() == 0) {
+				CString strError;
+				strError.Format(L"Failed to open '%s'.", m_szPath);
 
-			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(2/*error*/, CW2A(strError));
+				if (!TEST_MODE) {
+					if (m_pProgress != nullptr) {
+						m_pProgress->Log(2/*error*/, CW2A(strError));
+					}
+					::MessageBox(
+						::AfxGetMainWnd()->GetSafeHwnd(),
+						strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+				} else {
+					TRACE(L"\nError: %s", (LPCTSTR)strError);
 				}
-				::MessageBox(
-					::AfxGetMainWnd()->GetSafeHwnd(),
-					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
 			} else {
-				TRACE(L"\nError: %s", (LPCTSTR)strError);
-			}
-		} else {
-			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(0/*info*/, "*** Done. ***");
+				if (!TEST_MODE) {
+					if (m_pProgress != nullptr) {
+						m_pProgress->Log(0/*info*/, "*** Done. ***");
+					}
 				}
 			}
-		}
 	}
 };
 

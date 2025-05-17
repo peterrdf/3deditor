@@ -21,10 +21,93 @@
 #include "_log.h"
 #include "_ptr.h"
 
+#include <stdio.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+#ifdef _USE_LIBZIP
+#include "zip.h"
+#include "zlib.h"
+#pragma comment(lib, "libz-static.lib")
+#pragma comment(lib, "libzip-static.lib")
+
+// ************************************************************************************************
+const int ZIP_BUFFER_SIZE = 20000;
+unsigned char ZIP_BUFFER[BUFFER_SIZE + 1] = { 0 };
+
+// ********************************************************************************************
+// Zip support
+// ********************************************************************************************
+static wstring openBINZ(const wchar_t* szBinZip)
+{
+	vector<pair<fs::path, OwlModel>> vecBINModels;
+
+	wstring strBinModel;
+
+	fs::path pathBinZip = szBinZip;
+
+	int iError = 0;
+	zip* pZip = zip_open(pathBinZip.string().c_str(), 0, &iError);
+	if (iError != 0) {
+		return strBinModel;
+	}
+
+	wchar_t lpTempPathBuffer[MAX_PATH];
+	DWORD dwRetVal = GetTempPathW(MAX_PATH, lpTempPathBuffer);
+	if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
+		ASSERT(FALSE);
+		zip_close(pZip);
+		return strBinModel;
+	}
+	fs::path pathTemp = lpTempPathBuffer;
+
+	auto iEntries = zip_get_num_entries(pZip, 0);
+	for (auto i = 0; i < iEntries; ++i) {
+		const char* szName = zip_get_name(pZip, i, 0);
+		if (szName == nullptr) {
+			continue;
+		}
+
+		struct zip_stat zipStat;
+		zip_stat_init(&zipStat);
+		zip_stat(pZip, szName, 0, &zipStat);
+
+		zip_file* pZipFile = zip_fopen(pZip, szName, 0);
+		if (pZipFile == nullptr) {
+			continue;
+		}
+
+		fs::path pathTempFile = pathTemp / szName;
+		FILE* pFile = fopen(pathTempFile.string().c_str(), "wb");
+
+		zip_int64_t iRead = 0;
+		while ((iRead = zip_fread(pZipFile, ZIP_BUFFER, ZIP_BUFFER_SIZE)) > 0) {
+			fwrite(ZIP_BUFFER, sizeof(unsigned char), iRead, pFile);
+		}
+
+		fclose(pFile);
+
+		zip_fclose(pZipFile);
+		pZipFile = nullptr;
+
+		string strExtension = pathTempFile.extension().string();
+		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+		if (strExtension == ".bin") {
+			ASSERT(strBinModel.empty());
+			strBinModel = pathTempFile.wstring();
+		} // if (strExtension == ".bin")	
+	} // for (auto i = ...
+	
+	zip_close(pZip);
+
+	return strBinModel;
+}
+
+#endif // _USE_LIBZIP
+
+// ************************************************************************************************
 /*virtual*/ void CMy3DEditorDoc::_test_LoadModel(LPCTSTR szFileName) /*override*/
 {
 	if (szFileName != nullptr) {
@@ -34,6 +117,7 @@
 	}
 }
 
+// ************************************************************************************************
 // CMy3DEditorDoc
 
 IMPLEMENT_DYNCREATE(CMy3DEditorDoc, CDocument)
@@ -163,10 +247,23 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	auto pModel = new CRDFModel();
-	pModel->Load(lpszPathName, false);
+	fs::path pathPathName = lpszPathName;
+	string strExtension = pathPathName.extension().string();
+	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+	if (strExtension == ".binz") {
+		auto strModel = openBINZ(lpszPathName);
+		if (strModel.empty()) {
+			return FALSE;
+		}
 
-	setModel(pModel);
+		auto pModel = new CRDFModel();
+		pModel->Load(strModel.c_str(), false);
+		setModel(pModel);
+	} else {
+		auto pModel = new CRDFModel();
+		pModel->Load(lpszPathName, false);
+		setModel(pModel);
+	}
 
 	// Title
 	CString strTitle = AfxGetAppName();
