@@ -40,10 +40,8 @@ unsigned char ZIP_BUFFER[ZIP_BUFFER_SIZE + 1] = { 0 };
 // ********************************************************************************************
 // Zip support
 // ********************************************************************************************
-static wstring openBINZ(const wchar_t* szBinZip)
+static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 {
-	vector<pair<fs::path, OwlModel>> vecBINModels;
-
 	wstring strBinModel;
 
 	fs::path pathBinZip = szBinZip;
@@ -80,6 +78,7 @@ static wstring openBINZ(const wchar_t* szBinZip)
 		}
 
 		fs::path pathTempFile = pathTemp / szName;
+		vecTempFiles.push_back(pathTempFile.wstring());
 		FILE* pFile = fopen(pathTempFile.string().c_str(), "wb");
 
 		zip_int64_t iRead = 0;
@@ -251,7 +250,8 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	string strExtension = pathPathName.extension().string();
 	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 	if (strExtension == ".binz") {
-		auto strModel = openBINZ(lpszPathName);
+		vector<wstring> vecTempFiles;
+		auto strModel = openBINZ(lpszPathName, vecTempFiles);
 		if (strModel.empty()) {
 			return FALSE;
 		}
@@ -259,6 +259,11 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		auto pModel = new CRDFModel();
 		pModel->Load(strModel.c_str(), false);
 		setModel(pModel);
+
+		// Cleanup temp files
+		for (auto& strTempFile : vecTempFiles) {
+			fs::remove(strTempFile);
+		}
 	} else {
 		auto pModel = new CRDFModel();
 		pModel->Load(lpszPathName, false);
