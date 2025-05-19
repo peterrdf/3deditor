@@ -871,7 +871,7 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
-			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetInstance()->getOwlInstance(), (void**)&szValue, &iCard);
+			GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 			SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 			ASSERT((iMaxCard == -1) || (iCard < iMaxCard));
