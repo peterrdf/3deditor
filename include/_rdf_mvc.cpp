@@ -1021,7 +1021,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 
 	pInstance->recalculate();
 
-	if (m_bScaleAndCenterAllVisibleGeometry && pInstance->getEnable()) {
+	if (m_bScaleAndCenterAllVisibleGeometry) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();
 		getModel()->scale();
 	}
