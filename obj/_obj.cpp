@@ -33,6 +33,7 @@ namespace _obj2bin
 		, m_vecBRepVertices()
 		, m_vecBRepNormals()
 		, m_vecBRepTextureUVs()
+		, m_vecBReps()
 	{
 		VERIFY_POINTER(szInputFile);
 
@@ -65,6 +66,10 @@ namespace _obj2bin
 		for (auto& itMaterial : m_mapMaterials) {
 			delete itMaterial.second.first;
 		}
+
+		for (auto pBRep : m_vecBReps) {
+			delete pBRep;
+		}
 	}
 
 	/*virtual*/ void _exporter::execute()
@@ -85,82 +90,105 @@ namespace _obj2bin
 		// BRep
 		//
 
-		int64_t iIndex = 0;
-		for (size_t iFace = 0; iFace < m_vecFaces.size(); iFace++) {
-			vector<string> vecTokens;
-			_string::split(m_vecFaces[iFace], " ", vecTokens, false);
-			VERIFY_EXPRESSION(vecTokens.size() == 4);
-
-			for (size_t iFaceVertex = 1; iFaceVertex < vecTokens.size(); iFaceVertex++) {
-				vector<string> vecFaceVertex;
-				_string::split(vecTokens[iFaceVertex], "/", vecFaceVertex, false);
-				VERIFY_EXPRESSION(vecFaceVertex.size() >= 2);
-
-				m_vecBRepIndices.push_back(iIndex++);
-
-				long iVertexIndex = atol(vecFaceVertex[0].c_str()) - 1;
-				m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 0]);
-				m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 1]);
-				m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 2]);
-
-				if (!m_vecTextureUVs.empty()) {
-					long iUVIndex = atol(vecFaceVertex[1].c_str()) - 1;
-					m_vecBRepTextureUVs.push_back(m_vecTextureUVs[(iUVIndex * 2) + 0]);
-					m_vecBRepTextureUVs.push_back(m_vecTextureUVs[(iUVIndex * 2) + 1]);
-				}
-
-				if (!m_vecNormals.empty()) {
-					long iNormalIndex = atol(vecFaceVertex[2].c_str()) - 1;
-					m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 0]);
-					m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 1]);
-					m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 2]);
-				}				
-			}
-
-			m_vecBRepIndices.push_back(-1);
-		} // for (size_t iFace = ...
+		if (m_vecBReps.empty()) {
+			string strError = "No faces found in OBJ file: '";
+			strError += m_strInputFile;
+			strError += "'";
+			getLog()->logWrite(enumLogEvent::error, strError);
+			return;
+		}
 
 		if (m_owlModel == 0) {
 			m_owlModel = CreateModel();
 			assert(m_owlModel != 0);
-		}		
-
-		OwlInstance owlBRepInstance = CreateInstance(GetClassByName(m_owlModel, "BoundaryRepresentation"));
-		VERIFY_INSTANCE(owlBRepInstance);
-
-		SetDatatypeProperty(
-			owlBRepInstance,
-			GetPropertyByName(m_owlModel, "indices"),
-			m_vecBRepIndices.data(),
-			m_vecBRepIndices.size());
-
-		SetDatatypeProperty(
-			owlBRepInstance,
-			GetPropertyByName(m_owlModel, "vertices"),
-			m_vecBRepVertices.data(),
-			m_vecBRepVertices.size());
-
-		if (!m_vecBRepNormals.empty()) {
-			SetDatatypeProperty(
-				owlBRepInstance,
-			GetPropertyByName(m_owlModel, "normalCoordinates"),
-				m_vecBRepNormals.data(),
-				m_vecBRepNormals.size());
 		}
-		
-		if (!m_vecBRepTextureUVs.empty()) {
+
+		for (size_t iBRep = 0; iBRep < m_vecBReps.size(); iBRep++) {
+			auto pBRep = m_vecBReps[iBRep];
+			VERIFY_POINTER(pBRep);
+
+			if (pBRep->faces().empty()) {
+				getLog()->logWrite(enumLogEvent::warning, "Unused material.");
+				continue;
+			}
+
+			m_vecBRepIndices.clear();
+			m_vecBRepVertices.clear();
+			m_vecBRepNormals.clear();
+			m_vecBRepTextureUVs.clear();
+
+			int64_t iIndex = 0;
+			for (size_t iFace = 0; iFace < pBRep->faces().size(); iFace++) {
+				vector<string> vecTokens;
+				_string::split(pBRep->faces()[iFace], " ", vecTokens, false);
+				VERIFY_EXPRESSION(vecTokens.size() == 4);
+
+				for (size_t iFaceVertex = 1; iFaceVertex < vecTokens.size(); iFaceVertex++) {
+					vector<string> vecFaceVertex;
+					_string::split(vecTokens[iFaceVertex], "/", vecFaceVertex, false);
+					VERIFY_EXPRESSION(vecFaceVertex.size() >= 2);
+
+					m_vecBRepIndices.push_back(iIndex++);
+
+					long iVertexIndex = atol(vecFaceVertex[0].c_str()) - 1;
+					m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 0]);
+					m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 1]);
+					m_vecBRepVertices.push_back(m_vecVertices[(iVertexIndex * 3) + 2]);
+
+					if (!m_vecTextureUVs.empty()) {
+						long iUVIndex = atol(vecFaceVertex[1].c_str()) - 1;
+						m_vecBRepTextureUVs.push_back(m_vecTextureUVs[(iUVIndex * 2) + 0]);
+						m_vecBRepTextureUVs.push_back(m_vecTextureUVs[(iUVIndex * 2) + 1]);
+					}
+
+					if (!m_vecNormals.empty()) {
+						long iNormalIndex = atol(vecFaceVertex[2].c_str()) - 1;
+						m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 0]);
+						m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 1]);
+						m_vecBRepNormals.push_back(m_vecNormals[(iNormalIndex * 3) + 2]);
+					}
+				}
+
+				m_vecBRepIndices.push_back(-1);
+			} // for (size_t iFace = ...
+
+			OwlInstance owlBRepInstance = CreateInstance(GetClassByName(m_owlModel, "BoundaryRepresentation"));
+			VERIFY_INSTANCE(owlBRepInstance);
+
 			SetDatatypeProperty(
 				owlBRepInstance,
-				GetPropertyByName(m_owlModel, "textureCoordinates"),
-				m_vecBRepTextureUVs.data(),
-				m_vecBRepTextureUVs.size());
-		}		
+				GetPropertyByName(m_owlModel, "indices"),
+				m_vecBRepIndices.data(),
+				m_vecBRepIndices.size());
 
-		SetObjectProperty(
-			owlBRepInstance, 
-			GetPropertyByName(m_owlModel, 
-				"material"), 
-			getMaterialInstance());
+			SetDatatypeProperty(
+				owlBRepInstance,
+				GetPropertyByName(m_owlModel, "vertices"),
+				m_vecBRepVertices.data(),
+				m_vecBRepVertices.size());
+
+			if (!m_vecBRepNormals.empty()) {
+				SetDatatypeProperty(
+					owlBRepInstance,
+					GetPropertyByName(m_owlModel, "normalCoordinates"),
+					m_vecBRepNormals.data(),
+					m_vecBRepNormals.size());
+			}
+
+			if (!m_vecBRepTextureUVs.empty()) {
+				SetDatatypeProperty(
+					owlBRepInstance,
+					GetPropertyByName(m_owlModel, "textureCoordinates"),
+					m_vecBRepTextureUVs.data(),
+					m_vecBRepTextureUVs.size());
+			}
+
+			SetObjectProperty(
+				owlBRepInstance,
+				GetPropertyByName(m_owlModel,
+					"material"),
+				getMaterialInstance(iBRep));
+		} // for (size_t iBRep = ...
 
 		SaveModel(m_owlModel, m_strOutputFile.c_str());
 	}
@@ -213,7 +241,8 @@ namespace _obj2bin
 			_string::split(strLine, " ", vecTokens, false);
 			VERIFY_EXPRESSION(vecTokens.size() == 2);
 
-			m_vecMaterials.push_back(vecTokens[1]); //#todo: multiple materials
+			m_vecMaterials.push_back(vecTokens[1]);
+			m_vecBReps.push_back(new _brep());
 		} else if (strLine.find("v ") == 0) {
 			// Vertex
 			_string::split(strLine, " ", vecTokens, false);
@@ -238,8 +267,17 @@ namespace _obj2bin
 			m_vecNormals.push_back(atof(vecTokens[2].c_str()));
 			m_vecNormals.push_back(atof(vecTokens[3].c_str()));
 		} else if (strLine.find("f ") == 0) {
+			if (m_vecMaterials.empty()) {
+				m_vecMaterials.push_back("---default---");
+				m_vecBReps.push_back(new _brep());
+
+				string strError = "Face without material: '";
+				strError += strLine;
+				strError += "'";
+				getLog()->logWrite(enumLogEvent::error, strError);
+			}
 			// Faces
-			m_vecFaces.push_back(strLine);
+			m_vecBReps.back()->faces().push_back(strLine);
 		} else {
 			string strWarning = "Not support element: '"; 
 			strWarning += strLine.substr(0, 10);
@@ -411,13 +449,13 @@ namespace _obj2bin
 		return m_iDefaultMaterialInstance;
 	}
 
-	OwlInstance _exporter::getMaterialInstance()
+	OwlInstance _exporter::getMaterialInstance(size_t iIndex)
 	{
 		if (m_vecMaterials.empty()) {
 			return getDefaultMaterialInstance();
 		}
 
-		auto itMaterial = m_mapMaterials.find(m_vecMaterials.back());
+		auto itMaterial = m_mapMaterials.find(m_vecMaterials[iIndex]);
 		if (itMaterial == m_mapMaterials.end()) {
 			string stError = "Unknown material: '";
 			stError += m_vecMaterials.back();
