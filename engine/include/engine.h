@@ -504,7 +504,7 @@ static	inline	const wchar_t	* GetAssertionFileW(
 //
 //				int64_t					returns								OUT
 //
-//	This call defines how characters for names, strings will be serializaed and how
+//	This call defines how characters for names, strings will be serialized and how
 //	they are expected to be serialized. An exception are the Open / Import / Save calls,
 //	these calls have a fixed way of serialization of path / file names.
 //
@@ -1676,7 +1676,7 @@ int64_t			DECL STDC	SaveModelA(
 //	Available formats
 //		RDF
 //		TTL
-//		BIN/L - readible but large BIN format
+//		BIN/L - readable but large BIN format
 //		BIN/S - Optimized Binary, only running within given revision 
 //		BIN/X - Optimized Binary, running in all revisions supporting BIN/X
 //
