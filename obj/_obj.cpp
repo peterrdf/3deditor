@@ -225,6 +225,10 @@ namespace _obj2bin
 
 	void _exporter::processOBJLine(const string& strLine)
 	{
+		if (strLine.empty()) {
+			return;
+		}
+
 		vector<string> vecTokens;
 
 		if (strLine.find("#") == 0) {
@@ -246,7 +250,7 @@ namespace _obj2bin
 		} else if (strLine.find("v ") == 0) {
 			// Vertex
 			_string::split(strLine, " ", vecTokens, false);
-			VERIFY_EXPRESSION(vecTokens.size() == 4);
+			VERIFY_EXPRESSION(vecTokens.size() >= 4); // MeshLab 
 
 			m_vecVertices.push_back(atof(vecTokens[1].c_str()));
 			m_vecVertices.push_back(atof(vecTokens[2].c_str()));
@@ -363,10 +367,12 @@ namespace _obj2bin
 
 						strMaterial = "";
 					} else {
-						string strWarning = "Not support element: '";
-						strWarning += strLine.substr(0, 10);
-						strWarning += "...'";
-						getLog()->logWrite(enumLogEvent::warning, strWarning);
+						if (!strLine.empty()) {
+							string strWarning = "Not support element: '";
+							strWarning += strLine.substr(0, 10);
+							strWarning += "...'";
+							getLog()->logWrite(enumLogEvent::warning, strWarning);
+						}
 					}
 					
 					strLine = "";
