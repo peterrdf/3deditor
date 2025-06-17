@@ -405,18 +405,29 @@ _texture* _model::getTexture(const wstring& strTexture)
 			return m_mapTextures.at(strTexture);
 		}
 
-		fs::path pthFile = m_strPath;
-		fs::path pthTexture = pthFile.parent_path();
-		pthTexture.append(strTexture);
-
-		if (fs::exists(pthTexture)) {
-			auto pTexture = new _texture();
-			pTexture->load(pthTexture.wstring().c_str());
-
-			m_mapTextures[strTexture] = pTexture;
-
-			return pTexture;
+		fs::path pthTexture = strTexture;
+		if (!fs::exists(pthTexture)) {
+			fs::path pthFile = m_strPath;
+			pthTexture = pthFile.parent_path();
+			pthTexture.append(strTexture);
 		}
+
+		_texture* pTexture = NULL;
+		if (fs::exists(pthTexture)) {
+			pTexture = new _texture();
+			if (!pTexture->load(pthTexture.wstring().c_str())) {
+				delete pTexture;
+				pTexture = NULL;
+				AfxMessageBox(CString(L"Failed to read texture path: ") + pthTexture.c_str(), MB_ICONEXCLAMATION);
+			}
+		}
+		else {
+			AfxMessageBox(CString(L"Texture file not found: ") + pthTexture.c_str(), MB_ICONEXCLAMATION);
+		}
+
+		m_mapTextures[strTexture] = pTexture;
+		return pTexture;
+
 	} // if (!m_strModel.empty())
 
 	return getDefaultTexture();
