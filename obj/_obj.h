@@ -21,6 +21,9 @@ using namespace std;
 namespace _obj2bin
 {
 	// ********************************************************************************************
+	class _brep; // Forward declaration
+
+	// ********************************************************************************************
 	class _exporter : public _log_client
 	{
 
@@ -48,11 +51,13 @@ namespace _obj2bin
 		vector<double> m_vecTextureUVs;
 		vector<string> m_vecFaces;
 
-		// BRep
+		// BRep (Temp)
 		vector<int64_t> m_vecBRepIndices;
 		vector<double> m_vecBRepVertices;
 		vector<double> m_vecBRepNormals;
 		vector<double> m_vecBRepTextureUVs;
+
+		vector<_brep*> m_vecBReps;
 
 	public: // Methods
 
@@ -78,7 +83,23 @@ namespace _obj2bin
 		OwlInstance createColorComponentInstance(double dR, double dG, double dB);
 		void createDefaultMaterial();
 		OwlInstance getDefaultMaterialInstance();
-		OwlInstance getMaterialInstance();
+		OwlInstance getMaterialInstance(size_t iIndex);
+	};
+
+	// ********************************************************************************************
+	class _brep
+	{
+
+	private: // Fields
+
+		vector<string> m_vecFaces;
+
+	public: // Methods
+		_brep()
+			: m_vecFaces()
+		{}
+
+		vector<string>& faces() { return m_vecFaces; }
 	};
 };
 
