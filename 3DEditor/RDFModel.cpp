@@ -14,6 +14,7 @@
 #endif
 
 #include "_obj.h"
+#include "W:\DevArea\RDF\RDFApps\ImportPLY\RDFImportPLY.h"
 
 #include <bitset>
 #include <algorithm>
@@ -177,6 +178,15 @@ public: // Methods
 			m_pModel->LoadGISModel(m_szPath);
 		} else
 #endif
+		if (strExtension == L".PLY") {
+			CStringA filePath(m_szPath);
+			char errors[512];
+			auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), NULL, NULL, errors);
+			CString err(errors);
+			CString msg;
+			msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"not imorted", err.IsEmpty() ? L"without issues" : L"", err.GetString());
+			AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
+		}
 			{
 				if (m_bAdd) {
 					m_pModel->importModel(m_szPath);

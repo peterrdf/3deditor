@@ -16,6 +16,7 @@ CityGML Files (*.gml;*citygml)|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
 Wavefront OBJ Files (*.obj)|*.obj|\
 Autocad DXF Files (*.dxf)|*.dxf|\
+Polygon File Format (*.ply)|*.ply|\
 All Files (*.*)|*.*||");
 
 // ************************************************************************************************
