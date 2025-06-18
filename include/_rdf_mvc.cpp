@@ -1026,7 +1026,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 
 		for (auto owlInstance : vecAncestors) {
 			auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
-			if (pAncestorInstance) {
+			if (pAncestorInstance != nullptr) {
 				pAncestorInstance->recalculate(true);
 			}
 		}

@@ -400,24 +400,19 @@ _instance* _model::getInstanceByID(int64_t iID) const
 
 /*static*/ void _model::getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors)
 {
-	bool bContinue = false;
-
 	OwlInstance owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
 	while (owlInverseReferenceInstance != 0) {
 		if (find(
 			vecAncestors.begin(),
 			vecAncestors.end(),
-			owlInverseReferenceInstance) == vecAncestors.end()) {
-			vecAncestors.push_back(owlInverseReferenceInstance);
-			bContinue = true;
-			break;
+			owlInverseReferenceInstance) != vecAncestors.end()) {
+			break; // already exists			
 		}
+		vecAncestors.push_back(owlInverseReferenceInstance);
+
+		getInstanceAncestors(owlInverseReferenceInstance, vecAncestors);
 
 		owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, owlInverseReferenceInstance);
-	}
-
-	if (bContinue) {
-		getInstanceAncestors(vecAncestors.back(), vecAncestors);
 	}
 }
 
