@@ -17,7 +17,7 @@
 #include "gisengine.h"
 #endif
 
-#include "_gltf.h"
+#include "_bin2gltf.h"
 #include "_log.h"
 #include "_ptr.h"
 
@@ -455,7 +455,7 @@ void CMy3DEditorDoc::OnExportAsGltf()
 
 	_c_log log(nullptr);
 
-	_gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	_bin2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 	exporter.setLog(&log);
 	exporter.execute();
 }

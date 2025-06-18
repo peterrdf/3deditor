@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "_gltf.h"
+#include "_bin2gltf.h"
 
 #include "_base64.h"
 
 // ************************************************************************************************
-namespace _gltf
+namespace _bin2gltf
 {
 	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
 		: _log_client()
