@@ -297,10 +297,10 @@ namespace _eng
 
 			vector<OwlInstance> vecNodeInstances;
 			for (size_t iChild = 0; iChild < pChildrenValue->getValues().size(); iChild++) {
-				OwlInstance iNodeInstance = createNodeInstance(pChildrenValue->getValues()[iChild]->as<_json::_simple>());
-				VERIFY_INSTANCE(iNodeInstance);
+				OwlInstance iChildNodeInstance = createNodeInstance(pChildrenValue->getValues()[iChild]->as<_json::_simple>());
+				VERIFY_INSTANCE(iChildNodeInstance);
 
-				vecNodeInstances.push_back(iNodeInstance);
+				vecNodeInstances.push_back(iChildNodeInstance);
 			}
 
 			SetObjectProperty(
@@ -1156,10 +1156,10 @@ namespace _eng
 				VERIFY_POINTER(pBufferObject);
 
 				// byteLength
-				auto pByteLengthValue = pBufferObject->getPropertyValueAs<_json::_simple>("byteLength");
+				/*auto pByteLengthValue = pBufferObject->getPropertyValueAs<_json::_simple>("byteLength");
 				VERIFY_POINTER(pByteLengthValue);
 
-				int iByteLength = atoi(pByteLengthValue->getValue().c_str());
+				int iByteLength = atoi(pByteLengthValue->getValue().c_str());*/
 
 				// uri
 				strURI = getURI(pBufferObject);
@@ -1182,7 +1182,7 @@ namespace _eng
 			auto pTargetValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("target");
 			if (pTargetValue != nullptr) {
 				int iTarget = atoi(pTargetValue->getValue().c_str());
-				assert(iTarget == 34963/*ELEMENT_ARRAY_BUFFER*/);
+				VERIFY_EXPRESSION(iTarget == 34963/*ELEMENT_ARRAY_BUFFER*/);
 			}
 		}
 		// bufferView		
@@ -1282,10 +1282,10 @@ namespace _eng
 				VERIFY_POINTER(pBufferObject);
 
 				// byteLength
-				auto pByteLengthValue = pBufferObject->getPropertyValueAs<_json::_simple>("byteLength");
+				/*auto pByteLengthValue = pBufferObject->getPropertyValueAs<_json::_simple>("byteLength");
 				VERIFY_POINTER(pByteLengthValue);
 
-				int iByteLength = atoi(pByteLengthValue->getValue().c_str());
+				int iByteLength = atoi(pByteLengthValue->getValue().c_str());*/
 
 				// uri
 				strURI = getURI(pBufferObject);
@@ -1308,7 +1308,7 @@ namespace _eng
 			auto pTargetValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("target");
 			if (pTargetValue != nullptr) {
 				int iTarget = atoi(pTargetValue->getValue().c_str());
-				assert(iTarget == 34962/*ARRAY_BUFFER*/);
+				VERIFY_EXPRESSION(iTarget == 34962/*ARRAY_BUFFER*/);
 			}
 		}
 		// bufferView		
@@ -1324,7 +1324,7 @@ namespace _eng
 		auto pComponentTypeValue = pPositionAccessorObject->getPropertyValueAs<_json::_simple>("componentType");
 		if (pComponentTypeValue != nullptr) {
 			int iComponentType = atoi(pComponentTypeValue->getValue().c_str());
-			assert(iComponentType == 5126/*FLOAT*/);
+			VERIFY_EXPRESSION(iComponentType == 5126/*FLOAT*/);
 		}
 
 		// type
