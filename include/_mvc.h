@@ -111,6 +111,7 @@ public: // Methods
 	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
 	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName);
 	static double getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName);
+	static void getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors);
 
 	_texture* getTexture(const wstring& strTexture);
 	virtual _texture* getDefaultTexture() { return nullptr; };

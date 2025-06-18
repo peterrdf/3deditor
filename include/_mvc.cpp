@@ -398,6 +398,29 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? pdValues[0] : 0.;
 }
 
+/*static*/ void _model::getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors)
+{
+	bool bContinue = false;
+
+	OwlInstance owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
+	while (owlInverseReferenceInstance != 0) {
+		if (find(
+			vecAncestors.begin(),
+			vecAncestors.end(),
+			owlInverseReferenceInstance) == vecAncestors.end()) {
+			vecAncestors.push_back(owlInverseReferenceInstance);
+			bContinue = true;
+			break;
+		}
+
+		owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, owlInverseReferenceInstance);
+	}
+
+	if (bContinue) {
+		getInstanceAncestors(vecAncestors.back(), vecAncestors);
+	}
+}
+
 _texture* _model::getTexture(const wstring& strTexture)
 {
 	if (!m_strPath.empty()) {

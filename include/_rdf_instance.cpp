@@ -24,11 +24,21 @@ _rdf_instance::_rdf_instance(int64_t iID, _geometry* pGeometry, _matrix4x3* pTra
 	}
 }
 
-void _rdf_instance::recalculate()
+void _rdf_instance::recalculate(bool bForce/* = false*/)
 {
+	// Recalculate
+	if (bForce)
+	{
+		getGeometryAs<_rdf_geometry>()->recalculate();
+		m_bNeedsRefresh = false;
+
+		return;
+	}
+
+	// Recalculate if Enabled
 	if (!getEnable())
 	{
-		// Reloading on demand
+		// Recalculate on demand
 		m_bNeedsRefresh = true;
 
 		return;
