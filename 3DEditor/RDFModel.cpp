@@ -291,10 +291,10 @@ void CRDFModel::LoadGLTFModel(const wchar_t* szPath)
 		_gltf2bin::_exporter exporter(CW2A(szPath), pthOutputFile.string().c_str());
 		exporter.setLog(&log);
 		exporter.execute(false);
-		if (exporter.getOwlModel() == 0) {
+		if (exporter.getOwlModel(false) == 0) {
 			throw std::runtime_error("Failed to load GLTF model.");
 		}
-		attachModel(szPath, exporter.getOwlModel());
+		attachModel(szPath, exporter.getOwlModel(true));
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),

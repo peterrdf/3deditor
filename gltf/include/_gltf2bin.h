@@ -37,7 +37,14 @@ namespace _gltf2bin
 
 		void execute(bool bSaveFile);
 
-		OwlModel getOwlModel() const {
+		OwlModel getOwlModel(bool bDetach) {
+			if (bDetach) {
+				OwlModel owlModel = m_iModel;
+				m_iModel = 0; // Detach the model
+
+				return owlModel;
+			}
+
 			return m_iModel;
 		}
 	};
