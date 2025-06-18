@@ -216,6 +216,36 @@
     <ClInclude Include="..\obj\_reader.h">
       <Filter>obj</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_glb_importer.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_gltf_importer.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_gltf_importer_t.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_json_importer_t.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_gltf2bin.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_json.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_schema_storage.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_serialization.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_settings_storage.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_net.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -331,6 +361,30 @@
     </ClCompile>
     <ClCompile Include="..\obj\_reader.cpp">
       <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_glb_importer.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf_importer.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf_importer_t.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_json_importer_t.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf2bin.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_json.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_serialization.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_net.cpp">
+      <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

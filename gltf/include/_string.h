@@ -1,9 +1,13 @@
 #pragma once
 
+#include <locale>
+#include <codecvt>
 #include <string>
 #include <vector>
 #include <algorithm> 
 #include <functional>
+#include <cwchar>
+#include <uchar.h>
 using namespace std;
 
 #include <assert.h>
@@ -16,26 +20,26 @@ class _string
 
 public: //  Methods
 		
-	static inline void ltrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+	static inline void ltrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
 	static inline void ltrim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
-	static inline void rtrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+	static inline void rtrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
 
 	static inline void rtrim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
@@ -57,7 +61,7 @@ public: //  Methods
 
 	static inline void trim(string& strInput, char cToTrim)
 	{
-		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		rtrim(strInput, fnTrim);
 		ltrim(strInput, fnTrim);
@@ -86,8 +90,14 @@ public: //  Methods
 
 	static inline void toUpper(string& strInput)
 	{
-		std::transform(strInput.begin(), strInput.end(), strInput.begin(),
-			[](unsigned char c) { return (unsigned char)std::toupper(c); });
+		transform(strInput.begin(), strInput.end(), strInput.begin(),
+			[](unsigned char c) { return (unsigned char)toupper(c); });
+	}
+
+	static inline void toLower(string& strInput)
+	{
+		transform(strInput.begin(), strInput.end(), strInput.begin(),
+			[](unsigned char c) { return (unsigned char)tolower(c); });
 	}
 
 	static inline bool equal(const string& strInput1, const string& strInput2, bool bIgnoreCase)
@@ -259,11 +269,11 @@ public: //  Methods
 		{
 			trim(vecTokens);
 
-			auto isEmptyOrBlank = [](const std::string& s) {
-				return s.find_first_not_of(" \t") == std::string::npos;
+			auto isEmptyOrBlank = [](const string& s) {
+				return s.find_first_not_of(" \t") == string::npos;
 			};
 
-			vecTokens.erase(std::remove_if(vecTokens.begin(), vecTokens.end(), isEmptyOrBlank), vecTokens.end());
+			vecTokens.erase(remove_if(vecTokens.begin(), vecTokens.end(), isEmptyOrBlank), vecTokens.end());
 		}		
 	}
 
@@ -288,8 +298,12 @@ public: //  Methods
 	static inline string format(const char* szInput, Arguments... args)
 	{
 		char szBuffer[1024];
-		sprintf_s(szBuffer, 1024, szInput, args...);
 
+#ifdef _WINDOWS
+		sprintf_s(szBuffer, 1024, szInput, args...);
+#else
+		sprintf(szBuffer, szInput, args...);
+#endif		
 		return szBuffer;
 	}
 
@@ -297,25 +311,135 @@ public: //  Methods
 	static inline string sformat(const string& strInput, Arguments... args)
 	{
 		char szBuffer[1024];
-		sprintf_s(szBuffer, 1024, strInput.c_str(), args...);
 
+#ifdef _WINDOWS
+		sprintf_s(szBuffer, 1024, strInput.c_str(), args...);
+#else
+		sprintf(szBuffer, strInput.c_str(), args...);
+#endif
 		return szBuffer;
 	}
 
-	static inline bool isInteger(const std::string& strInput)
+	static inline bool isInteger(const string& strInput)
 	{
 		return !strInput.empty() && 
-			std::find_if(strInput.begin(),
+			find_if(strInput.begin(),
 			strInput.end(), 
-			[](unsigned char c) { return !std::isdigit(c); }) == strInput.end();
+			[](unsigned char c) { return !isdigit(c); }) == strInput.end();
 	}
 
-	static inline bool isXInteger(const std::string& strInput)
+	static inline bool isXInteger(const string& strInput)
 	{
 		return !strInput.empty() &&
-			std::find_if(strInput.begin(),
+			find_if(strInput.begin(),
 				strInput.end(),
-				[](unsigned char c) { return !std::isxdigit(c); }) == strInput.end();
+				[](unsigned char c) { return !isxdigit(c); }) == strInput.end();
 	}
 };
 
+// ************************************************************************************************
+static wstring utf8_to_wstring(const char* szInput)
+{
+	assert(szInput != nullptr);
+
+	return wstring_convert<codecvt_utf8_utf16<wchar_t>>().from_bytes(szInput);
+}
+
+// ************************************************************************************************
+static string wstring_to_utf8(const wchar_t* szInput)
+{
+	assert(szInput != nullptr);
+
+	return wstring_convert<codecvt_utf8_utf16<wchar_t>>().to_bytes(szInput);
+}
+
+// ************************************************************************************************
+typedef string u8string;
+
+static u8string To_UTF8(const u16string& s)
+{
+	wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> conv;
+	return conv.to_bytes(s);
+}
+
+static u8string To_UTF8(const u32string& s)
+{
+	wstring_convert<codecvt_utf8<char32_t>, char32_t> conv;
+	return conv.to_bytes(s);
+}
+
+static u16string To_UTF16(const u8string& s)
+{
+	wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> conv;
+	return conv.from_bytes(s);
+}
+
+static u16string To_UTF16(const u32string& s)
+{
+	wstring_convert<codecvt_utf16<char32_t>, char32_t> conv;
+	string bytes = conv.to_bytes(s);
+	return u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
+}
+
+static u32string To_UTF32(const u8string& s)
+{
+	wstring_convert<codecvt_utf8<char32_t>, char32_t> conv;
+	return conv.from_bytes(s);
+}
+
+static u32string To_UTF32(const u16string& s)
+{
+	const char16_t* pData = s.c_str();
+	wstring_convert<codecvt_utf16<char32_t>, char32_t> conv;
+	return conv.from_bytes(reinterpret_cast<const char*>(pData), reinterpret_cast<const char*>(pData + s.length()));
+}
+
+// ************************************************************************************************
+#ifndef _WINDOWS
+#define LPCSTR const char*
+#define LPCWSTR const wchar_t*
+
+// ************************************************************************************************
+class CW2A
+{
+
+private: // Members
+
+	string m_strOutput;
+
+public: // Methods
+
+	CW2A(const wchar_t* szInput)
+		: m_strOutput("")
+	{
+		m_strOutput = wstring_to_utf8(szInput);
+	}
+
+	operator LPCSTR()
+	{
+		return m_strOutput.c_str();
+	}
+};
+
+// ************************************************************************************************
+class CA2W
+{
+
+private: // Members
+
+	wstring m_strOutput;
+
+public: // Methods
+
+	CA2W(const char* szInput)
+		: m_strOutput(L"")
+	{
+		m_strOutput = utf8_to_wstring(szInput);
+	}
+
+	operator LPCWSTR()
+	{
+		return m_strOutput.c_str();
+	}
+};
+#endif // _WINDOWS

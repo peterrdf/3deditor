@@ -15,6 +15,8 @@ CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
 Wavefront OBJ Files (*.obj)|*.obj|\
+glTF Files (*.gltf)|*.gltf|\
+glTF Binary Files (*.glb)|*.glb|\
 Autocad DXF Files (*.dxf)|*.dxf|\
 All Files (*.*)|*.*||");
 
@@ -55,6 +57,7 @@ public: // Methods
 #endif
 
 	void LoadOBJModel(const wchar_t* szPath);
+	void LoadGLTFModel(const wchar_t* szPath);
 };
 
 // ************************************************************************************************

@@ -14,6 +14,7 @@
 #endif
 
 #include "_obj.h"
+#include "_gltf2bin.h"
 
 #include <bitset>
 #include <algorithm>
@@ -92,6 +93,8 @@ public: // Methods
 			m_pModel->LoadDXFModel(m_szPath);
 		} else if (strExtension == L".OBJ") {
 			m_pModel->LoadOBJModel(m_szPath);
+		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
+			m_pModel->LoadGLTFModel(m_szPath);
 		}
 #endif
 #ifdef _GIS_SUPPORT
@@ -104,38 +107,38 @@ public: // Methods
 			m_pModel->LoadGISModel(m_szPath);
 		} else
 #endif
-			{
-				if (m_bAdd) {
-					m_pModel->importModel(m_szPath);
-				} else {
-					OwlModel owlModel = OpenModelW(m_szPath);
-					if (owlModel) {
-						m_pModel->attachModel(m_szPath, owlModel);
-					}
-				}
-			}
-
-			if (m_pModel->getOwlModel() == 0) {
-				CString strError;
-				strError.Format(L"Failed to open '%s'.", m_szPath);
-
-				if (!TEST_MODE) {
-					if (m_pProgress != nullptr) {
-						m_pProgress->Log(2/*error*/, CW2A(strError));
-					}
-					::MessageBox(
-						::AfxGetMainWnd()->GetSafeHwnd(),
-						strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-				} else {
-					TRACE(L"\nError: %s", (LPCTSTR)strError);
-				}
+		{
+			if (m_bAdd) {
+				m_pModel->importModel(m_szPath);
 			} else {
-				if (!TEST_MODE) {
-					if (m_pProgress != nullptr) {
-						m_pProgress->Log(0/*info*/, "*** Done. ***");
-					}
+				OwlModel owlModel = OpenModelW(m_szPath);
+				if (owlModel) {
+					m_pModel->attachModel(m_szPath, owlModel);
 				}
 			}
+		}
+
+		if (m_pModel->getOwlModel() == 0) {
+			CString strError;
+			strError.Format(L"Failed to open '%s'.", m_szPath);
+
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(2/*error*/, CW2A(strError));
+				}
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(),
+					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+			} else {
+				TRACE(L"\nError: %s", (LPCTSTR)strError);
+			}
+		} else {
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(0/*info*/, "*** Done. ***");
+				}
+			}
+		}
 	}
 };
 
@@ -255,14 +258,6 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 void CRDFModel::LoadOBJModel(const wchar_t* szPath)
 {
 	try {
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-		wstring strRootFolder = pthRootFolder.wstring();
-		strRootFolder += L"\\";
-
 		OwlModel owlModel = CreateModel();
 		ASSERT(owlModel != 0);
 
@@ -275,6 +270,31 @@ void CRDFModel::LoadOBJModel(const wchar_t* szPath)
 		ImportGISModel(owlModel, CW2A(szPath));
 
 		attachModel(szPath, owlModel);
+	} catch (const std::runtime_error& err) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	} catch (...) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	}
+}
+
+void CRDFModel::LoadGLTFModel(const wchar_t* szPath)
+{
+	try {
+		fs::path pthOutputFile = szPath;
+		pthOutputFile += L".bin";
+
+		_c_log log((_log_callback)LogCallbackImpl);
+		_gltf2bin::_exporter exporter(CW2A(szPath), pthOutputFile.string().c_str());
+		exporter.setLog(&log);
+		exporter.execute(false);
+		if (exporter.getOwlModel() == 0) {
+			throw std::runtime_error("Failed to load GLTF model.");
+		}
+		attachModel(szPath, exporter.getOwlModel());
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
