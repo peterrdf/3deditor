@@ -144,6 +144,9 @@
     <ClInclude Include="..\obj\_obj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_importer_t.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -257,9 +260,6 @@
     <ClCompile Include="..\gltf\include\_json.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_json_importer_t.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\gltf\include\_net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -267,6 +267,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_serialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_importer_t.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

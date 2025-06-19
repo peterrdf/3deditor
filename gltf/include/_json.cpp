@@ -1,8 +1,10 @@
-﻿#include "stdafx.h"
+﻿#include "_host.h"
 
 #include "_json.h"
-#include "_net.h"
 #include "_string.h"
+#if _LOAD_SCHEMAS
+#include "_net.h"
+#endif _LOAD_SCHEMAS
 
 #include <chrono>
 
@@ -689,6 +691,7 @@ namespace _json
 		load();
 	}
 
+#ifdef _LOAD_SCHEMAS
 	/*virtual*/ void _document::loadSchemas()
 	{
 		VERIFY_POINTER(m_pSite);
@@ -734,6 +737,7 @@ namespace _json
 
 		return pSchema;
 	}
+#endif // _LOAD_SCHEMAS
 
 	void _document::loadInfoset()
 	{
@@ -856,6 +860,7 @@ namespace _json
 		m_strLocation = vecData[2];
 	}
 
+#ifdef _LOAD_SCHEMAS
 	string _schema::getNamespace(bool bRemoveProtocol) const
 	{
 		if (bRemoveProtocol)
@@ -875,6 +880,7 @@ namespace _json
 
 		return m_strLocation;
 	}
+#endif // _LOAD_SCHEMAS
 
 	// ********************************************************************************************
 	_infoset::_infoset(_document* pDocument)

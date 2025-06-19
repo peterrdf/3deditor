@@ -9,8 +9,11 @@
 #include "_log.h"
 #include "_io.h"
 #include "_errors.h"
-
-#include "_3DUtils.h"
+#ifdef _LOAD_SCHEMAS
+#include "_schema_file_storage.h"
+#include "_schema_embedded_storage.h"
+#include "_schema_embedded_storage_builder.h"
+#endif // _LOAD_SCHEMAS
 
 #define PI 3.14159265
 
@@ -27,8 +30,18 @@ namespace _eng
 
 	// ********************************************************************************************
 	template<typename Document, typename Site>
-	class _json_importer_t : public Site
+	class _importer_t : public Site
 	{
+
+	private: // Classes
+
+		// ****************************************************************************************
+		struct _vector3d
+		{
+			double x;
+			double y;
+			double z;
+		};
 
 	private: // Members
 
@@ -44,14 +57,20 @@ namespace _eng
 
 		Document* m_pDocument;
 
+	protected: // Members
+
+#ifdef _LOAD_SCHEMAS
+		_schema_storage* m_pSchemaStorage;
+#endif
+
 	public: // Methods
 
-		_json_importer_t(OwlModel iModel, int iValidationLevel);
-		virtual ~_json_importer_t();
+		_importer_t(OwlModel iModel, int iValidationLevel);
+		virtual ~_importer_t();
 
-		virtual void load(const char* szFile, bool bLoadSchemas);
-		virtual void loadArray(const unsigned char* szData, size_t iSize, bool bLoadSchemas);
-		virtual void loadStream(istream* pStream, bool bLoadSchemas);
+		virtual void load(const char* szFile);
+		virtual void loadArray(const unsigned char* szData, size_t iSize);
+		virtual void loadStream(istream* pStream);
 
 	protected: // Methods
 
@@ -74,6 +93,9 @@ namespace _eng
 		OwlInstance getDefaultMaterialInstance();
 		void setDocument(Document* pDocument) { clean(); m_pDocument = pDocument; }
 		Document* getDocument() const { return m_pDocument; }
+#ifdef _LOAD_SCHEMAS
+		_schema_storage* getSchemaStorage() const { return m_pSchemaStorage; }
+#endif // _LOAD_SCHEMAS
 
 		virtual void buildClassName(const string& strClass, string& strName) const;
 		virtual void addDataTypeAsString(int iType, string& strName) const;
@@ -231,7 +253,7 @@ namespace _eng
 
 			delete[] szValue;
 		}
-
+		 
 		void createStringValueProperty(OwlInstance iInstance, const string& strValue)
 		{
 			VERIFY_INSTANCE(iInstance);
@@ -287,44 +309,51 @@ namespace _eng
 			const string& strInstance, 
 			const vector<int64_t>& vecIndices,
 			const vector<double>& vecVertices,
-			OwlInstance iMaterialInstance = 0);
+			OwlInstance iMaterialInstance);
 
 		// http://rdf.bg/gkdoc/Point3D/CP64.html
 		OwlInstance createPoint3DInstance(
 			const string& strInstance,
-			const vector<double>& vecPoints,
-			OwlInstance iMaterialInstance = 0);
+			const vector<double>& vecPoints);
 
 		// http://rdf.bg/gkdoc/Point3DSet/CP64.html
 		OwlInstance createPoint3DSetDInstance(
 			const string& strInstance, 
+			const vector<double>& vecPoints);
+
+		// http://rdf.bg/gkdoc/Point3DSet/CP64.html
+		OwlInstance createPoint3DSetDInstance(
+			const string& strInstance,
 			const vector<double>& vecPoints,
-			OwlInstance iMaterialInstance = 0);
+			OwlInstance iMaterialInstance);
 
 		// http://rdf.bg/gkdoc/TriangleSet/CP64.html
 		OwlInstance createTriangleSetInstance(
 			const string& strInstance,
 			const vector<int64_t>& vecIndices,
 			const vector<double>& vecVertices,
-			OwlInstance iMaterialInstance = 0);
+			OwlInstance iMaterialInstance);
 
 		// http://rdf.bg/gkdoc/PolyLine3D/CP64.html
 		OwlInstance createPolyLine3DInstance(
 			const string& strInstance, 
-			const vector<double>& vecPoints,
-			OwlInstance iMaterialInstance = 0);
+			const vector<double>& vecPoints);
+
+		// http://rdf.bg/gkdoc/Line3DSet/CP64.html
+		OwlInstance createLine3DSetInstance(
+			const string& strInstance,
+			const vector<double>& vecPoints);
 
 		// http://rdf.bg/gkdoc/Line3DSet/CP64.html
 		OwlInstance createLine3DSetInstance(
 			const string& strInstance,
 			const vector<double>& vecPoints,
-			OwlInstance iMaterialInstance = 0);
+			OwlInstance iMaterialInstance);
 
 		// http://rdf.bg/gkdoc/Line3D/CP64.html
 		OwlInstance createLine3DInstance(
 			const string& strInstance,
-			const vector<double>& vecPoints,
-			OwlInstance iMaterialInstance = 0);
+			const vector<double>& vecPoints);
 
 		// http://rdf.bg/gkdoc/Arc3D/CP64.html
 		OwlInstance createArc3DInstance(
@@ -337,7 +366,226 @@ namespace _eng
 		// http://rdf.bg/gkdoc/Transformation/CP64.html
 		OwlInstance createTransformation(
 			const string& strInstance,
-			const vector<double>& vecTransformationMatrix);
+			const vector<double>& vecTransformationMatrix);		
+
+	public: // Methods
+
+#ifdef _LOAD_SCHEMAS
+		string getNamespaceRedirection(const string& strNamespace) const { return getSchemaStorage()->getNamespaceRedirection(strNamespace); };
+		string getLocationRedirection(const string& strLocation) const { return getSchemaStorage()->getLocationRedirection(strLocation); }
+
+		template<typename Schema>
+		Schema* loadSchema(const string& strNamespace, const string& strLocation)
+		{
+			if (strNamespace.empty() || strLocation.empty()) {
+				THROW_ARGUMENT_ERROR();
+			}
+
+			string strTargetNamespace = getNamespaceRedirection(strNamespace);
+			string strTargetLocation = getLocationRedirection(strLocation);
+
+			Schema* pSchema = nullptr;
+
+			string strStatus = "OK";
+			string strSource = "NA";
+
+			try {
+				bool bLoaded = false;
+
+				/* Metadata */
+				string strAbsoluteLocation = strTargetLocation;
+
+				auto pSchemaMetadata = getSchemaStorage()->getSchema(strTargetNamespace, strTargetLocation);
+				if (pSchemaMetadata != nullptr) {
+					// relative to absolute URL
+					strAbsoluteLocation = pSchemaMetadata->getLocation();
+				}
+
+				/* Cache */
+				bool bNew = false;
+				pSchema = getDocument()->getSchema(strTargetNamespace, strAbsoluteLocation, bNew);
+				if (!bNew) {
+					return pSchema;
+				}
+
+				/* Embedded */
+				auto pSchemaEmbeddedStorage = dynamic_cast<_schema_embedded_storage*>(getSchemaStorage());
+				if (pSchemaEmbeddedStorage != nullptr) {
+					auto pArchive = pSchemaEmbeddedStorage->getArchive(strTargetNamespace, strAbsoluteLocation, false);
+					if (pArchive != nullptr) {
+						strSource = "Embedded";
+
+						pSchema->deserialize(pArchive);
+
+						bLoaded = true;
+					}
+				}
+
+				// Storage
+				if (!bLoaded) {
+#ifdef _WINDOWS
+					if ((pSchemaMetadata != nullptr) && !pSchemaMetadata->getPath().empty()) {
+						// Known schema - use path attribute
+
+						/* Storage */
+						string strFilePath = getSchemaStorage()->getFilePath(pSchemaMetadata->getPath());
+						if (!strFilePath.empty()) {
+							strSource = "Storage";
+
+							pSchema->load(strFilePath.c_str());
+
+							bLoaded = true;
+						}
+					} else {
+						// Unknown schema - use ./schema/temp
+
+						string strFilePath = getSchemaStorage()->getTempFilePath(schema_temp_folder, strAbsoluteLocation);
+						if (!strFilePath.empty()) {
+							strSource = "Storage";
+
+							pSchema->load(strFilePath.c_str());
+
+							bLoaded = true;
+						}
+					}
+#endif // _WINDOWS
+				} // Storage		
+
+				// HTTP
+				if (!bLoaded) {
+#ifdef _WINDOWS
+					strSource = "HTTP";
+
+					_net::_http_client httpClient;
+					httpClient.setLog(Site::getLog());
+
+					downloadSchema(getSchemaStorage(),
+						&httpClient,
+						strAbsoluteLocation,
+						pSchemaMetadata != nullptr ? pSchemaMetadata->getPath() : "");
+
+					pSchema->load((istream*)httpClient.getPayload());
+
+					bLoaded = true;
+#endif // _WINDOWS
+				} // HTTP
+
+				if (!bLoaded) {
+					strStatus = "Error: not supported.";
+
+					pSchema->clean();
+				}
+			} catch (const std::runtime_error& err) {
+				strStatus = "Error: ";
+				strStatus += err.what();
+
+				pSchema->clean();
+			} catch (...) {
+				strStatus = "Error: ";
+				strStatus += _err::_internal;
+
+				pSchema->clean();
+			}
+
+			pSchema->metaData()["source"] = strSource;
+			pSchema->metaData()["status"] = strStatus;
+
+			return pSchema;
+		}
+
+		template<typename Schema>
+		void loadStorageSchemas()
+		{
+			for (auto itNamespaceSchemas : getSchemaStorage()->getNamespaceSchemas()) {
+				vector<_schema_metadata*> vecSchemas;
+				string strTargetNamespace = getSchemaStorage()->getSchemas(itNamespaceSchemas.first, vecSchemas);
+
+				for (auto pMetadata : vecSchemas) {
+					loadSchema<Schema>(strTargetNamespace, pMetadata->getLocation());
+				}
+			} // for (auto itNamespace ...
+		}
+
+		void downloadSchema(
+			_schema_storage* pSchemaStorage,
+			_net::_http_client* pHttpClient,
+			const string& strAbsoluteLocation,
+			const string& strPath) const;
+
+		void buildEmbeddedStorage(const string& strSourcesRootFolder, const string& strStorage, const vector<string>& vecReferences)
+		{
+			VERIFY_STLOBJ_IS_NOT_EMPTY(strSourcesRootFolder);
+			VERIFY_STLOBJ_IS_NOT_EMPTY(strStorage);
+
+			auto pSchemaFileStorage = dynamic_cast<_schema_file_storage*>(getSchemaStorage());
+			if (pSchemaFileStorage == nullptr)
+			{
+				THROW_INTERNAL_ERROR();
+			}
+
+			/* Storage */
+			getSchemaStorage()->loadMetadata(strStorage);
+
+			set<string> setNamespaces;
+			for (auto itNamespaceSchemas : pSchemaFileStorage->getNamespaceSchemas())
+			{
+				setNamespaces.insert(itNamespaceSchemas.first);
+			}
+
+			set<string> setNamespaceRedirections;
+			for (auto itNamespaceRedirection : pSchemaFileStorage->getNamespaceRedirections())
+			{
+				setNamespaceRedirections.insert(itNamespaceRedirection.first);
+			}
+
+			set<string> setLocationRedirections;
+			for (auto itLocationRedirection : pSchemaFileStorage->getLocationRedirections())
+			{
+				setLocationRedirections.insert(itLocationRedirection.first);
+			}
+
+			/* References */
+			for (auto strReference : vecReferences)
+			{
+				getSchemaStorage()->loadMetadata(strReference);
+			}
+			
+			load(nullptr);
+
+			/* Build */
+			_schema_embedded_storage_builder storageBuilder(
+				strStorage,
+				pSchemaFileStorage,
+				setNamespaces,
+				setNamespaceRedirections,
+				setLocationRedirections);
+
+			for (auto itNamespace2Schemas : getDocument()->getSchemas())
+			{
+				if (setNamespaces.find(itNamespace2Schemas.first) == setNamespaces.end())
+				{
+					continue;
+				}
+
+				auto pNamespace = storageBuilder.getNamespace(itNamespace2Schemas.first);
+				VERIFY_POINTER(pNamespace);
+
+				for (auto itLocation2Schema : itNamespace2Schemas.second)
+				{
+					auto pArchive = pNamespace->getArchive(itLocation2Schema.first, true);
+					VERIFY_POINTER(pArchive);
+
+					itLocation2Schema.second->serialize(pArchive);
+				}
+			}
+
+			string strEmbeddedStorageRootFolder = strSourcesRootFolder;
+			strEmbeddedStorageRootFolder += strStorage;
+			strEmbeddedStorageRootFolder += "\\";
+
+			storageBuilder.save(strEmbeddedStorageRootFolder);
+		}
+#endif // _LOAD_SCHEMAS
 	};
 };
 

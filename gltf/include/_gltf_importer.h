@@ -28,7 +28,5 @@ public: // Methods
 	// _document_site
 	virtual void onValueLoaded(_json::_value* pValue) override;
 	virtual void onPropertyLoaded(_json::_property* pProperty) override;
-	virtual void loadSchemas() override {}
-	virtual _json::_schema* loadSchema(const string& /*strNamespace*/, const string& /*strLocation*/) { return nullptr; }
 };
 

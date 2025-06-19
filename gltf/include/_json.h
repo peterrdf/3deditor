@@ -240,8 +240,10 @@ namespace _json
 
 		virtual void onValueLoaded(_value* pValue) = 0;
 		virtual void onPropertyLoaded(_property* pProperty) = 0;
+#ifdef _LOAD_SCHEMAS
 		virtual void loadSchemas() = 0;
 		virtual _schema* loadSchema(const string& strNamespace, const string& strLocation) = 0;
+#endif // _LOAD_SCHEMAS
 	};
 
 	// ********************************************************************************************
@@ -283,8 +285,10 @@ namespace _json
 		void load(const char* szFile);
 		void load(istream* pStream);
 
+#ifdef _LOAD_SCHEMAS
 		virtual void loadSchemas();		
 		_schema* getSchema(const string& strNamespace, const string& strLocation, bool& bNew);
+#endif // _LOAD_SCHEMAS
 
 		void loadInfoset();
 
@@ -319,8 +323,10 @@ namespace _json
 		virtual void serialize(_srln::_archive* pArchive) override;
 		virtual void deserialize(_srln::_archive* pArchive) override;
 
+#ifdef _LOAD_SCHEMAS
 		string getNamespace(bool bRemoveProtocol) const;
 		string getLocation(bool bRemoveProtocol) const;
+#endif // _LOAD_SCHEMAS
 	};
 
 	// ********************************************************************************************

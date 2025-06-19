@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "_host.h"
 
 #ifdef _WINDOWS
 #include "../include/engine.h"
@@ -10,8 +10,6 @@
 #include "_glb_importer.h"
 
 #include <chrono>
-
-#include "_net.h"
 
 // ************************************************************************************************
 _glb_importer::_glb_importer(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder)
@@ -83,5 +81,5 @@ void _glb_importer::load(const char* szFile)
 	// Store BIN chunk start position
 	m_nBINDataOffset = file.tellg();
 
-	loadArray((const unsigned char*)jsonData.data(), jsonData.size(), false);
+	loadArray((const unsigned char*)jsonData.data(), jsonData.size());
 }

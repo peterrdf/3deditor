@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "_host.h"
 #include "_gltf2bin.h"
 
 // ************************************************************************************************
@@ -43,7 +43,7 @@ namespace _gltf2bin
 		if (strExtension == ".gltf") {
 			_gltf_importer importer(m_iModel, pathInputFile.parent_path().string(), pathOutputFile.parent_path().string());
 			importer.setLog(getLog());
-			importer.load(m_strInputFile.c_str(), false);
+			importer.load(m_strInputFile.c_str());
 		} else if (strExtension == ".glb") {
 			_glb_importer importer(m_iModel, pathInputFile.parent_path().string(), pathOutputFile.parent_path().string());
 			importer.setLog(getLog());

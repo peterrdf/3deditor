@@ -225,9 +225,6 @@
     <ClInclude Include="..\gltf\include\_gltf_importer_t.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_json_importer_t.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
     <ClInclude Include="..\gltf\include\_gltf2bin.h">
       <Filter>glTF</Filter>
     </ClInclude>
@@ -244,6 +241,12 @@
       <Filter>glTF</Filter>
     </ClInclude>
     <ClInclude Include="..\gltf\include\_net.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_host.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\include\_importer_t.h">
       <Filter>glTF</Filter>
     </ClInclude>
   </ItemGroup>
@@ -371,9 +374,6 @@
     <ClCompile Include="..\gltf\include\_gltf_importer_t.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_json_importer_t.cpp">
-      <Filter>glTF</Filter>
-    </ClCompile>
     <ClCompile Include="..\gltf\include\_gltf2bin.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
@@ -384,6 +384,12 @@
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_net.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\include\_importer_t.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>

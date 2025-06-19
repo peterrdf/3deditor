@@ -1,4 +1,4 @@
-#include "stdafx.h"  //#todo
+#include "_host.h"
 
 #include "_serialization.h"
 #include "_net.h"

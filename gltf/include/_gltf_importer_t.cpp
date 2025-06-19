@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "_host.h"
 
 #include "_gltf_importer_t.h"
 
@@ -18,7 +18,7 @@ namespace _eng
 
 	// ********************************************************************************************
 	_gltf_importer_t::_gltf_importer_t(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder, int iValidationLevel)
-		: _json_importer_t<_json::_document, _json::_document_site>(iModel, iValidationLevel)
+		: _importer_t<_json::_document, _json::_document_site>(iModel, iValidationLevel)
 		, m_strRootFolder(strRootFolder)
 		, m_strOutputFolder(strOutputFolder)
 		, m_pRootObject(nullptr)
@@ -191,7 +191,7 @@ namespace _eng
 		VERIFY_POINTER(m_pRootObject);
 
 		m_iRootInstance = createInstance(
-			_json_importer_t::createClass("glTF"),
+			_importer_t::createClass("glTF"),
 			"glTF");
 		VERIFY_INSTANCE(m_iRootInstance);
 
@@ -248,7 +248,7 @@ namespace _eng
 			} // for (size_t iNode = ...
 
 			OwlInstance iSceneInstance = createInstance(
-				_json_importer_t::createClass("scene"),
+				_importer_t::createClass("scene"),
 				_string::format("scene (%d)", (int)iScene));
 			VERIFY_INSTANCE(iSceneInstance);
 

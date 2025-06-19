@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "_host.h"
 
 #ifdef _WINDOWS
 #include "../include/engine.h"
@@ -10,8 +10,6 @@
 #include "_gltf_importer.h"
 
 #include <chrono>
-
-#include "_net.h"
 
 // ************************************************************************************************
 _gltf_importer::_gltf_importer(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder)

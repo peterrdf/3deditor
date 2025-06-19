@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_json_importer_t.h"
+#include "_importer_t.h"
 #include "_json.h"
 #include "_base64.h"
 
@@ -8,7 +8,7 @@
 namespace _eng
 {
 	// ********************************************************************************************
-	class _gltf_importer_t : public _json_importer_t<_json::_document, _json::_document_site>
+	class _gltf_importer_t : public _importer_t<_json::_document, _json::_document_site>
 	{
 
 	private: // Members
@@ -50,7 +50,7 @@ namespace _eng
 
 	protected: // Methods
 
-		// _json_importer_t
+		// _importer_t
 		virtual bool preBuildModel() override;
 		virtual void buildModel() override;
 
