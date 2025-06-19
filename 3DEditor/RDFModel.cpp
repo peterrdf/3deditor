@@ -94,7 +94,15 @@ public: // Methods
 		} else if (strExtension == L".OBJ") {
 			m_pModel->LoadOBJModel(m_szPath);
 		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
-			m_pModel->LoadGLTFModel(m_szPath);
+			if (m_bAdd) {
+				m_pModel->ImportGLTFModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->ImportGLTFModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}			
 		}
 #endif
 #ifdef _GIS_SUPPORT
@@ -109,7 +117,7 @@ public: // Methods
 #endif
 		{
 			if (m_bAdd) {
-				m_pModel->importModel(m_szPath);
+				m_pModel->importModel(m_szPath);				
 			} else {
 				OwlModel owlModel = OpenModelW(m_szPath);
 				if (owlModel) {
@@ -281,20 +289,20 @@ void CRDFModel::LoadOBJModel(const wchar_t* szPath)
 	}
 }
 
-void CRDFModel::LoadGLTFModel(const wchar_t* szPath)
+void CRDFModel::ImportGLTFModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);	
+
 		fs::path pthOutputFile = szPath;
 		pthOutputFile += L".bin";
 
 		_c_log log((_log_callback)LogCallbackImpl);
-		_gltf2bin::_exporter exporter(CW2A(szPath), pthOutputFile.string().c_str());
+
+		_gltf2bin::_exporter exporter(owlModel, CW2A(szPath), pthOutputFile.string().c_str());
 		exporter.setLog(&log);
 		exporter.execute(false);
-		if (exporter.getOwlModel(false) == 0) {
-			throw std::runtime_error("Failed to load GLTF model.");
-		}
-		attachModel(szPath, exporter.getOwlModel(true));
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),

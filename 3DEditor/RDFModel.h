@@ -57,7 +57,7 @@ public: // Methods
 #endif
 
 	void LoadOBJModel(const wchar_t* szPath);
-	void LoadGLTFModel(const wchar_t* szPath);
+	void ImportGLTFModel(OwlModel owlModel, const wchar_t* szPath);
 };
 
 // ************************************************************************************************

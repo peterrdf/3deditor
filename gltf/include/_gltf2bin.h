@@ -32,20 +32,9 @@ namespace _gltf2bin
 
 	public: // Methods
 
-		_exporter(const char* szInputFile, const char* szOutputFile);
+		_exporter(OwlModel iModel, const char* szInputFile, const char* szOutputFile);
 		virtual ~_exporter();
 
 		void execute(bool bSaveFile);
-
-		OwlModel getOwlModel(bool bDetach) {
-			if (bDetach) {
-				OwlModel owlModel = m_iModel;
-				m_iModel = 0; // Detach the model
-
-				return owlModel;
-			}
-
-			return m_iModel;
-		}
 	};
 };

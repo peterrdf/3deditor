@@ -5,12 +5,13 @@
 namespace _gltf2bin
 {
 	// ************************************************************************************************
-	_exporter::_exporter(const char* szInputFile, const char* szOutputFile)
+	_exporter::_exporter(OwlModel iModel, const char* szInputFile, const char* szOutputFile)
 		: _log_client()
-		, m_iModel(0)
+		, m_iModel(iModel)
 		, m_strInputFile()
 		, m_strOutputFile()
 	{
+		VERIFY_INSTANCE(m_iModel);
 		VERIFY_POINTER(szInputFile);
 		VERIFY_POINTER(szOutputFile);
 
@@ -20,21 +21,10 @@ namespace _gltf2bin
 
 	/*virtual*/ _exporter::~_exporter()
 	{
-		if (m_iModel != 0) {
-			CloseModel(m_iModel);
-		}
 	}
 
 	void _exporter::execute(bool bSaveFile)
 	{
-		if (m_iModel != 0) {
-			CloseModel(m_iModel);
-			m_iModel = 0;
-		}
-
-		m_iModel = CreateModel();
-		VERIFY_INSTANCE(m_iModel);
-
 		// Validate input file path
 		fs::path pathInputFile = m_strInputFile;
 		if (!fs::exists(pathInputFile)) {
