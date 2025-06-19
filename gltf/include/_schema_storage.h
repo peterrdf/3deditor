@@ -2,10 +2,9 @@
 
 #include "_log.h"
 #include "_io.h"
-
-#if _LOAD_SCHEMAS
+#ifdef _LOAD_SCHEMAS
 #include "_net.h"
-#endif _LOAD_SCHEMAS
+#endif // _LOAD_SCHEMAS
 
 #include <string>
 using namespace std;
@@ -68,7 +67,7 @@ public: // Methods
 		}
 	}
 
-#if _LOAD_SCHEMAS
+#ifdef _LOAD_SCHEMAS
 	string getSchemas(const string& strNamespace, vector<_schema_metadata*>& vecSchemas)
 	{
 		if (strNamespace.empty())
@@ -94,6 +93,7 @@ public: // Methods
 
 		return strTargetNamespace;
 	}
+
 	_schema_metadata* getSchema(const string& strNamespace, const string& strLocation)
 	{
 		if (strNamespace.empty() || strLocation.empty())
@@ -142,6 +142,7 @@ public: // Methods
 
 		return nullptr;
 	}
+
 	string getNamespaceRedirection(const string& strNamespace) const
 	{
 		if (strNamespace.empty())
@@ -159,6 +160,7 @@ public: // Methods
 
 		return strNamespace;
 	}
+
 	string getLocationRedirection(const string& strLocation) const
 	{
 		if (strLocation.empty())

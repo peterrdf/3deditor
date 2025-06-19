@@ -798,8 +798,6 @@
     <ClInclude Include="..\include\_rdf_property.h" />
     <ClInclude Include="..\include\_settings_storage.h" />
     <ClInclude Include="..\include\_text_builder.h" />
-    <ClInclude Include="..\obj\_obj.h" />
-    <ClInclude Include="..\obj\_reader.h" />
     <ClInclude Include="..\stb\stb_image.h" />
     <ClInclude Include="InstancesDialog.h" />
     <ClInclude Include="InstancesList.h" />
@@ -952,7 +950,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_net.cpp" />
     <ClCompile Include="..\gltf\include\_node.cpp" />
     <ClCompile Include="..\gltf\include\_serialization.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>

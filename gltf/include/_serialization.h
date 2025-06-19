@@ -73,7 +73,9 @@ namespace _srln
 		_namespace(_storage* pStorage, const string& strName);
 		virtual ~_namespace();
 
+#ifdef _LOAD_SCHEMAS
 		_archive* getArchive(const string& strArchive, bool bCreateNewIfNeeded);
+#endif // _LOAD_SCHEMAS
 
 		const string& getName() const { return m_strName; }
 		map<std::string, _archive*>& archives() { return m_mapArchives; }		
@@ -101,9 +103,10 @@ namespace _srln
 
 		virtual ~_storage();
 
-		
+#if _LOAD_SCHEMAS
 		_namespace* getNamespace(const string& strNamespace);		
 		_archive* getArchive(const string& strNamespace, const string& strArchive, bool bCreateNewIfNeeded);
+#endif // _LOAD_SCHEMAS
 
 		const string& getName() const { return m_strName; }
 		map<std::string, _namespace*>& getNamespaces() { return m_mapNamespaces; }

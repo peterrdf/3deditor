@@ -240,9 +240,6 @@
     <ClInclude Include="..\gltf\include\_settings_storage.h">
       <Filter>glTF</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_net.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
     <ClInclude Include="..\gltf\include\_host.h">
       <Filter>glTF</Filter>
     </ClInclude>
@@ -381,9 +378,6 @@
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_serialization.cpp">
-      <Filter>glTF</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_net.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
