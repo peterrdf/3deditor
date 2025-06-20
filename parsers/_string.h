@@ -1,5 +1,12 @@
 #pragma once
 
+#ifdef _WINDOWS
+#include <atlbase.h>
+using namespace ATL;
+#else
+#define _atoi64(s) strtoull(s, nullptr, 10)
+#endif // _WINDOWS
+
 #include <locale>
 #include <codecvt>
 #include <string>
