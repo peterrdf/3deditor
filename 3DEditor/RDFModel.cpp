@@ -93,6 +93,7 @@ public: // Methods
 			m_pModel->LoadDXFModel(m_szPath);
 		} else if (strExtension == L".OBJ") {
 			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadOBJModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
 			} else {
@@ -103,6 +104,7 @@ public: // Methods
 			}
 		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
 			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadGLTFModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
 			} else {
@@ -121,6 +123,7 @@ public: // Methods
 			(strExtension == L".XML") ||
 			(strExtension == L".JSON")) {
 			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadGISModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
 			} else {

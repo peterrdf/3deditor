@@ -7,6 +7,7 @@
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
+	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
 	, m_pWorld(nullptr)
 	, m_mapID2Instance()
@@ -418,13 +419,13 @@ _instance* _model::getInstanceByID(int64_t iID) const
 
 _texture* _model::getTexture(const wstring& strTexture)
 {
-	if (!m_strPath.empty()) {
+	wstring strTextureSearch = getTextureSearchPath();
+	if (!strTextureSearch.empty()) {
 		if (m_mapTextures.find(strTexture) != m_mapTextures.end()) {
 			return m_mapTextures.at(strTexture);
 		}
 
-		fs::path pthFile = m_strPath;
-		fs::path pthTexture = pthFile.parent_path();
+		fs::path pthTexture = strTextureSearch;
 		pthTexture.append(strTexture);
 
 		if (fs::exists(pthTexture)) {
@@ -555,6 +556,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (bCloseModel) {
 		m_strPath = L"";
+		m_strTextureSearchPath = L"";
 	}
 
 	for (auto pGeometry : m_vecGeometries) {

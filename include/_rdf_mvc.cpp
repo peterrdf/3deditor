@@ -205,6 +205,7 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 
 	load();
@@ -218,6 +219,7 @@ void _rdf_model::assignModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 	m_bExternalModel = true;
 }
