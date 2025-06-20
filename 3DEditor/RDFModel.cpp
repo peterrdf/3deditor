@@ -271,9 +271,9 @@ void CRDFModel::LoadGISModel(OwlModel owlModel, const wchar_t* szPath)
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-		wstring strRootFolder = pthRootFolder.wstring();
+		fs::path pathExe = szAppPath;
+		auto pathRootFolder = pathExe.parent_path();
+		wstring strRootFolder = pathRootFolder.wstring();
 		strRootFolder += L"\\";
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
@@ -421,5 +421,11 @@ void CDefaultModel::Create()
 		pCylinder.set_segmentationParts(36);
 	}
 
-	attachModel(L"_DEFAULT_", owlModel);
+	wchar_t szAppPath[_MAX_PATH];
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+	fs::path pthExe = szAppPath;
+	auto pathDefaultModel = pthExe.parent_path();
+	pathDefaultModel.append(L"_DEFAULT_");
+	attachModel(pathDefaultModel.wstring().c_str(), owlModel);
 }
