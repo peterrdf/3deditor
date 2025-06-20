@@ -3,7 +3,7 @@
 #ifdef _WINDOWS
 #include "engine.h"
 #else
-#include "../../include/engine.h"
+#include "../include/engine.h"
 #endif
 
 #include "_ptr.h"

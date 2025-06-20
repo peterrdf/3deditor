@@ -8,6 +8,11 @@
 // https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
 
 // ************************************************************************************************
+#ifndef BYTE
+#define BYTE unsigned char
+#endif // BYTE
+
+// ************************************************************************************************
 static const std::string base64_chars =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "abcdefghijklmnopqrstuvwxyz"

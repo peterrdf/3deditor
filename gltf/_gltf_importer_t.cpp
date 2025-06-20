@@ -1211,14 +1211,14 @@ namespace _eng
 		assert(pTypeValue->getValue() == "SCALAR");
 
 		if ((iComponentType == 5121/*UNSIGNED_BYTE*/)) {
-			vector<BYTE> vecIndicesUS;
+			vector<unsigned char> vecIndicesUS;
 			readBuffer<BYTE>(
 				strURI.c_str(),
 				iIndicesOffset,
-				(uint64_t)iCount * 1 * sizeof(BYTE),
+				(uint64_t)iCount * 1 * sizeof(unsigned char),
 				vecIndicesUS);
 
-			convertType<BYTE, unsigned int>(vecIndicesUS, vecIndices);
+			convertType<unsigned char, unsigned int>(vecIndicesUS, vecIndices);
 		} else if ((iComponentType == 5122/*SHORT*/)) {
 			vector<short> vecIndicesUS;
 			readBuffer<short>(

@@ -230,24 +230,6 @@
     <ClCompile Include="..\obj\_obj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_bin2gltf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_glb_importer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf_importer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf_importer_t.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf2bin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\parsers\_importer_t.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -260,7 +242,25 @@
     <ClCompile Include="..\parsers\_serialization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_node.cpp">
+    <ClCompile Include="..\gltf\_bin2gltf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_glb_importer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf2bin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importer_t.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
