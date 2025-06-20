@@ -53,11 +53,11 @@ public: // Methods
 #endif
 
 #ifdef _GIS_SUPPORT
-	void LoadGISModel(const wchar_t* szPath);
+	void LoadGISModel(OwlModel owlModel, const wchar_t* szPath);
 #endif
 
-	void LoadOBJModel(const wchar_t* szPath);
-	void ImportGLTFModel(OwlModel owlModel, const wchar_t* szPath);
+	void LoadOBJModel(OwlModel owlModel, const wchar_t* szPath);
+	void LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath);
 };
 
 // ************************************************************************************************

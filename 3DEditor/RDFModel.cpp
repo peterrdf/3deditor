@@ -92,15 +92,23 @@ public: // Methods
 		if (strExtension == L".DXF") {
 			m_pModel->LoadDXFModel(m_szPath);
 		} else if (strExtension == L".OBJ") {
-			m_pModel->LoadOBJModel(m_szPath);
-		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
 			if (m_bAdd) {
-				m_pModel->ImportGLTFModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->LoadOBJModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
 			} else {
 				OwlModel owlModel = CreateModel();
 				ASSERT(owlModel != 0);
-				m_pModel->ImportGLTFModel(owlModel, m_szPath);
+				m_pModel->LoadOBJModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}
+		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
+			if (m_bAdd) {
+				m_pModel->LoadGLTFModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->LoadGLTFModel(owlModel, m_szPath);
 				m_pModel->attachModel(m_szPath, owlModel);
 			}			
 		}
@@ -112,7 +120,15 @@ public: // Methods
 			(strExtension == L".GMLZ") ||
 			(strExtension == L".XML") ||
 			(strExtension == L".JSON")) {
-			m_pModel->LoadGISModel(m_szPath);
+			if (m_bAdd) {
+				m_pModel->LoadGISModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->LoadGISModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}
 		} else
 #endif
 		{
@@ -232,9 +248,23 @@ void CRDFModel::LoadDXFModel(const wchar_t* szPath)
 #endif
 
 #ifdef _GIS_SUPPORT
-void CRDFModel::LoadGISModel(const wchar_t* szPath)
+void CRDFModel::LoadGISModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);
+		if (fs::path(szPath).empty()) {
+			throw std::runtime_error("Invalid GIS file path.");
+		}
+		if (fs::path(szPath).extension().string() != ".gml" &&
+			fs::path(szPath).extension().string() != ".citygml" &&
+			fs::path(szPath).extension().string() != ".gmlzip" &&
+			fs::path(szPath).extension().string() != ".gmlz" &&
+			fs::path(szPath).extension().string() != ".xml" &&
+			fs::path(szPath).extension().string() != ".json") {
+			throw std::runtime_error("Unsupported GIS file format.");
+		}
+
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
@@ -244,13 +274,7 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 		strRootFolder += L"\\";
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
-
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
-
 		ImportGISModel(owlModel, CW2A(szPath));
-
-		attachModel(szPath, owlModel);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
@@ -263,21 +287,17 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 }
 #endif // _GIS_SUPPORT
 
-void CRDFModel::LoadOBJModel(const wchar_t* szPath)
+void CRDFModel::LoadOBJModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);
 
 		_c_log log((_log_callback)LogCallbackImpl);
 
 		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false/*3DEditor*/);
 		exporter.setLog(&log);
 		exporter.execute();
-
-		ImportGISModel(owlModel, CW2A(szPath));
-
-		attachModel(szPath, owlModel);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
@@ -289,7 +309,7 @@ void CRDFModel::LoadOBJModel(const wchar_t* szPath)
 	}
 }
 
-void CRDFModel::ImportGLTFModel(OwlModel owlModel, const wchar_t* szPath)
+void CRDFModel::LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
 		VERIFY_INSTANCE(owlModel);
