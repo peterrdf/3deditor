@@ -138,9 +138,6 @@
     <ClInclude Include="..\include\_text_builder.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_importer_t.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -230,9 +227,6 @@
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\obj\_reader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\obj\_obj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -251,19 +245,22 @@
     <ClCompile Include="..\gltf\include\_gltf2bin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_json.cpp">
+    <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_importer_t.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_serialization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\include\_node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_serialization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_importer_t.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf_importers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
