@@ -246,6 +246,9 @@
     <ClInclude Include="..\gltf\include\_node.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\include\_guid.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

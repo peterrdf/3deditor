@@ -1,6 +1,7 @@
 ﻿#include "_host.h"
 
 #include "_gltf_importer_t.h"
+#include "_guid.h"
 
 // ************************************************************************************************
 namespace _eng
@@ -981,7 +982,7 @@ namespace _eng
 				string strURI;
 				auto pURIValue = pImageObject->getPropertyValueAs<_json::_simple>("uri");
 				if (pURIValue == nullptr) {
-					strURI = _string::format("texture_%d", iTextureIndex);
+					strURI = (LPCSTR)CW2A(generateGuid().c_str());
 
 					auto pMimeTypeValue = pImageObject->getPropertyValueAs<_json::_simple>("mimeType");
 					VERIFY_POINTER(pMimeTypeValue);

@@ -824,6 +824,7 @@
     <ClInclude Include="..\gltf\include\_gltf2bin.h" />
     <ClInclude Include="..\gltf\include\_gltf_importer.h" />
     <ClInclude Include="..\gltf\include\_gltf_importer_t.h" />
+    <ClInclude Include="..\gltf\include\_guid.h" />
     <ClInclude Include="..\gltf\include\_node.h" />
     <ClInclude Include="..\include\ascii.h" />
     <ClInclude Include="..\include\stb\stb_easy_font.h" />
