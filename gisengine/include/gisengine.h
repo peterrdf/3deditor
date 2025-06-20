@@ -56,8 +56,8 @@ extern "C" {
 
 	bool DECSPEC STDCALL IsCityJSON(OwlModel iModel);
 
+#if _LOAD_SCHEMAS
 	void DECSPEC STDCALL DownloadGISSchemas(const char* szMetadataFile);	
-#ifdef _DEBUG
 	void DECSPEC STDCALL BuildGISEmbeddedSchemaStorage(const char* szSourcesRootFolder);
 #endif
 #ifdef __cplusplus
