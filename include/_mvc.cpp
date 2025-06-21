@@ -7,6 +7,7 @@
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
+	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
 	, m_pWorld(nullptr)
 	, m_mapID2Instance()
@@ -398,39 +399,60 @@ _instance* _model::getInstanceByID(int64_t iID) const
 	return (iCard == 1) ? pdValues[0] : 0.;
 }
 
+/*static*/ void _model::getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors)
+{
+	OwlInstance owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
+	while (owlInverseReferenceInstance != 0) {
+		if (find(
+			vecAncestors.begin(),
+			vecAncestors.end(),
+			owlInverseReferenceInstance) != vecAncestors.end()) {
+			break; // already exists			
+		}
+		vecAncestors.push_back(owlInverseReferenceInstance);
+
+		getInstanceAncestors(owlInverseReferenceInstance, vecAncestors);
+
+		owlInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, owlInverseReferenceInstance);
+	}
+}
+
 _texture* _model::getTexture(const wstring& strTexture)
 {
-	if (!m_strPath.empty()) {
-		if (m_mapTextures.find(strTexture) != m_mapTextures.end()) {
-			return m_mapTextures.at(strTexture);
+	if (m_mapTextures.find(strTexture) != m_mapTextures.end()) {
+		return m_mapTextures.at(strTexture);
+	}
+
+	fs::path pthTexture = strTexture;
+
+	if (!fs::exists(pthTexture)) {
+		//use search path if texture not found by as absolute or relative path
+		wstring strTextureSearch = getTextureSearchPath();
+		pthTexture = strTextureSearch;
+		pthTexture.append(strTexture);
+	}
+
+	_texture* pTexture = NULL;
+
+	if (fs::exists(pthTexture)) {
+		pTexture = new _texture();
+		if (!pTexture->load(pthTexture.wstring().c_str())) {
+			AfxMessageBox(CString(L"Failed to load texture: ") + pthTexture.c_str(), MB_ICONERROR);
 		}
+	}
+	else {
+		CString msg;
+		msg.Format(L"Not found texture: %s\nSearch path: %s", strTexture.c_str(), pthTexture.c_str());
+		AfxMessageBox(msg, MB_ICONERROR);
+	}
 
-		fs::path pthTexture = strTexture;
-		if (!fs::exists(pthTexture)) {
-			fs::path pthFile = m_strPath;
-			pthTexture = pthFile.parent_path();
-			pthTexture.append(strTexture);
-		}
+	if (!pTexture) {
+		pTexture = getDefaultTexture();
+	}
 
-		_texture* pTexture = NULL;
-		if (fs::exists(pthTexture)) {
-			pTexture = new _texture();
-			if (!pTexture->load(pthTexture.wstring().c_str())) {
-				delete pTexture;
-				pTexture = NULL;
-				AfxMessageBox(CString(L"Failed to read texture path: ") + pthTexture.c_str(), MB_ICONEXCLAMATION);
-			}
-		}
-		else {
-			AfxMessageBox(CString(L"Texture file not found: ") + pthTexture.c_str(), MB_ICONEXCLAMATION);
-		}
+	m_mapTextures[strTexture] = pTexture;
 
-		m_mapTextures[strTexture] = pTexture;
-		return pTexture;
-
-	} // if (!m_strModel.empty())
-
-	return getDefaultTexture();
+	return pTexture;
 }
 
 void _model::setVertexBufferOffset(OwlInstance owlInstance)
@@ -548,6 +570,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 {
 	if (bCloseModel) {
 		m_strPath = L"";
+		m_strTextureSearchPath = L"";
 	}
 
 	for (auto pGeometry : m_vecGeometries) {

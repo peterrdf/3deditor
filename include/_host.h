@@ -1,3 +1,3 @@
 #ifdef _WINDOWS
-#include "stdafx.h"
+#include "../../3DEditor/stdafx.h"
 #endif

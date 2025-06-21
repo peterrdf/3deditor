@@ -937,8 +937,8 @@ void CDesignTreeView::SelectInstance(_rdf_instance* pInstance, BOOL bSelectTreeI
 	/** Load instance on demand */
 	auto itInstance2Item = m_mapInstance2Item.find(m_pSelectedInstance->getOwlInstance());
 	if (itInstance2Item == m_mapInstance2Item.end()) {
-		vector<int64_t> vecAncestors{ m_pSelectedInstance->getOwlInstance() };
-		GetAncestors(m_pSelectedInstance->getOwlInstance(), vecAncestors);
+		vector<OwlInstance> vecAncestors{ m_pSelectedInstance->getOwlInstance() };
+		_model::getInstanceAncestors(m_pSelectedInstance->getOwlInstance(), vecAncestors);
 
 		/** Load the ancestors */
 		for (int64_t iAncestor = vecAncestors.size() - 1; iAncestor > 0; iAncestor--) {
@@ -1679,31 +1679,6 @@ void CDesignTreeView::Clean()
 
 	m_hSelectedInstance = NULL;
 	m_pSelectedInstance = nullptr;
-}
-
-void CDesignTreeView::GetAncestors(OwlInstance iInstance, vector<int64_t>& vecAncestors)
-{
-	bool bContinue = false;
-
-	int64_t iInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, 0);
-	while (iInverseReferenceInstance != 0) {
-		if (find(
-			vecAncestors.begin(),
-			vecAncestors.end(),
-			iInverseReferenceInstance) == vecAncestors.end()) {
-			vecAncestors.push_back(iInverseReferenceInstance);
-
-			bContinue = true;
-
-			break;
-		}
-
-		iInverseReferenceInstance = GetInstanceInverseReferencesByIterator(iInstance, iInverseReferenceInstance);
-	}
-
-	if (bContinue) {
-		GetAncestors(vecAncestors.back(), vecAncestors);
-	}
 }
 
 // ************************************************************************************************

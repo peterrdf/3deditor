@@ -15,9 +15,11 @@ CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
 Wavefront OBJ Files (*.obj)|*.obj|\
-Autocad DXF Files (*.dxf)|*.dxf|") 
+glTF Files (*.gltf)|*.gltf|\
+glTF Binary Files (*.glb)|*.glb|\
+Autocad DXF Files (*.dxf)|*.dxf|")
 #ifdef IMPORT_PLY
-_T("Polygon File Format(*.ply) | *.ply |") 
+_T("Polygon File Format(*.ply) | *.ply|")
 #endif
 _T("All Files(*.*) | *.* || ");
 
@@ -54,10 +56,11 @@ public: // Methods
 #endif
 
 #ifdef _GIS_SUPPORT
-	void LoadGISModel(const wchar_t* szPath);
+	void LoadGISModel(OwlModel owlModel, const wchar_t* szPath);
 #endif
 
-	void LoadOBJModel(const wchar_t* szPath);
+	void LoadOBJModel(OwlModel owlModel, const wchar_t* szPath);
+	void LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath);
 };
 
 // ************************************************************************************************

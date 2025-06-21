@@ -17,6 +17,7 @@
 #endif
 
 #include "_obj.h"
+#include "_gltf2bin.h"
 
 #include <bitset>
 #include <algorithm>
@@ -43,79 +44,6 @@ void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 	}
 }
 #endif
-
-// ************************************************************************************************
-// Load OWL extensions
-
-extern "C" typedef void FuncType_LoadExtension(OwlModel model);
-#define FuncName_LoadExtension "LoadExtension"
-
-static void LoadEngineExtensions(OwlModel model)
-{
-#ifdef _WINDOWS
-
-	const char* path = getenv("RDF_ENGINE_EXTENSIONS_PATH");
-	if (!path) {
-		return;
-	}
-
-	char wildcard[1024];
-	_makepath(wildcard, NULL, path, "GKExtension_*", NULL);
-
-	TRACE("Search extensions %s...\n", wildcard);
-
-	WIN32_FIND_DATAA findData;
-	HANDLE hFind = FindFirstFileA(wildcard, &findData);
-
-	if (hFind != INVALID_HANDLE_VALUE) {
-
-		char saveCWD[4096];
-		_getcwd(saveCWD, sizeof(saveCWD) - 1);
-
-		char dllPath[4096];
-
-		do {
-			_makepath(dllPath, NULL, path, findData.cFileName, NULL);
-
-			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				_chdir(dllPath);
-				_makepath(dllPath, NULL, dllPath, findData.cFileName, "dll");
-			}
-			else {
-				_chdir(path);
-				size_t len = strlen(dllPath);
-				const char* ext = dllPath + len - 4;
-				if (_stricmp(ext, ".dll")) {
-					continue;
-				}
-			}
-
-			TRACE("       Loading %s...\n", dllPath);
-
-			if (auto lib = LoadLibraryA(dllPath)) {
-				if (auto func = (FuncType_LoadExtension*)GetProcAddress(lib, FuncName_LoadExtension)) {
-
-					func(model);
-					TRACE("        done\n");
-				}
-				else {
-					CStringA msg;
-					msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, FuncName_LoadExtension);
-					::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
-				}
-			}
-			else {
-				CStringA msg;
-				msg.Format("Can not load engine extension %s\nCan not load DLL", dllPath);
-				::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
-			}
-
-		} while (FindNextFileA(hFind, &findData));
-
-		_chdir(saveCWD);
-	}
-#endif
-}
 
 // ************************************************************************************************
 class CLoadTask : public CTask
@@ -167,7 +95,27 @@ public: // Methods
 		if (strExtension == L".DXF") {
 			m_pModel->LoadDXFModel(m_szPath);
 		} else if (strExtension == L".OBJ") {
-			m_pModel->LoadOBJModel(m_szPath);
+			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
+				m_pModel->LoadOBJModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->LoadOBJModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}
+		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
+			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
+				m_pModel->LoadGLTFModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->LoadGLTFModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}			
 		}
 #endif
 #ifdef _GIS_SUPPORT
@@ -177,53 +125,62 @@ public: // Methods
 			(strExtension == L".GMLZ") ||
 			(strExtension == L".XML") ||
 			(strExtension == L".JSON")) {
-			m_pModel->LoadGISModel(m_szPath);
+			if (m_bAdd) {
+				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
+				m_pModel->LoadGISModel(m_pModel->getOwlModel(), m_szPath);
+				m_pModel->load();
+			} else {
+				OwlModel owlModel = CreateModel();
+				ASSERT(owlModel != 0);
+				m_pModel->LoadGISModel(owlModel, m_szPath);
+				m_pModel->attachModel(m_szPath, owlModel);
+			}
 		} else
 #endif
 #ifdef IMPORT_PLY
-		if (strExtension == L".PLY") {
-			CStringA filePath(m_szPath);
-			char errors[512];
-			auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), NULL, NULL, errors);
-			CString err(errors);
-			CString msg;
-			msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"not imorted", err.IsEmpty() ? L"without issues" : L"", err.GetString());
-			AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
-		} else
+        if (strExtension == L".PLY") {
+            CStringA filePath(m_szPath);
+            char errors[512];
+            auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), NULL, NULL, errors);
+            CString err(errors);
+            CString msg;
+            msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"not imorted", err.IsEmpty() ? L"without issues" : L"", err.GetString());
+            AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
+		}
+		else
 #endif
-			{
-				if (m_bAdd) {
-					m_pModel->importModel(m_szPath);
-				} else {
-					OwlModel owlModel = OpenModelW(m_szPath);
-					LoadEngineExtensions(owlModel);
-					if (owlModel) {
-						m_pModel->attachModel(m_szPath, owlModel);
-					}
-				}
-			}
-
-			if (m_pModel->getOwlModel() == 0) {
-				CString strError;
-				strError.Format(L"Failed to open '%s'.", m_szPath);
-
-				if (!TEST_MODE) {
-					if (m_pProgress != nullptr) {
-						m_pProgress->Log(2/*error*/, CW2A(strError));
-					}
-					::MessageBox(
-						::AfxGetMainWnd()->GetSafeHwnd(),
-						strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-				} else {
-					TRACE(L"\nError: %s", (LPCTSTR)strError);
-				}
+		{
+			if (m_bAdd) {
+				m_pModel->importModel(m_szPath);				
 			} else {
-				if (!TEST_MODE) {
-					if (m_pProgress != nullptr) {
-						m_pProgress->Log(0/*info*/, "*** Done. ***");
-					}
+				OwlModel owlModel = OpenModelW(m_szPath);
+				if (owlModel) {
+					m_pModel->attachModel(m_szPath, owlModel);
 				}
 			}
+		}
+
+		if (m_pModel->getOwlModel() == 0) {
+			CString strError;
+			strError.Format(L"Failed to open '%s'.", m_szPath);
+
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(2/*error*/, CW2A(strError));
+				}
+				::MessageBox(
+					::AfxGetMainWnd()->GetSafeHwnd(),
+					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+			} else {
+				TRACE(L"\nError: %s", (LPCTSTR)strError);
+			}
+		} else {
+			if (!TEST_MODE) {
+				if (m_pProgress != nullptr) {
+					m_pProgress->Log(0/*info*/, "*** Done. ***");
+				}
+			}
+		}
 	}
 };
 
@@ -309,25 +266,33 @@ void CRDFModel::LoadDXFModel(const wchar_t* szPath)
 #endif
 
 #ifdef _GIS_SUPPORT
-void CRDFModel::LoadGISModel(const wchar_t* szPath)
+void CRDFModel::LoadGISModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);
+		if (fs::path(szPath).empty()) {
+			throw std::runtime_error("Invalid GIS file path.");
+		}
+		if (fs::path(szPath).extension().string() != ".gml" &&
+			fs::path(szPath).extension().string() != ".citygml" &&
+			fs::path(szPath).extension().string() != ".gmlzip" &&
+			fs::path(szPath).extension().string() != ".gmlz" &&
+			fs::path(szPath).extension().string() != ".xml" &&
+			fs::path(szPath).extension().string() != ".json") {
+			throw std::runtime_error("Unsupported GIS file format.");
+		}
+
 		wchar_t szAppPath[_MAX_PATH];
 		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
 
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-		wstring strRootFolder = pthRootFolder.wstring();
+		fs::path pathExe = szAppPath;
+		auto pathRootFolder = pathExe.parent_path();
+		wstring strRootFolder = pathRootFolder.wstring();
 		strRootFolder += L"\\";
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
-
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
-
 		ImportGISModel(owlModel, CW2A(szPath));
-
-		attachModel(szPath, owlModel);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
@@ -340,29 +305,42 @@ void CRDFModel::LoadGISModel(const wchar_t* szPath)
 }
 #endif // _GIS_SUPPORT
 
-void CRDFModel::LoadOBJModel(const wchar_t* szPath)
+void CRDFModel::LoadOBJModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
-		wchar_t szAppPath[_MAX_PATH];
-		::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
-
-		fs::path pthExe = szAppPath;
-		auto pthRootFolder = pthExe.parent_path();
-		wstring strRootFolder = pthRootFolder.wstring();
-		strRootFolder += L"\\";
-
-		OwlModel owlModel = CreateModel();
-		ASSERT(owlModel != 0);
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);
 
 		_c_log log((_log_callback)LogCallbackImpl);
 
 		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false/*3DEditor*/);
 		exporter.setLog(&log);
 		exporter.execute();
+	} catch (const std::runtime_error& err) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	} catch (...) {
+		::MessageBox(
+			::AfxGetMainWnd()->GetSafeHwnd(),
+			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
+	}
+}
 
-		ImportGISModel(owlModel, CW2A(szPath));
+void CRDFModel::LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath)
+{
+	try {
+		VERIFY_INSTANCE(owlModel);
+		VERIFY_POINTER(szPath);	
 
-		attachModel(szPath, owlModel);
+		fs::path pthOutputFile = szPath;
+		pthOutputFile += L".bin";
+
+		_c_log log((_log_callback)LogCallbackImpl);
+
+		_gltf2bin::_exporter exporter(owlModel, CW2A(szPath), pthOutputFile.string().c_str());
+		exporter.setLog(&log);
+		exporter.execute(false);
 	} catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
@@ -389,8 +367,6 @@ void CDefaultModel::Create()
 {
 	OwlModel owlModel = CreateModel();
 	assert(owlModel != 0);
-
-	LoadEngineExtensions(owlModel);
 
 	// Cube 1
 	{
@@ -460,5 +436,11 @@ void CDefaultModel::Create()
 		pCylinder.set_segmentationParts(36);
 	}
 
-	attachModel(L"_DEFAULT_", owlModel);
+	wchar_t szAppPath[_MAX_PATH];
+	::GetModuleFileName(::GetModuleHandle(nullptr), szAppPath, sizeof(szAppPath));
+
+	fs::path pthExe = szAppPath;
+	auto pathDefaultModel = pthExe.parent_path();
+	pathDefaultModel.append(L"_DEFAULT_");
+	attachModel(pathDefaultModel.wstring().c_str(), owlModel);
 }

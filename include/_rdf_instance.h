@@ -21,7 +21,7 @@ public:  // Methods
     // instance
     virtual void setEnable(bool bEnable) override;
 
-    void recalculate();
+    void recalculate(bool bForce = false);
 
 public: // Properties
 

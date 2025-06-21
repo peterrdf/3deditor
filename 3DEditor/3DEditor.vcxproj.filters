@@ -25,6 +25,9 @@
     <Filter Include="obj">
       <UniqueIdentifier>{4d0e0385-dabf-465d-b19d-bc9952c7dd70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="parsers">
+      <UniqueIdentifier>{ba163f0d-bbc8-4916-85a9-4714e8de376d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -186,35 +189,65 @@
     <ClInclude Include="..\include\_oglScene.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\gltf\include\_base64.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_errors.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_gltf.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_log.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_node.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_string.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
-    <ClInclude Include="..\gltf\include\_time.h">
-      <Filter>glTF</Filter>
-    </ClInclude>
     <ClInclude Include="..\obj\_obj.h">
       <Filter>obj</Filter>
     </ClInclude>
-    <ClInclude Include="..\obj\_io.h">
-      <Filter>obj</Filter>
+    <ClInclude Include="..\parsers\_errors.h">
+      <Filter>parsers</Filter>
     </ClInclude>
-    <ClInclude Include="..\obj\_reader.h">
-      <Filter>obj</Filter>
+    <ClInclude Include="..\parsers\_host.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_importer_t.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_io.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_json.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_log.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_reader.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_schema_storage.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_serialization.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_string.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_time.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_base64.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_bin2gltf.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_glb_importer.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_gltf_importer.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_gltf_importer_t.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_gltf2bin.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_guid.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gltf\_node.h">
+      <Filter>glTF</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -320,17 +353,41 @@
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\include\_gltf.cpp">
-      <Filter>glTF</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\include\_node.cpp">
-      <Filter>glTF</Filter>
-    </ClCompile>
     <ClCompile Include="..\obj\_obj.cpp">
       <Filter>obj</Filter>
     </ClCompile>
-    <ClCompile Include="..\obj\_reader.cpp">
-      <Filter>obj</Filter>
+    <ClCompile Include="..\parsers\_importer_t.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_json.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_reader.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_serialization.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_bin2gltf.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_glb_importer.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importer.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importer_t.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf_importers.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_gltf2bin.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_node.cpp">
+      <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

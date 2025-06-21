@@ -205,6 +205,7 @@ void _rdf_model::attachModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 
 	load();
@@ -218,6 +219,7 @@ void _rdf_model::assignModel(const wchar_t* szPath, OwlModel owlModel)
 	clean();
 
 	m_strPath = szPath;
+	m_strTextureSearchPath = fs::path(szPath).parent_path().wstring();
 	m_owlModel = owlModel;
 	m_bExternalModel = true;
 }
@@ -1020,6 +1022,17 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 	}
 
 	pInstance->recalculate();
+	if (!pInstance->hasGeometry()) {
+		vector<OwlInstance> vecAncestors;
+		_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
+
+		for (auto owlInstance : vecAncestors) {
+			auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
+			if (pAncestorInstance != nullptr) {
+				pAncestorInstance->recalculate(true);
+			}
+		}
+	}
 
 	if (m_bScaleAndCenterAllVisibleGeometry) {
 		_ptr<_rdf_model>(getModel())->reloadGeometries();

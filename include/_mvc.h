@@ -60,6 +60,7 @@ class _model
 protected: // Fields
 
 	wstring m_strPath;
+	wstring m_strTextureSearchPath;
 	bool m_bEnable;
 
 	const _model* m_pWorld;
@@ -97,7 +98,7 @@ public: // Methods
 	T* as()
 	{
 		return dynamic_cast<T*>(this);
-	}	
+	}
 
 	virtual void scale();
 	virtual void zoomTo(_instance* pInstance);
@@ -111,11 +112,22 @@ public: // Methods
 	static const wchar_t* getInstanceClassName(OwlInstance owlInstance);
 	static int64_t getInstanceObjectProperty(OwlInstance owlInstance, const char* szPropertyName);
 	static double getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName);
+	static void getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors);
 
 	_texture* getTexture(const wstring& strTexture);
-	virtual _texture* getDefaultTexture() { return nullptr; };
+	virtual wstring getTextureSearchPath() const {
+		return !m_strTextureSearchPath.empty() ? m_strTextureSearchPath : m_strPath;
+	}
+	void setTextureSearchPath(const wstring& strTextureSearchPath) {
+		m_strTextureSearchPath = strTextureSearchPath;
+	}
+	virtual _texture* getDefaultTexture() {
+		return nullptr;
+	}
 
-	virtual void resetInstancesEnabledState() { assert(false); }
+	virtual void resetInstancesEnabledState() {
+		assert(false);
+	}
 
 protected: // Methods
 

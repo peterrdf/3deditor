@@ -1847,10 +1847,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				* Update the modified value
 				*/
 				delete[] szNewValues[pData->GetCard()];
-				szNewValues[pData->GetCard()] = new wchar_t[wcslen(strValue) + 1];
-				wcscpy(szNewValues[pData->GetCard()], strValue);
+				szNewValues[pData->GetCard()] = new wchar_t[wcslen((LPCWSTR)strValue) + 1];
+				wcscpy(szNewValues[pData->GetCard()], (LPCWSTR)strValue);
 
+				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, false);
 				SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)szNewValues, iCard);
+				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
 				for (int iValue = 0; iValue < iCard; iValue++) {
 					delete[] szNewValues[iValue];
