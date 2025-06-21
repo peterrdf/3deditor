@@ -99,6 +99,7 @@ namespace _eng
 		virtual void createDoubleArrayProperty(OwlInstance iInstance, const string& strProperty, const _json::_array* pValues);
 
 		OwlInstance createMaterialInstance(int iMaterialIndex);
+		void saveTextureToFile(const string& strFile, const vector<uint8_t>& vecTextureData);
 		void saveTextureToFile(const string& strFile, int iOffset, int iByteLength);
 
 		virtual string getURI(const _json::_object* pBufferObject) const;

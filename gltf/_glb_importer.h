@@ -22,14 +22,13 @@ public: // Methods
 	_glb_importer(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder);
 	virtual ~_glb_importer();
 
+	// _importer_t
+	virtual void load(const char* szFile) override;
+
 protected: // Methods
 
 	// _gltf_importer_t
 	virtual string getURI(const _json::_object* pBufferObject) const override;
 	virtual streampos getBINDataOffset() const override;
-
-public: // Methods
-
-	void load(const char* szFile);
 };
 

@@ -22,17 +22,7 @@ _glb_importer::_glb_importer(OwlModel iModel, const string& strRootFolder, const
 {
 }
 
-/*virtual*/ string _glb_importer::getURI(const _json::_object* /*pBufferObject*/) const /*override*/
-{
-	return m_strInputFile;
-}
-
-/*virtual*/ streampos _glb_importer::getBINDataOffset() const /*override*/
-{
-	return m_nBINDataOffset;
-}
-
-void _glb_importer::load(const char* szFile)
+/*virtual*/ void _glb_importer::load(const char* szFile) /*override*/
 {
 	std::ifstream file(szFile, std::ios::binary);
 	if (!file.is_open()) {
@@ -81,4 +71,14 @@ void _glb_importer::load(const char* szFile)
 	m_nBINDataOffset = file.tellg();
 
 	loadArray((const unsigned char*)jsonData.data(), jsonData.size());
+}
+
+/*virtual*/ string _glb_importer::getURI(const _json::_object* /*pBufferObject*/) const /*override*/
+{
+	return m_strInputFile;
+}
+
+/*virtual*/ streampos _glb_importer::getBINDataOffset() const /*override*/
+{
+	return m_nBINDataOffset;
 }

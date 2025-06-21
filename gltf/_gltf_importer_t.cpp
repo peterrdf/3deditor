@@ -1031,6 +1031,30 @@ namespace _eng
 					saveTextureToFile(pathTextureFile.string(), iTextureOffset, iTextureByteLength);
 				} else {
 					strURI = pURIValue->getValue();
+					VERIFY_STLOBJ_IS_NOT_EMPTY(strURI);
+
+					size_t iIndex = strURI.find("base64,");
+					if (iIndex != string::npos) {
+						string strBase64Content = strURI.substr(iIndex + string("base64,").size());
+						VERIFY_STLOBJ_IS_NOT_EMPTY(strBase64Content);											
+
+						// Determine file extension based on MIME type
+						string strExtension = ".bin";
+						if (strURI.find("image/jpeg") != string::npos) {
+							strExtension = ".jpg";
+						} else if (strURI.find("image/png") != string::npos) {
+							strExtension = ".png";
+						} else if (strURI.find("image/webp") != string::npos) {
+							strExtension = ".webp";
+						}
+
+						strURI = (LPCSTR)CW2A(generateGuid().c_str());
+						strURI += strExtension;
+						fs::path pathTextureFile = fs::path(m_strOutputFolder) / fs::path(strURI);
+
+						vector<BYTE> vecBuffer = base64_decode(strBase64Content);
+						saveTextureToFile(pathTextureFile.string(), vecBuffer);
+					}			
 				}
 
 				// tag
@@ -1085,11 +1109,15 @@ namespace _eng
 		return iMaterialInstance;
 	}
 
-	void _gltf_importer_t::saveTextureToFile(const string& strFile, int iOffset, int iByteLength)
+	void _gltf_importer_t::saveTextureToFile(const string& strFile, const vector<uint8_t>& vecTextureData)
 	{
-		// Read texture data from the GLB file
-		vector<uint8_t> vecTextureData;
-		readBuffer<uint8_t>(getURI(nullptr), iOffset, iByteLength, vecTextureData);		
+		VERIFY_STLOBJ_IS_NOT_EMPTY(strFile);	
+		VERIFY_STLOBJ_IS_NOT_EMPTY(vecTextureData);	
+		VERIFY_EXPRESSION(fs::path(strFile).has_extension());
+		VERIFY_EXPRESSION(fs::path(strFile).extension() == ".bin" ||
+			fs::path(strFile).extension() == ".jpg" ||
+			fs::path(strFile).extension() == ".png" ||
+			fs::path(strFile).extension() == ".webp");
 
 		// Write the texture data to the file
 		std::ofstream outFile(strFile, std::ios::binary);
@@ -1097,11 +1125,18 @@ namespace _eng
 			getLog()->logWrite(enumLogEvent::error, "Failed to create texture file: " + strFile);
 			return;
 		}
-
 		outFile.write(reinterpret_cast<const char*>(vecTextureData.data()), vecTextureData.size());
 		outFile.close();
-
 		getLog()->logWrite(enumLogEvent::info, "Saved texture to file: " + strFile);
+	}
+
+	void _gltf_importer_t::saveTextureToFile(const string& strFile, int iOffset, int iByteLength)
+	{
+		// Read texture data from the GLB file
+		vector<uint8_t> vecTextureData;
+		readBuffer<uint8_t>(getURI(nullptr), iOffset, iByteLength, vecTextureData);		
+
+		saveTextureToFile(strFile, vecTextureData);
 	}
 
 	/*virtual*/ string _gltf_importer_t::getURI(const _json::_object* pBufferObject) const
