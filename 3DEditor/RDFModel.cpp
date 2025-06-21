@@ -12,9 +12,11 @@
 #ifdef _DXF_SUPPORT
 #include "_dxf_parser.h"
 #endif
+#ifdef IMPORT_PLY
+#include "RDFImportPLY.h"
+#endif
 
 #include "_obj.h"
-#include "W:\DevArea\RDF\RDFApps\ImportPLY\RDFImportPLY.h"
 
 #include <bitset>
 #include <algorithm>
@@ -178,6 +180,7 @@ public: // Methods
 			m_pModel->LoadGISModel(m_szPath);
 		} else
 #endif
+#ifdef IMPORT_PLY
 		if (strExtension == L".PLY") {
 			CStringA filePath(m_szPath);
 			char errors[512];
@@ -186,7 +189,8 @@ public: // Methods
 			CString msg;
 			msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"not imorted", err.IsEmpty() ? L"without issues" : L"", err.GetString());
 			AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
-		}
+		} else
+#endif
 			{
 				if (m_bAdd) {
 					m_pModel->importModel(m_szPath);
