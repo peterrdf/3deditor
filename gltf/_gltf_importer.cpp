@@ -6,7 +6,6 @@
 #include "../include/engine.h"
 #endif
 
-#include "_string.h"
 #include "_gltf_importer.h"
 
 #include <chrono>
