@@ -1,10 +1,8 @@
-#include "stdafx.h"
+#include "_host.h"
 #include "_obj.h"
 
-#include "_errors.h"
-#include "_string.h"
-
-#include <atlstr.h>
+#include "../parsers/_errors.h"
+#include "../parsers/_string.h"
 
 // ************************************************************************************************
 namespace _obj2bin

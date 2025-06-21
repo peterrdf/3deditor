@@ -1245,7 +1245,7 @@ namespace _eng
 		VERIFY_POINTER(pTypeValue);
 		assert(pTypeValue->getValue() == "SCALAR");
 
-		if ((iComponentType == 5121/*UNSIGNED_BYTE*/)) {
+		if (iComponentType == 5121/*UNSIGNED_BYTE*/) {
 			vector<unsigned char> vecIndicesUS;
 			readBuffer<BYTE>(
 				strURI.c_str(),
@@ -1254,7 +1254,7 @@ namespace _eng
 				vecIndicesUS);
 
 			convertType<unsigned char, unsigned int>(vecIndicesUS, vecIndices);
-		} else if ((iComponentType == 5122/*SHORT*/)) {
+		} else if (iComponentType == 5122/*SHORT*/) {
 			vector<short> vecIndicesUS;
 			readBuffer<short>(
 				strURI.c_str(),
@@ -1263,7 +1263,7 @@ namespace _eng
 				vecIndicesUS);
 
 			convertType<short, unsigned int>(vecIndicesUS, vecIndices);
-		} else if ((iComponentType == 5123/*UNSIGNED_SHORT*/)) {
+		} else if (iComponentType == 5123/*UNSIGNED_SHORT*/) {
 			vector<unsigned short> vecIndicesUS;
 			readBuffer<unsigned short>(
 				strURI.c_str(),
