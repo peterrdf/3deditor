@@ -46,6 +46,79 @@ void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 #endif
 
 // ************************************************************************************************
+// Load OWL extensions
+
+extern "C" typedef void FuncType_LoadExtension(OwlModel model);
+#define FuncName_LoadExtension "LoadExtension"
+
+static void LoadEngineExtensions(OwlModel model)
+{
+#ifdef _WINDOWS
+
+	const char* path = getenv("RDF_ENGINE_EXTENSIONS_PATH");
+	if (!path) {
+		return;
+	}
+
+	char wildcard[1024];
+	_makepath(wildcard, NULL, path, "GKExtension_*", NULL);
+
+	TRACE("Search extensions %s...\n", wildcard);
+
+	WIN32_FIND_DATAA findData;
+	HANDLE hFind = FindFirstFileA(wildcard, &findData);
+
+	if (hFind != INVALID_HANDLE_VALUE) {
+
+		char saveCWD[4096];
+		_getcwd(saveCWD, sizeof(saveCWD) - 1);
+
+		char dllPath[4096];
+
+		do {
+			_makepath(dllPath, NULL, path, findData.cFileName, NULL);
+
+			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				_chdir(dllPath);
+				_makepath(dllPath, NULL, dllPath, findData.cFileName, "dll");
+			}
+			else {
+				_chdir(path);
+				size_t len = strlen(dllPath);
+				const char* ext = dllPath + len - 4;
+				if (_stricmp(ext, ".dll")) {
+					continue;
+				}
+			}
+
+			TRACE("       Loading %s...\n", dllPath);
+
+			if (auto lib = LoadLibraryA(dllPath)) {
+				if (auto func = (FuncType_LoadExtension*)GetProcAddress(lib, FuncName_LoadExtension)) {
+
+					func(model);
+					TRACE("        done\n");
+				}
+				else {
+					CStringA msg;
+					msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, FuncName_LoadExtension);
+					::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
+				}
+			}
+			else {
+				CStringA msg;
+				msg.Format("Can not load engine extension %s\nCan not load DLL", dllPath);
+				::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
+			}
+
+		} while (FindNextFileA(hFind, &findData));
+
+		_chdir(saveCWD);
+	}
+#endif
+}
+
+// ************************************************************************************************
 class CLoadTask : public CTask
 {
 
@@ -154,6 +227,7 @@ public: // Methods
 				m_pModel->importModel(m_szPath);				
 			} else {
 				OwlModel owlModel = OpenModelW(m_szPath);
+				LoadEngineExtensions(owlModel);
 				if (owlModel) {
 					m_pModel->attachModel(m_szPath, owlModel);
 				}
