@@ -217,7 +217,7 @@ public: // Methods
             auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), NULL, NULL, errors);
             CString err(errors);
             CString msg;
-            msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"not imorted", err.IsEmpty() ? L"without issues" : L"", err.GetString());
+            msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
             AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
 		}
 		else
@@ -440,6 +440,7 @@ CDefaultModel::CDefaultModel()
 void CDefaultModel::Create()
 {
 	OwlModel owlModel = CreateModel();
+	LoadEngineExtensions(owlModel);
 	assert(owlModel != 0);
 
 	// Cube 1
