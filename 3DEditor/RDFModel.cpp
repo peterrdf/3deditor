@@ -218,7 +218,8 @@ public: // Methods
             CString err(errors);
             CString msg;
             msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
-            AfxMessageBox(msg, inst ? MB_OK : MB_ICONSTOP);
+            AfxMessageBox(msg, (inst!=NULL) ? MB_OK : MB_ICONSTOP);
+			m_pModel->load();
 		}
 		else
 #endif
