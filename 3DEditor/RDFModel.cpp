@@ -13,7 +13,7 @@
 #include "_dxf_parser.h"
 #endif
 
-#include "_obj.h"
+#include "_obj2bin.h"
 #include "_gltf2bin.h"
 
 #include <bitset>
@@ -298,7 +298,7 @@ void CRDFModel::LoadOBJModel(OwlModel owlModel, const wchar_t* szPath)
 
 		_c_log log((_log_callback)LogCallbackImpl);
 
-		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false/*3DEditor*/);
+		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false);
 		exporter.setLog(&log);
 		exporter.execute();
 	} catch (const std::runtime_error& err) {

@@ -1109,7 +1109,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\obj\_obj.cpp">
+    <ClCompile Include="..\obj\_obj2bin.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>

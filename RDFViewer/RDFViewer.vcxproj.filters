@@ -227,9 +227,6 @@
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\obj\_obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\parsers\_importer_t.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -261,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_obj2bin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

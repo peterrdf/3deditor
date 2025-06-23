@@ -189,7 +189,7 @@
     <ClInclude Include="..\include\_oglScene.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\obj\_obj.h">
+    <ClInclude Include="..\obj\_obj2bin.h">
       <Filter>obj</Filter>
     </ClInclude>
     <ClInclude Include="..\parsers\_errors.h">
@@ -353,7 +353,7 @@
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\obj\_obj.cpp">
+    <ClCompile Include="..\obj\_obj2bin.cpp">
       <Filter>obj</Filter>
     </ClCompile>
     <ClCompile Include="..\parsers\_importer_t.cpp">
