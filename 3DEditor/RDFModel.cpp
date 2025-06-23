@@ -214,7 +214,7 @@ public: // Methods
         if (strExtension == L".PLY") {
             CStringA filePath(m_szPath);
             char errors[512];
-            auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), NULL, NULL, errors);
+            auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), errors);
             CString err(errors);
             CString msg;
             msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
