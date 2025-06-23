@@ -17,8 +17,11 @@ CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
 Wavefront OBJ Files (*.obj)|*.obj|\
 glTF Files (*.gltf)|*.gltf|\
 glTF Binary Files (*.glb)|*.glb|\
-Autocad DXF Files (*.dxf)|*.dxf|\
-All Files (*.*)|*.*||");
+Autocad DXF Files (*.dxf)|*.dxf|")
+#ifdef IMPORT_PLY
+_T("Polygon File Format(*.ply) | *.ply|")
+#endif
+_T("All Files(*.*) | *.* || ");
 
 // ************************************************************************************************
 class CRDFModel : public _rdf_model
