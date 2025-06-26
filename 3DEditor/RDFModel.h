@@ -21,7 +21,7 @@ Autocad DXF Files (*.dxf)|*.dxf|")
 #ifdef IMPORT_PLY
 _T("Polygon File Format(*.ply) | *.ply|")
 #endif
-_T("All Files(*.*) | *.* || ");
+_T("All Files (*.*)|*.*||");
 
 // ************************************************************************************************
 class CRDFModel : public _rdf_model
