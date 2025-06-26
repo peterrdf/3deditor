@@ -109,7 +109,8 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 			&iStartIndexFacePolygons, &iIndicesCountFacePolygons,
 			&iStartIndexConceptualFacePolygons, &iIndicesCountConceptualFacePolygons);
 
-		wstring strTexture = getConcFaceTexture(iConceptualFace);
+		bool bFlipY = true; // backward compatibility
+		wstring strTexture = getConcFaceTexture(iConceptualFace, bFlipY);
 
 		if (iIndicesCountTriangles > 0) {
 			int32_t iIndexValue = *(m_pIndexBuffer->data() + iStartIndexTriangles);
@@ -134,7 +135,8 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 				iEmissiveColor,
 				iSpecularColor,
 				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
+				!strTexture.empty() ? strTexture.c_str() : nullptr,
+				bFlipY);
 
 			addTriangles(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles, material, mapMaterial2ConcFaces);
 		}
@@ -170,7 +172,8 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 				iEmissiveColor,
 				iSpecularColor,
 				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
+				nullptr,
+				false);
 
 			addLines(iConceptualFaceIndex, iStartIndexLines, iIndicesCountLines, material, mapMaterial2ConcFaceLines);
 		}
@@ -198,7 +201,8 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 				iEmissiveColor,
 				iSpecularColor,
 				fTransparency,
-				!strTexture.empty() ? strTexture.c_str() : nullptr);
+				nullptr,
+				false);
 
 			addPoints(iConceptualFaceIndex, iStartIndexPoints, iIndicesCountPoints, material, mapMaterial2ConcFacePoints);
 		}
@@ -232,13 +236,13 @@ void _rdf_geometry::loadName()
 	GetNameOfInstanceW(getOwlInstance(), &szName);
 
 	if (szName == nullptr) {
-		RdfProperty iTagProperty = GetPropertyByName(getOwlModel(), "tag");
-		if (iTagProperty != 0) {
+		RdfProperty rdfTagProperty = GetPropertyByName(getOwlModel(), "tag");
+		if (rdfTagProperty != 0) {
 			SetCharacterSerialization(getOwlModel(), 0, 0, false);
 
 			int64_t iCard = 0;
 			wchar_t** szValue = nullptr;
-			GetDatatypeProperty(getOwlInstance(), iTagProperty, (void**)&szValue, &iCard);
+			GetDatatypeProperty(getOwlInstance(), rdfTagProperty, (void**)&szValue, &iCard);
 
 			if (iCard == 1) {
 				szName = szValue[0];

@@ -18,8 +18,8 @@ namespace _eng
 	const char SPECULAR_COLOR_PROP[] = "specularColor";
 
 	// ********************************************************************************************
-	_gltf_importer_t::_gltf_importer_t(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder, int iValidationLevel)
-		: _importer_t<_json::_document, _json::_document_site>(iModel, iValidationLevel)
+	_gltf_importer_t::_gltf_importer_t(OwlModel owlModel, const string& strRootFolder, const string& strOutputFolder, int iValidationLevel, bool bTextureFlipV/* = false*/)
+		: _importer_t<_json::_document, _json::_document_site>(owlModel, iValidationLevel)
 		, m_strRootFolder(strRootFolder)
 		, m_strOutputFolder(strOutputFolder)
 		, m_pRootObject(nullptr)
@@ -37,6 +37,8 @@ namespace _eng
 		, m_mapMaterials()
 		, m_mapTextures()
 		, m_iRootInstance(0)
+		, m_bTextureFlipV(bTextureFlipV)
+		, m_rdfTextureFlipYProperty(0)
 		, m_mapClasses()
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strRootFolder);
@@ -604,7 +606,9 @@ namespace _eng
 			VERIFY_STLOBJ_IS_NOT_EMPTY(vecUVsF);
 
 			convertType<float, double>(vecUVsF, vecUVs);
-			textureFlipY<double>(vecUVs);
+			if (m_bTextureFlipV) {
+				textureFlipY<double>(vecUVs);
+			}
 		}
 		// attributes/TEXCOORD_0 accessor
 
@@ -963,8 +967,25 @@ namespace _eng
 			}
 
 			if (iTextureInstance == 0) {
+				if (m_rdfTextureFlipYProperty == 0) {
+					m_rdfTextureFlipYProperty = CreateProperty(
+						getModel(),
+						DATATYPEPROPERTY_TYPE_BOOLEAN,
+						"flipY");
+					VERIFY_INSTANCE(m_rdfTextureFlipYProperty);
+
+					SetClassPropertyCardinalityRestriction(
+						GetClassByName(getModel(), "Texture"),
+						m_rdfTextureFlipYProperty,
+						1,
+						1);
+				}
+
 				iTextureInstance = CreateInstance(GetClassByName(getModel(), "Texture"));
 				VERIFY_INSTANCE(iTextureInstance);
+
+				bool bFlipY = false;
+				SetDatatypeProperty(iTextureInstance, m_rdfTextureFlipYProperty, (void**)bFlipY);
 
 				m_mapTextures[iTextureIndex] = iTextureInstance;
 

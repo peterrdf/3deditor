@@ -102,7 +102,8 @@ _oglRendererSettings::_oglRendererSettings()
 		1.f, 0.f, 0.f,
 		1.f, 0.f, 0.f,
 		1.f,
-		nullptr);
+		nullptr,
+		false);
 
 	m_pPointedInstanceMaterial->init(
 		.0f, .0f, 1.f,
@@ -110,7 +111,8 @@ _oglRendererSettings::_oglRendererSettings()
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		1.f,
-		nullptr);
+		nullptr,
+		false);
 }
 
 void _oglRendererSettings::_setView(enumView enView)
@@ -793,7 +795,8 @@ void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float
 		fR, fG, fB,
 		fR, fG, fB,
 		fTransparency,
-		nullptr);
+		nullptr,
+		false);
 }
 
 // ************************************************************************************************
@@ -2149,7 +2152,7 @@ void _oglView::_drawFaces()
 
 					_texture* pTexture = nullptr;
 					if (pMaterial->hasTexture()) {
-						pTexture = pModel->getTexture(pMaterial->texture());
+						pTexture = pModel->getTexture(pMaterial->texture(), pMaterial->getFlipY());
 					}
 
 					if (pTexture != nullptr) {
@@ -2958,7 +2961,8 @@ void _oglView::addUserDefinedMaterial(const vector<_instance*>& vecInstances, fl
 			fR, fG, fB,
 			fR, fG, fB,
 			1.f,
-			nullptr);
+			nullptr,
+			false);
 
 		auto itUserDefinedMaterial = m_mapUserDefinedMaterials.find(pInstance);
 		if (itUserDefinedMaterial != m_mapUserDefinedMaterials.end()) {

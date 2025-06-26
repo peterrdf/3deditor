@@ -289,7 +289,7 @@ CRDFModel::~CRDFModel()
 		LPCTSTR szDefaultTexture = (LPCTSTR)strDefaultTexture;
 
 		m_pDefaultTexture = new _texture();
-		if (!m_pDefaultTexture->load(szDefaultTexture)) {
+		if (!m_pDefaultTexture->load(szDefaultTexture, false)) {
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"The default texture is not found.", L"Error", MB_ICONERROR | MB_OK);
 		}
 	}

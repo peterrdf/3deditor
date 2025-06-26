@@ -288,7 +288,7 @@ protected: // Methods
             DEFAULT_COLOR_A;
     }
 
-    wstring getConcFaceTexture(ConceptualFace iConceptualFace);
+    wstring getConcFaceTexture(ConceptualFace conceptualFace, bool& bFlipY);
     float getTransparency(OwlInstance owlMaterialInstance);
 
     void buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES_COUNT_LIMIT);

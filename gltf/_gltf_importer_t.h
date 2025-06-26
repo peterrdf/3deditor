@@ -36,6 +36,10 @@ namespace _eng
 
 		OwlInstance m_iRootInstance;
 
+		// Texture
+		bool m_bTextureFlipV;
+		RdfProperty m_rdfTextureFlipYProperty;
+
 	protected: // Members
 
 		map<string, OwlClass> m_mapClasses;
@@ -50,7 +54,7 @@ namespace _eng
 
 	public: // Methods
 
-		_gltf_importer_t(OwlModel iModel, const string& strRootFolder, const string& strOutputFolder, int iValidationLevel);
+		_gltf_importer_t(OwlModel owlModel, const string& strRootFolder, const string& strOutputFolder, int iValidationLevel, bool bTextureFlipV = false);
 		virtual ~_gltf_importer_t();
 
 		OwlInstance getRootInstance() const { return m_iRootInstance; }

@@ -395,7 +395,8 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
             iEmissiveColor,
             iSpecularColor,
             fTransparency,
-            nullptr);
+            nullptr,
+            false);
 
         if (iIndicesCountTriangles > 0) {
             addTriangles(iConceptualFaceIndex, iStartIndexTriangles, iIndicesCountTriangles, material, mapMaterial2ConcFaces);
@@ -432,11 +433,14 @@ void _geometry::addMaterial(int64_t iConceptualFaceIndex, int64_t iStartIndex, i
     }
 }
 
-wstring _geometry::getConcFaceTexture(ConceptualFace iConceptualFace)
+wstring _geometry::getConcFaceTexture(ConceptualFace conceptualFace, bool& bFlipY)
 {
-    wstring strTexture;
+    assert(conceptualFace != 0);
+    bFlipY = true; // backward compatibility
 
-    OwlInstance iMaterialInstance = GetConceptualFaceMaterial(iConceptualFace);
+    wstring strTexture;    
+
+    OwlInstance iMaterialInstance = GetConceptualFaceMaterial(conceptualFace);
     if (iMaterialInstance != 0) {
         int64_t* piInstances = nullptr;
         int64_t iCard = 0;
@@ -457,6 +461,20 @@ wstring _geometry::getConcFaceTexture(ConceptualFace iConceptualFace)
 
             if (iCard == 1) {
                 strTexture = CA2W(szValue[0]);
+
+                RdfProperty rdfFlipYProperty = GetPropertyByName(getOwlModel(), "flipY");
+                if (rdfFlipYProperty != 0) {
+                    iCard = 0;
+                    bool* pbFlipYValue = nullptr;
+                    GetDatatypeProperty(
+                        piInstances[0],
+                        rdfFlipYProperty,
+                        (void**)&pbFlipYValue,
+                        &iCard);
+                    if (iCard == 1) {
+                        bFlipY = *pbFlipYValue;
+                    }
+				} // if (rdfFlipYProperty != 0)
             }
 
             if (strTexture.empty()) {

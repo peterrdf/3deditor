@@ -359,7 +359,7 @@ namespace _obj2bin
 						_string::split(strLine, " ", vecTokens, false);
 						VERIFY_EXPRESSION(vecTokens.size() == 2);
 						
-						auto pMaterial = new _material(0, 0, 0, 0, 1.f, (LPCWSTR)CA2W(vecTokens[1].c_str())); //#todo: materials without texture
+						auto pMaterial = new _material(0, 0, 0, 0, 1.f, (LPCWSTR)CA2W(vecTokens[1].c_str()), false); //#todo: materials without texture
 						VERIFY_EXPRESSION(m_mapMaterials.find(strMaterial) == m_mapMaterials.end());
 						m_mapMaterials[strMaterial] = { pMaterial, 0 };
 

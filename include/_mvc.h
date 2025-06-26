@@ -114,7 +114,7 @@ public: // Methods
 	static double getInstanceDoubleProperty(OwlInstance owlInstance, const char* szPropertyName);
 	static void getInstanceAncestors(OwlInstance iInstance, vector<OwlInstance>& vecAncestors);
 
-	_texture* getTexture(const wstring& strTexture);
+	_texture* getTexture(const wstring& strTexture, bool bFlipY);
 	virtual wstring getTextureSearchPath() const {
 		return !m_strTextureSearchPath.empty() ? m_strTextureSearchPath : m_strPath;
 	}

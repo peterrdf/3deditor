@@ -48,7 +48,7 @@ public: // Methods
 		return false;
 	}
 
-	bool load(const wchar_t* lpszPathName)
+	bool load(const wchar_t* lpszPathName, bool bFlipY)
 	{
 #ifdef _WINDOWS
 		fs::path pthFile = lpszPathName;
@@ -57,7 +57,7 @@ public: // Methods
 			(pthFile.extension() == ".png") ||
 			(pthFile.extension() == ".bmp"))
 		{
-			stbi_set_flip_vertically_on_load(true);
+			stbi_set_flip_vertically_on_load(bFlipY);			
 
 			int iWidth = 0;
 			int iHeight = 0;
