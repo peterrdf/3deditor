@@ -41,7 +41,8 @@ namespace _obj2bin
 		string m_strOutputFile;
 
 		// Texture
-		bool m_bFlipTextureV;
+		bool m_bTextureFlipV;
+		RdfProperty m_rdfTextureFlipYProperty;
 
 		// Materials
 		set<string> m_setMaterialLibraries;
@@ -65,12 +66,9 @@ namespace _obj2bin
 
 	public: // Methods
 
-		_exporter(const char* szInputFile, bool bFlipTextureV = false);
-		_exporter(const char* szInputFile, const char* szOutputFile, bool bFlipTextureV = false);
-		_exporter(const char* szInputFile, OwlModel owlModel, bool bFlipTextureV = false);
-
-	public: // Methods
-
+		_exporter(const char* szInputFile, bool bTextureFlipV = false);
+		_exporter(const char* szInputFile, const char* szOutputFile, bool bTextureFlipV = false);
+		_exporter(const char* szInputFile, OwlModel owlModel, bool bTextureFlipV = false);
 		virtual ~_exporter();
 
 		virtual void execute();

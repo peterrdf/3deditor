@@ -244,24 +244,24 @@ namespace _eng
 				auto pNode = pNodesValue->getValues()[iNode];
 				VERIFY_POINTER(pNode);
 
-				OwlInstance iNodeInstance = createNodeInstance(pNode->as<_json::_simple>());
-				VERIFY_INSTANCE(iNodeInstance);
+				OwlInstance owlNodeInstance = createNodeInstance(pNode->as<_json::_simple>());
+				VERIFY_INSTANCE(owlNodeInstance);
 
-				vecNodeInstances.push_back(iNodeInstance);
+				vecNodeInstances.push_back(owlNodeInstance);
 			} // for (size_t iNode = ...
 
-			OwlInstance iSceneInstance = createInstance(
+			OwlInstance owlSceneInstance = createInstance(
 				_importer_t::createClass("scene"),
 				_string::format("scene (%d)", (int)iScene));
-			VERIFY_INSTANCE(iSceneInstance);
+			VERIFY_INSTANCE(owlSceneInstance);
 
 			SetObjectProperty(
-				iSceneInstance,
+				owlSceneInstance,
 				createObjectPropertyInstance("nodes"),
 				vecNodeInstances.data(),
 				vecNodeInstances.size());
 
-			vecSceneInstances.push_back(iSceneInstance);
+			vecSceneInstances.push_back(owlSceneInstance);
 		} // for (size_t iScene = ...
 
 		SetObjectProperty(
@@ -285,13 +285,13 @@ namespace _eng
 		auto pNodeObject = getNode(iNodeIndex);
 		VERIFY_POINTER(pNodeObject);
 
-		OwlInstance iNodeInstance = createCollectionInstance(
+		OwlInstance owlNodeInstance = createCollectionInstance(
 			"node",
 			_string::format("node (%d)", (int)iNodeIndex));
-		VERIFY_INSTANCE(iNodeInstance);
+		VERIFY_INSTANCE(owlNodeInstance);
 
 		/* Cache */
-		m_mapNodes[iNodeIndex] = iNodeInstance;
+		m_mapNodes[iNodeIndex] = owlNodeInstance;
 
 		auto pChildrenProperty = pNodeObject->getProperty("children");
 		if (pChildrenProperty != nullptr) {
@@ -300,14 +300,14 @@ namespace _eng
 
 			vector<OwlInstance> vecNodeInstances;
 			for (size_t iChild = 0; iChild < pChildrenValue->getValues().size(); iChild++) {
-				OwlInstance iChildNodeInstance = createNodeInstance(pChildrenValue->getValues()[iChild]->as<_json::_simple>());
-				VERIFY_INSTANCE(iChildNodeInstance);
+				OwlInstance owlChildNodeInstance = createNodeInstance(pChildrenValue->getValues()[iChild]->as<_json::_simple>());
+				VERIFY_INSTANCE(owlChildNodeInstance);
 
-				vecNodeInstances.push_back(iChildNodeInstance);
+				vecNodeInstances.push_back(owlChildNodeInstance);
 			}
 
 			SetObjectProperty(
-				iNodeInstance,
+				owlNodeInstance,
 				GetPropertyByName(getModel(), "objects"),
 				vecNodeInstances.data(),
 				vecNodeInstances.size());
@@ -322,7 +322,7 @@ namespace _eng
 				createNodeGeometry(pMeshIndex->as<_json::_simple>(), vecGeometries);
 				if (!vecGeometries.empty()) {
 					SetObjectProperty(
-						iNodeInstance,
+						owlNodeInstance,
 						GetPropertyByName(getModel(), "objects"),
 						vecGeometries.data(),
 						vecGeometries.size());
@@ -363,24 +363,24 @@ namespace _eng
 			vecMatrix.push_back(atof(pMatrixValue->getValues()[13]->as<_json::_simple>()->getValue().c_str()));
 			vecMatrix.push_back(atof(pMatrixValue->getValues()[14]->as<_json::_simple>()->getValue().c_str()));
 
-			OwlInstance iTransformationInstance = createTransformation(
+			OwlInstance owlTransformationInstance = createTransformation(
 				"Transformation",
 				vecMatrix);
-			VERIFY_INSTANCE(iTransformationInstance);
+			VERIFY_INSTANCE(owlTransformationInstance);
 
 			SetObjectProperty(
-				iTransformationInstance,
+				owlTransformationInstance,
 				GetPropertyByName(getModel(), "object"),
-				&iNodeInstance,
+				&owlNodeInstance,
 				1);
 
 			/* Cache */
-			m_mapNodes[iNodeIndex] = iTransformationInstance;
+			m_mapNodes[iNodeIndex] = owlTransformationInstance;
 
-			return iTransformationInstance;
+			return owlTransformationInstance;
 		} // if (pMatrixProperty != nullptr)
 
-		return iNodeInstance;
+		return owlNodeInstance;
 	}
 
 	/*virtual*/ void _gltf_importer_t::createNodeGeometry(const _json::_simple* pMeshIndex, vector<OwlInstance>& vecGeometries)
@@ -457,33 +457,33 @@ namespace _eng
 			}
 
 			if (iMode == 0/*POINTS*/) {
-				OwlInstance iInstance = createPoints(
+				OwlInstance owlInstance = createPoints(
 					iPositionAccessorIndex,
 					iIndicesAccessorIndex,
 					iMaterialIndex);
-				VERIFY_INSTANCE(iInstance);
+				VERIFY_INSTANCE(owlInstance);
 
-				vecGeometries.push_back(iInstance);
+				vecGeometries.push_back(owlInstance);
 			} else if (iMode == 1/*LINES*/) {
-				OwlInstance iInstance = createLines(
+				OwlInstance owlInstance = createLines(
 					iPositionAccessorIndex,
 					iIndicesAccessorIndex,
 					iMaterialIndex);
 
-				VERIFY_INSTANCE(iInstance);
+				VERIFY_INSTANCE(owlInstance);
 
-				vecGeometries.push_back(iInstance);
+				vecGeometries.push_back(owlInstance);
 			} else if (iMode == 4/*TRIANGLES*/) {
-				OwlInstance iInstance = createMesh(
+				OwlInstance owlInstance = createMesh(
 					iPositionAccessorIndex,
 					iNormalAccessorIndex,
 					iTexcoord0AccessorIndex,
 					iIndicesAccessorIndex,
 					iMaterialIndex);
 
-				VERIFY_INSTANCE(iInstance);
+				VERIFY_INSTANCE(owlInstance);
 
-				vecGeometries.push_back(iInstance);
+				vecGeometries.push_back(owlInstance);
 			} else {
 				getLog()->logWrite(enumLogEvent::error, "TODO.");
 			}
@@ -522,12 +522,12 @@ namespace _eng
 		}
 		// indices accessor
 
-		OwlInstance iInstance = createPoint3DSetDInstance(
+		OwlInstance owlInstance = createPoint3DSetDInstance(
 			"Points",
 			vecVertices,
 			createMaterialInstance(iMaterialIndex));
 
-		return iInstance;
+		return owlInstance;
 	}
 
 	/*virtual*/ OwlInstance _gltf_importer_t::createLines(
@@ -559,12 +559,12 @@ namespace _eng
 		}
 		// indices accessor
 
-		OwlInstance iInstance = createLine3DSetInstance(
+		OwlInstance owlInstance = createLine3DSetInstance(
 			"Lines",
 			vecVertices,
 			createMaterialInstance(iMaterialIndex));
 
-		return iInstance;
+		return owlInstance;
 	}
 
 	/*virtual*/ OwlInstance _gltf_importer_t::createMesh(
@@ -628,7 +628,7 @@ namespace _eng
 		}
 		// indices accessor
 
-		OwlInstance iInstance = createBoundaryRepresentationInstance(
+		OwlInstance owlInstance = createBoundaryRepresentationInstance(
 			"Mesh",
 			vecIndices,
 			vecVertices,
@@ -636,7 +636,7 @@ namespace _eng
 
 		if (!vecNormals.empty()) {
 			SetDatatypeProperty(
-				iInstance,
+				owlInstance,
 				GetPropertyByName(getModel(), "normalCoordinates"),
 				vecNormals.data(),
 				vecNormals.size());
@@ -644,13 +644,13 @@ namespace _eng
 
 		if (!vecUVs.empty()) {
 			SetDatatypeProperty(
-				iInstance,
+				owlInstance,
 				GetPropertyByName(getModel(), "textureCoordinates"),
 				vecUVs.data(),
 				vecUVs.size());
 		}
 
-		return iInstance;
+		return owlInstance;
 	}
 
 	const _json::_object* _gltf_importer_t::getNode(int iIndex)
@@ -773,9 +773,9 @@ namespace _eng
 		return pImage->as<_json::_object>();
 	}
 
-	/*virtual*/ void _gltf_importer_t::createStringProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
+	/*virtual*/ void _gltf_importer_t::createStringProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
 	{
-		VERIFY_INSTANCE(iInstance);
+		VERIFY_INSTANCE(owlInstance);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strProperty);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(vecValues);
 
@@ -790,7 +790,7 @@ namespace _eng
 		} // for (auto pChild ...
 
 		setDataProperty(
-			iInstance,
+			owlInstance,
 			strProperty,
 			DATATYPEPROPERTY_TYPE_STRING,
 			vecStrValues.data(),
@@ -801,9 +801,9 @@ namespace _eng
 		}
 	}
 
-	/*virtual*/ void _gltf_importer_t::createIntProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
+	/*virtual*/ void _gltf_importer_t::createIntProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
 	{
-		VERIFY_INSTANCE(iInstance);
+		VERIFY_INSTANCE(owlInstance);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strProperty);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(vecValues);
 
@@ -816,16 +816,16 @@ namespace _eng
 		}
 
 		setDataProperty(
-			iInstance,
+			owlInstance,
 			strProperty,
 			DATATYPEPROPERTY_TYPE_INTEGER,
 			vecIntValues.data(),
 			vecIntValues.size());
 	}
 
-	/*virtual*/ void _gltf_importer_t::createDoubleProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
+	/*virtual*/ void _gltf_importer_t::createDoubleProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues)
 	{
-		VERIFY_INSTANCE(iInstance);
+		VERIFY_INSTANCE(owlInstance);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strProperty);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(vecValues);
 
@@ -838,16 +838,16 @@ namespace _eng
 		}
 
 		setDataProperty(
-			iInstance,
+			owlInstance,
 			strProperty,
 			DATATYPEPROPERTY_TYPE_DOUBLE,
 			vecDoubleValues.data(),
 			vecDoubleValues.size());
 	}
 
-	/*virtual*/ void _gltf_importer_t::createDoubleArrayProperty(OwlInstance iInstance, const string& strProperty, const _json::_array* pValues)
+	/*virtual*/ void _gltf_importer_t::createDoubleArrayProperty(OwlInstance owlInstance, const string& strProperty, const _json::_array* pValues)
 	{
-		VERIFY_INSTANCE(iInstance);
+		VERIFY_INSTANCE(owlInstance);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strProperty);
 		VERIFY_POINTER(pValues);
 
@@ -860,7 +860,7 @@ namespace _eng
 		}
 
 		setDataProperty(
-			iInstance,
+			owlInstance,
 			strProperty,
 			DATATYPEPROPERTY_TYPE_DOUBLE,
 			vecDoubleValues.data(),
@@ -915,58 +915,58 @@ namespace _eng
 			pEmissiveFactorProperty = pMaterialObject->getPropertyValueAs<_json::_array>("emissiveFactor");
 		}  // else pbrMetallicRoughness	
 
-		OwlInstance iMaterialInstance = CreateInstance(GetClassByName(getModel(), "Material"));
-		VERIFY_INSTANCE(iMaterialInstance);
+		OwlInstance owlMaterialInstance = CreateInstance(GetClassByName(getModel(), "Material"));
+		VERIFY_INSTANCE(owlMaterialInstance);
 
-		setTag(iMaterialInstance, strMaterialName);
+		setTag(owlMaterialInstance, strMaterialName);
 
-		OwlInstance iColorInstance = CreateInstance(GetClassByName(getModel(), "Color"));
-		VERIFY_INSTANCE(iColorInstance);
+		OwlInstance owlColorInstance = CreateInstance(GetClassByName(getModel(), "Color"));
+		VERIFY_INSTANCE(owlColorInstance);
 
-		setTag(iColorInstance, "Color");
+		setTag(owlColorInstance, "Color");
 
 		SetObjectProperty(
-			iMaterialInstance,
+			owlMaterialInstance,
 			GetPropertyByName(getModel(), "color"),
-			&iColorInstance,
+			&owlColorInstance,
 			1);
 
 		if (pBaseColorFactorProperty != nullptr) {
-			OwlInstance iColorComponentInstance = createColorComponentInstance(
+			OwlInstance owlColorComponentInstance = createColorComponentInstance(
 				"ColorComponent",
 				atof(pBaseColorFactorProperty->getValues()[0]->as<_json::_simple>()->getValue().c_str()),
 				atof(pBaseColorFactorProperty->getValues()[1]->as<_json::_simple>()->getValue().c_str()),
 				atof(pBaseColorFactorProperty->getValues()[2]->as<_json::_simple>()->getValue().c_str()));
-			VERIFY_INSTANCE(iColorComponentInstance);
+			VERIFY_INSTANCE(owlColorComponentInstance);
 
 			SetObjectProperty(
-				iColorInstance,
+				owlColorInstance,
 				GetPropertyByName(getModel(), "ambient"),
-				&iColorComponentInstance,
+				&owlColorComponentInstance,
 				1);
 
 			SetObjectProperty(
-				iColorInstance,
+				owlColorInstance,
 				GetPropertyByName(getModel(), "diffuse"),
-				&iColorComponentInstance,
+				&owlColorComponentInstance,
 				1);
 
 			double dTransparency = atof(pBaseColorFactorProperty->getValues()[3]->as<_json::_simple>()->getValue().c_str());
 
 			SetDatatypeProperty(
-				iColorInstance,
+				owlColorInstance,
 				GetPropertyByName(getModel(), "transparency"),
 				&dTransparency,
 				1);
 		} // if (pBaseColorFactorProperty != nullptr)
 
 		if (iTextureIndex != -1) {
-			OwlInstance iTextureInstance = 0;
+			OwlInstance owlTextureInstance = 0;
 			if (m_mapTextures.find(iTextureIndex) != m_mapTextures.end()) {
-				iTextureInstance = m_mapTextures.at(iTextureIndex);
+				owlTextureInstance = m_mapTextures.at(iTextureIndex);
 			}
 
-			if (iTextureInstance == 0) {
+			if (owlTextureInstance == 0) {
 				if (m_rdfTextureFlipYProperty == 0) {
 					m_rdfTextureFlipYProperty = CreateProperty(
 						getModel(),
@@ -981,13 +981,13 @@ namespace _eng
 						1);
 				}
 
-				iTextureInstance = CreateInstance(GetClassByName(getModel(), "Texture"));
-				VERIFY_INSTANCE(iTextureInstance);
+				owlTextureInstance = CreateInstance(GetClassByName(getModel(), "Texture"));
+				VERIFY_INSTANCE(owlTextureInstance);
 
 				bool bFlipY = false;
-				SetDatatypeProperty(iTextureInstance, m_rdfTextureFlipYProperty, (void**)bFlipY);
+				SetDatatypeProperty(owlTextureInstance, m_rdfTextureFlipYProperty, (void**)bFlipY);
 
-				m_mapTextures[iTextureIndex] = iTextureInstance;
+				m_mapTextures[iTextureIndex] = owlTextureInstance;
 
 				auto pTextureObject = getTexture(iTextureIndex);
 				VERIFY_POINTER(pTextureObject);
@@ -1079,14 +1079,14 @@ namespace _eng
 				}
 
 				// tag
-				setTag(iTextureInstance, strURI);
+				setTag(owlTextureInstance, strURI);
 
 				// name
 				char* szValue = new char[strURI.size() + 1];
 				strcpy(szValue, strURI.c_str());
 
 				SetDatatypeProperty(
-					iTextureInstance,
+					owlTextureInstance,
 					GetPropertyByName(getModel(), "name"),
 					&szValue,
 					1);
@@ -1095,39 +1095,39 @@ namespace _eng
 			} // if (iTextureInstance == 0)
 
 			SetObjectProperty(
-				iMaterialInstance,
+				owlMaterialInstance,
 				GetPropertyByName(getModel(), "textures"),
-				&iTextureInstance,
+				&owlTextureInstance,
 				1);
 		} // if (iTextureIndex != -1)
 
 		if (pEmissiveFactorProperty != nullptr) {
 			assert(pEmissiveFactorProperty->getValues().size() == 3);
 
-			OwlInstance iColorComponentInstance = createColorComponentInstance(
+			OwlInstance owlColorComponentInstance = createColorComponentInstance(
 				"ColorComponent",
 				atof(pEmissiveFactorProperty->getValues()[0]->as<_json::_simple>()->getValue().c_str()),
 				atof(pEmissiveFactorProperty->getValues()[1]->as<_json::_simple>()->getValue().c_str()),
 				atof(pEmissiveFactorProperty->getValues()[2]->as<_json::_simple>()->getValue().c_str()));
-			VERIFY_INSTANCE(iColorComponentInstance);
+			VERIFY_INSTANCE(owlColorComponentInstance);
 
 			SetObjectProperty(
-				iColorInstance,
+				owlColorInstance,
 				GetPropertyByName(getModel(), "emissive"),
-				&iColorComponentInstance,
+				&owlColorComponentInstance,
 				1);
 
 			SetObjectProperty(
-				iColorInstance,
+				owlColorInstance,
 				GetPropertyByName(getModel(), "specular"),
-				&iColorComponentInstance,
+				&owlColorComponentInstance,
 				1);
 		} // if (pEmissiveFactorProperty != nullptr)
 
 		/* Cache */
-		m_mapMaterials[iMaterialIndex] = iMaterialInstance;
+		m_mapMaterials[iMaterialIndex] = owlMaterialInstance;
 
-		return iMaterialInstance;
+		return owlMaterialInstance;
 	}
 
 	void _gltf_importer_t::saveTextureToFile(const string& strFile, const vector<uint8_t>& vecTextureData)

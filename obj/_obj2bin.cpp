@@ -12,13 +12,14 @@ namespace _obj2bin
 	static const char default_color_name[] = "Default Color";
 
 	// ********************************************************************************************
-	_exporter::_exporter(const char* szInputFile, bool bFlipTextureV/* = false*/)
+	_exporter::_exporter(const char* szInputFile, bool bTextureFlipV/* = false*/)
 		: _log_client()
 		, m_owlModel(0)
 		, m_bExternalModel(false)
 		, m_strInputFile("")
 		, m_strOutputFile("")
-		, m_bFlipTextureV(bFlipTextureV)
+		, m_bTextureFlipV(bTextureFlipV)
+		, m_rdfTextureFlipYProperty(0)
 		, m_setMaterialLibraries()
 		, m_vecMaterials()
 		, m_mapMaterials()
@@ -38,16 +39,16 @@ namespace _obj2bin
 		m_strInputFile = szInputFile;
 	}
 
-	_exporter::_exporter(const char* szInputFile, const char* szOutputFile, bool bFlipTextureV/* = false*/)
-		: _exporter(szInputFile, bFlipTextureV)
+	_exporter::_exporter(const char* szInputFile, const char* szOutputFile, bool bTextureFlipV/* = false*/)
+		: _exporter(szInputFile, bTextureFlipV)
 	{
 		VERIFY_POINTER(szOutputFile);
 
 		m_strOutputFile = szOutputFile;
 	}
 
-	_exporter::_exporter(const char* szInputFile, OwlModel owlModel, bool bFlipTextureV/* = false*/)
-		: _exporter(szInputFile, bFlipTextureV)
+	_exporter::_exporter(const char* szInputFile, OwlModel owlModel, bool bTextureFlipV/* = false*/)
+		: _exporter(szInputFile, bTextureFlipV)
 	{
 		VERIFY_INSTANCE(owlModel);
 
@@ -259,7 +260,7 @@ namespace _obj2bin
 			VERIFY_EXPRESSION(vecTokens.size() == 3);
 
 			m_vecTextureUVs.push_back(atof(vecTokens[1].c_str()));
-			m_vecTextureUVs.push_back(m_bFlipTextureV ? -atof(vecTokens[2].c_str()) : atof(vecTokens[2].c_str()));
+			m_vecTextureUVs.push_back(m_bTextureFlipV ? -atof(vecTokens[2].c_str()) : atof(vecTokens[2].c_str()));
 		} else if (strLine.find("vn ") == 0) {
 			// Normals
 			_string::split(strLine, " ", vecTokens, false);
@@ -479,6 +480,20 @@ namespace _obj2bin
 		}
 
 		if (itMaterial->second.second == 0) {
+			if (m_rdfTextureFlipYProperty == 0) {
+				m_rdfTextureFlipYProperty = CreateProperty(
+					m_owlModel,
+					DATATYPEPROPERTY_TYPE_BOOLEAN,
+					"flipY");
+				VERIFY_INSTANCE(m_rdfTextureFlipYProperty);
+
+				SetClassPropertyCardinalityRestriction(
+					GetClassByName(m_owlModel, "Texture"),
+					m_rdfTextureFlipYProperty,
+					1,
+					1);
+			}
+
 			string strTexture = (LPCSTR)CW2A(itMaterial->second.first->texture().c_str());
 
 			char** szTexture = new char* [1];
@@ -487,6 +502,9 @@ namespace _obj2bin
 
 			OwlInstance owlTextureInstance = CreateInstance(GetClassByName(m_owlModel, "Texture"));
 			SetDatatypeProperty(owlTextureInstance, GetPropertyByName(m_owlModel, "name"), (void**)szTexture, 1);
+
+			bool bFlipY = false;
+			SetDatatypeProperty(owlTextureInstance, m_rdfTextureFlipYProperty, (void**)bFlipY);
 
 			itMaterial->second.second = CreateInstance(GetClassByName(m_owlModel, "Material"));
 			SetObjectProperty(itMaterial->second.second, GetPropertyByName(m_owlModel, "textures"), owlTextureInstance);

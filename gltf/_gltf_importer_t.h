@@ -97,10 +97,10 @@ namespace _eng
 		const _json::_object* getTexture(int iIndex);
 		const _json::_object* getImage(int iIndex);
 
-		virtual void createStringProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
-		virtual void createIntProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
-		virtual void createDoubleProperty(OwlInstance iInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
-		virtual void createDoubleArrayProperty(OwlInstance iInstance, const string& strProperty, const _json::_array* pValues);
+		virtual void createStringProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
+		virtual void createIntProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
+		virtual void createDoubleProperty(OwlInstance owlInstance, const string& strProperty, const vector<const _json::_value*>& vecValues);
+		virtual void createDoubleArrayProperty(OwlInstance owlInstance, const string& strProperty, const _json::_array* pValues);
 
 		OwlInstance createMaterialInstance(int iMaterialIndex);
 		void saveTextureToFile(const string& strFile, const vector<uint8_t>& vecTextureData);
