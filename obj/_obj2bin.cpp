@@ -503,7 +503,7 @@ namespace _obj2bin
 			OwlInstance owlTextureInstance = CreateInstance(GetClassByName(m_owlModel, "Texture"));
 			SetDatatypeProperty(owlTextureInstance, GetPropertyByName(m_owlModel, "name"), (void**)szTexture, 1);
 
-			bool bFlipY = false;
+			bool bFlipY = true;
 			SetDatatypeProperty(owlTextureInstance, m_rdfTextureFlipYProperty, (void**)bFlipY);
 
 			itMaterial->second.second = CreateInstance(GetClassByName(m_owlModel, "Material"));
