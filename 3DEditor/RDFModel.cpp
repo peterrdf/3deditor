@@ -13,7 +13,7 @@
 #include "_dxf_parser.h"
 #endif
 #ifdef IMPORT_PLY
-#include "RDFImportPLY.h"
+#include "../ImportPLY/RDFImportPLY.h"
 #endif
 
 #include "_obj2bin.h"

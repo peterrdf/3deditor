@@ -162,3 +162,6 @@
 ExtensionConepts/obj/
 x64/Release/ExtensionConepts.*
 x64/Debug/ExtensionConepts.*
+ImportPLY/obj/
+x64/Debug/ImportPLY.*
+x64/Release/ImportPLY.*
