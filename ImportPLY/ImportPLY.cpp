@@ -376,7 +376,8 @@ bool ImportPLY::SetMaterial(const char* plyFilePath, const aiScene* scene, const
             std::filesystem::path texFullPath(_plyFilePath.parent_path());
             texFullPath /= texName.C_Str();
             
-            const char* texPath_ = texFullPath.string().c_str();
+            std::string texPath = texFullPath.string();
+            const char* texPath_ = texPath.c_str();
 
             GET_CLASS(clsTexture, CLS_TEXTURE);
             CREATE_INSTANCE(texture, clsTexture, false);
