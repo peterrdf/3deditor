@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -159,3 +159,6 @@
 /x64/Release_stepengine/RDFViewer.pdb
 /x64/Release_stepengine/Test3DEditor.pdb
 /RDFViewer/Debug_ifcengine
+ExtensionConepts/obj/
+x64/Release/ExtensionConepts.*
+x64/Debug/ExtensionConepts.*

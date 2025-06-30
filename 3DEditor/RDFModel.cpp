@@ -29,6 +29,8 @@ using namespace std;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
+#include "../ExtensionConepts/ExtensionConcepts.h"
+
 // ************************************************************************************************
 extern BOOL TEST_MODE;
 
@@ -53,6 +55,8 @@ extern "C" typedef void FuncType_LoadExtension(OwlModel model);
 
 static void LoadEngineExtensions(OwlModel model)
 {
+	ExtensionConceptsLoad(model);
+
 #ifdef _WINDOWS
 
 	const char* path = getenv("RDF_ENGINE_EXTENSIONS_PATH");
