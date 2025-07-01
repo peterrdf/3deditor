@@ -83,6 +83,7 @@ extern "C" {
     //
     struct STRUCT_VERTEX;
 
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // Access functions
@@ -291,7 +292,7 @@ extern "C" {
 
     //
     // The callback to create B-Rep of a concept
-    // rdfgeom_GetBRep will return not NULL but empty representation (empty conceptual face list) 
+    // User rdfgeom_GetBRep to get SHELL to populate. It will return not NULL but empty representation (empty conceptual face list) 
     // Implemented should use rdfgeom_AllocatePoints and rdfgeom_*_Create to initialize geometry
     // All nested instances already have defined representation to the moment of the call, and their shells can be used.
     // clientData is any value passed to rdfgeom_SetClassGeometry
