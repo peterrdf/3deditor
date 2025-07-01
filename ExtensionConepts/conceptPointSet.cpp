@@ -59,7 +59,7 @@ bool PointSet::GetBoundingBox(OwlInstance inst, VECTOR3* startVector, VECTOR3* e
     int_t dim = Helper::GetDataProperyValue<int_t>(inst, PROP_DIM, 3);
 
     double* coords = NULL;
-    int_t ncoords = Helper::GetDataProperyValue(inst, PROP_COORD, (void**)&coords);
+    int64_t ncoords = Helper::GetDataProperyValue(inst, PROP_COORD, (void**)&coords);
 
     for (int_t i = 0; i < ncoords / dim; i++) {
         for (int_t j = 0; j < min(dim, 3); j++) {
@@ -134,14 +134,14 @@ void PointSet::CreateShell(OwlInstance inst, void*)
     int_t dim = Helper::GetDataProperyValue<int_t>(inst, PROP_DIM, 3);
 
     double* coords = NULL;
-    int_t ncoords = Helper::GetDataProperyValue(inst, PROP_COORD, (void**)&coords);
+    int64_t ncoords = Helper::GetDataProperyValue(inst, PROP_COORD, (void**)&coords);
 
     if (ncoords < dim) {
         return;
     }
 
     double* normalCoords = NULL;
-    int_t nnormCoords = Helper::GetDataProperyValue(inst, PROP_NORMALS, (void**)&normalCoords);
+    int64_t nnormCoords = Helper::GetDataProperyValue(inst, PROP_NORMALS, (void**)&normalCoords);
 
     //TODO
     //double* tangentCoords = NULL;
@@ -149,22 +149,22 @@ void PointSet::CreateShell(OwlInstance inst, void*)
 
     int_t textureDim = Helper::GetDataProperyValue(inst, PROP_TEX_DIM, 2);
     double* texCoord = NULL;
-    int_t ntexCoord = Helper::GetDataProperyValue(inst, PROP_TEX_COORD, (void**)&texCoord);
+    int64_t ntexCoord = Helper::GetDataProperyValue(inst, PROP_TEX_COORD, (void**)&texCoord);
 
-    int_t Npt = ncoords / dim;
+    int_t Npt = (int_t)(ncoords / dim);
 
     // set vertices
     //
-    rdfgeom_AllocatePoints(inst, shell, ncoords/dim, nnormCoords >= dim, ntexCoord >= textureDim);
+    rdfgeom_AllocatePoints(inst, shell, Npt, nnormCoords >= dim, ntexCoord >= textureDim);
     
     VECTOR3* points = rdfgeom_GetPoints(shell);
-    CopyPoints(points, Npt, 3, coords, ncoords, dim);
+    CopyPoints(points, Npt, 3, coords, (int_t)ncoords, dim);
 
     VECTOR3* normals = rdfgeom_GetNormals(shell);
-    CopyPoints(normals, Npt, 3, normalCoords, nnormCoords, dim);
+    CopyPoints(normals, Npt, 3, normalCoords, (int_t)nnormCoords, dim);
 
     VECTOR2* texUV = rdfgeom_GetTextureCoordinates(shell);
-    CopyPoints(texUV, Npt, 2, texCoord, ntexCoord, textureDim);
+    CopyPoints(texUV, Npt, 2, texCoord, (int_t)ntexCoord, textureDim);
 
     //set to show
     //

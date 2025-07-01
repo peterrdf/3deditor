@@ -74,7 +74,7 @@ void FacetSurface::CreateShell(OwlInstance inst, void*)
 
     //
     int_t* indecies = NULL;
-    int_t numInd = Helper::GetDataProperyValue(inst, PROP_IDXS, (void**) &indecies);
+    int64_t numInd = Helper::GetDataProperyValue(inst, PROP_IDXS, (void**) &indecies);
 
     // Fill the shell
 

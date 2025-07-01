@@ -25,11 +25,11 @@ struct Helper
     static TVal GetDataProperyValue(OwlInstance inst, const char* name, TVal defval, RdfProperty* prop = NULL);
         
     template<typename TVal>
-    static int_t GetDataProperyValue(OwlInstance inst, const char* name, TVal* arrValues, int_t arrSize, RdfProperty* pprop = NULL);
+    static int64_t GetDataProperyValue(OwlInstance inst, const char* name, TVal* arrValues, int_t arrSize, RdfProperty* pprop = NULL);
 
-    static int_t GetDataProperyValue(OwlInstance inst, const char* name, void** arrValues, RdfProperty* pprop = NULL);
+    static int64_t GetDataProperyValue(OwlInstance inst, const char* name, void** arrValues, RdfProperty* pprop = NULL);
 
-    static int_t GetObjectPropertyValue(OwlInstance inst, const char* name, OwlInstance** objects, RdfProperty* pprop = NULL);
+    static int64_t GetObjectPropertyValue(OwlInstance inst, const char* name, OwlInstance** objects, RdfProperty* pprop = NULL);
 
     static OwlInstance GetObjectPropertyValue(OwlInstance inst, const char* name);
 
@@ -67,7 +67,7 @@ TVal Helper::GetDataProperyValue(OwlInstance inst, const char* name, TVal defval
 /// 
 /// </summary>
 template<typename TVal>
-int_t Helper::GetDataProperyValue(OwlInstance inst, const char* name, TVal* arrValues, int_t arrSize, RdfProperty* pprop)
+int64_t Helper::GetDataProperyValue(OwlInstance inst, const char* name, TVal* arrValues, int_t arrSize, RdfProperty* pprop)
 {
     TVal* val = NULL;
     auto card = GetDataProperyValue(inst, name, (void**)&val, pprop);

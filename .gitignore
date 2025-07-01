@@ -165,3 +165,7 @@ x64/Debug/ExtensionConepts.*
 ImportPLY/obj/
 x64/Debug/ImportPLY.*
 x64/Release/ImportPLY.*
+Win32/Debug/ExtensionConepts.*
+Win32/Release/ExtensionConepts.*
+Win32/Release/ImportPLY.*
+Win32/Debug/ImportPLY.*

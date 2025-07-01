@@ -30,7 +30,7 @@ bool Helper::AddClassProperty(OwlClass cls, const char* name, RdfPropertyType ty
 /// <summary>
 /// 
 /// </summary>
-int_t Helper::GetDataProperyValue(OwlInstance inst, const char* name, void** arrValues, RdfProperty* pprop)
+int64_t Helper::GetDataProperyValue(OwlInstance inst, const char* name, void** arrValues, RdfProperty* pprop)
 {
     if (!inst) {
         return 0;
@@ -47,7 +47,7 @@ int_t Helper::GetDataProperyValue(OwlInstance inst, const char* name, void** arr
 
     assert(prop); if (!prop) return 0;
 
-    int_t card = 0;
+    int64_t card = 0;
     auto err = GetDatatypeProperty(inst, prop, (void**)arrValues, &card);
     if (err)
         card = 0;
@@ -71,7 +71,7 @@ void	Helper::MatrixIdentity(MATRIX* pOut)
 /// <summary>
 /// 
 /// </summary>
-int_t Helper::GetObjectPropertyValue(OwlInstance inst, const char* name, OwlInstance** objects, RdfProperty* pprop /*= NULL*/)
+int64_t Helper::GetObjectPropertyValue(OwlInstance inst, const char* name, OwlInstance** objects, RdfProperty* pprop /*= NULL*/)
 {
     if (!inst) {
         return 0;
@@ -88,7 +88,7 @@ int_t Helper::GetObjectPropertyValue(OwlInstance inst, const char* name, OwlInst
 
     assert(prop); if (!prop) return 0;
 
-    int_t card = 0;
+    int64_t card = 0;
     auto err = GetObjectProperty(inst, prop, objects, &card);
     if (err)
         card = 0;
