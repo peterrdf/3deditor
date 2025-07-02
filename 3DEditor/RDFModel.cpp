@@ -59,66 +59,77 @@ static void LoadEngineExtensions(OwlModel model)
 
 #ifdef _WINDOWS
 
-	const char* path = getenv("RDF_ENGINE_EXTENSIONS_PATH");
-	if (!path) {
+	const char* pathListEnv = getenv("RDF_ENGINE_EXTENSIONS_PATH");
+	if (!pathListEnv) {
 		return;
 	}
 
-	char wildcard[1024];
-	_makepath(wildcard, NULL, path, "GKExtension_*", NULL);
+	std::list<std::string> pathList;
+	std::stringstream ss(pathListEnv);
+	std::string item;
+	while (std::getline(ss, item, ';')) {
+		pathList.push_back(item);
+	}
 
-	TRACE("Search extensions %s...\n", wildcard);
+	char saveCWD[4096];
+	_getcwd(saveCWD, sizeof(saveCWD) - 1);
 
-	WIN32_FIND_DATAA findData;
-	HANDLE hFind = FindFirstFileA(wildcard, &findData);
+	for (auto& path : pathList) {
 
-	if (hFind != INVALID_HANDLE_VALUE) {
+		char wildcard[1024];
+		_makepath(wildcard, NULL, path.c_str(), "GKExtension_*", NULL);
 
-		char saveCWD[4096];
-		_getcwd(saveCWD, sizeof(saveCWD) - 1);
+		TRACE("Search extensions %s...\n", wildcard);
 
-		char dllPath[4096];
+		WIN32_FIND_DATAA findData;
+		HANDLE hFind = FindFirstFileA(wildcard, &findData);
 
-		do {
-			_makepath(dllPath, NULL, path, findData.cFileName, NULL);
+		if (hFind != INVALID_HANDLE_VALUE) {
 
-			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				_chdir(dllPath);
-				_makepath(dllPath, NULL, dllPath, findData.cFileName, "dll");
-			}
-			else {
-				_chdir(path);
-				size_t len = strlen(dllPath);
-				const char* ext = dllPath + len - 4;
-				if (_stricmp(ext, ".dll")) {
-					continue;
+			char dllPath[4096];
+
+			do {
+				_makepath(dllPath, NULL, path.c_str(), findData.cFileName, NULL);
+
+				if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					_chdir(dllPath);
+					_makepath(dllPath, NULL, dllPath, findData.cFileName, "dll");
 				}
-			}
+				else {
+					_chdir(path.c_str());
+					size_t len = strlen(dllPath);
+					const char* ext = dllPath + len - 4;
+					if (_stricmp(ext, ".dll")) {
+						continue;
+					}
+				}
 
-			TRACE("       Loading %s...\n", dllPath);
+				TRACE("       Loading %s...\n", dllPath);
 
-			if (auto lib = LoadLibraryA(dllPath)) {
-				if (auto func = (FuncType_LoadExtension*)GetProcAddress(lib, FuncName_LoadExtension)) {
+				if (auto lib = LoadLibraryA(dllPath)) {
+					if (auto func = (FuncType_LoadExtension*)GetProcAddress(lib, FuncName_LoadExtension)) {
 
-					func(model);
-					TRACE("        done\n");
+						func(model);
+						TRACE("        done\n");
+					}
+					else {
+						CStringA msg;
+						msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, FuncName_LoadExtension);
+						::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
+					}
 				}
 				else {
 					CStringA msg;
-					msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, FuncName_LoadExtension);
+					msg.Format("Can not load engine extension %s\nCan not load DLL", dllPath);
 					::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
 				}
-			}
-			else {
-				CStringA msg;
-				msg.Format("Can not load engine extension %s\nCan not load DLL", dllPath);
-				::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
-			}
 
-		} while (FindNextFileA(hFind, &findData));
+			} while (FindNextFileA(hFind, &findData));
 
-		_chdir(saveCWD);
-	}
+		}//if (hFind != INVALID_HANDLE_VALUE)
+	}//for (auto& path : pathList) 
+
+	_chdir(saveCWD);
 #endif
 }
 
