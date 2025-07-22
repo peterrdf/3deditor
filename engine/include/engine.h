@@ -90,7 +90,7 @@ typedef		int64_t										ConceptualFace;
 #define		FORMAT_EXPORT_FACE_POLYGONS					FLAGBIT(12)		//	Object face polygon lines (dense wireframe) are exported (requires FORMAT_FLAG_CONTAINS_TRIANGLES)
 #define		FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS		FLAGBIT(13)		//	Object conceptual face polygon lines (wireframe) are exported 
 #define		FORMAT_EXPORT_POLYGONS_AS_TUPLES			FLAGBIT(14)		//	Polygon lines (wireframe) exported as tuples (edges) - else as list (loop)
-#define		FORMAT_EXPORT_ADVANCED_NORMALS				FLAGBIT(15)		//	Normal's are exported to be in line with the original semantic form description (orthogonal to conceptual face, could be non orthogonal to the planar face or triangle) - else all normals of triangles are transformed orthogonal to the palnar face or triangle they belong to
+#define		FORMAT_EXPORT_ADVANCED_NORMALS				FLAGBIT(15)		//	Normal vectors are exported to be in line with the original semantic form description (orthogonal to conceptual face, could be non orthogonal to the planar face or triangle) - else all normal vectors of triangles are transformed orthogonal to the planar face or triangle they belong to
 #define		FORMAT_EXPORT_DIRECTX						FLAGBIT(16)		//	Where possible DirectX compatibility is given to exported data. Unsets FORMAT_FLAG_OPENGL, FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
 #define		FORMAT_EXPORT_OPENGL						FLAGBIT(17)		//	Where possible OpenGL compatibility is given to exported data. Unsets FORMAT_FLAG_DIRECTX. Sets FORMAT_FLAG_VERSION_0001, FORMAT_FLAG_VERSION_0010
 #define		FORMAT_EXPORT_DOUBLE_SIDED					FLAGBIT(18)		//	Every face has exactly one opposite face (normally both index and vertex array are doubled in size)
@@ -233,7 +233,7 @@ static	inline	int64_t	GetRevisionW(
 //
 //	This call is required to be called to enable the DLL to work if protection is active.
 //
-//	Returns the number of days (incl. this one) that this version is still active or 0 if no protection is embedded.
+//	Returns the number of days (including this one) that this version is still active or 0 if no protection is embedded.
 //	In case no days are left and protection is active this call will return -1.
 //
 int64_t			DECL STDC	GetProtection(
@@ -751,7 +751,7 @@ OwlModel		DECL STDC	GetModel(
 //
 //	This call can be used in two ways. The optional arguments classCnt,
 //	propertyCnt and instanceCnt can be used to get the total amount of active classes,
-//	properies and instances available within the model.
+//	properties and instances available within the model.
 //
 //	The setting and mask can be used to order the handles given for classes,
 //	properties and instances.
@@ -1027,7 +1027,7 @@ int64_t			DECL STDC	SetExternalReferenceData(
 //
 //				int64_t					returns								OUT
 //
-//	Gets application data from model, class, property, instance that were previosly set by SetExternalReferenceData
+//	Gets application data from model, class, property, instance that were previously set by SetExternalReferenceData
 //	Returns 0 on error, 1 on success
 //
 int64_t			DECL STDC	GetExternalReferenceData(
@@ -6171,8 +6171,8 @@ void			DECL STDC	GetDependingProperty(
 //			1	Polygon lines (wireframe) exported as tuples, i.e. typical 4 point polygon exported as 0 1 1 2 2 3 3 0
 //
 //		bit 15:	(FORMAT_EXPORT_ADVANCED_NORMALS)
-//			0	All normals of triangles are transformed orthogonal to the 2D face they belong to
-//			1	Normals are exported to be in line with the original semantic form description (could be non orthogonal to the 2D face) 
+//			0	All normal vectors of triangles are transformed orthogonal to the 2D face they belong to
+//			1	Normal vectors are exported to be in line with the original semantic form description (could be non orthogonal to the 2D face) 
 //
 //		bit 16:	(FORMAT_EXPORT_DIRECTX)
 //			0	no specific behavior
@@ -7063,7 +7063,7 @@ void			DECL STDC	SetBoundingBoxReference(
 //
 //	When the transformationMatrix is given, it will fill an array of 12 double values.
 //	When the transformationMatrix is left empty and both startVector and endVector are
-//	given the boundingbox without transformation is calculated and returned.
+//	given the bounding box without transformation is calculated and returned.
 //
 bool			DECL STDC	GetBoundingBox(
 									OwlInstance				owlInstance,
@@ -7117,7 +7117,7 @@ static	inline	bool	GetBoundingBox(
 //
 //				void					returns
 //
-//	This function returns the relative transformation matrix between two instances, i.e. in practise
+//	This function returns the relative transformation matrix between two instances, i.e. in practice
 //	this means the matrices connected to the Transformation instances in the path in between.
 //	The matrix is only given when a unique path through inverse relations can be found,
 //	otherwise the identity matrix is returned.
