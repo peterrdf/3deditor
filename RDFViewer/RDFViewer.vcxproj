@@ -423,8 +423,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>./../lib/x64;./../engine/lib/x64;./../gisengine/lib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExtensionConepts.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;./../lib/x64;./../engine/lib/x64;./../gisengine/lib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -659,8 +659,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>./../lib/x64;./../engine/lib/x64;./../glew-2.2.0/lib/Release/x64;./../gisengine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExtensionConepts.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;./../lib/x64;./../engine/lib/x64;./../glew-2.2.0/lib/Release/x64;./../gisengine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

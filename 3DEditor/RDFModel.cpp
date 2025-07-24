@@ -316,12 +316,10 @@ CRDFModel::~CRDFModel()
 {
 	_rdf_model::clean(bCloseModel);
 
-	//!!! please fix - m_pDefault texture deleted twice - another time when load textures are disposed !!!
-	//delete default texture file and open something with texture to reproduce
-	if (m_pDefaultTexture)
+	if (m_pDefaultTexture != nullptr) {
 		delete m_pDefaultTexture;
-
-	m_pDefaultTexture = nullptr;
+		m_pDefaultTexture = nullptr;
+	}
 }
 
 void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
