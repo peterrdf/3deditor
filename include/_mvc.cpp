@@ -446,12 +446,9 @@ _texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
 		AfxMessageBox(msg, MB_ICONERROR);
 	}
 
-	if (pTexture != nullptr) {
-		m_mapTextures[strTexture] = pTexture;		
+	if (pTexture == nullptr) {
+		m_mapTextures[strTexture] = getDefaultTexture();
 	}
-	else {
-		pTexture = getDefaultTexture();
-	}	
 
 	return pTexture;
 }
@@ -585,7 +582,11 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 	m_vecInstances.clear();
 	m_mapID2Instance.clear();
 
+	auto pDefaultTexture = getDefaultTexture();
 	for (auto itTexture : m_mapTextures) {
+		if (itTexture.second == pDefaultTexture) {
+			continue; // do not delete default texture
+		}
 		delete itTexture.second;
 	}
 	m_mapTextures.clear();
