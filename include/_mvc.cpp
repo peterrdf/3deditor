@@ -582,14 +582,16 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 	m_vecInstances.clear();
 	m_mapID2Instance.clear();
 
-	auto pDefaultTexture = getDefaultTexture();
-	for (auto itTexture : m_mapTextures) {
-		if (itTexture.second == pDefaultTexture) {
-			continue; // do not delete default texture
+	if (!m_mapTextures.empty()) {
+		auto pDefaultTexture = getDefaultTexture();
+		for (auto itTexture : m_mapTextures) {
+			if (itTexture.second == pDefaultTexture) {
+				continue; // do not delete default texture
+			}
+			delete itTexture.second;
 		}
-		delete itTexture.second;
+		m_mapTextures.clear();
 	}
-	m_mapTextures.clear();
 }
 
 void _model::getDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const
