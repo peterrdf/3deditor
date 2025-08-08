@@ -686,7 +686,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
         owlInstanceMatrix = owlInstanceMatrixMultiplication;
     }
     else {
-        owlInstanceMatrix = owlInstanceCartesianTransformationOperatorMatrix & owlInstanceAxis2PlacementMatrix;
+        owlInstanceMatrix = owlInstanceCartesianTransformationOperatorMatrix ? owlInstanceCartesianTransformationOperatorMatrix : owlInstanceAxis2PlacementMatrix;
     }
 
     SdaiAggr	itemsAGGR = nullptr;
