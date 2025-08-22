@@ -395,7 +395,7 @@ namespace _bin2gltf
 		writeObjectProperty(ASSET_PROP, vecProperties);
 	}
 
-	void _exporter::writeBuffersProperty()
+	/*virtual*/ void _exporter::writeBuffersProperty()
 	{
 		*getOutputStream() << "\n";
 		writeIndent();
@@ -558,7 +558,7 @@ namespace _bin2gltf
 		writeEndArrayTag();
 	}
 
-	void _exporter::writeBufferViewsProperty()
+	/*virtual*/ void _exporter::writeBufferViewsProperty()
 	{
 		*getOutputStream() << "\n";
 		writeIndent();

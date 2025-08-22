@@ -18,6 +18,7 @@
 #endif
 
 #include "_bin2gltf.h"
+#include "_bin2glb.h"
 #include "_log.h"
 #include "_ptr.h"
 
@@ -481,7 +482,7 @@ void CMy3DEditorDoc::OnExportAsGltfBinary()
 
 	_c_log log(nullptr);
 
-	_bin2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	_bin2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
 	exporter.setLog(&log);
 	exporter.execute();
 }

@@ -60,7 +60,7 @@ namespace _bin2gltf
 	class _exporter : public _log_client
 	{
 
-	private: // Members
+	protected: // Members
 
 		_model* m_pModel;
 
@@ -110,8 +110,8 @@ namespace _bin2gltf
 		void writeBoolProperty(const string& strName, bool bValue);
 		void writeObjectProperty(const string& strName, const vector<string>& vecProperties);
 		void writeAssetProperty();
-		void writeBuffersProperty();
-		void writeBufferViewsProperty();
+		virtual void writeBuffersProperty();
+		virtual void writeBufferViewsProperty();
 		void writeAccessorsProperty();
 		void writeMeshesProperty();
 		void writeNodesProperty();

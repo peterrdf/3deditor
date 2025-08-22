@@ -249,6 +249,9 @@
     <ClInclude Include="..\gltf\_node.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\gltf\_bin2glb.h">
+      <Filter>glTF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -387,6 +390,9 @@
       <Filter>glTF</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_node.cpp">
+      <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_bin2glb.cpp">
       <Filter>glTF</Filter>
     </ClCompile>
   </ItemGroup>
