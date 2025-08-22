@@ -43,34 +43,96 @@ namespace _bin2glb
 			jsonContent += ' ';
 		}
 
+		// First, collect all binary data in a memory buffer to get its size
+		std::ostringstream binaryStream;
+		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
+			auto pNode = m_vecNodes[iIndex];
+			const auto VERTEX_LENGTH = pNode->getGeometry()->getVertexLength();
+
+			// Vertices/POSITION
+			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 0];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 1];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 2];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+			}
+
+			// Vertices/NORMAL
+			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 3];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 4];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 5];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+			}
+
+			// Vertices/TEXCOORD_0
+			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
+				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
+				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
+			}
+
+			// Write all indices
+			auto writeIndices = [&binaryStream](const auto& cohorts) {
+				for (auto pCohort : cohorts) {
+					for (size_t i = 0; i < pCohort->indices().size(); i++) {
+						GLuint iIndexValue = pCohort->indices()[i];
+						binaryStream.write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
+					}
+				}
+			};
+
+			writeIndices(pNode->getGeometry()->concFacesCohorts());
+			writeIndices(pNode->getGeometry()->concFacePolygonsCohorts());
+			writeIndices(pNode->getGeometry()->linesCohorts());
+			writeIndices(pNode->getGeometry()->pointsCohorts());
+		}
+
+		// Get binary content and apply padding
+		std::string binaryContent = binaryStream.str();
+		uint32_t binaryPadding = (4 - (binaryContent.length() % 4)) % 4;
+		for (uint32_t i = 0; i < binaryPadding; i++) {
+			binaryContent += '\0';
+		}
+
 		// Calculate sizes
 		uint32_t jsonChunkLength = static_cast<uint32_t>(jsonContent.length());
-		uint32_t totalLength = 12 + 8 + jsonChunkLength; // 12 bytes header + 8 bytes JSON chunk header + JSON content
+		uint32_t binaryChunkLength = static_cast<uint32_t>(binaryContent.length());
+
+		// Total length = 12 (header) + 8 (JSON chunk header) + jsonChunkLength + 8 (BIN chunk header) + binaryChunkLength
+		uint32_t totalLength = 12 + 8 + jsonChunkLength + 8 + binaryChunkLength;
 
 		// Write GLB header (12 bytes)
-		// Magic number: 'glTF' (in little-endian byte order)
-		uint32_t magic = 0x46546C67;
+		uint32_t magic = 0x46546C67;  // 'glTF' in ASCII (little-endian)
 		outputStream.write(reinterpret_cast<const char*>(&magic), 4);
 
-		// Version: 2
 		uint32_t version = 2;
 		outputStream.write(reinterpret_cast<const char*>(&version), 4);
 
-		// Total file size
 		outputStream.write(reinterpret_cast<const char*>(&totalLength), 4);
 
 		// Write JSON chunk header (8 bytes)
-		// JSON chunk length
 		outputStream.write(reinterpret_cast<const char*>(&jsonChunkLength), 4);
 
-		// JSON chunk type: 'JSON' (in little-endian byte order)
-		uint32_t jsonChunkType = 0x4E4F534A;
+		uint32_t jsonChunkType = 0x4E4F534A;  // 'JSON' in ASCII (little-endian)
 		outputStream.write(reinterpret_cast<const char*>(&jsonChunkType), 4);
 
 		// Write JSON content
 		outputStream.write(jsonContent.c_str(), jsonChunkLength);
 
-		// We're not adding a separate BIN chunk because buffers are embedded in the JSON
+		// Write BIN chunk header (8 bytes)
+		outputStream.write(reinterpret_cast<const char*>(&binaryChunkLength), 4);
+
+		uint32_t binaryChunkType = 0x004E4942;  // 'BIN\0' in ASCII (little-endian)
+		outputStream.write(reinterpret_cast<const char*>(&binaryChunkType), 4);
+
+		// Write binary content
+		outputStream.write(binaryContent.c_str(), binaryChunkLength);
 
 		if (!outputStream.good()) {
 			getLog()->logWrite(enumLogEvent::error, "Error while writing GLB file.");
