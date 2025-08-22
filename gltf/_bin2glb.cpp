@@ -25,18 +25,16 @@ namespace _bin2glb
 		*getOutputStream() << "\n";
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << BUFFERS_PROP;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << BUFFERS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartArrayTag(false);
 
 		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
 			auto pNode = m_vecNodes[iIndex];
-
-			const auto VERTEX_LENGTH = pNode->getGeometry()->getVertexLength();
 
 			// buffer: byteLength
 			uint32_t iBufferByteLength = 0;
@@ -88,7 +86,7 @@ namespace _bin2glb
 			pNode->bufferByteLength() = iBufferByteLength;
 
 			if (iIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
 			indent()++;
@@ -112,11 +110,11 @@ namespace _bin2glb
 		*getOutputStream() << "\n";
 		writeIndent();
 
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << BUFFER_VIEWS_PROP;
-		*m_pOutputStream << DOULE_QUOT_MARK;
-		*m_pOutputStream << COLON;
-		*m_pOutputStream << SPACE;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << BUFFER_VIEWS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
 
 		writeStartArrayTag(false);
 
@@ -131,7 +129,7 @@ namespace _bin2glb
 				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 			}
 
 			uint32_t iByteOffset = 0;
@@ -143,11 +141,11 @@ namespace _bin2glb
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -157,7 +155,7 @@ namespace _bin2glb
 				iByteOffset += pNode->verticesBufferViewByteLength();
 			}
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// normals/ARRAY_BUFFER/NORMAL
 			{
@@ -166,11 +164,11 @@ namespace _bin2glb
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -180,7 +178,7 @@ namespace _bin2glb
 				iByteOffset += pNode->normalsBufferViewByteLength();
 			}
 
-			*m_pOutputStream << COMMA;
+			*getOutputStream() << COMMA;
 
 			// textures/ARRAY_BUFFER/TEXCOORD_0
 			{
@@ -189,11 +187,11 @@ namespace _bin2glb
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
 				indent()--;
 
@@ -207,18 +205,18 @@ namespace _bin2glb
 			for (size_t iIndicesBufferViewIndex = 0; iIndicesBufferViewIndex < pNode->indicesBufferViewsByteLength().size(); iIndicesBufferViewIndex++) {
 				uint32_t iByteLength = pNode->indicesBufferViewsByteLength()[iIndicesBufferViewIndex];
 
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
 				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", iByteLength);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("byteOffset", iByteOffset);
-				*m_pOutputStream << COMMA;
+				*getOutputStream() << COMMA;
 				writeIntProperty("target", 34963/*ELEMENT_ARRAY_BUFFER*/);
 				indent()--;
 
