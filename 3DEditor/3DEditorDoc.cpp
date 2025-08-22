@@ -139,6 +139,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_LANDXML, &CMy3DEditorDoc::OnUpdateExportAsLandxml)
 	ON_COMMAND(ID_EXPORT_AS_GLTF, &CMy3DEditorDoc::OnExportAsGltf)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_GLTF, &CMy3DEditorDoc::OnUpdateExportAsGltf)
+	ON_COMMAND(ID_EXPORT_AS_GLTF_BINARY, &CMy3DEditorDoc::OnExportAsGltfBinary)
+	ON_UPDATE_COMMAND_UI(ID_EXPORT_AS_GLTF_BINARY, &CMy3DEditorDoc::OnUpdateExportAsGltfBinary)
 END_MESSAGE_MAP()
 
 
@@ -461,6 +463,30 @@ void CMy3DEditorDoc::OnExportAsGltf()
 }
 
 void CMy3DEditorDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(getModel() != nullptr);
+}
+
+void CMy3DEditorDoc::OnExportAsGltfBinary()
+{
+	fs::path pthInputFile = getModels()[0]->getPath();
+
+	TCHAR szFilters[] = _T("glTF Binary Files (*.glb)|*.glb|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T("glb"), pthInputFile.wstring().c_str(),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+
+	if (dlgFile.DoModal() != IDOK) {
+		return;
+	}
+
+	_c_log log(nullptr);
+
+	_bin2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	exporter.setLog(&log);
+	exporter.execute();
+}
+
+void CMy3DEditorDoc::OnUpdateExportAsGltfBinary(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(getModel() != nullptr);
 }

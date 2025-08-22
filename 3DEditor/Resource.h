@@ -162,13 +162,14 @@
 #define ID_EXPORT_AS_LANDXML            32838
 #define ID_INSTANCES_ENABLE_RESET       32840
 #define ID_EXPORT_AS_GLTF               32843
+#define ID_EXPORT_AS_GLTF_BINARY        32844
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        329
-#define _APS_NEXT_COMMAND_VALUE         32844
+#define _APS_NEXT_COMMAND_VALUE         32845
 #define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           313
 #endif

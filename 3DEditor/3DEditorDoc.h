@@ -78,4 +78,6 @@ public:
 	afx_msg void OnUpdateExportAsLandxml(CCmdUI* pCmdUI);
 	afx_msg void OnExportAsGltf();
 	afx_msg void OnUpdateExportAsGltf(CCmdUI* pCmdUI);
+	afx_msg void OnExportAsGltfBinary();
+	afx_msg void OnUpdateExportAsGltfBinary(CCmdUI* pCmdUI);
 };

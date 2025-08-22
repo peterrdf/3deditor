@@ -244,6 +244,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_EXPORT_AS_INFRAGML);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_LANDXML);
 	lstBasicCommands.AddTail(ID_EXPORT_AS_GLTF);
+	lstBasicCommands.AddTail(ID_EXPORT_AS_GLTF_BINARY);
 	lstBasicCommands.AddTail(ID_FILE_PRINT);
 	lstBasicCommands.AddTail(ID_APP_EXIT);
 	lstBasicCommands.AddTail(ID_EDIT_CUT);
