@@ -15,9 +15,66 @@ namespace _bin2glb
 	{
 	}
 
-	void _exporter::execute()
+	/*virtual*/ bool _exporter::createOuputStream() /*override*/
 	{
-		_bin2gltf::_exporter::execute();
+		if (m_pOutputStream != nullptr) {
+			delete m_pOutputStream;
+		}
+
+		m_pOutputStream = new std::ostringstream();
+
+		return getOutputStream()->good();
+	}
+
+	/*virtual*/ void _exporter::postExecute() /*override*/
+	{
+		std::ofstream outputStream(m_strOutputFile, std::ios::out | std::ios::binary | std::ios::trunc);
+		if (!outputStream.is_open()) {
+			getLog()->logWrite(enumLogEvent::error, "Failed to create output file.");
+			return;
+		}
+
+		// Get JSON content as string
+		std::string jsonContent = ((std::ostringstream*)m_pOutputStream)->str();
+
+		// GLB requires JSON chunk to be 4-byte aligned
+		uint32_t jsonPadding = (4 - (jsonContent.length() % 4)) % 4;
+		for (uint32_t i = 0; i < jsonPadding; i++) {
+			jsonContent += ' ';
+		}
+
+		// Calculate sizes
+		uint32_t jsonChunkLength = static_cast<uint32_t>(jsonContent.length());
+		uint32_t totalLength = 12 + 8 + jsonChunkLength; // 12 bytes header + 8 bytes JSON chunk header + JSON content
+
+		// Write GLB header (12 bytes)
+		// Magic number: 'glTF' (in little-endian byte order)
+		uint32_t magic = 0x46546C67;
+		outputStream.write(reinterpret_cast<const char*>(&magic), 4);
+
+		// Version: 2
+		uint32_t version = 2;
+		outputStream.write(reinterpret_cast<const char*>(&version), 4);
+
+		// Total file size
+		outputStream.write(reinterpret_cast<const char*>(&totalLength), 4);
+
+		// Write JSON chunk header (8 bytes)
+		// JSON chunk length
+		outputStream.write(reinterpret_cast<const char*>(&jsonChunkLength), 4);
+
+		// JSON chunk type: 'JSON' (in little-endian byte order)
+		uint32_t jsonChunkType = 0x4E4F534A;
+		outputStream.write(reinterpret_cast<const char*>(&jsonChunkType), 4);
+
+		// Write JSON content
+		outputStream.write(jsonContent.c_str(), jsonChunkLength);
+
+		// We're not adding a separate BIN chunk because buffers are embedded in the JSON
+
+		if (!outputStream.good()) {
+			getLog()->logWrite(enumLogEvent::error, "Error while writing GLB file.");
+		}
 	}
 
 	/*virtual*/ void _exporter::writeBuffersProperty() /*override*/
@@ -101,133 +158,6 @@ namespace _bin2glb
 
 			m_iBuffersCount++;
 		} // for (for (size_t iIndex = ...
-
-		writeEndArrayTag();
-	}
-
-	/*virtual*/ void _exporter::writeBufferViewsProperty() /*override*/
-	{
-		*getOutputStream() << "\n";
-		writeIndent();
-
-		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << BUFFER_VIEWS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << COLON;
-		*getOutputStream() << SPACE;
-
-		writeStartArrayTag(false);
-
-		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
-		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
-			auto pNode = m_vecNodes[iNodeIndex];
-
-			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->getGeometry()->concFacesCohorts().size() +
-				pNode->getGeometry()->concFacePolygonsCohorts().size() +
-				pNode->getGeometry()->linesCohorts().size() +
-				pNode->getGeometry()->pointsCohorts().size());
-
-			if (iNodeIndex > 0) {
-				*getOutputStream() << COMMA;
-			}
-
-			uint32_t iByteOffset = 0;
-
-			// vertices/ARRAY_BUFFER/POSITION
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += pNode->verticesBufferViewByteLength();
-			}
-
-			*getOutputStream() << COMMA;
-
-			// normals/ARRAY_BUFFER/NORMAL
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += pNode->normalsBufferViewByteLength();
-			}
-
-			*getOutputStream() << COMMA;
-
-			// textures/ARRAY_BUFFER/TEXCOORD_0
-			{
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += pNode->texturesBufferViewByteLength();
-			}
-
-			// indices/ELEMENT_ARRAY_BUFFER
-			for (size_t iIndicesBufferViewIndex = 0; iIndicesBufferViewIndex < pNode->indicesBufferViewsByteLength().size(); iIndicesBufferViewIndex++) {
-				uint32_t iByteLength = pNode->indicesBufferViewsByteLength()[iIndicesBufferViewIndex];
-
-				*getOutputStream() << COMMA;
-
-				indent()++;
-				writeStartObjectTag();
-
-				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
-				*getOutputStream() << COMMA;
-				writeUIntProperty("byteLength", iByteLength);
-				*getOutputStream() << COMMA;
-				writeIntProperty("byteOffset", iByteOffset);
-				*getOutputStream() << COMMA;
-				writeIntProperty("target", 34963/*ELEMENT_ARRAY_BUFFER*/);
-				indent()--;
-
-				writeEndObjectTag();
-				indent()--;
-
-				iByteOffset += iByteLength;
-			} // for (size_t iIndicesBufferViewIndex = ...
-
-			m_iBufferViewsCount++;
-		} // for (size_t iNodeIndex = ...
 
 		writeEndArrayTag();
 	}

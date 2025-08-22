@@ -16,6 +16,7 @@ namespace _bin2gltf
 		, m_mapImages()
 		, m_vecNodes()
 		, m_vecSceneRootNodes()
+		, m_strOutputFile("")
 		, m_strOutputFolder("")
 		, m_pOutputStream(nullptr)
 		, m_iIndent(-1)
@@ -26,16 +27,15 @@ namespace _bin2gltf
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);
 
-		m_pPolygonsMaterial = new _material();
-		addMaterial(m_pPolygonsMaterial);
+		m_strOutputFile = szOutputFile;
+		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strOutputFile);
 
 		fs::path pthOutputFile = szOutputFile;
 		m_strOutputFolder = pthOutputFile.parent_path().string();
-		m_pOutputStream = new wofstream(szOutputFile, std::ios::out | std::ios::trunc);
+		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strOutputFolder);
 
-		// UTF-8 locale
-		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
-		getOutputStream()->imbue(loc);
+		m_pPolygonsMaterial = new _material();
+		addMaterial(m_pPolygonsMaterial);
 	}
 
 	/*virtual*/ _exporter::~_exporter()
@@ -143,8 +143,25 @@ namespace _bin2gltf
 		postExecute();
 	}
 
+	/*virtual*/ bool _exporter::createOuputStream()
+	{
+		if (m_pOutputStream != nullptr) {
+			delete m_pOutputStream;
+		}
+
+		m_pOutputStream = new ofstream(m_strOutputFile, std::ios::out | std::ios::trunc);
+		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
+		getOutputStream()->imbue(loc);
+		return getOutputStream()->good();
+	}
+
 	/*virtual*/ bool _exporter::preExecute()
 	{
+		if (!createOuputStream()) {
+			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
+			return false;
+		}		
+
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
 				auto pNode = new _node(pGeometry);

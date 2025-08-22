@@ -46,12 +46,11 @@ namespace _bin2glb
 		_exporter(_model* pModel, const char* szOutputFile);
 		virtual ~_exporter();
 
-		void execute();
-
 	protected: // Methods
 
+		virtual bool createOuputStream() override;
+		virtual void postExecute() override;
 		virtual void writeBuffersProperty() override;
-		virtual void writeBufferViewsProperty() override;
 	};
 };
 

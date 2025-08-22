@@ -73,8 +73,9 @@ namespace _bin2gltf
 		vector<_node*> m_vecNodes;
 		vector<uint32_t> m_vecSceneRootNodes;
 
+		string m_strOutputFile;
 		string m_strOutputFolder;
-		wofstream* m_pOutputStream;
+		ostream* m_pOutputStream;
 		int m_iIndent; // TAB-s count
 
 		uint32_t m_iBuffersCount;
@@ -89,6 +90,8 @@ namespace _bin2gltf
 		void execute();
 
 	protected: // Methods	
+
+		virtual bool createOuputStream();
 
 		virtual bool preExecute();
 		virtual void postExecute();
@@ -127,7 +130,7 @@ namespace _bin2gltf
 	public: // Properties
 
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
-		wofstream* getOutputStream() const { return m_pOutputStream; }
+		ostream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
 
 		virtual int64_t getGeometryID(_geometry* pGeometry) { return (int64_t)pGeometry; }
