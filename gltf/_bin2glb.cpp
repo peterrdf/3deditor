@@ -223,4 +223,134 @@ namespace _bin2glb
 
 		writeEndArrayTag();
 	}
+
+	/*virtual*/ void _exporter::writeBufferViewsProperty() /*override*/
+	{
+		*getOutputStream() << "\n";
+		writeIndent();
+
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << BUFFER_VIEWS_PROP;
+		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << COLON;
+		*getOutputStream() << SPACE;
+
+		writeStartArrayTag(false);
+
+		uint32_t iGlobalByteOffset = 0;
+
+		// ARRAY_BUFFER/ELEMENT_ARRAY_BUFFER
+		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
+			auto pNode = m_vecNodes[iNodeIndex];
+
+			assert(pNode->indicesBufferViewsByteLength().size() ==
+				pNode->getGeometry()->concFacesCohorts().size() +
+				pNode->getGeometry()->concFacePolygonsCohorts().size() +
+				pNode->getGeometry()->linesCohorts().size() +
+				pNode->getGeometry()->pointsCohorts().size());
+
+			if (iNodeIndex > 0) {
+				*getOutputStream() << COMMA;
+			}
+
+			uint32_t iByteOffset = iGlobalByteOffset;
+
+			// vertices/ARRAY_BUFFER/POSITION
+			{
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				*getOutputStream() << COMMA;
+				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
+				*getOutputStream() << COMMA;
+				writeIntProperty("byteOffset", iByteOffset);
+				*getOutputStream() << COMMA;
+				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				iByteOffset += pNode->verticesBufferViewByteLength();
+			}
+
+			*getOutputStream() << COMMA;
+
+			// normals/ARRAY_BUFFER/NORMAL
+			{
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				*getOutputStream() << COMMA;
+				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
+				*getOutputStream() << COMMA;
+				writeIntProperty("byteOffset", iByteOffset);
+				*getOutputStream() << COMMA;
+				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				iByteOffset += pNode->normalsBufferViewByteLength();
+			}
+
+			*getOutputStream() << COMMA;
+
+			// textures/ARRAY_BUFFER/TEXCOORD_0
+			{
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				*getOutputStream() << COMMA;
+				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
+				*getOutputStream() << COMMA;
+				writeIntProperty("byteOffset", iByteOffset);
+				*getOutputStream() << COMMA;
+				writeIntProperty("target", 34962/*ARRAY_BUFFER*/);
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				iByteOffset += pNode->texturesBufferViewByteLength();
+			}
+
+			// indices/ELEMENT_ARRAY_BUFFER
+			for (size_t iIndicesBufferViewIndex = 0; iIndicesBufferViewIndex < pNode->indicesBufferViewsByteLength().size(); iIndicesBufferViewIndex++) {
+				uint32_t iByteLength = pNode->indicesBufferViewsByteLength()[iIndicesBufferViewIndex];
+
+				*getOutputStream() << COMMA;
+
+				indent()++;
+				writeStartObjectTag();
+
+				indent()++;
+				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				*getOutputStream() << COMMA;
+				writeUIntProperty("byteLength", iByteLength);
+				*getOutputStream() << COMMA;
+				writeIntProperty("byteOffset", iByteOffset);
+				*getOutputStream() << COMMA;
+				writeIntProperty("target", 34963/*ELEMENT_ARRAY_BUFFER*/);
+				indent()--;
+
+				writeEndObjectTag();
+				indent()--;
+
+				iByteOffset += iByteLength;
+			} // for (size_t iIndicesBufferViewIndex = ...
+
+			iGlobalByteOffset += pNode->bufferByteLength();
+			m_iBufferViewsCount++;
+		} // for (size_t iNodeIndex = ...
+
+		writeEndArrayTag();
+	}
 };
