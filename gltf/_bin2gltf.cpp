@@ -150,8 +150,9 @@ namespace _bin2gltf
 		}
 
 		m_pOutputStream = new ofstream(m_strOutputFile, std::ios::out | std::ios::trunc);
-		std::locale loc(std::locale("C"), new std::codecvt_utf8<char>);
+		std::locale loc(std::locale::classic());
 		getOutputStream()->imbue(loc);
+
 		return getOutputStream()->good();
 	}
 

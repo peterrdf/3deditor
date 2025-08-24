@@ -22,6 +22,8 @@ namespace _bin2glb
 		}
 
 		m_pOutputStream = new std::ostringstream();
+		std::locale loc(std::locale::classic());
+		getOutputStream()->imbue(loc);
 
 		return getOutputStream()->good();
 	}
