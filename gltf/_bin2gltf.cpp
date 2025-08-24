@@ -176,7 +176,7 @@ namespace _bin2gltf
 	{
 	}
 
-	void _exporter::writeIndent()
+	/*virtual*/ void _exporter::writeIndent()
 	{
 		for (int iTab = 0; iTab < m_iIndent; iTab++) {
 			*getOutputStream() << TAB;

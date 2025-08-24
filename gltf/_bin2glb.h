@@ -50,6 +50,7 @@ namespace _bin2glb
 
 		virtual bool createOuputStream() override;
 		virtual void postExecute() override;
+		virtual void writeIndent() override {}
 		virtual void writeBuffersProperty() override;
 		virtual void writeBufferViewsProperty() override;
 

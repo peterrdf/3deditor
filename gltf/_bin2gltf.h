@@ -100,7 +100,7 @@ namespace _bin2gltf
 		string buildNumberProperty(const string& strName, const string& strValue);
 		string buildArrayProperty(const string& strName, const vector<string>& vecValues);
 
-		void writeIndent();
+		virtual void writeIndent();
 		void writeStartObjectTag(bool bNewLine = true);
 		void writeEndObjectTag();
 		void writeStartArrayTag(bool bNewLine = true);
