@@ -141,7 +141,7 @@ namespace _bin2glb
 
 	/*virtual*/ void _exporter::writeBuffersProperty() /*override*/
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -226,7 +226,7 @@ namespace _bin2glb
 
 	/*virtual*/ void _exporter::writeBufferViewsProperty() /*override*/
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;

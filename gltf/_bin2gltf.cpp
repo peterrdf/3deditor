@@ -186,7 +186,7 @@ namespace _bin2gltf
 	void _exporter::writeStartObjectTag(bool bNewLine/* = true*/)
 	{
 		if (bNewLine) {
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
 		}
 
@@ -195,7 +195,7 @@ namespace _bin2gltf
 
 	void _exporter::writeEndObjectTag()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 		*getOutputStream() << "}";
 	}
@@ -203,7 +203,7 @@ namespace _bin2gltf
 	void _exporter::writeStartArrayTag(bool bNewLine/* = true*/)
 	{
 		if (bNewLine) {
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
 		}
 
@@ -212,7 +212,7 @@ namespace _bin2gltf
 
 	void _exporter::writeEndArrayTag()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 		*getOutputStream() << "]";
 	}
@@ -284,7 +284,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -301,7 +301,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -316,7 +316,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -331,7 +331,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -346,7 +346,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -361,7 +361,7 @@ namespace _bin2gltf
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -377,7 +377,7 @@ namespace _bin2gltf
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(vecProperties);
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -394,7 +394,7 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 			}
 
-			*getOutputStream() << "\n";
+			*getOutputStream() << getNewLine();
 			writeIndent();
 			*getOutputStream() << vecProperties[iIndex].c_str();
 		}
@@ -414,7 +414,7 @@ namespace _bin2gltf
 
 	/*virtual*/ void _exporter::writeBuffersProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -577,7 +577,7 @@ namespace _bin2gltf
 
 	/*virtual*/ void _exporter::writeBufferViewsProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -709,7 +709,7 @@ namespace _bin2gltf
 
 		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
 
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
@@ -748,7 +748,7 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
 				*getOutputStream() << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
@@ -757,7 +757,7 @@ namespace _bin2gltf
 						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*getOutputStream() << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
@@ -822,11 +822,11 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 				writeUIntProperty("count", (uint32_t)pNode->getGeometry()->getVerticesCount());
 				*getOutputStream() << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string> { "-1.0", "-1.0" }).c_str();
 				*getOutputStream() << COMMA;
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string> { "1.0", "1.0" }).c_str();
 				*getOutputStream() << COMMA;
@@ -958,7 +958,7 @@ namespace _bin2gltf
 
 	void _exporter::writeMeshesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// meshes
@@ -997,7 +997,7 @@ namespace _bin2gltf
 						writeStringProperty("name", _string::sformat("%lld-conceptual-face-%lld", getGeometryID(pNode->getGeometry()), iConcFacesCohortIndex));
 						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1075,7 +1075,7 @@ namespace _bin2gltf
 						writeStringProperty("name", _string::sformat("%lld-conceptual-face-polygons-%lld", getGeometryID(pNode->getGeometry()), iConcFacePolygonsCohortIndex));
 						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1147,7 +1147,7 @@ namespace _bin2gltf
 						writeStringProperty("name", _string::sformat("%lld-lines-%lld", getGeometryID(pNode->getGeometry()), iLinesCohortIndex));
 						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1223,7 +1223,7 @@ namespace _bin2gltf
 						writeStringProperty("name", _string::sformat("%lld-points-%lld", getGeometryID(pNode->getGeometry()), iPointsCohortIndex));
 						*getOutputStream() << COMMA;
 
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 
 						*getOutputStream() << DOULE_QUOT_MARK;
@@ -1293,7 +1293,7 @@ namespace _bin2gltf
 
 	void _exporter::writeNodesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// nodes
@@ -1346,11 +1346,11 @@ namespace _bin2gltf
 						indent()++;
 						writeStringProperty("name", _string::sformat("%lld-instance", getGeometryID(pNode->getGeometry())));
 						*getOutputStream() << COMMA;
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
 						*getOutputStream() << COMMA;
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("matrix", vector<string>
 						{
@@ -1415,7 +1415,7 @@ namespace _bin2gltf
 
 	void _exporter::writeScenesProperty()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// scenes
@@ -1438,7 +1438,7 @@ namespace _bin2gltf
 					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
 				}
 
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				indent()++;
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("nodes", vecRootNodes).c_str();
@@ -1456,7 +1456,7 @@ namespace _bin2gltf
 
 	void _exporter::writeMaterials()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// materials
@@ -1510,7 +1510,7 @@ namespace _bin2gltf
 							writeStartObjectTag();
 
 							indent()++;
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << DOULE_QUOT_MARK;
 							*getOutputStream() << "pbrMetallicRoughness";
@@ -1554,7 +1554,7 @@ namespace _bin2gltf
 
 						// pbrMetallicRoughness
 						indent()++;
-						*getOutputStream() << "\n";
+						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
 						*getOutputStream() << "pbrMetallicRoughness";
@@ -1566,7 +1566,7 @@ namespace _bin2gltf
 						{
 							writeStartObjectTag();
 
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							indent()++;
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("baseColorFactor", vector<string>
@@ -1585,7 +1585,7 @@ namespace _bin2gltf
 
 						// emissiveFactor
 						{
-							*getOutputStream() << "\n";
+							*getOutputStream() << getNewLine();
 							writeIndent();
 							*getOutputStream() << buildArrayProperty("emissiveFactor", vector<string>
 							{
@@ -1630,7 +1630,7 @@ namespace _bin2gltf
 
 	void _exporter::writeImages()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// images
@@ -1683,7 +1683,7 @@ namespace _bin2gltf
 
 	void _exporter::writeSamplers()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// samplers
@@ -1698,7 +1698,7 @@ namespace _bin2gltf
 			{
 				writeStartArrayTag(false);
 
-				*getOutputStream() << "\n";
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << "{}";
 
@@ -1711,7 +1711,7 @@ namespace _bin2gltf
 
 	void _exporter::writeTextures()
 	{
-		*getOutputStream() << "\n";
+		*getOutputStream() << getNewLine();
 		writeIndent();
 
 		// images

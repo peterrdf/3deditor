@@ -52,6 +52,10 @@ namespace _bin2glb
 		virtual void postExecute() override;
 		virtual void writeBuffersProperty() override;
 		virtual void writeBufferViewsProperty() override;
+
+	public: // Properties
+
+			virtual const char* getNewLine() const override { return ""; }
 	};
 };
 
