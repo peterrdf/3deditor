@@ -152,7 +152,7 @@ namespace _bin2glb
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
-		writeStartArrayTag(false);
+		uint32_t iGlobalBufferByteLength = 0;
 
 		for (size_t iIndex = 0; iIndex < m_vecNodes.size(); iIndex++) {
 			auto pNode = m_vecNodes[iIndex];
@@ -206,22 +206,22 @@ namespace _bin2glb
 
 			pNode->bufferByteLength() = iBufferByteLength;
 
-			if (iIndex > 0) {
-				*getOutputStream() << COMMA;
-			}
-
-			indent()++;
-			writeStartObjectTag();
-
-			indent()++;
-			writeUIntProperty("byteLength", iBufferByteLength);
-			indent()--;
-
-			writeEndObjectTag();
-			indent()--;
-
-			m_iBuffersCount++;
+			iGlobalBufferByteLength += iBufferByteLength;
 		} // for (for (size_t iIndex = ...
+
+		m_iBuffersCount = 1;
+
+		writeStartArrayTag(false);
+
+		indent()++;
+		writeStartObjectTag();
+
+		indent()++;
+		writeUIntProperty("byteLength", iGlobalBufferByteLength);
+		indent()--;
+
+		writeEndObjectTag();
+		indent()--;
 
 		writeEndArrayTag();
 	}
@@ -263,7 +263,7 @@ namespace _bin2glb
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", 0);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->verticesBufferViewByteLength());
 				*getOutputStream() << COMMA;
@@ -286,7 +286,7 @@ namespace _bin2glb
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", 0);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->normalsBufferViewByteLength());
 				*getOutputStream() << COMMA;
@@ -309,7 +309,7 @@ namespace _bin2glb
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", 0);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", pNode->texturesBufferViewByteLength());
 				*getOutputStream() << COMMA;
@@ -334,7 +334,7 @@ namespace _bin2glb
 				writeStartObjectTag();
 
 				indent()++;
-				writeUIntProperty("buffer", (uint32_t)iNodeIndex);
+				writeUIntProperty("buffer", 0);
 				*getOutputStream() << COMMA;
 				writeUIntProperty("byteLength", iByteLength);
 				*getOutputStream() << COMMA;
