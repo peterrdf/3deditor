@@ -19,7 +19,7 @@ glTF Files (*.gltf)|*.gltf|\
 glTF Binary Files (*.glb)|*.glb|\
 Autocad DXF Files (*.dxf)|*.dxf|")
 #ifdef IMPORT_PLY
-_T("Polygon File Format(*.ply) | *.ply|")
+_T("Polygon File Format (*.ply)|*.ply|")
 #endif
 _T("All Files (*.*)|*.*||");
 
