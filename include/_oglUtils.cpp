@@ -125,200 +125,228 @@ void _oglRendererSettings::_setView(enumView enView)
 	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
 
 	switch (enView) {
-		case enumView::Front:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 270.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
-			} else {
-				assert(false);
-			}
+	case enumView::Front:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 270.f;
 		}
-		break;
-
-		case enumView::Back:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 90.f;
-				m_fYAngle = 180.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
-			} else {
-				assert(false);
-			}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(0., 0., glm::radians(90.));
 		}
-		break;
-
-		case enumView::Left:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 270.f;
-				m_fZAngle = 90.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::Right:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 270.f;
-				m_fZAngle = 270.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::Top:
-		{
-			m_fXAngle = 0.f;
-			m_fYAngle = 0.f;
-			m_fZAngle = 0.f;
-		}
-		break;
-
-		case enumView::Bottom:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fYAngle = 180.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::FrontTopLeft:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 315.f;
-				m_fZAngle = 45.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::FrontTopRight:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 315.f;
-				m_fZAngle = 315.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::FrontBottomLeft:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 225.f;
-				m_fZAngle = 45.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::FrontBottomRight:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 225.f;
-				m_fZAngle = 315.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::BackTopLeft:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 315.f;
-				m_fZAngle = 225.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::BackTopRight:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 315.f;
-				m_fZAngle = 135.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::BackBottomLeft:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 225.f;
-				m_fZAngle = 225.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::BackBottomRight:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 225.f;
-				m_fZAngle = 135.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		case enumView::Isometric:
-		{
-			if (m_enRotationMode == enumRotationMode::XY) {
-				m_fXAngle = 315.f;
-				m_fYAngle = 0.f;
-				m_fZAngle = 45.f;
-			} else if (m_enRotationMode == enumRotationMode::XYZ) {
-				m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
-			} else {
-				assert(false);
-			}
-		}
-		break;
-
-		default:
-		{
+		else {
 			assert(false);
 		}
-		break;
+	}
+	break;
+
+	case enumView::Back:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 90.f;
+			m_fYAngle = 180.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(180.), 0., glm::radians(90.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::Left:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 270.f;
+			m_fZAngle = 90.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(270.), 0., glm::radians(90.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::Right:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 270.f;
+			m_fZAngle = 270.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(90.), 0., glm::radians(90.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::Top:
+	{
+		m_fXAngle = 0.f;
+		m_fYAngle = 0.f;
+		m_fZAngle = 0.f;
+	}
+	break;
+
+	case enumView::Bottom:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fYAngle = 180.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(0., glm::radians(180.), 0.);
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::FrontTopLeft:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 315.f;
+			m_fZAngle = 45.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-315.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::FrontTopRight:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 315.f;
+			m_fZAngle = 315.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-315.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::FrontBottomLeft:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 225.f;
+			m_fZAngle = 45.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(-225.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::FrontBottomRight:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 225.f;
+			m_fZAngle = 315.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-315.), 0., glm::radians(-225.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::BackTopLeft:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 315.f;
+			m_fZAngle = 225.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-315.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::BackTopRight:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 315.f;
+			m_fZAngle = 135.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-315.f));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::BackBottomLeft:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 225.f;
+			m_fZAngle = 225.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-225.), 0., glm::radians(-225.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::BackBottomRight:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 225.f;
+			m_fZAngle = 135.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-135.), 0., glm::radians(-225.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	case enumView::Isometric:
+	{
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_fXAngle = 315.f;
+			m_fYAngle = 0.f;
+			m_fZAngle = 45.f;
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			m_rotation = _quaterniond::toQuaternion(glm::radians(-45.), 0., glm::radians(45.));
+		}
+		else {
+			assert(false);
+		}
+	}
+	break;
+
+	default:
+	{
+		assert(false);
+	}
+	break;
 	} // switch (enView)
 }
 
@@ -481,7 +509,7 @@ void _oglRendererSettings::_setView(enumView enView)
 			m_bShowCoordinateSystem = strValue == "TRUE";
 		}
 	}
-	
+
 	{
 		string strSettingName(typeid(this).raw_name());
 		strSettingName += NAMEOFVAR(m_bModelCoordinateSystem);
@@ -947,7 +975,8 @@ void _oglRenderer::_rotateMouseLButton(float fXAngle, float fYAngle)
 	if (m_enRotationMode == enumRotationMode::XY) {
 		if (abs(fXAngle) >= abs(fYAngle)) {
 			fYAngle = 0.;
-		} else {
+		}
+		else {
 			if (abs(fYAngle) >= abs(fXAngle)) {
 				fXAngle = 0.;
 			}
@@ -956,11 +985,13 @@ void _oglRenderer::_rotateMouseLButton(float fXAngle, float fYAngle)
 		_rotate(
 			fXAngle * ROTATION_SPEED,
 			fYAngle * ROTATION_SPEED);
-	} else if (m_enRotationMode == enumRotationMode::XYZ) {
+	}
+	else if (m_enRotationMode == enumRotationMode::XYZ) {
 		_rotate(
 			-fXAngle * ROTATION_SPEED,
 			-fYAngle * ROTATION_SPEED);
-	} else {
+	}
+	else {
 		assert(false);
 	}
 }
@@ -972,29 +1003,29 @@ void _oglRenderer::_zoomMouseMButton(LONG lDelta)
 	}
 
 	switch (m_enProjection) {
-		case enumProjection::Perspective:
-		{
-			_zoom(
-				lDelta > 0 ?
-				-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
-				abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
-		}
-		break;
+	case enumProjection::Perspective:
+	{
+		_zoom(
+			lDelta > 0 ?
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE));
+	}
+	break;
 
-		case enumProjection::Orthographic:
-		{
-			_zoom(
-				lDelta > 0 ?
-				abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE) :
-				-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE));
-		}
-		break;
+	case enumProjection::Orthographic:
+	{
+		_zoom(
+			lDelta > 0 ?
+			abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE) :
+			-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE));
+	}
+	break;
 
-		default:
-		{
-			assert(false);
-		}
-		break;
+	default:
+	{
+		assert(false);
+	}
+	break;
 	} // switch (m_enProjection)
 }
 
@@ -1103,14 +1134,16 @@ void _oglRenderer::_rotate(float fXAngle, float fYAngle)
 	m_fXAngle += fXAngle * (180.f / (float)M_PI);
 	if (m_fXAngle > 360.f) {
 		m_fXAngle -= 360.f;
-	} else if (m_fXAngle < -360.f) {
+	}
+	else if (m_fXAngle < -360.f) {
 		m_fXAngle += 360.f;
 	}
 
 	m_fYAngle += fYAngle * (180.f / (float)M_PI);
 	if (m_fYAngle > 360.f) {
 		m_fYAngle = m_fYAngle - 360.f;
-	} else if (m_fYAngle < -360.f) {
+	}
+	else if (m_fYAngle < -360.f) {
 		m_fYAngle += 360.f;
 	}
 
@@ -1120,37 +1153,37 @@ void _oglRenderer::_rotate(float fXAngle, float fYAngle)
 void _oglRenderer::_zoom(float fZTranslation)
 {
 	switch (m_enProjection) {
-		case enumProjection::Perspective:
+	case enumProjection::Perspective:
+	{
+		float fNewZTranslation = m_fZTranslation + fZTranslation;
+		//#todo
+		/*if ((fNewZTranslation >= m_fZoomMax) ||
+			(fNewZTranslation <= m_fZoomMin))
 		{
-			float fNewZTranslation = m_fZTranslation + fZTranslation;
-			//#todo
-			/*if ((fNewZTranslation >= m_fZoomMax) ||
-				(fNewZTranslation <= m_fZoomMin))
-			{
-				return;
-			}*/
+			return;
+		}*/
 
-			m_fZTranslation = fNewZTranslation;
+		m_fZTranslation = fNewZTranslation;
+	}
+	break;
+
+	case enumProjection::Orthographic:
+	{
+		float fNewScaleFactor = m_fScaleFactor + fZTranslation;
+		if ((fNewScaleFactor >= m_fScaleFactorMax) ||
+			(fNewScaleFactor <= m_fScaleFactorMin)) {
+			return;
 		}
-		break;
 
-		case enumProjection::Orthographic:
-		{
-			float fNewScaleFactor = m_fScaleFactor + fZTranslation;
-			if ((fNewScaleFactor >= m_fScaleFactorMax) ||
-				(fNewScaleFactor <= m_fScaleFactorMin)) {
-				return;
-			}
+		m_fScaleFactor = fNewScaleFactor;
+	}
+	break;
 
-			m_fScaleFactor = fNewScaleFactor;
-		}
-		break;
-
-		default:
-		{
-			assert(false);
-		}
-		break;
+	default:
+	{
+		assert(false);
+	}
+	break;
 	} // switch (m_enProjection)
 
 	_redraw();
@@ -1184,28 +1217,28 @@ void _oglRenderer::_pan(float fX, float fY)
 /*virtual*/ void _oglRenderer::_onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 {
 	switch (m_enProjection) {
-		case enumProjection::Perspective:
-		{
-			_zoom(
-				zDelta < 0 ?
-				-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
-				abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
-		}
-		break;
+	case enumProjection::Perspective:
+	{
+		_zoom(
+			zDelta < 0 ?
+			-abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+			abs(m_fZoomInterval * ZOOM_SPEED_MOUSE_WHEEL));
+	}
+	break;
 
-		case enumProjection::Orthographic:
-		{
-			_zoom(zDelta < 0 ?
-				-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL) :
-				abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL));
-		}
-		break;
+	case enumProjection::Orthographic:
+	{
+		_zoom(zDelta < 0 ?
+			-abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL) :
+			abs(m_fScaleFactorInterval * ZOOM_SPEED_MOUSE_WHEEL));
+	}
+	break;
 
-		default:
-		{
-			assert(false);
-		}
-		break;
+	default:
+	{
+		assert(false);
+	}
+	break;
 	} // switch (m_enProjection)
 }
 
@@ -1215,49 +1248,49 @@ void _oglRenderer::_pan(float fX, float fY)
 	m_pWnd->GetClientRect(&rcClient);
 
 	switch (nChar) {
-		case VK_UP:
-		{
-			_pan(
-				0.f,
-				PAN_SPEED_KEYS * m_fPanYInterval);
-		}
-		break;
+	case VK_UP:
+	{
+		_pan(
+			0.f,
+			PAN_SPEED_KEYS * m_fPanYInterval);
+	}
+	break;
 
-		case VK_DOWN:
-		{
-			_pan(
-				0.f,
-				-PAN_SPEED_KEYS * m_fPanYInterval);
-		}
-		break;
+	case VK_DOWN:
+	{
+		_pan(
+			0.f,
+			-PAN_SPEED_KEYS * m_fPanYInterval);
+	}
+	break;
 
-		case VK_LEFT:
-		{
-			_pan(
-				-PAN_SPEED_KEYS * m_fPanXInterval,
-				0.f);
-		}
-		break;
+	case VK_LEFT:
+	{
+		_pan(
+			-PAN_SPEED_KEYS * m_fPanXInterval,
+			0.f);
+	}
+	break;
 
-		case VK_RIGHT:
-		{
-			_pan(
-				PAN_SPEED_KEYS * m_fPanXInterval,
-				0.f);
-		}
-		break;
+	case VK_RIGHT:
+	{
+		_pan(
+			PAN_SPEED_KEYS * m_fPanXInterval,
+			0.f);
+	}
+	break;
 
-		case VK_PRIOR:
-		{
-			_zoom(abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
-		}
-		break;
+	case VK_PRIOR:
+	{
+		_zoom(abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
+	}
+	break;
 
-		case VK_NEXT:
-		{
-			_zoom(-abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
-		}
-		break;
+	case VK_NEXT:
+	{
+		_zoom(-abs(m_fZoomInterval * ZOOM_SPEED_KEYS));
+	}
+	break;
 	} // switch (nChar)
 }
 
@@ -1366,9 +1399,10 @@ void _oglRenderer::_prepare(
 
 	if (m_bDrawSelectInstanceBufferInProgress) {
 		glViewport(0, 0, BUFFER_SIZE, BUFFER_SIZE);
-	} else {
+	}
+	else {
 		glViewport(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
-	}	
+	}
 
 	if (bClear) {
 		glEnable(GL_SCISSOR_TEST);
@@ -1399,8 +1433,13 @@ void _oglRenderer::_prepare(
 	zNear = min(zNear, abs((double)fZmin));
 	if (zNear != 0.) {
 		zNear /= 25.;
-	} else {
+	}
+	else {
 		zNear = fBoundingSphereDiameter * .1;
+	}
+
+	if (zNear < 0.001) {
+		zNear = 0.001;
 	}
 
 	GLdouble zFar = 100.;
@@ -1411,17 +1450,19 @@ void _oglRenderer::_prepare(
 	if (bPerspecitve) {
 		glm::mat4 matProjection = glm::frustum<GLdouble>(-fW, fW, -fH, fH, zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
-	} else {
+	}
+	else {
 		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
-	}	
+	}
 
 	// Model-View Matrix
 	m_matModelView = glm::identity<glm::mat4>();
 
 	if (bTranslate) {
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
-	} else {
+	}
+	else {
 		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
 	}
 
@@ -1443,7 +1484,8 @@ void _oglRenderer::_prepare(
 		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
 		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
 		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
-	} else if (m_enRotationMode == enumRotationMode::XYZ) {
+	}
+	else if (m_enRotationMode == enumRotationMode::XYZ) {
 		// Apply rotation...
 		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
 		m_rotation.cross(rotation);
@@ -1456,7 +1498,8 @@ void _oglRenderer::_prepare(
 		delete pRotationMatrix;
 
 		m_matModelView = m_matModelView * matTransformation;
-	} else {
+	}
+	else {
 		assert(false);
 	}
 
@@ -1493,7 +1536,8 @@ void _oglRenderer::_showTooltip(LPCTSTR szTitle, LPCTSTR szText)
 
 			toolInfo.lpszText = (LPWSTR)szText;
 			m_toolTipCtrl.SetToolInfo(&toolInfo);
-		} else {
+		}
+		else {
 			CPoint ptCursor;
 			GetCursorPos(&ptCursor);
 
@@ -1627,51 +1671,51 @@ _oglView::_oglView()
 	}
 
 	switch (enApplicationProperty) {
-		case enumApplicationProperty::All:
-		case enumApplicationProperty::Projection:
-		case enumApplicationProperty::View:
-		case enumApplicationProperty::GhostView:
-		case enumApplicationProperty::GhostViewTransparency:
-		case enumApplicationProperty::ShowFaces:
-		case enumApplicationProperty::CullFaces:
-		case enumApplicationProperty::ShowFacesWireframes:
-		case enumApplicationProperty::ShowConceptualFacesWireframes:
-		case enumApplicationProperty::ShowLines:
-		case enumApplicationProperty::ShowPoints:
-		case enumApplicationProperty::ShowNormalVectors:
-		case enumApplicationProperty::ShowTangenVectors:
-		case enumApplicationProperty::ShowBiNormalVectors:
-		case enumApplicationProperty::ScaleVectors:
-		case enumApplicationProperty::ShowBoundingBoxes:
-		case enumApplicationProperty::RotationMode:
-		case enumApplicationProperty::ShowCoordinateSystem:
-		case enumApplicationProperty::CoordinateSystemType:
-		case enumApplicationProperty::ShowNavigator:
-		case enumApplicationProperty::PointLightingLocation:
-		case enumApplicationProperty::AmbientLightWeighting:
-		case enumApplicationProperty::SpecularLightWeighting:
-		case enumApplicationProperty::DiffuseLightWeighting:
-		case enumApplicationProperty::MaterialShininess:
-		case enumApplicationProperty::Contrast:
-		case enumApplicationProperty::Brightness:
-		case enumApplicationProperty::Gamma:
-		{
-			_redraw();
-		}
-		break;
+	case enumApplicationProperty::All:
+	case enumApplicationProperty::Projection:
+	case enumApplicationProperty::View:
+	case enumApplicationProperty::GhostView:
+	case enumApplicationProperty::GhostViewTransparency:
+	case enumApplicationProperty::ShowFaces:
+	case enumApplicationProperty::CullFaces:
+	case enumApplicationProperty::ShowFacesWireframes:
+	case enumApplicationProperty::ShowConceptualFacesWireframes:
+	case enumApplicationProperty::ShowLines:
+	case enumApplicationProperty::ShowPoints:
+	case enumApplicationProperty::ShowNormalVectors:
+	case enumApplicationProperty::ShowTangenVectors:
+	case enumApplicationProperty::ShowBiNormalVectors:
+	case enumApplicationProperty::ScaleVectors:
+	case enumApplicationProperty::ShowBoundingBoxes:
+	case enumApplicationProperty::RotationMode:
+	case enumApplicationProperty::ShowCoordinateSystem:
+	case enumApplicationProperty::CoordinateSystemType:
+	case enumApplicationProperty::ShowNavigator:
+	case enumApplicationProperty::PointLightingLocation:
+	case enumApplicationProperty::AmbientLightWeighting:
+	case enumApplicationProperty::SpecularLightWeighting:
+	case enumApplicationProperty::DiffuseLightWeighting:
+	case enumApplicationProperty::MaterialShininess:
+	case enumApplicationProperty::Contrast:
+	case enumApplicationProperty::Brightness:
+	case enumApplicationProperty::Gamma:
+	{
+		_redraw();
+	}
+	break;
 
-		case enumApplicationProperty::VisibleValuesCountLimit:
-		case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
-		{
-			// NA
-			break;
-		}
-
-		default:
-		{
-			assert(false); // Internal error!
-		}
+	case enumApplicationProperty::VisibleValuesCountLimit:
+	case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
+	{
+		// NA
 		break;
+	}
+
+	default:
+	{
+		assert(false); // Internal error!
+	}
+	break;
 	} // switch (enApplicationProperty)
 }
 
@@ -1746,7 +1790,7 @@ _oglView::_oglView()
 
 	for (auto pModel : getController()->getDecorationModels()) {
 		auto pBuffer = new _oglBuffersEx(pModel);
-		_load(vector<_model*>{ pModel }, *pBuffer);
+		_load(vector<_model*>{ pModel }, * pBuffer);
 
 		m_vecDecorationBuffers.push_back(pBuffer);
 	}
@@ -2062,7 +2106,8 @@ void _oglView::_drawFaces()
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	} else {
+	}
+	else {
 		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK)) {
 			glEnable(GL_CULL_FACE);
 			glCullFace(strCullFaces == CULL_FACES_FRONT ? GL_FRONT : GL_BACK);
@@ -2136,7 +2181,8 @@ void _oglView::_drawFaces()
 							(fTransparency > m_fGhostViewTransparency)) {
 							fTransparency = m_fGhostViewTransparency;
 						}
-					} else if (pMaterial == m_pPointedInstanceMaterial) {
+					}
+					else if (pMaterial == m_pPointedInstanceMaterial) {
 						fTransparency = m_fGhostViewTransparency;
 					}
 
@@ -2144,7 +2190,8 @@ void _oglView::_drawFaces()
 						if (fTransparency == 1.0f) {
 							continue;
 						}
-					} else {
+					}
+					else {
 						if (fTransparency < 1.0f) {
 							continue;
 						}
@@ -2162,7 +2209,8 @@ void _oglView::_drawFaces()
 						glBindTexture(GL_TEXTURE_2D, pTexture->getName());
 
 						m_pOGLProgram->_setSampler(0);
-					} else {
+					}
+					else {
 						m_pOGLProgram->_setMaterial(pMaterial, fTransparency);
 					}
 
@@ -2185,7 +2233,8 @@ void _oglView::_drawFaces()
 
 	if (bTransparent) {
 		glDisable(GL_BLEND);
-	} else {
+	}
+	else {
 		if ((strCullFaces == CULL_FACES_FRONT) || (strCullFaces == CULL_FACES_BACK)) {
 			glDisable(GL_CULL_FACE);
 		}
@@ -2561,7 +2610,7 @@ void _oglView::_drawInstancesFrameBuffer()
 
 	// World
 	m_pSelectInstanceFrameBuffer->create();
-	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {		
+	if (m_pSelectInstanceFrameBuffer->encoding().empty()) {
 		for (auto pModel : getController()->getModels()) {
 			if (!pModel->getEnable()) {
 				continue;
@@ -2586,7 +2635,7 @@ void _oglView::_drawInstancesFrameBuffer()
 	// Draw
 	//
 
-	m_bDrawSelectInstanceBufferInProgress = true;	
+	m_bDrawSelectInstanceBufferInProgress = true;
 
 	// Decorations
 	for (auto pBuffer : m_vecDecorationBuffers) {
@@ -2618,7 +2667,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	if (bApplyApplicationSettings && !getShowFaces()) {
 		return;
-	}	
+	}
 
 	pSelectInstanceFrameBuffer->bind();
 
@@ -2692,7 +2741,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	} // for (auto itCohort ...
 
 	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);	
+	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	pSelectInstanceFrameBuffer->unbind();
 
@@ -2730,7 +2779,8 @@ bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& d
 		dWinZ = fWinZ;
 
 		_oglUtils::checkForErrors();
-	} else {
+	}
+	else {
 		dWinZ = fDepth;
 	}
 
@@ -2777,7 +2827,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 				GL_UNSIGNED_BYTE,
 				arPixels);
 			m_pSelectInstanceFrameBuffer->unbind();
-			
+
 			if (arPixels[3] != 0) {
 				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 				pPointedInstance = getController()->getInstanceByID(iInstanceID);
@@ -2917,35 +2967,35 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 	} // if (enEvent == meLBtnDown)
 
 	switch (enEvent) {
-		case enumMouseEvent::Move:
-		{
-			_onMouseMoveEvent(nFlags, point);
-		}
-		break;
+	case enumMouseEvent::Move:
+	{
+		_onMouseMoveEvent(nFlags, point);
+	}
+	break;
 
-		case enumMouseEvent::LBtnDown:
-		case enumMouseEvent::MBtnDown:
-		case enumMouseEvent::RBtnDown:
-		{
-			m_ptStartMousePosition = point;
-			m_ptPrevMousePosition = point;
-		}
-		break;
+	case enumMouseEvent::LBtnDown:
+	case enumMouseEvent::MBtnDown:
+	case enumMouseEvent::RBtnDown:
+	{
+		m_ptStartMousePosition = point;
+		m_ptPrevMousePosition = point;
+	}
+	break;
 
-		case enumMouseEvent::LBtnUp:
-		case enumMouseEvent::MBtnUp:
-		case enumMouseEvent::RBtnUp:
-		{
-			m_ptStartMousePosition.x = -1;
-			m_ptStartMousePosition.y = -1;
-			m_ptPrevMousePosition.x = -1;
-			m_ptPrevMousePosition.y = -1;
-		}
-		break;
+	case enumMouseEvent::LBtnUp:
+	case enumMouseEvent::MBtnUp:
+	case enumMouseEvent::RBtnUp:
+	{
+		m_ptStartMousePosition.x = -1;
+		m_ptStartMousePosition.y = -1;
+		m_ptPrevMousePosition.x = -1;
+		m_ptPrevMousePosition.y = -1;
+	}
+	break;
 
-		default:
-			assert(false);
-			break;
+	default:
+		assert(false);
+		break;
 	} // switch (enEvent)
 }
 
@@ -2968,7 +3018,8 @@ void _oglView::addUserDefinedMaterial(const vector<_instance*>& vecInstances, fl
 		if (itUserDefinedMaterial != m_mapUserDefinedMaterials.end()) {
 			delete itUserDefinedMaterial->second;
 			itUserDefinedMaterial->second = pMaterial;
-		} else {
+		}
+		else {
 			m_mapUserDefinedMaterials[pInstance] = pMaterial;
 		}
 	}

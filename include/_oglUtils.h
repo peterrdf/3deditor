@@ -1112,7 +1112,12 @@ public: // Methods
 
     void _setNormalMatrix(glm::mat4& matModelView) const
     {
-        glm::mat3 matNormal = matModelView;
+        // Extract the upper-left 3x3 portion of the model-view matrix
+        glm::mat3 matNormal = glm::mat3(matModelView);
+
+        // Calculate the inverse transpose (proper normal matrix)
+        matNormal = glm::transpose(glm::inverse(matNormal));
+
         glProgramUniformMatrix3fv(
             _getID(),
             m_iNormalMatrix,
