@@ -22,7 +22,9 @@
 // or to describe and construct new concepts by specifying non-constructive (B-Rep) geometry 
 // 
 
-extern "C" {
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -146,10 +148,18 @@ extern "C" {
     //
     extern CONCEPTUAL_FACE** rdfgeom_GetConceptualFaces(SHELL* geometry);
 
+#ifdef __cplusplus
+    }
+#endif
+
     //
     // Check iterator points to the end of conceptual face list
     //
-    static bool rdfgeom_cface_EndOfList(CONCEPTUAL_FACE** cfaceP) { return !(cfaceP && *cfaceP); }
+    static inline bool rdfgeom_cface_EndOfList(CONCEPTUAL_FACE** cfaceP) { return !(cfaceP && *cfaceP); }
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
     //
     // Go iterator to next conceptual face
@@ -200,14 +210,28 @@ extern "C" {
     extern CONCEPTUAL_FACE** rdfgeom_cface_GetChildren(CONCEPTUAL_FACE* cface);
 
     //
+    // Add children to conceptual faces.
+    // Children are usually conceptual faces of another instance 
+    //
+    extern void rdfgeom_cface_SetChildren(CONCEPTUAL_FACE* cface, CONCEPTUAL_FACE* children);
+
+    //
     // Get instance of the conceptual face
     //
     extern OwlInstance     rdfgeom_cface_GetInstance(CONCEPTUAL_FACE* cface);
 
+#ifdef __cplusplus
+    }
+#endif
+
     //
     // Check iterator points to the end of face list
     //
-    static bool rdfgeom_face_EndOfList(STRUCT_FACE** faceP) { return !(faceP && *faceP); }
+    static inline bool rdfgeom_face_EndOfList(STRUCT_FACE** faceP) { return !(faceP && *faceP); }
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
     //
     // Go iterator to next face
@@ -241,10 +265,18 @@ extern "C" {
     //
     extern STRUCT_FACE** rdfgeom_face_GetOpenings(STRUCT_FACE* face);
 
+#ifdef __cplusplus
+    }
+#endif
+
     //
     // Check iterator points to the end of vertex list
     //
-    static bool rdfgeom_vertex_EndOfList(STRUCT_VERTEX** vertexP) { return !(vertexP && *vertexP); }
+    static inline bool rdfgeom_vertex_EndOfList(STRUCT_VERTEX** vertexP) { return !(vertexP && *vertexP); }
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
     //
     // Go iterator to next vertex
@@ -306,6 +338,8 @@ extern "C" {
     //
     extern bool rdfgeom_SetClassGeometry(OwlClass cls, RDFGEOM_CALLBACK_INIT_SHELL fnInitRepr, RDFGEOM_CALLBACK_GET_BBOX fnGetBBox, void* clientData);
 
-}
+#ifdef __cplusplus
+    }
+#endif
 
 #endif
