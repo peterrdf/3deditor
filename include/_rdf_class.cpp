@@ -1,17 +1,17 @@
 #include "_host.h"
 #include "_rdf_class.h"
+#include "displayName.h"
 
 // ************************************************************************************************
 _rdf_class::_rdf_class(OwlClass owlClass)
 	: m_owlClass(owlClass)
-	, m_szName(nullptr)
 	, m_vecParentClasses()
 	, m_vecAncestorClasses()
 	, m_vecPropertyRestrictions()
 {
 	assert(m_owlClass != 0);
 
-	GetNameOfClassW(m_owlClass, &m_szName);
+	m_szName = DisplayName (m_owlClass);
 
 	OwlClass owlParentClass = GetClassParentsByIterator(m_owlClass, 0);
 	while (owlParentClass != 0) {

@@ -12,6 +12,7 @@
 
 #include "_rdf_class.h"
 #include "_ptr.h"
+#include "displayName.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -2679,14 +2680,11 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 
 		wstring strRange;
 		for (size_t iRestriction = 0; iRestriction < vecRestrictionClasses.size(); iRestriction++) {
-			char* szClassName = nullptr;
-			GetNameOfClass(vecRestrictionClasses[iRestriction], &szClassName);
 
 			if (!strRange.empty()) {
 				strRange += L"; ";
 			}
-
-			strRange += CA2W(szClassName);
+			strRange += DisplayName (vecRestrictionClasses[iRestriction]);
 		}
 
 		auto pRange = new CMFCPropertyGridProperty(L"rdfs:range", (_variant_t)strRange.c_str(), pProperty->getName());

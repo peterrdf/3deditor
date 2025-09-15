@@ -17,7 +17,8 @@ class _rdf_property
 
 private: // Fields	
 
-    RdfProperty m_rdfProperty;
+    RdfProperty     m_rdfProperty;
+    std::wstring    m_displayName;
 
 public: // Methods
 

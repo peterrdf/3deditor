@@ -1,11 +1,14 @@
 #include "_host.h"
 #include "_rdf_property.h"
+#include "displayName.h"
 
 // ************************************************************************************************
 _rdf_property::_rdf_property(RdfProperty rdfProperty)
 	: m_rdfProperty(rdfProperty)
 {
 	assert(m_rdfProperty != 0);
+
+	m_displayName = DisplayName(m_rdfProperty);
 }
 
 /*virtual*/ _rdf_property::~_rdf_property()
@@ -196,10 +199,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 const wchar_t* _rdf_property::getName() const
 {
-	wchar_t* szName = nullptr;
-	GetNameOfPropertyW(m_rdfProperty, &szName);
-
-	return szName;
+	return m_displayName.c_str();
 }
 
 // ************************************************************************************************
