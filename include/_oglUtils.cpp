@@ -1429,20 +1429,15 @@ void _oglRenderer::_prepare(
 	}
 	GLdouble aspect = m_dAspectRatio;
 
-	GLdouble zNear = min(abs((double)fXmin), abs((double)fYmin));
-	zNear = min(zNear, abs((double)fZmin));
-	if (zNear != 0.) {
-		zNear /= 25.;
-	}
-	else {
-		zNear = fBoundingSphereDiameter * .1;
-	}
-
-	if (zNear < 0.001) {
-		zNear = 0.001;
+	// Znear and Zfar
+	GLdouble dCenterZ = (fZmin + fZmax) / 2.0;
+	GLdouble dCameraDistance = abs(m_fZTranslation + dCenterZ);
+	GLdouble zNear = max(0.001, min(dCameraDistance * 0.001, (fBoundingSphereDiameter / 2.0) * 0.001));
+	GLdouble zFar = dCameraDistance + fBoundingSphereDiameter;
+	if (zFar < zNear * 2.0) {
+		zFar = zNear * 1000.0;
 	}
 
-	GLdouble zFar = 100.;
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
 
@@ -1504,20 +1499,11 @@ void _oglRenderer::_prepare(
 	}
 
 	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
-
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-	glm::mat4 matNormal = m_matModelView;
-	matNormal = glm::inverse(matNormal);
-	matNormal = glm::transpose(matNormal);
-	m_pOGLProgram->_setNormalMatrix(matNormal);
-
-	// Model
-	m_pOGLProgram->_enableBlinnPhongModel(true);
-#else
 	m_pOGLProgram->_setNormalMatrix(m_matModelView);
-
-	// Model
+#ifdef _BLINN_PHONG_SHADERS
+	m_pOGLProgram->_enableBlinnPhongModel(true);
+#else	
 	m_pOGLProgram->_enableLighting(true);
 #endif
 }
@@ -2084,6 +2070,22 @@ void _oglView::_load(const vector<_model*>& vecModels, _oglBuffers& oglBuffers) 
 	_drawInstancesFrameBuffer();
 }
 
+bool _oglView::_applyTransformation(const _matrix4x4* pTransformationMatrix)
+{
+	if (pTransformationMatrix == nullptr) {
+		return false;
+	}
+
+	glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pTransformationMatrix);
+	glm::mat4 matModelView = m_matModelView;
+	matModelView = matModelView * matTransformation;
+
+	m_pOGLProgram->_setModelViewMatrix(matModelView);
+	m_pOGLProgram->_setNormalMatrix(matModelView);
+
+	return true;
+}
+
 void _oglView::_drawFaces()
 {
 	_drawFaces(m_worldBuffers, false);
@@ -2143,19 +2145,8 @@ void _oglView::_drawFaces()
 				}
 
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++) {
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
@@ -2188,11 +2179,19 @@ void _oglView::_drawFaces()
 
 					if (bTransparent) {
 						if (fTransparency == 1.0f) {
+							// Restore Model-View Matrix
+							if (bRestoreModelViewMatrix) {
+								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+							}
 							continue;
 						}
 					}
 					else {
 						if (fTransparency < 1.0f) {
+							// Restore Model-View Matrix
+							if (bRestoreModelViewMatrix) {
+								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+							}
 							continue;
 						}
 					}
@@ -2225,6 +2224,11 @@ void _oglView::_drawFaces()
 						m_pOGLProgram->_enableTexture(false);
 					}
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // auto pInstance : ...			
 		} // for (auto pGeometry : ...
 
@@ -2239,9 +2243,6 @@ void _oglView::_drawFaces()
 			glDisable(GL_CULL_FACE);
 		}
 	}
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -2287,19 +2288,8 @@ void _oglView::_drawFacesPolygons()
 				}
 
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (size_t iCohort = 0; iCohort < pGeometry->facePolygonsCohorts().size(); iCohort++) {
 					_cohort* pCohort = pGeometry->facePolygonsCohorts()[iCohort];
 
@@ -2310,14 +2300,16 @@ void _oglView::_drawFacesPolygons()
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -2361,21 +2353,10 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApply
 				if (!pInstance->getEnable()) {
 					continue;
 				}
-
+				
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (size_t iCohort = 0; iCohort < pGeometry->concFacePolygonsCohorts().size(); iCohort++) {
 					_cohort* pCohort = pGeometry->concFacePolygonsCohorts()[iCohort];
 
@@ -2386,14 +2367,16 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApply
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -2439,19 +2422,8 @@ void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSetting
 				}
 
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (size_t iCohort = 0; iCohort < pGeometry->linesCohorts().size(); iCohort++) {
 					_cohort* pCohort = pGeometry->linesCohorts()[iCohort];
 
@@ -2462,14 +2434,16 @@ void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSetting
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -2516,19 +2490,8 @@ void _oglView::_drawPoints()
 				}
 
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (auto pCohort : pGeometry->pointsCohorts()) {
 					bool bIsInstancePointed = m_pPointedInstance != nullptr ?
 						pInstance->getOwner() != nullptr ? pInstance->getOwner() == m_pPointedInstance : pInstance == m_pPointedInstance :
@@ -2551,14 +2514,16 @@ void _oglView::_drawPoints()
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // for (auto pInstance ...
 		} // for (auto pGeometry ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	_oglUtils::checkForErrors();
 
@@ -2703,19 +2668,8 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 				}
 
 				// Transformation Matrix
-				glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pInstance->getTransformationMatrix());
-				glm::mat4 matModelView = m_matModelView;
-				matModelView = matModelView * matTransformation;
+				bool bRestoreModelViewMatrix = _applyTransformation(pInstance->getTransformationMatrix());
 
-				m_pOGLProgram->_setModelViewMatrix(matModelView);
-#ifdef _BLINN_PHONG_SHADERS
-				glm::mat4 matNormal = m_matModelView * matTransformation;
-				matNormal = glm::inverse(matNormal);
-				matNormal = glm::transpose(matNormal);
-				m_pOGLProgram->_setNormalMatrix(matNormal);
-#else
-				m_pOGLProgram->_setNormalMatrix(matModelView);
-#endif
 				for (size_t iCohort = 0; iCohort < pGeometry->concFacesCohorts().size(); iCohort++) {
 					auto pCohort = pGeometry->concFacesCohorts()[iCohort];
 
@@ -2734,14 +2688,16 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 						(void*)(sizeof(GLuint) * pCohort->IBOOffset()),
 						pGeometry->VBOOffset());
 				}
+
+				// Restore Model-View Matrix
+				if (bRestoreModelViewMatrix) {					
+					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
 
 		glBindVertexArray(0);
 	} // for (auto itCohort ...
-
-	// Restore Model-View Matrix
-	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 
 	pSelectInstanceFrameBuffer->unbind();
 

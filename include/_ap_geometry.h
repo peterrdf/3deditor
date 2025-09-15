@@ -29,7 +29,7 @@ public: // Methods
     {}
 
     // _geometry
-    virtual OwlModel getOwlModel() override
+    virtual OwlModel getOwlModel() const override
     {
         return getOwlModel(getSdaiModel());
     }

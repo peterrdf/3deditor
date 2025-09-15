@@ -188,6 +188,27 @@ void _geometry::calculateBB(
     }
 }
 
+void _geometry::calculateVerticesMinMax(
+    float& fXmin, float& fXmax,
+    float& fYmin, float& fYmax,
+    float& fZmin, float& fZmax) const
+{
+    if (getVerticesCount() == 0) {
+        return;
+    }
+
+    const auto VERTEX_LENGTH = getVertexLength();
+
+    for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++) {
+        fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+        fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+        fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+        fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+        fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
+        fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);        
+	}
+}
+
 void _geometry::scale(float fScaleFactor)
 {
     if (getVerticesCount() == 0) {
@@ -203,6 +224,7 @@ void _geometry::scale(float fScaleFactor)
         m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2] /= fScaleFactor;
     }
 
+    /* BB - Min */
     m_pvecAABBMin->x /= fScaleFactor;
     m_pvecAABBMin->y /= fScaleFactor;
     m_pvecAABBMin->z /= fScaleFactor;
@@ -243,6 +265,11 @@ void _geometry::translate(float fX, float fY, float fZ)
     m_pvecAABBMax->x += fX;
     m_pvecAABBMax->y += fY;
     m_pvecAABBMax->z += fZ;
+
+    // Instances
+    for (size_t iInstance = 0; iInstance < m_vecInstances.size(); iInstance++) {
+        m_vecInstances[iInstance]->translate(fX, fY, fZ);
+    }
 }
 
 void _geometry::addInstance(_instance* pInstance)
@@ -287,6 +314,17 @@ bool  _geometry::calculateInstance(_vertices_f* pVertexBuffer, _indices_i32* pIn
     memset(pVertexBuffer->data(), 0, (uint32_t)pVertexBuffer->size() * (int64_t)pVertexBuffer->getVertexLength() * sizeof(float));
 
     UpdateInstanceVertexBuffer(getOwlInstance(), pVertexBuffer->data());
+
+#ifdef _PRINT_VERTEX_BUFFER
+    for (int64_t i = 0; i < pVertexBuffer->size(); i++) {
+		TRACE(
+			L"V %lld: %f, %f, %f\n",
+			i,
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 0],
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 1],
+			pVertexBuffer->data()[(i * pVertexBuffer->getVertexLength()) + 2]);
+	}
+#endif
 
     pIndexBuffer->data() = new int32_t[(uint32_t)pIndexBuffer->size()];
     memset(pIndexBuffer->data(), 0, (uint32_t)pIndexBuffer->size() * sizeof(int32_t));

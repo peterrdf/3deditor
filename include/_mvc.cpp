@@ -446,9 +446,7 @@ _texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
 		AfxMessageBox(msg, MB_ICONERROR);
 	}
 
-	if (pTexture != nullptr) {
-		m_mapTextures[strTexture] = pTexture;
-	} else {
+	if (pTexture == nullptr) {
 		m_mapTextures[strTexture] = getDefaultTexture();
 	}
 

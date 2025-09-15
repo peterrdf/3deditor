@@ -6,6 +6,21 @@
 #define PI 3.14159265
 
 // ************************************************************************************************
+static void _normalize(float fXin, float fYin, float fZin, float* pV)
+{
+    float d = sqrtf(fXin * fXin + fYin * fYin + fZin * fZin);
+    if (d == 0.f) {
+        pV[0] = 0.f;
+        pV[1] = 0.f;
+        pV[2] = 0.f;
+        return;
+    }
+    pV[0] = fXin / d;
+    pV[1] = fYin / d;
+    pV[2] = fZin / d;
+}
+
+// ************************************************************************************************
 struct _vector3d
 {
     double x;
@@ -369,6 +384,81 @@ static void _matrix4x4Identity(_matrix4x4* pM)
     memset(pM, 0, sizeof(_matrix4x4));
 
     pM->_11 = pM->_22 = pM->_33 = pM->_44 = 1.;
+}
+
+static void	_matrix4x4Multiply(_matrix4x4* pOut, const _matrix4x4* pM1, const _matrix4x4* pM2)
+{
+    assert((pOut != nullptr) && (pM1 != nullptr) && (pM2 != nullptr));
+
+    _matrix4x4 pTmp;
+
+    // Row 1
+    pTmp._11 = pM1->_11 * pM2->_11 + pM1->_12 * pM2->_21 + pM1->_13 * pM2->_31 + pM1->_14 * pM2->_41;
+    pTmp._12 = pM1->_11 * pM2->_12 + pM1->_12 * pM2->_22 + pM1->_13 * pM2->_32 + pM1->_14 * pM2->_42;
+    pTmp._13 = pM1->_11 * pM2->_13 + pM1->_12 * pM2->_23 + pM1->_13 * pM2->_33 + pM1->_14 * pM2->_43;
+    pTmp._14 = pM1->_11 * pM2->_14 + pM1->_12 * pM2->_24 + pM1->_13 * pM2->_34 + pM1->_14 * pM2->_44;
+
+    // Row 2
+    pTmp._21 = pM1->_21 * pM2->_11 + pM1->_22 * pM2->_21 + pM1->_23 * pM2->_31 + pM1->_24 * pM2->_41;
+    pTmp._22 = pM1->_21 * pM2->_12 + pM1->_22 * pM2->_22 + pM1->_23 * pM2->_32 + pM1->_24 * pM2->_42;
+    pTmp._23 = pM1->_21 * pM2->_13 + pM1->_22 * pM2->_23 + pM1->_23 * pM2->_33 + pM1->_24 * pM2->_43;
+    pTmp._24 = pM1->_21 * pM2->_14 + pM1->_22 * pM2->_24 + pM1->_23 * pM2->_34 + pM1->_24 * pM2->_44;
+
+    // Row 3
+    pTmp._31 = pM1->_31 * pM2->_11 + pM1->_32 * pM2->_21 + pM1->_33 * pM2->_31 + pM1->_34 * pM2->_41;
+    pTmp._32 = pM1->_31 * pM2->_12 + pM1->_32 * pM2->_22 + pM1->_33 * pM2->_32 + pM1->_34 * pM2->_42;
+    pTmp._33 = pM1->_31 * pM2->_13 + pM1->_32 * pM2->_23 + pM1->_33 * pM2->_33 + pM1->_34 * pM2->_43;
+    pTmp._34 = pM1->_31 * pM2->_14 + pM1->_32 * pM2->_24 + pM1->_33 * pM2->_34 + pM1->_34 * pM2->_44;
+
+    // Row 4
+    pTmp._41 = pM1->_41 * pM2->_11 + pM1->_42 * pM2->_21 + pM1->_43 * pM2->_31 + pM1->_44 * pM2->_41;
+    pTmp._42 = pM1->_41 * pM2->_12 + pM1->_42 * pM2->_22 + pM1->_43 * pM2->_32 + pM1->_44 * pM2->_42;
+    pTmp._43 = pM1->_41 * pM2->_13 + pM1->_42 * pM2->_23 + pM1->_43 * pM2->_33 + pM1->_44 * pM2->_43;
+    pTmp._44 = pM1->_41 * pM2->_14 + pM1->_42 * pM2->_24 + pM1->_43 * pM2->_34 + pM1->_44 * pM2->_44;
+
+    // Copy result to output
+    pOut->_11 = pTmp._11; pOut->_12 = pTmp._12; pOut->_13 = pTmp._13; pOut->_14 = pTmp._14;
+    pOut->_21 = pTmp._21; pOut->_22 = pTmp._22; pOut->_23 = pTmp._23; pOut->_24 = pTmp._24;
+    pOut->_31 = pTmp._31; pOut->_32 = pTmp._32; pOut->_33 = pTmp._33; pOut->_34 = pTmp._34;
+    pOut->_41 = pTmp._41; pOut->_42 = pTmp._42; pOut->_43 = pTmp._43; pOut->_44 = pTmp._44;
+}
+
+static void	_matrixRotateByEulerAngles4x4(
+    _matrix4x4* matrix,
+    double	alpha,
+    double	beta,
+    double	gamma)
+{
+    //
+    //	https://en.wikipedia.org/wiki/Rotation_matrix
+    //
+    double	cos_alpha = cos(alpha), sin_alpha = sin(alpha),
+        cos_beta = cos(beta), sin_beta = sin(beta),
+        cos_gamma = cos(gamma), sin_gamma = sin(gamma);
+
+    matrix->_11 = 1. * cos_beta * cos_gamma;
+    matrix->_12 = 1. * cos_beta * sin_gamma;
+    matrix->_13 = -1. * sin_beta * 1.;
+    matrix->_14 = 0.;
+
+    matrix->_21 = sin_alpha * sin_beta * cos_gamma
+        - cos_alpha * 1. * sin_gamma;
+    matrix->_22 = sin_alpha * sin_beta * sin_gamma
+        + cos_alpha * 1. * cos_gamma;
+    matrix->_23 = sin_alpha * cos_beta * 1.;
+    matrix->_24 = 0.;
+
+    matrix->_31 = cos_alpha * sin_beta * cos_gamma
+        + sin_alpha * 1. * sin_gamma;
+    matrix->_32 = cos_alpha * sin_beta * sin_gamma
+        - sin_alpha * 1. * cos_gamma;
+    matrix->_33 = cos_alpha * cos_beta * 1.;
+    matrix->_34 = 0.;
+
+    matrix->_41 = 0.;
+    matrix->_42 = 0.;
+    matrix->_43 = 0.;
+    matrix->_44 = 1.;
 }
 
 static void	_transform(const _vector3* pV, const _matrix4x4* pM, _vector3* pOut)

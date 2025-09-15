@@ -225,6 +225,11 @@ public: // Methods
         double& dYmin, double& dYmax,
         double& dZmin, double& dZmax);
 
+    void calculateVerticesMinMax(
+        float& fXmin, float& fXmax,
+        float& fYmin, float& fYmax,
+        float& fZmin, float& fZmax) const;
+
     void scale(float fScaleFactor);
     void translate(float fX, float fY, float fZ);
 
@@ -303,9 +308,9 @@ protected: // Methods
 public: // Properties
 
     // Metadata
-    virtual OwlInstance getOwlInstance() { return m_owlInstance; }
+    virtual OwlInstance getOwlInstance() const { return m_owlInstance; }
     OwlClass getOwlClass() { return ::GetInstanceClass(getOwlInstance()); }
-    virtual OwlModel getOwlModel() { return ::GetModel(getOwlInstance()); }
+    virtual OwlModel getOwlModel() const { return ::GetModel(getOwlInstance()); }
     bool isReferenced() { return ::GetInstanceInverseReferencesByIterator(getOwlInstance(), 0) != 0; }
     virtual bool isPlaceholder() const { return false; }
     const wchar_t* getName() const { return m_strName.c_str(); }
@@ -316,7 +321,7 @@ public: // Properties
     int64_t getIndicesCount() const { return m_pIndexBuffer != nullptr ? m_pIndexBuffer->size() : 0; }
     float* getVertices() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->data() : nullptr; }
     int64_t getVerticesCount() const { return m_pVertexBuffer != nullptr ? m_pVertexBuffer->size() : 0; }
-    uint32_t getVertexLength() { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
+    uint32_t getVertexLength() const { return (uint32_t)SetFormat(getOwlModel()) / sizeof(float); }
     int64_t getConceptualFacesCount() const { return m_iConceptualFacesCount; }
     bool getShow() const { return m_bShow; }
     void setShow(bool bShow) { m_bShow = bShow; }

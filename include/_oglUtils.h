@@ -2522,6 +2522,7 @@ protected: // Methods
     virtual void _postDraw() {}
     virtual void _drawBuffers();
 
+    bool _applyTransformation(const _matrix4x4* pTransformationMatrix);
     void _drawFaces();
     void _drawFaces(_oglBuffers& oglBuffers, bool bTransparent, bool bApplyApplicationSettings = true);
     void _drawFacesPolygons();
