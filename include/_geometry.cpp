@@ -4,7 +4,11 @@
 #include "_oglUtils.h"
 
 #ifdef __EMSCRIPTEN__
-#include "../../gisengine/Parsers/_string.h"
+	#include "../../gisengine/Parsers/_string.h"
+#else 
+	#ifdef __GNUG__ 
+	#include "_string.h"
+	#endif
 #endif
 
 // ************************************************************************************************

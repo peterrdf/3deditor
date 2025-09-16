@@ -12,6 +12,9 @@
 #include "_settings_storage.h"
 #include "_ptr.h"
 
+#include <algorithm>
+using namespace std;
+
 // ************************************************************************************************
 _rdf_model::_rdf_model()
 	: _model()
@@ -1055,16 +1058,24 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 void _rdf_controller::loadSettings()
 {
 	{
+#ifdef _WINDOWS
 		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
 		strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
-
+		
 		string strValue = getSettingsStorage()->getSetting(strSettingName);
 		if (!strValue.empty()) {
 			m_iVisibleValuesCountLimit = atoi(strValue.c_str());
 		}
 	}
 
-	string strSettingName(typeid(this).raw_name());
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
 	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
 
 	string strValue = getSettingsStorage()->getSetting(strSettingName);
@@ -1077,7 +1088,11 @@ void _rdf_controller::setVisibleValuesCountLimit(int iNewValue)
 { 
 	m_iVisibleValuesCountLimit = iNewValue;
 
-	string strSettingName(typeid(this).raw_name());
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
 	strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
 
 	getSettingsStorage()->setSetting(strSettingName, to_string(m_iVisibleValuesCountLimit));
@@ -1087,7 +1102,11 @@ void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue)
 { 
 	m_bScaleAndCenterAllVisibleGeometry = bNewValue; 
 
-	string strSettingName(typeid(this).raw_name());
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
 	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
 
 	getSettingsStorage()->setSetting(strSettingName, bNewValue ? "TRUE" : "FALSE");

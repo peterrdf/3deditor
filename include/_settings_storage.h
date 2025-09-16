@@ -62,7 +62,11 @@ public: // Methods
 
     void saveSettings()
     {
+#ifdef _WINDOWS
         ofstream streamSettings(m_strSettingsFile.c_str());
+#else
+        ofstream streamSettings(fs::path(m_strSettingsFile).string().c_str());
+#endif
         if (!streamSettings) {
             assert(false);
 
@@ -80,8 +84,11 @@ public: // Methods
     {
         m_strSettingsFile = strSettingsFile;
         m_mapSettings.clear();
-
-        ifstream streamSettings(m_strSettingsFile.c_str());
+#ifdef _WINDOWS
+		ifstream streamSettings(m_strSettingsFile.c_str());
+#else
+		ifstream streamSettings(fs::path(m_strSettingsFile).string().c_str());
+#endif
         if (!streamSettings) {
             return;
         }

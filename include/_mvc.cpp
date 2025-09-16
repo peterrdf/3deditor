@@ -4,6 +4,9 @@
 #include "_oglUtils.h"
 #include "_ptr.h"
 
+#include <algorithm>
+using namespace std;
+
 // ************************************************************************************************
 _model::_model()
 	: m_strPath(L"")
@@ -437,13 +440,17 @@ _texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
 	if (fs::exists(pthTexture)) {
 		pTexture = new _texture();
 		if (!pTexture->load(pthTexture.wstring().c_str(), bFlipY)) {
+#ifdef _WINDOWS
 			AfxMessageBox(CString(L"Failed to load texture: ") + pthTexture.c_str(), MB_ICONERROR);
+#endif
 		}
 	}
 	else {
+#ifdef _WINDOWS
 		CString msg;
 		msg.Format(L"Not found texture: %s\nSearch path: %s", strTexture.c_str(), pthTexture.c_str());
 		AfxMessageBox(msg, MB_ICONERROR);
+#endif
 	}
 
 	if (pTexture == nullptr) {

@@ -34,7 +34,9 @@ public: // Methods
 	{
 		if (m_iName != 0)
 		{
+#ifdef _WINDOWS
 			glDeleteTextures(1, &m_iName);
+#endif
 		}
 	}
 

@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_ifc_geometry.h"
 
+#include <cwctype>
 #include <algorithm>
 using namespace std;
 

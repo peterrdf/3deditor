@@ -2,6 +2,7 @@
 #include "_ifc_instance.h"
 #include "_ifc_geometry.h"
 
+#include <cwctype>
 #include <algorithm>
 
 // ************************************************************************************************
