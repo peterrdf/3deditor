@@ -337,6 +337,13 @@ void CRDFOpenGLView::DrawBoundingBoxes(_model* pModel)
 
 	for (auto pGeometry : pModel->getGeometries()) {
 		assert(pGeometry->getInstances().size() == 1);
+
+		// Disabled geometry
+		if (!pGeometry->getInstances()[0]->getEnable()) {
+			continue;
+		}
+
+		// No bounding box
 		if ((pGeometry->getBBTransformation() == nullptr) ||
 			(pGeometry->getBBMin() == nullptr) ||
 			(pGeometry->getBBMax() == nullptr)) {
