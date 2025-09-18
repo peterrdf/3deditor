@@ -1030,15 +1030,15 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 	}
 
 	pInstance->recalculate();
-	if (!pInstance->hasGeometry()) {
-		vector<OwlInstance> vecAncestors;
-		_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
 
-		for (auto owlInstance : vecAncestors) {
-			auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
-			if (pAncestorInstance != nullptr) {
-				pAncestorInstance->recalculate(true);
-			}
+	// Recalculate ancestors
+	vector<OwlInstance> vecAncestors;
+	_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
+
+	for (auto owlInstance : vecAncestors) {
+		auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
+		if (pAncestorInstance != nullptr) {
+			pAncestorInstance->recalculate(true);
 		}
 	}
 
