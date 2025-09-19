@@ -3406,9 +3406,9 @@ RdfProperty		DECL STDC	GetPropertiesByIterator(
 //
 //				void					returns
 //
-//	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
+//	Sets or unsets a specific owlClass as range restriction to an property. The property is expected to
 //	be an object[property, i.e. relation.]
-//	If rdfProperty is not an object property this call has no effect.
+//	If property is not an object property this call has no effect.
 //
 void			DECL STDC	SetPropertyRangeRestriction(
 									RdfProperty				rdfProperty,
@@ -3425,9 +3425,9 @@ void			DECL STDC	SetPropertyRangeRestriction(
 //
 //				void					returns
 //
-//	Sets or unsets a specific owlClass as range restriction to an rdfProperty. The property is expected to
+//	Sets or unsets a specific owlClass as range restriction to an property. The property is expected to
 //	be an object[property, i.e. relation.]
-//	If rdfProperty is not an object property this call has no effect.
+//	If property is not an object property this call has no effect.
 //
 void			DECL STDC	SetPropertyRangeRestrictionEx(
 									OwlModel				model,
@@ -3497,9 +3497,9 @@ RdfProperty		DECL STDC	GetPropertyParentsByIterator(
 //
 //	Error return codes:
 //		0	successful
-//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		1	argument property is incorrect (not a proper handle to an active property)
 //		2	argument name is incorrect (nullptr or zero length name)
-//		3	the name of rdfProperty is locked
+//		3	the name of property is locked
 //		4	name is already used by another class
 //		5	name is already used by a property
 //		6	name is already used by an instance
@@ -3542,9 +3542,9 @@ static	inline	int64_t	SetNameOfProperty(
 //
 //	Error return codes:
 //		0	successful
-//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		1	argument property is incorrect (not a proper handle to an active property)
 //		2	argument name is incorrect (nullptr or zero length name)
-//		3	the name of rdfProperty is locked
+//		3	the name of property is locked
 //		4	name is already used by another class
 //		5	name is already used by a property
 //		6	name is already used by an instance
@@ -3588,9 +3588,9 @@ static	inline	int64_t	SetNameOfPropertyW(
 //
 //	Error return codes:
 //		0	successful
-//		1	argument model or rdfProperty is incorrect (not a proper handle to an active property)
+//		1	argument model or property is incorrect (not a proper handle to an active property)
 //		2	argument name is incorrect (nullptr or zero length name)
-//		3	the name of rdfProperty is locked
+//		3	the name of property is locked
 //		4	name is already used by another class
 //		5	name is already used by a property
 //		6	name is already used by an instance
@@ -3640,9 +3640,9 @@ static	inline	int64_t	SetNameOfPropertyEx(
 //
 //	Error return codes:
 //		0	successful
-//		1	argument model or rdfProperty is incorrect (not a proper handle to an active property)
+//		1	argument model or property is incorrect (not a proper handle to an active property)
 //		2	argument name is incorrect (nullptr or zero length name)
-//		3	the name of rdfProperty is locked
+//		3	the name of property is locked
 //		4	name is already used by another class
 //		5	name is already used by a property
 //		6	name is already used by an instance
@@ -3960,33 +3960,11 @@ RdfPropertyType	DECL STDC	GetPropertyTypeEx(
 //
 //				int64_t					returns								OUT
 //
-//	This call is named remove property instead of a at first sight more logical name delete property as all content depending on this property is not lost per se.
-//	Each properties having the removed property as a parent will now inherit ther parents of the removed property.
-//	All property values in the context of an instance will become property values of the parent property, or in case no parent property is defined the values are lost.
-//	The return value represents a bit set defining findings during the removal, if a clean removal with no side effects was possible the return value is 0. In all other cases 
-//	the following bits represent the findings during removal:
-//		bit 0:
-//			0	Input as expected
-//			1	Encountered an issue on input value, i.e. property was not recognized as property
-//		bit 1:
-//			0	No 'child' properties found
-//			1	Properties found that had this property as a parent, they are adjusted by inheriting directly removed properties parents if present
-//		bit 2:
-//			0	No instances found with value restrictions for this property
-//			1	Vertex does contain 3D point info
-//		bit 3:
-//			0	No instances found with values for this property
-//			1	Vertex does contain 3D normal vector info => if set, bit 4 will also be set
-//		bit 6:
-//			0	Vertex does not contain first 2D texture info
-//			1	Vertex does contain first 2D texture info
-//		bit 7:
-//			0	Vertex does not contain second 2D texture info
-//			1	Vertex does contain second 2D texture info => if set, bit 6 will also be set
-//
-//	Error return codes:
+//  Removes property from model.
+// 
+//	Return codes:
 //		0	successful
-//		1	argument rdfProperty is incorrect (not a proper handle to an active property)
+//		1	argument rdfProperty is invalid (wrong type or embedded property)
 //		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
 //		3	an instance has a non-zero cardinality for the property to be deleted
 //		4	undefined error
@@ -4002,39 +3980,16 @@ int64_t			DECL STDC	RemoveProperty(
 //
 //				int64_t					returns								OUT
 //
-//	This call is named remove property instead of a at first sight more logical name delete property as all content depending on this property is not lost per se.
-//	Each properties having the removed property as a parent will now inherit ther parents of the removed property.
-//	All property values in the context of an instance will become property values of the parent property, or in case no parent property is defined the values are lost.
-//	The return value represents a bit set defining findings during the removal, if a clean removal with no side effects was possible the return value is 0. In all other cases 
-//	the following bits represent the findings during removal:
-//		bit 0:
-//			0	Input as expected
-//			1	Encountered an issue on input value, i.e. property was not recognized as property
-//		bit 1:
-//			0	No 'child' properties found
-//			1	Properties found that had this property as a parent, they are adjusted by inheriting directly removed properties parents if present
-//		bit 2:
-//			0	No instances found with value restrictions for this property
-//			1	Vertex does contain 3D point info
-//		bit 3:
-//			0	No instances found with values for this property
-//			1	Vertex does contain 3D normal vector info => if set, bit 4 will also be set
-//		bit 6:
-//			0	Vertex does not contain first 2D texture info
-//			1	Vertex does contain first 2D texture info
-//		bit 7:
-//			0	Vertex does not contain second 2D texture info
-//			1	Vertex does contain second 2D texture info => if set, bit 6 will also be set
-//
-//	Error return codes:
+//  Removes property from model.
+//	This call has the same behavior as RemoveProperty, however needs to be
+//	used in case properties are exchanged as a successive series of integers.
+// 
+//	Return codes:
 //		0	successful
-//		1	argument model or rdfProperty is incorrect (not a proper handle to an active model)
+//		1	argument rdfProperty is invalid (wrong type or embedded property)
 //		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
 //		3	an instance has a non-zero cardinality for the property to be deleted
 //		4	undefined error
-//
-//	This call has the same behavior as RemoveProperty, however needs to be
-//	used in case properties are exchanged as a successive series of integers.
 //
 int64_t			DECL STDC	RemovePropertyEx(
 									OwlModel				model,
@@ -5332,7 +5287,7 @@ int64_t			DECL STDC	SetObjectPropertyEx(
 //
 //				int64_t					returns								OUT
 //
-//	This function gets the value(s) of a certain objectProperty
+//	This function gets the value(s) of a certain property
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
@@ -5404,7 +5359,7 @@ static	inline	OwlInstance	GetObjectProperty(
 //
 //				int64_t					returns								OUT
 //
-//	This function gets the value(s) of a certain objectProperty
+//	This function gets the value(s) of a certain property
 //	in the context of an instance.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
@@ -6107,7 +6062,7 @@ int64_t			DECL STDC	GetDependingPropertyCnt(
 //	of influence on the form. It also returns the handle to instance this property
 //	belongs to.
 //
-//	Note: the returned property is always a datatypeProperty
+//	Note: the returned property is always a property
 //	Note: if input is incorrect (for example index is in wrong domain) _property and
 //		  instance will be both zero.
 //	Note: BE AWARE, THIS FUNCTION EXPECTS A TREE, NOT A NETWORK, IN CASE OF A NETWORK THIS FUNCTION CAN LOCK THE ENGINE
