@@ -252,6 +252,9 @@
     <ClInclude Include="..\gltf\_bin2glb.h">
       <Filter>glTF</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\displayName.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

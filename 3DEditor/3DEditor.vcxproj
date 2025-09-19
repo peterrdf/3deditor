@@ -828,6 +828,7 @@
     <ClInclude Include="..\gltf\_guid.h" />
     <ClInclude Include="..\gltf\_node.h" />
     <ClInclude Include="..\include\ascii.h" />
+    <ClInclude Include="..\include\displayName.h" />
     <ClInclude Include="..\include\stb\stb_easy_font.h" />
     <ClInclude Include="..\include\stb\stb_image.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
