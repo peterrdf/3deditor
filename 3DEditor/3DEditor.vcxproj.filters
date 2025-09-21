@@ -28,6 +28,9 @@
     <Filter Include="parsers">
       <UniqueIdentifier>{ba163f0d-bbc8-4916-85a9-4714e8de376d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="zip">
+      <UniqueIdentifier>{06266f66-45de-452a-a3a5-f073149101bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -255,6 +258,12 @@
     <ClInclude Include="..\include\displayName.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\zip\miniz.h">
+      <Filter>zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zip\zip.h">
+      <Filter>zip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -397,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="..\gltf\_bin2glb.cpp">
       <Filter>glTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zip\zip.c">
+      <Filter>zip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

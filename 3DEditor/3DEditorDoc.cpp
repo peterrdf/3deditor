@@ -28,11 +28,7 @@
 #define new DEBUG_NEW
 #endif
 
-#ifdef _USE_LIBZIP
 #include "zip.h"
-#include "zlib.h"
-#pragma comment(lib, "libz-static.lib")
-#pragma comment(lib, "libzip-static.lib")
 
 // ************************************************************************************************
 const int ZIP_BUFFER_SIZE = 20000;
@@ -47,9 +43,8 @@ static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 
 	fs::path pathBinZip = szBinZip;
 
-	int iError = 0;
-	zip* pZip = zip_open(pathBinZip.string().c_str(), 0, &iError);
-	if (iError != 0) {
+	zip_t* pZip = zip_open(pathBinZip.string().c_str(), 0, 'r');
+	if (pZip == NULL) {
 		return strBinModel;
 	}
 
@@ -62,6 +57,33 @@ static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 	}
 	fs::path pathTemp = lpTempPathBuffer;
 
+	auto iEntries = zip_entries_total(pZip);
+	for (auto i = 0; i < iEntries; ++i) {
+		zip_entry_openbyindex(pZip, i);
+		if (zip_entry_isdir(pZip))
+			continue;
+
+		string strName = zip_entry_name(pZip);
+		if (strName.empty()) {
+			continue;
+		}
+
+		fs::path pathTempFile = pathTemp / strName;
+		vecTempFiles.push_back(pathTempFile.wstring());
+
+		fs::path pathEntry = strName;
+		string strExtension = pathEntry.extension().string();
+		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+		if (strExtension == ".bin") {
+			ASSERT(strBinModel.empty());
+			strBinModel = pathTempFile.wstring();
+		}
+
+		zip_entry_fread(pZip, pathTempFile.string().c_str());
+		zip_entry_close(pZip);
+	}
+	
+	/*
 	auto iEntries = zip_get_num_entries(pZip, 0);
 	for (auto i = 0; i < iEntries; ++i) {
 		const char* szName = zip_get_name(pZip, i, 0);
@@ -101,11 +123,10 @@ static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 	} // for (auto i = ...
 	
 	zip_close(pZip);
+	*/
 
 	return strBinModel;
 }
-
-#endif // _USE_LIBZIP
 
 // ************************************************************************************************
 /*virtual*/ void CMy3DEditorDoc::_test_LoadModel(LPCTSTR szFileName) /*override*/

@@ -197,23 +197,62 @@ _ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstance
 			double arOffset[3] = { 0., 0., 0. };
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
-			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
-			for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
-				auto pMappedItem = pMappedItemPendingUpdate.second;
+			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
+				double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
+					auto pMappedItem = pMappedItemPendingUpdate.second;
 
-				pMappedItem->matrix._41 += arOffset[0];
-				pMappedItem->matrix._42 += arOffset[1];
-				pMappedItem->matrix._43 += arOffset[2];
+					pMappedItem->matrix._41 += arOffset[0];
+					pMappedItem->matrix._42 += arOffset[1];
+					pMappedItem->matrix._43 += arOffset[2];
 
-				pMappedItem->matrix._41 /= dScaleFactor;
-				pMappedItem->matrix._42 /= dScaleFactor;
-				pMappedItem->matrix._43 /= dScaleFactor;
+					pMappedItem->matrix._41 /= dScaleFactor;
+					pMappedItem->matrix._42 /= dScaleFactor;
+					pMappedItem->matrix._43 /= dScaleFactor;
 
-				pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
 
-				delete pMappedItem;
-			}
-		}
+					delete pMappedItem;
+				}
+			} // if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
+			else {
+				// Special case: only mapped items without offset
+				float fXmin = FLT_MAX;
+				float fXmax = -FLT_MAX;
+				float fYmin = FLT_MAX;
+				float fYmax = -FLT_MAX;
+				float fZmin = FLT_MAX;
+				float fZmax = -FLT_MAX;
+
+				for (auto pGeometry : getGeometries()) {
+					if (!pGeometry->hasGeometry() ||
+						pGeometry->ignoreBB()) {
+						continue;
+					}
+
+					for (auto pInstance : pGeometry->getInstances()) {
+						pGeometry->calculateBB(
+							pInstance,
+							fXmin, fXmax,
+							fYmin, fYmax,
+							fZmin, fZmax);
+					}
+				} // for (auto pGeometry : ...
+
+				for (auto pGeometry : getGeometries()) {
+					if (!pGeometry->hasGeometry()) {
+						continue;
+					}
+
+					for (auto pInstance : pGeometry->getInstances()) {
+						pInstance->translate(
+							-fXmin,
+							-fYmin,
+							-fZmin);
+					}
+				}
+			} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
+		} // if (!m_vecMappedItemPendingUpdate.empty())
 
 		scale();
 

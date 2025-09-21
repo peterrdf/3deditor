@@ -453,9 +453,7 @@ _texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
 #endif
 	}
 
-	if (pTexture == nullptr) {
-		m_mapTextures[strTexture] = getDefaultTexture();
-	}
+	m_mapTextures[strTexture] = pTexture != nullptr ? pTexture : getDefaultTexture();
 
 	return pTexture;
 }

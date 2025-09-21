@@ -6,12 +6,12 @@
 #define PI 3.14159265
 
 // ************************************************************************************************
-static void _normalize(float fXin, float fYin, float fZin, float* pV)
+static void _normalizeVector(float fXin, float fYin, float fZin, float* pV)
 {
     float d = sqrtf(fXin * fXin + fYin * fYin + fZin * fZin);
     if (d == 0.f) {
         pV[0] = 0.f;
-        pV[1] = 0.f;
+		pV[1] = 1.f; // If normal is zero vector, set Y axis as default
         pV[2] = 0.f;
         return;
     }

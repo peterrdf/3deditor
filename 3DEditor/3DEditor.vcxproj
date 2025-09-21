@@ -314,14 +314,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
@@ -345,14 +345,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
@@ -376,14 +376,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
@@ -407,14 +407,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
@@ -438,16 +438,16 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -469,9 +469,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <OmitFramePointers>false</OmitFramePointers>
@@ -479,7 +479,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -501,9 +501,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <OmitFramePointers>false</OmitFramePointers>
@@ -511,7 +511,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -533,9 +533,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <OmitFramePointers>false</OmitFramePointers>
@@ -543,7 +543,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -567,16 +567,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_ENABLE_OPENGL_DEBUG;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -598,16 +598,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -629,16 +629,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -660,16 +660,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)ziplib/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -691,9 +691,9 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;W:\DevArea\RDF\RDFApps\ImportPLY\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;W:\DevArea\RDF\RDFApps\ImportPLY\</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -702,7 +702,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -723,9 +723,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -734,7 +734,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -755,9 +755,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -766,7 +766,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -787,9 +787,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_USE_LIBZIP;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_ENABLE_OPENGL_DEBUG;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/ziplib\include;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -798,7 +798,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)ziplib/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -860,6 +860,8 @@
     <ClInclude Include="..\parsers\_serialization.h" />
     <ClInclude Include="..\parsers\_string.h" />
     <ClInclude Include="..\parsers\_time.h" />
+    <ClInclude Include="..\zip\miniz.h" />
+    <ClInclude Include="..\zip\zip.h" />
     <ClInclude Include="3DEditor.h" />
     <ClInclude Include="3DEditorDoc.h" />
     <ClInclude Include="3DEditorView.h" />
@@ -1287,6 +1289,24 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\zip\zip.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="3DEditor.cpp" />
     <ClCompile Include="3DEditorDoc.cpp" />

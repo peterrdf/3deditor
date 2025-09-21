@@ -15,28 +15,41 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::filesystem;
 #endif
 
-#ifdef _USE_LIBZIP
-#include "zip.h"
+// https://github.com/madler/zlib/tree/develop
 #include "zlib.h"
-#pragma comment(lib, "libz-static.lib")
-#pragma comment(lib, "libzip-static.lib")
+
+// https://github.com/kuba--/zip
+#include "zip.h"
 
 // ************************************************************************************************
-const int_t	BLOCK_LENGTH_READ = 20000; // MAX: 65535
+const size_t BLOCK_LENGTH_READ = 65000; // MAX: 65535
 
 // ************************************************************************************************
-static zip_file* g_pZipFile = nullptr;
+static unsigned char* m_szZipEntryBuffer = nullptr;
+static size_t m_iZipEntrySize = 0;
+static size_t m_iZipEntryOffset = 0;
 
 // ************************************************************************************************
-static int_t __stdcall	ReadCallBackFunction(unsigned char* szContent)
+static int_t __stdcall ReadCallBackFunction(unsigned char* szContent)
 {
-    if (g_pZipFile == nullptr) {
-        return -1;
-    }
+	if (m_szZipEntryBuffer == nullptr) {
+		return -1;
+	}
 
-    return (int_t)zip_fread(g_pZipFile, szContent, BLOCK_LENGTH_READ);
+	if (m_iZipEntryOffset >= m_iZipEntrySize) {
+		return 0;
+	}
+
+	size_t iBlockLength = (m_iZipEntrySize - m_iZipEntryOffset) < BLOCK_LENGTH_READ ? (m_iZipEntrySize - m_iZipEntryOffset) : BLOCK_LENGTH_READ;
+	if (iBlockLength == 0) {
+		return 0;
+	}
+
+	memcpy(szContent, m_szZipEntryBuffer + m_iZipEntryOffset, iBlockLength);
+	m_iZipEntryOffset += BLOCK_LENGTH_READ;
+
+	return iBlockLength;
 }
-#endif // _USE_LIBZIP
 
 // ************************************************************************************************
 class _ap_model_factory
@@ -44,314 +57,264 @@ class _ap_model_factory
 
 public: // Methods
 
-    static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
-    {
-#ifdef _USE_LIBZIP
-        fs::path pathModel = szModel;
-        string strExtension = pathModel.extension().string();
-        std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+	static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
+	{
+		fs::path pathModel = szModel;
+		string strExtension = pathModel.extension().string();
+		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
 
-        /*
-        * IFCZIP
-        */
-        if (strExtension == ".ifczip") {
-            auto sdaiModel = openIFCZipModel(pathModel);
-            if (sdaiModel == 0) {
-                MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+		/*
+		* IFCZIP
+		*/
+		if (strExtension == ".ifczip") {
+			return nullptr;
+		}
 
-                return nullptr;
-            }
+		/*
+		* STEPGZip
+		*/
+		if (strExtension == ".stpz") {
+			return nullptr;
+		}
 
-            auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
-            pModel->attachModel(szModel, sdaiModel, pWorld);
+		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
+		if (sdaiModel == 0) {
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+			return nullptr;
+		}
 
-            return pModel;
-        } // IFCZIP
+		wchar_t* szFileSchema = 0;
+		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
+		if (szFileSchema == nullptr) {
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
+			return nullptr;
+		}
 
-        /*
-        * STEPGZip
-        */
-        if (strExtension == ".stpz") {
-            auto sdaiModel = openSTEPGZipModel(pathModel);
-            if (sdaiModel == 0) {
-                MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+		wstring strFileSchema = szFileSchema;
+		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::towupper);
 
-                return nullptr;
-            }
+		/*
+		* STEP
+		*/
+		if ((strFileSchema.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
+			(strFileSchema.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
+			(strFileSchema.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
+			(strFileSchema.find(L"AUTOMOTIVE_DESIGN") == 0) ||
+			(strFileSchema.find(L"AP203") == 0) ||
+			(strFileSchema.find(L"AP209") == 0) ||
+			(strFileSchema.find(L"AP214") == 0) ||
+			(strFileSchema.find(L"AP242") == 0)) {
+			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
+			pModel->attachModel(szModel, sdaiModel, nullptr);
 
-            auto pModel = new _ap242_model(bLoadInstancesOnDemand);
-            pModel->attachModel(szModel, sdaiModel, nullptr);
+			return pModel;
+		}
 
-            return pModel;
-        } // STEPZIP
-#endif // _USE_LIBZIP
+		/*
+		* IFC
+		*/
+		if (strFileSchema.find(L"IFC") == 0) {
+			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
+			pModel->attachModel(szModel, sdaiModel, pWorld);
 
-        auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
-        if (sdaiModel == 0) {
-            MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
-
-            return nullptr;
-        }
-
-        wchar_t* szFileSchema = 0;
-        GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
-        if (szFileSchema == nullptr) {
-            MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
-
-            return nullptr;
-        }
-
-        wstring strFileSchema = szFileSchema;
-        std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::towupper);
-
-        /*
-        * STEP
-        */
-        if ((strFileSchema.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
-            (strFileSchema.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
-            (strFileSchema.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
-            (strFileSchema.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
-            (strFileSchema.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
-            (strFileSchema.find(L"AUTOMOTIVE_DESIGN") == 0) ||
-            (strFileSchema.find(L"AP203") == 0) ||
-            (strFileSchema.find(L"AP209") == 0) ||
-            (strFileSchema.find(L"AP214") == 0) ||
-            (strFileSchema.find(L"AP242") == 0)) {
-            auto pModel = new _ap242_model(bLoadInstancesOnDemand);
-            pModel->attachModel(szModel, sdaiModel, nullptr);
-
-            return pModel;
-        }
-
-        /*
-        * IFC
-        */
-        if (strFileSchema.find(L"IFC") == 0) {
-            auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
-            pModel->attachModel(szModel, sdaiModel, pWorld);
-
-            return pModel;
-        }
+			return pModel;
+		}
 
 #ifdef _CIS2_EXPERIMENTAL
-        /*
-        * CIS2
-        */
-        if (strFileSchema.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
-            auto pModel = new CCIS2Model();
-            pModel->attachModel(szModel, sdaiModel, nullptr);
+		/*
+		* CIS2
+		*/
+		if (strFileSchema.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
+			auto pModel = new CCIS2Model();
+			pModel->attachModel(szModel, sdaiModel, nullptr);
 
-            return pModel;
-        }
+			return pModel;
+		}
 #endif // _CIS2_EXPERIMENTAL
 
-        return nullptr;
-    }    
+		return nullptr;
+	}
 
-#ifdef _USE_LIBZIP
-    static vector<_model*> loadIFCZIP(const wchar_t* szIFCZIP)
-    {
-        vector<_model*> vecModels;
+	static vector<_model*> loadIFCZIP(const wchar_t* szIFCZIP)
+	{
+		vector<_model*> vecModels;
 
-        auto vecSdaiModels = openIFCZip(szIFCZIP);
-        for (auto prSdaiModel : vecSdaiModels) {
-            auto pModel = new _ifc_model(vecSdaiModels.size() > 1, false);
-            pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
+		auto vecSdaiModels = openIFCZip(szIFCZIP);
+		for (auto prSdaiModel : vecSdaiModels) {
+			auto pModel = new _ifc_model(vecSdaiModels.size() > 1, false);
+			pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
 
-            vecModels.push_back(pModel);
-        }
+			vecModels.push_back(pModel);
+		}
 
-        return vecModels;
-    }
+		return vecModels;
+	}
 
-    // ********************************************************************************************
-    // Zip support
-    // ********************************************************************************************
-    static SdaiModel openIFCZipModel(const fs::path& pathIfcZip)
-    {
-        string strIFCFileName = pathIfcZip.stem().string();
-        strIFCFileName += ".ifc";
+	static vector<_model*> loadSTEPGZip(const wchar_t* szIFCZIP)
+	{
+		vector<_model*> vecModels;
 
-        int iError = 0;
-        zip* pZip = zip_open(pathIfcZip.string().c_str(), 0, &iError);
-        if (iError != 0) {
-            return 0;
-        }
+		auto vecSdaiModels = openSTEPGZip(szIFCZIP);
+		if (vecSdaiModels.size() != 1) {
+			return vecModels;
+		}
 
-        struct zip_stat zipStat;
-        zip_stat_init(&zipStat);
-        zip_stat(pZip, strIFCFileName.c_str(), 0, &zipStat);
+		auto pModel = new _ap242_model();
+		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
+		vecModels.push_back(pModel);
 
-        g_pZipFile = zip_fopen(pZip, strIFCFileName.c_str(), 0);
-        if (g_pZipFile == nullptr) {
-            return 0;
-        }
+		return vecModels;
+	}
 
-        auto sdaiModel = engiOpenModelByStream(0, ReadCallBackFunction, "");
+	// ********************************************************************************************
+	// Zip support
+	// ********************************************************************************************
+	static vector<pair<fs::path, SdaiModel>> openIFCZip(const wchar_t* szIFCZIP)
+	{
+		vector<pair<fs::path, SdaiModel>> vecSdaiModels;
 
-        zip_fclose(g_pZipFile);
-        g_pZipFile = nullptr;
-        zip_close(pZip);
+		fs::path pathIfcZip = szIFCZIP;
 
-        return sdaiModel;
-    }
+		zip_t* pZip = zip_open(pathIfcZip.string().c_str(), 0, 'r');
+		if (pZip == NULL) {
+			return vecSdaiModels;
+		}
 
-    // ********************************************************************************************
-    // Zip support
-    // ********************************************************************************************
-    static vector<pair<fs::path, SdaiModel>> openIFCZip(const wchar_t* szIFCZIP)
-    {
-        vector<pair<fs::path, SdaiModel>> vecSdaiModels;
+		auto iEntries = zip_entries_total(pZip);
+		for (auto i = 0; i < iEntries; ++i) {
+			zip_entry_openbyindex(pZip, i);
+			if (zip_entry_isdir(pZip))
+				continue;
 
-        fs::path pathIfcZip = szIFCZIP;
+			string strName = zip_entry_name(pZip);
+			if (strName.empty()) {
+				continue;
+			}
 
-        int iError = 0;
-        zip* pZip = zip_open(pathIfcZip.string().c_str(), 0, &iError);
-        if (iError != 0) {
-            return vecSdaiModels;
-        }
+			fs::path pathEntry = strName;
+			string strExtension = pathEntry.extension().string();
+			std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+			if (strExtension != ".ifc") {
+				continue;
+			}
 
-        {
-            auto iEntries = zip_get_num_entries(pZip, 0);
-            for (auto i = 0; i < iEntries; ++i) {
-                const char* szName = zip_get_name(pZip, i, 0);
-                if (szName == nullptr) {
-                    continue;
-                }
+			zip_entry_open(pZip, strName.c_str());
 
-                fs::path pathEntry = szName;
-                string strExtension = pathEntry.extension().string();
-                std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
-                if (strExtension != ".ifc") {
-                    continue;
-                }
+			m_szZipEntryBuffer = nullptr;
+			m_iZipEntrySize = 0;
+			m_iZipEntryOffset = 0;
+			zip_entry_read(pZip, (void**)&m_szZipEntryBuffer, &m_iZipEntrySize);
 
-                struct zip_stat zipStat;
-                zip_stat_init(&zipStat);
-                zip_stat(pZip, pathEntry.string().c_str(), 0, &zipStat);
+			vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, ReadCallBackFunction, "") });
 
-                g_pZipFile = zip_fopen(pZip, pathEntry.string().c_str(), 0);
-                if (g_pZipFile == nullptr) {
-                    continue;
-                }
+			zip_entry_close(pZip);
+		}
 
-                vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, ReadCallBackFunction, "") });
-            }
-        }
+		m_szZipEntryBuffer = nullptr;
+		m_iZipEntrySize = 0;
+		m_iZipEntryOffset = 0;
+		zip_close(pZip);
 
-        zip_fclose(g_pZipFile);
-        g_pZipFile = nullptr;
-        zip_close(pZip);
+		return vecSdaiModels;
+	}
 
-        return vecSdaiModels;
-    }
+	// ********************************************************************************************
+	// GZip support
+	// https://windrealm.org/tutorials/decompress-gzip-stream.php
+	// ********************************************************************************************	
+	static bool gzipInflate(const vector<unsigned char> compressed, vector<unsigned char>& uncompressed)
+	{
+		if (compressed.size() == 0) {
+			return false;
+		}
 
-    // ********************************************************************************************
-    // GZip support
-    // https://windrealm.org/tutorials/decompress-gzip-stream.php
-    // ********************************************************************************************	
-    static bool gzipInflate(const std::string& compressedBytes, std::string& uncompressedBytes)
-    {
-        if (compressedBytes.size() == 0) {
-            uncompressedBytes = compressedBytes;
-            return true;
-        }
+		uncompressed.clear();
 
-        uncompressedBytes.clear();
+		unsigned full_length = (unsigned)compressed.size();
+		unsigned half_length = (unsigned)compressed.size() / 2;
 
-        unsigned full_length = (unsigned)compressedBytes.size();
-        unsigned half_length = (unsigned)compressedBytes.size() / 2;
+		unsigned uncompLength = full_length;
+		char* uncomp = (char*)calloc(sizeof(char), uncompLength);
 
-        unsigned uncompLength = full_length;
-        char* uncomp = (char*)calloc(sizeof(char), uncompLength);
+		z_stream strm;
+		strm.next_in = (Bytef*)compressed.data();
+		strm.avail_in = (unsigned)compressed.size();
+		strm.total_out = 0;
+		strm.zalloc = Z_NULL;
+		strm.zfree = Z_NULL;
 
-        z_stream strm;
-        strm.next_in = (Bytef*)compressedBytes.c_str();
-        strm.avail_in = (unsigned)compressedBytes.size();
-        strm.total_out = 0;
-        strm.zalloc = Z_NULL;
-        strm.zfree = Z_NULL;
+		bool done = false;
 
-        bool done = false;
+		if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
+			free(uncomp);
+			return false;
+		}
 
-        if (inflateInit2(&strm, (16 + MAX_WBITS)) != Z_OK) {
-            free(uncomp);
-            return false;
-        }
+		while (!done) {
+			// If our output buffer is too small  
+			if (strm.total_out >= uncompLength) {
+				// Increase size of output buffer  
+				char* uncomp2 = (char*)calloc(sizeof(char), uncompLength + half_length);
+				memcpy(uncomp2, uncomp, uncompLength);
+				uncompLength += half_length;
+				free(uncomp);
+				uncomp = uncomp2;
+			}
 
-        while (!done) {
-            // If our output buffer is too small  
-            if (strm.total_out >= uncompLength) {
-                // Increase size of output buffer  
-                char* uncomp2 = (char*)calloc(sizeof(char), uncompLength + half_length);
-                memcpy(uncomp2, uncomp, uncompLength);
-                uncompLength += half_length;
-                free(uncomp);
-                uncomp = uncomp2;
-            }
+			strm.next_out = (Bytef*)(uncomp + strm.total_out);
+			strm.avail_out = uncompLength - strm.total_out;
 
-            strm.next_out = (Bytef*)(uncomp + strm.total_out);
-            strm.avail_out = uncompLength - strm.total_out;
+			// Inflate another chunk.  
+			int err = inflate(&strm, Z_SYNC_FLUSH);
+			if (err == Z_STREAM_END) done = true;
+			else if (err != Z_OK) {
+				break;
+			}
+		}
 
-            // Inflate another chunk.  
-            int err = inflate(&strm, Z_SYNC_FLUSH);
-            if (err == Z_STREAM_END) done = true;
-            else if (err != Z_OK) {
-                break;
-            }
-        }
+		if (inflateEnd(&strm) != Z_OK) {
+			free(uncomp);
+			return false;
+		}
 
-        if (inflateEnd(&strm) != Z_OK) {
-            free(uncomp);
-            return false;
-        }
+		for (size_t i = 0; i < strm.total_out; ++i) {
+			uncompressed.push_back(uncomp[i]);
+		}
 
-        for (size_t i = 0; i < strm.total_out; ++i) {
-            uncompressedBytes += uncomp[i];
-        }
-        free(uncomp);
-        return true;
-    }
+		free(uncomp);
 
-    /* Reads a file into memory. */
-    static bool loadBinaryFile(const std::string& filename, std::string& contents)
-    {
-        // Open the gzip file in binary mode  
-        FILE* f = fopen(filename.c_str(), "rb");
-        if (f == NULL)
-            return false;
+		return true;
+	}
 
-        // Clear existing bytes in output vector  
-        contents.clear();
+	static vector<pair<fs::path, SdaiModel>> openSTEPGZip(const fs::path& pathStepGZip)
+	{
+		vector<pair<fs::path, SdaiModel>> vecSdaiModels;
 
-        // Read all the bytes in the file  
-        int c = fgetc(f);
-        while (c != EOF) {
-            contents += (char)c;
-            c = fgetc(f);
-        }
-        fclose(f);
+		FILE* f = fopen(pathStepGZip.string().c_str(), "rb");
+		if (f == NULL) {
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+			return vecSdaiModels;
+		}
 
-        return true;
-    }
+		vector<unsigned char> compressed;
+		int c = fgetc(f);
+		while (c != EOF) {
+			compressed.push_back((unsigned char)c);
+			c = fgetc(f);
+		}
+		fclose(f);
 
-    static SdaiModel openSTEPGZipModel(const fs::path& pathStepGZip)
-    {
-        // Read the gzip file data into memory  
-        std::string fileData;
-        if (!loadBinaryFile(pathStepGZip.string(), fileData)) {
-            printf("Error loading input file.");
-            return 0;
-        }
+		vector<unsigned char> uncompressed;
+		if (!gzipInflate(compressed, uncompressed)) {
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed decompress the model.", L"Error", MB_ICONERROR | MB_OK);
+			return vecSdaiModels;
+		}
 
-        std::string data;
-        if (!gzipInflate(fileData, data)) {
-            printf("Error decompressing file.");
-            return 0;
-        }
+		vecSdaiModels.push_back({ pathStepGZip, engiOpenModelByArray(0, (unsigned char*)uncompressed.data(), (int_t)uncompressed.size(), "") });
 
-        return engiOpenModelByArray(0, (unsigned char*)data.c_str(), (int_t)data.size(), "");
-    }
-#endif _USE_LIBZIP
+		return vecSdaiModels;
+	}
 };
 
