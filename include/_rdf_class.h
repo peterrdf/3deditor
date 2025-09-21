@@ -20,7 +20,7 @@ class _rdf_class
 private: // Fields
 
 	OwlClass m_owlClass;
-	std::wstring m_szName;
+	std::wstring m_strName;
 	vector<OwlClass> m_vecParentClasses;
 	vector<OwlClass> m_vecAncestorClasses;
 	vector<_rdf_property_restriction*> m_vecPropertyRestrictions;
@@ -36,7 +36,7 @@ public: // Methods
 	static wstring getAncestors(OwlClass owlClass);
 
 	OwlClass getOwlClass() const { return m_owlClass; }
-	const wchar_t* getName() const { return m_szName.c_str(); }
+	const wchar_t* getName() const { return m_strName.c_str(); }
 	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
 	const vector<OwlClass>& getAncestorClasses() const { return m_vecAncestorClasses; }
 	const vector<_rdf_property_restriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }

@@ -8,7 +8,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 {
 	assert(m_rdfProperty != 0);
 
-	m_displayName = DisplayName(m_rdfProperty);
+	m_strDisplayName = DisplayName(m_rdfProperty);
 }
 
 /*virtual*/ _rdf_property::~_rdf_property()
@@ -199,7 +199,7 @@ _rdf_property::_rdf_property(RdfProperty rdfProperty)
 
 const wchar_t* _rdf_property::getName() const
 {
-	return m_displayName.c_str();
+	return m_strDisplayName.c_str();
 }
 
 // ************************************************************************************************

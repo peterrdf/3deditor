@@ -11,7 +11,7 @@ _rdf_class::_rdf_class(OwlClass owlClass)
 {
 	assert(m_owlClass != 0);
 
-	m_szName = DisplayName (m_owlClass);
+	m_strName = DisplayName(m_owlClass);
 
 	OwlClass owlParentClass = GetClassParentsByIterator(m_owlClass, 0);
 	while (owlParentClass != 0) {
