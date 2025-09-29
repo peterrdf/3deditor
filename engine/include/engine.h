@@ -4449,18 +4449,18 @@ OwlInstance		DECL STDC	UnsetInstanceClassEx(
 
 //
 //		GetInstancePropertyByIterator                           (https://rdf.bg/gkdoc/CP64/GetInstancePropertyByIterator.html)
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				RdfProperty				rdfProperty							IN
 //
 //				RdfProperty				returns								OUT
 //
 //	Returns a handle to the objectTypeProperty or dataTypeProperty connected to
-//	the instance, this property can also contain a value, but for example also
+//	the instance, class or model. This property can also contain a value, but for example also
 //	the knowledge about cardinality restrictions in the context of this instance's class
 //	and the exact cardinality in context of its instance.
 //
 RdfProperty		DECL STDC	GetInstancePropertyByIterator(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									RdfProperty				rdfProperty
 								);
 
@@ -4917,15 +4917,14 @@ static	inline	const wchar_t	* GetNameOfInstanceWEx(
 
 //
 //		SetDatatypeProperty                                     (https://rdf.bg/gkdoc/CP64/SetDatatypeProperty.html)
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
 //				const void				* values							IN
 //				int64_t					card								IN
 //
 //				int64_t					returns								OUT
 //
-//	This function sets the value(s) of a certain datatypeTypeProperty
-//	in the context of an instance.
+//	This function sets the value(s) of a certain datatypeTypeProperty of an instance, class or model.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
 //	or doubles, this list has a length as given in the values card. The actual used type
@@ -4936,7 +4935,7 @@ static	inline	const wchar_t	* GetNameOfInstanceWEx(
 //		  the property is within the boundaries.
 //
 int64_t			DECL STDC	SetDatatypeProperty(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlDatatypeProperty		owlDatatypeProperty,
 									const void				* values,
 									int64_t					card
@@ -5092,15 +5091,14 @@ int64_t			DECL STDC	SetDatatypePropertyEx(
 
 //
 //		GetDatatypeProperty                                     (https://rdf.bg/gkdoc/CP64/GetDatatypeProperty.html)
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
 //				const void				** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
 //
-//	This function gets the value(s) of a certain datatypeTypeProperty
-//	in the context of an instance.
+//	This function gets the value(s) of a certain datatypeTypeProperty of an instance, class or model.
 //	The value of card gives the actual card of the values list.
 //	The list values of undefined (void) items is a list of booleans, chars, integers
 //	or doubles, this list has a length as given in the value card. The actual used type
@@ -5108,7 +5106,7 @@ int64_t			DECL STDC	SetDatatypePropertyEx(
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 int64_t			DECL STDC	GetDatatypeProperty(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlDatatypeProperty		owlDatatypeProperty,
 									const void				** values,
 									int64_t					* card
@@ -5197,15 +5195,15 @@ static	inline	int64_t	GetDatatypePropertyEx(
 
 //
 //		SetObjectProperty                                       (https://rdf.bg/gkdoc/CP64/SetObjectProperty.html)
-//				OwlInstance				owlInstance							IN
+//				RdfsResoure				rdfsResource						IN
 //				OwlObjectProperty		owlObjectProperty					IN
-//				const OwlInstance		* values							IN
+//				const RdfsResource		* values							IN
 //				int64_t					card								IN
 //
 //				int64_t					returns								OUT
 //
-//	This function sets the value(s) of a certain objectTypeProperty
-//	in the context of an instance.
+//	This function sets the value(s) of a certain objectTypeProperty of an instance, class or model.
+// 	A value can be OwlInstance, OwlClass, RdfProperty, OwlObjectProperty or OwlDatatypeProperty.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
 //	has a length as given in the values card.
@@ -5215,9 +5213,9 @@ static	inline	int64_t	GetDatatypePropertyEx(
 //		  the property is within the boundaries.
 //
 int64_t			DECL STDC	SetObjectProperty(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlObjectProperty		owlObjectProperty,
-									const OwlInstance		* values,
+									const RdfsResource		* values,
 									int64_t					card
 								);
 
@@ -5280,24 +5278,24 @@ int64_t			DECL STDC	SetObjectPropertyEx(
 
 //
 //		GetObjectProperty                                       (https://rdf.bg/gkdoc/CP64/GetObjectProperty.html)
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlObjectProperty		owlObjectProperty					IN
-//				const OwlInstance		** values							IN / OUT
+//				const RdfsResource		** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
 //
-//	This function gets the value(s) of a certain property
-//	in the context of an instance.
+//	This function gets the value(s) of a certain property of an instance, class or model.
 //	The value of card gives the actual card of the values list.
-//	The list values of integers is a list of handles to instances, this list
+//	The list values of integers is a list of handles to instance, classe or property, this list
 //	has a length as given in the value card.
+//  Caller should not dispose the list
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 int64_t			DECL STDC	GetObjectProperty(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlObjectProperty		owlObjectProperty,
-									const OwlInstance		** values,
+									const RdfsResource		** values,
 									int64_t					* card
 								);
 
