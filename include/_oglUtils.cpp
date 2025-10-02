@@ -2704,51 +2704,116 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 	_oglUtils::checkForErrors();
 }
 
+//bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+//{
+//	CRect rcClient;
+//	m_pWnd->GetClientRect(&rcClient);
+//
+//	GLfloat arModelViewMatrix[16];
+//	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
+//
+//	GLfloat arProjectionMatrix[16];
+//	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
+//
+//	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
+//
+//	GLdouble arModelView[16];
+//	GLdouble arProjection[16];
+//	for (int i = 0; i < 16; i++) {
+//		arModelView[i] = arModelViewMatrix[i];
+//		arProjection[i] = arProjectionMatrix[i];
+//	}
+//
+//	GLdouble dWinX = (double)iX;
+//	GLdouble dWinY = (double)arViewport[3] - (double)iY;
+//
+//	double dWinZ = 0.;
+//	if (fDepth == -FLT_MAX) {
+//		float fWinZ = 0.f;
+//		glReadPixels(iX, (int)dWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+//
+//		dWinZ = fWinZ;
+//
+//		_oglUtils::checkForErrors();
+//	}
+//	else {
+//		dWinZ = fDepth;
+//	}
+//
+//	if (dWinZ >= 1.) {
+//		return false;
+//	}
+//
+//	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
+//
+//	_oglUtils::checkForErrors();
+//
+//	return iResult == GL_TRUE;
+//}
+
 bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
 
-	GLfloat arModelViewMatrix[16];
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
-
-	GLfloat arProjectionMatrix[16];
-	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
-
+	// Viewport
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 
+	// Use the stored matrices from the class instead of querying OpenGL
+	glm::mat4 modelViewMatrix = m_matModelView;
+
+	// Projection matrix from the program
+	GLfloat arProjectionMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(),
+		glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"),
+		arProjectionMatrix);
+
+	// Convert to double precision for gluUnProject
 	GLdouble arModelView[16];
 	GLdouble arProjection[16];
+
+	const float* modelViewPtr = glm::value_ptr(modelViewMatrix);
 	for (int i = 0; i < 16; i++) {
-		arModelView[i] = arModelViewMatrix[i];
-		arProjection[i] = arProjectionMatrix[i];
+		arModelView[i] = static_cast<GLdouble>(modelViewPtr[i]);
+		arProjection[i] = static_cast<GLdouble>(arProjectionMatrix[i]);
 	}
 
-	GLdouble dWinX = (double)iX;
-	GLdouble dWinY = (double)arViewport[3] - (double)iY;
+	// Convert window coordinates
+	GLdouble dWinX = static_cast<GLdouble>(iX);
+	GLdouble dWinY = static_cast<GLdouble>(arViewport[3] - iY); // Flip Y coordinate
 
-	double dWinZ = 0.;
+	// Handle depth value
+	GLdouble dWinZ = 0.0;
 	if (fDepth == -FLT_MAX) {
-		float fWinZ = 0.f;
-		glReadPixels(iX, (int)dWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+		GLfloat fWinZ = 0.0f;
+		glReadPixels(iX, static_cast<int>(dWinY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
 
-		dWinZ = fWinZ;
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			return false;
+		}
 
-		_oglUtils::checkForErrors();
+		dWinZ = static_cast<GLdouble>(fWinZ);
 	}
 	else {
-		dWinZ = fDepth;
+		dWinZ = static_cast<GLdouble>(fDepth);
 	}
 
-	if (dWinZ >= 1.) {
+	// Check if depth value is valid (not at far plane)
+	if (dWinZ >= 1.0) {
 		return false;
 	}
 
-	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
+	GLint result = gluUnProject(dWinX, dWinY, dWinZ,
+		arModelView, arProjection, arViewport,
+		&dX, &dY, &dZ);
 
-	_oglUtils::checkForErrors();
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		return false;
+	}
 
-	return iResult == GL_TRUE;
+	return result == GL_TRUE;
 }
 
 void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)

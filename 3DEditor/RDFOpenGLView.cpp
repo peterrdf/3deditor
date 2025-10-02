@@ -258,6 +258,24 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 		m_bDragFaceMode = TRUE;
 		m_pDragFaceInstance = getController()->getSelectedInstance();
 		m_iDragFace = m_iPointedFace;
+
+		auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel());
+		assert(pModel != nullptr);
+
+		GLdouble dX = 0.;
+		GLdouble dY = 0.;
+		GLdouble dZ = 0.;
+		if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+			_vector3d vecVertexBufferOffset;
+			GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+			auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
+
+			GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+			GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+			GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+			TRACE("X/Y/Z: %f, %f, %f\n", dWorldX, dWorldY, dWorldZ);
+		}
 		return;
 	}
 }
