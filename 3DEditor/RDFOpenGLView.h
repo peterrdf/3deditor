@@ -19,6 +19,12 @@ private: // Fields
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
+public:
+	//#dragface
+	BOOL m_bDragFaceMode;
+	_instance* m_pDragFaceInstance;
+	int64_t m_iDragFace;
+
 public: // Methods
 	
 	CRDFOpenGLView(CWnd* pWnd);	

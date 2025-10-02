@@ -29,6 +29,9 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
+	, m_bDragFaceMode(FALSE)
+	, m_pDragFaceInstance(nullptr)
+	, m_iDragFace(-1)
 {
 	assert(pWnd != nullptr);
 
@@ -56,6 +59,9 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_oglView::onInstanceSelected(pSender);
 }
@@ -69,6 +75,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
 
 	_load();
 }
@@ -78,6 +85,9 @@ void CRDFOpenGLView::onInstancePropertySelected(_view* /*pSender*/)
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_redraw();
 }
@@ -91,6 +101,9 @@ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstanc
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_load();
 }
@@ -104,6 +117,9 @@ void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstanc
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_load();
 }
@@ -117,6 +133,9 @@ void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_load();
 }
@@ -130,6 +149,9 @@ void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInsta
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_load();
 }
@@ -143,6 +165,9 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	m_pPointFaceFrameBuffer->encoding().clear();
 	m_iPointedFace = -1;
 	m_iNearestVertex = -1;
+	m_bDragFaceMode = FALSE;
+	m_pDragFaceInstance = nullptr;
+	m_iDragFace = -1;
 
 	_load();
 }
@@ -214,6 +239,27 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			_redraw();
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
+
+	// #dragface
+	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
+		TRACE("*** END Drag Face Mode\n");
+		//
+		// END Drag Face Mode
+		//
+
+		m_bDragFaceMode = FALSE;
+		m_pDragFaceInstance = nullptr;
+		m_iDragFace = -1;
+		return;
+	}
+
+	if (!m_bDragFaceMode && (GetKeyState(VK_CONTROL) & 0x8000) && (m_iPointedFace != -1)) {
+		TRACE("*** START Drag Face Mode\n");
+		m_bDragFaceMode = TRUE;
+		m_pDragFaceInstance = getController()->getSelectedInstance();
+		m_iDragFace = m_iPointedFace;
+		return;
+	}
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
@@ -645,7 +691,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 			//
 			// Points
 			//
-			
+
 			for (size_t iPoint = 0; iPoint < vecPoints.size(); iPoint++) {
 				auto pPoint = const_cast<_primitives*>(&vecPoints[iPoint]);
 
@@ -1439,7 +1485,7 @@ void CRDFOpenGLView::DrawPointedFace()
 
 	if (m_iPointedFace == -1) {
 		return;
-	}	
+	}
 
 	/*
 	* Triangles
@@ -1526,13 +1572,11 @@ void CRDFOpenGLView::DrawPointedFace()
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
 {
-	if (getController()->getSelectedInstance() == nullptr)
-	{
+	if (getController()->getSelectedInstance() == nullptr) {
 		return pair<int64_t, int64_t>(-1, -1);
 	}
 
-	if (m_iPointedFace == -1)
-	{
+	if (m_iPointedFace == -1) {
 		return pair<int64_t, int64_t>(-1, -1);
 	}
 
@@ -1561,17 +1605,15 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 	int64_t iZeroBasedIndex = 0;
 	for (int64_t iIndex = pConceptulFace->startIndex();
 		iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
-		iIndex++, iZeroBasedIndex++)
-	{
+		iIndex++, iZeroBasedIndex++) {
 		fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
 		fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
 		fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
 
 		double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
-		if (dMinDistance > dDistance)
-		{
+		if (dMinDistance > dDistance) {
 			iConcFaceVertexIndex = iZeroBasedIndex;
-			iVertexIndex = pIndices[iIndex];			
+			iVertexIndex = pIndices[iIndex];
 			dMinDistance = dDistance;
 		}
 	}

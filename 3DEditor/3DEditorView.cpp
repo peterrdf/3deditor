@@ -141,6 +141,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_BI_NORMAL_VECTORS, &CMy3DEditorView::OnUpdateShowBiNormalVectors)
 	ON_COMMAND(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnShowBoundingBoxes)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnUpdateShowBoundingBoxes)
+	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -149,12 +150,10 @@ CMy3DEditorView::CMy3DEditorView()
 	: CView()
 	, _rdf_view()
 	, m_pOpenGLView(nullptr)
-{
-}
+{}
 
 CMy3DEditorView::~CMy3DEditorView()
-{
-}
+{}
 
 BOOL CMy3DEditorView::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -622,4 +621,14 @@ void CMy3DEditorView::OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_pOpenGLView != nullptr);
 	pCmdUI->SetCheck((m_pOpenGLView != nullptr) && m_pOpenGLView->getShowBoundingBoxes());
+}
+
+BOOL CMy3DEditorView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+	if ((m_pOpenGLView != nullptr) && (m_pOpenGLView->m_bDragFaceMode)) {
+		::SetCursor(AfxGetApp()->LoadStandardCursor(IDC_CROSS));
+		return TRUE;
+	}
+
+	return __super::OnSetCursor(pWnd, nHitTest, message);
 }

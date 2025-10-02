@@ -112,6 +112,7 @@ public:
 	afx_msg void OnUpdateShowBiNormalVectors(CCmdUI* pCmdUI);
 	afx_msg void OnShowBoundingBoxes();
 	afx_msg void OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp
