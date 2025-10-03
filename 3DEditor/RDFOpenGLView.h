@@ -60,6 +60,9 @@ private: // Methods
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
+	//#dragface
+	void TryTransform(_instance* pInstance, int64_t iFace, const CPoint& point, double dX, double dY, double dZ);
+
 public:
 
 	// Test

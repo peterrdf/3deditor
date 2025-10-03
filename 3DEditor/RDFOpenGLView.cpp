@@ -274,10 +274,19 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
 			GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
 			GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-			TRACE("X/Y/Z: %f, %f, %f\n", dWorldX, dWorldY, dWorldZ);
+
+			TryTransform(m_pDragFaceInstance, m_iDragFace, point, dWorldX, dWorldY, dWorldZ);
 		}
 		return;
 	}
+}
+
+// #dragface
+void CRDFOpenGLView::TryTransform(_instance* pInstance, int64_t iFace, const CPoint& point, double dX, double dY, double dZ)
+{
+	TRACE("TryTransform: %S, Face %lld\n", pInstance->getUniqueName(), iFace);
+	TRACE("Point: %d, %d\n", point.x, point.y);
+	TRACE("X/Y/Z: %f, %f, %f\n", dX, dY, dZ);
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
