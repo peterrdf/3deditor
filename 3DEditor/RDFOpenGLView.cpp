@@ -241,11 +241,15 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	// #dragface
+	static GLdouble dWorldX = 0.;
+	static GLdouble dWorldY = 0.;
+	static GLdouble dWorldZ = 0.;
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
 		//
 		// END Drag Face Mode
 		//
+		TryTransform(m_pDragFaceInstance, m_iDragFace, dWorldX, dWorldY, dWorldZ, point);
 
 		m_bDragFaceMode = FALSE;
 		m_pDragFaceInstance = nullptr;
@@ -254,11 +258,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	}
 
 	if (!m_bDragFaceMode && (GetKeyState(VK_CONTROL) & 0x8000) && (m_iPointedFace != -1)) {
-		TRACE("*** START Drag Face Mode\n");
-		m_bDragFaceMode = TRUE;
-		m_pDragFaceInstance = getController()->getSelectedInstance();
-		m_iDragFace = m_iPointedFace;
-
 		auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel());
 		assert(pModel != nullptr);
 
@@ -266,27 +265,31 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 		GLdouble dY = 0.;
 		GLdouble dZ = 0.;
 		if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+			TRACE("*** START Drag Face Mode\n");
+			m_bDragFaceMode = TRUE;
+			m_pDragFaceInstance = getController()->getSelectedInstance();
+			m_iDragFace = m_iPointedFace;
+
 			_vector3d vecVertexBufferOffset;
 			GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
 			auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
 
-			GLdouble dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-			GLdouble dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-			GLdouble dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-
-			TryTransform(m_pDragFaceInstance, m_iDragFace, point, dWorldX, dWorldY, dWorldZ);
+			dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+			dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+			dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+			TRACE("World X/Y/Z: %f, %f, %f\n", dWorldX, dWorldY, dWorldZ);
 		}
 		return;
 	}
 }
 
 // #dragface
-void CRDFOpenGLView::TryTransform(_instance* pInstance, int64_t iFace, const CPoint& point, double dX, double dY, double dZ)
+void CRDFOpenGLView::TryTransform(_instance* pInstance, int64_t iFace, double dStartX, double dStartY, double dStartZ, const CPoint& endPoint)
 {
-	TRACE("TryTransform: %S, Face %lld\n", pInstance->getUniqueName(), iFace);
-	TRACE("Point: %d, %d\n", point.x, point.y);
-	TRACE("X/Y/Z: %f, %f, %f\n", dX, dY, dZ);
+	TRACE("TryTransform: %S, Face %lld\n", pInstance->getUniqueName(), iFace);	
+	TRACE("X/Y/Z: %f, %f, %f\n", dStartX, dStartY, dStartZ);
+	TRACE("Point: %d, %d\n", endPoint.x, endPoint.y);
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
