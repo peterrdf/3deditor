@@ -2751,7 +2751,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 //	return iResult == GL_TRUE;
 //}
 
-bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
+bool _oglView::getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {
 	CRect rcClient;
 	m_pWnd->GetClientRect(&rcClient);
@@ -2759,7 +2759,7 @@ bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& d
 	// Viewport
 	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
 
-	// Use the stored matrices from the class instead of querying OpenGL
+	// Use the stored matrices from the class
 	glm::mat4 modelViewMatrix = m_matModelView;
 
 	// Projection matrix from the program
@@ -2779,14 +2779,14 @@ bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& d
 	}
 
 	// Convert window coordinates
-	GLdouble dWinX = static_cast<GLdouble>(iX);
-	GLdouble dWinY = static_cast<GLdouble>(arViewport[3] - iY); // Flip Y coordinate
+	GLdouble dWinX = static_cast<GLdouble>(iScreenX);
+	GLdouble dWinY = static_cast<GLdouble>(arViewport[3] - iScreenY); // Flip Y coordinate
 
 	// Handle depth value
 	GLdouble dWinZ = 0.0;
 	if (fDepth == -FLT_MAX) {
 		GLfloat fWinZ = 0.0f;
-		glReadPixels(iX, static_cast<int>(dWinY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
+		glReadPixels(iScreenX, static_cast<int>(dWinY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
 
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
@@ -2814,6 +2814,70 @@ bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& d
 	}
 
 	return result == GL_TRUE;
+}
+
+bool _oglView::getScreenPos(GLdouble dX, GLdouble dY, GLdouble dZ, int& iScreenX, int& iScreenY)
+{
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	// Viewport
+	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
+
+	// Use the stored matrices from the class
+	glm::mat4 modelViewMatrix = m_matModelView;
+
+	// Get projection matrix from the program
+	GLfloat arProjectionMatrix[16];
+	glGetUniformfv(m_pOGLProgram->_getID(),
+		glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"),
+		arProjectionMatrix);
+
+	// Convert to double precision for gluProject
+	GLdouble arModelView[16];
+	GLdouble arProjection[16];
+
+	const float* modelViewPtr = glm::value_ptr(modelViewMatrix);
+	for (int i = 0; i < 16; i++) {
+		arModelView[i] = static_cast<GLdouble>(modelViewPtr[i]);
+		arProjection[i] = static_cast<GLdouble>(arProjectionMatrix[i]);
+	}
+
+	GLdouble dWinX = 0.0;
+	GLdouble dWinY = 0.0;
+	GLdouble dWinZ = 0.0;
+
+	// Project 3D point to screen coordinates
+	GLint result = gluProject(dX, dY, dZ,
+		arModelView, arProjection, arViewport,
+		&dWinX, &dWinY, &dWinZ);
+
+	// Check for OpenGL errors
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		return false;
+	}
+
+	if (result != GL_TRUE) {
+		return false;
+	}
+
+	// Convert to screen coordinates (flip Y coordinate)
+	iScreenX = static_cast<int>(dWinX);
+	iScreenY = static_cast<int>(arViewport[3] - dWinY);
+
+	// Check if the point is within the viewport
+	if (iScreenX < 0 || iScreenX >= rcClient.Width() ||
+		iScreenY < 0 || iScreenY >= rcClient.Height()) {
+		return false; // Point is outside viewport
+	}
+
+	// Check if the point is behind the camera (negative Z in view space)
+	if (dWinZ < 0.0 || dWinZ > 1.0) {
+		return false; // Point is outside depth range
+	}
+
+	return true;
 }
 
 void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)

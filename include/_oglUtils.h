@@ -2536,7 +2536,8 @@ protected: // Methods
     virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
 
     // http://nehe.gamedev.net/article/using_gluunproject/16013/
-    bool getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
+    bool getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
+    bool getScreenPos(GLdouble dX, GLdouble dY, GLdouble dZ, int& iScreenX, int& iScreenY);
 
 public: // Methods
 
