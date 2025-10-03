@@ -61,7 +61,14 @@ private: // Methods
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
 	//#dragface
-	void TryTransform(_instance* pInstance, int64_t iFace, double dStartX, double dStartY, double dStartZ, const CPoint& endPoint);
+	void TryTransform(
+		OwlInstance instance,
+		int iConceptualFace,
+		int iFace,
+		double dStartPoint[3],
+		const CPoint& endPoint,
+		double projectionMatrix[16]
+	);
 
 public:
 

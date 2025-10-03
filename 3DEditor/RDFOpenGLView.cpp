@@ -246,10 +246,27 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	static GLdouble dWorldZ = 0.;
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
-		//
-		// END Drag Face Mode
-		//
-		TryTransform(m_pDragFaceInstance, m_iDragFace, dWorldX, dWorldY, dWorldZ, point);
+
+		GLfloat arProjectionMatrix[16];
+		glGetUniformfv(m_pOGLProgram->_getID(),
+			glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"),
+			arProjectionMatrix);
+
+		// Convert to double array for TryTransform
+		double arProjectionMatrixDouble[16];
+		for (int i = 0; i < 16; i++) {
+			arProjectionMatrixDouble[i] = static_cast<double>(arProjectionMatrix[i]);
+		}
+
+		double dStartPoint[3] = { dWorldX, dWorldY, dWorldZ };
+
+		TryTransform(
+			m_pDragFaceInstance->getOwlInstance(),
+			m_iDragFace,
+			-1,
+			dStartPoint,
+			point,
+			arProjectionMatrixDouble);
 
 		m_bDragFaceMode = FALSE;
 		m_pDragFaceInstance = nullptr;
@@ -285,10 +302,17 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 }
 
 // #dragface
-void CRDFOpenGLView::TryTransform(_instance* pInstance, int64_t iFace, double dStartX, double dStartY, double dStartZ, const CPoint& endPoint)
+void CRDFOpenGLView::TryTransform(
+	OwlInstance instance,
+	int iConceptualFace,
+	int iFace,
+	double dStartPoint[3],
+	const CPoint& endPoint,
+	double projectionMatrix[16]
+)
 {
-	TRACE("TryTransform: %S, Face %lld\n", pInstance->getUniqueName(), iFace);	
-	TRACE("X/Y/Z: %f, %f, %f\n", dStartX, dStartY, dStartZ);
+	TRACE("TryTransform: Conceptual Face %lld\n", iConceptualFace);
+	TRACE("X/Y/Z: %f, %f, %f\n", dStartPoint[0], dStartPoint[1], dStartPoint[2]);
 	TRACE("Point: %d, %d\n", endPoint.x, endPoint.y);
 }
 
