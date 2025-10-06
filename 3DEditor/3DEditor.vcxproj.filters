@@ -264,6 +264,12 @@
     <ClInclude Include="..\zip\zip.h">
       <Filter>zip</Filter>
     </ClInclude>
+    <ClInclude Include="DragFace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DragFace\DragFace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -409,6 +415,9 @@
     </ClCompile>
     <ClCompile Include="..\zip\zip.c">
       <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="DragFace\DragFace.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

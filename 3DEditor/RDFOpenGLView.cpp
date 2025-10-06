@@ -9,6 +9,9 @@
 
 #include "Resource.h"
 
+#include "DragFace/DragFace.h"
+
+
 extern BOOL TEST_MODE;
 
 wchar_t FACE_SELECTION_IBO[] = L"FACE_SELECTION_IBO";
@@ -241,7 +244,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	// #dragface
-	static GLdouble startDragPoint[3] = { 0,0,0 };
+	static double startDragPoint[3] = { 0,0,0 };
 
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
@@ -284,10 +287,11 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	}
 }
 
+
 void CRDFOpenGLView::OnDragFace(
 	OwlInstance instance,
 	int iConceptualFace,
-	double dStartPoint[3],
+	double startDragPoint[3],
 	const CPoint& endPoint
 )
 {
@@ -325,9 +329,13 @@ void CRDFOpenGLView::OnDragFace(
 	glm::vec3 ray_world = glm::normalize(glm::vec3(invView * ray_eye));
 	glm::vec3 org_world = glm::vec3(invView[3]);
 
-	TRACE("Instance %s\n", GetNameOfClass(GetInstanceClass(instance)));
-	TRACE("X/Y/Z: %f, %f, %f\n", dStartPoint[0], dStartPoint[1], dStartPoint[2]);
-	TRACE("Point: %d, %d\n", endPoint.x, endPoint.y);
+	double targerRayDir[3] = { ray_world.x, ray_world.y, ray_world.z };
+	double targetRayOrg[3] = { org_world.x, org_world.y, org_world.z };
+
+	//
+	//
+	//
+	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir );
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/

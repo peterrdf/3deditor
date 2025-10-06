@@ -63,7 +63,7 @@ private: // Methods
 	void OnDragFace(
 		OwlInstance		instance,
 		int				iConceptualFace,
-		GLdouble		startDragPoint[3],
+		double			startDragPoint[3],
 		const CPoint&	endPoint
 	);
 
