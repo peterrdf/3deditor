@@ -241,32 +241,16 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	// #dragface
-	static GLdouble dWorldX = 0.;
-	static GLdouble dWorldY = 0.;
-	static GLdouble dWorldZ = 0.;
+	static GLdouble startDragPoint[3] = { 0,0,0 };
+
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
 
-		GLfloat arProjectionMatrix[16];
-		glGetUniformfv(m_pOGLProgram->_getID(),
-			glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"),
-			arProjectionMatrix);
-
-		// Convert to double array for TryTransform
-		double arProjectionMatrixDouble[16];
-		for (int i = 0; i < 16; i++) {
-			arProjectionMatrixDouble[i] = static_cast<double>(arProjectionMatrix[i]);
-		}
-
-		double dStartPoint[3] = { dWorldX, dWorldY, dWorldZ };
-
-		TryTransform(
+		OnDragFace(
 			m_pDragFaceInstance->getOwlInstance(),
 			m_iDragFace,
-			-1,
-			dStartPoint,
-			point,
-			arProjectionMatrixDouble);
+			startDragPoint,
+			point);
 
 		m_bDragFaceMode = FALSE;
 		m_pDragFaceInstance = nullptr;
@@ -292,26 +276,56 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 
 			auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
 
-			dWorldX = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-			dWorldY = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-			dWorldZ = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-			TRACE("World X/Y/Z: %f, %f, %f\n", dWorldX, dWorldY, dWorldZ);
+			startDragPoint[0] = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+			startDragPoint[1] = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+			startDragPoint[2] = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 		}
 		return;
 	}
 }
 
-// #dragface
-void CRDFOpenGLView::TryTransform(
+void CRDFOpenGLView::OnDragFace(
 	OwlInstance instance,
 	int iConceptualFace,
-	int iFace,
 	double dStartPoint[3],
-	const CPoint& endPoint,
-	double projectionMatrix[16]
+	const CPoint& endPoint
 )
 {
-	TRACE("TryTransform: Conceptual Face %lld\n", iConceptualFace);
+	// --- Un-projection endPoint to Word Ray ---
+	// 
+	GLint projLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix");
+	GLint viewLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix");
+	if (projLoc == -1 || viewLoc == -1)
+		return;
+
+	// get matrices
+	GLfloat projMatrix[16];
+	GLfloat viewMatrix[16];
+
+	glGetUniformfv(m_pOGLProgram->_getID(), projLoc, projMatrix);
+	glGetUniformfv(m_pOGLProgram->_getID(), viewLoc, viewMatrix);
+
+	glm::mat4 projection = glm::make_mat4(projMatrix);
+	glm::mat4 view = glm::make_mat4(viewMatrix);
+	glm::mat4 invView = glm::inverse(view);
+
+	// 1. Screen -> NDC
+	CRect rcClient;
+	m_pWnd->GetClientRect(&rcClient);
+
+	float x = (2.0f * endPoint.x) / rcClient.Width() - 1.0f;
+	float y = 1.0f - (2.0f * endPoint.y) / rcClient.Height(); // inversion Y
+	glm::vec4 ray_clip(x, y, -1.0f, 1.0f);
+
+	// 2. to view space
+	glm::vec4 ray_eye = glm::inverse(projection) * ray_clip;
+	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
+
+	// 3. to WC
+	glm::vec3 ray_world = glm::normalize(glm::vec3(invView * ray_eye));
+	glm::vec3 org_world = glm::vec3(invView[3]);
+
+	TRACE("Instance %s\n", GetNameOfClass(GetInstanceClass(instance)));
 	TRACE("X/Y/Z: %f, %f, %f\n", dStartPoint[0], dStartPoint[1], dStartPoint[2]);
 	TRACE("Point: %d, %d\n", endPoint.x, endPoint.y);
 }

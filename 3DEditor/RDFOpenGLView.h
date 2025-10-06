@@ -60,14 +60,11 @@ private: // Methods
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
-	//#dragface
-	void TryTransform(
-		OwlInstance instance,
-		int iConceptualFace,
-		int iFace,
-		double dStartPoint[3],
-		const CPoint& endPoint,
-		double projectionMatrix[16]
+	void OnDragFace(
+		OwlInstance		instance,
+		int				iConceptualFace,
+		GLdouble		startDragPoint[3],
+		const CPoint&	endPoint
 	);
 
 public:
