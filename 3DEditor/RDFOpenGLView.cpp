@@ -335,7 +335,9 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	//
-	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir );
+	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
+
+	getController()->onModelUpdated();
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/

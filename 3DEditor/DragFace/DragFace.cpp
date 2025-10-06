@@ -1,5 +1,19 @@
 #include "stdafx.h"
 
+static void TestPoint(OwlModel model, double pt[3], double size)
+{
+	auto sphere = GEOM::Sphere::Create(model);
+	sphere.set_radius(size);
+
+	auto T = GEOM::Matrix::Create(model);
+	T.set__41(pt[0]);
+	T.set__42(pt[1]);
+	T.set__43(pt[2]);
+
+	auto trans = GEOM::Transformation::Create(model);
+	trans.set_object(sphere);
+	trans.set_matrix(T);
+}
 
 extern void DragFace(
 	OwlInstance		instance,
@@ -9,5 +23,15 @@ extern void DragFace(
 	double          tagretRayDir[3]
 )
 {
+	auto model = GetModel(instance);
 
+	double box[6] = { 0,0,0,0,0,0 };
+	GetBoundingBox(instance, box, box + 3);
+
+	double size = 0;
+	for (int i = 0; i < 3; i++) {
+		size = max (size, (box[i + 3] - box[i]) / 5);
+	}
+
+	TestPoint(model, startDragPoint, size);
 }
