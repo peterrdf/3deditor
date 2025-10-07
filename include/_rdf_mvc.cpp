@@ -551,6 +551,31 @@ _rdf_instance* _rdf_model::createInstance(OwlClass owlClass)
 	return pInstance;
 }
 
+void _rdf_model::addInstances(const vector<OwlInstance>& vecInstances)
+{
+	assert(!vecInstances.empty());
+
+	for (size_t iInstance = 0; iInstance < vecInstances.size(); iInstance++) {
+		if (vecInstances[iInstance] == 0) {
+			continue;
+		}
+
+		auto itInstance = m_mapInstances.find(vecInstances[iInstance]);
+		if (itInstance != m_mapInstances.end()) {
+			continue;
+		}
+
+		auto pGeometry = new _rdf_geometry(vecInstances[iInstance]);
+		addGeometry(pGeometry);
+
+		auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+		pInstance->setEnable(true);
+		addInstance(pInstance);
+
+		m_mapInstanceDefaultState[vecInstances[iInstance]] = true;
+	} // for (size_t iInstance = ...
+}
+
 bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 {
 	assert(pInstance != nullptr);
@@ -874,6 +899,31 @@ _rdf_instance* _rdf_controller::createInstance(_view* pSender, OwlClass owlClass
 	}
 
 	return pInstance;
+}
+
+void _rdf_controller::addInstances(_view* pSender, const vector<OwlInstance>& vecInstances)
+{
+	assert(!vecInstances.empty());
+
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
+	}
+	_ptr<_rdf_model>(getModel())->addInstances(vecInstances);
+
+	if (m_bScaleAndCenterAllVisibleGeometry) {
+		_ptr<_rdf_model>(getModel())->reloadGeometries();
+		getModel()->scale();
+	}
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInstanceCreated(pSender, nullptr);
+			//rdfView->onInstancesAdded(pSender); //#todo
+		}
+	}
 }
 
 bool _rdf_controller::deleteInstance(_view* pSender, _rdf_instance* pInstance)

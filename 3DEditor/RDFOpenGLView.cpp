@@ -4,6 +4,7 @@
 #include "RDFController.h"
 #include "ProgressIndicator.h"
 #include "_test.h"
+#include "_ptr.h"
 
 #include <chrono>
 
@@ -335,9 +336,10 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	//
-	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
+	DragFace(_ptr<CRDFController>(getController()),
+		instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
 
-	getController()->onModelUpdated();
+	//getController()->onModelUpdated();
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/

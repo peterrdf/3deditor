@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#include "_rdf_mvc.h"
 
-static void TestPoint(OwlModel model, double pt[3], double size)
+static void TestPoint(_rdf_controller* controller,
+	OwlModel model, double pt[3], double size)
 {
 	auto sphere = GEOM::Sphere::Create(model);
 	sphere.set_radius(size);
@@ -13,9 +15,13 @@ static void TestPoint(OwlModel model, double pt[3], double size)
 	auto trans = GEOM::Transformation::Create(model);
 	trans.set_object(sphere);
 	trans.set_matrix(T);
+
+	controller->addInstances(nullptr, // update all views
+		vector<OwlInstance>{(OwlInstance)sphere, (OwlInstance)trans});
 }
 
 extern void DragFace(
+	_rdf_controller* controller,
 	OwlInstance		instance,
 	int				iConceptualFace,
 	double			startDragPoint[3],
@@ -33,5 +39,5 @@ extern void DragFace(
 		size = max (size, (box[i + 3] - box[i]) / 5);
 	}
 
-	TestPoint(model, startDragPoint, size);
+	TestPoint(controller, model, startDragPoint, size);
 }

@@ -810,6 +810,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3DEditor\conceptMesh.cpp" />
+    <ClCompile Include="..\3DEditor\DragFace\DragFace.cpp" />
     <ClCompile Include="..\3DEditor\EditObjectPropertyDialog.cpp" />
     <ClCompile Include="..\3DEditor\NewInstanceDialog.cpp" />
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp" />

@@ -263,6 +263,9 @@
     <ClCompile Include="..\obj\_obj2bin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\3DEditor\DragFace\DragFace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\RDFViewer.rc2">

@@ -66,6 +66,7 @@ public:  // Methods
 	void getClassAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestors) const;
 
 	_rdf_instance* createInstance(OwlClass owlClass);
+	void addInstances(const vector<OwlInstance>& vecInstances);
 	bool deleteInstance(_rdf_instance* pInstance);
 	void resetInstancesDefaultEnableState();
 
@@ -160,6 +161,7 @@ public: // Methods
 	void showMetaInformation(_view* pSender, _rdf_instance* pInstance);
 	void renameInstance(_view* pSender, _rdf_instance* pInstance, const wchar_t* szName);
 	_rdf_instance* createInstance(_view* pSender, OwlClass owlClass);
+	void addInstances(_view* pSender, const vector<OwlInstance>& vecInstances);
 	bool deleteInstance(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstanceTree(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstanceTreeRecursive(_view* pSender, _rdf_instance* pInstance);
