@@ -336,10 +336,12 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	//
-	DragFace(_ptr<CRDFController>(getController()),
-		instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
+	std::vector<OwlInstance> newInstances;
+	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir, newInstances);
 
-	//getController()->onModelUpdated();
+	((CRDFController*)getController())->addInstances(nullptr, // update all views
+		newInstances);
+
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
