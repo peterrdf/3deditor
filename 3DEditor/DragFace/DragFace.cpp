@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "_rdf_mvc.h"
 
-static OwlInstance DrawPoint(OwlModel model, double pt[3], double size)
+#include <vector>
+using namespace std;
+
+static vector<OwlInstance> DrawPoint(OwlModel model, double pt[3], double size)
 {
 	auto sphere = GEOM::Sphere::Create(model);
 	sphere.set_radius(size);
@@ -16,7 +19,7 @@ static OwlInstance DrawPoint(OwlModel model, double pt[3], double size)
 	trans.set_object(sphere);
 	trans.set_matrix(T);
 
-	return trans;
+	return vector<OwlInstance>{ (OwlInstance)sphere, (OwlInstance)T, (OwlInstance)trans };
 }
 
 extern void DragFace(
@@ -25,7 +28,7 @@ extern void DragFace(
 	double						startDragPoint[3],
 	double						targetRayOrg[3],
 	double						tagretRayDir[3],
-	std::vector<OwlInstance>&   newInstances
+	std::vector<OwlInstance>& newInstances
 )
 {
 	auto model = GetModel(instance);
@@ -35,9 +38,8 @@ extern void DragFace(
 
 	double size = 0;
 	for (int i = 0; i < 3; i++) {
-		size = max (size, (box[i + 3] - box[i]) / 15);
+		size = max(size, (box[i + 3] - box[i]) / 15);
 	}
 
-	auto pt = DrawPoint(model, startDragPoint, size);
-	newInstances.push_back(pt);
+	newInstances = DrawPoint(model, startDragPoint, size);
 }
