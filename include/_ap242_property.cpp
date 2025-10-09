@@ -60,7 +60,7 @@ void _ap242_property::load()
 				sdaiGetAggrByIndex(sdaiItemsAggr, k, sdaiINSTANCE, &sdaiItemInstance);
 
 				if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "DESCRIPTIVE_REPRESENTATION_ITEM")) {
-					wchar_t* szDescription = nullptr;
+					szDescription = nullptr;
 					sdaiGetAttrBN(sdaiItemInstance, "description", sdaiUNICODE, &szDescription);
 
 					m_strValue = szDescription != nullptr ? szDescription : L"$";
@@ -69,8 +69,6 @@ void _ap242_property::load()
 				else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(sdaiModel, "VALUE_REPRESENTATION_ITEM")) {
 					SdaiADB sdaiValueComponentADB = nullptr;
 					sdaiGetAttrBN(sdaiItemInstance, "value_component", sdaiADB, &sdaiValueComponentADB);
-
-					const char* szTypePath = sdaiGetADBTypePath(sdaiValueComponentADB, 0);
 					switch (sdaiGetADBType(sdaiValueComponentADB)) {
 						case sdaiINTEGER:
 							{
