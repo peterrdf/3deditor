@@ -23,7 +23,7 @@ const char COLON				= ':';
 const char COMMA				= ',';
 const char EQUAL				= '=';
 const char SINGLE_QUOT_MARK		= '\'';
-const char DOULE_QUOT_MARK		= '"';
+const char DOUBLE_QUOT_MARK		= '"';
 const char SPACE_TAB[]			= " \t";
 
 // ********************************************************************************************

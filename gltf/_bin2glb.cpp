@@ -146,9 +146,9 @@ namespace _bin2glb
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << BUFFERS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
@@ -231,9 +231,9 @@ namespace _bin2glb
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << BUFFER_VIEWS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 

@@ -32,7 +32,7 @@ namespace _bin2gltf
 	const char TAB = '\t';
 	const char SPACE = ' ';
 	const char COMMA = ',';
-	const char DOULE_QUOT_MARK = '"';
+	const char DOUBLE_QUOT_MARK = '"';
 	const char COLON = ':';
 
 	// ********************************************************************************************
