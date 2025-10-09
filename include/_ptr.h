@@ -96,4 +96,5 @@ public: // Properties
     const vector<T*>& data() { return m_vecData; }
     size_t size() const { return m_vecData.size(); }
     bool empty() const { return m_vecData().empty(); }
+	int64_t index() const { return m_iIndex; }
 };

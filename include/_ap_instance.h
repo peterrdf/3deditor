@@ -27,42 +27,47 @@ public:  // Methods
         OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
         assert(owlMatrixInstance != 0);
 
-        vector<double> vecMatrix
-        {
-            getTransformationMatrix()->_11,
-            getTransformationMatrix()->_12,
-            getTransformationMatrix()->_13,
-            getTransformationMatrix()->_21,
-            getTransformationMatrix()->_22,
-            getTransformationMatrix()->_23,
-            getTransformationMatrix()->_31,
-            getTransformationMatrix()->_32,
-            getTransformationMatrix()->_33,
-            getTransformationMatrix()->_41,
-            getTransformationMatrix()->_42,
-            getTransformationMatrix()->_43,
-        };
+        if (getTransformationMatrix()) {
+            vector<double> vecMatrix
+            {
+                getTransformationMatrix()->_11,
+                getTransformationMatrix()->_12,
+                getTransformationMatrix()->_13,
+                getTransformationMatrix()->_21,
+                getTransformationMatrix()->_22,
+                getTransformationMatrix()->_23,
+                getTransformationMatrix()->_31,
+                getTransformationMatrix()->_32,
+                getTransformationMatrix()->_33,
+                getTransformationMatrix()->_41,
+                getTransformationMatrix()->_42,
+                getTransformationMatrix()->_43,
+            };
 
-        SetDatatypeProperty(
-            owlMatrixInstance,
-            GetPropertyByName(getOwlModel(), "coordinates"),
-            vecMatrix.data(),
-            vecMatrix.size());
+            SetDatatypeProperty(
+                owlMatrixInstance,
+                GetPropertyByName(getOwlModel(), "coordinates"),
+                vecMatrix.data(),
+                vecMatrix.size());
 
-        OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
-        assert(owlTransformationInstance != 0);
+            OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+            assert(owlTransformationInstance != 0);
 
-        SetObjectProperty(
-            owlTransformationInstance,
-            GetPropertyByName(getOwlModel(), "object"),
-            owlInstance);
+            SetObjectProperty(
+                owlTransformationInstance,
+                GetPropertyByName(getOwlModel(), "object"),
+                owlInstance);
 
-        SetObjectProperty(
-            owlTransformationInstance,
-            GetPropertyByName(getOwlModel(), "matrix"),
-            owlMatrixInstance);
+            SetObjectProperty(
+                owlTransformationInstance,
+                GetPropertyByName(getOwlModel(), "matrix"),
+                owlMatrixInstance);
 
-        SaveInstanceTreeW(owlTransformationInstance, szPath);
+            SaveInstanceTreeW(owlTransformationInstance, szPath);
+        }
+        else {
+            SaveInstanceTreeW(owlInstance, szPath);
+        }
     }
 
 public: // Properties

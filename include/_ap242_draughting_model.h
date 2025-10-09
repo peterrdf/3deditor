@@ -20,7 +20,7 @@ private: // Members
     SdaiInstance m_sdaiInstance;
     wstring m_strName;
 
-    // Reperesentation
+    // Representation
     vector<_ap242_annotation_plane*> m_vecAnnotationPlanes;
     vector<_ap242_draughting_callout*> m_vecDraughtingCallouts;
 
