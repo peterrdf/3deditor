@@ -3172,9 +3172,12 @@ void CPropertiesWnd::LoadBaseInformation(_rdf_instance* pInstance)
 	{
 		auto pAABBBBMin = pInstance->getGeometry()->getAABBMin();
 
+		auto pModel = getRDFController()->getModel();
+		double dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
+
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
-			pAABBBBMin->x, pAABBBBMin->y, pAABBBBMin->z);
+			pAABBBBMin->x * dScaleFactor, pAABBBBMin->y * dScaleFactor, pAABBBBMin->z * dScaleFactor);
 
 		auto pItem = new CMFCPropertyGridProperty(L"AABB Bounding box min", (_variant_t)szBuffer, L"AABB Bounding box min");
 		pItem->AllowEdit(FALSE);
@@ -3188,9 +3191,12 @@ void CPropertiesWnd::LoadBaseInformation(_rdf_instance* pInstance)
 	{
 		auto pAABBBBMax = pInstance->getGeometry()->getAABBMax();
 
+		auto pModel = getRDFController()->getModel();
+		double dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
+
 		swprintf(szBuffer, 100,
 			L"%.6f, %.6f, %.6f",
-			pAABBBBMax->x, pAABBBBMax->y, pAABBBBMax->z);
+			pAABBBBMax->x * dScaleFactor, pAABBBBMax->y * dScaleFactor, pAABBBBMax->z * dScaleFactor);
 
 		auto pItem = new CMFCPropertyGridProperty(L"AABB Bounding box max", (_variant_t)szBuffer, L"AABB Bounding box max");
 		pItem->AllowEdit(FALSE);
