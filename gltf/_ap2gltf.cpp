@@ -2516,6 +2516,8 @@ namespace _ap2gltf
 			return;
 		}
 
+		*getOutputStream() << COMMA;
+
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
@@ -2821,7 +2823,9 @@ namespace _ap2gltf
 
 					indent()--;
 					writeEndArrayTag();
-				}
+
+					*getOutputStream() << COMMA;
+				}		
 			}			
 			// groups
 			// propertySetIds
