@@ -70,12 +70,11 @@ CApplicationProperty::CApplicationProperty(const CString& strGroupName, DWORD_PT
 }
 
 // ************************************************************************************************
-CColorApplicationProperty::CColorApplicationProperty(const CString& strName, const COLORREF& color, CPalette* pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
+CColorSelectorProperty::CColorSelectorProperty(const CString& strName, const COLORREF& color, CPalette* pPalette, LPCTSTR szDescription, DWORD_PTR dwData)
 	: CMFCPropertyGridColorProperty(strName, color, pPalette, szDescription, dwData)
-{
-}
+{}
 
-/*virtual*/ CColorApplicationProperty::~CColorApplicationProperty()
+/*virtual*/ CColorSelectorProperty::~CColorSelectorProperty()
 {
 	delete (CApplicationPropertyData*)GetData();
 }
@@ -1207,7 +1206,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	if (m_wndObjectCombo.GetCurSel() == 0) {
 		auto pOGLRenderer = getRDFController()->getViewAs<_oglRenderer>();
 		if (pOGLRenderer == nullptr) {
-			ASSERT(false);
+			ASSERT(FALSE);
 
 			return 0;
 		}
@@ -1514,24 +1513,66 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				}
 				break;
 
+				case enumApplicationProperty::SelectionMaterial:
+					{
+						OnSelectionMaterialPropertyChanged(pApplicationProperty);
+					}
+					break;
+
+				case enumApplicationProperty::HighlightMaterial:
+					{
+						OnHighlightMaterialPropertyChanged(pApplicationProperty);
+					}
+					break;
+
 				default:
-					ASSERT(false);
+					ASSERT(FALSE);
 					break;
 			} // switch (pData->GetType())
 
 			return 0;
 		} // if (pApplicationProperty != nullptr)
 
-		auto pColorApplicationProperty = dynamic_cast<CColorApplicationProperty*>((CMFCPropertyGridProperty*)lparam);
-		if (pColorApplicationProperty != nullptr) {
-			ASSERT(false); // DISABLED
+		auto pColorSelectorProperty = dynamic_cast<CColorSelectorProperty*>((CMFCPropertyGridProperty*)lparam);
+		if (pColorSelectorProperty != nullptr) {
+			auto pData = (CApplicationPropertyData*)pColorSelectorProperty->GetData();
+			if (pData == nullptr) {
+				ASSERT(FALSE);
+				return 0;
+			}
+
+			switch (pData->GetType()) {
+				case enumApplicationProperty::BackgroundColor:
+					{
+						pOGLRenderer->setBackgroundColor(
+							(float)GetRValue(pColorSelectorProperty->GetColor()) / 255.f,
+							(float)GetGValue(pColorSelectorProperty->GetColor()) / 255.f,
+							(float)GetBValue(pColorSelectorProperty->GetColor()) / 255.f);
+						getController()->onApplicationPropertyChanged(this, enumApplicationProperty::BackgroundColor);
+					}
+					break;
+
+				case enumApplicationProperty::SelectionMaterial:
+					{
+						OnSelectionMaterialPropertyChanged(pColorSelectorProperty);
+					}
+					break;
+
+				case enumApplicationProperty::HighlightMaterial:
+					{
+						OnHighlightMaterialPropertyChanged(pColorSelectorProperty);
+					}
+					break;
+
+				default:
+					ASSERT(FALSE);
+					break;
+			} // switch (pData->GetType())
 
 			return 0;
-		} // if (pColorApplicationProperty != nullptr)
+		} // if (pColorSelectorProperty != nullptr)
 
-		ASSERT(false); // unexpected!
-
-		return 0;
+		ASSERT(FALSE); // unexpected!
 	} // if (m_wndObjectCombo.GetCurSel() == 0)
 #pragma endregion
 
@@ -1932,6 +1973,100 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	return 0;
 }
 
+void CPropertiesWnd::OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty* pProp)
+{
+	if (pProp == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pMaterialProperty = pProp->GetParent();
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+
+	// Validate transparency value
+	auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+	if (fTransparency > 1.f) {
+		fTransparency = 1.f;
+		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+	}
+	else if (fTransparency < 0.f) {
+		fTransparency = 0.f;
+		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+	}
+
+	_material material;
+	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+
+	auto pRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pRenderer != nullptr) {
+		pRenderer->setSelectedInstanceMaterial(material);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::SelectionMaterial);
+	}
+}
+
+void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty* pProp)
+{
+	if (pProp == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pMaterialProperty = pProp->GetParent();
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+
+	// Validate transparency value
+	auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+	if (fTransparency > 1.f) {
+		fTransparency = 1.f;
+		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+	}
+	else if (fTransparency < 0.f) {
+		fTransparency = 0.f;
+		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+	}
+
+	_material material;
+	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(2)))->GetColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+
+	auto pRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pRenderer != nullptr) {
+		pRenderer->setPointedInstanceMaterial(material);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightMaterial);
+	}
+}
+
 CPropertiesWnd::CPropertiesWnd()
 {
 	m_nComboHeight = 0;
@@ -2306,6 +2441,184 @@ void CPropertiesWnd::LoadApplicationProperties()
 
 		pViewGroup->AddSubItem(pProperty);
 	}
+
+	// Background Color
+	{
+		auto pColor = pOGLRenderer->getBackgroundColor();
+		auto pProperty = new CColorSelectorProperty(L"Background Color",
+			RGB((BYTE)(pColor->r() * 255.f),
+				(BYTE)(pColor->g() * 255.f),
+				(BYTE)(pColor->b() * 255.f)),
+			nullptr,
+			L"Background Color",
+			(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::BackgroundColor));
+		pProperty->EnableOtherButton(_T("Other..."));
+		pProperty->EnableAutomaticButton(_T("Default"), RGB(230, 230, 230));
+
+		pViewGroup->AddSubItem(pProperty);
+	}
+
+	// Selection Material
+	{
+		auto pMaterial = pOGLRenderer->getSelectedInstanceMaterial();
+
+		auto pSelectedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Selection Material"));
+
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Specular
+		{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Emissive
+		{
+			auto pProperty = new CColorSelectorProperty(L"Emissive",
+				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->AllowEdit(TRUE);
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		pViewGroup->AddSubItem(pSelectedInstanceMateriaGroup);
+	}
+	// Selection Material
+
+	// Highlight Material
+	{
+		auto pMaterial = pOGLRenderer->getPointedInstanceMaterial();
+
+		auto pPointedInstanceMateriaGroup = new CMFCPropertyGridProperty(_T("Highlight Material"));
+
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Specular
+		{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Emissive
+		{
+			auto pProperty = new CColorSelectorProperty(L"Emissive",
+				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
+					(BYTE)(pMaterial->getEmissiveColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->AllowEdit(TRUE);
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
+	}
+	// Highlight Material
 #pragma endregion
 
 #pragma region UI

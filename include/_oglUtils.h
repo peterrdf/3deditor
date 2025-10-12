@@ -1241,6 +1241,7 @@ public: // Methods
         _setAmbientColor(pMaterial);
         _setDiffuseColor(pMaterial);
         _setSpecularColor(pMaterial);
+        //_setEmissiveColor(pMaterial); //#todo emissive color support
 
         _setTransparency(fTransparency);
     }
@@ -2230,6 +2231,9 @@ protected: // Fields
     BOOL m_bModelCoordinateSystem;
     BOOL m_bShowNavigator;
 
+	// Background
+    _color* m_pBackgroundColor;
+
     // Selection
     _material* m_pSelectedInstanceMaterial;
     _material* m_pPointedInstanceMaterial;
@@ -2314,8 +2318,14 @@ public: // Properties
     void setShowNavigator(BOOL bValue);
     BOOL getShowNavigator() const;
 
-    void setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency);
+	void setBackgroundColor(float fR, float fG, float fB);
+	_color* getBackgroundColor() const { return m_pBackgroundColor; }
+
+    void setSelectedInstanceMaterial(const _material& material);
     _material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
+
+	void setPointedInstanceMaterial(const _material& material);
+	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
 };
 
 // ************************************************************************************************

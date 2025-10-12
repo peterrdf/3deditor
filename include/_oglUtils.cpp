@@ -1,6 +1,7 @@
 #include "_host.h"
 #include "_oglUtils.h"
 #include "_instance.h"
+#include "_string.h"
 #include "_ptr.h"
 
 #ifdef __EMSCRIPTEN__
@@ -52,6 +53,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_bShowCoordinateSystem(TRUE)
 	, m_bModelCoordinateSystem(TRUE)
 	, m_bShowNavigator(TRUE)
+	, m_pBackgroundColor(new _color())
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
 	, m_bMultiSelect(false)
@@ -61,6 +63,7 @@ _oglRendererSettings::_oglRendererSettings()
 
 /*virtual*/ _oglRendererSettings::~_oglRendererSettings()
 {
+	delete m_pBackgroundColor;
 	delete m_pSelectedInstanceMaterial;
 	delete m_pPointedInstanceMaterial;
 }
@@ -95,6 +98,9 @@ _oglRendererSettings::_oglRendererSettings()
 	m_bModelCoordinateSystem = TRUE;
 	m_bShowNavigator = TRUE;
 
+	// Background
+	m_pBackgroundColor->init(0.9f, 0.9f, 0.9f);
+
 	// Selection
 	m_pSelectedInstanceMaterial->init(
 		1.f, 0.f, 0.f,
@@ -110,7 +116,7 @@ _oglRendererSettings::_oglRendererSettings()
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
-		1.f,
+		.5f,
 		nullptr,
 		false);
 }
@@ -529,6 +535,63 @@ void _oglRendererSettings::_setView(enumView enView)
 			m_bShowNavigator = strValue == "TRUE";
 		}
 	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pBackgroundColor);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arRGB;
+			_string::split(strValue, ":", arRGB);
+			if (arRGB.size() == 3) {
+				m_pBackgroundColor->init(
+					(float)atof(arRGB[0].c_str()), (float)atof(arRGB[1].c_str()), (float)atof(arRGB[2].c_str()));
+			}
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arMaterial;
+			_string::split(strValue, ":", arMaterial);
+			if (arMaterial.size() == 13) {
+				m_pSelectedInstanceMaterial->init(
+					(float)atof(arMaterial[0].c_str()), (float)atof(arMaterial[1].c_str()), (float)atof(arMaterial[2].c_str()),
+					(float)atof(arMaterial[3].c_str()), (float)atof(arMaterial[4].c_str()), (float)atof(arMaterial[5].c_str()),
+					(float)atof(arMaterial[6].c_str()), (float)atof(arMaterial[7].c_str()), (float)atof(arMaterial[8].c_str()),
+					(float)atof(arMaterial[9].c_str()), (float)atof(arMaterial[10].c_str()), (float)atof(arMaterial[11].c_str()),
+					(float)atof(arMaterial[12].c_str()),
+					nullptr,
+					false);
+			}
+		}
+	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arMaterial;
+			_string::split(strValue, ":", arMaterial);
+			if (arMaterial.size() == 13) {
+				m_pPointedInstanceMaterial->init(
+					(float)atof(arMaterial[0].c_str()), (float)atof(arMaterial[1].c_str()), (float)atof(arMaterial[2].c_str()),
+					(float)atof(arMaterial[3].c_str()), (float)atof(arMaterial[4].c_str()), (float)atof(arMaterial[5].c_str()),
+					(float)atof(arMaterial[6].c_str()), (float)atof(arMaterial[7].c_str()), (float)atof(arMaterial[8].c_str()),
+					(float)atof(arMaterial[9].c_str()), (float)atof(arMaterial[10].c_str()), (float)atof(arMaterial[11].c_str()),
+					(float)atof(arMaterial[12].c_str()),
+					nullptr,
+					false);
+			}
+		}
+	}
 }
 
 enumProjection _oglRendererSettings::_getProjection() const
@@ -815,16 +878,60 @@ BOOL _oglRendererSettings::getShowNavigator() const
 	return m_bShowNavigator;
 }
 
-void _oglRendererSettings::setSelectedInstanceMaterial(float fR, float fG, float fB, float fTransparency)
+void _oglRendererSettings::setBackgroundColor(float fR, float fG, float fB)
+{
+	m_pBackgroundColor->init(fR, fG, fB);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pBackgroundColor);
+
+	string strValue = to_string(fR) + ":" + to_string(fG) + ":" + to_string(fB);
+	saveSetting(strSettingName, strValue);
+}
+
+void _oglRendererSettings::setSelectedInstanceMaterial(const _material& material)
 {
 	m_pSelectedInstanceMaterial->init(
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fR, fG, fB,
-		fTransparency,
+		material.getAmbientColor().r(), material.getAmbientColor().g(), material.getAmbientColor().b(),
+		material.getDiffuseColor().r(), material.getDiffuseColor().g(), material.getDiffuseColor().b(),
+		material.getSpecularColor().r(), material.getSpecularColor().g(), material.getSpecularColor().b(),
+		material.getEmissiveColor().r(), material.getEmissiveColor().g(), material.getEmissiveColor().b(),
+		material.getA(),
 		nullptr,
 		false);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pSelectedInstanceMaterial);
+
+	string strValue = 
+		to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
+		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
+		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +
+		to_string(material.getA());
+	saveSetting(strSettingName, strValue);
+}
+
+void _oglRendererSettings::setPointedInstanceMaterial(const _material& material)
+{
+	m_pPointedInstanceMaterial->init(
+		material.getAmbientColor().r(), material.getAmbientColor().g(), material.getAmbientColor().b(),
+		material.getDiffuseColor().r(), material.getDiffuseColor().g(), material.getDiffuseColor().b(),
+		material.getSpecularColor().r(), material.getSpecularColor().g(), material.getSpecularColor().b(),
+		material.getEmissiveColor().r(), material.getEmissiveColor().g(), material.getEmissiveColor().b(),
+		material.getA(),
+		nullptr,
+		false);
+
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
+
+	string strValue = to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
+		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
+		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +
+		to_string(material.getA());
+	saveSetting(strSettingName, strValue);
 }
 
 // ************************************************************************************************
@@ -1408,7 +1515,11 @@ void _oglRenderer::_prepare(
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(iViewportX, iViewportY, iViewportWidth, iViewportHeight);
 
-		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+		glClearColor(
+			m_pBackgroundColor->r(),
+			m_pBackgroundColor->g(),
+			m_pBackgroundColor->b(),
+			1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_SCISSOR_TEST);
@@ -1660,6 +1771,9 @@ _oglView::_oglView()
 	case enumApplicationProperty::All:
 	case enumApplicationProperty::Projection:
 	case enumApplicationProperty::View:
+	case enumApplicationProperty::BackgroundColor:
+	case enumApplicationProperty::SelectionMaterial:
+	case enumApplicationProperty::HighlightMaterial:
 	case enumApplicationProperty::GhostView:
 	case enumApplicationProperty::GhostViewTransparency:
 	case enumApplicationProperty::ShowFaces:
