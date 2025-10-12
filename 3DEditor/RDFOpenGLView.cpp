@@ -10,7 +10,7 @@
 
 #include "Resource.h"
 
-#include "DragFace/DragFace.h"
+#include "../DragFace/DragFace.h"
 
 
 extern BOOL TEST_MODE;
@@ -336,9 +336,9 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	//
-	std::vector<OwlInstance> newInstances;
-	DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir, newInstances);
-
+	auto inst = DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
+	
+	std::vector<OwlInstance> newInstances = { inst };
 	((CRDFController*)getController())->addInstances(nullptr, // update all views
 		newInstances);
 

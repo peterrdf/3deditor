@@ -323,7 +323,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -354,7 +354,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -385,7 +385,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -416,7 +416,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -448,7 +448,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -480,7 +480,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -512,7 +512,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -544,7 +544,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -577,7 +577,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -608,7 +608,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -639,7 +639,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -670,7 +670,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -703,7 +703,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -735,7 +735,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -767,7 +767,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -799,7 +799,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -1315,7 +1315,6 @@
     <ClCompile Include="3DEditorView.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="conceptMesh.cpp" />
-    <ClCompile Include="DragFace\DragFace.cpp" />
     <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="RenameDialog.cpp" />
     <ClCompile Include="EditObjectPropertyDialog.cpp" />

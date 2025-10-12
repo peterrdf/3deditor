@@ -416,9 +416,6 @@
     <ClCompile Include="..\zip\zip.c">
       <Filter>zip</Filter>
     </ClCompile>
-    <ClCompile Include="DragFace\DragFace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DEditor.rc">

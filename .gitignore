@@ -169,3 +169,5 @@ Win32/Debug/ExtensionConepts.*
 Win32/Release/ExtensionConepts.*
 Win32/Release/ImportPLY.*
 Win32/Debug/ImportPLY.*
+DragFace/obj/
+x64/*/DragFace.*
