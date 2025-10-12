@@ -926,7 +926,8 @@ void _oglRendererSettings::setPointedInstanceMaterial(const _material& material)
 	string strSettingName(typeid(this).raw_name());
 	strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
 
-	string strValue = to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+	string strValue = 
+		to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
 		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
 		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
 		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +

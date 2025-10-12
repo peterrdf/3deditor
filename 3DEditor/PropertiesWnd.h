@@ -81,6 +81,9 @@ public: // Methods
 
 	CColorSelectorProperty(const CString& strName, const COLORREF& color, CPalette* pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
 	virtual ~CColorSelectorProperty();
+
+	COLORREF GetSelectedColor() const;
+	COLORREF GetAutomaticColor() const;
 };
 
 // ************************************************************************************************
