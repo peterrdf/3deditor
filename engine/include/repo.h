@@ -148,7 +148,7 @@ const char     DECL * STDC  repo_GetPrefixByIterator   (RdfFile file, const char
 //      -- for "<prefix>:<local_name>" the function will return URI value of the prefix concatenated with <local_name>
 //      -- when separator is missed ("<local_name>") it will return <local_name>
 //
-// Return NULL if fails
+// Return "" if fails
 // !!! Returned pointer is valid until next call to the function
 //
 const char     DECL * STDC  repo_ResolveName           (RdfFile file, const char* prefixedOrIriName, char separator);
@@ -161,7 +161,7 @@ const char     DECL * STDC  repo_ResolveName           (RdfFile file, const char
 // 
 // The function will return suitable prefixed name or (when no suitable prefix found) fully qualified IFREF name.
 //
-// Return NULL if fails
+// Return "" if fails
 // !!! Returned pointer is valid until next call to the function
 //
 const char     DECL * STDC  repo_GetPrefixedName        (RdfFile file, const char* iriName, char separator);
