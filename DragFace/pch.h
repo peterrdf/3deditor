@@ -13,7 +13,10 @@
 #include "engine.h"
 #include "geom.h"
 
+#include "wykobi.hpp"
+using namespace wykobi;
 
+/*
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
@@ -21,6 +24,6 @@
 #ifndef min
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
-
+*/
 
 #endif //PCH_H
