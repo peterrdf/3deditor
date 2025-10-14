@@ -64,7 +64,8 @@ private: // Methods
 		OwlInstance		instance,
 		int				iConceptualFace,
 		double			startDragPoint[3],
-		const CPoint&	endPoint
+		const CPoint&	endPoint,
+		double endDragPoint[3]
 	);
 
 public:
