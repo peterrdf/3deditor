@@ -337,10 +337,9 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	auto inst = DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
-	
-	std::vector<OwlInstance> newInstances = { inst };
-	((CRDFController*)getController())->addInstances(nullptr, // update all views
-		newInstances);
+
+	_ptr<_rdf_model>(getController()->getModel())->reload();
+	getController()->onModelUpdated();
 
 }
 
