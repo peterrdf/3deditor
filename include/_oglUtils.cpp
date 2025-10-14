@@ -1550,6 +1550,11 @@ void _oglRenderer::_prepare(
 		zFar = zNear * 1000.0;
 	}
 
+	// Ensure a minimum zFar
+	if (zFar < 100.) {
+		zFar = 100.;
+	}
+
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
 	GLdouble fW = fH * aspect;
 
