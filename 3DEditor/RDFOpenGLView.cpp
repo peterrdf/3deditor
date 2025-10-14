@@ -250,11 +250,18 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
 
-		OnDragFace(
-			m_pDragFaceInstance->getOwlInstance(),
-			m_iDragFace,
-			startDragPoint,
-			point);
+		GLdouble dX = 0.;
+		GLdouble dY = 0.;
+		GLdouble dZ = 0.;
+		if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+			double endDragPoint[3] = { dX, dY, dZ };
+			OnDragFace(
+				m_pDragFaceInstance->getOwlInstance(),
+				m_iDragFace,
+				startDragPoint,
+				point,
+				endDragPoint);
+		}
 
 		m_bDragFaceMode = FALSE;
 		m_pDragFaceInstance = nullptr;
@@ -293,9 +300,14 @@ void CRDFOpenGLView::OnDragFace(
 	OwlInstance instance,
 	int iConceptualFace,
 	double startDragPoint[3],
-	const CPoint& endPoint
+	const CPoint& endPoint,
+	double endDragPoint[3]
 )
 {
+	TRACE(">>> Drag Face: Face %d\n", iConceptualFace);
+	TRACE("    Start Point: (%f, %f, %f)\n", startDragPoint[0], startDragPoint[1], startDragPoint[2]);
+	TRACE("    End   Point: (%f, %f, %f)\n", endDragPoint[0], endDragPoint[1], endDragPoint[2]);
+
 	// --- Un-projection endPoint to Word Ray ---
 	// 
 	GLint projLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix");

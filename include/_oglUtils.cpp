@@ -2799,10 +2799,11 @@ bool _oglView::getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX,
 		dWinZ = static_cast<GLdouble>(fDepth);
 	}
 
+	//#dragface
 	// Check if depth value is valid (not at far plane)
-	if (dWinZ >= 1.0) {
+	/*if (dWinZ >= 1.0) {
 		return false;
-	}
+	}*/
 
 	GLint result = gluUnProject(dWinX, dWinY, dWinZ,
 		arModelView, arProjection, arViewport,
