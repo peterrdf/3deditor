@@ -16,6 +16,10 @@ class CMy3DEditorDoc
 	, public CRDFController
 {
 
+private: // Fields
+
+	vector<wstring> m_vecTempFiles;
+
 public: // Methods
 
 	// CRDFController
@@ -61,6 +65,7 @@ protected:
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
+	virtual void OnCloseDocument();
 	afx_msg void OnViewScaleAndCenterAllGeometry();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileImport();

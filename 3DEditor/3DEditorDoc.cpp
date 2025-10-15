@@ -82,48 +82,6 @@ static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 		zip_entry_fread(pZip, pathTempFile.string().c_str());
 		zip_entry_close(pZip);
 	}
-	
-	/*
-	auto iEntries = zip_get_num_entries(pZip, 0);
-	for (auto i = 0; i < iEntries; ++i) {
-		const char* szName = zip_get_name(pZip, i, 0);
-		if (szName == nullptr) {
-			continue;
-		}
-
-		struct zip_stat zipStat;
-		zip_stat_init(&zipStat);
-		zip_stat(pZip, szName, 0, &zipStat);
-
-		zip_file* pZipFile = zip_fopen(pZip, szName, 0);
-		if (pZipFile == nullptr) {
-			continue;
-		}
-
-		fs::path pathTempFile = pathTemp / szName;
-		vecTempFiles.push_back(pathTempFile.wstring());
-		FILE* pFile = fopen(pathTempFile.string().c_str(), "wb");
-
-		zip_int64_t iRead = 0;
-		while ((iRead = zip_fread(pZipFile, ZIP_BUFFER, ZIP_BUFFER_SIZE)) > 0) {
-			fwrite(ZIP_BUFFER, sizeof(unsigned char), iRead, pFile);
-		}
-
-		fclose(pFile);
-
-		zip_fclose(pZipFile);
-		pZipFile = nullptr;
-
-		string strExtension = pathTempFile.extension().string();
-		std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
-		if (strExtension == ".bin") {
-			ASSERT(strBinModel.empty());
-			strBinModel = pathTempFile.wstring();
-		} // if (strExtension == ".bin")	
-	} // for (auto i = ...
-	
-	zip_close(pZip);
-	*/
 
 	return strBinModel;
 }
@@ -133,7 +91,8 @@ static wstring openBINZ(const wchar_t* szBinZip, vector<wstring>& vecTempFiles)
 {
 	if (szFileName != nullptr) {
 		OnOpenDocument(szFileName);
-	} else {
+	}
+	else {
 		OnNewDocument();
 	}
 }
@@ -169,12 +128,12 @@ END_MESSAGE_MAP()
 // CMy3DEditorDoc construction/destruction
 
 CMy3DEditorDoc::CMy3DEditorDoc()
-{
-}
+	: CDocument()
+	, m_vecTempFiles()
+{}
 
 CMy3DEditorDoc::~CMy3DEditorDoc()
-{
-}
+{}
 
 BOOL CMy3DEditorDoc::OnNewDocument()
 {
@@ -192,7 +151,8 @@ void CMy3DEditorDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring()) {
 		// TODO: add storing code here
-	} else {
+	}
+	else {
 		// TODO: add loading code here
 	}
 }
@@ -235,7 +195,8 @@ void CMy3DEditorDoc::SetSearchContent(const CString& value)
 {
 	if (value.IsEmpty()) {
 		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-	} else {
+	}
+	else {
 		CMFCFilterChunkValueImpl* pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
 		if (pChunk != nullptr) {
@@ -284,11 +245,11 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		pModel->Load(strModel.c_str(), false);
 		setModel(pModel);
 
-		// Cleanup temp files
-		for (auto& strTempFile : vecTempFiles) {
-			fs::remove(strTempFile);
-		}
-	} else {
+		m_vecTempFiles.insert(m_vecTempFiles.end(),
+			std::make_move_iterator(vecTempFiles.begin()),
+			std::make_move_iterator(vecTempFiles.end()));
+	}
+	else {
 		auto pModel = new CRDFModel();
 		pModel->Load(lpszPathName, false);
 		setModel(pModel);
@@ -312,6 +273,17 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	SaveModelW(getModel()->getOwlModel(), lpszPathName);
 
 	return TRUE;
+}
+
+void CMy3DEditorDoc::OnCloseDocument()
+{
+	// Cleanup temp files
+	for (auto& strTempFile : m_vecTempFiles) {
+		fs::remove(strTempFile);
+	}
+	m_vecTempFiles.clear();
+
+	__super::OnCloseDocument();
 }
 
 void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
@@ -512,3 +484,5 @@ void CMy3DEditorDoc::OnUpdateExportAsGltfBinary(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(getModel() != nullptr);
 }
+
+
