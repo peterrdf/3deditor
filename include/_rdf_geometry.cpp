@@ -2,6 +2,7 @@
 #include "_rdf_geometry.h"
 #include "_oglUtils.h"
 #include <bitset>
+#include "displayName.h"
 
 // ************************************************************************************************
 _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
@@ -229,8 +230,7 @@ void _rdf_geometry::loadName()
 	OwlClass owlClass = GetInstanceClass(getOwlInstance());
 	assert(owlClass != 0);
 
-	wchar_t* szClassName = nullptr;
-	GetNameOfClassW(owlClass, &szClassName);
+	std::wstring strClassName = DisplayName(owlClass);
 
 	wchar_t* szName = nullptr;
 	GetNameOfInstanceW(getOwlInstance(), &szName);
@@ -256,10 +256,11 @@ void _rdf_geometry::loadName()
 
 	if (szName != nullptr) {
 		m_strName = szName;
-		swprintf(szUniqueName, 512, L"%s (%s)", szName, szClassName);
-	} else {
-		m_strName = szClassName;
-		swprintf(szUniqueName, 512, L"#%lld (%s)", getOwlInstance(), szClassName);
+		swprintf(szUniqueName, 512, L"%s (%s)", szName, strClassName.c_str());
+	}
+	else {
+		m_strName = strClassName;
+		swprintf(szUniqueName, 512, L"#%lld (%s)", getOwlInstance(), strClassName.c_str());
 	}
 
 	m_strUniqueName = szUniqueName;
