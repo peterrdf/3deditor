@@ -1995,22 +1995,42 @@ void CPropertiesWnd::OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty
 	}
 
 	auto pMaterialProperty = pProp->GetParent();
-	ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 3);
+	//ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
 
 	// Validate transparency value
-	auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+	auto strValue = pMaterialProperty->GetSubItem(2)->GetValue();
+	//auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
 	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
 	if (fTransparency > 1.f) {
 		fTransparency = 1.f;
-		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+		//pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);		
 	}
 	else if (fTransparency < 0.f) {
 		fTransparency = 0.f;
-		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+		//pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
 	}
 
 	_material material;
 	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+	/*material.init(
 		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
 		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
 		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
@@ -2025,7 +2045,7 @@ void CPropertiesWnd::OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty
 		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
 		fTransparency,
 		nullptr,
-		false);
+		false);*/
 
 	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
 	if (pOGLRenderer != nullptr) {
@@ -2042,22 +2062,42 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 	}
 
 	auto pMaterialProperty = pProp->GetParent();
-	ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 3);
+	//ASSERT(pMaterialProperty->GetSubItemsCount() == 5);
 
 	// Validate transparency value
-	auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
+	auto strValue = pMaterialProperty->GetSubItem(2)->GetValue();
+	//auto strValue = pMaterialProperty->GetSubItem(4)->GetValue();
 	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
 	if (fTransparency > 1.f) {
 		fTransparency = 1.f;
-		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+		//pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);		
 	}
 	else if (fTransparency < 0.f) {
 		fTransparency = 0.f;
-		pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+		//pMaterialProperty->GetSubItem(4)->SetValue(fTransparency);
 	}
 
 	_material material;
 	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+	/*material.init(
 		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
 		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
 		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
@@ -2072,7 +2112,7 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(3)))->GetSelectedColor()) / 255.f,
 		fTransparency,
 		nullptr,
-		false);
+		false);*/
 
 	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
 	if (pOGLRenderer != nullptr) {
@@ -2508,23 +2548,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
 
-		// Specular
-		{
-			auto pProperty = new CColorSelectorProperty(L"Specular",
-				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
-					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
-					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
-				nullptr,
-				L"Selection Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
-			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
-
-			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
-		}
-
 		// Emissive
-		{
+		/*{
 			auto pProperty = new CColorSelectorProperty(L"Emissive",
 				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
 					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
@@ -2536,7 +2561,22 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
 
 			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
-		}
+		}*/
+
+		// Specular
+		/*{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Selection Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::SelectionMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(255, 0, 0));
+
+			pSelectedInstanceMateriaGroup->AddSubItem(pProperty);
+		}*/
 
 		// Transparency
 		{
@@ -2589,23 +2629,8 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
 		}
 
-		// Specular
-		{
-			auto pProperty = new CColorSelectorProperty(L"Specular",
-				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
-					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
-					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
-				nullptr,
-				L"Highlight Color",
-				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
-			pProperty->EnableOtherButton(_T("Other..."));
-			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
-
-			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
-		}
-
 		// Emissive
-		{
+		/*{
 			auto pProperty = new CColorSelectorProperty(L"Emissive",
 				RGB((BYTE)(pMaterial->getEmissiveColor().r() * 255.f),
 					(BYTE)(pMaterial->getEmissiveColor().g() * 255.f),
@@ -2617,7 +2642,22 @@ void CPropertiesWnd::LoadApplicationProperties()
 			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
 
 			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
-		}
+		}*/
+
+		// Specular
+		/*{
+			auto pProperty = new CColorSelectorProperty(L"Specular",
+				RGB((BYTE)(pMaterial->getSpecularColor().r() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().g() * 255.f),
+					(BYTE)(pMaterial->getSpecularColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 0, 255));
+
+			pPointedInstanceMateriaGroup->AddSubItem(pProperty);
+		}*/
 
 		// Transparency
 		{
