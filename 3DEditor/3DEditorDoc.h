@@ -16,10 +16,6 @@ class CMy3DEditorDoc
 	, public CRDFController
 {
 
-private: // Fields
-
-	vector<wstring> m_vecTempFiles;
-
 public: // Methods
 
 	// CRDFController

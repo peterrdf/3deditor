@@ -129,7 +129,6 @@ END_MESSAGE_MAP()
 
 CMy3DEditorDoc::CMy3DEditorDoc()
 	: CDocument()
-	, m_vecTempFiles()
 {}
 
 CMy3DEditorDoc::~CMy3DEditorDoc()
@@ -245,9 +244,10 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		pModel->Load(strModel.c_str(), false);
 		setModel(pModel);
 
-		m_vecTempFiles.insert(m_vecTempFiles.end(),
-			std::make_move_iterator(vecTempFiles.begin()),
-			std::make_move_iterator(vecTempFiles.end()));
+		// Cleanup temp files
+		for (auto& strTempFile : vecTempFiles) {
+			fs::remove(strTempFile);
+		}
 	}
 	else {
 		auto pModel = new CRDFModel();
@@ -277,12 +277,6 @@ BOOL CMy3DEditorDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 void CMy3DEditorDoc::OnCloseDocument()
 {
-	// Cleanup temp files
-	for (auto& strTempFile : m_vecTempFiles) {
-		fs::remove(strTempFile);
-	}
-	m_vecTempFiles.clear();
-
 	__super::OnCloseDocument();
 }
 
