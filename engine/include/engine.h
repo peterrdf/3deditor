@@ -123,7 +123,7 @@ typedef		int64_t										ConceptualFace;
 #define		COLOR_GET_R(clr)							(COLOR_GET_R255(clr)/255.0)							//	get color red component in range 0..1
 #define		COLOR_GET_G(clr)							(COLOR_GET_G255(clr)/255.0)							//	get color green component in range 0..1
 #define		COLOR_GET_B(clr)							(COLOR_GET_B255(clr)/255.0)							//	get color blue component in range 0..1
-#define		COLOR_GET_W(clr)							(COLOR_GET_W255(clr)/255.0)							//	get color trancparency in range 0..1
+#define		COLOR_GET_W(clr)							(COLOR_GET_W255(clr)/255.0)							//	get color transparency in range 0..1
 
 
 #define		COLOR_ARR_RGBW255(r)						COLOR_RGBW255(r[0],r[1],r[2],r[3])					//	get color from array of 4 components in range 0..255
