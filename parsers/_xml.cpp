@@ -10,13 +10,15 @@
 namespace _xml	
 {
 	// ********************************************************************************************
-	const char LESS_THAN =			'<';
-	const char GREATER_THAN =		'>';
-	const char QUESTION_MARK =		'?';
-	const char VERSION_START[] =	"?";
-	const char VERSION_END[] =		"?";
-	const char COMMENT_START[] =	"!--";
-	const char COMMENT_END[] =		"--";
+	const char LESS_THAN =			 '<';
+	const char GREATER_THAN =		 '>';
+	const char QUESTION_MARK =		 '?';
+	const char VERSION_START[] =	 "?xml";
+	const char VERSION_END[] =		 "?";
+	const char STYLE_SHEET_START[] = "?xml-stylesheet";	
+	const char STYLE_SHEET_END[] =   "?";
+	const char COMMENT_START[] =	 "!--";
+	const char COMMENT_END[] =		 "--";
 
 	// ********************************************************************************************
 	const char import_tag[] = "import";
@@ -215,6 +217,11 @@ namespace _xml
 
 	string _element::getNamespace() const
 	{
+		if (m_strPrefix.empty() && hasAttribute(_xml::xmlns_attr))
+		{
+			return _net::_url::removeProtocol(getAttribute(_xml::xmlns_attr)->getValue());
+		}
+
 		return m_pSite->getNamespace(m_strPrefix, m_strName);
 	}
 
@@ -445,6 +452,16 @@ namespace _xml
 	{}
 
 	// ********************************************************************************************
+	_style_sheet::_style_sheet(_document* pDocument, const string& strTag)
+		: _element(nullptr, pDocument, strTag)
+	{
+		m_bEmpty = true;
+	}
+
+	/*virtual*/ _style_sheet::~_style_sheet()
+	{}
+
+	// ********************************************************************************************
 	_comment::_comment(_document* pDocument, const string& strTag)
 		: _element(nullptr, pDocument, "comment")
 	{
@@ -460,6 +477,7 @@ namespace _xml
 		: m_pSite(pSite)
 		, m_pReader(nullptr)
 		, m_pVersion(nullptr)
+		, m_vecStyleSheets()
 		, m_vecComments()
 		, m_mapSchemas()	
 		, m_pRoot(nullptr)
@@ -598,6 +616,7 @@ namespace _xml
 		load();
 	}	
 
+#ifdef _LOAD_SCHEMAS
 	/*virtual*/ void _document::loadSchemas()
 	{
 		if (m_pRoot == nullptr)
@@ -661,6 +680,7 @@ namespace _xml
 		
 		loadInfosets();
 	}
+#endif // _LOAD_SCHEMAS
 
 	/*virtual*/ void _document::clean()
 	{
@@ -669,6 +689,12 @@ namespace _xml
 
 		delete m_pVersion;
 		m_pVersion = nullptr;
+
+		for (auto pStyleSheet : m_vecStyleSheets)
+		{
+			delete pStyleSheet;
+		}
+		m_vecStyleSheets.clear();
 
 		for (auto pComment : m_vecComments)
 		{
@@ -822,20 +848,37 @@ namespace _xml
 					THROW_ERROR(_err::_format);
 				}
 
-				if (_string::startsEndsWith(strTag, VERSION_START, VERSION_END, false))
+				if (_string::startsEndsWith(strTag, STYLE_SHEET_START, STYLE_SHEET_END, false))
+				{
+					// <?xml-stylesheet...?>
+					strTag = strTag.substr(1).substr(0, strTag.size() - 2);
+
+					auto pStyleSheet = new _style_sheet(this, strTag);
+					if (pStyleSheet->getName() != "xml-stylesheet")
+					{
+						THROW_ERROR(_err::_format);
+					}
+
+					m_vecStyleSheets.push_back(pStyleSheet);
+
+					ch = m_pReader->getChar();
+
+					continue;
+				}
+				else if (_string::startsEndsWith(strTag, VERSION_START, VERSION_END, false))
 				{
 					// <?xml...?>
 					strTag = strTag.substr(1).substr(0, strTag.size() - 2);
 
-					if (_string::startsWith(strTag, "xml ")) {
-						if (m_pVersion != nullptr) {
-							THROW_ERROR(_err::_format);
-						}
+					if (m_pVersion != nullptr)
+					{
+						THROW_ERROR(_err::_format);
+					}
 
-						m_pVersion = new _version(this, strTag);
-						if (m_pVersion->getName() != "xml") {
-							THROW_ERROR(_err::_format);
-						}
+					m_pVersion = new _version(this, strTag);
+					if (m_pVersion->getName() != "xml")
+					{
+						THROW_ERROR(_err::_format);
 					}
 
 					ch = m_pReader->getChar();
@@ -877,9 +920,12 @@ namespace _xml
 			ch = m_pReader->getNextChar(false);
 		} // while (ch != EOF)
 
+#ifdef _LOAD_SCHEMAS
 		loadNamespaces();
+#endif // _LOAD_SCHEMAS
 	}
 
+#ifdef _LOAD_SCHEMAS
 	_schema* _document::loadSchema(const string& strNamespace, const string& strLocation)
 	{
 		VERIFY_POINTER(m_pSite);
@@ -941,6 +987,7 @@ namespace _xml
 			}
 		} // for (auto pAttribute ...
 	}
+#endif // _LOAD_SCHEMAS
 
 	void _document::loadInfosets()
 	{
@@ -1027,6 +1074,7 @@ namespace _xml
 		m_strNamespace = vecData[0];
 		m_strLocation = vecData[1];
 
+#ifdef _LOAD_SCHEMAS
 		vector<string> vecImports;
 		_string::split(vecData[2], "^|^", vecImports, false);
 
@@ -1054,8 +1102,10 @@ namespace _xml
 				m_vecIncludes.push_back(pSchema);
 			}
 		}
+#endif // _LOAD_SCHEMAS
 	}
 
+#ifdef _LOAD_SCHEMAS
 	/*virtual*/ void _schema::loadSchemas() /*override*/
 	{
 		if (getRoot() == nullptr)
@@ -1076,6 +1126,7 @@ namespace _xml
 			loadNamespaceSchemas(itPrefix2Namespace.second);
 		}
 	}
+#endif // _LOAD_SCHEMAS
 
 	/*virtual*/ void _schema::clean() /*override*/
 	{
@@ -1096,6 +1147,7 @@ namespace _xml
 				THROW_INTERNAL_ERROR();
 			}
 
+#ifdef _LOAD_SCHEMAS
 			auto strNamespace = pElement->getAttributeValue(namespace_attr);
 			auto strLocation = pElement->getAttributeValue(schemaLocation_attr);
 
@@ -1103,6 +1155,7 @@ namespace _xml
 				strNamespace,
 				strLocation);
 			m_vecImports.push_back(pSchema);
+#endif
 
 			return;
 		} // import_tag)
@@ -1110,12 +1163,19 @@ namespace _xml
 		// <include
 		if (pElement->getName() == include_tag)
 		{
+			if (!pElement->hasAttribute(schemaLocation_attr))
+			{
+				THROW_INTERNAL_ERROR();
+			}
+
+#ifdef _LOAD_SCHEMAS
 			auto strLocation = pElement->getAttributeValue(schemaLocation_attr);
 
 			auto pSchema = loadSchema(
 				m_strNamespace,
 				strLocation);
 			m_vecIncludes.push_back(pSchema);
+#endif // _LOAD_SCHEMAS
 
 			return;
 		} // include_tag
@@ -1191,6 +1251,7 @@ namespace _xml
 		: m_strNamespace(strNamespace)
 		, m_vecSchemas()
 		, m_mapElements()
+		, m_mapGroups()
 		, m_mapType2Elements()
 		, m_mapTypes()		
 		, m_mapAttributes()
@@ -1208,6 +1269,10 @@ namespace _xml
 			if (pElement->getName() == element_elem)			
 			{
 				loadElement(pElement);		
+			}
+			else if (pElement->getName() == group_elem)
+			{
+				loadGroup(pElement);
 			}
 			else if ((pElement->getName() == simpleType_elem) ||
 				(pElement->getName() == complexType_elem))
@@ -1264,6 +1329,26 @@ namespace _xml
 				m_mapType2Elements.at(strTypeAttribute).push_back(pXSDElement);
 			}			
 		}		
+	}
+
+	void _infoset::loadGroup(_element* pXSDElement)
+	{
+		VERIFY_POINTER(pXSDElement);
+
+		if (!pXSDElement->hasAttribute(name_attr))
+		{
+			assert(FALSE);
+
+			return;
+		}
+
+		string strNameAttribute = pXSDElement->getAttributeValue(name_attr);
+		if (m_mapGroups.find(strNameAttribute) != m_mapGroups.end())
+		{
+			THROW_INTERNAL_ERROR();
+		}
+
+		m_mapGroups[strNameAttribute] = pXSDElement;
 	}
 
 	void _infoset::loadType(_element* pXSDElement)
@@ -1353,24 +1438,47 @@ namespace _xml
 		}
 
 		auto itInfoset = m_mapInfosets.find(strNamespace);
-		if (itInfoset == m_mapInfosets.end())
+		if ((itInfoset == m_mapInfosets.end()) || itInfoset->second->getSchemas().empty())
 		{
 			m_pDocument->getSite()->logErrf("Unknown namespace: '%s'.", strNamespace.c_str());
 
 			return nullptr;
 		}
 
+		// Search element-s
 		auto itElement = itInfoset->second->elements().find(pXMLElement->getName());
 		if (itElement != itInfoset->second->elements().end())
 		{
 			return itElement->second;
 		}
 
+		// Search group-s
+		for (auto itGroup : itInfoset->second->groups())
+		{
+			auto pChoiceElement = _xml::_utils::getChild(itGroup.second, choice_elem);
+			if (pChoiceElement != nullptr)
+			{
+				vector<_xml::_element*> vecChildren;
+				_xml::_utils::getChildren(pChoiceElement, element_elem, vecChildren);
+
+				for (auto pChild : vecChildren)
+				{
+					if (pChild->getAttributeValue(name_attr) == pXMLElement->getName())
+					{
+						return pChild;
+					}
+				}
+			}
+		}
+
 		auto pXMLParent = pXMLElement->getParent();
 		VERIFY_POINTER(pXMLParent);
 
 		auto pParentXSDType = getXSDType(pXMLParent);
-		VERIFY_POINTER(pParentXSDType);
+		if (pParentXSDType == nullptr)
+		{
+			return nullptr;
+		}
 
 		return searchXSDTypeForXSDElement(pParentXSDType, pXMLElement->getName());
 	}
@@ -1403,7 +1511,7 @@ namespace _xml
 
 		if (pChild != nullptr)
 		{
-			return pChild;
+ 			return pChild;
 		}
 
 		THROW_INTERNAL_ERROR();
@@ -1461,12 +1569,10 @@ namespace _xml
 		return nullptr;
 	}
 
-	_element* _infosets::getXSDTypeBaseElement(_element* pXMLElement, _element* pXSDType, _infoset*& pInfoset) const
+	_element* _infosets::getXSDTypeBaseElement(_element* pXMLElement, _element* pXSDType) const
 	{
 		VERIFY_POINTER(pXMLElement);
 		VERIFY_POINTER(pXSDType);
-
-		pInfoset = nullptr;
 
 		string strNamespace = pXMLElement->getNamespace();
 		if (strNamespace.empty())
@@ -1482,8 +1588,6 @@ namespace _xml
 			return nullptr;
 		}
 
-		pInfoset = itInfoset->second;
-
 		string strXSDType = _xml::_xsd_type::getName(pXSDType);
 
 		vector<string> vecTokens;
@@ -1492,6 +1596,25 @@ namespace _xml
 		if (vecTokens.empty() || (vecTokens.size() > 2))
 		{
 			THROW_INTERNAL_ERROR();
+		}
+
+		// Search group-s
+		for (auto itGroup : itInfoset->second->groups())
+		{
+			auto pChoiceElement = _xml::_utils::getChild(itGroup.second, choice_elem);
+			if (pChoiceElement != nullptr)
+			{
+				vector<_xml::_element*> vecChildren;
+				_xml::_utils::getChildren(pChoiceElement, element_elem, vecChildren);
+
+				for (auto pChild : vecChildren)
+				{
+					if (pChild->getAttributeValue(name_attr) == pXMLElement->getName())
+					{
+						return pChild;
+					}
+				}
+			}
 		}
 
 		strXSDType = vecTokens.size() == 1 ? vecTokens[0] : vecTokens[1];
@@ -1533,14 +1656,14 @@ namespace _xml
 			// Imports
 			for (auto pImport : pSchema->getImports())
 			{
-				itInfoset = m_mapInfosets.find(pImport->getNamespace(true));
-				if (itInfoset == m_mapInfosets.end())
+				auto itInfoset2 = m_mapInfosets.find(pImport->getNamespace(true));
+				if (itInfoset2 == m_mapInfosets.end())
 				{
 					continue;
 				}
 
-				itType2Element = itInfoset->second->type2Elements().find(strXSDType);
-				if (itType2Element != itInfoset->second->type2Elements().end())
+				itType2Element = itInfoset2->second->type2Elements().find(strXSDType);
+				if (itType2Element != itInfoset2->second->type2Elements().end())
 				{
 					if (itType2Element->second.size() > 1)
 					{
@@ -1573,14 +1696,14 @@ namespace _xml
 			// Includes
 			for (auto pInclude : pSchema->getIncludes())
 			{
-				itInfoset = m_mapInfosets.find(pInclude->getNamespace(true));
-				if (itInfoset == m_mapInfosets.end())
+				auto itInfoset2 = m_mapInfosets.find(pInclude->getNamespace(true));
+				if (itInfoset2 == m_mapInfosets.end())
 				{
 					continue;
 				}
 
-				itType2Element = itInfoset->second->type2Elements().find(strXSDType);
-				if (itType2Element != itInfoset->second->type2Elements().end())
+				itType2Element = itInfoset2->second->type2Elements().find(strXSDType);
+				if (itType2Element != itInfoset2->second->type2Elements().end())
 				{
 					if (itType2Element->second.size() > 1)
 					{
@@ -1614,9 +1737,8 @@ namespace _xml
 		return nullptr;
 	}
 
-	_element* _infosets::getXSDElementType(_infoset* pInfoset, _element* pXSDElement) const
+	_element* _infosets::getXSDElementType(_element* pXSDElement) const
 	{
-		VERIFY_POINTER(pInfoset);
 		VERIFY_POINTER(pXSDElement);
 
 		string strTypeAttribute = pXSDElement->getAttributeValue(_xml::type_attr);
@@ -1625,12 +1747,21 @@ namespace _xml
 			return nullptr;
 		}
 
-		string strXSDType = strTypeAttribute;
-
 		vector<string> vecTokens;
-		_string::tokenize(strXSDType, CHR2STR(COLON), vecTokens);
+		_string::tokenize(strTypeAttribute, CHR2STR(COLON), vecTokens);
 
 		if (vecTokens.empty() || (vecTokens.size() > 2))
+		{
+			THROW_INTERNAL_ERROR();
+		}
+
+		string strPrefix = vecTokens.size() == 2 ? vecTokens[0] : "";
+		string strXSDType = vecTokens.size() == 2 ? vecTokens[1] : vecTokens[0];
+
+		auto strNamespace = pXSDElement->getNamespace(strPrefix, strXSDType);
+
+		auto itInfoset = m_mapInfosets.find(strNamespace);
+		if (itInfoset == m_mapInfosets.end())
 		{
 			THROW_INTERNAL_ERROR();
 		}
@@ -1638,26 +1769,26 @@ namespace _xml
 		strXSDType = vecTokens.size() == 1 ? vecTokens[0] : vecTokens[1];
 
 		// Schemas
-		auto itType = pInfoset->types().find(strXSDType);
-		if ((itType != pInfoset->types().end()))
+		auto itType = itInfoset->second->types().find(strXSDType);
+		if ((itType != itInfoset->second->types().end()))
 		{
 			return itType->second;
 		}
 
 		// Imports & Includes
-		for (auto pSchema : pInfoset->getSchemas())
+		for (auto pSchema : itInfoset->second->getSchemas())
 		{
 			// Imports
 			for (auto pImport : pSchema->getImports())
 			{
-				auto itInfoset = m_mapInfosets.find(pImport->getNamespace(true));
-				if (itInfoset == m_mapInfosets.end())
+				auto itInfoset2 = m_mapInfosets.find(pImport->getNamespace(true));
+				if (itInfoset2 == m_mapInfosets.end())
 				{
 					continue;
 				}
 
-				itType = itInfoset->second->types().find(strXSDType);
-				if ((itType != itInfoset->second->types().end()))
+				itType = itInfoset2->second->types().find(strXSDType);
+				if ((itType != itInfoset2->second->types().end()))
 				{
 					return itType->second;
 				}
@@ -1666,47 +1797,136 @@ namespace _xml
 			// Includes
 			for (auto pInclude : pSchema->getIncludes())
 			{
-				auto itInfoset = m_mapInfosets.find(pInclude->getNamespace(true));
-				if (itInfoset == m_mapInfosets.end())
+				auto itInfoset2 = m_mapInfosets.find(pInclude->getNamespace(true));
+				if (itInfoset2 == m_mapInfosets.end())
 				{
 					continue;
 				}
 
-				itType = itInfoset->second->types().find(strXSDType);
-				if ((itType != itInfoset->second->types().end()))
+				itType = itInfoset2->second->types().find(strXSDType);
+				if ((itType != itInfoset2->second->types().end()))
 				{
 					return itType->second;
 				}
 			} // for (auto pInclude ...
-		} // for (auto pSchema : 
+		} // for (auto pSchema ...
 
 		return nullptr;
 	}
 
-	_element* _infosets::getXSDElementSubstitutionElement(_infoset* pInfoset, _element* pXSDElement) const
+	_element* _infosets::getXSDElementSubstitutionElement(_element* pXSDElement) const
 	{
-		VERIFY_POINTER(pInfoset);
 		VERIFY_POINTER(pXSDElement);
 
 		string strSubstitutionGroup = pXSDElement->getAttributeValue(_xml::substitutionGroup_attr);
-		if (strSubstitutionGroup.empty())
+		if (!strSubstitutionGroup.empty())
 		{
-			return nullptr;
-		}
+			vector<string> vecTokens;
+			_string::tokenize(strSubstitutionGroup, CHR2STR(COLON), vecTokens);
 
-		string strXSDType = strSubstitutionGroup;
+			if (vecTokens.empty() || (vecTokens.size() > 2))
+			{
+				THROW_INTERNAL_ERROR();
+			}
 
-		vector<string> vecTokens;
-		_string::tokenize(strXSDType, CHR2STR(COLON), vecTokens);
+			string strPrefix = vecTokens.size() == 2 ? vecTokens[0] : "";
+			string strXSDType = vecTokens.size() == 2 ? vecTokens[1] : vecTokens[0];
 
-		if (vecTokens.empty() || (vecTokens.size() > 2))
+			auto strNamespace = pXSDElement->getNamespace(strPrefix, strXSDType);
+
+			auto itInfoset = m_mapInfosets.find(strNamespace);
+			if (itInfoset == m_mapInfosets.end())
+			{
+				THROW_INTERNAL_ERROR();
+			}
+
+			auto itElement = itInfoset->second->elements().find(strXSDType);
+			if ((itElement != itInfoset->second->elements().end()))
+			{
+				return itElement->second;
+			}
+
+			// Imports & Includes
+			for (auto pSchema : itInfoset->second->getSchemas())
+			{
+				// Imports
+				for (auto pImport : pSchema->getImports())
+				{
+					auto itInfoset2 = m_mapInfosets.find(pImport->getNamespace(true));
+					if (itInfoset2 == m_mapInfosets.end())
+					{
+						continue;
+					}
+
+					itElement = itInfoset2->second->elements().find(strXSDType);
+					if ((itElement != itInfoset2->second->elements().end()))
+					{
+						return itElement->second;
+					}
+				} // for (auto pImport ...
+
+				// Includes
+				for (auto pInclude : pSchema->getIncludes())
+				{
+					auto itInfoset2 = m_mapInfosets.find(pInclude->getNamespace(true));
+					if (itInfoset2 == m_mapInfosets.end())
+					{
+						continue;
+					}
+
+					itElement = itInfoset2->second->elements().find(strXSDType);
+					if ((itElement != itInfoset2->second->elements().end()))
+					{
+						return itElement->second;
+					}
+				} // for (auto pInclude ...
+			} // for (auto pSchema ...
+		} // if (strSubstitutionGroup.empty())
+		else
 		{
-			THROW_INTERNAL_ERROR();
-		}
+			// group/element/complexType/complexContent/extension/sequence/element[ref]
+			string strRefElement = _utils::getChildAttribute(
+				pXSDElement, vector<string>{ complexType_elem, complexContent_elem, extension_elem, sequence_elem, element_elem },
+				ref_attr);
 
-		strXSDType = vecTokens.size() == 1 ? vecTokens[0] : vecTokens[1];
+			if (!strRefElement.empty())
+			{
+				vector<string> vecTokens;
+				_string::tokenize(strRefElement, CHR2STR(COLON), vecTokens);
 
-		auto itElement = pInfoset->elements().find(strXSDType);
+				if (vecTokens.empty() || (vecTokens.size() > 2))
+				{
+					THROW_INTERNAL_ERROR();
+				}
+
+				string strPrefix = vecTokens.size() == 2 ? vecTokens[0] : "";
+				string strXSDType = vecTokens.size() == 2 ? vecTokens[1] : vecTokens[0];
+
+				auto strNamespace = pXSDElement->getNamespace(strPrefix, strXSDType);
+
+				auto itInfoset = m_mapInfosets.find(strNamespace);
+				if (itInfoset == m_mapInfosets.end())
+				{
+					THROW_INTERNAL_ERROR();
+				}
+
+				auto itElement = itInfoset->second->elements().find(strXSDType);
+				if ((itElement != itInfoset->second->elements().end()))
+				{
+					return itElement->second;
+				}
+			}
+		} // else if (strSubstitutionGroup.empty())
+
+		return nullptr;
+	}
+
+	_element* _infosets::getXSDElement(_infoset* pInfoset, const string& strName) const
+	{
+		VERIFY_POINTER(pInfoset);
+		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
+
+		auto itElement = pInfoset->elements().find(strName);
 		if ((itElement != pInfoset->elements().end()))
 		{
 			return itElement->second;
@@ -1724,7 +1944,7 @@ namespace _xml
 					continue;
 				}
 
-				itElement = itInfoset->second->elements().find(strXSDType);
+				itElement = itInfoset->second->elements().find(strName);
 				if ((itElement != itInfoset->second->elements().end()))
 				{
 					return itElement->second;
@@ -1740,7 +1960,7 @@ namespace _xml
 					continue;
 				}
 
-				itElement = itInfoset->second->elements().find(strXSDType);
+				itElement = itInfoset->second->elements().find(strName);
 				if ((itElement != itInfoset->second->elements().end()))
 				{
 					return itElement->second;
@@ -1758,7 +1978,7 @@ namespace _xml
 		if (strElementName.empty())
 		{
 			THROW_ARGUMENT_ERROR();
-		}
+		}		
 
 		if (_xsd_type::isGlobalType(pXSDType))
 		{
@@ -1778,11 +1998,6 @@ namespace _xml
 
 						pXSDElement = searchXSDTypeForXSDElement(pBaseXSDType, strElementName);
 					}
-				}
-
-				if (pXSDElement == nullptr)
-				{
-					THROW_INTERNAL_ERROR();
 				}
 
 				return pXSDElement;
@@ -1815,18 +2030,12 @@ namespace _xml
 			}
 			
 			// complexType/...
-			auto pXSDElement = searchXSDTypeForXSDElementRecursive(pXSDType, strElementName);
-			if (pXSDElement == nullptr)
-			{
-				THROW_INTERNAL_ERROR();
-			}
-
-			return pXSDElement;
+			return searchXSDTypeForXSDElementRecursive(pXSDType, strElementName);
 		} // if (_xsd_type::isGlobalType ...)
 		else
 		{
 			return searchXSDTypeForXSDElementRecursive(pXSDType, strElementName);
-		} // else if (_xsd_type::isGlobalType ...)
+		}
 	}
 
 	_element* _infosets::searchXSDTypeForXSDElementRecursive(_element* pXSDTypeChild, const string& strElementName) const
@@ -1863,11 +2072,15 @@ namespace _xml
 					return pXSDElement;
 				}
 			}
+			else if (pChild->getName() == group_elem)
+			{
+				// NA
+			}
 			else if (pChild->getName() == annotation_elem)
 			{
 				// NA
 			}
-			else if(pChild->getName() == attribute_elem)
+			else if (pChild->getName() == attribute_elem)
 			{
 				// NA
 			}
@@ -1908,7 +2121,7 @@ namespace _xml
 	{
 		VERIFY_POINTER(pXSDType);
 
-		if (pXSDType->getName() == simpleType_elem)
+		if ((pXSDType->getName() == simpleType_elem) || (pXSDType->getName() == simpleContent_elem))
 		{
 			return enumXSDType::simple;
 		}
@@ -1979,12 +2192,19 @@ namespace _xml
 				}
 			}
 
-			// VERSION_START, COMMENT_START
+			// STYLE_SHEET_START, VERSION_START, COMMENT_START
 			if (bCheckForSpecialTag && (strTag.size() >= 3))
 			{
 				bCheckForSpecialTag = false;
 
-				if (_string::startsWith(strTag, VERSION_START, false))
+				if (_string::startsWith(strTag, STYLE_SHEET_START, false))
+				{
+					// <?xml-stylesheet...?>
+					readSpecialTag(pReader, STYLE_SHEET_START, STYLE_SHEET_END, strTag);
+
+					break;
+				}
+				else if (_string::startsWith(strTag, VERSION_START, false))
 				{
 					// <?xml...?>
 					readSpecialTag(pReader, VERSION_START, VERSION_END, strTag);

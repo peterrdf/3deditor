@@ -3,7 +3,7 @@
 #include "../include/engine.h"
 
 // ************************************************************************************************
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(_GISENGINE_STATIC)
 #ifdef _USRDLL
 #define DECSPEC __declspec(dllexport)  
 #else

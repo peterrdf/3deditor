@@ -15,6 +15,7 @@ namespace _xml
 	// ********************************************************************************************
 	const char id_attr[] = "id";
 	const char href_attr[] = "href";
+	const char ref_attr[] = "ref";
 	const char name_attr[] = "name";
 	const char type_attr[] = "type";
 	const char abstract_attr[] = "abstract";
@@ -47,6 +48,7 @@ namespace _xml
 	const char restriction_elem[] = "restriction";
 	const char sequence_elem[] = "sequence";
 	const char choice_elem[] = "choice";	
+	const char group_elem[] = "group";
 	const char attribute_elem[] = "attribute";
 	const char anyAttribute_elem[] = "anyAttribute";
 	const char attributeGroup_elem[] = "attributeGroup";
@@ -119,8 +121,7 @@ namespace _xml
 
 	protected: // Members
 
-		// <?xml...?>
-		// <!--...--> <.../> 
+		// <?xml...?> OR <?xml-stylesheet...?> OR <!--...--> OR <.../> 
 		bool m_bEmpty;
 		string m_strContent;
 
@@ -157,7 +158,7 @@ namespace _xml
 
 	// ********************************************************************************************
 	/// <summary>
-	/// <?xml ... ?>
+	/// <?xml...?>
 	/// </summary>
 	class _version : public _element
 	{
@@ -170,7 +171,20 @@ namespace _xml
 
 	// ********************************************************************************************
 	/// <summary>
-	/// <?xml ... ?>
+	/// <?xml-stylesheet...?>
+	/// </summary>
+	class _style_sheet : public _element
+	{
+
+	public: // Methods
+
+		_style_sheet(_document* pDocument, const string& strTag);
+		virtual ~_style_sheet();
+	};
+
+	// ********************************************************************************************
+	/// <summary>
+	/// <!--...-->
 	/// </summary>
 	class _comment : public _element
 	{
@@ -190,9 +204,11 @@ namespace _xml
 	protected: // Methods
 
 		virtual void onElementLoaded(_element* pElement) = 0;
+#ifdef _LOAD_SCHEMAS
 		virtual void loadNamespaceSchemas(const string& strNamespace) = 0;
 		virtual _schema* loadSchema(const string& strNamespace, const string& strLocation) = 0;
 		virtual void loadSchemas() = 0;
+#endif // _LOAD_SCHEMAS
 	};
 
 	// ********************************************************************************************
@@ -208,6 +224,7 @@ namespace _xml
 		_stream_reader* m_pReader;
 
 		_version* m_pVersion;
+		vector<_style_sheet*> m_vecStyleSheets;
 		vector<_element*> m_vecComments;
 		map<string, map<string, _schema*>> m_mapSchemas; // namespace : (location : _schema*)
 
@@ -240,11 +257,17 @@ namespace _xml
 		void load(const char* szFile);
 		void load(istream* pStream);
 
+#ifdef _LOAD_SCHEMAS
 		virtual void loadSchemas();
+#endif // _LOAD_SCHEMAS
 
 		virtual void clean();
 			
 		_document_site* getSite() const { return m_pSite; }
+		const _version* getVersion() const { return m_pVersion; }
+		const vector<_style_sheet*>& getStyleSheets() const { return m_vecStyleSheets; }
+		const vector<_element*>& getComments() const { return m_vecComments; }
+		const map<string, map<string, _schema*>>& getSchemas() { return m_mapSchemas; }
 		_element* getRoot() const { return m_pRoot; }
 		string getDefaultNamespace(bool bRemoveProtocol) const;
 		const map<string, map<string, _schema*>>& getSchemas() const { return m_mapSchemas; }
@@ -261,9 +284,11 @@ namespace _xml
 		
 		virtual void load();
 
+#ifdef _LOAD_SCHEMAS
 		_schema* loadSchema(const string& strNamespace, const string& strLocation);
 		void loadNamespaceSchemas(const string& strNamespace);
 		void loadNamespaces();
+#endif // _LOAD_SCHEMAS
 
 	private: // Methods
 
@@ -293,7 +318,9 @@ namespace _xml
 		virtual void deserialize(_srln::_archive* /*pArchive*/) override;
 
 		// _document
+#ifdef _LOAD_SCHEMAS		
 		virtual void loadSchemas() override;
+#endif // _LOAD_SCHEMAS
 		virtual void clean() override;
 
 	protected: // Methods
@@ -322,21 +349,26 @@ namespace _xml
 		string m_strNamespace;
 		vector<_schema*> m_vecSchemas;
 
-		// element name : _element*
-		// e.g. <xs:element name="CityModel" type="CityModelType" substitutionGroup="gml:_FeatureCollection"/>
+		// element name : _element*, e.g. 
+		// <xs:element name="CityModel" type="CityModelType" substitutionGroup="gml:_FeatureCollection"/>		
 		map<string, _element*> m_mapElements;
 
-		// e.g. 
+		// group name : _element*, e.g. 
+		// <xs:element name="CityModel" type="CityModelType" substitutionGroup="gml:_FeatureCollection"/>
+		//	<group name="CityModelMemberGroup">
+		map<string, _element*> m_mapGroups;
+
+		// type name : _element*, e.g. 
 		// <element name = "_CoordinateOperation" type = "gml:AbstractCoordinateOperationType" abstract = "true" substitutionGroup = "gml:Definition" / >
 		// <element name="_SingleOperation" type="gml:AbstractCoordinateOperationType" abstract="true" substitutionGroup="gml:_CoordinateOperation">
 		map<string, vector<_element*>> m_mapType2Elements;
 
-		// type name (complexType/simpleType) : _element*
-		// e.g. <xs:complexType name="CityModelType">
+		// type name (complexType/simpleType) : _element*, e.g. 
+		// <xs:complexType name="CityModelType">
 		map<string, _element*> m_mapTypes;
 
-		// attribute name : _element*
-		// e.g. <attribute name="uom" type="anyURI">
+		// attribute name : _element*, e.g. 
+		// <attribute name="uom" type="anyURI">
 		map<string, _element*> m_mapAttributes;
 		
 	public: // Methods
@@ -348,6 +380,7 @@ namespace _xml
 
 		const vector<_schema*>& getSchemas() const { return m_vecSchemas; }
 		const map<string, _element*>& elements() { return m_mapElements; }
+		const map<string, _element*>& groups() { return  m_mapGroups; }
 		const map<string, vector<_element*>>& type2Elements() { return m_mapType2Elements; }
 		const map<string, _element*>& types() { return m_mapTypes; }
 		const map<string, _element*>& attributes() { return m_mapAttributes; }
@@ -355,6 +388,7 @@ namespace _xml
 	private: // Methods
 
 		void loadElement(_element* pXSDElement);
+		void loadGroup(_element* pXSDElement);
 		void loadType(_element* pXSDElement);		
 		void loadAttribute(_element* pXSDElement);
 	};
@@ -381,9 +415,10 @@ namespace _xml
 		_element* getXSDType(_element* pXMLElement) const;
 		_element* getXSDType(_element* pXMLElement, const string& strTypeUniqueName) const;		
 		_element* getXSDAttribute(_element* pXMLElement, _xml::_attribute* pAttribute) const;
-		_element* getXSDTypeBaseElement(_element* pXMLElement, _element* pXSDType, _infoset*& pInfoset) const;
-		_element* getXSDElementType(_infoset* pInfoset, _element* pXSDElement) const;
-		_element* getXSDElementSubstitutionElement(_infoset* pInfoset, _element* pXSDElement) const;
+		_element* getXSDTypeBaseElement(_element* pXMLElement, _element* pXSDType) const;
+		_element* getXSDElementType(_element* pXSDElement) const;
+		_element* getXSDElementSubstitutionElement(_element* pXSDElement) const;
+		_element* getXSDElement(_infoset* pInfoset, const string& strName) const;
 
 		const map<string, _infoset*>& infosets() const { return m_mapInfosets; }
 
@@ -391,7 +426,6 @@ namespace _xml
 
 		_element* searchXSDTypeForXSDElement(_element* pXSDType, const string& strElementName) const;
 		_element* searchXSDTypeForXSDElementRecursive(_element* pXSDTypeChild, const string& strElementName) const;
-
 	};
 
 	// ********************************************************************************************

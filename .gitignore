@@ -169,3 +169,9 @@ Win32/Debug/ExtensionConepts.*
 Win32/Release/ExtensionConepts.*
 Win32/Release/ImportPLY.*
 Win32/Debug/ImportPLY.*
+/3DEditor/x64/Release_Product
+/RDFViewer/x64/Release_Product
+/Test3DEditor/x64/Release_Product
+/x64/Release_Product
+/RDFViewer/Release_Product
+/Test3DEditor/Release_Product
