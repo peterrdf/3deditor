@@ -8,15 +8,13 @@
 #include <string.h>
 #include <errno.h>
 
-#include <atlbase.h>
-using namespace ATL;
-
 #ifdef _WINDOWS
 #include <Winsock2.h>
 #include <Winhttp.h>
 #include <ws2tcpip.h>
-#else
-#error Linux/MacOS support
+
+#include <atlbase.h>
+using namespace ATL;
 #endif // _WINDOWS
 
 #include "_log.h"
@@ -92,9 +90,11 @@ namespace _net
 
 	private: // Members
 
+#ifdef _WINDOWS
 		HINTERNET m_hSession;
 		HINTERNET m_hConnect;
 		HINTERNET m_hRequest;
+#endif // _WINDOWS
 
 		std::stringstream m_ssPayload;
 
@@ -104,7 +104,7 @@ namespace _net
 		virtual ~_http_client();
 
 		// GET
-		void get(const wchar_t* szUrl);
+		void get(const char* szUrl);
 
 		std::stringstream const* getPayload() const { return &m_ssPayload; }
 

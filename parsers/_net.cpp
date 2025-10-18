@@ -16,10 +16,13 @@ namespace _net
     // ********************************************************************************************
     _http_client::_http_client()
         : _log_client()
+#ifdef _WINDOWS
         , m_hSession(NULL)
         , m_hConnect(NULL)
         , m_hRequest(NULL)
+#endif // _WINDOWS
     {
+#ifdef _WINDOWS
         // Use WinHttpOpen to obtain a session handle
         m_hSession = WinHttpOpen(
             L"GISEngine",
@@ -32,23 +35,31 @@ namespace _net
         {
             LOG_THROW_ERROR_F("WinHttpOpen() failed; error code: %u", GetLastError());
         }
+#endif // _WINDOWS
     }
 
     /*virtual*/ _http_client::~_http_client()
     {
         clean();
 
+#ifdef _WINDOWS
         if (m_hSession != NULL)
         {
             WinHttpCloseHandle(m_hSession);
             m_hSession = NULL;
         }
+#endif // _WINDOWS
     }
 
-    void _http_client::get(const wchar_t* szUrl)
+    void _http_client::get(const char* szUrl)
     {
-        logInfof("Downloading '%s' ...", (LPCSTR)CW2A(szUrl));
+        VERIFY_POINTER(szUrl);
 
+        logInfof("Downloading '%s' ...", szUrl);
+        
+        wstring strUrl = (LPCWSTR)CA2W(szUrl);
+
+#ifdef _WINDOWS
         clean();
 
         // Extract Host & Path
@@ -59,7 +70,7 @@ namespace _net
         urlComps.dwHostNameLength = (DWORD)-1;
         urlComps.dwUrlPathLength = (DWORD)-1;
         urlComps.dwExtraInfoLength = (DWORD)-1;
-        if (!WinHttpCrackUrl(szUrl, (DWORD)wcslen(szUrl), 0, &urlComps))
+        if (!WinHttpCrackUrl(strUrl.c_str(), (DWORD)wcslen(strUrl.c_str()), 0, &urlComps))
         {
             LOG_THROW_ERROR_F("WinHttpCrackUrl() failed; error code: %d.", GetLastError());
         }
@@ -87,7 +98,7 @@ namespace _net
             NULL,
             WINHTTP_NO_REFERER,
             WINHTTP_DEFAULT_ACCEPT_TYPES,
-            _string::startsWith((LPCSTR)CW2A(szUrl), HTTPS, false) ? WINHTTP_FLAG_SECURE : 0);
+            _string::startsWith(szUrl, HTTPS, false) ? WINHTTP_FLAG_SECURE : 0);
         if (m_hRequest == NULL)
         {
             LOG_THROW_ERROR_F("WinHttpOpenRequest() failed; error code: %d.", GetLastError());
@@ -162,10 +173,12 @@ namespace _net
 
             delete[] pszOutBuffer;
         } while (dwSize > 0);
+#endif // _WINDOWS
     }
 
     /*virtual*/ void _http_client::clean()
     {
+#ifdef _WINDOWS
         if (m_hConnect != NULL)
         {
             WinHttpCloseHandle(m_hConnect);
@@ -177,6 +190,7 @@ namespace _net
             WinHttpCloseHandle(m_hRequest);
             m_hRequest = NULL;
         }
+#endif // _WINDOWS
 
         m_ssPayload.clear();
     }
