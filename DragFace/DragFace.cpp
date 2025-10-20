@@ -77,7 +77,8 @@ extern OwlInstance DragFace(
 	OwlInstance					instance,
 	int							iConceptualFace,
 	double						startDragPoint[3],
-	double						targetRayOrg[3],
+    double						endDragPoint[3],
+    double						targetRayOrg[3],
 	double						targetRayDir[3]
 )
 {
@@ -92,17 +93,13 @@ extern OwlInstance DragFace(
     auto model = GetModel(instance);
 
     auto startPt = MakePoint(startDragPoint);
+    auto endDragPt = MakePoint(endDragPoint);
     auto endRayOrg = MakePoint(targetRayOrg);
     auto endRayDir = MakeVector(targetRayDir);
 
-    DrawPoint(model, startPt, size);
-    DrawPoint(model, endRayOrg, size);
+    DrawPoint(model, endDragPt, 2*size);
 
-#if 0
     auto segment = ProjectCubeOntoLine(box, endRayOrg, endRayDir);
 
 	return DrawInput(model, startPt, segment, size);
-#endif
-
-    return NULL;
 }
