@@ -348,7 +348,7 @@ void CRDFOpenGLView::OnDragFace(
 	//
 	//
 	//
-	auto inst = DragFace(instance, iConceptualFace, startDragPoint, targetRayOrg, targerRayDir);
+	DragFace(instance, iConceptualFace, startDragPoint, endDragPoint, targerRayDir);
 
 	_ptr<_rdf_model>(getController()->getModel())->reload();
 	getController()->onModelUpdated();

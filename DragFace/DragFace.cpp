@@ -81,20 +81,28 @@ extern OwlInstance DragFace(
 	double						targetRayDir[3]
 )
 {
-	auto model = GetModel(instance);
+    double box[6] = { 0,0,0,0,0,0 };
+    GetBoundingBox(instance, box, box + 3);
+
+    double size = 0;
+    for (int i = 0; i < 3; i++) {
+        size = max(size, (box[i + 3] - box[i]) / 15);
+    }
+
+    auto model = GetModel(instance);
+
     auto startPt = MakePoint(startDragPoint);
     auto endRayOrg = MakePoint(targetRayOrg);
     auto endRayDir = MakeVector(targetRayDir);
 
-	double box[6] = { 0,0,0,0,0,0 };
-	GetBoundingBox(instance, box, box + 3);
+    DrawPoint(model, startPt, size);
+    DrawPoint(model, endRayOrg, size);
 
-	double size = 0;
-	for (int i = 0; i < 3; i++) {
-		size = max(size, (box[i + 3] - box[i]) / 15);
-	}
-
+#if 0
     auto segment = ProjectCubeOntoLine(box, endRayOrg, endRayDir);
 
 	return DrawInput(model, startPt, segment, size);
+#endif
+
+    return NULL;
 }
