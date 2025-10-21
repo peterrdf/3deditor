@@ -60,12 +60,12 @@ static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 	return trans;
 }
 
-static OwlInstance DrawInput(OwlModel model, Point3d& startPt, Segment3D& target, double size)
+static OwlInstance DrawInput(OwlModel model, Point3d& pt, Segment3D& segment, double size)
 {
     OwlInstance arr[3];
-    arr[0] = DrawPoint(model, startPt, size);
-    arr[1] = DrawPoint(model, target.pt[0], size);
-    arr[2] = DrawPoint(model, target.pt[1], size);
+    arr[0] = DrawPoint(model, pt, size);
+    arr[1] = DrawPoint(model, segment.pt[0], size);
+    arr[2] = DrawPoint(model, segment.pt[1], size);
 
     auto collection = GEOM::Collection::Create(model);
     collection.set_objects(arr, 3);
@@ -97,9 +97,9 @@ extern OwlInstance DragFace(
     auto endRayOrg = MakePoint(targetRayOrg);
     auto endRayDir = MakeVector(targetRayDir);
 
-    DrawPoint(model, endDragPt, 2*size);
+    //DrawPoint(model, endDragPt, 2*size);
 
     auto segment = ProjectCubeOntoLine(box, endRayOrg, endRayDir);
 
-	return DrawInput(model, startPt, segment, size);
+	return DrawInput(model, endDragPt, segment, size);
 }
