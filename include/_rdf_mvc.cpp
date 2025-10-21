@@ -342,7 +342,8 @@ void _rdf_model::loadInstances()
 /*virtual*/ void  _rdf_model::preLoad()
 {
 	getInstancesDefaultEnableState();
-	updateVertexBufferOffset();
+	//#dragface
+	//updateVertexBufferOffset();
 }
 
 void _rdf_model::load()
@@ -355,7 +356,8 @@ void _rdf_model::load()
 
 	postLoad();
 
-	scale();
+	//#dragface
+	//scale();
 }
 
 void _rdf_model::getInstancesDefaultEnableState()
