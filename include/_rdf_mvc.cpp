@@ -1024,7 +1024,10 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		return;
 	}
 
-	pInstance->recalculate();
+	ClearedExternalBuffers(getModel()->getOwlModel());
+
+	//ClearedInstanceExternalBuffers(pInstance->getOwlInstance());
+	pInstance->recalculate(true);
 
 	vector<OwlInstance> vecAncestors;
 	_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
@@ -1032,6 +1035,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 	for (auto owlInstance : vecAncestors) {
 		auto pAncestorInstance = _ptr<_rdf_model>(getModel())->getInstanceByOwlInstance(owlInstance);
 		if (pAncestorInstance != nullptr) {
+			//ClearedInstanceExternalBuffers(owlInstance);
 			pAncestorInstance->recalculate(true);
 		}
 	}
