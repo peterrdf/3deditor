@@ -250,18 +250,23 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
 
-		double endPt[6];
-		if (getOGLPos(point.x, point.y, -FLT_MAX, endPt[0], endPt[1], endPt[2])) {
-			if (getOGLPos(point.x, point.y, -FLT_MAX/10, endPt[3], endPt[4], endPt[5])) {
+		double endPts[6];
+		if (getOGLPos(point.x, point.y, -FLT_MAX, endPts[0], endPts[1], endPts[2])) {
+
+			getOGLPos(point.x, point.y, 0, endPts[3], endPts[4], endPts[5]);
+
+				//endPts[3] = endPts[0] + m_vecViewPoint.x;
+				//endPts[4] = endPts[1] + m_vecViewPoint.y;
+				//endPts[5] = endPts[2] + m_vecViewPoint.z;
+			
 				DragFace(
 					m_pDragFaceInstance->getOwlInstance(),
 					m_iDragFace,
 					startDragPoint,
-					endPt);
+					endPts);
 
 				_ptr<_rdf_model>(getController()->getModel())->reload();
 				getController()->onModelUpdated();
-			}
 		}
 
 		m_bDragFaceMode = FALSE;

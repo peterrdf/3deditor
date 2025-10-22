@@ -44,7 +44,10 @@ static Segment3D ProjectCubeOntoLine(
 
 static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 {
-	auto sphere = GEOM::Sphere::Create(model);
+    char name[256];
+    sprintf_s(name, "(%g, %g, %g)", pt.x, pt.y, pt.z);
+
+	auto sphere = GEOM::Sphere::Create(model, name);
 	sphere.set_radius(size);
 	sphere.set_segmentationParts(36);
 
@@ -53,7 +56,7 @@ static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 	T.set__42(pt[1]);
 	T.set__43(pt[2]);
 
-	auto trans = GEOM::Transformation::Create(model);
+	auto trans = GEOM::Transformation::Create(model, name);
 	trans.set_object(sphere);
 	trans.set_matrix(T);
 
@@ -64,7 +67,7 @@ static OwlInstance DrawPoints(OwlModel model, Point3d const* rpt, int npt, doubl
 {
     std::vector<OwlInstance> rinst;
     
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < npt; i++) {
         rinst.push_back(DrawPoint(model, rpt[i], size));
     }
 
@@ -96,9 +99,13 @@ extern OwlInstance DragFace(
     pt[1] = MakePoint(endDragLine);
     pt[2] = MakePoint(endDragLine + 3);
 
+    auto vec = pt[2] - pt[1];
+    //normalize(vec);     
+    pt[2] = pt[1] - vec;
+
     //auto endRayDir = endPt2 - endPt1;
 
     //auto segment = ProjectCubeOntoLine(box, endPt1, endRayDir);
 
-	return DrawPoints(model, pt, 3, size);
+	return DrawPoints(model, pt+1, 2, size);
 }
