@@ -2519,7 +2519,7 @@ public: // Methods
     virtual void onApplicationPropertyChanged(_view* pSender, enumApplicationProperty enApplicationProperty) override;
     virtual void onControllerChanged() override;
 
-    virtual void _load();
+    virtual void _load(bool bUpdateCameraSettings = true);
 
     virtual void _draw(CDC* pDC);
 

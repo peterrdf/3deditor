@@ -7,6 +7,7 @@
 #include "_rdf_instance.h"
 #include "_rdf_mvc.h"
 #include "_oglUtils.h"
+#include "_ptr.h"
 
 // ************************************************************************************************
 class CRDFOpenGLView : public _oglView
