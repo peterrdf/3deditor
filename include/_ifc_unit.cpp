@@ -2,12 +2,17 @@
 #include "_ifc_unit.h"
 
 // ************************************************************************************************
-_ifc_unit::_ifc_unit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
-    : m_iType(UNKNOWN)
+_ifc_unit::_ifc_unit(SdaiInstance sdaiInstance, const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName)
+	: m_sdaiInstance(sdaiInstance)
+    , m_iType(UNKNOWN)
     , m_strType(L"")
     , m_strPrefix(L"")
     , m_strName(L"")
 {
+    assert(m_sdaiInstance != 0);
+    assert(szName != nullptr);
+	assert(szType != nullptr);
+
     convertType(szType);
     convertPrefix(szPrefix);
     convertName(szName);
@@ -597,7 +602,7 @@ void _ifc_unit_provider::loadUnits(SdaiInstance sdaiProjectInstance)
                     wchar_t* szName = nullptr;
                     sdaiGetAttrBN(sdaiUnitComponentInstance, "Name", sdaiUNICODE, &szName);
 
-                    _ifc_unit* pUnit = new _ifc_unit(szUnitType, szPrefix, szName);
+                    _ifc_unit* pUnit = new _ifc_unit(sdaiUnitComponentInstance, szUnitType, szPrefix, szName);
                     m_mapUnits[pUnit->getType()] = pUnit;
                 }
                 else {
@@ -619,7 +624,7 @@ void _ifc_unit_provider::loadUnits(SdaiInstance sdaiProjectInstance)
                 wchar_t* szName = nullptr;
                 sdaiGetAttrBN(sdaiAggrInstance, "Name", sdaiUNICODE, &szName);
 
-                auto pUnit = new _ifc_unit(szUnitType, szPrefix, szName);
+                auto pUnit = new _ifc_unit(sdaiAggrInstance, szUnitType, szPrefix, szName);
                 m_mapUnits[pUnit->getType()] = pUnit;
             } // IFCSIUNIT
         } // else IFCCONVERSIONBASEDUNIT

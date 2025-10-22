@@ -34,6 +34,7 @@ public: // Methods
 
 public: // Properties
 
+    const vector<_ifc_geometry*>& getMappedGeometries() const { return m_vecMappedGeometries; }
     bool getIsMappedItem() const { return m_bIsMappedItem; }
     bool getIsReferenced() const { return m_bIsReferenced; }
 };

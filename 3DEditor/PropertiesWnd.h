@@ -74,13 +74,16 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class CColorApplicationProperty : public CMFCPropertyGridColorProperty
+class CColorSelectorProperty : public CMFCPropertyGridColorProperty
 {
 
 public: // Methods
 
-	CColorApplicationProperty(const CString & strName, const COLORREF & color, CPalette * pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
-	virtual ~CColorApplicationProperty();
+	CColorSelectorProperty(const CString& strName, const COLORREF& color, CPalette* pPalette, LPCTSTR szDescription, DWORD_PTR dwData);
+	virtual ~CColorSelectorProperty();
+
+	COLORREF GetSelectedColor() const;
+	COLORREF GetAutomaticColor() const;
 };
 
 // ************************************************************************************************
@@ -211,6 +214,8 @@ protected: // Methods
 	
 	// Support for properties
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
+	void OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
+	void OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 
 private: // Methods
 

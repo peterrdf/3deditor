@@ -9,8 +9,9 @@
 _ap242_model::_ap242_model(bool bLoadInstancesOnDemand/* = false*/)
     : _ap_model(enumAP::STEP)
     , m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
+    , m_pPropertyProvider(nullptr)
     , m_mapExpressID2Assembly()
-    , m_vecDraughtingModels()
+    , m_vecDraughtingModels()	
 {}
 
 /*virtual*/ _ap242_model::~_ap242_model()
@@ -49,6 +50,11 @@ _ap242_model::_ap242_model(bool bLoadInstancesOnDemand/* = false*/)
 /*virtual*/ void _ap242_model::clean(bool bCloseModel/*= true*/) /*override*/
 {
     _ap_model::clean(bCloseModel);
+
+    if (bCloseModel) {
+        delete m_pPropertyProvider;
+        m_pPropertyProvider = nullptr;
+    }
 
     auto itExpressID2Assembly = m_mapExpressID2Assembly.begin();
     for (; itExpressID2Assembly != m_mapExpressID2Assembly.end(); itExpressID2Assembly++) {
@@ -295,4 +301,13 @@ _ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdai
 void _ap242_model::save(const wchar_t* /*szPath*/)
 {
     assert(0); //#todo
+}
+
+_ap242_property_provider* _ap242_model::getPropertyProvider()
+{
+    if (m_pPropertyProvider == nullptr) {
+        m_pPropertyProvider = new _ap242_property_provider(getSdaiModel());
+	}
+
+    return m_pPropertyProvider;
 }

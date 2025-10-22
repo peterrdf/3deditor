@@ -862,11 +862,6 @@ _rdf_instance* _rdf_controller::createInstance(_view* pSender, OwlClass owlClass
 	auto pInstance = _ptr<_rdf_model>(getModel())->createInstance(owlClass);
 	assert(pInstance != nullptr);
 
-	if (m_bScaleAndCenterAllVisibleGeometry) {
-		_ptr<_rdf_model>(getModel())->reloadGeometries();
-		getModel()->scale();
-	}
-
 	auto itView = getViews().begin();
 	for (; itView != getViews().end(); itView++) {
 		_ptr<_rdf_view> rdfView(*itView, false);
@@ -1031,9 +1026,8 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		return;
 	}
 
-	pInstance->recalculate();
+	pInstance->recalculate(true);
 
-	// Recalculate ancestors
 	vector<OwlInstance> vecAncestors;
 	_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
 

@@ -84,7 +84,7 @@ namespace _json
 		VERIFY_STLOBJ_IS_EMPTY(strValue);
 
 		char ch = pReader->getChar();
-		if (ch != DOULE_QUOT_MARK)
+		if (ch != DOUBLE_QUOT_MARK)
 		{
 			THROW_INTERNAL_ERROR();
 		}
@@ -92,7 +92,7 @@ namespace _json
 		ch = pReader->getNextChar(true);
 		while (ch != EOF)
 		{
-			if ((ch == DOULE_QUOT_MARK) &&
+			if ((ch == DOUBLE_QUOT_MARK) &&
 				(strValue.empty() || (strValue.back() != BACK_SLASH)))
 			{
 				ch = pReader->getNextChar(true);
@@ -174,7 +174,7 @@ namespace _json
 
 				return;
 			}
-			else if (ch == DOULE_QUOT_MARK)
+			else if (ch == DOUBLE_QUOT_MARK)
 			{
 				_value::loadString(pReader, m_strValue);
 
@@ -265,7 +265,7 @@ namespace _json
 
 				continue;
 			}
-			else if (ch == DOULE_QUOT_MARK)
+			else if (ch == DOUBLE_QUOT_MARK)
 			{
 				auto pProperty = new _property(this, getSite());
 				pProperty->load(pReader);
@@ -577,7 +577,7 @@ namespace _json
 		VERIFY_STLOBJ_IS_EMPTY(m_strName);
 
 		char ch = pReader->getChar();
-		if (ch != DOULE_QUOT_MARK)
+		if (ch != DOUBLE_QUOT_MARK)
 		{
 			THROW_INTERNAL_ERROR();
 		}
@@ -585,7 +585,7 @@ namespace _json
 		ch = pReader->getNextChar(true);
 		while (ch != EOF)
 		{
-			if ((ch == DOULE_QUOT_MARK) && 
+			if ((ch == DOUBLE_QUOT_MARK) && 
 				(m_strName.empty() || (m_strName.back() != BACK_SLASH)))
 			{
 				ch = pReader->getNextChar(true);

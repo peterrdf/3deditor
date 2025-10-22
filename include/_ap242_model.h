@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_ap_mvc.h"
+#include "_ap242_property.h"
 
 // ************************************************************************************************
 class _ap242_product_definition;
@@ -16,6 +17,8 @@ class _ap242_model : public _ap_model
 private: // Members
 
     bool m_bLoadInstancesOnDemand;
+
+    _ap242_property_provider* m_pPropertyProvider;
 
     map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
     vector<_ap242_draughting_model*> m_vecDraughtingModels;
@@ -53,4 +56,5 @@ public: // Properties
 
     const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
     const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
+    _ap242_property_provider* getPropertyProvider();
 };

@@ -225,14 +225,14 @@ namespace _bin2gltf
 
 		string strProperty;
 
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += strName.c_str();
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += COLON;
 		strProperty += SPACE;
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += strValue.c_str();
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 
 		return strProperty;
 	}
@@ -244,9 +244,9 @@ namespace _bin2gltf
 
 		string strProperty;
 
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += strName.c_str();
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += COLON;
 		strProperty += SPACE;
 		strProperty += strValue.c_str();
@@ -261,9 +261,9 @@ namespace _bin2gltf
 
 		string strProperty;
 
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += strName.c_str();
-		strProperty += DOULE_QUOT_MARK;
+		strProperty += DOUBLE_QUOT_MARK;
 		strProperty += COLON;
 		strProperty += SPACE;
 
@@ -288,14 +288,14 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strValue.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 	}
 
 	void _exporter::writeIntProperty(const string& strName, int iValue)
@@ -305,9 +305,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << iValue;
@@ -320,9 +320,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << iValue;
@@ -335,9 +335,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << fValue;
@@ -350,9 +350,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << dValue;
@@ -365,9 +365,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << (bValue ? "true" : "false");
@@ -381,9 +381,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << strName.c_str();
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
@@ -418,9 +418,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << BUFFERS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
@@ -581,9 +581,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << BUFFER_VIEWS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
@@ -713,9 +713,9 @@ namespace _bin2gltf
 		*getOutputStream() << getNewLine();
 		writeIndent();
 
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << ACCESSORS_PROP;
-		*getOutputStream() << DOULE_QUOT_MARK;
+		*getOutputStream() << DOUBLE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 
@@ -964,9 +964,9 @@ namespace _bin2gltf
 
 		// meshes
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << MESHES_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1001,9 +1001,9 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << "primitives";
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << COLON;
 						*getOutputStream() << SPACE;
 
@@ -1079,9 +1079,9 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << "primitives";
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << COLON;
 						*getOutputStream() << SPACE;
 
@@ -1151,9 +1151,9 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << "primitives";
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << COLON;
 						*getOutputStream() << SPACE;
 
@@ -1227,9 +1227,9 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << "primitives";
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << COLON;
 						*getOutputStream() << SPACE;
 
@@ -1299,9 +1299,9 @@ namespace _bin2gltf
 
 		// nodes
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << NODES_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1421,9 +1421,9 @@ namespace _bin2gltf
 
 		// scenes
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << SCENES_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1462,9 +1462,9 @@ namespace _bin2gltf
 
 		// materials
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << MATERIALS_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1513,9 +1513,9 @@ namespace _bin2gltf
 							indent()++;
 							*getOutputStream() << getNewLine();
 							writeIndent();
-							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << DOUBLE_QUOT_MARK;
 							*getOutputStream() << "pbrMetallicRoughness";
-							*getOutputStream() << DOULE_QUOT_MARK;
+							*getOutputStream() << DOUBLE_QUOT_MARK;
 							*getOutputStream() << COLON;
 							*getOutputStream() << SPACE;
 
@@ -1557,9 +1557,9 @@ namespace _bin2gltf
 						indent()++;
 						*getOutputStream() << getNewLine();
 						writeIndent();
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << "pbrMetallicRoughness";
-						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << DOUBLE_QUOT_MARK;
 						*getOutputStream() << COLON;
 						*getOutputStream() << SPACE;
 
@@ -1636,9 +1636,9 @@ namespace _bin2gltf
 
 		// images
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << IMAGES_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1689,9 +1689,9 @@ namespace _bin2gltf
 
 		// samplers
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << SAMPLERS_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 
@@ -1717,9 +1717,9 @@ namespace _bin2gltf
 
 		// images
 		{
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << TEXTURES_PROP;
-			*getOutputStream() << DOULE_QUOT_MARK;
+			*getOutputStream() << DOUBLE_QUOT_MARK;
 			*getOutputStream() << COLON;
 			*getOutputStream() << SPACE;
 

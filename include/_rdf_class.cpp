@@ -5,6 +5,7 @@
 // ************************************************************************************************
 _rdf_class::_rdf_class(OwlClass owlClass)
 	: m_owlClass(owlClass)
+	, m_strName(L"")
 	, m_vecParentClasses()
 	, m_vecAncestorClasses()
 	, m_vecPropertyRestrictions()

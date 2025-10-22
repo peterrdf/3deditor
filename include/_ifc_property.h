@@ -13,21 +13,59 @@ class _ifc_property
 
 private: // Members	
 
+	SdaiInstance m_sdaiInstance;
+	wstring m_strEntityName;
 	wstring m_strName;
 	wstring m_strValue;
+	wstring m_strIfcValueType;
+	wstring m_strValueType;
 
 public: // Methods
 
-	_ifc_property(const wstring& strName, const wstring& strValue);
+	_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, const wstring& strValue);
 	virtual ~_ifc_property();
 
 	static bool hasProperties(SdaiModel sdaiModel, SdaiInstance sdaiInstance);
 	static wstring getPropertySingleValue(SdaiInstance sdaiPropertySingleValueInstance);
+	static pair<wstring, wstring> getValueTypes(SdaiInstance sdaiInstance);
 
 public: // Properties
 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	wstring getEntityName() const { return m_strEntityName; }
 	wstring getName() const { return m_strName; }
 	wstring getValue() const { return m_strValue; }
+	wstring getIfcValueType() const { return m_strIfcValueType; }
+	wstring getValueType() const { return m_strValueType; }
+};
+
+// ************************************************************************************************
+struct _ifc_property_comparator
+{
+	bool operator()(const _ifc_property* lhs, const _ifc_property* rhs) const
+	{
+		int entityNameCmp = lhs->getEntityName().compare(rhs->getEntityName());
+		if (entityNameCmp != 0) {
+			return entityNameCmp < 0;
+		}
+
+		int nameCmp = lhs->getName().compare(rhs->getName());
+		if (nameCmp != 0) {
+			return nameCmp < 0;
+		}
+
+		int valueCmp = lhs->getValue().compare(rhs->getValue());
+		if (valueCmp != 0) {
+			return valueCmp < 0;
+		}
+
+		int ifcValueTypeCmp = lhs->getIfcValueType().compare(rhs->getIfcValueType());
+		if (ifcValueTypeCmp != 0) {
+			return ifcValueTypeCmp < 0;
+		}
+
+		return lhs->getValueType().compare(rhs->getValueType()) < 0;
+	}
 };
 
 // ************************************************************************************************
@@ -36,16 +74,18 @@ class _ifc_property_set
 
 private: // Members	
 
+	SdaiInstance m_sdaiInstance;
 	wstring m_strName;
 	vector<_ifc_property*> m_vecProperties;
 
 public: // Methods
 
-	_ifc_property_set(const wstring& strName);
+	_ifc_property_set(SdaiInstance sdaiInstance, const wstring& strName);
 	virtual ~_ifc_property_set();
 
 public: // Properties
 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	wstring getName() const { return m_strName; }
 	vector<_ifc_property*>& properties() { return m_vecProperties; }
 };

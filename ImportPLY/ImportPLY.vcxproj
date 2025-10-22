@@ -9,6 +9,14 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Product|Win32">
+      <Configuration>Release_Product</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Product|x64">
+      <Configuration>Release_Product</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -33,6 +41,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -41,6 +56,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -62,10 +84,16 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
@@ -73,6 +101,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -84,11 +116,41 @@
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_TRIANGULATE_PROCESS;ASSIMP_BUILD_NO_EXPORT;ASSIMP_BUILD_NO_USD_IMPORTER;ASSIMP_BUILD_NO_X_IMPORTER;ASSIMP_BUILD_NO_AMF_IMPORTER;ASSIMP_BUILD_NO_3DS_IMPORTER;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_MD3_IMPORTER;ASSIMP_BUILD_NO_MDL_IMPORTER;ASSIMP_BUILD_NO_MD2_IMPORTER;ASSIMP_BUILD_NO_ASE_IMPORTER;ASSIMP_BUILD_NO_OBJ_IMPORTER;ASSIMP_BUILD_NO_HMP_IMPORTER;ASSIMP_BUILD_NO_SMD_IMPORTER;ASSIMP_BUILD_NO_MDC_IMPORTER;ASSIMP_BUILD_NO_MD5_IMPORTER;ASSIMP_BUILD_NO_STL_IMPORTER;ASSIMP_BUILD_NO_LWO_IMPORTER;ASSIMP_BUILD_NO_DXF_IMPORTER;ASSIMP_BUILD_NO_NFF_IMPORTER;ASSIMP_BUILD_NO_RAW_IMPORTER;ASSIMP_BUILD_NO_SIB_IMPORTER;ASSIMP_BUILD_NO_OFF_IMPORTER;ASSIMP_BUILD_NO_AC_IMPORTER;ASSIMP_BUILD_NO_BVH_IMPORTER;ASSIMP_BUILD_NO_IRRMESH_IMPORTER;ASSIMP_BUILD_NO_IRR_IMPORTER;ASSIMP_BUILD_NO_Q3D_IMPORTER;ASSIMP_BUILD_NO_B3D_IMPORTER;ASSIMP_BUILD_NO_COLLADA_IMPORTER;ASSIMP_BUILD_NO_TERRAGEN_IMPORTER;ASSIMP_BUILD_NO_CSM_IMPORTER;ASSIMP_BUILD_NO_3D_IMPORTER;ASSIMP_BUILD_NO_LWS_IMPORTER;ASSIMP_BUILD_NO_OGRE_IMPORTER;ASSIMP_BUILD_NO_OPENGEX_IMPORTER;ASSIMP_BUILD_NO_MS3D_IMPORTER;ASSIMP_BUILD_NO_COB_IMPORTER;ASSIMP_BUILD_NO_BLEND_IMPORTER;ASSIMP_BUILD_NO_Q3BSP_IMPORTER;ASSIMP_BUILD_NO_NDO_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_XGL_IMPORTER;ASSIMP_BUILD_NO_FBX_IMPORTER;ASSIMP_BUILD_NO_ASSBIN_IMPORTER;ASSIMP_BUILD_NO_GLTF_IMPORTER;ASSIMP_BUILD_NO_GLTF1_IMPORTER;ASSIMP_BUILD_NO_GLTF2_IMPORTER;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_3MF_IMPORTER;ASSIMP_BUILD_NO_X3D_IMPORTER;ASSIMP_BUILD_NO_MMD_IMPORTER;ASSIMP_BUILD_NO_IQM_IMPORTER;WIN32;NDEBUG;IMPORTPLY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)engine/include;$(ProjectDir)\assimp\include;$(ProjectDir)\assimp\code;$(ProjectDir)\assimp\contrib\utf8cpp\source</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(RDF_ENGINE_LIB)$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>engine.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>ImportPLY.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -167,6 +229,33 @@
       <ModuleDefinitionFile>ImportPLY.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_TRIANGULATE_PROCESS;ASSIMP_BUILD_NO_EXPORT;ASSIMP_BUILD_NO_USD_IMPORTER;ASSIMP_BUILD_NO_X_IMPORTER;ASSIMP_BUILD_NO_AMF_IMPORTER;ASSIMP_BUILD_NO_3DS_IMPORTER;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_MD3_IMPORTER;ASSIMP_BUILD_NO_MDL_IMPORTER;ASSIMP_BUILD_NO_MD2_IMPORTER;ASSIMP_BUILD_NO_ASE_IMPORTER;ASSIMP_BUILD_NO_OBJ_IMPORTER;ASSIMP_BUILD_NO_HMP_IMPORTER;ASSIMP_BUILD_NO_SMD_IMPORTER;ASSIMP_BUILD_NO_MDC_IMPORTER;ASSIMP_BUILD_NO_MD5_IMPORTER;ASSIMP_BUILD_NO_STL_IMPORTER;ASSIMP_BUILD_NO_LWO_IMPORTER;ASSIMP_BUILD_NO_DXF_IMPORTER;ASSIMP_BUILD_NO_NFF_IMPORTER;ASSIMP_BUILD_NO_RAW_IMPORTER;ASSIMP_BUILD_NO_SIB_IMPORTER;ASSIMP_BUILD_NO_OFF_IMPORTER;ASSIMP_BUILD_NO_AC_IMPORTER;ASSIMP_BUILD_NO_BVH_IMPORTER;ASSIMP_BUILD_NO_IRRMESH_IMPORTER;ASSIMP_BUILD_NO_IRR_IMPORTER;ASSIMP_BUILD_NO_Q3D_IMPORTER;ASSIMP_BUILD_NO_B3D_IMPORTER;ASSIMP_BUILD_NO_COLLADA_IMPORTER;ASSIMP_BUILD_NO_TERRAGEN_IMPORTER;ASSIMP_BUILD_NO_CSM_IMPORTER;ASSIMP_BUILD_NO_3D_IMPORTER;ASSIMP_BUILD_NO_LWS_IMPORTER;ASSIMP_BUILD_NO_OGRE_IMPORTER;ASSIMP_BUILD_NO_OPENGEX_IMPORTER;ASSIMP_BUILD_NO_MS3D_IMPORTER;ASSIMP_BUILD_NO_COB_IMPORTER;ASSIMP_BUILD_NO_BLEND_IMPORTER;ASSIMP_BUILD_NO_Q3BSP_IMPORTER;ASSIMP_BUILD_NO_NDO_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_XGL_IMPORTER;ASSIMP_BUILD_NO_FBX_IMPORTER;ASSIMP_BUILD_NO_ASSBIN_IMPORTER;ASSIMP_BUILD_NO_GLTF_IMPORTER;ASSIMP_BUILD_NO_GLTF1_IMPORTER;ASSIMP_BUILD_NO_GLTF2_IMPORTER;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_3MF_IMPORTER;ASSIMP_BUILD_NO_X3D_IMPORTER;ASSIMP_BUILD_NO_MMD_IMPORTER;ASSIMP_BUILD_NO_IQM_IMPORTER;WIN64;NDEBUG;IMPORTPLY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)engine/include;$(ProjectDir)\assimp\include;$(ProjectDir)\assimp\code;$(ProjectDir)\assimp\contrib\utf8cpp\source</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(RDF_ENGINE_LIB)$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>engine.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>ImportPLY.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -217,8 +306,10 @@
     <ClCompile Include="assimp\code\Common\Exporter.cpp" />
     <ClCompile Include="assimp\code\Common\Importer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="assimp\code\Common\ImporterRegistry.cpp" />
@@ -272,20 +363,26 @@
     <ClCompile Include="assimp\code\PostProcessing\ValidateDataStructure.cpp" />
     <ClCompile Include="ImportPLY.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RDFImportPLY.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>

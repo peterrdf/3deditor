@@ -81,7 +81,7 @@ CRDFOpenGLView::~CRDFOpenGLView()
 	m_iNearestVertex = -1;
 	m_bDragFaceMode = FALSE;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 void CRDFOpenGLView::onInstancePropertySelected(_view* /*pSender*/)
@@ -109,7 +109,7 @@ void CRDFOpenGLView::onInstanceCreated(_view* pSender, _rdf_instance* /*pInstanc
 	m_pDragFaceInstance = nullptr;
 	m_iDragFace = -1;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstance*/)
@@ -125,7 +125,7 @@ void CRDFOpenGLView::onInstanceDeleted(_view* pSender, _rdf_instance* /*pInstanc
 	m_pDragFaceInstance = nullptr;
 	m_iDragFace = -1;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
@@ -141,7 +141,7 @@ void CRDFOpenGLView::onInstancesDeleted(_view* pSender)
 	m_pDragFaceInstance = nullptr;
 	m_iDragFace = -1;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInstance*/)
@@ -157,7 +157,7 @@ void CRDFOpenGLView::onMeasurementsAdded(_view* pSender, _rdf_instance* /*pInsta
 	m_pDragFaceInstance = nullptr;
 	m_iDragFace = -1;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/)
@@ -173,7 +173,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	m_pDragFaceInstance = nullptr;
 	m_iDragFace = -1;
 
-	_load();
+	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/

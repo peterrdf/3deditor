@@ -51,6 +51,7 @@ class _ifc_unit
 
 private: // Members	
 
+	SdaiInstance m_sdaiInstance;
     int m_iType;
     wstring m_strType;
     wstring m_strPrefix;
@@ -58,11 +59,12 @@ private: // Members
 
 public: // Methods
 
-    _ifc_unit(const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName);
+    _ifc_unit(SdaiInstance sdaiInstance, const wchar_t* szType, const wchar_t* szPrefix, const wchar_t* szName);
     virtual ~_ifc_unit();
 
 public: // Properties
 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
     wstring getType() const { return m_strType; }
     wstring getPrefix() const { return m_strPrefix; }
     wstring getName() const { return m_strName; }
@@ -103,6 +105,10 @@ protected: // Methods
 
     void load();
     void loadUnits(SdaiInstance sdaiProjectInstance);
+
+public: // Properties
+
+    const map<wstring, _ifc_unit*>& getUnits() const { return m_mapUnits; }
 };
 
 #endif // IFCUNIT_H

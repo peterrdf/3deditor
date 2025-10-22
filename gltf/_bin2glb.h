@@ -13,7 +13,7 @@ namespace _bin2glb
 	const char TAB = '\t';
 	const char SPACE = ' ';
 	const char COMMA = ',';
-	const char DOULE_QUOT_MARK = '"';
+	const char DOUBLE_QUOT_MARK = '"';
 	const char COLON = ':';
 
 	// ********************************************************************************************
