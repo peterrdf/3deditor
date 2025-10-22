@@ -1024,7 +1024,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		return;
 	}
 
-	pInstance->recalculate();
+	pInstance->recalculate(true);
 
 	vector<OwlInstance> vecAncestors;
 	_model::getInstanceAncestors(pInstance->getOwlInstance(), vecAncestors);
