@@ -250,17 +250,18 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
 
-		GLdouble dX = 0.;
-		GLdouble dY = 0.;
-		GLdouble dZ = 0.;
-		if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
-			double endDragPoint[3] = { dX, dY, dZ };
-			OnDragFace(
-				m_pDragFaceInstance->getOwlInstance(),
-				m_iDragFace,
-				startDragPoint,
-				point,
-				endDragPoint);
+		double endPt[6];
+		if (getOGLPos(point.x, point.y, -FLT_MAX, endPt[0], endPt[1], endPt[2])) {
+			if (getOGLPos(point.x, point.y, -FLT_MAX/10, endPt[3], endPt[4], endPt[5])) {
+				DragFace(
+					m_pDragFaceInstance->getOwlInstance(),
+					m_iDragFace,
+					startDragPoint,
+					endPt);
+
+				_ptr<_rdf_model>(getController()->getModel())->reload();
+				getController()->onModelUpdated();
+			}
 		}
 
 		m_bDragFaceMode = FALSE;
@@ -295,65 +296,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	}
 }
 
-
-void CRDFOpenGLView::OnDragFace(
-	OwlInstance instance,
-	int iConceptualFace,
-	double startDragPoint[3],
-	const CPoint& endPoint,
-	double endDragPoint[3]
-)
-{
-	TRACE(">>> Drag Face: Face %d\n", iConceptualFace);
-	TRACE("    Start Point: (%f, %f, %f)\n", startDragPoint[0], startDragPoint[1], startDragPoint[2]);
-	TRACE("    End   Point: (%f, %f, %f)\n", endDragPoint[0], endDragPoint[1], endDragPoint[2]);
-
-	// --- Un-projection endPoint to Word Ray ---
-	// 
-	GLint projLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix");
-	GLint viewLoc = glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix");
-	if (projLoc == -1 || viewLoc == -1)
-		return;
-
-	// get matrices
-	GLfloat projMatrix[16];
-	GLfloat viewMatrix[16];
-
-	glGetUniformfv(m_pOGLProgram->_getID(), projLoc, projMatrix);
-	glGetUniformfv(m_pOGLProgram->_getID(), viewLoc, viewMatrix);
-
-	glm::mat4 projection = glm::make_mat4(projMatrix);
-	glm::mat4 view = glm::make_mat4(viewMatrix);
-	glm::mat4 invView = glm::inverse(view);
-
-	// 1. Screen -> NDC
-	CRect rcClient;
-	m_pWnd->GetClientRect(&rcClient);
-
-	float x = (2.0f * endPoint.x) / rcClient.Width() - 1.0f;
-	float y = 1.0f - (2.0f * endPoint.y) / rcClient.Height(); // inversion Y
-	glm::vec4 ray_clip(x, y, -1.0f, 1.0f);
-
-	// 2. to view space
-	glm::vec4 ray_eye = glm::inverse(projection) * ray_clip;
-	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
-
-	// 3. to WC
-	glm::vec3 ray_world = glm::normalize(glm::vec3(invView * ray_eye));
-	glm::vec3 org_world = glm::vec3(invView[3]);
-
-	double targerRayDir[3] = { ray_world.x, ray_world.y, ray_world.z };
-	double targetRayOrg[3] = { org_world.x, org_world.y, org_world.z };
-
-	//
-	//
-	//
-	DragFace(instance, iConceptualFace, startDragPoint, endDragPoint, targetRayOrg, targerRayDir);
-
-	_ptr<_rdf_model>(getController()->getModel())->reload();
-	getController()->onModelUpdated();
-
-}
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
 {

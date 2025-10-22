@@ -60,14 +60,6 @@ private: // Methods
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
 
-	void OnDragFace(
-		OwlInstance		instance,
-		int				iConceptualFace,
-		double			startDragPoint[3],
-		const CPoint&	endPoint,
-		double endDragPoint[3]
-	);
-
 public:
 
 	// Test
