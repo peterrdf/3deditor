@@ -2,11 +2,12 @@
 #include "DragFace.h"
 #include "GeomTypes.h"
 
-static Segment3D ProjectCubeOntoLine(
-    double          box[6],
-    const Point3d&  linePt,
-    const Vector3d& lineDir)
+static void TrimLineToBox(
+    Segment3D&      line,
+    double          box[6])
 {
+    auto lineDir = line.Direction();
+
     // Segment range
     double tmm[2] = { std::numeric_limits<double>::max(),  std::numeric_limits<double>::lowest() };
 
@@ -21,7 +22,7 @@ static Segment3D ProjectCubeOntoLine(
                     (k ? box[2] : box[5])
                 );
 
-                Vector3d diff = linePt - vert;
+                Vector3d diff = line.pt[0] - vert;
                 double t = dot_product(diff, lineDir);
                 if (t < tmm[0]) tmm[0] = t;
                 if (t > tmm[1]) tmm[1] = t;
@@ -31,15 +32,15 @@ static Segment3D ProjectCubeOntoLine(
 
     // 
     Segment3D segment;
-    segment.pt[0] = linePt + lineDir * tmm[0];
-    segment.pt[1] = linePt + lineDir * tmm[1];
+    segment.pt[0] = line.pt[0] + lineDir * tmm[0];
+    segment.pt[1] = line.pt[1] + lineDir * tmm[1];
 
     //check
     auto dir = segment.Direction();
     auto collinear = dot_product(dir, lineDir);
     assert(fabs(fabs(collinear) - 1) < 1e-7);
 
-    return segment;
+    line = segment;
 }
 
 static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
@@ -63,16 +64,16 @@ static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 	return trans;
 }
 
-static OwlInstance DrawPoints(OwlModel model, Point3d const* rpt, int npt, double size)
+static OwlInstance DrawInput(OwlModel model, Point3d const& pt, Segment3D& line, double size)
 {
     std::vector<OwlInstance> rinst;
     
-    for (int i = 0; i < npt; i++) {
-        rinst.push_back(DrawPoint(model, rpt[i], size));
-    }
+    rinst.push_back(DrawPoint(model, pt, size));
+    rinst.push_back(DrawPoint(model, line.pt[0], size));
+    rinst.push_back(DrawPoint(model, line.pt[1], size));
 
     auto collection = GEOM::Collection::Create(model);
-    collection.set_objects(rinst.data(), npt);
+    collection.set_objects(rinst.data(), rinst.size());
 
     return collection;
 }
@@ -89,23 +90,19 @@ extern OwlInstance DragFace(
 
     double size = 0;
     for (int i = 0; i < 3; i++) {
-        size = max(size, (box[i + 3] - box[i]) / 15);
+        size = max(size, (box[i + 3] - box[i]) / 30);
     }
 
     auto model = GetModel(instance);
 
-    Point3d pt[3];
-    pt[0] = MakePoint(startDragPoint);
-    pt[1] = MakePoint(endDragLine);
-    pt[2] = MakePoint(endDragLine + 3);
+    Point3d ptStart;
+    ptStart = MakePoint(startDragPoint);
 
-    auto vec = pt[2] - pt[1];
-    //normalize(vec);     
-    pt[2] = pt[1] - vec;
+    Segment3D line;
+    line.pt[0] = MakePoint(endDragLine);
+    line.pt[1] = MakePoint(endDragLine + 3);
 
-    //auto endRayDir = endPt2 - endPt1;
+    TrimLineToBox(line, box);
 
-    //auto segment = ProjectCubeOntoLine(box, endPt1, endRayDir);
-
-	return DrawPoints(model, pt+1, 2, size);
+	return DrawInput(model, ptStart, line, size);
 }
