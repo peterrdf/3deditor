@@ -825,7 +825,9 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 			/*
 			* Notify
 			*/
+			AfxGetMainWnd()->SetRedraw(FALSE); 
 			pData->GetController()->onInstancePropertyEdited((CPropertiesWnd*)m_pWndList->GetParent(), pData->GetInstance(), pData->GetProperty());
+			AfxGetMainWnd()->SetRedraw(TRUE);
 
 			/*
 			* Update UI
