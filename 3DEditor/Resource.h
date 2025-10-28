@@ -87,6 +87,7 @@
 #define IDB_SORT_INSTANCES_24           312
 #define TEXTFILE                        312
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
+#define ID_INDICATOR_LOG                313
 #define IDD_DIALOG_NEW_INSTANCE         314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
 #define IDD_DIALOG_SEARCH               316
@@ -171,6 +172,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        329
 #define _APS_NEXT_COMMAND_VALUE         32845
 #define _APS_NEXT_CONTROL_VALUE         1012
-#define _APS_NEXT_SYMED_VALUE           313
+#define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif
