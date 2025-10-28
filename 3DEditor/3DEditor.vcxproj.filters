@@ -270,6 +270,9 @@
     <ClInclude Include="..\include\_log_hub.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="CustomStatusBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -415,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="..\zip\zip.c">
       <Filter>zip</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomStatusBar.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
