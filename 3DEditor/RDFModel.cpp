@@ -35,17 +35,19 @@ namespace fs = std::experimental::filesystem;
 extern BOOL TEST_MODE;
 
 // ************************************************************************************************
-CProgress* m_pProgress = nullptr;
+_log_hub* g_pLogHub = nullptr;
+CProgress* g_pProgress = nullptr;
 
 // ************************************************************************************************
-#ifdef _GIS_SUPPORT
 void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 {
-	if (m_pProgress != nullptr) {
-		m_pProgress->Log((int)iEvent, szEvent);
+	if (g_pProgress != nullptr) {
+		g_pProgress->Log((int)iEvent, szEvent);
+	}
+	if (g_pLogHub != nullptr) {
+		g_pLogHub->logWrite((enumLogEvent)iEvent, szEvent);
 	}
 }
-#endif
 
 // ************************************************************************************************
 // Load OWL extensions
@@ -161,7 +163,7 @@ public: // Methods
 
 	virtual void Run() override
 	{
-		if (m_pProgress != nullptr) {
+		if (g_pProgress != nullptr) {
 			CString strLog;
 			if (m_bAdd) {
 				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
@@ -170,8 +172,11 @@ public: // Methods
 			}
 
 			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(0/*info*/, CW2A(strLog));
+				if (g_pProgress != nullptr) {
+					g_pProgress->Log(0/*info*/, CW2A(strLog));
+				}
+				if (g_pLogHub != nullptr) {
+					g_pLogHub->logWrite(enumLogEvent::info, (LPCSTR)CW2A(strLog));
 				}
 			}
 		}
@@ -255,8 +260,11 @@ public: // Methods
 			strError.Format(L"Failed to open '%s'.", m_szPath);
 
 			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(2/*error*/, CW2A(strError));
+				if (g_pProgress != nullptr) {
+					g_pProgress->Log(2/*error*/, CW2A(strError));
+				}
+				if (g_pLogHub != nullptr) {
+					g_pLogHub->logWrite(enumLogEvent::error, (LPCSTR)CW2A(strError));
 				}
 				::MessageBox(
 					::AfxGetMainWnd()->GetSafeHwnd(),
@@ -266,8 +274,11 @@ public: // Methods
 			}
 		} else {
 			if (!TEST_MODE) {
-				if (m_pProgress != nullptr) {
-					m_pProgress->Log(0/*info*/, "*** Done. ***");
+				if (g_pProgress != nullptr) {
+					g_pProgress->Log(0/*info*/, "*** Done. ***");
+				}
+				if (g_pLogHub != nullptr) {
+					g_pLogHub->logWrite(enumLogEvent::info, "*** Done. ***");
 				}
 			}
 		}
@@ -275,10 +286,12 @@ public: // Methods
 };
 
 // ************************************************************************************************
-CRDFModel::CRDFModel()
+CRDFModel::CRDFModel(_controller* pController)
 	: _rdf_model()
+	, m_pController(pController)
 	, m_pDefaultTexture(nullptr)
 {
+	ASSERT(m_pController != nullptr);
 }
 
 CRDFModel::~CRDFModel()
@@ -324,13 +337,15 @@ CRDFModel::~CRDFModel()
 
 void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 {
+	g_pLogHub = m_pController->getLogHub();
+
 	CLoadTask loadTask(this, szPath, bAdd);
 #ifdef _PROGRESS_UI_SUPPORT
 	if (!TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
-		m_pProgress = &dlgProgress;
+		g_pProgress = &dlgProgress;
 		dlgProgress.DoModal();
-		m_pProgress = nullptr;
+		g_pProgress = nullptr;
 	} else
 #endif
 	{
@@ -445,8 +460,8 @@ void CRDFModel::LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath)
 }
 
 // ************************************************************************************************
-CDefaultModel::CDefaultModel()
-	: CRDFModel()
+CDefaultModel::CDefaultModel(_controller* pController)
+	: CRDFModel(pController)
 {
 	Create();
 }

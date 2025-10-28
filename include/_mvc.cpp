@@ -628,7 +628,8 @@ void _model::setDimensions(_model* pSource)
 
 // ************************************************************************************************
 _controller::_controller()
-	: m_vecModels()
+	: m_pLogHub(new _log_hub())
+	, m_vecModels()
 	, m_vecDecorationModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
@@ -642,6 +643,7 @@ _controller::_controller()
 {
 	clean();
 
+	delete m_pLogHub;
 	delete m_pSettingsStorage;
 }
 

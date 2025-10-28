@@ -3,6 +3,7 @@
 #include "_geometry.h"
 #include "_oglScene.h"
 #include "_texture.h"
+#include "_log_hub.h"
 #include "_settings_storage.h"
 
 #include <cfloat>
@@ -216,6 +217,7 @@ class _controller
 
 private: // Fields
 
+	_log_hub* m_pLogHub;
 	vector<_model*> m_vecModels;
 	vector<_model*> m_vecDecorationModels;
 	set<_view*> m_setViews;
@@ -309,6 +311,7 @@ protected: // Methods
 
 public: // Properties
 
+	_log_hub* getLogHub() const { return m_pLogHub; }
 	_model* getModel() const; // kept for backward compatibility
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }

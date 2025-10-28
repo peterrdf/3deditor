@@ -936,6 +936,7 @@
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_host.h" />
     <ClInclude Include="..\include\_instance.h" />
+    <ClInclude Include="..\include\_log_hub.h" />
     <ClInclude Include="..\include\_material.h" />
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglScene.h" />
@@ -993,6 +994,7 @@
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="_dxf_parser.h" />
+    <ClInclude Include="_log_hub.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gltf\_bin2glb.cpp">

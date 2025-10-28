@@ -30,11 +30,12 @@ class CRDFModel : public _rdf_model
 
 private: // Fields
 
+	_controller* m_pController;
 	_texture* m_pDefaultTexture;
 
 public: // Methods
 
-	CRDFModel();
+	CRDFModel(_controller* pController);
 	virtual ~CRDFModel();
 
 public: // Methods
@@ -69,7 +70,7 @@ class CDefaultModel : public CRDFModel
 
 public: // Methods
 
-	CDefaultModel();
+	CDefaultModel(_controller* pController);
 	virtual ~CDefaultModel();
 
 private: // Methods

@@ -42,7 +42,7 @@ BOOL CRDFViewerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	setModel(new CDefaultModel());
+	setModel(new CDefaultModel(this));
 
 	return TRUE;
 }
@@ -130,7 +130,7 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	auto pModel = new CRDFModel();
+	auto pModel = new CRDFModel(this);
 	pModel->Load(lpszPathName, false);
 
 	setModel(pModel);

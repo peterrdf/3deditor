@@ -264,6 +264,12 @@
     <ClInclude Include="..\zip\zip.h">
       <Filter>zip</Filter>
     </ClInclude>
+    <ClInclude Include="_log_hub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_log_hub.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
