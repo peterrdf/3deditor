@@ -46,6 +46,7 @@ enum class enumApplicationProperty : int
 	Contrast,
 	Brightness,
 	Gamma,
+	ShowProgressDialog,
 	VisibleValuesCountLimit,
 	ScalelAndCenterAllVisibleGeometry,
 };

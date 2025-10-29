@@ -1320,6 +1320,14 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
+				case enumApplicationProperty::ShowProgressDialog:
+					{
+						getRDFController()->setShowProgressDialog(strValue == TRUE_VALUE_PROPERTY ? TRUE : FALSE);
+
+						getRDFController()->onApplicationPropertyChanged(this, enumApplicationProperty::ShowProgressDialog);
+					}
+					break;
+
 				case enumApplicationProperty::VisibleValuesCountLimit:
 					{
 						int iValue = _wtoi((LPCTSTR)strValue);
@@ -2688,6 +2696,18 @@ void CPropertiesWnd::LoadApplicationProperties()
 	{
 		auto pUI = new CMFCPropertyGridProperty(_T("UI"));
 		pViewGroup->AddSubItem(pUI);
+
+		// Show Progress UI
+		{
+			auto pProperty = new CApplicationProperty(_T("Show Progress Dialog"),
+				getRDFController()->getShowProgressDialog() ? TRUE_VALUE_PROPERTY : FALSE_VALUE_PROPERTY,
+				_T("Show Progress UI"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::ShowProgressDialog));
+			pProperty->AddOption(TRUE_VALUE_PROPERTY);
+			pProperty->AddOption(FALSE_VALUE_PROPERTY);
+			pProperty->AllowEdit(FALSE);
+			pUI->AddSubItem(pProperty);
+		}
 
 		// Visible values count limit
 		{
