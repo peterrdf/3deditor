@@ -212,7 +212,7 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _controller
+class _controller : public _log_client
 {
 
 private: // Fields

@@ -628,7 +628,8 @@ void _model::setDimensions(_model* pSource)
 
 // ************************************************************************************************
 _controller::_controller()
-	: m_pLogHub(new _log_hub())
+	: _log_client()
+	, m_pLogHub(new _log_hub())
 	, m_vecModels()
 	, m_vecDecorationModels()
 	, m_setViews()
@@ -637,6 +638,7 @@ _controller::_controller()
 	, m_vecSelectedInstances()
 	, m_pTargetInstance(nullptr)
 {
+	setLog(m_pLogHub);
 }
 
 /*virtual*/ _controller::~_controller()
@@ -652,6 +654,7 @@ void _controller::setModel(_model* pModel)
 	vector<_model*> vecModels;
 	if (pModel != nullptr) {
 		vecModels.push_back(pModel);
+		logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
 	}
 
 	setModels(vecModels);
