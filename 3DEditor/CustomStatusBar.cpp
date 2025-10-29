@@ -107,7 +107,7 @@ void CCustomStatusBar::UpdateLogStatus(enumLogEvent enLogEvent, const std::strin
     }
 }
 
-void CCustomStatusBar::HandlePaneClick(int nPane, CPoint point)
+void CCustomStatusBar::HandlePaneClick(int nPane, CPoint /*point*/)
 {
     if (GetItemID(nPane) == ID_INDICATOR_LOG)
     {
