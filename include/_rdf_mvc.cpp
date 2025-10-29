@@ -16,8 +16,8 @@
 using namespace std;
 
 // ************************************************************************************************
-_rdf_model::_rdf_model()
-	: _model()
+_rdf_model::_rdf_model(_log* pLog)
+	: _model(pLog)
 	, m_owlModel(0)
 	, m_bExternalModel(false)
 	, m_mapInstances()
@@ -1112,8 +1112,8 @@ void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue)
 }
 
 // ************************************************************************************************
-_coordinate_system_model_base::_coordinate_system_model_base()
-	: _rdf_model()
+_coordinate_system_model_base::_coordinate_system_model_base(_log* pLog)
+	: _rdf_model(pLog)
 	, m_pTextBuilder(new _text_builder())
 {
 }
@@ -1401,7 +1401,7 @@ void _coordinate_system_model_base::create(const wchar_t* szName)
 
 // ************************************************************************************************
 _world_coordinate_system_model::_world_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model_base()
+	: _coordinate_system_model_base(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 {
@@ -1480,7 +1480,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 // ************************************************************************************************
 _model_coordinate_system_model::_model_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model_base()
+	: _coordinate_system_model_base(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 {
@@ -1532,7 +1532,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 /*static*/ const int _navigator_model::NAVIGATION_VIEW_LENGTH = 250;
 
 _navigator_model::_navigator_model(_controller* pController)
-	: _rdf_model()
+	: _rdf_model(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 	, m_pTextBuilder(new _text_builder())

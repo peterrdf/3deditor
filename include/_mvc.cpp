@@ -8,7 +8,7 @@
 using namespace std;
 
 // ************************************************************************************************
-_model::_model()
+_model::_model(_log* pLog)
 	: _log_client()
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
@@ -28,6 +28,7 @@ _model::_model()
 	, m_vecInstances()
 	, m_mapTextures()
 {
+	setLog(pLog);
 }
 
 /*virtual*/ _model::~_model()

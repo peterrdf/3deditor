@@ -28,7 +28,7 @@ private: // Fields
 
 public:  // Methods
 
-	_rdf_model();
+	_rdf_model(_log* pLog);
 	virtual ~_rdf_model();
 
 	// _model
@@ -191,7 +191,7 @@ private: // Fields
 
 public: // Methods
 
-	_coordinate_system_model_base();
+	_coordinate_system_model_base(_log* pLog);
 	virtual ~_coordinate_system_model_base();
 
 	// _model

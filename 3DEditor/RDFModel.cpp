@@ -287,12 +287,11 @@ public: // Methods
 
 // ************************************************************************************************
 CRDFModel::CRDFModel(_controller* pController)
-	: _rdf_model()
+	: _rdf_model(pController->getLog())
 	, m_pController(pController)
 	, m_pDefaultTexture(nullptr)
 {
 	ASSERT(m_pController != nullptr);
-	setLog(m_pController->getLogHub());
 }
 
 CRDFModel::~CRDFModel()

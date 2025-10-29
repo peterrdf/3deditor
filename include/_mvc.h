@@ -93,7 +93,7 @@ private: // Fields
 
 public: // Methods
 
-	_model();
+	_model(_log* pLog);
 	virtual ~_model();
 
 	virtual _instance* loadInstance(int64_t /*iInstance*/) = 0;
