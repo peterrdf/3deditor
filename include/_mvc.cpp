@@ -671,6 +671,9 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	clean();
 
 	m_vecModels = vecModels;
+	for (auto pModel : m_vecModels) {
+		logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
+	}
 
 	// e.g. Coordinate System, Navigation, etc.
 	loadDecorationModels();

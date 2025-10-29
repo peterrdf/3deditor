@@ -6,8 +6,8 @@
 #include "_rdf_instance.h"
 
 // ************************************************************************************************
-_ap242_model::_ap242_model(bool bLoadInstancesOnDemand/* = false*/)
-    : _ap_model(enumAP::STEP)
+_ap242_model::_ap242_model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
+    : _ap_model(pLog, enumAP::STEP)
     , m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
     , m_pPropertyProvider(nullptr)
     , m_mapExpressID2Assembly()

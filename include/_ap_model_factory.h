@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_log.h"
 #include "_mvc.h"
 #include "_ifc_model.h"
 #include "_ap242_model.h"
@@ -57,7 +58,7 @@ class _ap_model_factory
 
 public: // Methods
 
-	static _ap_model* load(const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
+	static _ap_model* load(_log* pLog, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
 	{
 		fs::path pathModel = szModel;
 		string strExtension = pathModel.extension().string();
@@ -106,7 +107,7 @@ public: // Methods
 			(strFileSchema.find(L"AP209") == 0) ||
 			(strFileSchema.find(L"AP214") == 0) ||
 			(strFileSchema.find(L"AP242") == 0)) {
-			auto pModel = new _ap242_model(bLoadInstancesOnDemand);
+			auto pModel = new _ap242_model(pLog, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
@@ -116,7 +117,7 @@ public: // Methods
 		* IFC
 		*/
 		if (strFileSchema.find(L"IFC") == 0) {
-			auto pModel = new _ifc_model(bMultipleModels, bLoadInstancesOnDemand);
+			auto pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, pWorld);
 
 			return pModel;
@@ -127,7 +128,7 @@ public: // Methods
 		* CIS2
 		*/
 		if (strFileSchema.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
-			auto pModel = new CCIS2Model();
+			auto pModel = new CCIS2Model(pLog);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
@@ -137,13 +138,13 @@ public: // Methods
 		return nullptr;
 	}
 
-	static vector<_model*> loadIFCZIP(const wchar_t* szIFCZIP)
+	static vector<_model*> loadIFCZIP(_log* pLog, const wchar_t* szIFCZIP)
 	{
 		vector<_model*> vecModels;
 
 		auto vecSdaiModels = openIFCZip(szIFCZIP);
 		for (auto prSdaiModel : vecSdaiModels) {
-			auto pModel = new _ifc_model(vecSdaiModels.size() > 1, false);
+			auto pModel = new _ifc_model(pLog, vecSdaiModels.size() > 1, false);
 			pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
 
 			vecModels.push_back(pModel);
@@ -152,7 +153,7 @@ public: // Methods
 		return vecModels;
 	}
 
-	static vector<_model*> loadSTEPGZip(const wchar_t* szIFCZIP)
+	static vector<_model*> loadSTEPGZip(_log* pLog, const wchar_t* szIFCZIP)
 	{
 		vector<_model*> vecModels;
 
@@ -161,7 +162,7 @@ public: // Methods
 			return vecModels;
 		}
 
-		auto pModel = new _ap242_model();
+		auto pModel = new _ap242_model(pLog);
 		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
 		vecModels.push_back(pModel);
 
