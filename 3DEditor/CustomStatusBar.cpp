@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CustomStatusBar.h"
 #include "Resource.h"
+#include "LogDialog.h"
 
 #define WM_UPDATE_LOG_STATUS (WM_USER + 100)
 
@@ -108,13 +109,11 @@ void CCustomStatusBar::UpdateLogStatus(enumLogEvent enLogEvent, const std::strin
 
 void CCustomStatusBar::HandlePaneClick(int nPane, CPoint point)
 {
-    UINT nID = GetItemID(nPane);
-    
-    switch (nID)
+    if (GetItemID(nPane) == ID_INDICATOR_LOG)
     {
-        case ID_INDICATOR_LOG:
-            AfxMessageBox(_T("Log pane clicked!"));
-            break;
-        // Handle other panes...
-    }
+        if (m_pLogHub) {
+            CLogDialog logDlg(m_pLogHub, AfxGetMainWnd());
+            logDlg.DoModal();
+        }
+	}
 }

@@ -9,11 +9,13 @@ class CCustomStatusBar
     : public CMFCStatusBar
     , public _log_view
 {
+
 private: // Fields
 
 	_log_hub* m_pLogHub;
 
 public:
+
     CCustomStatusBar();
     virtual ~CCustomStatusBar();
 

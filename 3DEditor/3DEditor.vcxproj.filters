@@ -273,6 +273,9 @@
     <ClInclude Include="CustomStatusBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -420,6 +423,9 @@
       <Filter>zip</Filter>
     </ClCompile>
     <ClCompile Include="CustomStatusBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
