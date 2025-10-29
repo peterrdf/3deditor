@@ -193,8 +193,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
-	// Log View
-	GetController()->getLogHub()->setLogView(&m_statusBar);
+	// Initialize
+	m_statusBar.SetLogHub(GetController()->getLogHub());
 
 	// TODO: Delete these five lines if you don't want the toolbar and menubar to be dockable
 	m_menuBar.EnableDocking(CBRS_ALIGN_ANY);

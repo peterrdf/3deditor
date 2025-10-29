@@ -30,6 +30,9 @@ class _log_hub
 private: // Members
 
 	vector<pair<enumLogEvent, string>> m_vecMessages;
+	int m_iWarningCount;
+	int m_iErrorCount;
+
 	_log_view* m_pLogView;
 
 public: // Methods
@@ -38,6 +41,8 @@ public: // Methods
 		: _log()
 		, _log_client()
 		, m_vecMessages()
+		, m_iWarningCount(0)
+		, m_iErrorCount(0)
 		, m_pLogView(nullptr)
 	{
 		setLog(this);
@@ -50,6 +55,13 @@ public: // Methods
 	{
 		m_vecMessages.push_back(make_pair(enLogEvent, _time::addDateTimeStamp(strEvent)));
 
+		if (enLogEvent == enumLogEvent::warning) {
+			m_iWarningCount++;
+		}
+		else if (enLogEvent == enumLogEvent::error) {
+			m_iErrorCount++;
+		}
+
 		if (m_pLogView != nullptr) {
 			auto& lastMessage = m_vecMessages.back();
 			m_pLogView->onLogWrite(lastMessage.first, lastMessage.second);
@@ -60,4 +72,8 @@ public: // Methods
 	{
 		m_pLogView = pLogView;
 	}
+
+	const vector<pair<enumLogEvent, string>>& getMessages() const { return m_vecMessages; }
+	int getWarningsCount() const { return m_iWarningCount; }
+	int getErrorsCount() const { return m_iErrorCount; }
 };

@@ -10,11 +10,21 @@ BEGIN_MESSAGE_MAP(CCustomStatusBar, CMFCStatusBar)
 END_MESSAGE_MAP()
 
 CCustomStatusBar::CCustomStatusBar()
+	: m_pLogHub(nullptr)
 {
+	
 }
 
 CCustomStatusBar::~CCustomStatusBar()
 {
+}
+
+void CCustomStatusBar::SetLogHub(_log_hub* pLogHub)
+{
+    ASSERT(pLogHub != nullptr);
+
+    m_pLogHub = pLogHub;
+    m_pLogHub->setLogView(this);
 }
 
 /*virtual*/ void CCustomStatusBar::onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) /*override*/
@@ -90,7 +100,9 @@ void CCustomStatusBar::UpdateLogStatus(enumLogEvent enLogEvent, const std::strin
             }
 		}        
 
-        SetPaneText(nIndex, (LPCWSTR)CA2W(strEvent.c_str()));
+        CString strMessage;
+        strMessage.Format(L"[WARN: %d] [ERR: %d] %S", m_pLogHub->getWarningsCount(), m_pLogHub->getErrorsCount(), strEvent.c_str());
+        SetPaneText(nIndex, strMessage);
     }
 }
 

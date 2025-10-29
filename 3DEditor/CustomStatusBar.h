@@ -9,12 +9,18 @@ class CCustomStatusBar
     : public CMFCStatusBar
     , public _log_view
 {
+private: // Fields
+
+	_log_hub* m_pLogHub;
+
 public:
     CCustomStatusBar();
     virtual ~CCustomStatusBar();
 
 	// _log_view
     virtual void onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) override;
+
+    void SetLogHub(_log_hub* pLogHub);
 
 protected:
     afx_msg LRESULT OnUpdateLogStatus(WPARAM wParam, LPARAM lParam);
