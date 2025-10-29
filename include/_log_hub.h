@@ -22,7 +22,9 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class _log_hub : public _log
+class _log_hub 
+	: public _log
+	, public _log_client
 {
 
 private: // Members
@@ -33,16 +35,20 @@ private: // Members
 public: // Methods
 
 	_log_hub()
-		: m_vecMessages()
+		: _log()
+		, _log_client()
+		, m_vecMessages()
 		, m_pLogView(nullptr)
-	{}
+	{
+		setLog(this);
+	}
 
 	virtual ~_log_hub()
 	{}
 
 	virtual void logWrite(enumLogEvent enLogEvent, const std::string& strEvent) override
 	{
-		m_vecMessages.push_back(make_pair(enLogEvent, strEvent));
+		m_vecMessages.push_back(make_pair(enLogEvent, _time::addDateTimeStamp(strEvent)));
 
 		if (m_pLogView != nullptr) {
 			auto& lastMessage = m_vecMessages.back();
