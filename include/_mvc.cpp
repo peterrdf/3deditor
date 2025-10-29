@@ -9,7 +9,8 @@ using namespace std;
 
 // ************************************************************************************************
 _model::_model()
-	: m_strPath(L"")
+	: _log_client()
+	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
 	, m_pWorld(nullptr)
@@ -440,17 +441,14 @@ _texture* _model::getTexture(const wstring& strTexture, bool bFlipY)
 	if (fs::exists(pthTexture)) {
 		pTexture = new _texture();
 		if (!pTexture->load(pthTexture.wstring().c_str(), bFlipY)) {
-#ifdef _WINDOWS
-			AfxMessageBox(CString(L"Failed to load texture: ") + pthTexture.c_str(), MB_ICONERROR);
-#endif
+			logErrf("Failed to load texture: '%s'.",
+				(LPCSTR)CW2A(strTexture.c_str()));
 		}
 	}
 	else {
-#ifdef _WINDOWS
-		CString msg;
-		msg.Format(L"Not found texture: %s\nSearch path: %s", strTexture.c_str(), pthTexture.c_str());
-		AfxMessageBox(msg, MB_ICONERROR);
-#endif
+		logErrf("Texture file not found: '%s'. Search path: '%s'.",
+			(LPCSTR)CW2A(strTexture.c_str()),
+			(LPCSTR)CW2A(getTextureSearchPath().c_str()));
 	}
 
 	if (pTexture == nullptr) {
@@ -975,6 +973,7 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 	vector<_instance*> vecInstance;
 	if (pInstance != nullptr) {
 		vecInstance.push_back(pInstance);
+		logInfof("Selected '%s'.", (LPCSTR)CW2A(pInstance->getUniqueName()));
 	}
 
 	selectInstances(pSender, vecInstance, bAdd);

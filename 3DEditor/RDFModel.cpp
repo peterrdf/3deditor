@@ -292,6 +292,7 @@ CRDFModel::CRDFModel(_controller* pController)
 	, m_pDefaultTexture(nullptr)
 {
 	ASSERT(m_pController != nullptr);
+	setLog(m_pController->getLogHub());
 }
 
 CRDFModel::~CRDFModel()

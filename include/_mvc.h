@@ -57,7 +57,7 @@ class _controller;
 static int64_t s_iInstanceID = 1;
 
 // ************************************************************************************************
-class _model
+class _model : public _log_client
 {
 	friend class _controller;
 
