@@ -302,6 +302,12 @@ IDI_PROPERTIES_WND      ICON                    "res\\properties_wnd.ico"
 
 IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 
+IDI_ICON_INFO           ICON                    "res\\information.ico"
+
+IDI_ICON_WARN           ICON                    "res\\warning.ico"
+
+IDI_ICON_ERR            ICON                    "res\\error.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

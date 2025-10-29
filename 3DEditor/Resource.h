@@ -99,6 +99,9 @@
 #define IDD_DIALOG_PROGRESS             325
 #define IDR_TEXTFILE_VERTEX_SHADER3     327
 #define IDR_TEXTFILE_FRAGMENT_SHADER3   328
+#define IDI_ICON_INFO                   329
+#define IDI_ICON_WARN                   331
+#define IDI_ICON_ERR                    332
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -169,7 +172,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        329
+#define _APS_NEXT_RESOURCE_VALUE        333
 #define _APS_NEXT_COMMAND_VALUE         32845
 #define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           314

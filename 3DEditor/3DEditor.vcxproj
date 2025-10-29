@@ -1515,12 +1515,16 @@
     <Image Include="res\classview_hc.bmp" />
     <Image Include="res\class_view.ico" />
     <Image Include="res\class_view_hc.ico" />
+    <Image Include="res\error.ico" />
     <Image Include="res\explorer.bmp" />
     <Image Include="res\explorer_hc.bmp" />
     <Image Include="res\fileview.bmp" />
     <Image Include="res\fileview_hc.bmp" />
     <Image Include="res\file_view.ico" />
     <Image Include="res\file_view_hc.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon2.ico" />
+    <Image Include="res\information.ico" />
     <Image Include="res\menuimages.bmp" />
     <Image Include="res\menuimages_hc.bmp" />
     <Image Include="res\properties.bmp" />
@@ -1532,6 +1536,7 @@
     <Image Include="res\sort_hc.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\warning.ico" />
     <Image Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
