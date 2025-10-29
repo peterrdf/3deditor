@@ -1810,6 +1810,7 @@ _oglView::_oglView()
 	}
 	break;
 
+	case enumApplicationProperty::ShowProgressDialog:
 	case enumApplicationProperty::VisibleValuesCountLimit:
 	case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
 	{

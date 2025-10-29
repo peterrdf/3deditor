@@ -264,6 +264,18 @@
     <ClInclude Include="..\zip\zip.h">
       <Filter>zip</Filter>
     </ClInclude>
+    <ClInclude Include="_log_hub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_log_hub.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomStatusBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LogDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DragFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -416,6 +428,12 @@
     <ClCompile Include="..\zip\zip.c">
       <Filter>zip</Filter>
     </ClCompile>
+    <ClCompile Include="CustomStatusBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DEditor.rc">
@@ -496,6 +514,21 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\sort_24.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\information.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\warning.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\error.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

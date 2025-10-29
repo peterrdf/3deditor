@@ -5,8 +5,8 @@
 using namespace std;
 
 // ************************************************************************************************
-_ap_model::_ap_model(enumAP enAP)
-    : _model()
+_ap_model::_ap_model(_log* pLog, enumAP enAP)
+    : _model(pLog)
     , m_sdaiModel(0)
     , m_enAP(enAP)
     , m_pEntityProvider(nullptr)

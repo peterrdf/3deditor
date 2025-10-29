@@ -3,6 +3,7 @@
 #include "_geometry.h"
 #include "_oglScene.h"
 #include "_texture.h"
+#include "_log_hub.h"
 #include "_settings_storage.h"
 
 #include <cfloat>
@@ -45,6 +46,7 @@ enum class enumApplicationProperty : int
 	Contrast,
 	Brightness,
 	Gamma,
+	ShowProgressDialog,
 	VisibleValuesCountLimit,
 	ScalelAndCenterAllVisibleGeometry,
 };
@@ -56,7 +58,7 @@ class _controller;
 static int64_t s_iInstanceID = 1;
 
 // ************************************************************************************************
-class _model
+class _model : public _log_client
 {
 	friend class _controller;
 
@@ -92,7 +94,7 @@ private: // Fields
 
 public: // Methods
 
-	_model();
+	_model(_log* pLog);
 	virtual ~_model();
 
 	virtual _instance* loadInstance(int64_t /*iInstance*/) = 0;
@@ -211,11 +213,12 @@ public: // Properties
 };
 
 // ************************************************************************************************
-class _controller
+class _controller : public _log_client
 {
 
 private: // Fields
 
+	_log_hub* m_pLogHub;
 	vector<_model*> m_vecModels;
 	vector<_model*> m_vecDecorationModels;
 	set<_view*> m_setViews;
@@ -309,6 +312,7 @@ protected: // Methods
 
 public: // Properties
 
+	_log_hub* getLogHub() const { return m_pLogHub; }
 	_model* getModel() const; // kept for backward compatibility
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
