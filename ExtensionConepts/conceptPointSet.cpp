@@ -43,13 +43,16 @@ bool PointSet::CreateClass(OwlModel model)
 /// <summary>
 /// 
 /// </summary>
-bool PointSet::GetBoundingBox(OwlInstance inst, VECTOR3* startVector, VECTOR3* endVector, MATRIX* transformationMatrix, void*)
+bool PointSet::GetBoundingBox(OwlInstance inst, void*)
 {
-    if (transformationMatrix)
-        Helper::MatrixIdentity(transformationMatrix);
+    VECTOR3 startVector;
+    VECTOR3 endVector;
+    MATRIX  transformationMatrix;
 
-    double* xyzStart = &startVector->x;
-    double* xyzEnd = &endVector->x;
+    Helper::MatrixIdentity(&transformationMatrix);
+
+    double* xyzStart = &startVector.x;
+    double* xyzEnd = &endVector.x;
 
     for (int_t j = 0; j < 3; j++) {
         xyzStart[j] = DBL_MAX;
@@ -68,14 +71,22 @@ bool PointSet::GetBoundingBox(OwlInstance inst, VECTOR3* startVector, VECTOR3* e
         }
     }
 
-    if (startVector->x <= endVector->x) {
+    if (startVector.x <= endVector.x) {
         for (int_t j = dim; j < 3; j++) {
             xyzStart[j] = 0;
             xyzEnd[j] = 0;
         }
     }
 
-    return startVector->x <= endVector->x;
+    if (startVector.x <= endVector.x) {
+        rdfgeom_SetBoundingBox(inst, &startVector, &endVector, &transformationMatrix);
+        return true;
+    }
+    else {
+        rdfgeom_SetBoundingBox(inst, 0, 0, 0);
+        return false;
+    }
+
 }
 
 /// <summary>

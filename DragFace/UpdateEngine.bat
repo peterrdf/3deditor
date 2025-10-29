@@ -29,6 +29,6 @@ if .%RDF_ENGINE_LIB%.==.. goto LibUpdated
 echo Update RDF engine binaries
 REM always use release GK build because of assertions
 copy "%RDF_ENGINE_LIB%Release\engine.lib" "%LIB_DIR%engine.lib" /y
-copy "%RDF_ENGINE_LIB%Release\engine.dll" "%DLL_DIR%engine.dll" /y
+rem copy "%RDF_ENGINE_LIB%Release\engine.dll" "%DLL_DIR%engine.dll" /y
 
 :LibUpdated

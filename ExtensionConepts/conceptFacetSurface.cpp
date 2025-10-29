@@ -35,12 +35,19 @@ bool FacetSurface::CreateClass(OwlModel model)
 /// <summary>
 /// 
 /// </summary>
-bool FacetSurface::GetBoundingBox(OwlInstance inst, VECTOR3* startVector, VECTOR3* endVector, MATRIX* transformationMatrix, void*)
+bool FacetSurface::GetBoundingBox(OwlInstance inst, void*)
 {
     OwlInstance pointSet = Helper::GetObjectPropertyValue(inst, PROP_OBJECT);
     if (pointSet){
-        return ::GetBoundingBox(pointSet, (double*)transformationMatrix, (double*)startVector, (double*)endVector);
+        VECTOR3 startVector;
+        VECTOR3 endVector;
+        MATRIX transformationMatrix;
+        if (::GetBoundingBox(pointSet, (double*)&transformationMatrix, (double*)&startVector, (double*)&endVector)) {
+            rdfgeom_SetBoundingBox(inst, &startVector, &endVector, &transformationMatrix);
+            return true;
+        }
     }
+    rdfgeom_SetBoundingBox(inst, 0,0,0);
     return false;
 }
 
