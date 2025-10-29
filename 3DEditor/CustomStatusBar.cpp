@@ -20,34 +20,22 @@ CCustomStatusBar::~CCustomStatusBar()
 /*virtual*/ void CCustomStatusBar::onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) /*override*/
 {
     if (GetCurrentThreadId() == AfxGetApp()->m_nThreadID) {
-        CString strMessage;
-        strMessage.Format(_T("Log [%d]: %S"), enLogEvent, strEvent.c_str());
-
-        int nIndex = CommandToIndex(ID_INDICATOR_LOG);
-        if (nIndex != -1) {
-            SetPaneText(nIndex, strMessage);
-        }
+        UpdateLogStatus(enLogEvent, strEvent);
     }
     else {
-        CString* pMessage = new CString();
-        pMessage->Format(_T("Log [%d]: %S"), enLogEvent, strEvent.c_str());
-
+        string* pMessage = new string(strEvent);
         PostMessage(WM_UPDATE_LOG_STATUS, (WPARAM)enLogEvent, (LPARAM)pMessage);
-    }    
+    }
 }
 
 LRESULT CCustomStatusBar::OnUpdateLogStatus(WPARAM wParam, LPARAM lParam)
 {
     enumLogEvent enLogEvent = (enumLogEvent)wParam;
-    CString* pMessage = (CString*)lParam;
+    string* pMessage = (string*)lParam;
 
     if (pMessage) {
-        int nIndex = CommandToIndex(ID_INDICATOR_LOG);
-        if (nIndex != -1) {
-            SetPaneText(nIndex, *pMessage);
-        }
-
-        delete pMessage; // Clean up allocated memory
+        UpdateLogStatus(enLogEvent, *pMessage);
+        delete pMessage;
     }
 
     return 0;
@@ -69,6 +57,41 @@ void CCustomStatusBar::OnLButtonDown(UINT nFlags, CPoint point)
     }
     
     CMFCStatusBar::OnLButtonDown(nFlags, point);
+}
+
+void CCustomStatusBar::UpdateLogStatus(enumLogEvent enLogEvent, const std::string& strEvent)
+{
+    int nIndex = CommandToIndex(ID_INDICATOR_LOG);
+    if (nIndex != -1) {
+
+        ULONG_PTR iIcon = 0;
+        switch (enLogEvent)
+        {
+            case enumLogEvent::info:
+				iIcon = IDI_ICON_INFO;
+                break;
+            case enumLogEvent::warning:
+				iIcon = IDI_ICON_WARN;
+                break;
+            case enumLogEvent::error:
+                iIcon = IDI_ICON_ERR; 
+                break;
+		}
+
+        if (iIcon != 0) {
+            HICON hIcon = (HICON)LoadImage(
+                AfxGetResourceHandle(),
+                MAKEINTRESOURCE(iIcon),
+                IMAGE_ICON,
+                16, 16, LR_DEFAULTCOLOR
+            );
+            if (hIcon) {
+                SetPaneIcon(nIndex, hIcon);
+            }
+		}        
+
+        SetPaneText(nIndex, (LPCWSTR)CA2W(strEvent.c_str()));
+    }
 }
 
 void CCustomStatusBar::HandlePaneClick(int nPane, CPoint point)

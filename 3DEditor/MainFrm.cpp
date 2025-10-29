@@ -184,7 +184,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 		HICON hIcon = (HICON)LoadImage(
 			AfxGetResourceHandle(),
-			MAKEINTRESOURCE(IDI_ICON_WARN),
+			MAKEINTRESOURCE(IDI_ICON_INFO),
 			IMAGE_ICON,
 			16, 16, LR_DEFAULTCOLOR
 		);

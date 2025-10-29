@@ -23,5 +23,6 @@ protected:
     DECLARE_MESSAGE_MAP()
     
 private:
+	void UpdateLogStatus(enumLogEvent enLogEvent, const std::string& strEvent);
     void HandlePaneClick(int nPane, CPoint point);
 };

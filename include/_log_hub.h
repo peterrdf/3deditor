@@ -45,7 +45,8 @@ public: // Methods
 		m_vecMessages.push_back(make_pair(enLogEvent, strEvent));
 
 		if (m_pLogView != nullptr) {
-			m_pLogView->onLogWrite(enLogEvent, strEvent);
+			auto& lastMessage = m_vecMessages.back();
+			m_pLogView->onLogWrite(lastMessage.first, lastMessage.second);
 		}
 	}
 
