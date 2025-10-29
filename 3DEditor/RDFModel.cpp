@@ -16,8 +16,10 @@
 #include "../ImportPLY/RDFImportPLY.h"
 #endif
 
+#include "_rdf_mvc.h"
 #include "_obj2bin.h"
 #include "_gltf2bin.h"
+#include "_ptr.h"
 
 #include <bitset>
 #include <algorithm>
@@ -158,8 +160,7 @@ public: // Methods
 	}
 
 	virtual ~CLoadTask()
-	{
-	}
+	{}
 
 	virtual void Run() override
 	{
@@ -167,7 +168,8 @@ public: // Methods
 			CString strLog;
 			if (m_bAdd) {
 				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
-			} else {
+			}
+			else {
 				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
 			}
 
@@ -187,28 +189,32 @@ public: // Methods
 #ifdef _DXF_SUPPORT
 		if (strExtension == L".DXF") {
 			m_pModel->LoadDXFModel(m_szPath);
-		} else if (strExtension == L".OBJ") {
+		}
+		else if (strExtension == L".OBJ") {
 			if (m_bAdd) {
 				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadOBJModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
-			} else {
+			}
+			else {
 				OwlModel owlModel = CreateModel();
 				ASSERT(owlModel != 0);
 				m_pModel->LoadOBJModel(owlModel, m_szPath);
 				m_pModel->attachModel(m_szPath, owlModel);
 			}
-		} else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
+		}
+		else if ((strExtension == L".GLTF") || (strExtension == L".GLB")) {
 			if (m_bAdd) {
 				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadGLTFModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
-			} else {
+			}
+			else {
 				OwlModel owlModel = CreateModel();
 				ASSERT(owlModel != 0);
 				m_pModel->LoadGLTFModel(owlModel, m_szPath);
 				m_pModel->attachModel(m_szPath, owlModel);
-			}			
+			}
 		}
 #endif
 #ifdef _GIS_SUPPORT
@@ -222,38 +228,41 @@ public: // Methods
 				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadGISModel(m_pModel->getOwlModel(), m_szPath);
 				m_pModel->load();
-			} else {
+			}
+			else {
 				OwlModel owlModel = CreateModel();
 				ASSERT(owlModel != 0);
 				m_pModel->LoadGISModel(owlModel, m_szPath);
 				m_pModel->attachModel(m_szPath, owlModel);
 			}
-		} else
-#endif
-#ifdef IMPORT_PLY
-        if (strExtension == L".PLY") {
-            CStringA filePath(m_szPath);
-            char errors[512];
-            auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), errors);
-            CString err(errors);
-            CString msg;
-            msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
-            AfxMessageBox(msg, (inst!=NULL) ? MB_OK : MB_ICONSTOP);
-			m_pModel->load();
 		}
 		else
 #endif
-		{
-			if (m_bAdd) {
-				m_pModel->importModel(m_szPath);				
-			} else {
-				OwlModel owlModel = OpenModelW(m_szPath);
-				LoadEngineExtensions(owlModel);
-				if (owlModel) {
-					m_pModel->attachModel(m_szPath, owlModel);
+#ifdef IMPORT_PLY
+			if (strExtension == L".PLY") {
+				CStringA filePath(m_szPath);
+				char errors[512];
+				auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), errors);
+				CString err(errors);
+				CString msg;
+				msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
+				AfxMessageBox(msg, (inst != NULL) ? MB_OK : MB_ICONSTOP);
+				m_pModel->load();
+			}
+			else
+#endif
+			{
+				if (m_bAdd) {
+					m_pModel->importModel(m_szPath);
+				}
+				else {
+					OwlModel owlModel = OpenModelW(m_szPath);
+					LoadEngineExtensions(owlModel);
+					if (owlModel) {
+						m_pModel->attachModel(m_szPath, owlModel);
+					}
 				}
 			}
-		}
 
 		if (m_pModel->getOwlModel() == 0) {
 			CString strError;
@@ -269,10 +278,12 @@ public: // Methods
 				::MessageBox(
 					::AfxGetMainWnd()->GetSafeHwnd(),
 					strError, L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-			} else {
+			}
+			else {
 				TRACE(L"\nError: %s", (LPCTSTR)strError);
 			}
-		} else {
+		}
+		else {
 			if (!TEST_MODE) {
 				if (g_pProgress != nullptr) {
 					g_pProgress->Log(0/*info*/, "*** Done. ***");
@@ -341,12 +352,13 @@ void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 
 	CLoadTask loadTask(this, szPath, bAdd);
 #ifdef _PROGRESS_UI_SUPPORT
-	if (!TEST_MODE) {
+	if (_ptr<_rdf_controller>(m_pController)->getShowProgressDialog() && !TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 		g_pProgress = &dlgProgress;
 		dlgProgress.DoModal();
 		g_pProgress = nullptr;
-	} else
+	}
+	else
 #endif
 	{
 		loadTask.Run();
@@ -364,7 +376,8 @@ void CRDFModel::LoadDXFModel(const wchar_t* szPath)
 		parser.load(CW2A(szPath));
 
 		attachModel(szPath, owlModel);
-	} catch (const std::runtime_error& ex) {
+	}
+	catch (const std::runtime_error& ex) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(ex.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -400,11 +413,13 @@ void CRDFModel::LoadGISModel(OwlModel owlModel, const wchar_t* szPath)
 
 		SetGISOptionsW(strRootFolder.c_str(), true, LogCallbackImpl);
 		ImportGISModel(owlModel, CW2A(szPath));
-	} catch (const std::runtime_error& err) {
+	}
+	catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	} catch (...) {
+	}
+	catch (...) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -423,11 +438,13 @@ void CRDFModel::LoadOBJModel(OwlModel owlModel, const wchar_t* szPath)
 		_obj2bin::_exporter exporter(CW2A(szPath), owlModel, false);
 		exporter.setLog(&log);
 		exporter.execute();
-	} catch (const std::runtime_error& err) {
+	}
+	catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	} catch (...) {
+	}
+	catch (...) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -438,7 +455,7 @@ void CRDFModel::LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath)
 {
 	try {
 		VERIFY_INSTANCE(owlModel);
-		VERIFY_POINTER(szPath);	
+		VERIFY_POINTER(szPath);
 
 		fs::path pthOutputFile = szPath;
 		pthOutputFile += L".bin";
@@ -448,11 +465,13 @@ void CRDFModel::LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath)
 		_gltf2bin::_exporter exporter(owlModel, CW2A(szPath), pthOutputFile.string().c_str());
 		exporter.setLog(&log);
 		exporter.execute(false);
-	} catch (const std::runtime_error& err) {
+	}
+	catch (const std::runtime_error& err) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			CA2W(err.what()), L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
-	} catch (...) {
+	}
+	catch (...) {
 		::MessageBox(
 			::AfxGetMainWnd()->GetSafeHwnd(),
 			L"Unknown error.", L"Error", MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
@@ -467,8 +486,7 @@ CDefaultModel::CDefaultModel(_controller* pController)
 }
 
 /*virtual*/ CDefaultModel::~CDefaultModel()
-{
-}
+{}
 
 void CDefaultModel::Create()
 {
