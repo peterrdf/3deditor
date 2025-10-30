@@ -745,7 +745,7 @@ BEGIN
             VALUE "FileDescription", "3DEditor"
             VALUE "FileVersion", VERSION_STRING
             VALUE "InternalName", "3DEditor.exe"
-            VALUE "LegalCopyright", "(c) RDF LTD.  All rights reserved."
+            VALUE "LegalCopyright", "(c) RDF LTD. All rights reserved."
             VALUE "OriginalFilename", "3DEditor.exe"
             VALUE "ProductName", "3DEditor"
             VALUE "ProductVersion", VERSION_STRING
