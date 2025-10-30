@@ -87,6 +87,7 @@
 #define IDB_SORT_INSTANCES_24           312
 #define TEXTFILE                        312
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
+#define ID_INDICATOR_LOG                313
 #define IDD_DIALOG_NEW_INSTANCE         314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
 #define IDD_DIALOG_SEARCH               316
@@ -98,6 +99,10 @@
 #define IDD_DIALOG_PROGRESS             325
 #define IDR_TEXTFILE_VERTEX_SHADER3     327
 #define IDR_TEXTFILE_FRAGMENT_SHADER3   328
+#define IDI_ICON_INFO                   329
+#define IDI_ICON_WARN                   331
+#define IDI_ICON_ERR                    332
+#define IDD_DIALOG_LOG                  333
 #define IDC_COMBO_EXISTING_INSTANCE     1000
 #define IDC_RADIO_EXISTING_INSTANCE     1001
 #define IDC_RADIO_NEW_INSTANCE          1002
@@ -110,6 +115,7 @@
 #define IDC_COMBO_INSTANCES             1009
 #define IDC_EDIT_NAME                   1010
 #define IDC_EDIT_PROGRESS               1011
+#define IDC_EDIT_MESSAGES               1012
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -168,9 +174,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        329
+#define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32845
-#define _APS_NEXT_CONTROL_VALUE         1012
-#define _APS_NEXT_SYMED_VALUE           313
+#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

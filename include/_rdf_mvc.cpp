@@ -16,16 +16,15 @@
 using namespace std;
 
 // ************************************************************************************************
-_rdf_model::_rdf_model()
-	: _model()
+_rdf_model::_rdf_model(_log* pLog)
+	: _model(pLog)
 	, m_owlModel(0)
 	, m_bExternalModel(false)
 	, m_mapInstances()
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_mapInstanceDefaultState()
-{
-}
+{}
 
 /*virtual*/ _rdf_model::~_rdf_model()
 {
@@ -34,9 +33,9 @@ _rdf_model::_rdf_model()
 
 /*virtual*/ _instance* _rdf_model::loadInstance(int64_t iInstance) /*override*/
 {
-	assert(iInstance != 0);	
+	assert(iInstance != 0);
 
-	clean(false);	
+	clean(false);
 
 	preLoad();
 
@@ -255,11 +254,11 @@ void _rdf_model::importModel(const wchar_t* szPath)
 		if (m_owlModel != 0) {
 			if (!m_bExternalModel) {
 				::CloseModel(m_owlModel);
-			}			
+			}
 			m_owlModel = 0;
 			m_bExternalModel = false;
 		}
-	}	
+	}
 
 	m_mapInstances.clear();
 
@@ -330,7 +329,8 @@ void _rdf_model::loadInstances()
 			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
 			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
-		} else {
+		}
+		else {
 			// Import Model
 			itInstance->second->recalculate();
 		}
@@ -583,7 +583,8 @@ void _rdf_model::resetInstancesDefaultEnableState()
 	}
 }
 
-void _rdf_model::reloadGeometries() {
+void _rdf_model::reloadGeometries()
+{
 	for (auto pGeometry : getGeometries()) {
 		_ptr<_rdf_geometry>(pGeometry)->reload();
 	}
@@ -706,12 +707,10 @@ void _rdf_model::reloadGeometries() {
 // ************************************************************************************************
 _rdf_view::_rdf_view()
 	: _view()
-{
-}
+{}
 
 /*virtual*/ _rdf_view::~_rdf_view()
-{
-}
+{}
 
 _rdf_controller* _rdf_view::getRDFController() const
 {
@@ -731,14 +730,13 @@ _rdf_model* _rdf_view::getRDFModel() const
 _rdf_controller::_rdf_controller()
 	: _controller()
 	, m_pSelectedProperty(nullptr)
+	, m_bShowProgressDialog(false)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
-{
-}
+{}
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
-{
-}
+{}
 
 /*virtual*/ void _rdf_controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/) /*override*/
 {
@@ -1065,7 +1063,7 @@ void _rdf_controller::loadSettings()
 		string strSettingName(typeid(this).name());
 #endif
 		strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
-		
+
 		string strValue = getSettingsStorage()->getSetting(strSettingName);
 		if (!strValue.empty()) {
 			m_iVisibleValuesCountLimit = atoi(strValue.c_str());
@@ -1073,9 +1071,9 @@ void _rdf_controller::loadSettings()
 	}
 
 #ifdef _WINDOWS
-		string strSettingName(typeid(this).raw_name());
+	string strSettingName(typeid(this).raw_name());
 #else
-		string strSettingName(typeid(this).name());
+	string strSettingName(typeid(this).name());
 #endif
 	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
 
@@ -1085,28 +1083,42 @@ void _rdf_controller::loadSettings()
 	}
 }
 
-void _rdf_controller::setVisibleValuesCountLimit(int iNewValue) 
-{ 
+void _rdf_controller::setShowProgressDialog(bool bNewValue)
+{
+	m_bShowProgressDialog = bNewValue;
+
+#ifdef _WINDOWS
+	string strSettingName(typeid(this).raw_name());
+#else
+	string strSettingName(typeid(this).name());
+#endif
+	strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+
+	getSettingsStorage()->setSetting(strSettingName, m_bShowProgressDialog ? "TRUE" : "FALSE");
+}
+
+void _rdf_controller::setVisibleValuesCountLimit(int iNewValue)
+{
 	m_iVisibleValuesCountLimit = iNewValue;
 
 #ifdef _WINDOWS
-		string strSettingName(typeid(this).raw_name());
+	string strSettingName(typeid(this).raw_name());
 #else
-		string strSettingName(typeid(this).name());
+	string strSettingName(typeid(this).name());
 #endif
 	strSettingName += NAMEOFVAR(m_iVisibleValuesCountLimit);
 
 	getSettingsStorage()->setSetting(strSettingName, to_string(m_iVisibleValuesCountLimit));
 }
 
-void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue) 
-{ 
-	m_bScaleAndCenterAllVisibleGeometry = bNewValue; 
+void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue)
+{
+	m_bScaleAndCenterAllVisibleGeometry = bNewValue;
 
 #ifdef _WINDOWS
-		string strSettingName(typeid(this).raw_name());
+	string strSettingName(typeid(this).raw_name());
 #else
-		string strSettingName(typeid(this).name());
+	string strSettingName(typeid(this).name());
 #endif
 	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
 
@@ -1114,11 +1126,10 @@ void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue)
 }
 
 // ************************************************************************************************
-_coordinate_system_model_base::_coordinate_system_model_base()
-	: _rdf_model()
+_coordinate_system_model_base::_coordinate_system_model_base(_log* pLog)
+	: _rdf_model(pLog)
 	, m_pTextBuilder(new _text_builder())
-{
-}
+{}
 
 /*virtual*/ _coordinate_system_model_base::~_coordinate_system_model_base()
 {
@@ -1403,7 +1414,7 @@ void _coordinate_system_model_base::create(const wchar_t* szName)
 
 // ************************************************************************************************
 _world_coordinate_system_model::_world_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model_base()
+	: _coordinate_system_model_base(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 {
@@ -1413,8 +1424,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
-{
-}
+{}
 
 /*virtual*/ bool _world_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
 {
@@ -1482,7 +1492,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 // ************************************************************************************************
 _model_coordinate_system_model::_model_coordinate_system_model(_controller* pController)
-	: _coordinate_system_model_base()
+	: _coordinate_system_model_base(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 {
@@ -1492,8 +1502,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
-{
-}
+{}
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
@@ -1534,7 +1543,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 /*static*/ const int _navigator_model::NAVIGATION_VIEW_LENGTH = 250;
 
 _navigator_model::_navigator_model(_controller* pController)
-	: _rdf_model()
+	: _rdf_model(pController->getLog())
 	, _decoration()
 	, m_pController(pController)
 	, m_pTextBuilder(new _text_builder())
@@ -1618,36 +1627,50 @@ _navigator_model::_navigator_model(_controller* pController)
 		return false;
 	}
 
-	wstring strInstanceName = pInstance->getName(); 
+	wstring strInstanceName = pInstance->getName();
 	if ((strInstanceName == L"#front") || (strInstanceName == L"#front-label")) {
 		pOGLRenderer->_setView(enumView::Front);
-	} else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label")) {
+	}
+	else if ((strInstanceName == L"#back") || (strInstanceName == L"#back-label")) {
 		pOGLRenderer->_setView(enumView::Back);
-	} else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label")) {
+	}
+	else if ((strInstanceName == L"#top") || (strInstanceName == L"#top-label")) {
 		pOGLRenderer->_setView(enumView::Top);
-	} else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label")) {
+	}
+	else if ((strInstanceName == L"#bottom") || (strInstanceName == L"#bottom-label")) {
 		pOGLRenderer->_setView(enumView::Bottom);
-	} else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label")) {
+	}
+	else if ((strInstanceName == L"#left") || (strInstanceName == L"#left-label")) {
 		pOGLRenderer->_setView(enumView::Left);
-	} else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label")) {
+	}
+	else if ((strInstanceName == L"#right") || (strInstanceName == L"#right-label")) {
 		pOGLRenderer->_setView(enumView::Right);
-	} else if (strInstanceName == L"#front-top-left") {
+	}
+	else if (strInstanceName == L"#front-top-left") {
 		pOGLRenderer->_setView(enumView::FrontTopLeft);
-	} else if (strInstanceName == L"#front-top-right") {
+	}
+	else if (strInstanceName == L"#front-top-right") {
 		pOGLRenderer->_setView(enumView::FrontTopRight);
-	} else if (strInstanceName == L"#front-bottom-left") {
+	}
+	else if (strInstanceName == L"#front-bottom-left") {
 		pOGLRenderer->_setView(enumView::FrontBottomLeft);
-	} else if (strInstanceName == L"#front-bottom-right") {
+	}
+	else if (strInstanceName == L"#front-bottom-right") {
 		pOGLRenderer->_setView(enumView::FrontBottomRight);
-	} else if (strInstanceName == L"#back-top-left") {
+	}
+	else if (strInstanceName == L"#back-top-left") {
 		pOGLRenderer->_setView(enumView::BackTopLeft);
-	} else if (strInstanceName == L"#back-top-right") {
+	}
+	else if (strInstanceName == L"#back-top-right") {
 		pOGLRenderer->_setView(enumView::BackTopRight);
-	} else if (strInstanceName == L"#back-bottom-left") {
+	}
+	else if (strInstanceName == L"#back-bottom-left") {
 		pOGLRenderer->_setView(enumView::BackBottomLeft);
-	} else if (strInstanceName == L"#back-bottom-right") {
+	}
+	else if (strInstanceName == L"#back-bottom-right") {
 		pOGLRenderer->_setView(enumView::BackBottomRight);
-	} else {
+	}
+	else {
 		pOGLRenderer->_setView(enumView::Isometric);
 	}
 

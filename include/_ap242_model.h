@@ -25,7 +25,7 @@ private: // Members
 
 public: // Methods
 
-    _ap242_model(bool bLoadInstancesOnDemand = false);
+    _ap242_model(_log* pLog, bool bLoadInstancesOnDemand = false);
     virtual ~_ap242_model();
 
 protected: // Methods

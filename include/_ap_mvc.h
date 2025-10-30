@@ -48,7 +48,7 @@ private: // Members
 
 public: // Methods
 
-    _ap_model(enumAP enAP);
+    _ap_model(_log* pLog, enumAP enAP);
     virtual ~_ap_model();
 
     // _model

@@ -8,28 +8,20 @@
 #include "DesignTreeView.h"
 #include "ClassView.h"
 #include "PropertiesWnd.h"
+#include "CustomStatusBar.h"
 
-// ------------------------------------------------------------------------------------------------
+// ************************************************************************************************
 class CMainFrame : public CFrameWndEx
 {
-	// --------------------------------------------------------------------------------------------
 	friend class CTestLayout;
 	
 private: // Methods
-
-	// --------------------------------------------------------------------------------------------
 	CDocument* GetDocument() const;
-
-	// --------------------------------------------------------------------------------------------
 	CView* GetView() const;
-
-	// --------------------------------------------------------------------------------------------
-	// Controller - MVC
 	CRDFController * GetController() const;
 
 public: // Methods
 
-	// --------------------------------------------------------------------------------------------
 	// Tests
 	void GenerateTests(const CString& strInputDataDir, const CString& strWildcard);
 
@@ -60,7 +52,7 @@ public:
 protected:  // control bar embedded members
 	CMFCMenuBar       m_menuBar;
 	CMFCToolBar       m_toolBar;
-	CMFCStatusBar     m_statusBar;
+	CCustomStatusBar  m_statusBar;
 	CMFCToolBarImages m_userImages;
 	CDesignTreeView   m_designTreeView;
 	CClassView        m_classView;

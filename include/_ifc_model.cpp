@@ -18,8 +18,8 @@
 #define DEFAULT_CIRCLE_SEGMENTS 36
 
 // ************************************************************************************************
-_ifc_model::_ifc_model(bool bUseWorldCoordinates /*= false*/, bool bLoadInstancesOnDemand /*= false*/)
-	: _ap_model(enumAP::IFC)
+_ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool bLoadInstancesOnDemand /*= false*/)
+	: _ap_model(pLog, enumAP::IFC)
 	, m_bUseWorldCoordinates(bUseWorldCoordinates)
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_sdaiSpaceEntity(0)

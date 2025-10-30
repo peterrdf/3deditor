@@ -139,7 +139,7 @@ BOOL CMy3DEditorDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	setModel(new CDefaultModel());
+	setModel(new CDefaultModel(this));
 
 	return TRUE;
 }
@@ -240,7 +240,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			return FALSE;
 		}
 
-		auto pModel = new CRDFModel();
+		auto pModel = new CRDFModel(this);
 		pModel->Load(strModel.c_str(), false);
 		setModel(pModel);
 
@@ -250,7 +250,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		}
 	}
 	else {
-		auto pModel = new CRDFModel();
+		auto pModel = new CRDFModel(this);
 		pModel->Load(lpszPathName, false);
 		setModel(pModel);
 	}
