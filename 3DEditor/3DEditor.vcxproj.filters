@@ -279,6 +279,12 @@
     <ClInclude Include="version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\parsers\_net.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\_xml.h">
+      <Filter>parsers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -389,13 +395,7 @@
     <ClCompile Include="..\parsers\_importer_t.cpp">
       <Filter>parsers</Filter>
     </ClCompile>
-    <ClCompile Include="..\parsers\_json.cpp">
-      <Filter>parsers</Filter>
-    </ClCompile>
     <ClCompile Include="..\parsers\_reader.cpp">
-      <Filter>parsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\parsers\_serialization.cpp">
       <Filter>parsers</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_bin2gltf.cpp">
@@ -430,6 +430,18 @@
     </ClCompile>
     <ClCompile Include="LogDialog.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_json.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_net.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_serialization.cpp">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_xml.cpp">
+      <Filter>parsers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
