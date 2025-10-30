@@ -653,7 +653,6 @@ void _controller::setModel(_model* pModel)
 	vector<_model*> vecModels;
 	if (pModel != nullptr) {
 		vecModels.push_back(pModel);
-		logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
 	}
 
 	setModels(vecModels);
