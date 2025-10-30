@@ -220,7 +220,11 @@ public:
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
+	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	CString GetVersionInfo(LPCTSTR lpszKey);
+	void UpdateVersionInfo();	
 
 // Implementation
 protected:
@@ -231,9 +235,89 @@ CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
 }
 
+BOOL CAboutDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	UpdateVersionInfo();
+
+	return TRUE;
+}
+
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+}
+
+CString CAboutDlg::GetVersionInfo(LPCTSTR lpszKey)
+{
+	CString strValue;
+
+	// Get the module handle
+	HMODULE hModule = GetModuleHandle(NULL);
+
+	// Get the filename of the executable
+	TCHAR szFilename[MAX_PATH];
+	GetModuleFileName(hModule, szFilename, MAX_PATH);
+
+	// Get version information size
+	DWORD dwHandle = 0;
+	DWORD dwSize = GetFileVersionInfoSize(szFilename, &dwHandle);
+
+	if (dwSize == 0)
+		return strValue;
+
+	// Allocate buffer for version information
+	BYTE* pVersionInfo = new BYTE[dwSize];
+
+	// Get the version information
+	if (GetFileVersionInfo(szFilename, dwHandle, dwSize, pVersionInfo)) {
+		// Query language and code page
+		struct LANGANDCODEPAGE
+		{
+			WORD wLanguage;
+			WORD wCodePage;
+		} *lpTranslate;
+
+		UINT cbTranslate;
+		if (VerQueryValue(pVersionInfo, TEXT("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, &cbTranslate)) {
+			// Format the query string
+			CString strQuery;
+			strQuery.Format(TEXT("\\StringFileInfo\\%04x%04x\\%s"),
+				lpTranslate[0].wLanguage, lpTranslate[0].wCodePage, lpszKey);
+
+			// Query the specific value
+			LPCTSTR lpszValue;
+			UINT cchValue;
+			if (VerQueryValue(pVersionInfo, strQuery, (LPVOID*)&lpszValue, &cchValue)) {
+				strValue = lpszValue;
+			}
+		}
+	}
+
+	delete[] pVersionInfo;
+	return strValue;
+}
+
+void CAboutDlg::UpdateVersionInfo()
+{	
+	CString strProductVersion = GetVersionInfo(_T("ProductVersion"));
+	CString strProductName = GetVersionInfo(_T("ProductName"));
+	if (!strProductName.IsEmpty() && !strProductVersion.IsEmpty()) {
+		CString strVersionText;
+		strVersionText.Format(L"%s, Version %s", (LPCWSTR)strProductName, (LPCWSTR)strProductVersion);
+		SetDlgItemText(IDC_PRODUCT_NAME, strVersionText);
+	}
+
+	CString strLegalCopyright = GetVersionInfo(_T("LegalCopyright"));
+	if (!strLegalCopyright.IsEmpty()) {
+		SetDlgItemText(IDC_COPYRIGHT, strLegalCopyright);
+	}
+
+	CString strCompanyName = GetVersionInfo(_T("CompanyName"));
+	if (!strCompanyName.IsEmpty()) {
+		SetDlgItemText(IDC_COMPANY, strCompanyName);
+	}
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)

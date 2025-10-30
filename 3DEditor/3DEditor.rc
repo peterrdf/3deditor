@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -103,10 +104,11 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "About 3DEditor"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "3DEditor, Version 2.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2022",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+ICON            IDR_MAINFRAME, IDC_STATIC, 14, 14, 20, 20
+LTEXT           "3DEditor", IDC_PRODUCT_NAME, 42, 14, 114, 8, SS_NOPREFIX
+LTEXT           "Copyright info", IDC_COPYRIGHT, 42, 26, 114, 8
+LTEXT           "Company info", IDC_COMPANY, 42, 38, 114, 8
+DEFPUSHBUTTON   "OK", IDOK, 113, 41, 50, 14, WS_GROUP
 END
 
 IDD_DIALOG_EDIT_OBJECT_PROPRTY DIALOGEX 0, 0, 223, 112
@@ -723,8 +725,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+FILEVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
+PRODUCTVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -741,12 +743,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "RDF LTD"
             VALUE "FileDescription", "3DEditor"
-            VALUE "FileVersion", "2.0.0.1"
+            VALUE "FileVersion", VERSION_STRING
             VALUE "InternalName", "3DEditor.exe"
             VALUE "LegalCopyright", "(c) RDF LTD.  All rights reserved."
             VALUE "OriginalFilename", "3DEditor.exe"
             VALUE "ProductName", "3DEditor"
-            VALUE "ProductVersion", "2.0.0.1"
+            VALUE "ProductVersion", VERSION_STRING
         END
     END
     BLOCK "VarFileInfo"
