@@ -99,6 +99,14 @@
     extern SHELL* rdfgeom_GetBRep(OwlInstance instance);
 
     //
+    // Sets calculated bounding box cached on instance
+    // Transform T may be NULL or given.
+    // If transform is given, the implemented should fill the transform, either startVector and endVector should receive World Coordinate box.
+    // Pass all NULLs if box is not known yet.
+    //
+    extern void rdfgeom_SetBoundingBox(OwlInstance instance, VECTOR3* low, VECTOR3* high, MATRIX* T);
+
+    //
     // Get number of points of the SHELL
     // It can return 0. 
     //
@@ -313,21 +321,19 @@
 
     //
     // The callback to get bounding box of a concept
-    // Implementer should fill startVector and endVector.
-    // transform may be NULL or given.
-    // If transform is given, the implemented should fill the transform, either startVector and endVector should receive coordinate box.
-    // The callback should return false if box is not known yet, and true when it returns values.
+    // Implementer should call rdfgeom_SetBoundingBox.
     // rdfgeom_GetBRep can be used in the call but will return NULL until CalculateInstance call.
     // clientData is any value passed to rdfgeom_SetClassGeometry
     //
-    typedef bool (*RDFGEOM_CALLBACK_GET_BBOX)(OwlInstance inst, VECTOR3* startVector, VECTOR3* endVector, MATRIX* transform, void* clientData);
+    typedef bool (*RDFGEOM_CALLBACK_GET_BBOX)(OwlInstance inst, void* clientData);
 
     //
     // The callback to create B-Rep of a concept
-    // User rdfgeom_GetBRep to get SHELL to populate. It will return not NULL but empty representation (empty conceptual face list) 
+    // Use rdfgeom_GetBRep to get SHELL to populate. It will return not NULL but empty representation (empty conceptual face list) 
     // Implemented should use rdfgeom_AllocatePoints and rdfgeom_*_Create to initialize geometry
     // All nested instances already have defined representation to the moment of the call, and their shells can be used.
     // clientData is any value passed to rdfgeom_SetClassGeometry
+    // Also implementer should call rdfgeom_SetBoundingBox
     //
     typedef void (*RDFGEOM_CALLBACK_INIT_SHELL)(OwlInstance inst, void* clientData);
     
