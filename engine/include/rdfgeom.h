@@ -344,6 +344,40 @@
     //
     extern bool rdfgeom_SetClassGeometry(OwlClass cls, RDFGEOM_CALLBACK_INIT_SHELL fnInitRepr, RDFGEOM_CALLBACK_GET_BBOX fnGetBBox, void* clientData);
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // 
+    // Extension support
+    // 
+
+    //
+    // The logging callback can be provided by host application which loads engine extension    
+    //
+    enum RDFGEOM_LOG_LEVEL
+    {
+        RDFGEOM_LOG_INFO = 0,
+        RDFGEOM_LOG_WARNING,
+        RDFGEOM_LOG_ERROR
+    };
+
+    //
+    // Extension can use and host application can provide this callback to log messages to host application 
+    // 
+    typedef void (*RDFGEOM_CALLBACK_LOG)(RDFGEOM_LOG_LEVEL level, const char* msg, void* hostData);
+
+
+    //
+    // Extension should implement and host application should call this function to initialize the extension 
+    //
+    #define RDFGEOM_LOAD_EXTENSION_FUNC         rdfgeom_LoadExtension
+    #define RDFGEOM_LOAD_EXTENSION_FUNC_NAME    "rdfgeom_LoadExtension"
+    typedef void (*RDFGEOM_LOAD_EXTENSION_FUNC_TYPE)(OwlModel model, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+
+    #define RDFGEOM_UNLOAD_EXTENSION_FUNC         rdfgeom_UnLoadExtension
+    #define RDFGEOM_UNLOAD_EXTENSION_FUNC_NAME    "rdfgeom_UnLoadExtension"
+    typedef void (*RDFGEOM_UNLOAD_EXTENSION_FUNC_TYPE)(void* hostData);
+
+
 #ifdef __cplusplus
     }
 #endif

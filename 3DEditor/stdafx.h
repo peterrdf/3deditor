@@ -49,5 +49,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include "..\engine\include\engine.h"
 #include "..\engine\include\geom.h"
+#include "..\engine\include\rdfgeom.h"
 

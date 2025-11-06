@@ -85,6 +85,13 @@ public: // Methods
 	void setLog(_log* pLog) { m_pLog = pLog; }
 	_log* getLog() { return m_pLog; }
 
+	void logWrite(enumLogEvent level, const std::string& strEvent)
+	{
+		if (m_pLog != nullptr) {
+			m_pLog->logWrite(level, _time::addDateTimeStamp(strEvent));
+		}
+	}
+
 	void logInfo(const std::string& strEvent)
 	{
 		if (m_pLog != nullptr) {
