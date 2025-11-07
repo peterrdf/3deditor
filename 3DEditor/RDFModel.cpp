@@ -315,19 +315,12 @@ CRDFModel::CRDFModel(_controller* pController)
 
 CRDFModel::~CRDFModel()
 {
-	/*
-	@Svilen, call to logInfo crash on app exit
-	Could you please fix and uncomment cleanup code below
-
-	logInfo("Crash!");
-
 	for (auto& module : m_loadedModules) {
 		if (auto fnUnload = (RDFGEOM_UNLOAD_EXTENSION_FUNC_TYPE)GetProcAddress(module, RDFGEOM_UNLOAD_EXTENSION_FUNC_NAME)) {
 			fnUnload(this);
 		}
 	}
 	m_loadedModules.clear();
-	*/
 
 	clean();
 }

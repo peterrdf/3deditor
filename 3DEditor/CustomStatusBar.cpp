@@ -8,6 +8,7 @@
 BEGIN_MESSAGE_MAP(CCustomStatusBar, CMFCStatusBar)
     ON_WM_LBUTTONDOWN()
     ON_MESSAGE(WM_UPDATE_LOG_STATUS, OnUpdateLogStatus)
+    ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 CCustomStatusBar::CCustomStatusBar()
@@ -116,4 +117,12 @@ void CCustomStatusBar::HandlePaneClick(int nPane, CPoint /*point*/)
             logDlg.DoModal();
         }
 	}
+}
+void CCustomStatusBar::OnDestroy()
+{
+    __super::OnDestroy();
+
+    if (m_pLogHub != nullptr) {
+		m_pLogHub->setLogView(nullptr);
+    }
 }
