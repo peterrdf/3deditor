@@ -311,6 +311,7 @@
     //
     extern int_t rdfgeom_vertex_GetPointIndex(STRUCT_VERTEX* vertex);
     
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // Define geometry for custom concepts
@@ -353,7 +354,7 @@
     //
     // The logging callback can be provided by host application which loads engine extension    
     //
-    enum RDFGEOM_LOG_LEVEL
+    enum class RDFGEOM_LOG_LEVEL : unsigned char
     {
         RDFGEOM_LOG_INFO = 0,
         RDFGEOM_LOG_WARNING,
