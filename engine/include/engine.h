@@ -5687,6 +5687,12 @@ int64_t			DECL STDC	UpdateInstance(
 									OwlInstance				owlInstance
 								);
 
+
+bool			DECL STDC	IsUpToDate(
+									OwlInstance owlInstance
+								);
+
+
 //
 //		InferenceInstance                                       (https://rdf.bg/gkdoc/CP64/InferenceInstance.html)
 //				OwlInstance				owlInstance							IN

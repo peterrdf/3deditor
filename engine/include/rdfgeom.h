@@ -356,9 +356,9 @@
     //
     enum class RDFGEOM_LOG_LEVEL : unsigned char
     {
-        RDFGEOM_LOG_INFO = 0,
-        RDFGEOM_LOG_WARNING,
-        RDFGEOM_LOG_ERROR
+        INFO = 0,
+        WARN,
+        ERR
     };
 
     //
