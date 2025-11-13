@@ -1,29 +1,29 @@
 #include "pch.h"
 #include "DragFace.h"
-#include "GeomTypes.h"
 
 static void TrimLineToBox(
-    Segment3D&      line,
+    SEGMENT3&       line,
     double          box[6])
 {
-    auto lineDir = line.Direction();
+    VECTOR3 lineDir = line.pt[1] - line.pt[0];
+    Vec3Normalize(lineDir);
 
     // Segment range
-    double tmm[2] = { std::numeric_limits<double>::max(),  std::numeric_limits<double>::lowest() };
+    double tmm[2] = { FLT_MAX,  -(FLT_MAX-1) };
 
     // project 8 cube vertices
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
             for (int k = 0; k < 2; ++k) {
 
-                auto vert = make_point(
+                auto vert = Vec3Make(
                     (i ? box[0] : box[3]),
                     (j ? box[1] : box[4]),
                     (k ? box[2] : box[5])
                 );
 
-                Vector3d diff = line.pt[0] - vert;
-                double t = dot_product(diff, lineDir);
+                auto diff = line.pt[0] - vert;
+                double t = Vec3Dot(diff, lineDir);
                 if (t < tmm[0]) tmm[0] = t;
                 if (t > tmm[1]) tmm[1] = t;
             }
@@ -31,19 +31,20 @@ static void TrimLineToBox(
     }
 
     // 
-    Segment3D segment;
+    SEGMENT3 segment;
     segment.pt[0] = line.pt[0] + lineDir * tmm[0];
     segment.pt[1] = line.pt[1] + lineDir * tmm[1];
 
     //check
-    auto dir = segment.Direction();
-    auto collinear = dot_product(dir, lineDir);
+    auto dir = segment.pt[1]-segment.pt[0];
+    Vec3Normalize(dir);
+    auto collinear = Vec3Dot(&dir, &lineDir);
     assert(fabs(fabs(collinear) - 1) < 1e-7);
 
     line = segment;
 }
 
-static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
+static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size)
 {
     char name[256];
     sprintf_s(name, "(%g, %g, %g)", pt.x, pt.y, pt.z);
@@ -53,9 +54,9 @@ static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 	sphere.set_segmentationParts(36);
 
 	auto T = GEOM::Matrix::Create(model);
-	T.set__41(pt[0]);
-	T.set__42(pt[1]);
-	T.set__43(pt[2]);
+	T.set__41(pt.x);
+	T.set__42(pt.y);
+	T.set__43(pt.z);
 
 	auto trans = GEOM::Transformation::Create(model, name);
 	trans.set_object(sphere);
@@ -64,7 +65,7 @@ static OwlInstance DrawPoint(OwlModel model, Point3d const& pt, double size)
 	return trans;
 }
 
-static OwlInstance DrawInput(OwlModel model, Point3d const& pt, Segment3D& line, double size)
+static OwlInstance DrawInput(OwlModel model, VECTOR3 const& pt, SEGMENT3& line, double size)
 {
     std::vector<OwlInstance> rinst;
     
@@ -81,8 +82,8 @@ static OwlInstance DrawInput(OwlModel model, Point3d const& pt, Segment3D& line,
 extern OwlInstance DragFace(
     OwlInstance					instance,
     int							iConceptualFace,
-    double						startDragPoint[3],
-    double						endDragLine[6]
+	VECTOR3 const&				startDragPoint,
+	SEGMENT3 const&				endDragLine
 )
 {
     double box[6] = { 0,0,0,0,0,0 };
@@ -95,14 +96,9 @@ extern OwlInstance DragFace(
 
     auto model = GetModel(instance);
 
-    Point3d ptStart;
-    ptStart = MakePoint(startDragPoint);
-
-    Segment3D line;
-    line.pt[0] = MakePoint(endDragLine);
-    line.pt[1] = MakePoint(endDragLine + 3);
+    SEGMENT3 line = endDragLine;
 
     TrimLineToBox(line, box);
 
-	return DrawInput(model, ptStart, line, size);
+	return DrawInput(model, startDragPoint, line, size);
 }

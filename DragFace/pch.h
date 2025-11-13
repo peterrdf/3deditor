@@ -7,16 +7,17 @@
 #ifndef PCH_H
 #define PCH_H
 
-// add headers that you want to pre-compile here
-#include "framework.h"
+#include <stdio.h>
+#include <math.h>
+#include <cfloat>
+
+#include <vector>
 
 #include "engine.h"
+#include "W:\DevArea\RDF\GK\RDFGeometryKernel\Code\include\rdfgeom.h"
+#include "rdfgeom.h"
 #include "geom.h"
 
-#include "wykobi.hpp"
-using namespace wykobi;
-
-/*
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
@@ -24,6 +25,5 @@ using namespace wykobi;
 #ifndef min
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
-*/
 
 #endif //PCH_H

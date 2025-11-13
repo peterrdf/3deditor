@@ -18,7 +18,7 @@
 // Geometry representation of instances
 //
 // This API intended to access B-Rep geometry of GeometricItem instances as textured polygons, wires and points.
-// It can be used to get information from existing instances after CalulateInstance call
+// It can be used to get information from existing instances after CalculateInstance call
 // or to describe and construct new concepts by specifying non-constructive (B-Rep) geometry 
 // 
 
@@ -39,6 +39,11 @@
         double	x, y, z;
     };
 
+    struct SEGMENT3
+    {
+        VECTOR3    pt[2];
+    };
+
     //
     // 2D point, usually used for texture coordinates 
     //
@@ -57,6 +62,276 @@
 			_31, _32, _33,
 			_41, _42, _43;
     };
+
+#ifdef __cplusplus
+    }
+#endif
+
+    //
+    // Base geometry structures and functions
+    //
+static	inline		double	Sqr(
+										double		value
+									)
+{
+	return value * value;
+}
+
+inline double* Vec3Coordinates(VECTOR3& vec) { return &(vec.x); }
+inline const double* Vec3Coordinates(const VECTOR3& vec) { return &(vec.x); }
+
+static inline void    Vec3Init(
+							VECTOR3& vec,
+							double	 x = 0,
+							double   y = 0,
+						    double   z = 0
+						)
+{
+	vec.x = x;
+	vec.y = y;
+	vec.z = z;
+}
+
+static inline void    Vec3Init(
+							VECTOR3&        vec,
+							const double	xyz[3]
+						)
+{
+	double	* coord = Vec3Coordinates(vec);
+	for (int i = 0; i < 3; i++)
+		coord[i] = xyz[i];
+}
+
+static inline VECTOR3 Vec3Make(
+                            double	 x = 0,
+                            double   y = 0,
+                            double   z = 0
+                        )
+{
+    VECTOR3 vec;
+    vec.x = x;
+    vec.y = y;
+    vec.z = z;
+    return vec;
+}
+
+static inline VECTOR3 Vec3Make(
+                            double    xyz[3]
+                        )
+{
+    VECTOR3 vec;
+    Vec3Init(vec, xyz);
+    return vec;
+}
+
+static	inline		void	Vec3Identity(
+										VECTOR3						* pV
+									)
+{
+	pV->x = 0.;
+	pV->y = 0.;
+	pV->z = 0.;
+}
+
+static	inline		double	Vec3Normalize(
+										VECTOR3						* pInOut
+									)
+{
+	double	size = Sqr(pInOut->x) + Sqr(pInOut->y) + Sqr(pInOut->z);
+
+	if (size > 0.0000000000000001) {
+		double	sqrtSize = sqrt(size);
+
+		pInOut->x /= sqrtSize;
+		pInOut->y /= sqrtSize;
+		pInOut->z /= sqrtSize;
+
+		return sqrtSize;
+	}
+	else {
+		pInOut->x = 0.;
+		pInOut->y = 0.;
+		pInOut->z = 0.;
+
+		return 0.;
+	}
+}
+
+static inline void Vec3Normalize (VECTOR3& vInOut)
+{
+    Vec3Normalize(&vInOut);
+}
+
+void	Vec3Transform(
+				VECTOR3						* pInOut,
+				const MATRIX				* pM
+			);
+
+void	Vec3Transform(
+				VECTOR3						* pOut,
+				const VECTOR3				* pV,
+				const MATRIX				* pM
+			);
+
+void	Vec3TransformNoTranslation(
+				VECTOR3						* pInOut,
+				const MATRIX				* pM
+			);
+
+void	Vec3TransformNoTranslation(
+				VECTOR3						* pOut,
+				const VECTOR3				* pV,
+				const MATRIX				* pM
+			);
+
+void	Vec3TransformNoTranslation(
+				VECTOR3						* pOut,
+				const VECTOR3				* pV,
+				const MATRIX				* pM,
+				bool						invertNormal
+			);
+
+static	inline		void	Vec3Add(
+										VECTOR3						* pOut,
+										const VECTOR3				* pV
+									)
+{
+	pOut->x += pV->x;
+	pOut->y += pV->y;
+	pOut->z += pV->z;
+}
+
+static	inline		void	Vec3Add(
+										VECTOR3						* pOut,
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	pOut->x = pV1->x + pV2->x;
+	pOut->y = pV1->y + pV2->y;
+	pOut->z = pV1->z + pV2->z;
+}
+
+static inline VECTOR3 operator+(const VECTOR3& v1, const VECTOR3& v2)
+{
+    VECTOR3 result = v1;
+    Vec3Add(&result, &v2);
+    return result;
+}
+
+static	inline		void	Vec3Subtract(
+										VECTOR3						* pInOut,
+										const VECTOR3				* pV
+									)
+{
+	pInOut->x -= pV->x;
+	pInOut->y -= pV->y;
+	pInOut->z -= pV->z;
+}
+
+static	inline		void	Vec3Subtract(
+										VECTOR3						* pOut,
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	assert(pOut != pV1);
+
+	pOut->x = pV1->x - pV2->x;
+	pOut->y = pV1->y - pV2->y;
+	pOut->z = pV1->z - pV2->z;
+}
+
+static inline VECTOR3 operator-(const VECTOR3& v1, const VECTOR3& v2)
+{
+    VECTOR3 result = v2;
+    Vec3Subtract(&result, &v1);
+    return result;
+}
+
+
+static inline VECTOR3 operator*(const VECTOR3& v, double scalar)
+{
+    VECTOR3 result;
+    result.x = v.x * scalar;
+    result.y = v.y * scalar;
+    result.z = v.z * scalar;
+    return result;
+}
+
+static	inline		double	Vec3Dot(
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	assert(pV1 != pV2);
+
+	double	dotProduct = pV1->x * pV2->x + pV1->y * pV2->y + pV1->z * pV2->z;
+
+	return dotProduct;
+}
+
+static inline   double Vec3Dot(const VECTOR3& v1, const VECTOR3& v2)
+{
+    return Vec3Dot(&v1, &v2);
+}
+
+static	inline		void	Vec3Cross(
+										VECTOR3						* pOut,
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	VECTOR3 v;
+
+	v.x = pV1->y * pV2->z - pV1->z * pV2->y;
+	v.y = pV1->z * pV2->x - pV1->x * pV2->z;
+	v.z = pV1->x * pV2->y - pV1->y * pV2->x;
+
+	pOut->x = v.x;
+	pOut->y = v.y;
+	pOut->z = v.z;
+}
+
+static	inline		double	Vec3DistanceSqr(
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	return Sqr(pV1->x - pV2->x) + Sqr(pV1->y - pV2->y) + Sqr(pV1->z - pV2->z);
+}
+
+static	inline		double	Vec3Distance(
+										const VECTOR3				* pV1,
+										const VECTOR3				* pV2
+									)
+{
+	return sqrt(
+					Vec3DistanceSqr(
+							pV1,
+							pV2
+						)
+				);
+}
+
+static	inline		double	Vec3Length(
+										const VECTOR3				* pV
+									)
+{
+	return sqrt(Sqr(pV->x) + Sqr(pV->y) + Sqr(pV->z));
+}
+
+static inline SEGMENT3 Seg3Make(const double coords[6])
+{
+    SEGMENT3 seg;
+    Vec3Init(seg.pt[0], coords);
+    Vec3Init(seg.pt[1], coords+3);
+    return seg;
+}
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
     //
     // B-Rep geometry of an instance
@@ -206,7 +481,7 @@
     // It returns NULL when no transformation is set (identity transformation).
     // Transformation for child (nested) conceptual faces are superposed.
     //
-    extern MATRIX* rdfgeom_cface_GetLocalTranformation(CONCEPTUAL_FACE* cface);
+    extern MATRIX* rdfgeom_cface_GetLocalTransformation(CONCEPTUAL_FACE* cface);
 
     //
     // Get iterator for nested conceptual faces

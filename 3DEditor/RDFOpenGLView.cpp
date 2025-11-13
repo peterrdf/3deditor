@@ -245,7 +245,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	// #dragface
-	static double startDragPoint[3] = { 0,0,0 };
+	static VECTOR3 startDragPoint = Vec3Make();
 
 	if (m_bDragFaceMode && !(GetKeyState(VK_CONTROL) & 0x8000)) {
 		TRACE("*** END Drag Face Mode\n");
@@ -263,7 +263,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 					m_pDragFaceInstance->getOwlInstance(),
 					m_iDragFace,
 					startDragPoint,
-					endPts);
+					Seg3Make(endPts));
 
 				_ptr<_rdf_model>(getController()->getModel())->reload();
 				getController()->onModelUpdated();
@@ -293,9 +293,9 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 
 			auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
 
-			startDragPoint[0] = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-			startDragPoint[1] = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-			startDragPoint[2] = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+			startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+			startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+			startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 		}
 		return;
 	}

@@ -180,8 +180,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DragFace.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="GeomTypes.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
