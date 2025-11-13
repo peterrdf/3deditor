@@ -117,6 +117,7 @@ RdfFile         DECL  STDC  repo_GetFileByIterator          (OwlModel model, Rdf
 bool           DECL STDC    repo_SetPrefix  (RdfFile file, const char* prefix, const char* uri);
 
 // Changes the prefix keeping its URI value.
+// If new prefix is NULL it will remove (unset) the prefix.
 // Returns success flag.
 //
 bool           DECL STDC    repo_ChangePrefix(RdfFile file, const char* oldprefix, const char* newprefix);

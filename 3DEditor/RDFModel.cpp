@@ -54,10 +54,7 @@ void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 // ************************************************************************************************
 // Load OWL extensions
 
-extern "C" typedef void FuncType_LoadExtension(OwlModel model);
-#define FuncName_LoadExtension "LoadExtension"
-
-static void LoadEngineExtensions(OwlModel model)
+void CRDFModel::LoadEngineExtensions(OwlModel model)
 {
 	ExtensionConceptsLoad(model);
 
@@ -111,14 +108,17 @@ static void LoadEngineExtensions(OwlModel model)
 				TRACE("       Loading %s...\n", dllPath);
 
 				if (auto lib = LoadLibraryA(dllPath)) {
-					if (auto func = (FuncType_LoadExtension*)GetProcAddress(lib, FuncName_LoadExtension)) {
+					
+					m_loadedModules.push_back(lib);
 
-						func(model);
+					if (auto funcInit = (RDFGEOM_LOAD_EXTENSION_FUNC_TYPE)GetProcAddress(lib, RDFGEOM_LOAD_EXTENSION_FUNC_NAME)) {
+
+						funcInit(model, RdfgeomLogCallback, this);
 						TRACE("        done\n");
 					}
 					else {
 						CStringA msg;
-						msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, FuncName_LoadExtension);
+						msg.Format("Can not load engine extension %s\nProcedure %s not found in the library", dllPath, RDFGEOM_LOAD_EXTENSION_FUNC_NAME);
 						::MessageBoxA(GetFocus(), msg, "Error", MB_ICONERROR);
 					}
 				}
@@ -135,6 +135,14 @@ static void LoadEngineExtensions(OwlModel model)
 
 	_chdir(saveCWD);
 #endif
+}
+
+void CRDFModel::RdfgeomLogCallback(RDFGEOM_LOG_LEVEL level, const char* msg, void* me)
+{
+    auto pThis = (CRDFModel*)me;
+	if (pThis != nullptr) {
+        pThis->logWrite((enumLogEvent)level, msg);
+    }
 }
 
 // ************************************************************************************************
@@ -257,8 +265,8 @@ public: // Methods
 				}
 				else {
 					OwlModel owlModel = OpenModelW(m_szPath);
-					LoadEngineExtensions(owlModel);
 					if (owlModel) {
+						m_pModel->LoadEngineExtensions(owlModel);
 						m_pModel->attachModel(m_szPath, owlModel);
 					}
 				}
@@ -307,6 +315,13 @@ CRDFModel::CRDFModel(_controller* pController)
 
 CRDFModel::~CRDFModel()
 {
+	for (auto& module : m_loadedModules) {
+		if (auto fnUnload = (RDFGEOM_UNLOAD_EXTENSION_FUNC_TYPE)GetProcAddress(module, RDFGEOM_UNLOAD_EXTENSION_FUNC_NAME)) {
+			fnUnload(this);
+		}
+	}
+	m_loadedModules.clear();
+
 	clean();
 }
 
@@ -491,8 +506,8 @@ CDefaultModel::CDefaultModel(_controller* pController)
 void CDefaultModel::Create()
 {
 	OwlModel owlModel = CreateModel();
+
 	LoadEngineExtensions(owlModel);
-	assert(owlModel != 0);
 
 	// Cube 1
 	{

@@ -128,8 +128,8 @@ namespace _eng
 				vector<BYTE> vecBuffer = base64_decode(strBase64Content);
 				VERIFY_STLOBJ_IS_NOT_EMPTY(vecBuffer);
 
-				vecValues.resize(iBytesCount / sizeof(T), T());
-				memcpy(vecValues.data(), vecBuffer.data() + iOffset, iBytesCount);
+				vecValues.resize((size_t)iBytesCount / sizeof(T), T());
+				memcpy(vecValues.data(), vecBuffer.data() + iOffset, (size_t)iBytesCount);
 			} // if (iIndex != string::npos)
 			else {
 				fs::path pthBinFile = m_strRootFolder;
@@ -140,8 +140,8 @@ namespace _eng
 
 				binStream.seekg(iOffset, ios::beg);
 
-				vecValues.resize(iBytesCount / sizeof(T), T());
-				binStream.read((char*)vecValues.data(), iBytesCount);
+				vecValues.resize((size_t)iBytesCount / sizeof(T), T());
+				binStream.read((char*)vecValues.data(), (size_t)iBytesCount);
 				binStream.close();
 			} // else if (iIndex != string::npos)
 		}

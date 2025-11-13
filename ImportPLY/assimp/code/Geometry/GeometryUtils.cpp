@@ -47,7 +47,7 @@ namespace Assimp {
 
 // ------------------------------------------------------------------------------------------------
 ai_real GeometryUtils::heron( ai_real a, ai_real b, ai_real c ) {
-    const ai_real s    = (a + b + c) * 0.5;
+    const ai_real s = (a + b + c) * 0.5f;
     const ai_real area = pow((s * ( s - a ) * ( s - b ) * ( s - c ) ), static_cast<ai_real>(0.5));
     return area;
 }

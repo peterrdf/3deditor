@@ -1,5 +1,6 @@
 #pragma once
 #include "repo.h"
+#include "_string.h"
 
 static std::wstring DisplayName(RdfsResource res)
 {

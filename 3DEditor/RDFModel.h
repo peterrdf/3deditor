@@ -62,6 +62,15 @@ public: // Methods
 
 	void LoadOBJModel(OwlModel owlModel, const wchar_t* szPath);
 	void LoadGLTFModel(OwlModel owlModel, const wchar_t* szPath);
+
+	void LoadEngineExtensions(OwlModel model);
+
+private:
+	static void RdfgeomLogCallback(RDFGEOM_LOG_LEVEL level, const char* msg, void* me);
+
+private:
+	std::list<HMODULE> m_loadedModules;
+
 };
 
 // ************************************************************************************************

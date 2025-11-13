@@ -33,4 +33,6 @@ protected:
 private:
 	void UpdateLogStatus(enumLogEvent enLogEvent, const std::string& strEvent);
     void HandlePaneClick(int nPane, CPoint point);
+public:
+    afx_msg void OnDestroy();
 };

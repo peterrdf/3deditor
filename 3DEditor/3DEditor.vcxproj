@@ -361,7 +361,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -392,7 +392,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -423,7 +423,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -454,7 +454,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
@@ -486,7 +486,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -518,7 +518,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -550,7 +550,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -582,7 +582,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -615,7 +615,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -646,7 +646,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release_Product;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>Version.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -677,7 +677,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -708,7 +708,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -739,7 +739,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gltf/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;$(SolutionDir)gisengine/lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -772,7 +772,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -804,7 +804,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release_Product;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>Version.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -836,7 +836,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;stepengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -868,7 +868,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;ifcengine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -900,7 +900,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;$(SolutionDir)lib/x64;$(SolutionDir)engine/lib/x64;$(SolutionDir)gisengine/lib/x64;$(SolutionDir)gltf/lib/x64;$(SolutionDir)glew-2.2.0/lib/Release/x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;cis2engine.lib;Version.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcw.lib;LIBCMT.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcw.lib;LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
@@ -957,11 +957,13 @@
     <ClInclude Include="..\parsers\_io.h" />
     <ClInclude Include="..\parsers\_json.h" />
     <ClInclude Include="..\parsers\_log.h" />
+    <ClInclude Include="..\parsers\_net.h" />
     <ClInclude Include="..\parsers\_reader.h" />
     <ClInclude Include="..\parsers\_schema_storage.h" />
     <ClInclude Include="..\parsers\_serialization.h" />
     <ClInclude Include="..\parsers\_string.h" />
     <ClInclude Include="..\parsers\_time.h" />
+    <ClInclude Include="..\parsers\_xml.h" />
     <ClInclude Include="..\zip\miniz.h" />
     <ClInclude Include="..\zip\zip.h" />
     <ClInclude Include="3DEditor.h" />
@@ -972,8 +974,6 @@
     <ClInclude Include="conceptMesh.h" />
     <ClInclude Include="CustomStatusBar.h" />
     <ClInclude Include="LogDialog.h" />
-    <ClInclude Include="DragFace.h" />
-    <ClInclude Include="DragFace\DragFace.h" />
     <ClInclude Include="ProgressDialog.h" />
     <ClInclude Include="RenameDialog.h" />
     <ClInclude Include="EditObjectPropertyDialog.h" />
@@ -997,6 +997,7 @@
     <ClInclude Include="TestManager.h" />
     <ClInclude Include="TreeCtrlEx.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="_dxf_parser.h" />
     <ClInclude Include="_log_hub.h" />
   </ItemGroup>
@@ -1380,26 +1381,52 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\parsers\_json.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_host.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_net.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_host.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\parsers\_reader.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
@@ -1420,26 +1447,52 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\parsers\_serialization.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_host.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_xml.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">_host.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|x64'">_host.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_host.h</PrecompiledHeaderFile>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Product|x64'">true</ExcludedFromBuild>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|x64'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_cis2engine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_ifcengine|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_host.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_host.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\zip\zip.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">NotUsing</PrecompiledHeader>

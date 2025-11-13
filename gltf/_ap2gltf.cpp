@@ -1525,15 +1525,15 @@ namespace _ap2gltf
 
 						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
 
-						char* szGlobalId = nullptr;
-						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						wchar_t* szGlobalId = nullptr;
+						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 						assert(szGlobalId != nullptr);
 
 						indent()++;
 						writeStartObjectTag();
 
 						indent()++;
-						writeStringProperty("name", szGlobalId != nullptr ? szGlobalId : "$");
+						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 						*getOutputStream() << COMMA;
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1571,10 +1571,10 @@ namespace _ap2gltf
 							writeStartObjectTag();
 
 							string strGlobalId;
-							char* szGlobalId = nullptr;
-							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+							wchar_t* szGlobalId = nullptr;
+							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 							if (szGlobalId != nullptr) {
-								strGlobalId = szGlobalId;
+								strGlobalId = (const char*)CW2A(szGlobalId);
 							}
 							else {
 								strGlobalId = _string::format("#%lld:%d", apGeometry->getExpressID(), iInstanceIndex++);
@@ -2081,27 +2081,27 @@ namespace _ap2gltf
 	{
 		_ptr<_ap_model> apModel(m_pModel);
 
-		char* szFileSchema = 0;
-		GetSPFFHeaderItem(apModel->getSdaiModel(), 9, 0, sdaiSTRING, (char**)&szFileSchema);
+		wchar_t* szFileSchema = 0;
+		GetSPFFHeaderItem(apModel->getSdaiModel(), 9, 0, sdaiUNICODE, &szFileSchema);
 
 		writeStringProperty("id", "0001"); //#todo
 		*getOutputStream() << COMMA;
 		if (apModel->getAP() == enumAP::IFC) {
-			char* szProjectGlobalId = nullptr;
+			wchar_t* szProjectGlobalId = nullptr;
 			SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(apModel->getSdaiModel(), "IFCPROJECT");
 			SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
 			if (iMembersCount > 0) {
 				SdaiInstance sdaiProjectInstance = 0;
 				engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
-				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiSTRING, &szProjectGlobalId);
+				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiUNICODE, &szProjectGlobalId);
 				assert(szProjectGlobalId != nullptr);
 			}
-			writeStringProperty("projectId", szProjectGlobalId != nullptr ? szProjectGlobalId : "$");
+			writeStringProperty("projectId", szProjectGlobalId != nullptr ? (const char*)CW2A(szProjectGlobalId) : "$");
 			*getOutputStream() << COMMA;
 		}
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		*getOutputStream() << COMMA;
-		writeStringProperty("schema", szFileSchema != nullptr ? szFileSchema : "$");
+		writeStringProperty("schema", szFileSchema != nullptr ? (const char*)CW2A(szFileSchema) : "$");
 		*getOutputStream() << COMMA;
 		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD");
 	}
@@ -2270,22 +2270,22 @@ namespace _ap2gltf
 					*getOutputStream() << COMMA;
 				}
 
-				char* szGlobalId = nullptr;
-				sdaiGetAttrBN(itPropertySet.second.first->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+				wchar_t* szGlobalId = nullptr;
+				sdaiGetAttrBN(itPropertySet.second.first->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 				assert(szGlobalId != nullptr);
 
-				char* szEntityName = nullptr;
-				engiGetEntityName(sdaiGetInstanceType(itPropertySet.second.first->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+				wchar_t* szEntityName = nullptr;
+				engiGetEntityName(sdaiGetInstanceType(itPropertySet.second.first->getSdaiInstance()), sdaiUNICODE, (const char**)&szEntityName);
 
 				indent()++;
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("id", szGlobalId != nullptr ? szGlobalId : "$");
+				writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 				*getOutputStream() << COMMA;
 				writeStringProperty("name", (const char*)CW2A(itPropertySet.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", szEntityName != nullptr ? szEntityName : "$");
+				writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
 				*getOutputStream() << COMMA;
 				{
 					*getOutputStream() << getNewLine();
@@ -2547,24 +2547,24 @@ namespace _ap2gltf
 						*getOutputStream() << COMMA;
 					}
 
-					char* szGlobalId = nullptr;
-					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+					wchar_t* szGlobalId = nullptr;
+					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 					assert(szGlobalId != nullptr);
 
-					char* szName = nullptr;
-					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+					wchar_t* szName = nullptr;
+					sdaiGetAttrBN(pGeometry->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
 
-					char* szEntityName = nullptr;
-					engiGetEntityName(sdaiGetInstanceType(pGeometry->getSdaiInstance()), sdaiSTRING, (const char**)&szEntityName);
+					wchar_t* szEntityName = nullptr;
+					engiGetEntityName(sdaiGetInstanceType(pGeometry->getSdaiInstance()), sdaiUNICODE, (const char**)&szEntityName);
 
 					writeStartObjectTag();
 
 					indent()++;
-					writeStringProperty("id", szGlobalId != nullptr ? szGlobalId : "$");
+					writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("name", szName != nullptr ? szName : "$");
+					writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("type", szEntityName != nullptr ? szEntityName : "$");
+					writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
 					indent()--;
 
 					writeEndObjectTag();
@@ -2667,8 +2667,8 @@ namespace _ap2gltf
 
 			auto pProjectNode = modelStructure.getProjectNode();
 
-			char* szName = nullptr;
-			sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+			wchar_t* szName = nullptr;
+			sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
 
 			indent()++;
 			writeStartObjectTag();
@@ -2676,7 +2676,7 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", szName != nullptr ? szName : "$");
+			writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
@@ -2702,14 +2702,14 @@ namespace _ap2gltf
 						if (iIndex++ > 0) {
 							*getOutputStream() << COMMA;
 						}
-						char* szGlobalId = nullptr;
-						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						wchar_t* szGlobalId = nullptr;
+						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 						assert(szGlobalId != nullptr);
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}
@@ -2756,10 +2756,10 @@ namespace _ap2gltf
 				strParentGlobalId = L"null";
 			}
 
-			char* szName = nullptr;
-			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiSTRING, &szName);
+			wchar_t* szName = nullptr;
+			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
 
-			string strName = szName != nullptr ? szName : "";
+			string strName = szName != nullptr ? (const char*)CW2A(szName) : "";
 			string strObjectType = "$";
 			string strTag = "$";
 			if (!strName.empty()) {
@@ -2810,14 +2810,14 @@ namespace _ap2gltf
 						if (iIndex > 0) {
 							*getOutputStream() << COMMA;
 						}
-						char* szGlobalId = nullptr;
-						sdaiGetAttrBN(itGroupedInstances->second[iIndex], "GlobalId", sdaiSTRING, &szGlobalId);
+						wchar_t* szGlobalId = nullptr;
+						sdaiGetAttrBN(itGroupedInstances->second[iIndex], "GlobalId", sdaiUNICODE, &szGlobalId);
 						assert(szGlobalId != nullptr);
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}				
 
@@ -2849,14 +2849,14 @@ namespace _ap2gltf
 						if (iIndex++ > 0) {
 							*getOutputStream() << COMMA;
 						}
-						char* szGlobalId = nullptr;
-						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiSTRING, &szGlobalId);
+						wchar_t* szGlobalId = nullptr;
+						sdaiGetAttrBN(pPropertySet->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
 						assert(szGlobalId != nullptr);
 
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? szGlobalId : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}

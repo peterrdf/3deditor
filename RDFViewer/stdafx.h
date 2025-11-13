@@ -58,6 +58,8 @@
 #endif
 
 
+#include "..\engine\include\engine.h"
 #include "..\engine\include\geom.h"
+#include "..\engine\include\rdfgeom.h"
 
 #include <direct.h>

@@ -89,8 +89,11 @@
 #define IDD_DIALOG_EDIT_OBJECT_PROPRTY  313
 #define ID_INDICATOR_LOG                313
 #define IDD_DIALOG_NEW_INSTANCE         314
+#define IDC_PRODUCT_NAME                314
 #define IDR_POPUP_INSTANCES_NO_GEOMETRY 315
+#define IDC_COPYRIGHT                   315
 #define IDD_DIALOG_SEARCH               316
+#define IDC_COMPANY                     316
 #define IDD_DIALOG_SELECT_INSTANCE      318
 #define IDR_TEXTFILE_VERTEX_SHADER2     320
 #define IDR_TEXTFILE_FRAGMENT_SHADER2   321
@@ -177,6 +180,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32845
 #define _APS_NEXT_CONTROL_VALUE         1013
-#define _APS_NEXT_SYMED_VALUE           314
+#define _APS_NEXT_SYMED_VALUE           317
 #endif
 #endif
