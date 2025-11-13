@@ -8,7 +8,7 @@ set PLATFORM=%~3
 
 set INC_DIR=%PROJ_DIR%..\engine\include\
 set LIB_DIR=%PROJ_DIR%..\engine\lib\%PLATFORM%\
-set DLL_DIR=%PROJ_DIR%..\%PLATFORM%\%CONFIG%\
+set DLL_DIR=%PROJ_DIR%..\%PLATFORM%\Release\
 
 echo INC_DIR=%INC_DIR%
 echo LIB_DIR=%LIB_DIR%
@@ -29,6 +29,6 @@ if .%RDF_ENGINE_LIB%.==.. goto LibUpdated
 echo Update RDF engine binaries
 REM always use release GK build because of assertions
 copy "%RDF_ENGINE_LIB%Release\engine.lib" "%LIB_DIR%engine.lib" /y
-REM copy "%RDF_ENGINE_LIB%Release\engine.dll" "%DLL_DIR%engine.dll" /y
+copy "%RDF_ENGINE_LIB%Release\engine.dll" "%DLL_DIR%engine.dll" /y
 
 :LibUpdated
