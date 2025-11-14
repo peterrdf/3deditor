@@ -2313,6 +2313,7 @@ void _oglView::_drawFaces()
 							// Restore Model-View Matrix
 							if (bRestoreModelViewMatrix) {
 								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+								m_pOGLProgram->_setNormalMatrix(m_matModelView);
 							}
 							continue;
 						}
@@ -2322,6 +2323,7 @@ void _oglView::_drawFaces()
 							// Restore Model-View Matrix
 							if (bRestoreModelViewMatrix) {
 								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+								m_pOGLProgram->_setNormalMatrix(m_matModelView);
 							}
 							continue;
 						}
@@ -2359,6 +2361,7 @@ void _oglView::_drawFaces()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // auto pInstance : ...			
 		} // for (auto pGeometry : ...
@@ -2435,6 +2438,7 @@ void _oglView::_drawFacesPolygons()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2502,6 +2506,7 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApply
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2569,6 +2574,7 @@ void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSetting
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2649,6 +2655,7 @@ void _oglView::_drawPoints()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (auto pInstance ...
 		} // for (auto pGeometry ...
@@ -2823,6 +2830,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {					
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...

@@ -19,6 +19,21 @@ _ap242_model::_ap242_model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
     clean();
 }
 
+_ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) const
+{
+	assert(sdaiInstance != 0);
+
+    ExpressID expressID = internalGetP21Line(sdaiInstance);
+
+	// Search in cache
+    auto itExpressID2Assembly = m_mapExpressID2Assembly.find(expressID);
+    if (itExpressID2Assembly != m_mapExpressID2Assembly.end()) {
+        return itExpressID2Assembly->second;
+    }
+
+	return nullptr;
+}
+
 /*virtual*/ _instance* _ap242_model::loadInstance(int64_t iInstance) /*override*/
 {
     assert(iInstance != 0);

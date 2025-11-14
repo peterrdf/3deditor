@@ -59,8 +59,11 @@ void _ap_model::attachModel(const wchar_t* szPath, SdaiModel sdaiModel, _model* 
     attachModelCore();
 }
 
-_geometry* _ap_model::getGeometryByInstance(SdaiInstance sdaiInstance)
+_geometry* _ap_model::getGeometryByInstance(SdaiInstance sdaiInstance) const
 {
+    assert(sdaiInstance != 0);
+
+	// Search in cache
     auto itGeometry = m_mapGeometries.find(sdaiInstance);
     if (itGeometry != m_mapGeometries.end()) {
         return itGeometry->second;
@@ -73,6 +76,7 @@ _geometry* _ap_model::getGeometryByExpressID(ExpressID iExpressID) const
 {
     assert(iExpressID != 0);
 
+    // Search in cache
     auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
     if (itExpressID2Geometry != m_mapExpressID2Geometry.end()) {
         return itExpressID2Geometry->second;

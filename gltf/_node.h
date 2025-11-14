@@ -14,6 +14,8 @@ private: // Fields
 
 	_geometry* m_pGeometry;
 
+	uint32_t m_iIndex; // glTF: node index
+
 	uint32_t m_iBufferByteLength; // buffer: byteLength
 	string m_strBufferBinFile; // buffer: uri (*.bin)	
 	uint32_t m_iVerticesBufferViewByteLength; // vertices/ARRAY_BUFFER/POSITION
@@ -26,9 +28,15 @@ private: // Fields
 public: // Methods
 
 	_node(_geometry* pGeometry);
-	virtual ~_node();
+	virtual ~_node();	
+
+public: // Properties
+
+	// Geometry
+	_geometry* getGeometry() const { return m_pGeometry; }
 
 	// glTF
+	uint32_t& index() { return m_iIndex; }
 	uint32_t& bufferByteLength() { return m_iBufferByteLength; }
 	string& bufferBinFile() { return m_strBufferBinFile; }
 	uint32_t& verticesBufferViewByteLength() { return m_iVerticesBufferViewByteLength; }
@@ -37,10 +45,4 @@ public: // Methods
 	vector<uint32_t>& indicesBufferViewsByteLength() { return m_vecIndicesBufferViewsByteLength; }
 	vector<uint32_t>& accessors() { return m_vecAccessors; }
 	vector<uint32_t>& meshes() { return m_vecMeshes; }
-
-protected: // Methods
-
-public: // Properties
-
-	_geometry* getGeometry() const { return m_pGeometry; }
 };

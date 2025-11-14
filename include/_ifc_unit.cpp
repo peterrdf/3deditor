@@ -1,4 +1,4 @@
-#include "_host.h"
+﻿#include "_host.h"
 #include "_ifc_unit.h"
 
 // ************************************************************************************************
@@ -7,7 +7,9 @@ _ifc_unit::_ifc_unit(SdaiInstance sdaiInstance, const wchar_t* szType, const wch
     , m_iType(UNKNOWN)
     , m_strType(L"")
     , m_strPrefix(L"")
+    , m_strPrefixSymbol(L"")
     , m_strName(L"")
+    , m_strNameSymbol(L"")
 {
     assert(m_sdaiInstance != 0);
     assert(szName != nullptr);
@@ -31,6 +33,14 @@ wstring _ifc_unit::getUnit() const
     strUnit += m_strName;
 
     return strUnit;
+}
+
+wstring _ifc_unit::getUnitSymbol() const
+{
+    wstring strUnitSymbol = m_strPrefixSymbol;
+    strUnitSymbol += m_strNameSymbol;
+
+    return strUnitSymbol;
 }
 
 void _ifc_unit::convertType(const wchar_t* szUnitType)
@@ -223,81 +233,97 @@ void _ifc_unit::convertPrefix(const wchar_t* szPrefix)
 
     if (wcscmp(szPrefix, L".EXA.") == 0) {
         m_strPrefix = L"Exa";
+        m_strPrefixSymbol = L"E";
         return;
     }
 
     if (wcscmp(szPrefix, L".PETA.") == 0) {
         m_strPrefix = L"Peta";
+        m_strPrefixSymbol = L"P";
         return;
     }
 
     if (wcscmp(szPrefix, L".TERA.") == 0) {
         m_strPrefix = L"Tera";
+        m_strPrefixSymbol = L"T";
         return;
     }
 
     if (wcscmp(szPrefix, L".GIGA.") == 0) {
         m_strPrefix = L"Giga";
+        m_strPrefixSymbol = L"G";
         return;
     }
 
     if (wcscmp(szPrefix, L".MEGA.") == 0) {
         m_strPrefix = L"Mega";
+        m_strPrefixSymbol = L"M";
         return;
     }
 
     if (wcscmp(szPrefix, L".KILO.") == 0) {
         m_strPrefix = L"Kilo";
+        m_strPrefixSymbol = L"k";
         return;
     }
 
     if (wcscmp(szPrefix, L".HECTO.") == 0) {
         m_strPrefix = L"Hecto";
+        m_strPrefixSymbol = L"h";
         return;
     }
 
     if (wcscmp(szPrefix, L".DECA.") == 0) {
         m_strPrefix = L"Deca";
+        m_strPrefixSymbol = L"da";
         return;
     }
 
     if (wcscmp(szPrefix, L".DECI.") == 0) {
         m_strPrefix = L"Deci";
+        m_strPrefixSymbol = L"d";
         return;
     }
 
     if (wcscmp(szPrefix, L".CENTI.") == 0) {
         m_strPrefix = L"Centi";
+        m_strPrefixSymbol = L"c";
         return;
     }
 
     if (wcscmp(szPrefix, L".MILLI.") == 0) {
         m_strPrefix = L"Milli";
+        m_strPrefixSymbol = L"m";
         return;
     }
 
     if (wcscmp(szPrefix, L".MICRO.") == 0) {
         m_strPrefix = L"Micro";
+        m_strPrefixSymbol = L"μ";
         return;
     }
 
     if (wcscmp(szPrefix, L".NANO.") == 0) {
         m_strPrefix = L"Nano";
+        m_strPrefixSymbol = L"n";
         return;
     }
 
     if (wcscmp(szPrefix, L".PICO.") == 0) {
         m_strPrefix = L"Pico";
+        m_strPrefixSymbol = L"p";
         return;
     }
 
     if (wcscmp(szPrefix, L".FEMTO.") == 0) {
         m_strPrefix = L"Femto";
+        m_strPrefixSymbol = L"f";
         return;
     }
 
     if (wcscmp(szPrefix, L".ATTO.") == 0) {
         m_strPrefix = L"Atto";
+        m_strPrefixSymbol = L"a";
         return;
     }
 }
@@ -308,151 +334,184 @@ void _ifc_unit::convertName(const wchar_t* szName)
 
     if (wcscmp(szName, L".AMPERE.") == 0) {
         m_strName = L"Ampere";
+        m_strNameSymbol = L"A";
         return;
     }
 
     if (wcscmp(szName, L".BECQUEREL.") == 0) {
         m_strName = L"Becquerel";
+        m_strNameSymbol = L"Bq";
         return;
     }
 
     if (wcscmp(szName, L".CANDELA.") == 0) {
         m_strName = L"Candela";
+        m_strNameSymbol = L"cd";
         return;
     }
 
     if (wcscmp(szName, L".COULOMB.") == 0) {
         m_strName = L"Coulomb";
+        m_strNameSymbol = L"C";
         return;
     }
 
     if (wcscmp(szName, L".CUBIC_METRE.") == 0) {
         m_strName = L"Cubic Metre";
+        m_strNameSymbol = L"m3";
+        //m_strNameSymbol = L"m³";
         return;
     }
 
     if (wcscmp(szName, L".DEGREE_CELSIUS.") == 0) {
         m_strName = L"Degree Celcius";
+        m_strNameSymbol = L"DEGREE_CELSIUS"; // XKT
+        //m_strNameSymbol = L"°C";
         return;
     }
 
     if (wcscmp(szName, L".FARAD.") == 0) {
         m_strName = L"Farad";
+        m_strNameSymbol = L"F";
         return;
     }
 
     if (wcscmp(szName, L".GRAM.") == 0) {
         m_strName = L"Gram";
+        m_strNameSymbol = L"g";
         return;
     }
 
     if (wcscmp(szName, L".GRAY.") == 0) {
         m_strName = L"Gray";
+        m_strNameSymbol = L"Gy";
         return;
     }
 
     if (wcscmp(szName, L".HENRY.") == 0) {
         m_strName = L"Henry";
+        m_strNameSymbol = L"H";
         return;
     }
 
     if (wcscmp(szName, L".HERTZ.") == 0) {
         m_strName = L"Hertz";
+        m_strNameSymbol = L"Hz";
         return;
     }
 
     if (wcscmp(szName, L".JOULE.") == 0) {
         m_strName = L"Joule";
+        m_strNameSymbol = L"J";
         return;
     }
 
     if (wcscmp(szName, L".KELVIN.") == 0) {
         m_strName = L"Kelvin";
+        m_strNameSymbol = L"K";
         return;
     }
 
     if (wcscmp(szName, L".LUMEN.") == 0) {
         m_strName = L"Lumen";
+        m_strNameSymbol = L"lm";
         return;
     }
 
     if (wcscmp(szName, L".LUX.") == 0) {
         m_strName = L"Lux";
+        m_strNameSymbol = L"lx";
         return;
     }
 
     if (wcscmp(szName, L".METRE.") == 0) {
         m_strName = L"Metre";
+        m_strNameSymbol = L"m";
         return;
     }
 
     if (wcscmp(szName, L".MOLE.") == 0) {
         m_strName = L"Mole";
+        m_strNameSymbol = L"mol";
         return;
     }
 
     if (wcscmp(szName, L".NEWTON.") == 0) {
         m_strName = L"Newton";
+        m_strNameSymbol = L"N";
         return;
     }
 
     if (wcscmp(szName, L".OHM.") == 0) {
         m_strName = L"Ohm";
+        m_strNameSymbol = L"Ω";
         return;
     }
 
     if (wcscmp(szName, L".PASCAL.") == 0) {
         m_strName = L"Pascal";
+        m_strNameSymbol = L"Pa";
         return;
     }
 
     if (wcscmp(szName, L".RADIAN.") == 0) {
         m_strName = L"Radian";
+        m_strNameSymbol = L"rad";
         return;
     }
 
     if (wcscmp(szName, L".SECOND.") == 0) {
         m_strName = L"Second";
+        m_strNameSymbol = L"s";
         return;
     }
 
     if (wcscmp(szName, L".SIEMENS.") == 0) {
         m_strName = L"Siemens";
+        m_strNameSymbol = L"S";
         return;
     }
 
     if (wcscmp(szName, L".SIEVERT.") == 0) {
         m_strName = L"Sievert";
+        m_strNameSymbol = L"Sv";
         return;
     }
 
     if (wcscmp(szName, L".SQUARE_METRE.") == 0) {
         m_strName = L"Square Metre";
+        m_strNameSymbol = L"m2"; // XKT
+        //m_strNameSymbol = L"m²";
         return;
     }
 
     if (wcscmp(szName, L".STERADIAN.") == 0) {
         m_strName = L"Steradian";
+        m_strNameSymbol = L"sr";
         return;
     }
 
     if (wcscmp(szName, L".TESLA.") == 0) {
         m_strName = L"Tesla";
+        m_strNameSymbol = L"T";
         return;
     }
 
     if (wcscmp(szName, L".VOLT.") == 0) {
         m_strName = L"Volt";
+        m_strNameSymbol = L"V";
         return;
     }
 
     if (wcscmp(szName, L".WATT.") == 0) {
         m_strName = L"Watt";
+        m_strNameSymbol = L"W";
         return;
     }
 
     if (wcscmp(szName, L".WEBER.") == 0) {
         m_strName = L"Weber";
+        m_strNameSymbol = L"Wb";
         return;
     }
 
@@ -486,7 +545,7 @@ const _ifc_unit* _ifc_unit_provider::getUnit(const wchar_t* szUnit) const
     return nullptr;
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const
 {
     wchar_t* szQuantityName = nullptr;
     sdaiGetAttrBN(sdaiQuantityInstance, "Name", sdaiUNICODE, &szQuantityName);
@@ -501,55 +560,54 @@ pair<wstring, wstring> _ifc_unit_provider::getQuantity(SdaiInstance sdaiQuantity
     sdaiGetAttrBN(sdaiQuantityInstance, "Unit", sdaiUNICODE, &szUnit);
 
     wstring strName = szQuantityName;
+
+    wstring strDescription;
+    if (szQuantityDescription != nullptr) {
+        strDescription = szQuantityDescription;
+    }
+
     wstring strValue = szValue != nullptr ? szValue : L"NA";
 
+    wstring strUnit;
     if (szUnit != nullptr) {
-        strValue += L" ";
-        strValue += szUnit;
-    } // if (szUnit != nullptr)
+        strUnit = szUnit;
+    }
     else {
         auto itUnit = m_mapUnits.find(szUnitName);
         if (itUnit != m_mapUnits.end()) {
-            strValue += L" ";
-            strValue += itUnit->second->getName();
+            strUnit = itUnit->second->getName();
         }
-    } // else if (szUnit != nullptr)	
-
-    if ((szQuantityDescription != nullptr) && (wcslen(szQuantityDescription) > 0)) {
-        strValue += L" ('";
-        strValue += szQuantityDescription;
-        strValue += L"')";
     }
 
-    return pair<wstring, wstring>(strName, strValue);
+    return tuple<wstring, wstring, wstring, wstring>(strName, strDescription, strValue, strUnit);
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityLength(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityLength(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "LengthValue", L"LENGTHUNIT");
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityArea(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityArea(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "AreaValue", L"AREAUNIT");
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityVolume(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityVolume(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "VolumeValue", L"VOLUMEUNIT");
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityCount(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityCount(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "CountValue", L"");
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityWeight(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityWeight(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "WeigthValue", L"MASSUNIT");
 }
 
-pair<wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuantityInstance) const
+tuple<wstring, wstring, wstring, wstring> _ifc_unit_provider::getQuantityTime(SdaiInstance sdaiQuantityInstance) const
 {
     return getQuantity(sdaiQuantityInstance, "TimeValue", L"TIMEUNIT");
 }

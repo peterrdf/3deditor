@@ -28,6 +28,8 @@ public: // Methods
     _ap242_model(_log* pLog, bool bLoadInstancesOnDemand = false);
     virtual ~_ap242_model();
 
+    _ap242_assembly* getAssemblyByInstance(SdaiInstance sdaiInstance) const;
+
 protected: // Methods
 
     // _model

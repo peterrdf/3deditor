@@ -57,7 +57,7 @@ public: // Methods
     bool openModel(const wchar_t* szPath);
     void attachModel(const wchar_t* szPath, SdaiModel sdaiModel, _model* pWorld);
 
-    _geometry* getGeometryByInstance(SdaiInstance sdaiInstance);
+    _geometry* getGeometryByInstance(SdaiInstance sdaiInstance) const;
     _geometry* getGeometryByExpressID(ExpressID iExpressID) const;
     template<typename T>
     T* getGeometryByExpressIDAs(ExpressID iExpressID) const;

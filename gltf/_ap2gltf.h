@@ -68,6 +68,7 @@ namespace _ap2gltf
 	protected: // Members
 
 		_model* m_pModel;
+		set<SdaiInstance> m_setTargetInstances;
 
 		bool m_bEmbeddedBuffers;
 
@@ -75,8 +76,10 @@ namespace _ap2gltf
 		vector<const _material*> m_vecMaterials;
 		GLTFMATERIALS m_mapMaterials;
 		map<wstring, uint32_t> m_mapImages;
+		uint32_t m_iSceneNodeIndex;
 		vector<_node*> m_vecNodes;
 		map<_geometry*,  _node*> m_mapNodes;
+		map<string, uint32_t> m_mapName2Index;
 		vector<uint32_t> m_vecSceneRootNodes;
 		uint32_t m_iRootNodeIndex;
 
@@ -89,12 +92,22 @@ namespace _ap2gltf
 		uint32_t m_iBufferViewsCount;
 		uint32_t m_iMeshesCount;
 
+		bool m_bExportGeometriesOnly;
+		bool m_bWriteModelMetadataJSON;
+
+		// IFC
+		_ifc_model_structure* m_pIFCModelStructure;
+
+		// AP242
+		_ap242_model_structure* m_pAP242ModelStructure;
+
 	public: // Methods
 
 		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
 		virtual ~_exporter();
 
 		void execute();
+		void execute(const set<SdaiInstance>& setTargetInstances);
 
 	protected: // Methods
 
@@ -108,6 +121,7 @@ namespace _ap2gltf
 		string buildStringProperty(const string& strName, const string& strValue);
 		string buildNumberProperty(const string& strName, const string& strValue);
 		string buildArrayProperty(const string& strName, const vector<string>& vecValues);
+		string buildArrayProperty(const string& strName, const vector<uint32_t>& vecValues);
 
 		virtual void writeIndent();
 		void writeStartObjectTag(bool bNewLine = true);
@@ -127,12 +141,18 @@ namespace _ap2gltf
 		void writeAccessorsProperty();
 		void writeMeshesProperty();
 		void writeNodesProperty();
+		void writeNodesPropertyModelStructure();
+		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel);
+		void writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren);
+		void writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model);
+		void writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model, _ap242_node* pParent, vector<uint32_t>& vecParentChildren);
 		void writeSceneProperty();
 		void writeScenesProperty();
 		void writeMaterials();
 		void writeImages();
 		void writeSamplers();
 		void writeTextures();
+		string escapeJsonString(const string& input) const;
 
 		size_t addMaterial(const _material* pMaterial);
 
@@ -154,6 +174,8 @@ namespace _ap2gltf
 		OwlModel getModel() const { return m_pModel->getOwlModel(); }
 		ostream* getOutputStream() const { return m_pOutputStream; }
 		int& indent() { return m_iIndent; }
+		bool& exportGeometriesOnly() { return m_bExportGeometriesOnly; }
+		bool& writeModelMetadataJSON() { return m_bWriteModelMetadataJSON; }
 		virtual const char* getNewLine() const { return "\n"; }
 		virtual int64_t getGeometryID(_geometry* pGeometry) { return (int64_t)pGeometry; }
 	};

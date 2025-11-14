@@ -6,8 +6,12 @@
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
 #include "_ifc_model.h"
+#include "_ap242_instance.h"
 #include "_ap242_product_definition.h"
 #include "_ap242_draughting_model.h"
+
+// ************************************************************************************************
+//#define _DEBUG_EXPORTER
 
 // ************************************************************************************************
 namespace _ap2gltf
@@ -15,13 +19,16 @@ namespace _ap2gltf
 	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
 		: _log_client()
 		, m_pModel(pModel)
+		, m_setTargetInstances()
 		, m_bEmbeddedBuffers(bEmbeddedBuffers)
 		, m_pPolygonsMaterial(nullptr)
 		, m_vecMaterials()
 		, m_mapMaterials()
 		, m_mapImages()
+		, m_iSceneNodeIndex(0)
 		, m_vecNodes()
 		, m_mapNodes()
+		, m_mapName2Index()
 		, m_vecSceneRootNodes()
 		, m_iRootNodeIndex(0)
 		, m_strOutputFile("")
@@ -31,6 +38,10 @@ namespace _ap2gltf
 		, m_iBuffersCount(0)
 		, m_iBufferViewsCount(0)
 		, m_iMeshesCount(0)
+		, m_bExportGeometriesOnly(false)
+		, m_bWriteModelMetadataJSON(true)
+		, m_pIFCModelStructure(nullptr)
+		, m_pAP242ModelStructure(nullptr)
 	{
 		VERIFY_POINTER(m_pModel);
 		VERIFY_POINTER(szOutputFile);
@@ -55,6 +66,9 @@ namespace _ap2gltf
 		}
 
 		delete getOutputStream();
+
+		delete m_pIFCModelStructure;
+		delete m_pAP242ModelStructure;
 	}
 
 	void _exporter::execute()
@@ -150,6 +164,17 @@ namespace _ap2gltf
 		postExecute();
 	}
 
+	void _exporter::execute(const set<SdaiInstance>& setTargetInstances)
+	{
+		assert(!setTargetInstances.empty());
+
+		m_setTargetInstances = setTargetInstances;
+		m_bExportGeometriesOnly = true;
+		m_bWriteModelMetadataJSON = false;
+
+		execute();
+	}
+
 	/*virtual*/ bool _exporter::createOuputStream()
 	{
 		if (getOutputStream() != nullptr) {
@@ -191,18 +216,65 @@ namespace _ap2gltf
 
 	/*virtual*/ bool _exporter::preExecute()
 	{
+		_ptr<_ap_model> apModel(m_pModel, false);
+		if (!apModel) {
+			getLog()->logWrite(enumLogEvent::error, "Unsupported model type.");
+			return false;
+		}
+
 		if (!createOuputStream()) {
 			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
 			return false;
 		}
 
-		for (auto pGeometry : m_pModel->getGeometries()) {
-			if (!ignoreGeometry(pGeometry)) {
-				auto pNode = new _node(pGeometry);
-				m_vecNodes.push_back(pNode);
+		if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON) {
+			_ptr<_ifc_model> ifcModel(m_pModel, false);
+			if (ifcModel) {
+				m_pIFCModelStructure = new _ifc_model_structure(ifcModel);
+				m_pIFCModelStructure->build();
+#ifdef _DEBUG
+				m_pIFCModelStructure->print();
+#endif
+			}
+			else {
+				_ptr<_ap242_model> ap242Model(m_pModel, false);
+				if (ap242Model) {
+					m_pAP242ModelStructure = new _ap242_model_structure(ap242Model);
+					m_pAP242ModelStructure->build();
+#ifdef _DEBUG
+					m_pAP242ModelStructure->print();
+#endif
+				}
+				else {
+					getLog()->logWrite(enumLogEvent::error, "Unsupported model type.");
+					return false;
+				}
+			}
+		} // if (!m_bExportGeometriesOnly || m_bWriteModelMetadataJSON)
 
-				assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
-				m_mapNodes[pGeometry] = pNode;
+		if (m_setTargetInstances.empty()) {
+			// All geometries
+			for (auto pGeometry : m_pModel->getGeometries()) {
+				if (!ignoreGeometry(pGeometry)) {
+					auto pNode = new _node(pGeometry);
+					m_vecNodes.push_back(pNode);
+					assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
+					m_mapNodes[pGeometry] = pNode;
+				}
+			}
+		}
+		else {
+			// Selected geometries only			
+			for (auto sdaiInstance : m_setTargetInstances) {
+				auto pGeometry = apModel->getGeometryByInstance(sdaiInstance);
+				if (pGeometry != nullptr) {
+					if (!ignoreGeometry(pGeometry)) {
+						auto pNode = new _node(pGeometry);
+						m_vecNodes.push_back(pNode);
+						assert(m_mapNodes.find(pGeometry) == m_mapNodes.end());
+						m_mapNodes[pGeometry] = pNode;
+					}
+				}
 			}
 		}
 
@@ -211,6 +283,10 @@ namespace _ap2gltf
 
 	/*virtual*/ void _exporter::postExecute()
 	{
+		if (!m_bWriteModelMetadataJSON) {
+			return;
+		}
+
 		if (getOutputStream() != nullptr) {
 			delete getOutputStream();
 		}
@@ -218,8 +294,9 @@ namespace _ap2gltf
 		fs::path pthMetadataFile = m_strOutputFile;
 		pthMetadataFile += ".json";
 
-		m_pOutputStream = new ofstream(pthMetadataFile.string(), std::ios::out | std::ios::trunc);
-		std::locale loc(std::locale::classic());
+		m_pOutputStream = new ofstream(pthMetadataFile.string(),
+			std::ios::out | std::ios::binary | std::ios::trunc);
+		std::locale loc(std::locale::classic(), new std::codecvt_utf8<wchar_t>);
 		getOutputStream()->imbue(loc);
 
 		if (!getOutputStream()->good()) {
@@ -371,6 +448,33 @@ namespace _ap2gltf
 		return strProperty;
 	}
 
+	string _exporter::buildArrayProperty(const string& strName, const vector<uint32_t>& vecValues)
+	{
+		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
+		VERIFY_STLOBJ_IS_NOT_EMPTY(vecValues);
+
+		string strProperty;
+
+		strProperty += DOULE_QUOT_MARK;
+		strProperty += strName.c_str();
+		strProperty += DOULE_QUOT_MARK;
+		strProperty += COLON;
+		strProperty += SPACE;
+
+		strProperty += "[";
+		for (size_t iIndex = 0; iIndex < vecValues.size(); iIndex++) {
+			if (iIndex > 0) {
+				strProperty += COMMA;
+				strProperty += SPACE;
+			}
+
+			strProperty += to_string(vecValues[iIndex]);
+		}
+		strProperty += "]";
+
+		return strProperty;
+	}
+
 	void _exporter::writeStringProperty(const string& strName, const string& strValue)
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(strName);
@@ -379,12 +483,12 @@ namespace _ap2gltf
 		writeIndent();
 
 		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << strName.c_str();
+		*getOutputStream() << escapeJsonString(strName).c_str();
 		*getOutputStream() << DOULE_QUOT_MARK;
 		*getOutputStream() << COLON;
 		*getOutputStream() << SPACE;
 		*getOutputStream() << DOULE_QUOT_MARK;
-		*getOutputStream() << strValue.c_str();
+		*getOutputStream() << escapeJsonString(strValue).c_str();
 		*getOutputStream() << DOULE_QUOT_MARK;
 	}
 
@@ -1374,8 +1478,14 @@ namespace _ap2gltf
 
 	void _exporter::writeNodesProperty()
 	{
+		_ptr<_ap_model> apModel(m_pModel);
+		if (!apModel) {
+			assert(false);
+			return;
+		}
+
 		float fLengthConversionFactor = (float)getProjectUnitConversionFactor(
-			_ptr<_ap_model>(m_pModel)->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
+			apModel->getSdaiModel(), "LENGTHUNIT", nullptr, nullptr, nullptr);
 
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
@@ -1399,7 +1509,7 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			uint32_t iSceneNodeIndex = 0;
+			m_iSceneNodeIndex = 0;
 			for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 				auto pNode = m_vecNodes[iNodeIndex];
 				auto pGeometry = pNode->getGeometry();
@@ -1428,6 +1538,10 @@ namespace _ap2gltf
 
 					// Transformations
 					for (auto pMappedGeometry : ifcGeometry->getMappedGeometries()) {
+						if (ignoreGeometry(pMappedGeometry)) {
+							continue;
+						}
+
 						for (auto pInstance : pMappedGeometry->getInstances()) {
 							_ptr<_ifc_instance> ifcInstance(pInstance);
 							if (ifcInstance->getOwner() != pPlaceholderInstance) {
@@ -1436,11 +1550,11 @@ namespace _ap2gltf
 
 							auto pTransformation = pInstance->getTransformationMatrix();
 
-							if (iSceneNodeIndex > 0) {
+							if (m_iSceneNodeIndex > 0) {
 								*getOutputStream() << COMMA;
 							}
 
-							vecPlaceholderNodeChildren.push_back(to_string(iSceneNodeIndex++));
+							vecPlaceholderNodeChildren.push_back(to_string(m_iSceneNodeIndex++));
 
 							auto itMappedItem = m_mapNodes.find(pMappedGeometry);
 							assert(itMappedItem != m_mapNodes.end());
@@ -1450,7 +1564,7 @@ namespace _ap2gltf
 							{
 								vector<string> vecNodeChildren;
 								for (size_t iMeshIndex = 0; iMeshIndex < pMappedNode->meshes().size(); iMeshIndex++) {
-									vecNodeChildren.push_back(to_string(iSceneNodeIndex++));
+									vecNodeChildren.push_back(to_string(m_iSceneNodeIndex++));
 								}
 
 								indent()++;
@@ -1489,7 +1603,7 @@ namespace _ap2gltf
 											to_string(mtxInstanceTransformation._43),
 											to_string(mtxInstanceTransformation._44)
 									}).c_str();
-								} // if (pTransformation != nullptr)								
+								} // if (pTransformation != nullptr)
 								indent()--;
 
 								writeEndObjectTag();
@@ -1519,11 +1633,12 @@ namespace _ap2gltf
 
 					// Placeholder root
 					{
-						if (iSceneNodeIndex > 0) {
+						pNode->index() = m_iSceneNodeIndex;
+						m_vecSceneRootNodes.push_back(pNode->index());
+
+						if (m_iSceneNodeIndex > 0) {
 							*getOutputStream() << COMMA;
 						}
-
-						m_vecSceneRootNodes.push_back(iSceneNodeIndex);
 
 						wchar_t* szGlobalId = nullptr;
 						sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
@@ -1534,6 +1649,12 @@ namespace _ap2gltf
 
 						indent()++;
 						writeStringProperty("name", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+#ifdef _DEBUG_EXPORTER
+						*getOutputStream() << COMMA;
+						writeStringProperty("DEBUG: index", to_string(pNode->index()));
+						*getOutputStream() << COMMA;
+						writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
+#endif
 						*getOutputStream() << COMMA;
 						*getOutputStream() << getNewLine();
 						writeIndent();
@@ -1546,42 +1667,56 @@ namespace _ap2gltf
 					// Placeholder root
 
 					// next root
-					iSceneNodeIndex++;
+					m_iSceneNodeIndex++;
 				} // if (pGeometry->isPlaceholder())
 				else {
+					pNode->index() = m_iSceneNodeIndex;
+
 					// Instances
 					int iInstanceIndex = 0;
 					for (auto pInstance : pGeometry->getInstances()) {
 						auto pTransformation = pInstance->getTransformationMatrix();
 
-						if (iSceneNodeIndex > 0) {
+						if (m_iSceneNodeIndex > 0) {
 							*getOutputStream() << COMMA;
 						}
 
 						// root	
 						{
-							m_vecSceneRootNodes.push_back(iSceneNodeIndex);
+							m_vecSceneRootNodes.push_back(m_iSceneNodeIndex);
+
+							string strName;
+							if (apModel->getAP() == enumAP::IFC) {
+								wchar_t* szGlobalId = nullptr;
+								sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+								assert(szGlobalId != nullptr);
+								strName = (const char*)CW2A(szGlobalId);
+							}
+							else if (apModel->getAP() == enumAP::STEP) {
+								strName = _string::format("#%lld:%d", apGeometry->getExpressID(), iInstanceIndex);
+
+								assert(m_mapName2Index.find(strName) == m_mapName2Index.end());
+								m_mapName2Index[strName] = pNode->index() + ((int)pNode->meshes().size() * iInstanceIndex) + iInstanceIndex;
+							}
+							else {
+								assert(false); // Not supported!
+							}
 
 							vector<string> vecNodeChildren;
 							for (size_t iMeshIndex = 0; iMeshIndex < pNode->meshes().size(); iMeshIndex++) {
-								vecNodeChildren.push_back(to_string(++iSceneNodeIndex));
+								vecNodeChildren.push_back(to_string(++m_iSceneNodeIndex));
 							}
 
 							indent()++;
 							writeStartObjectTag();
-
-							string strGlobalId;
-							wchar_t* szGlobalId = nullptr;
-							sdaiGetAttrBN(apGeometry->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
-							if (szGlobalId != nullptr) {
-								strGlobalId = (const char*)CW2A(szGlobalId);
-							}
-							else {
-								strGlobalId = _string::format("#%lld:%d", apGeometry->getExpressID(), iInstanceIndex++);
-							}
-
 							indent()++;
-							writeStringProperty("name", strGlobalId);
+							writeStringProperty("name", strName);
+#ifdef _DEBUG_EXPORTER
+							*getOutputStream() << COMMA;
+							writeStringProperty("DEBUG: index", to_string(pNode->index()));
+							*getOutputStream() << COMMA;
+							writeStringProperty("DEBUG: unique_name", (const char*)CW2A(apGeometry->getUniqueName()));
+#endif
 							*getOutputStream() << COMMA;
 							*getOutputStream() << getNewLine();
 							writeIndent();
@@ -1617,7 +1752,6 @@ namespace _ap2gltf
 								}).c_str();
 							} // if (pTransformation != nullptr)							
 							indent()--;
-
 							writeEndObjectTag();
 							indent()--;
 						}
@@ -1641,15 +1775,18 @@ namespace _ap2gltf
 						}
 						// children
 
+						// next instance
+						iInstanceIndex++;
+
 						// next root
-						iSceneNodeIndex++;
+						m_iSceneNodeIndex++;
 					} //for (size_t iTransformation = ...
 				} // else if (pGeometry->isPlaceholder())
 			} // for (size_t iNodeIndex = ...
 
 			// root
-			{
-				if (iSceneNodeIndex > 0) {
+			if (m_bExportGeometriesOnly) {
+				if (m_iSceneNodeIndex > 0) {
 					*getOutputStream() << COMMA;
 				}
 
@@ -1658,16 +1795,17 @@ namespace _ap2gltf
 					vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
 				}
 
+				// Z-up to Y-up
 				_matrix4x4 mtxDefaultViewTransformation;
 				_matrix4x4Identity(&mtxDefaultViewTransformation);
 				_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
 
-
 				indent()++;
 				writeStartObjectTag();
-
-				*getOutputStream() << getNewLine();
 				indent()++;
+				writeStringProperty("name", "Z_UP");
+				*getOutputStream() << COMMA;
+				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("children", vecRootNodes).c_str();
 				*getOutputStream() << COMMA;
@@ -1693,17 +1831,314 @@ namespace _ap2gltf
 						to_string(mtxDefaultViewTransformation._44)
 				}).c_str();
 				indent()--;
-
 				writeEndObjectTag();
 				indent()--;
 
-				m_iRootNodeIndex = iSceneNodeIndex;
+				m_iRootNodeIndex = m_iSceneNodeIndex;
+			} // if (m_bExportGeometriesOnly)
+			else {
+				writeNodesPropertyModelStructure();
 			}
 			// root
 
 			writeEndArrayTag();
 		}
 		// nodes
+	}
+
+	void _exporter::writeNodesPropertyModelStructure()
+	{
+		//
+		// IFC
+		//
+
+		_ptr<_ifc_model> ifcModel(m_pModel, false);
+		if (ifcModel) {
+			writeNodesPropertyModelStructureIFC(ifcModel);
+			return;
+		}
+
+		//
+		// STEP
+		//
+
+		_ptr<_ap242_model> ap242Model(m_pModel, false);
+		if (ap242Model) {
+			writeNodesPropertyModelStructureAP242(ap242Model);
+			return;
+		}
+
+		//
+		// Not supported
+		//
+
+		assert(false);
+	}
+
+	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel)
+	{
+		assert(pIfcModel != nullptr);
+		assert(m_pIFCModelStructure != nullptr);
+
+		auto pProjectNode = m_pIFCModelStructure->getProjectNode();
+		assert(pProjectNode != nullptr);
+
+		vector<uint32_t> vecChildren;
+		writeNodesPropertyModelStructureIFC(pIfcModel, pProjectNode, vecChildren);
+#ifdef _DEBUG_EXPORTER
+		auto pGeometry = pIfcModel->getGeometryByInstance(pProjectNode->getSdaiInstance());
+		assert(pGeometry != nullptr);
+#endif
+		wchar_t* szGlobalId = nullptr;
+		sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+		assert(szGlobalId != nullptr);
+
+		// Project root
+		*getOutputStream() << COMMA;
+		indent()++;
+		writeStartObjectTag();
+		indent()++;
+		writeStringProperty("name", (const char*)CW2A(szGlobalId));
+#ifdef _DEBUG_EXPORTER
+		*getOutputStream() << COMMA;
+		writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
+		*getOutputStream() << COMMA;
+		writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
+#endif
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+		indent()--;
+		writeEndObjectTag();
+		indent()--;
+
+		// Z-up to Y-up
+		_matrix4x4 mtxDefaultViewTransformation;
+		_matrix4x4Identity(&mtxDefaultViewTransformation);
+		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
+
+		*getOutputStream() << COMMA;
+		indent()++;
+		writeStartObjectTag();
+		indent()++;
+		writeStringProperty("name", "Z_UP");
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("children", vector<string>{ to_string(m_iSceneNodeIndex) }).c_str();
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("matrix", vector<string>
+		{
+			to_string(mtxDefaultViewTransformation._11),
+				to_string(mtxDefaultViewTransformation._12),
+				to_string(mtxDefaultViewTransformation._13),
+				to_string(mtxDefaultViewTransformation._14),
+				to_string(mtxDefaultViewTransformation._21),
+				to_string(mtxDefaultViewTransformation._22),
+				to_string(mtxDefaultViewTransformation._23),
+				to_string(mtxDefaultViewTransformation._24),
+				to_string(mtxDefaultViewTransformation._31),
+				to_string(mtxDefaultViewTransformation._32),
+				to_string(mtxDefaultViewTransformation._33),
+				to_string(mtxDefaultViewTransformation._34),
+				to_string(mtxDefaultViewTransformation._41),
+				to_string(mtxDefaultViewTransformation._42),
+				to_string(mtxDefaultViewTransformation._43),
+				to_string(mtxDefaultViewTransformation._44)
+		}).c_str();
+		indent()--;
+		writeEndObjectTag();
+		indent()--;
+
+		m_iRootNodeIndex = ++m_iSceneNodeIndex;
+	}
+
+	void _exporter::writeNodesPropertyModelStructureIFC(_ifc_model* pIfcModel, _ifc_node* pParent, vector<uint32_t>& vecParentChildren)
+	{
+		assert(pIfcModel != nullptr);
+		assert(pParent != nullptr);
+
+		for (auto pChildNode : pParent->children()) {
+			// Skip IfcRelDecomposes and IfcRelContainedInSpatialStructure nodes
+			if (pChildNode->getGlobalId() != wstring(DECOMPOSITION_NODE) &&
+				pChildNode->getGlobalId() != wstring(CONTAINS_NODE)) {
+				auto pGeometry = pIfcModel->getGeometryByInstance(pChildNode->getSdaiInstance());
+				assert(pGeometry != nullptr);
+
+				auto itNode = m_mapNodes.find(pGeometry);
+				if (itNode == m_mapNodes.end()) {
+					// Continue to traverse
+					vector<uint32_t> vecChildren;
+					writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecChildren);
+
+					vecParentChildren.push_back(m_iSceneNodeIndex++);
+
+					// Write node
+					wchar_t* szGlobalId = nullptr;
+					sdaiGetAttrBN(pChildNode->getSdaiInstance(), "GlobalId", sdaiUNICODE, &szGlobalId);
+					assert(szGlobalId != nullptr);
+
+					*getOutputStream() << COMMA;
+					indent()++;
+					writeStartObjectTag();
+					indent()++;
+					writeStringProperty("name", (const char*)CW2A(szGlobalId));
+#ifdef _DEBUG_EXPORTER
+					*getOutputStream() << COMMA;
+					writeStringProperty("DEBUG: index", to_string(m_iSceneNodeIndex));
+					*getOutputStream() << COMMA;
+					writeStringProperty("DEBUG: unique_name", (const char*)CW2A(pGeometry->getUniqueName()));
+#endif
+					if (!vecChildren.empty()) {
+						*getOutputStream() << COMMA;
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+					}
+					indent()--;
+					writeEndObjectTag();
+					indent()--;
+				}
+				else {
+					vecParentChildren.push_back(itNode->second->index());
+
+					// Continue to traverse
+					writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecParentChildren);
+				}
+			}
+			else {
+				// Continue to traverse
+				writeNodesPropertyModelStructureIFC(pIfcModel, pChildNode, vecParentChildren);
+			}
+		} // for (auto pChildNode : ...)
+	}
+
+	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model)
+	{
+		assert(pAP242Model != nullptr);
+		assert(m_pAP242ModelStructure != nullptr);
+
+		m_vecSceneRootNodes.clear();
+
+		auto& vecRootProducts = m_pAP242ModelStructure->getRootProducts();
+		for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
+			auto pRootProduct = vecRootProducts[iRootProductIndex];
+			auto itName2Index = m_mapName2Index.find(pRootProduct->getId());
+			if (itName2Index == m_mapName2Index.end()) {
+				// Continue to traverse
+				vector<uint32_t> vecChildren;
+				writeNodesPropertyModelStructureAP242(pAP242Model, pRootProduct, vecChildren);
+
+				// Write node
+				*getOutputStream() << COMMA;
+				indent()++;
+				writeStartObjectTag();
+				indent()++;
+				writeStringProperty("name", pRootProduct->getId());
+				if (!vecChildren.empty()) {
+					*getOutputStream() << COMMA;
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				}
+				indent()--;
+				writeEndObjectTag();
+				indent()--;
+
+				m_vecSceneRootNodes.push_back(m_iSceneNodeIndex++);
+			}
+			else {
+				m_vecSceneRootNodes.push_back(itName2Index->second);
+			}
+		} // for (size_t iRootProductIndex = ...
+
+		vector<string> vecRootNodes;
+		for (size_t iRootNodeIndex = 0; iRootNodeIndex < m_vecSceneRootNodes.size(); iRootNodeIndex++) {
+			vecRootNodes.push_back(to_string(m_vecSceneRootNodes[iRootNodeIndex]));
+		}
+
+		// Z-up to Y-up
+		_matrix4x4 mtxDefaultViewTransformation;
+		_matrix4x4Identity(&mtxDefaultViewTransformation);
+		_matrixRotateByEulerAngles4x4(&mtxDefaultViewTransformation, 2 * PI * -90. / 360., 0, 0);
+
+		*getOutputStream() << COMMA;
+		indent()++;
+		writeStartObjectTag();
+		indent()++;
+		writeStringProperty("name", "Z_UP");
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("children", vecRootNodes).c_str();
+		*getOutputStream() << COMMA;
+		*getOutputStream() << getNewLine();
+		writeIndent();
+		*getOutputStream() << buildArrayProperty("matrix", vector<string>
+		{
+			to_string(mtxDefaultViewTransformation._11),
+				to_string(mtxDefaultViewTransformation._12),
+				to_string(mtxDefaultViewTransformation._13),
+				to_string(mtxDefaultViewTransformation._14),
+				to_string(mtxDefaultViewTransformation._21),
+				to_string(mtxDefaultViewTransformation._22),
+				to_string(mtxDefaultViewTransformation._23),
+				to_string(mtxDefaultViewTransformation._24),
+				to_string(mtxDefaultViewTransformation._31),
+				to_string(mtxDefaultViewTransformation._32),
+				to_string(mtxDefaultViewTransformation._33),
+				to_string(mtxDefaultViewTransformation._34),
+				to_string(mtxDefaultViewTransformation._41),
+				to_string(mtxDefaultViewTransformation._42),
+				to_string(mtxDefaultViewTransformation._43),
+				to_string(mtxDefaultViewTransformation._44)
+		}).c_str();
+		indent()--;
+		writeEndObjectTag();
+		indent()--;
+
+		m_iRootNodeIndex = m_iSceneNodeIndex;
+	}
+
+	void _exporter::writeNodesPropertyModelStructureAP242(_ap242_model* pAP242Model, _ap242_node* pParent, vector<uint32_t>& vecParentChildren)
+	{
+		assert(pAP242Model != nullptr);
+		assert(pParent != nullptr);
+
+		for (auto pChildNode : pParent->children()) {
+			auto itName2Index = m_mapName2Index.find(pChildNode->getId());
+			if (itName2Index == m_mapName2Index.end()) {
+				// Continue to traverse
+				vector<uint32_t> vecChildren;
+				writeNodesPropertyModelStructureAP242(pAP242Model, pChildNode, vecChildren);
+				vecParentChildren.push_back(m_iSceneNodeIndex++);
+
+				// Write node
+				*getOutputStream() << COMMA;
+				indent()++;
+				writeStartObjectTag();
+				indent()++;
+				writeStringProperty("name", pChildNode->getId());
+				if (!vecChildren.empty()) {
+					*getOutputStream() << COMMA;
+					*getOutputStream() << getNewLine();
+					writeIndent();
+					*getOutputStream() << buildArrayProperty("children", vecChildren).c_str();
+				}
+				indent()--;
+				writeEndObjectTag();
+				indent()--;
+			}
+			else {
+				vecParentChildren.push_back(itName2Index->second);
+
+				// Continue to traverse
+				writeNodesPropertyModelStructureAP242(pAP242Model, pChildNode, vecParentChildren);
+			}
+		} // for (auto pChildNode : ...)
 	}
 
 	void _exporter::writeSceneProperty()
@@ -1890,7 +2325,7 @@ namespace _ap2gltf
 							}).c_str();
 						}
 						// emissiveFactor
-						*/					
+						*/
 
 						*getOutputStream() << COMMA;
 
@@ -2060,6 +2495,47 @@ namespace _ap2gltf
 		// images
 	}
 
+	string _exporter::escapeJsonString(const string& input) const
+	{
+		string output;
+		for (char c : input) {
+			switch (c) {
+				case '\"':
+					output += "\\\"";
+					break;
+				case '\\':
+					output += "\\\\";
+					break;
+				case '\b':
+					output += "\\b";
+					break;
+				case '\f':
+					output += "\\f";
+					break;
+				case '\n':
+					output += "\\n";
+					break;
+				case '\r':
+					output += "\\r";
+					break;
+				case '\t':
+					output += "\\t";
+					break;
+				default:
+					if (c < 0x20) {
+						// Control characters must be escaped as \uXXXX
+						char buf[7];
+						snprintf(buf, sizeof(buf), "\\u%04x", c);
+						output += buf;
+					}
+					else {
+						output += c;
+					}
+			}
+		}
+		return output;
+	}
+
 	size_t _exporter::addMaterial(const _material* pMaterial)
 	{
 		VERIFY_POINTER(pMaterial);
@@ -2096,12 +2572,12 @@ namespace _ap2gltf
 				sdaiGetAttrBN(sdaiProjectInstance, "GlobalId", sdaiUNICODE, &szProjectGlobalId);
 				assert(szProjectGlobalId != nullptr);
 			}
-			writeStringProperty("projectId", szProjectGlobalId != nullptr ? (const char*)CW2A(szProjectGlobalId) : "$");
+			writeStringProperty("projectId", szProjectGlobalId != nullptr ? wstring_to_utf8(szProjectGlobalId) : "$");
 			*getOutputStream() << COMMA;
 		}
 		writeStringProperty("createdAt", _dateTime::iso8601DateTimeStamp());
 		*getOutputStream() << COMMA;
-		writeStringProperty("schema", szFileSchema != nullptr ? (const char*)CW2A(szFileSchema) : "$");
+		writeStringProperty("schema", szFileSchema != nullptr ? wstring_to_utf8(szFileSchema) : "$");
 		*getOutputStream() << COMMA;
 		writeStringProperty("creatingApplication", "STEP2glTF Convertor 1.0, RDF LTD");
 	}
@@ -2171,7 +2647,7 @@ namespace _ap2gltf
 				if (itPropertySet == mapPropertySets.end()) {
 					mapPropertySets[pPropertySet->getSdaiInstance()] = { pPropertySet, iPropertySetIndex++ };
 #ifdef _WINDOWS
-					TRACE("Property set: %s\n", (const char*)CW2A(pPropertySet->getName().c_str()));
+					TRACE(L"Property set: %s\n", pPropertySet->getName().c_str());
 #endif
 				}
 				else {
@@ -2184,10 +2660,10 @@ namespace _ap2gltf
 					if (itProperty == mapProperties.end()) {
 						mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
-						TRACE("Property set: %s, property: %s, value: %s\n",
-							(const char*)CW2A(pPropertySet->getName().c_str()),
-							(const char*)CW2A(pProperty->getName().c_str()),
-							(const char*)CW2A(pProperty->getValue().c_str()));
+						TRACE(L"Property set: %s, property: %s, value: %s\n",
+							pPropertySet->getName().c_str(),
+							pProperty->getName().c_str(),
+							pProperty->getValue().c_str());
 #endif
 					}
 					else {
@@ -2231,15 +2707,15 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itProperty.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcPropertyType", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				writeStringProperty("ifcPropertyType", wstring_to_utf8(itProperty.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("ifcValueType", (const char*)CW2A(itProperty.first->getIfcValueType().c_str()));
+				writeStringProperty("ifcValueType", wstring_to_utf8(itProperty.first->getIfcValueType().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				writeStringProperty("value", wstring_to_utf8(itProperty.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				writeStringProperty("valueType", wstring_to_utf8(itProperty.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();
@@ -2281,11 +2757,11 @@ namespace _ap2gltf
 				writeStartObjectTag();
 
 				indent()++;
-				writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+				writeStringProperty("id", szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(itPropertySet.second.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itPropertySet.second.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
+				writeStringProperty("type", szEntityName != nullptr ? wstring_to_utf8(szEntityName) : "$");
 				*getOutputStream() << COMMA;
 				{
 					*getOutputStream() << getNewLine();
@@ -2357,10 +2833,10 @@ namespace _ap2gltf
 				if (itProperty == mapProperties.end()) {
 					mapProperties[pProperty] = 0;
 #ifdef _WINDOWS
-					TRACE("Property: %s, Value: %s, Type: %s\n",
-						(const char*)CW2A(pProperty->getName().c_str()),
-						(const char*)CW2A(pProperty->getValue().c_str()),
-						(const char*)CW2A(pProperty->getValueType().c_str()));
+					TRACE(L"Property: %s, Value: %s, Type: %s\n",
+						pProperty->getName().c_str(),
+						pProperty->getValue().c_str(),
+						pProperty->getValueType().c_str());
 #endif
 				}
 				else {
@@ -2405,13 +2881,13 @@ namespace _ap2gltf
 				indent()++;
 				writeStringProperty("id", _string::format("#%lld", internalGetP21Line(itProperty.first->getSdaiInstance())));
 				*getOutputStream() << COMMA;
-				writeStringProperty("name", (const char*)CW2A(itProperty.first->getName().c_str()));
+				writeStringProperty("name", wstring_to_utf8(itProperty.first->getName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(itProperty.first->getEntityName().c_str()));
+				writeStringProperty("type", wstring_to_utf8(itProperty.first->getEntityName().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("value", (const char*)CW2A(itProperty.first->getValue().c_str()));
+				writeStringProperty("value", wstring_to_utf8(itProperty.first->getValue().c_str()));
 				*getOutputStream() << COMMA;
-				writeStringProperty("valueType", (const char*)CW2A(itProperty.first->getValueType().c_str()));
+				writeStringProperty("valueType", wstring_to_utf8(itProperty.first->getValueType().c_str()));
 				indent()--;
 
 				writeEndObjectTag();
@@ -2460,11 +2936,17 @@ namespace _ap2gltf
 					indent()++;
 					writeStartObjectTag();
 					indent()++;
-					writeStringProperty("name", (const char*)CW2A(prUnit.second->getName().c_str()));
+					writeStringProperty("name", wstring_to_utf8(prUnit.second->getUnitSymbol().c_str()));
 					*getOutputStream() << COMMA;
-					writeStringProperty("className", (const char*)CW2A(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
+					writeStringProperty("className", wstring_to_utf8(_ap_geometry::getEntityName(prUnit.second->getSdaiInstance())));
 					*getOutputStream() << COMMA;
-					writeStringProperty("unitEnum", (const char*)CW2A(prUnit.second->getType().c_str()));
+					writeStringProperty("unitEnum", wstring_to_utf8(prUnit.second->getType().c_str()));
+					if (!prUnit.second->getPrefix().empty()) {
+						*getOutputStream() << COMMA;
+						wstring strPrefix = prUnit.second->getPrefix();
+						std::transform(strPrefix.begin(), strPrefix.end(), strPrefix.begin(), ::towupper);
+						writeStringProperty("prefix", wstring_to_utf8(strPrefix.c_str()));
+					}
 					indent()--;
 					writeEndObjectTag();
 					indent()--;
@@ -2498,7 +2980,7 @@ namespace _ap2gltf
 						*getOutputStream() << COMMA;
 					}
 					indent()++;
-					writeIntProperty((const char*)CW2A(prUnit.second->getType().c_str()), iUnitIndex++);
+					writeIntProperty(wstring_to_utf8(prUnit.second->getType().c_str()), iUnitIndex++);
 					indent()--;
 				}
 				// unit
@@ -2560,11 +3042,11 @@ namespace _ap2gltf
 					writeStartObjectTag();
 
 					indent()++;
-					writeStringProperty("id", szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+					writeStringProperty("id", szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
+					writeStringProperty("name", szName != nullptr ? wstring_to_utf8(szName) : "$");
 					*getOutputStream() << COMMA;
-					writeStringProperty("type", szEntityName != nullptr ? (const char*)CW2A(szEntityName) : "$");
+					writeStringProperty("type", szEntityName != nullptr ? wstring_to_utf8(szEntityName) : "$");
 					indent()--;
 
 					writeEndObjectTag();
@@ -2641,16 +3123,11 @@ namespace _ap2gltf
 			return;
 		}
 
-		_ifc_model_structure modelStructure(pIfcModel);
-		modelStructure.build();
-#ifdef _DEBUG
-		modelStructure.print();
-#endif
 		//
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -2665,7 +3142,9 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			auto pProjectNode = modelStructure.getProjectNode();
+			assert(m_pIFCModelStructure != nullptr);
+			auto pProjectNode = m_pIFCModelStructure->getProjectNode();
+			assert(pProjectNode != nullptr);
 
 			wchar_t* szName = nullptr;
 			sdaiGetAttrBN(pProjectNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
@@ -2674,11 +3153,11 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", (const char*)CW2A(pProjectNode->getGlobalId()));
+			writeStringProperty("id", wstring_to_utf8(pProjectNode->getGlobalId()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", szName != nullptr ? (const char*)CW2A(szName) : "$");
+			writeStringProperty("name", szName != nullptr ? wstring_to_utf8(szName) : "$");
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pProjectNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", "null");
 			*getOutputStream() << COMMA;
@@ -2709,7 +3188,7 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}
@@ -2759,7 +3238,7 @@ namespace _ap2gltf
 			wchar_t* szName = nullptr;
 			sdaiGetAttrBN(pNode->getSdaiInstance(), "Name", sdaiUNICODE, &szName);
 
-			string strName = szName != nullptr ? (const char*)CW2A(szName) : "";
+			string strName = szName != nullptr ? wstring_to_utf8(szName) : "";
 			string strObjectType = "$";
 			string strTag = "$";
 			if (!strName.empty()) {
@@ -2778,13 +3257,13 @@ namespace _ap2gltf
 			writeStartObjectTag();
 
 			indent()++;
-			writeStringProperty("id", (const char*)CW2A(pNode->getGlobalId()));
+			writeStringProperty("id", wstring_to_utf8(pNode->getGlobalId()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("name", strName);
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
-			writeStringProperty("parent", (const char*)CW2A(strParentGlobalId.c_str()));
+			writeStringProperty("parent", wstring_to_utf8(strParentGlobalId.c_str()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("ObjectType", strObjectType);
 			*getOutputStream() << COMMA;
@@ -2817,16 +3296,16 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
-					}				
+					}
 
 					indent()--;
 					writeEndArrayTag();
 
 					*getOutputStream() << COMMA;
-				}		
-			}			
+				}
+			}
 			// groups
 			// propertySetIds
 			{
@@ -2856,7 +3335,7 @@ namespace _ap2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << DOULE_QUOT_MARK;
-						*getOutputStream() << (szGlobalId != nullptr ? (const char*)CW2A(szGlobalId) : "$");
+						*getOutputStream() << (szGlobalId != nullptr ? wstring_to_utf8(szGlobalId) : "$");
 						*getOutputStream() << DOULE_QUOT_MARK;
 					}
 				}
@@ -2885,16 +3364,11 @@ namespace _ap2gltf
 			return;
 		}
 
-		_ap242_model_structure modelStructure(pAP242Model);
-		modelStructure.build();
-#ifdef _DEBUG
-		modelStructure.print();
-#endif
 		//
 		// Write metadata
 		//
 
-		* getOutputStream() << COMMA;
+		*getOutputStream() << COMMA;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -2909,7 +3383,8 @@ namespace _ap2gltf
 
 			writeStartArrayTag(false);
 
-			auto& vecRootProducts = modelStructure.getRootProducts();
+			assert(m_pAP242ModelStructure != nullptr);
+			auto& vecRootProducts = m_pAP242ModelStructure->getRootProducts();
 			for (size_t iRootProductIndex = 0; iRootProductIndex < vecRootProducts.size(); iRootProductIndex++) {
 				auto pRootProduct = vecRootProducts[iRootProductIndex];
 				if (iRootProductIndex > 0) {
@@ -2919,22 +3394,39 @@ namespace _ap2gltf
 				string strName = "$";
 				_ptr<_ap242_product_definition> product(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 				if (product) {
-					strName = (const char*)CW2A(product->getProductName());
+					strName = wstring_to_utf8(product->getProductName());
 				}
 				else {
 					_ptr<_ap242_annotation_plane> annotationPlane(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 					if (annotationPlane) {
-						strName = (const char*)CW2A(annotationPlane->getName());
+						strName = wstring_to_utf8(annotationPlane->getName());
 					}
 					else {
 						_ptr<_ap242_draughting_callout> draughtingCallout(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 						if (draughtingCallout) {
-							strName = (const char*)CW2A(draughtingCallout->getName());
+							strName = wstring_to_utf8(draughtingCallout->getName());
 						}
 						else {
-							assert(false);	// Unknown root product type 
+							if (pRootProduct->getType() == _ap242_node_type::DraughtingModel) {
+								auto itDraughtingModel = find_if(pAP242Model->getDraughtingModels().begin(), pAP242Model->getDraughtingModels().end(),
+									[&strName, pRootProduct](const _ap242_draughting_model* pDraughtingModel) {
+										if (pDraughtingModel->getSdaiInstance() == pRootProduct->getSdaiInstance()) {
+											strName = wstring_to_utf8(pDraughtingModel->getName());
+											return true;
+										}
+										return false;
+									});
+								assert(itDraughtingModel != pAP242Model->getDraughtingModels().end());
+							}
+							else {
+								assert(false);	// Unknown root product type 
+							}
 						}
 					}
+				}
+
+				if (strName.empty()) {
+					strName = "$";
 				}
 
 				indent()++;
@@ -2945,7 +3437,7 @@ namespace _ap2gltf
 				*getOutputStream() << COMMA;
 				writeStringProperty("name", strName);
 				*getOutputStream() << COMMA;
-				writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
+				writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pRootProduct->getSdaiInstance())));
 				*getOutputStream() << COMMA;
 				writeStringProperty("parent", "null");
 				*getOutputStream() << COMMA;
@@ -3024,9 +3516,9 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", (const char*)CW2A(product->getProductName()));
+			writeStringProperty("name", wstring_to_utf8(product->getProductName()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			*getOutputStream() << COMMA;
@@ -3092,9 +3584,9 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", (const char*)CW2A(itAssembly->second->getName()));
+			writeStringProperty("name", wstring_to_utf8(itAssembly->second->getName()));
 			*getOutputStream() << COMMA;
-			writeStringProperty("type", (const char*)CW2A(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
 			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
 			indent()--;
@@ -3108,6 +3600,138 @@ namespace _ap2gltf
 
 			return;
 		} // if (itAssembly != mapExpressID2Assembly.end())
+
+		//
+		// Annotation Plane
+		//
+
+		_ptr<_ap242_annotation_plane> annotationPlane(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (annotationPlane) {
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(annotationPlane->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
+			// propertyIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertyIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(annotationPlane->getSdaiInstance());
+				if (pPropertyCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pProperty : pPropertyCollection->properties()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertyIds
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (annotationPlane)
+
+		//
+		// Draughting Callout
+		//
+
+		_ptr<_ap242_draughting_callout> draughtingCallout(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (draughtingCallout) {
+			*getOutputStream() << COMMA;
+
+			indent()++;
+			writeStartObjectTag();
+
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(draughtingCallout->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			*getOutputStream() << COMMA;
+			// propertyIds
+			{
+				*getOutputStream() << getNewLine();
+				writeIndent();
+
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << "propertyIds";
+				*getOutputStream() << DOULE_QUOT_MARK;
+				*getOutputStream() << COLON;
+				*getOutputStream() << SPACE;
+
+				writeStartArrayTag(false);
+				indent()++;
+
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(draughtingCallout->getSdaiInstance());
+				if (pPropertyCollection != nullptr) {
+					int iIndex = 0;
+					for (auto pProperty : pPropertyCollection->properties()) {
+						if (iIndex++ > 0) {
+							*getOutputStream() << COMMA;
+						}
+
+						*getOutputStream() << getNewLine();
+						writeIndent();
+						*getOutputStream() << DOULE_QUOT_MARK;
+						*getOutputStream() << _string::format("#%lld", internalGetP21Line(pProperty->getSdaiInstance()));
+						*getOutputStream() << DOULE_QUOT_MARK;
+					}
+				}
+
+				indent()--;
+				writeEndArrayTag();
+			}
+			// propertyIds
+			indent()--;
+
+			writeEndObjectTag();
+			indent()--;
+
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (draughtingCallout)
 
 		//
 		// Not supported
