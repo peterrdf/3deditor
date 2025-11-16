@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "DragFace.h"
+#include "FaceGeom.h"
 
 static void TrimLineToBox(
     SEGMENT3&       line,
@@ -44,12 +45,12 @@ static void TrimLineToBox(
     line = segment;
 }
 
-static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size)
+static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
 {
-    char name[256];
-    sprintf_s(name, "(%g, %g, %g)", pt.x, pt.y, pt.z);
+    char full_name[256];
+    sprintf_s(full_name, "%s (%g, %g, %g)", name, pt.x, pt.y, pt.z);
 
-	auto sphere = GEOM::Sphere::Create(model, name);
+	auto sphere = GEOM::Sphere::Create(model, full_name);
 	sphere.set_radius(size);
 	sphere.set_segmentationParts(36);
 
@@ -65,19 +66,79 @@ static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size)
 	return trans;
 }
 
-static OwlInstance DrawInput(OwlModel model, VECTOR3 const& pt, SEGMENT3& line, double size)
+static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 {
-    std::vector<OwlInstance> rinst;
-    
-    rinst.push_back(DrawPoint(model, pt, size));
-    rinst.push_back(DrawPoint(model, line.pt[0], size));
-    rinst.push_back(DrawPoint(model, line.pt[1], size));
+    VECTOR3 average = Vec3Make(0, 0, 0);
+    int cnt = 0;
+    for (auto& pt : lst) {
+        average = average + pt;
+        cnt++;  
+    }
 
-    auto collection = GEOM::Collection::Create(model);
-    collection.set_objects(rinst.data(), rinst.size());
+    average = average * (1.0 / cnt);
 
-    return collection;
+    return average;
 }
+
+static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE* cface, VECTOR3* points, int_t numPoints, MATRIX* transform)
+{    
+    MATRIX currentTransform;
+    if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(cface)) {
+        assert(!"not tested");
+        if (transform) {
+            MatrixMultiply(&currentTransform, transform, locatTransform);
+            transform = &currentTransform;
+        } else {
+            transform = locatTransform;
+        }
+    }
+
+    for (auto face = *rdfgeom_cface_GetFaces(cface); face; face = *rdfgeom_face_GetNext(face)) {
+        PLANE plane;
+        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
+        if (pos > GeomPosition::Outside) {
+            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
+            normals.push_back(normal);
+        }
+    }
+
+    for (auto child = *rdfgeom_cface_GetChildren(cface); child; child = *rdfgeom_cface_GetNext(cface)) {
+        FindNormals(normals, pt, child, points, numPoints, transform);
+    }
+}
+
+
+static bool FindNormal (OwlInstance inst, int iConceptualFace, VECTOR3 const& pt, VECTOR3& outNormal)
+{
+    outNormal = Vec3Make(0, 0, 0);
+
+    if (auto shell = rdfgeom_GetBRep(inst)) {
+        if (auto points = rdfgeom_GetPoints(shell)) {
+            auto numPoints = rdfgeom_GetNumOfPoints(shell);
+
+            auto cface = *rdfgeom_GetConceptualFaces(shell);
+            while (iConceptualFace && cface) {
+                cface = *rdfgeom_cface_GetNext(cface);
+                iConceptualFace--;
+            }
+
+            std::list<VECTOR3> normals;
+            FindNormals(normals, pt, cface, points, numPoints, NULL);
+            //for (cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
+            //    FindNormals(normals, pt, cface, points, numPoints, NULL);
+            //}
+
+            if (!normals.empty()) {
+                outNormal = AverageVector(normals);
+                Vec3Invert(&outNormal);
+                return true; //>>>> found normal
+            }
+        }
+    }
+    assert(!"normal not found");
+    return false;
+}
+
 
 extern OwlInstance DragFace(
     OwlInstance					instance,
@@ -97,8 +158,21 @@ extern OwlInstance DragFace(
     auto model = GetModel(instance);
 
     SEGMENT3 line = endDragLine;
-
     TrimLineToBox(line, box);
 
-	return DrawInput(model, startDragPoint, line, size);
+    std::vector<OwlInstance> debug;
+    debug.push_back(DrawPoint(model, startDragPoint, size, "start drag"));
+    debug.push_back(DrawPoint(model, line.pt[0], size, "end drag"));
+    debug.push_back(DrawPoint(model, line.pt[1], size, "end drag"));
+
+
+    VECTOR3 normal;
+    if (FindNormal(instance, iConceptualFace, startDragPoint, normal)) {
+        auto target = startDragPoint + normal * (5*size);
+        debug.push_back(DrawPoint(model, target, size, "normal"));
+    }
+
+    auto collection = GEOM::Collection::Create(model);
+    collection.set_objects(debug.data(), debug.size());
+    return collection;
 }

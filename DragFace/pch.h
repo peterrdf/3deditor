@@ -7,11 +7,13 @@
 #ifndef PCH_H
 #define PCH_H
 
+#include <afxwin.h>
 #include <stdio.h>
 #include <math.h>
 #include <cfloat>
 
 #include <vector>
+#include <list>
 
 #include "engine.h"
 #include "W:\DevArea\RDF\GK\RDFGeometryKernel\Code\include\rdfgeom.h"

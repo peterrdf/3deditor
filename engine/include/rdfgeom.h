@@ -53,6 +53,12 @@
     };
 
     //
+    struct PLANE
+    {
+        double	a, b, c, d;
+    };
+
+    //
     // 3D transformation with affine matrix and translation vector 
     //
     struct MATRIX 
@@ -63,19 +69,137 @@
 			_41, _42, _43;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // B-Rep geometry of an instance
+    // It has list of points and list of CONCEPTUAL_FACE parts.
+    //
+    struct SHELL;
+
+    //
+    // Part of B-rep geometry 
+    // It can be a bounded surfaces, wires or points, or has nested (child) conceptual faces 
+    // Bounded surface is represented as list of polygonal faces (STRUCT_FACE) 
+    // which can be facet approximation when exact shape is curved.
+    //
+    struct CONCEPTUAL_FACE;
+
+    //
+    // Planar polygon
+    // Face has outer boundary loop of vertices,
+    // and list of openings represented as faces list.
+    //
+    struct STRUCT_FACE;
+
+    //
+    // Point in 3D space
+    // It can be used for point in loop or separate (standalone) point in the shell
+    //
+    struct STRUCT_VERTEX;
+
 #ifdef __cplusplus
     }
 #endif
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
-    // Base geometry structures and functions
+    // Base geometry functions
     //
+
 static	inline		double	Sqr(
 										double		value
 									)
 {
 	return value * value;
 }
+
+//
+//	Vector2
+//
+
+
+void	Vec2Transform(
+				VECTOR2						* pInOut,
+				const MATRIX				* pM
+			);
+
+void	Vec2Transform(
+				VECTOR2						* pOut,
+				const VECTOR2				* pV,
+				const MATRIX				* pM
+			);
+
+
+static	inline		void	Vec2Add(
+										VECTOR2						* pOut,
+										const VECTOR2				* pV1,
+										const VECTOR2				* pV2
+									)
+{
+	pOut->u = pV1->u + pV2->u;
+	pOut->v = pV1->v + pV2->v;
+}
+
+static	inline		double	Vec2DistanceSqr(
+										const VECTOR2				* pV1,
+										const VECTOR2				* pV2
+									)
+{
+	return Sqr(pV1->u - pV2->u) + Sqr(pV1->v - pV2->v);
+}
+
+static	inline		double	Vec2Distance(
+										const VECTOR2				* pV1,
+										const VECTOR2				* pV2
+									)
+{
+	return sqrt(
+					Vec2DistanceSqr(
+							pV1,
+							pV2
+						)
+				);
+}
+
+static	inline		double	Vec2Dot(
+										const VECTOR2				* pV
+									)
+{
+	return pV->u * pV->u + pV->v * pV->v;
+}
+
+static	inline		double	Vec2Dot(
+										const VECTOR2				* pV1,
+										const VECTOR2				* pV2
+									)
+{
+	return pV1->u * pV2->u + pV1->v * pV2->v;
+}
+
+static	inline		double	Vec2Normalize(
+										VECTOR2						* pInOut
+									)
+{
+	double	size = Sqr(pInOut->u) + Sqr(pInOut->v);
+	
+	if (size > 0.0000000000000001) {
+		double	sqrtSize = sqrt(size);
+
+		pInOut->u /= sqrtSize;
+		pInOut->v /= sqrtSize;
+
+		return sqrtSize;
+	}
+	else {
+		pInOut->u = 0.;
+		pInOut->v = 0.;
+		return 0.;
+	}
+}
+
+//
+//	Vector3
+//
 
 inline double* Vec3Coordinates(VECTOR3& vec) { return &(vec.x); }
 inline const double* Vec3Coordinates(const VECTOR3& vec) { return &(vec.x); }
@@ -160,6 +284,15 @@ static	inline		double	Vec3Normalize(
 static inline void Vec3Normalize (VECTOR3& vInOut)
 {
     Vec3Normalize(&vInOut);
+}
+
+static	inline		void	Vec3Invert(
+										VECTOR3						* pV
+									)
+{
+	pV->x = - pV->x;
+	pV->y = - pV->y;
+	pV->z = - pV->z;
 }
 
 void	Vec3Transform(
@@ -301,6 +434,8 @@ static	inline		double	Vec3DistanceSqr(
 	return Sqr(pV1->x - pV2->x) + Sqr(pV1->y - pV2->y) + Sqr(pV1->z - pV2->z);
 }
 
+static  inline double Vec3dDistanceSqr(const VECTOR3& pt1, const VECTOR3& pt2) { return Vec3DistanceSqr(&pt1, &pt2); }
+
 static	inline		double	Vec3Distance(
 										const VECTOR3				* pV1,
 										const VECTOR3				* pV2
@@ -314,11 +449,23 @@ static	inline		double	Vec3Distance(
 				);
 }
 
+static	inline		double	Vec3LengthSqr(
+    const VECTOR3* pV
+)
+{
+    return Sqr(pV->x) + Sqr(pV->y) + Sqr(pV->z);
+}
+
 static	inline		double	Vec3Length(
 										const VECTOR3				* pV
 									)
 {
-	return sqrt(Sqr(pV->x) + Sqr(pV->y) + Sqr(pV->z));
+	return sqrt(Vec3LengthSqr(pV));
+}
+
+static inline bool Vec3IsUnit(const VECTOR3& v, double eps = 1e-7)
+{
+    return fabs(Vec3LengthSqr(&v)-1) < Sqr(eps);
 }
 
 static inline SEGMENT3 Seg3Make(const double coords[6])
@@ -329,41 +476,20 @@ static inline SEGMENT3 Seg3Make(const double coords[6])
     return seg;
 }
 
+void	MatrixMultiply(
+				MATRIX						* pOut,
+				const MATRIX				* pM1,
+				const MATRIX				* pM2
+			);
+
+
 #ifdef __cplusplus
     extern "C" {
 #endif
 
-    //
-    // B-Rep geometry of an instance
-    // It has list of points and list of CONCEPTUAL_FACE parts.
-    //
-    struct SHELL;
-
-    //
-    // Part of B-rep geometry 
-    // It can be a bounded surfaces, wires or points, or has nested (child) conceptual faces 
-    // Bounded surface is represented as list of polygonal faces (STRUCT_FACE) 
-    // which can be facet approximation when exact shape is curved.
-    //
-    struct CONCEPTUAL_FACE;
-    
-    //
-    // Planar polygon
-    // Face has outer boundary loop of vertices,
-    // and list of openings represented as faces list.
-    //
-    struct STRUCT_FACE;
-    
-    //
-    // Point in 3D space
-    // It can be used for point in loop or separate (standalone) point in the shell
-    //
-    struct STRUCT_VERTEX;
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
-    // Access functions
+    // Shell access functions
     //
 
     //
