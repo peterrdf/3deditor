@@ -2,14 +2,7 @@
 #include "_geometry.h"
 #include "_instance.h"
 #include "_oglUtils.h"
-
-#ifdef __EMSCRIPTEN__
-	#include "../../gisengine/Parsers/_string.h"
-#else 
-	#ifdef __GNUG__ 
-	#include "_string.h"
-	#endif
-#endif
+#include "_string.h"
 
 // ************************************************************************************************
 /*static*/ unsigned int* _cohort::merge(const vector<_cohort*>& vecCohorts, uint32_t& iIndicesCount)

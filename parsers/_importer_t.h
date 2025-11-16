@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef _WINDOWS
-#include "../include/engine.h"
-#else
-#include "../include/engine.h"
-#endif
+#include "engine.h"
 
 #include "_log.h"
 #include "_io.h"

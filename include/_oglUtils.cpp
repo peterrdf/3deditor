@@ -4,10 +4,6 @@
 #include "_string.h"
 #include "_ptr.h"
 
-#ifdef __EMSCRIPTEN__
-#include "../../gisengine/Parsers/_string.h"
-#endif
-
 // ************************************************************************************************
 static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
 {

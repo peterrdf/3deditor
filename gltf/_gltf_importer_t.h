@@ -1,15 +1,8 @@
 #pragma once
 
 #include "_base64.h"
-#ifdef _WINDOWS
 #include "_importer_t.h"
 #include "_json.h"
-#else
-#include "../parsers/_importer_t.h"
-#include "../parsers/_json.h"
-#endif
-
-
 
 // ************************************************************************************************
 namespace _eng

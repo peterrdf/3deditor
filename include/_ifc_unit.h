@@ -1,13 +1,8 @@
 #ifndef IFCUNIT_H
 #define IFCUNIT_H
 
-#ifdef _WINDOWS
 #include "engine.h"
 #include "ifcengine.h"
-#else
-#include "../../include/engine.h"
-#include "../../include/ifcengine.h"
-#endif
 
 #include <string>
 #include <tuple>
