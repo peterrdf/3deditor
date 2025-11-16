@@ -11,6 +11,8 @@
 #include "_schema_embedded_storage_builder.h"
 #endif // _LOAD_SCHEMAS
 
+#include <cmath>
+
 #define PI 3.14159265
 
 // ************************************************************************************************

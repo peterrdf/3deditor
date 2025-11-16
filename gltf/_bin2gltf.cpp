@@ -1665,7 +1665,7 @@ namespace _bin2gltf
 						// uri
 						{
 							indent()++;
-							writeStringProperty("uri", CW2A(itImageURI.second.c_str()).m_psz);
+							writeStringProperty("uri", (LPCSTR)CW2A(itImageURI.second.c_str()));
 							indent()--;
 						}
 
