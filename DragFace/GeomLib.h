@@ -100,7 +100,7 @@ extern bool LineLineClosestPoints(
 /// </summary>
 extern void IntersectLineInstance(
     std::vector<VECTOR3>&   outPoints,
-    const SEGMENT3&         line,
+    const RAY3&             line,
     OwlInstance             instance
 );
 
@@ -109,7 +109,7 @@ extern void IntersectLineInstance(
 /// </summary>
 extern void IntersectLineCFace(
     std::vector<VECTOR3>&   outPoints, 
-    const SEGMENT3&         line, 
+    const RAY3&             line,
     const CONCEPTUAL_FACE&  cface, 
     const VECTOR3*          shellPoints, 
     int_t                   numShellPoints,
@@ -121,7 +121,7 @@ extern void IntersectLineCFace(
 /// </summary>
 extern void IntersectLineFace(
     std::vector<VECTOR3>&   outPoints,
-    const SEGMENT3&         line,
+    const RAY3&             line,
     const STRUCT_FACE&      face,
     const VECTOR3*          shellPoints,
     int_t                   numShellPoints,

@@ -44,6 +44,12 @@
         VECTOR3    pt[2];
     };
 
+    struct RAY3
+    {
+        VECTOR3    org;
+        VECTOR3    dir;//normalized direction
+    };
+
     //
     // 2D point, usually used for texture coordinates 
     //
@@ -281,9 +287,9 @@ static	inline		double	Vec3Normalize(
 	}
 }
 
-static inline void Vec3Normalize (VECTOR3& vInOut)
+static inline double Vec3Normalize (VECTOR3& vInOut)
 {
-    Vec3Normalize(&vInOut);
+    return Vec3Normalize(&vInOut);
 }
 
 static	inline		void	Vec3Invert(

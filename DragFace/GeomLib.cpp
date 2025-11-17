@@ -405,7 +405,7 @@ extern bool LineLineClosestPoints(
 //
 extern void IntersectLineInstance(
     std::vector<VECTOR3>&   outPoints,
-    const SEGMENT3&         line,
+    const RAY3&             line,
     OwlInstance             instance
 )
 {
@@ -424,7 +424,7 @@ extern void IntersectLineInstance(
 //
 extern void IntersectLineCFace(
     std::vector<VECTOR3>&   outPoints,
-    const SEGMENT3&         line,
+    const RAY3&             line,
     const CONCEPTUAL_FACE&  cface,
     const VECTOR3*          shellPoints,
     int_t                   numShellPoints,
@@ -448,7 +448,7 @@ extern void IntersectLineCFace(
 //
 extern void IntersectLineFace(
     std::vector<VECTOR3>&   outPoints,
-    const SEGMENT3&         line,
+    const RAY3&             line,
     const STRUCT_FACE&      face,
     const VECTOR3*          shellPoints,
     int_t                   numShellPoints,
@@ -458,13 +458,11 @@ extern void IntersectLineFace(
     PLANE plane;
     if (FindFacePlane(plane, face, shellPoints, numShellPoints, transform)) {
         //Intersect line with plane
-        VECTOR3 lineDir = line.pt[1] - line.pt[0];
-        Vec3Normalize(lineDir);
-        double denom = plane.a * lineDir.x + plane.b * lineDir.y + plane.c * lineDir.z;
+        double denom = plane.a * line.dir.x + plane.b * line.dir.y + plane.c * line.dir.z;
         if (fabs(denom) > ANGLE_TOLERANCE) {
-            double t = -(plane.a * line.pt[0].x + plane.b * line.pt[0].y + plane.c * line.pt[0].z + plane.d) / denom;
+            double t = -(plane.a * line.org.x + plane.b * line.org.y + plane.c * line.org.z + plane.d) / denom;
             VECTOR3 pt;
-            pt = line.pt[0] + lineDir * t;
+            pt = line.org + line.dir * t;
             //Classify point to face
             auto pos = ClassifyPointToFaceFast(pt, face, shellPoints, numShellPoints, transform);
             if (pos == GeomPosition::Inside || pos == GeomPosition::OnEdge || pos == GeomPosition::Vertex) {

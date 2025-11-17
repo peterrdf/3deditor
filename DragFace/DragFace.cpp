@@ -76,9 +76,68 @@ static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size, con
 	return trans;
 }
 
-
-static void ModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
+static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfProperty prop, double value)
 {
+    SetDatatypeProperty(inst, prop, value);
+    CalculateInstance(inst);
+
+    std::vector<VECTOR3> intersections;
+    IntersectLineInstance(intersections, ray, inst);
+
+    double minDot = FLT_MAX;
+
+    for (auto& pt : intersections) {
+        auto vecToPoint = pt - ray.org;
+        double dot = Vec3Dot(&ray.dir, &vecToPoint);
+        minDot = min(minDot, dot);
+    }
+
+    return minDot;
+}
+
+struct PropertyResult
+{
+    RdfProperty    prop;
+    double         value;
+    double         position; //along ray from target point; signed positive in direction to start drag point,
+};
+
+static void TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ray)
+{
+    double v[2] = { result.value, NAN };
+    double p[2] = { result.position, NAN };
+
+    v[1] = fabs(result.value) > 0.1 ? result.value * 1.1 : 1;
+    p[1] = GetMinIntersectionPosition(inst, ray, result.prop, v[1]);
+
+    if (fabs(p[1]) < fabs(result.position)) {
+        //better position found
+        result.value = v[1];
+        result.position = p[1];
+    }
+
+    if (fabs(p[1]-p[0]) > LENGTH_TOLERANCE) {
+        //linear interpolation to zero position
+        double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
+        double pos = GetMinIntersectionPosition(inst, ray, result.prop, val);
+     
+        if (fabs(pos) < fabs(result.position)) {
+            //better position found
+            result.value = val;
+            result.position = pos;
+        }
+    }
+}
+
+static bool TryModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
+{
+    RAY3 ray;
+    ray.org = directrix.pt[1];
+    ray.dir = directrix.pt[0] - directrix.pt[1];
+    double startDistance = Vec3Normalize(ray.dir);
+
+    std::map<double, PropertyResult> results; //property results sorted by distance
+
     RdfProperty prop = NULL;
     while (NULL!=(prop = GetInstancePropertyByIterator(instance, prop))) {
         
@@ -88,17 +147,32 @@ static void ModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
             double* values = NULL;
             int_t card = 0;
             GetDatatypeProperty(instance, prop, (void**) &values, &card);
-            if (card == 1 && fabs(values[0])>LENGTH_TOLERANCE) {
+            if (card == 1) {
 
-                double oldValue = values[0];
-                double newValue = oldValue * 2;
+                PropertyResult result;
+                result.prop = prop;
+                result.value = values[0];
+                result.position = startDistance;
 
-                SetDatatypeProperty(instance, prop, &newValue, 1);
-                CalculateInstance(instance);
+                TryProperty(result, instance, ray);
 
+                results[fabs(result.position)] = result;
+
+                SetDatatypeProperty(instance, prop, values[0]);//restore property
             }
         }
     }
+
+    if (results.size() > 0) {
+        //apply best result
+        auto& best = *results.begin();
+        if (best.first < startDistance / 2) {
+            SetDatatypeProperty(instance, best.second.prop, best.second.value);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -143,13 +217,14 @@ extern OwlInstance DragFace(
             debug.push_back(DrawPoint(model, directrix.pt[0], size, "start point"));
             debug.push_back(DrawPoint(model, directrix.pt[1], size, "final point"));
 
-           //ModifyInstance(instance, directrix);
-        }
-
-        
+            TryModifyInstance(instance, directrix);
+        }        
     }
     
-    auto collection = GEOM::Collection::Create(model);
-    collection.set_objects(debug.data(), debug.size());
-    return collection;
+    if (!debug.empty()) {
+        auto collection = GEOM::Collection::Create(model);
+        collection.set_objects(debug.data(), debug.size());
+        return collection;
+    }
+    return NULL;
 }

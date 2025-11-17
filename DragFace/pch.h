@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 
 #include "engine.h"
 #include "W:\DevArea\RDF\GK\RDFGeometryKernel\Code\include\rdfgeom.h"
