@@ -3960,11 +3960,11 @@ RdfPropertyType	DECL STDC	GetPropertyTypeEx(
 //
 //				int64_t					returns								OUT
 //
-//  Removes property from model.
-// 
+//	Removes property from model.
+//
 //	Return codes:
 //		0	successful
-//		1	argument rdfProperty is invalid (wrong type or embedded property)
+//		1	argument property is invalid (wrong type or embedded property)
 //		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
 //		3	an instance has a non-zero cardinality for the property to be deleted
 //		4	undefined error
@@ -3980,13 +3980,13 @@ int64_t			DECL STDC	RemoveProperty(
 //
 //				int64_t					returns								OUT
 //
-//  Removes property from model.
+//	Removes property from model.
 //	This call has the same behavior as RemoveProperty, however needs to be
 //	used in case properties are exchanged as a successive series of integers.
-// 
+//
 //	Return codes:
 //		0	successful
-//		1	argument rdfProperty is invalid (wrong type or embedded property)
+//		1	argument property is invalid (wrong type or embedded property)
 //		2	another property is dependent on the property to be deleted (for example through an inheritance relation)
 //		3	an instance has a non-zero cardinality for the property to be deleted
 //		4	undefined error
@@ -4002,7 +4002,7 @@ int64_t			DECL STDC	RemovePropertyEx(
 //
 //				RdfProperty				returns								OUT
 //
-//	Returns RdfProperty if the argument rdfsResource is an actual active property in an active model. It returns 0 in all other cases,
+//	Returns property if the argument rdfsResource is an actual active property in an active model. It returns 0 in all other cases,
 //	i.e. this could mean the model is already closed, the property is inactive or removed or the session is closed.
 //	It could also mean it represents a handle to another resource, for example a class, instance or model.
 //
@@ -4948,7 +4948,7 @@ int64_t			DECL STDC	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								bool					value
 							)
@@ -4956,7 +4956,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_BOOLEAN);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -4966,7 +4966,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								const char				* value
 							)
@@ -4974,7 +4974,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_STRING || GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_CHAR_ARRAY);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -4984,7 +4984,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								const wchar_t			* value
 							)
@@ -4992,7 +4992,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_STRING || GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -5002,7 +5002,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								int64_t					value
 							)
@@ -5010,7 +5010,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_INTEGER);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -5020,7 +5020,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								double					value
 							)
@@ -5028,7 +5028,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_DOUBLE);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -5038,7 +5038,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //
 static	inline	int64_t	SetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								unsigned char			value
 							)
@@ -5046,7 +5046,7 @@ static	inline	int64_t	SetDatatypeProperty(
 	assert(GetPropertyType(owlDatatypeProperty) == DATATYPEPROPERTY_TYPE_BYTE);
 	const int64_t	card = 1;
 	return	SetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void*) &value,
 					card
@@ -5060,7 +5060,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 //		SetDatatypePropertyEx                                   (https://rdf.bg/gkdoc/CP64/SetDatatypePropertyEx.html)
 //				OwlModel				model								IN
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
 //				const void				* values							IN
 //				int64_t					card								IN
@@ -5083,7 +5083,7 @@ static	inline	int64_t	SetDatatypeProperty(
 //
 int64_t			DECL STDC	SetDatatypePropertyEx(
 									OwlModel				model,
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlDatatypeProperty		owlDatatypeProperty,
 									const void				* values,
 									int64_t					card
@@ -5119,14 +5119,14 @@ int64_t			DECL STDC	GetDatatypeProperty(
 //
 //
 static	inline	int64_t	GetDatatypeProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								void					** values,
 								int64_t					* card
 							)
 {
 	return	GetDatatypeProperty(
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void**) values,
 					card
@@ -5140,7 +5140,7 @@ static	inline	int64_t	GetDatatypeProperty(
 //
 //		GetDatatypePropertyEx                                   (https://rdf.bg/gkdoc/CP64/GetDatatypePropertyEx.html)
 //				OwlModel				model								IN
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlDatatypeProperty		owlDatatypeProperty					IN
 //				const void				** values							IN / OUT
 //				int64_t					* card								IN / OUT
@@ -5160,7 +5160,7 @@ static	inline	int64_t	GetDatatypeProperty(
 //
 int64_t			DECL STDC	GetDatatypePropertyEx(
 									OwlModel				model,
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlDatatypeProperty		owlDatatypeProperty,
 									const void				** values,
 									int64_t					* card
@@ -5174,7 +5174,7 @@ int64_t			DECL STDC	GetDatatypePropertyEx(
 //
 static	inline	int64_t	GetDatatypePropertyEx(
 								OwlModel				model,
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlDatatypeProperty		owlDatatypeProperty,
 								void					** values,
 								int64_t					* card
@@ -5182,7 +5182,7 @@ static	inline	int64_t	GetDatatypePropertyEx(
 {
 	return	GetDatatypePropertyEx(
 					model,
-					owlInstance,
+					rdfsResource,
 					owlDatatypeProperty,
 					(const void**) values,
 					card
@@ -5195,7 +5195,7 @@ static	inline	int64_t	GetDatatypePropertyEx(
 
 //
 //		SetObjectProperty                                       (https://rdf.bg/gkdoc/CP64/SetObjectProperty.html)
-//				RdfsResoure				rdfsResource						IN
+//				RdfsResource			rdfsResource						IN
 //				OwlObjectProperty		owlObjectProperty					IN
 //				const RdfsResource		* values							IN
 //				int64_t					card								IN
@@ -5203,7 +5203,7 @@ static	inline	int64_t	GetDatatypePropertyEx(
 //				int64_t					returns								OUT
 //
 //	This function sets the value(s) of a certain objectTypeProperty of an instance, class or model.
-// 	A value can be OwlInstance, OwlClass, RdfProperty, OwlObjectProperty or OwlDatatypeProperty.
+//	A value can be OwlInstance, OwlClass, RdfProperty, OwlObjectProperty or OwlDatatypeProperty.
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instances, this list
 //	has a length as given in the values card.
@@ -5226,17 +5226,17 @@ int64_t			DECL STDC	SetObjectProperty(
 //
 //
 static	inline	int64_t	SetObjectProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlObjectProperty		owlObjectProperty,
-								OwlInstance				value
+								RdfsResource			value
 							)
 {
 	assert(GetPropertyType(owlObjectProperty) == OBJECTPROPERTY_TYPE);
 	const int64_t	card = 1;
 	return	SetObjectProperty(
-					owlInstance,
+					rdfsResource,
 					owlObjectProperty,
-					(const OwlInstance*) &value,
+					(const RdfsResource*) &value,
 					card
 				);
 }
@@ -5248,9 +5248,9 @@ static	inline	int64_t	SetObjectProperty(
 //
 //		SetObjectPropertyEx                                     (https://rdf.bg/gkdoc/CP64/SetObjectPropertyEx.html)
 //				OwlModel				model								IN
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlObjectProperty		owlObjectProperty					IN
-//				const OwlInstance		* values							IN
+//				const RdfsResource		* values							IN
 //				int64_t					card								IN
 //
 //				int64_t					returns								OUT
@@ -5270,9 +5270,9 @@ static	inline	int64_t	SetObjectProperty(
 //
 int64_t			DECL STDC	SetObjectPropertyEx(
 									OwlModel				model,
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlObjectProperty		owlObjectProperty,
-									const OwlInstance		* values,
+									const RdfsResource		* values,
 									int64_t					card
 								);
 
@@ -5289,7 +5289,7 @@ int64_t			DECL STDC	SetObjectPropertyEx(
 //	The value of card gives the actual card of the values list.
 //	The list values of integers is a list of handles to instance, classe or property, this list
 //	has a length as given in the value card.
-//  Caller should not dispose the list
+//	Caller should not dispose the list
 //	The return value always should be 0, if not something is wrong in the way this property is called.
 //
 int64_t			DECL STDC	GetObjectProperty(
@@ -5306,16 +5306,16 @@ int64_t			DECL STDC	GetObjectProperty(
 //
 //
 static	inline	int64_t	GetObjectProperty(
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlObjectProperty		owlObjectProperty,
-								OwlInstance				** values,
+								RdfsResource			** values,
 								int64_t					* card
 							)
 {
 	return	GetObjectProperty(
-					owlInstance,
+					rdfsResource,
 					owlObjectProperty,
-					(const OwlInstance**) values,
+					(const RdfsResource**) values,
 					card
 				);
 }
@@ -5323,7 +5323,7 @@ static	inline	int64_t	GetObjectProperty(
 //
 //
 static	inline	OwlInstance	GetObjectProperty(
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlObjectProperty		owlObjectProperty
 								)
 {
@@ -5331,7 +5331,7 @@ static	inline	OwlInstance	GetObjectProperty(
 	int64_t		card = 0;
 
 	GetObjectProperty(
-			owlInstance,
+			rdfsResource,
 			owlObjectProperty,
 			&values,
 			&card
@@ -5350,9 +5350,9 @@ static	inline	OwlInstance	GetObjectProperty(
 //
 //		GetObjectPropertyEx                                     (https://rdf.bg/gkdoc/CP64/GetObjectPropertyEx.html)
 //				OwlModel				model								IN
-//				OwlInstance				owlInstance							IN
+//				RdfsResource			rdfsResource						IN
 //				OwlObjectProperty		owlObjectProperty					IN
-//				const OwlInstance		** values							IN / OUT
+//				const RdfsResource		** values							IN / OUT
 //				int64_t					* card								IN / OUT
 //
 //				int64_t					returns								OUT
@@ -5369,9 +5369,9 @@ static	inline	OwlInstance	GetObjectProperty(
 //
 int64_t			DECL STDC	GetObjectPropertyEx(
 									OwlModel				model,
-									OwlInstance				owlInstance,
+									RdfsResource			rdfsResource,
 									OwlObjectProperty		owlObjectProperty,
-									const OwlInstance		** values,
+									const RdfsResource		** values,
 									int64_t					* card
 								);
 
@@ -5383,17 +5383,17 @@ int64_t			DECL STDC	GetObjectPropertyEx(
 //
 static	inline	int64_t	GetObjectPropertyEx(
 								OwlModel				model,
-								OwlInstance				owlInstance,
+								RdfsResource			rdfsResource,
 								OwlObjectProperty		owlObjectProperty,
-								OwlInstance				** values,
+								RdfsResource			** values,
 								int64_t					* card
 							)
 {
 	return	GetObjectPropertyEx(
 					model,
-					owlInstance,
+					rdfsResource,
 					owlObjectProperty,
-					(const OwlInstance**) values,
+					(const RdfsResource**) values,
 					card
 				);
 }
@@ -5684,6 +5684,21 @@ static	inline	int64_t	CalculateInstance(
 //	defined.
 //
 int64_t			DECL STDC	UpdateInstance(
+									OwlInstance				owlInstance
+								);
+
+//
+//		IsUpToDate                                              (https://rdf.bg/gkdoc/CP64/IsUpToDate.html)
+//				OwlInstance				owlInstance							IN
+//
+//				bool					returns								OUT
+//
+//	This function returns if an instance has geometry derived and if this
+//	geometry is still up-to-date. It could return false if geometry has never been updated
+//	or in case a property has been updated, or a (recursively) related instance has an updated property since
+//	last calculation of geometry.
+//
+bool			DECL STDC	IsUpToDate(
 									OwlInstance				owlInstance
 								);
 
@@ -5997,6 +6012,226 @@ void			DECL STDC	GetConceptualFaceOriginEx(
 									int64_t					* originatingOwlInstance,
 									int64_t					* originatingConceptualFace
 								);
+
+//
+//		GetConceptualFaceGUID                                   (https://rdf.bg/gkdoc/CP64/GetConceptualFaceGUID.html)
+//				ConceptualFace			conceptualFace						IN
+//				const char				** name								IN / OUT
+//
+//				const char				* returns							OUT
+//
+//	This function returns a unique name for the conceptualFace.
+//	The name will be the same for each recalculation of the geometry.
+//	The return value (and optional name argument) have a valid content till thhe next call of this
+//	function or till the model is closed.
+//
+//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
+//	For example in case of a boolean operation where the type of placement of objects is changing. 
+//
+const char		DECL * STDC	GetConceptualFaceGUID(
+									ConceptualFace			conceptualFace,
+									const char				** name
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	const char	* GetConceptualFaceGUID(
+									ConceptualFace			conceptualFace,
+									char					** name
+								)
+{
+	return	GetConceptualFaceGUID(
+					conceptualFace,
+					(const char**) name
+				);
+}
+
+//
+//
+static	inline	const char	* GetConceptualFaceGUID(
+									ConceptualFace			conceptualFace
+								)
+{
+	return	GetConceptualFaceGUID(
+					conceptualFace,
+					(const char**) nullptr				//	name
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceGUIDW                                  (https://rdf.bg/gkdoc/CP64/GetConceptualFaceGUIDW.html)
+//				ConceptualFace			conceptualFace						IN
+//				const wchar_t			** name								IN / OUT
+//
+//				const wchar_t			* returns							OUT
+//
+//	This function returns a unique name for the conceptualFace.
+//	The name will be the same for each recalculation of the geometry.
+//	The return value (and optional name argument) have a valid content till thhe next call of this
+//	function or till the model is closed.
+//
+//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
+//	For example in case of a boolean operation where the type of placement of objects is changing. 
+//
+const wchar_t	DECL * STDC	GetConceptualFaceGUIDW(
+									ConceptualFace			conceptualFace,
+									const wchar_t			** name
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	const wchar_t	* GetConceptualFaceGUIDW(
+										ConceptualFace			conceptualFace,
+										wchar_t					** name
+									)
+{
+	return	GetConceptualFaceGUIDW(
+					conceptualFace,
+					(const wchar_t**) name
+				);
+}
+
+//
+//
+static	inline	const wchar_t	* GetConceptualFaceGUIDW(
+										ConceptualFace			conceptualFace
+									)
+{
+	return	GetConceptualFaceGUIDW(
+					conceptualFace,
+					(const wchar_t**) nullptr			//	name
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceXYZ2UV                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceXYZ2UV.html)
+//				ConceptualFace			conceptualFace						IN
+//				double					* u									IN / OUT
+//				double					* v									IN / OUT
+//				double					x									IN
+//				double					y									IN
+//				double					z									IN
+//
+//				bool					returns								OUT
+//
+//	This function returns UV coordinates for a specific conceptualFace given its real world coordinates.
+//	The UV coordinates are expected to be both (inclusive) between 0. and 1., i.e. [0..1].
+//
+bool			DECL STDC	GetConceptualFaceXYZ2UV(
+									ConceptualFace			conceptualFace,
+									double					* u,
+									double					* v,
+									double					x,
+									double					y,
+									double					z
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	bool	GetConceptualFaceXYZ2UV(
+								ConceptualFace			conceptualFace,
+								double					* out__VEC2,
+								const double			* in__VEC3
+							)
+{
+	return	GetConceptualFaceXYZ2UV(
+					conceptualFace,
+					&out__VEC2[0],						//	u
+					&out__VEC2[1],						//	v
+					in__VEC3[0],						//	x
+					in__VEC3[1],						//	y
+					in__VEC3[2]							//	z
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceUV2XYZ                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceUV2XYZ.html)
+//				ConceptualFace			conceptualFace						IN
+//				double					* x									IN / OUT
+//				double					* y									IN / OUT
+//				double					* z									IN / OUT
+//				double					u									IN
+//				double					v									IN
+//
+//				bool					returns								OUT
+//
+//	This function returns real world coordinates for a specific conceptualFace given its UV coordinates.
+//	The UV coordinates are expected to be both (inclusive) between 0. and 1., i.e. [0..1].
+//
+//	Note: the returned value is the exact location within the 3D model space
+//	    according to the internal definition. This can slightly differ from the
+//	    generated geometry because of segmentation.
+//
+//	Therefore the following code returns the same values for u and v (if proper values, i.e. both within range [0..1]):
+//	    double  u = .., v = ..;
+//	    double  x, y, z;
+//	    GetConceptualFaceUV2XYZ(conceptualFace, &x, &y, &z, u, v);
+//	    GetConceptualFaceUV2XYZ(conceptualFace, &u, &v, x, y, z);
+//
+//	The following code returns potentially not exactly the same values for x, y, z (if values are from resutling geometry):
+//	    double  x = .., y = .., z = ..;
+//	    double  u, v;
+//	    GetConceptualFaceUV2XYZ(conceptualFace, &u, &v, x, y, z);
+//	    GetConceptualFaceUV2XYZ(conceptualFace, &x, &y, &z, u, v);
+//
+bool			DECL STDC	GetConceptualFaceUV2XYZ(
+									ConceptualFace			conceptualFace,
+									double					* x,
+									double					* y,
+									double					* z,
+									double					u,
+									double					v
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	bool	GetConceptualFaceUV2XYZ(
+								ConceptualFace			conceptualFace,
+								double					* out__VEC3,
+								const double			* in__VEC2
+							)
+{
+	return	GetConceptualFaceUV2XYZ(
+					conceptualFace,
+					&out__VEC3[0],						//	x
+					&out__VEC3[1],						//	y
+					&out__VEC3[2],						//	z
+					in__VEC2[0],						//	u
+					in__VEC2[1]							//	v
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
 
 //
 //		GetFaceCnt                                              (https://rdf.bg/gkdoc/CP64/GetFaceCnt.html)
