@@ -2,8 +2,8 @@
 #include "DragFace.h"
 #include "FaceGeom.h"
 
-static void TrimLineToBox(
-    SEGMENT3&       line,
+static SEGMENT3& TrimLineToBox(
+    const SEGMENT3& line,
     double          box[6])
 {
     VECTOR3 lineDir = line.pt[1] - line.pt[0];
@@ -23,7 +23,7 @@ static void TrimLineToBox(
                     (k ? box[2] : box[5])
                 );
 
-                auto diff = line.pt[0] - vert;
+                auto diff = vert - line.pt[0];
                 double t = Vec3Dot(diff, lineDir);
                 if (t < tmm[0]) tmm[0] = t;
                 if (t > tmm[1]) tmm[1] = t;
@@ -42,7 +42,17 @@ static void TrimLineToBox(
     auto collinear = Vec3Dot(&dir, &lineDir);
     assert(fabs(fabs(collinear) - 1) < 1e-7);
 
-    line = segment;
+    return segment;
+}
+
+static void TrimLineToSize(SEGMENT3& line, double size)
+{
+    VECTOR3 lineDir = line.pt[1] - line.pt[0];
+    Vec3Normalize(lineDir);
+    VECTOR3 pt0 = line.pt[0];
+    VECTOR3 offset = lineDir * (size * 0.5);
+    line.pt[0] = pt0 - offset;
+    line.pt[1] = pt0 + offset;
 }
 
 static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
@@ -157,21 +167,27 @@ extern OwlInstance DragFace(
 
     auto model = GetModel(instance);
 
-    SEGMENT3 line = endDragLine;
-    TrimLineToBox(line, box);
-
     std::vector<OwlInstance> debug;
     debug.push_back(DrawPoint(model, startDragPoint, size, "start drag"));
-    debug.push_back(DrawPoint(model, line.pt[0], size, "end drag"));
-    debug.push_back(DrawPoint(model, line.pt[1], size, "end drag"));
 
+    //SEGMENT3 line = TrimLineToBox(endDragLine, box);
+    //debug.push_back(DrawPoint(model, line.pt[0], size, "end drag 1"));
+    //debug.push_back(DrawPoint(model, line.pt[1], size, "end drag 2"));
 
     VECTOR3 normal;
     if (FindNormal(instance, iConceptualFace, startDragPoint, normal)) {
-        auto target = startDragPoint + normal * (5*size);
-        debug.push_back(DrawPoint(model, target, size, "normal"));
-    }
+        SEGMENT3 normalLine;
+        normalLine.pt[0] = startDragPoint;
+        normalLine.pt[1] = startDragPoint + normal;
 
+        SEGMENT3 closest;
+        if (LineLineClosestPoints(closest, normalLine, endDragLine)) {
+            debug.push_back(DrawPoint(model, closest.pt[0], size, "target point"));
+            debug.push_back(DrawPoint(model, closest.pt[1], size, "end drag closest"));
+        }
+
+    }
+    
     auto collection = GEOM::Collection::Create(model);
     collection.set_objects(debug.data(), debug.size());
     return collection;

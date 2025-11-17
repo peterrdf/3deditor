@@ -377,8 +377,8 @@ static	inline		void	Vec3Subtract(
 
 static inline VECTOR3 operator-(const VECTOR3& v1, const VECTOR3& v2)
 {
-    VECTOR3 result = v2;
-    Vec3Subtract(&result, &v1);
+    VECTOR3 result = v1;
+    Vec3Subtract(&result, &v2);
     return result;
 }
 

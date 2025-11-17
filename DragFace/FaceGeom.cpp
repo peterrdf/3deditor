@@ -237,3 +237,53 @@ extern GeomPosition ClassifyPointToFaceFast(
 
     return inside ? GeomPosition::Inside : GeomPosition::Outside;
 }
+
+//
+//
+extern bool LineLineClosestPoints(
+    SEGMENT3&       closestPoints,
+    const SEGMENT3& lineI,
+    const SEGMENT3& lineII
+)
+{
+    //lineI A + t*u
+    const VECTOR3& A = lineI.pt[0];
+    VECTOR3 u = lineI.pt[1] - lineI.pt[0];
+
+    //lineII B + s*v
+    const VECTOR3& B = lineII.pt[0];
+    VECTOR3 v = lineII.pt[1] - lineII.pt[0];
+
+    VECTOR3 w0 = A - B;
+
+    double a = Vec3LengthSqr(&u);
+    double b = Vec3Dot(&u, &v);
+    double c = Vec3LengthSqr(&v);
+    double d = Vec3Dot(&u, &w0);
+    double e = Vec3Dot(&v, &w0);
+
+    double D = a * c - b * b;
+
+    double t, s;
+
+    if (fabs(D) > ANGLE_TOLERANCE)
+    {
+        // non-parallel lines
+        t = (b * e - c * d) / D;
+        s = (a * e - b * d) / D;
+    }
+    else
+    {
+        // parallel lines
+        if (a < ANGLE_TOLERANCE)
+            return false;   // degenerate lines
+
+        t = -d / a;
+        s = 0.0;
+    }
+
+    closestPoints.pt[0] = A + u * t;
+    closestPoints.pt[1] = B + v * s;
+
+    return true;
+}

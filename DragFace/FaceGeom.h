@@ -1,6 +1,7 @@
 #pragma once
 
-#define LENGTH_TOLERANCE 1e-8
+#define LENGTH_TOLERANCE 1e-7
+#define ANGLE_TOLERANCE 1e-10
 
 /// <summary>
 /// 
@@ -77,4 +78,15 @@ extern GeomPosition ClassifyPointToFaceFast(
     const MATRIX*           localTransform,
     PLANE*                  plane = nullptr,
     double                  eps = LENGTH_TOLERANCE
+);
+
+/// <summary>
+/// Find closest point on infinite lineI and lineII
+/// closedPoints.pt[0] - point on lineI
+/// closedPoints.pt[1] - point on lineII
+/// </summary>
+extern bool LineLineClosestPoints(
+    SEGMENT3&       closestPoints,
+    const SEGMENT3& lineI,
+    const SEGMENT3& lineII
 );
