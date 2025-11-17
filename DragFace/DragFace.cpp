@@ -102,8 +102,10 @@ struct PropertyResult
     double         position; //along ray from target point; signed positive in direction to start drag point,
 };
 
-static void TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ray)
+static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ray)
 {
+    bool better = false;
+
     double v[2] = { result.value, NAN };
     double p[2] = { result.position, NAN };
 
@@ -112,6 +114,7 @@ static void TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ra
 
     if (fabs(p[1]) < fabs(result.position)) {
         //better position found
+        better = true;
         result.value = v[1];
         result.position = p[1];
     }
@@ -123,10 +126,13 @@ static void TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ra
      
         if (fabs(pos) < fabs(result.position)) {
             //better position found
+            better = true;
             result.value = val;
             result.position = pos;
         }
     }
+
+    return better;
 }
 
 static bool TryModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
@@ -149,16 +155,18 @@ static bool TryModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
             GetDatatypeProperty(instance, prop, (void**) &values, &card);
             if (card == 1) {
 
+                double oldValue = values[0];
+
                 PropertyResult result;
                 result.prop = prop;
-                result.value = values[0];
+                result.value = oldValue;
                 result.position = startDistance;
 
-                TryProperty(result, instance, ray);
+                if (TryProperty(result, instance, ray)) {
+                    results[fabs(result.position)] = result;
+                }
 
-                results[fabs(result.position)] = result;
-
-                SetDatatypeProperty(instance, prop, values[0]);//restore property
+                SetDatatypeProperty(instance, prop, oldValue);//restore property
             }
         }
     }
@@ -183,6 +191,21 @@ extern OwlInstance DragFace(
 	SEGMENT3 const&				endDragLine
 )
 {
+    /*
+    iConceptualFace = 0;
+    (VECTOR3&)startDragPoint = Vec3Make( -5.96576, 0.539311, 2.68788 );
+    (VECTOR3&)endDragLine.pt[0] = Vec3Make(5.44445, 42.6429, -65.3029);
+    (VECTOR3&)endDragLine.pt[1] = Vec3Make(-12.4988, -12.4964, 24.3789);
+    */
+
+
+    TRACE("DragFace called on instance 0x%p, conceptual face %d\n", instance, iConceptualFace);
+    TRACE("   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
+    TRACE("   end drag line: (%g, %g, %g) - (%g, %g, %g)\n",
+        endDragLine.pt[0].x, endDragLine.pt[0].y, endDragLine.pt[0].z,
+        endDragLine.pt[1].x, endDragLine.pt[1].y, endDragLine.pt[1].z
+    );
+
     double box[6] = { 0,0,0,0,0,0 };
     GetBoundingBox(instance, box, box + 3);
 
