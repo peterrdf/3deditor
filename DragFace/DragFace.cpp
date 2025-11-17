@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DragFace.h"
-#include "FaceGeom.h"
+#include "GeomLib.h"
 
 static SEGMENT3& TrimLineToBox(
     const SEGMENT3& line,
@@ -76,77 +76,29 @@ static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size, con
 	return trans;
 }
 
-static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
+
+static void ModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
 {
-    VECTOR3 average = Vec3Make(0, 0, 0);
-    int cnt = 0;
-    for (auto& pt : lst) {
-        average = average + pt;
-        cnt++;  
-    }
+    RdfProperty prop = NULL;
+    while (NULL!=(prop = GetInstancePropertyByIterator(instance, prop))) {
+        
+        auto propType = GetPropertyType(prop);
+        if (propType == DATATYPEPROPERTY_TYPE_DOUBLE) {
+        
+            double* values = NULL;
+            int_t card = 0;
+            GetDatatypeProperty(instance, prop, (void**) &values, &card);
+            if (card == 1 && fabs(values[0])>LENGTH_TOLERANCE) {
 
-    average = average * (1.0 / cnt);
+                double oldValue = values[0];
+                double newValue = oldValue * 2;
 
-    return average;
-}
+                SetDatatypeProperty(instance, prop, &newValue, 1);
+                CalculateInstance(instance);
 
-static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE* cface, VECTOR3* points, int_t numPoints, MATRIX* transform)
-{    
-    MATRIX currentTransform;
-    if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(cface)) {
-        assert(!"not tested");
-        if (transform) {
-            MatrixMultiply(&currentTransform, transform, locatTransform);
-            transform = &currentTransform;
-        } else {
-            transform = locatTransform;
-        }
-    }
-
-    for (auto face = *rdfgeom_cface_GetFaces(cface); face; face = *rdfgeom_face_GetNext(face)) {
-        PLANE plane;
-        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
-        if (pos > GeomPosition::Outside) {
-            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-            normals.push_back(normal);
-        }
-    }
-
-    for (auto child = *rdfgeom_cface_GetChildren(cface); child; child = *rdfgeom_cface_GetNext(cface)) {
-        FindNormals(normals, pt, child, points, numPoints, transform);
-    }
-}
-
-
-static bool FindNormal (OwlInstance inst, int iConceptualFace, VECTOR3 const& pt, VECTOR3& outNormal)
-{
-    outNormal = Vec3Make(0, 0, 0);
-
-    if (auto shell = rdfgeom_GetBRep(inst)) {
-        if (auto points = rdfgeom_GetPoints(shell)) {
-            auto numPoints = rdfgeom_GetNumOfPoints(shell);
-
-            auto cface = *rdfgeom_GetConceptualFaces(shell);
-            while (iConceptualFace && cface) {
-                cface = *rdfgeom_cface_GetNext(cface);
-                iConceptualFace--;
-            }
-
-            std::list<VECTOR3> normals;
-            FindNormals(normals, pt, cface, points, numPoints, NULL);
-            //for (cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
-            //    FindNormals(normals, pt, cface, points, numPoints, NULL);
-            //}
-
-            if (!normals.empty()) {
-                outNormal = AverageVector(normals);
-                Vec3Invert(&outNormal);
-                return true; //>>>> found normal
             }
         }
     }
-    assert(!"normal not found");
-    return false;
 }
 
 
@@ -168,24 +120,33 @@ extern OwlInstance DragFace(
     auto model = GetModel(instance);
 
     std::vector<OwlInstance> debug;
-    debug.push_back(DrawPoint(model, startDragPoint, size, "start drag"));
+    //debug.push_back(DrawPoint(model, startDragPoint, size, "start drag"));
 
     //SEGMENT3 line = TrimLineToBox(endDragLine, box);
     //debug.push_back(DrawPoint(model, line.pt[0], size, "end drag 1"));
     //debug.push_back(DrawPoint(model, line.pt[1], size, "end drag 2"));
 
     VECTOR3 normal;
-    if (FindNormal(instance, iConceptualFace, startDragPoint, normal)) {
+    if (FindNormal(normal, startDragPoint, instance, iConceptualFace)) {
         SEGMENT3 normalLine;
         normalLine.pt[0] = startDragPoint;
         normalLine.pt[1] = startDragPoint + normal;
 
         SEGMENT3 closest;
         if (LineLineClosestPoints(closest, normalLine, endDragLine)) {
-            debug.push_back(DrawPoint(model, closest.pt[0], size, "target point"));
-            debug.push_back(DrawPoint(model, closest.pt[1], size, "end drag closest"));
+            //debug.push_back(DrawPoint(model, closest.pt[0], size, "normal closest"));
+            //debug.push_back(DrawPoint(model, closest.pt[1], size, "end drag closest"));
+
+            SEGMENT3 directrix;
+            directrix.pt[0] = startDragPoint;
+            directrix.pt[1] = closest.pt[1];
+            debug.push_back(DrawPoint(model, directrix.pt[0], size, "start point"));
+            debug.push_back(DrawPoint(model, directrix.pt[1], size, "final point"));
+
+           //ModifyInstance(instance, directrix);
         }
 
+        
     }
     
     auto collection = GEOM::Collection::Create(model);

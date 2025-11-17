@@ -21,7 +21,7 @@
     <ClInclude Include="DragFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FaceGeom.h">
+    <ClInclude Include="GeomLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClCompile Include="DragFace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FaceGeom.cpp">
+    <ClCompile Include="GeomLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

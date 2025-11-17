@@ -1,6 +1,36 @@
 #include "pch.h"
-#include "FaceGeom.h"
+#include "GeomLib.h"
 
+//
+//
+template <typename Type> static Type* PTR(const Type& ref) { return const_cast<Type*>(&ref); }
+
+//
+//
+static const MATRIX* GetCurrentTransform(
+    const CONCEPTUAL_FACE&  cface,
+    const MATRIX*           parentTransform,
+    MATRIX&                 buffer
+)
+{
+    if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(PTR(cface))) {
+        assert(!"not tested");
+        if (parentTransform) {
+            MatrixMultiply(&buffer, parentTransform, locatTransform);
+            return &buffer;
+        }
+        else {
+            return locatTransform;
+        }
+    }
+    else {
+        return parentTransform;
+    }
+
+}
+
+//
+//
 extern void DumpFace(
     const STRUCT_FACE&      face,
     const VECTOR3*          shellPoints,
@@ -10,7 +40,7 @@ extern void DumpFace(
 {
     TRACE("Dump face 0x%p\n", &face);
     int i = 0;
-    for (auto vertex = *rdfgeom_face_GetBoundary(const_cast<STRUCT_FACE*>(&face)); vertex; vertex = *rdfgeom_vertex_GetNext(vertex)) {
+    for (auto vertex = *rdfgeom_face_GetBoundary(PTR(face)); vertex; vertex = *rdfgeom_vertex_GetNext(vertex)) {
         VECTOR3 pt;
         GetVertexPoint(pt, vertex, shellPoints, numShellPoints, transform);
         TRACE("   [%d] = %g, %g, %g\n", i++, pt.x, pt.y, pt.z);
@@ -21,7 +51,7 @@ extern void DumpFace(
 //
 extern bool GetVertexPoint(
     VECTOR3&                outPoint,
-    STRUCT_VERTEX*          vertex,
+    const STRUCT_VERTEX*    vertex,
     const VECTOR3*          shellPoints,
     int_t                   numShellPoints,
     const MATRIX*           transform
@@ -32,7 +62,7 @@ extern bool GetVertexPoint(
         return false;
     }
 
-    int_t index = rdfgeom_vertex_GetPointIndex(vertex);
+    int_t index = rdfgeom_vertex_GetPointIndex(const_cast<STRUCT_VERTEX*>(vertex));
     if (index < 0 || index >= numShellPoints) {
         assert(false);
         return false;
@@ -61,9 +91,7 @@ extern bool FindFacePlane(
 {
     plane = { 0, 0, 0, 0 };
 
-    STRUCT_FACE* pface = const_cast<STRUCT_FACE*>(&face);
-
-    auto vertex = *rdfgeom_face_GetBoundary(pface);
+    auto vertex = *rdfgeom_face_GetBoundary(PTR(face));
     VECTOR3 pt0;
     if (!GetVertexPoint(pt0, vertex, shellPoints, numShellPoints, transform)){
         return false;
@@ -106,7 +134,7 @@ extern bool FindFacePlane(
 
 //
 //
-extern void ProjectToCoordPlane(
+static void ProjectToCoordPlane(
     const VECTOR3&          xyz,
     CoordPlane              plane,
     VECTOR2&                uv
@@ -173,7 +201,7 @@ extern GeomPosition ClassifyPointToFaceFast(
     ProjectToCoordPlane(pt, coord, uv);
     //TRACE("Projected point uv=(%g, %g) on %s plane\n", uv.u, uv.v, coord == CoordPlane::YZ ? "YZ" : (coord == CoordPlane::XZ ? "XZ" : "XY"));
 
-    auto vertex = *rdfgeom_face_GetBoundary(const_cast<STRUCT_FACE*>(&face));
+    auto vertex = *rdfgeom_face_GetBoundary(PTR(face));
     VECTOR3 pt1;
     if (!GetVertexPoint(pt1, vertex, shellPoints, numShellPoints, transform)) {
         return GeomPosition::Undefined;
@@ -238,6 +266,90 @@ extern GeomPosition ClassifyPointToFaceFast(
     return inside ? GeomPosition::Inside : GeomPosition::Outside;
 }
 
+
+//
+//
+static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
+{
+    VECTOR3 average = Vec3Make(0, 0, 0);
+    int cnt = 0;
+    for (auto& pt : lst) {
+        average = average + pt;
+        cnt++;
+    }
+
+    average = average * (1.0 / cnt);
+
+    return average;
+}
+
+
+//
+//
+static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, const CONCEPTUAL_FACE& cface, const VECTOR3* points, int_t numPoints, const MATRIX* transform)
+{
+    MATRIX buffer;
+    transform = GetCurrentTransform(cface, transform, buffer);
+
+    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+        PLANE plane;
+        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
+        if (pos > GeomPosition::Outside) {
+            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
+            normals.push_back(normal);
+        }
+    }
+
+    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
+        FindNormals(normals, pt, *child, points, numPoints, transform);
+    }
+}
+
+
+//
+//
+extern bool FindNormal (
+    VECTOR3&                outNormal,
+    const VECTOR3&          pt,
+    OwlInstance             inst,
+    int                     iConceptualFace // -1 - search all faces
+) 
+{
+    outNormal = Vec3Make(0, 0, 0);
+
+    if (auto shell = rdfgeom_GetBRep(inst)) {
+        if (auto points = rdfgeom_GetPoints(shell)) {
+            auto numPoints = rdfgeom_GetNumOfPoints(shell);
+
+            std::list<VECTOR3> normals;
+
+            auto cface = *rdfgeom_GetConceptualFaces(shell);
+            if (iConceptualFace >= 0) {
+                auto cnt = iConceptualFace;
+                while (cnt && cface) {
+                    cface = *rdfgeom_cface_GetNext(cface);
+                    cnt--;
+                }
+            }
+
+            for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
+                FindNormals(normals, pt, *cface, points, numPoints, NULL);
+                if (iConceptualFace >= 0)
+                    break;
+            }
+
+            if (!normals.empty()) {
+                outNormal = AverageVector(normals);
+                Vec3Invert(&outNormal);
+                return true; //>>>> found normal
+            }
+        }
+    }
+    
+    assert(!"normal not found");
+    return false;
+}
+
 //
 //
 extern bool LineLineClosestPoints(
@@ -286,4 +398,78 @@ extern bool LineLineClosestPoints(
     closestPoints.pt[1] = B + v * s;
 
     return true;
+}
+
+
+//
+//
+extern void IntersectLineInstance(
+    std::vector<VECTOR3>&   outPoints,
+    const SEGMENT3&         line,
+    OwlInstance             instance
+)
+{
+    if (auto shell = rdfgeom_GetBRep(instance)) {
+        if (auto points = rdfgeom_GetPoints(shell)) {
+            auto numPoints = rdfgeom_GetNumOfPoints(shell);
+
+            for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
+                IntersectLineCFace(outPoints, line, *cface, points, numPoints, NULL);
+            }
+        }
+    }
+}
+
+//
+//
+extern void IntersectLineCFace(
+    std::vector<VECTOR3>&   outPoints,
+    const SEGMENT3&         line,
+    const CONCEPTUAL_FACE&  cface,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           transform
+)
+{
+    MATRIX buffer;
+    transform = GetCurrentTransform(cface, transform, buffer);
+
+    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+        IntersectLineFace(outPoints, line, *face, shellPoints, numShellPoints, transform);
+    }
+
+    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
+        IntersectLineCFace(outPoints, line, *child, shellPoints, numShellPoints, transform);
+    }
+
+}
+
+//
+//
+extern void IntersectLineFace(
+    std::vector<VECTOR3>&   outPoints,
+    const SEGMENT3&         line,
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           transform
+)
+{
+    PLANE plane;
+    if (FindFacePlane(plane, face, shellPoints, numShellPoints, transform)) {
+        //Intersect line with plane
+        VECTOR3 lineDir = line.pt[1] - line.pt[0];
+        Vec3Normalize(lineDir);
+        double denom = plane.a * lineDir.x + plane.b * lineDir.y + plane.c * lineDir.z;
+        if (fabs(denom) > ANGLE_TOLERANCE) {
+            double t = -(plane.a * line.pt[0].x + plane.b * line.pt[0].y + plane.c * line.pt[0].z + plane.d) / denom;
+            VECTOR3 pt;
+            pt = line.pt[0] + lineDir * t;
+            //Classify point to face
+            auto pos = ClassifyPointToFaceFast(pt, face, shellPoints, numShellPoints, transform);
+            if (pos == GeomPosition::Inside || pos == GeomPosition::OnEdge || pos == GeomPosition::Vertex) {
+                outPoints.push_back(pt);
+            }
+        }
+    }
 }

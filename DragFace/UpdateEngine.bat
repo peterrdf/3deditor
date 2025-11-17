@@ -1,18 +1,16 @@
 
-echo Check RDF engine includes
-
 set PROJ_DIR=%~1
 set CONFIG=%~2
 set PLATFORM=%~3
-
 
 set INC_DIR=%PROJ_DIR%..\engine\include\
 set LIB_DIR=%PROJ_DIR%..\engine\lib\%PLATFORM%\
 set DLL_DIR=%PROJ_DIR%..\%PLATFORM%\Release\
 
-echo INC_DIR=%INC_DIR%
-echo LIB_DIR=%LIB_DIR%
-echo DLL_DIR=%DLL_DIR%
+echo Update RDF engine target folders
+echo   INC_DIR=%INC_DIR%
+echo   LIB_DIR=%LIB_DIR%
+echo   DLL_DIR=%DLL_DIR%
 
 
 @echo on

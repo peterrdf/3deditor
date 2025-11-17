@@ -41,20 +41,12 @@ extern void DumpFace(
 /// </summary>
 extern bool GetVertexPoint(
     VECTOR3&                outPoint,
-    STRUCT_VERTEX*          vertex,
+    const STRUCT_VERTEX*    vertex,
     const VECTOR3*          shellPoints,
     int_t                   numShellPoints,
     const MATRIX*           localTransform
     );
 
-/// <summary>
-/// 
-/// </summary>   
-extern void ProjectToCoordPlane(
-    const VECTOR3&          xyz,
-    CoordPlane              plane,
-    VECTOR2&                uv
-);
 
 /// <summary>
 /// 
@@ -81,6 +73,16 @@ extern GeomPosition ClassifyPointToFaceFast(
 );
 
 /// <summary>
+/// Find normal at point on instance surface
+/// </summary>
+extern bool FindNormal (
+    VECTOR3&                outNormal,
+    const VECTOR3&          pt,
+    OwlInstance             inst,
+    int                     iConceptualFace = -1 // -1 - search all faces
+);  
+
+/// <summary>
 /// Find closest point on infinite lineI and lineII
 /// closedPoints.pt[0] - point on lineI
 /// closedPoints.pt[1] - point on lineII
@@ -89,4 +91,39 @@ extern bool LineLineClosestPoints(
     SEGMENT3&       closestPoints,
     const SEGMENT3& lineI,
     const SEGMENT3& lineII
+);
+
+
+
+/// <summary>
+/// Find intersection points of infinite line with instance BRep geometry 
+/// </summary>
+extern void IntersectLineInstance(
+    std::vector<VECTOR3>&   outPoints,
+    const SEGMENT3&         line,
+    OwlInstance             instance
+);
+
+/// <summary>
+/// Find intersection points of infinite line with conceptual face 
+/// </summary>
+extern void IntersectLineCFace(
+    std::vector<VECTOR3>&   outPoints, 
+    const SEGMENT3&         line, 
+    const CONCEPTUAL_FACE&  cface, 
+    const VECTOR3*          shellPoints, 
+    int_t                   numShellPoints,
+    const MATRIX*           transform
+    );
+
+/// <summary>
+/// Find intersection points of infinite line with face 
+/// </summary>
+extern void IntersectLineFace(
+    std::vector<VECTOR3>&   outPoints,
+    const SEGMENT3&         line,
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           transform
 );
