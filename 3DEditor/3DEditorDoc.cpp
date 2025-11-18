@@ -434,9 +434,11 @@ void CMy3DEditorDoc::OnUpdateExportAsLandxml(CCmdUI* pCmdUI)
 void CMy3DEditorDoc::OnExportAsGltf()
 {
 	fs::path pthInputFile = getModels()[0]->getPath();
+	fs::path pthOutputFile = pthInputFile;
+	pthOutputFile += L".gltf";
 
 	TCHAR szFilters[] = _T("glTF Files (*.gltf)|*.gltf|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("gltf"), pthInputFile.wstring().c_str(),
+	CFileDialog dlgFile(FALSE, _T("gltf"), pthOutputFile.wstring().c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK) {
@@ -458,9 +460,11 @@ void CMy3DEditorDoc::OnUpdateExportAsGltf(CCmdUI* pCmdUI)
 void CMy3DEditorDoc::OnExportAsGltfBinary()
 {
 	fs::path pthInputFile = getModels()[0]->getPath();
+	fs::path pthOutputFile = pthInputFile;
+	pthOutputFile += L".glb";
 
 	TCHAR szFilters[] = _T("glTF Binary Files (*.glb)|*.glb|All Files (*.*)|*.*||");
-	CFileDialog dlgFile(FALSE, _T("glb"), pthInputFile.wstring().c_str(),
+	CFileDialog dlgFile(FALSE, _T("glb"), pthOutputFile.wstring().c_str(),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 
 	if (dlgFile.DoModal() != IDOK) {
