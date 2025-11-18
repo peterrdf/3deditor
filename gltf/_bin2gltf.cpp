@@ -1350,28 +1350,30 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
-						*getOutputStream() << COMMA;
-						*getOutputStream() << getNewLine();
-						writeIndent();
-						*getOutputStream() << buildArrayProperty("matrix", vector<string>
-						{
-							to_string(pTransformation->_11),
-								to_string(pTransformation->_12),
-								to_string(pTransformation->_13),
-								to_string(pTransformation->_14),
-								to_string(pTransformation->_21),
-								to_string(pTransformation->_22),
-								to_string(pTransformation->_23),
-								to_string(pTransformation->_24),
-								to_string(pTransformation->_31),
-								to_string(pTransformation->_32),
-								to_string(pTransformation->_33),
-								to_string(pTransformation->_34),
-								to_string(pTransformation->_41),
-								to_string(pTransformation->_42),
-								to_string(pTransformation->_43),
-								to_string(pTransformation->_44)
-						}).c_str();
+						if (pTransformation != nullptr) {
+							*getOutputStream() << COMMA;
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << buildArrayProperty("matrix", vector<string>
+							{
+								to_string(pTransformation->_11),
+									to_string(pTransformation->_12),
+									to_string(pTransformation->_13),
+									to_string(pTransformation->_14),
+									to_string(pTransformation->_21),
+									to_string(pTransformation->_22),
+									to_string(pTransformation->_23),
+									to_string(pTransformation->_24),
+									to_string(pTransformation->_31),
+									to_string(pTransformation->_32),
+									to_string(pTransformation->_33),
+									to_string(pTransformation->_34),
+									to_string(pTransformation->_41),
+									to_string(pTransformation->_42),
+									to_string(pTransformation->_43),
+									to_string(pTransformation->_44)
+							}).c_str();							
+						}
 						indent()--;
 
 						writeEndObjectTag();
