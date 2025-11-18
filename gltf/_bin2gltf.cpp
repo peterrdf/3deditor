@@ -708,7 +708,7 @@ namespace _bin2gltf
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
+		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -724,12 +724,39 @@ namespace _bin2gltf
 		int iBufferViewIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->getGeometry()->concFacesCohorts().size() +
-				pNode->getGeometry()->concFacePolygonsCohorts().size() +
-				pNode->getGeometry()->linesCohorts().size() +
-				pNode->getGeometry()->pointsCohorts().size());
+				pGeometry->concFacesCohorts().size() +
+				pGeometry->concFacePolygonsCohorts().size() +
+				pGeometry->linesCohorts().size() +
+				pGeometry->pointsCohorts().size());
+
+			float fXmin = FLT_MAX;
+			float fXmax = -FLT_MAX;
+			float fYmin = FLT_MAX;
+			float fYmax = -FLT_MAX;
+			float fZmin = FLT_MAX;
+			float fZmax = -FLT_MAX;
+			pGeometry->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+			fXmin *= fScaleFactor;
+			fXmin -= (float)vecVertexBufferOffset.x;
+
+			fYmin *= fScaleFactor;
+			fYmin -= (float)vecVertexBufferOffset.y;
+
+			fZmin *= fScaleFactor;
+			fZmin -= (float)vecVertexBufferOffset.z;
+
+			fXmax *= fScaleFactor;
+			fXmax -= (float)vecVertexBufferOffset.x;
+
+			fYmax *= fScaleFactor;
+			fYmax -= (float)vecVertexBufferOffset.y;
+
+			fZmax *= fScaleFactor;
+			fZmax -= (float)vecVertexBufferOffset.z;
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
@@ -753,18 +780,18 @@ namespace _bin2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", fXmin),
+						_string::format("%.10g", fYmin),
+						_string::format("%.10g", fZmin),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", fXmax),
+						_string::format("%.10g", fYmax),
+						_string::format("%.10g", fZmax),
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
