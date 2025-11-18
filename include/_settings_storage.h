@@ -16,7 +16,7 @@ namespace fs = std::filesystem;
 #endif
 
 // ************************************************************************************************
-#define NAMEOFVAR(variable) ((decltype(&variable))nullptr, #variable)
+#define NAMEOFVAR(variable) ((void)((decltype(&variable))nullptr), #variable)
 
 // ************************************************************************************************
 class _settings_storage

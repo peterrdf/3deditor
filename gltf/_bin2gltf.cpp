@@ -161,7 +161,7 @@ namespace _bin2gltf
 		if (!createOuputStream()) {
 			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
 			return false;
-		}		
+		}
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
@@ -174,8 +174,7 @@ namespace _bin2gltf
 	}
 
 	/*virtual*/ void _exporter::postExecute()
-	{
-	}
+	{}
 
 	/*virtual*/ void _exporter::writeIndent()
 	{
@@ -444,7 +443,8 @@ namespace _bin2gltf
 			std::ostream* pNodeBinDataStream = nullptr;
 			if (m_bEmbeddedBuffers) {
 				pNodeBinDataStream = new std::stringstream();
-			} else {
+			}
+			else {
 				pNodeBinDataStream = new std::ofstream();
 				((std::ofstream*)pNodeBinDataStream)->open(pthNodeBinData.string(), std::ios::out | std::ios::binary | std::ios::trunc);
 			}
@@ -560,7 +560,8 @@ namespace _bin2gltf
 				std::string strBase64BufferData = "data:application/octet-stream;base64,";
 				strBase64BufferData += base64_encode(reinterpret_cast<const unsigned char*>(strBufferData.data()), (unsigned int)strBufferData.size());
 				writeStringProperty("uri", strBase64BufferData);
-			} else {
+			}
+			else {
 				writeStringProperty("uri", pthNodeBinData.stem().string() + ".bin");
 			}
 			indent()--;
@@ -708,7 +709,7 @@ namespace _bin2gltf
 		_vector3d vecVertexBufferOffset;
 		GetVertexBufferOffset(m_pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
-		float fScaleFactor = (float)m_pModel->getOriginalBoundingSphereDiameter() / 2.f;
+		double dScaleFactor = m_pModel->getOriginalBoundingSphereDiameter() / 2.;
 
 		*getOutputStream() << getNewLine();
 		writeIndent();
@@ -724,39 +725,12 @@ namespace _bin2gltf
 		int iBufferViewIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
-			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pGeometry->concFacesCohorts().size() +
-				pGeometry->concFacePolygonsCohorts().size() +
-				pGeometry->linesCohorts().size() +
-				pGeometry->pointsCohorts().size());
-
-			float fXmin = FLT_MAX;
-			float fXmax = -FLT_MAX;
-			float fYmin = FLT_MAX;
-			float fYmax = -FLT_MAX;
-			float fZmin = FLT_MAX;
-			float fZmax = -FLT_MAX;
-			pGeometry->calculateVerticesMinMax(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
-
-			fXmin *= fScaleFactor;
-			fXmin -= (float)vecVertexBufferOffset.x;
-
-			fYmin *= fScaleFactor;
-			fYmin -= (float)vecVertexBufferOffset.y;
-
-			fZmin *= fScaleFactor;
-			fZmin -= (float)vecVertexBufferOffset.z;
-
-			fXmax *= fScaleFactor;
-			fXmax -= (float)vecVertexBufferOffset.x;
-
-			fYmax *= fScaleFactor;
-			fYmax -= (float)vecVertexBufferOffset.y;
-
-			fZmax *= fScaleFactor;
-			fZmax -= (float)vecVertexBufferOffset.z;
+				pNode->getGeometry()->concFacesCohorts().size() +
+				pNode->getGeometry()->concFacePolygonsCohorts().size() +
+				pNode->getGeometry()->linesCohorts().size() +
+				pNode->getGeometry()->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
@@ -780,18 +754,18 @@ namespace _bin2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					_string::format("%.10g", fXmin),
-						_string::format("%.10g", fYmin),
-						_string::format("%.10g", fZmin),
+					_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					_string::format("%.10g", fXmax),
-						_string::format("%.10g", fYmax),
-						_string::format("%.10g", fZmax),
+					_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -1399,7 +1373,7 @@ namespace _bin2gltf
 									to_string(pTransformation->_42),
 									to_string(pTransformation->_43),
 									to_string(pTransformation->_44)
-							}).c_str();							
+							}).c_str();
 						}
 						indent()--;
 
@@ -1530,7 +1504,8 @@ namespace _bin2gltf
 						if (itImage == m_mapImages.end()) {
 							iImageIndex = (uint32_t)m_mapImages.size();
 							m_mapImages[strTexture] = iImageIndex;
-						} else {
+						}
+						else {
 							iImageIndex = itImage->second;
 						}
 
@@ -1577,7 +1552,8 @@ namespace _bin2gltf
 							// pbrMetallicRoughness							
 						}
 						// texture
-					} else {
+					}
+					else {
 						// material					
 						indent()++;
 						writeStartObjectTag();

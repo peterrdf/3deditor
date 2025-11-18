@@ -654,7 +654,7 @@ void _geometry::buildConcFacesCohorts(MATERIALS& mapMaterials, const GLsizei IND
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 concFacesCohorts().push_back(pCohort);
@@ -728,7 +728,7 @@ void _geometry::buildFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
         } // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
         // Check the limit
-        if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
+        if ((int)(pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
             pCohort = new _cohort();
             facePolygonsCohorts().push_back(pCohort);
         }
@@ -794,7 +794,7 @@ void _geometry::buildConcFacePolygonsCohorts(const GLsizei INDICES_COUNT_LIMIT)
         } // if (iIndicesCount > INDICES_COUNT_LIMIT / 2)
 
         // Check the limit
-        if ((pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
+        if ((int)(pCohort->indices().size() + (iIndicesCount * 2)) > INDICES_COUNT_LIMIT) {
             pCohort = new _cohort();
             concFacePolygonsCohorts().push_back(pCohort);
         }
@@ -870,7 +870,7 @@ void _geometry::buildLinesCohorts(MATERIALS& mapMaterials, const GLsizei INDICES
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 linesCohorts().push_back(pCohort);
@@ -954,7 +954,7 @@ void _geometry::buildPointsCohorts(MATERIALS& mapMaterials, const GLsizei INDICE
             }
 
             // Check the limit
-            if (pCohort->indices().size() + iIndicesCount > INDICES_COUNT_LIMIT) {
+            if ((int)(pCohort->indices().size() + iIndicesCount) > INDICES_COUNT_LIMIT) {
                 pCohort = new _cohortWithMaterial(itMaterial->first);
 
                 pointsCohorts().push_back(pCohort);

@@ -3408,7 +3408,7 @@ namespace _ap2gltf
 						}
 						else {
 							if (pRootProduct->getType() == _ap242_node_type::DraughtingModel) {
-								auto itDraughtingModel = find_if(pAP242Model->getDraughtingModels().begin(), pAP242Model->getDraughtingModels().end(),
+								(void)find_if(pAP242Model->getDraughtingModels().begin(), pAP242Model->getDraughtingModels().end(),
 									[&strName, pRootProduct](const _ap242_draughting_model* pDraughtingModel) {
 										if (pDraughtingModel->getSdaiInstance() == pRootProduct->getSdaiInstance()) {
 											strName = wstring_to_utf8(pDraughtingModel->getName());
@@ -3416,7 +3416,6 @@ namespace _ap2gltf
 										}
 										return false;
 									});
-								assert(itDraughtingModel != pAP242Model->getDraughtingModels().end());
 							}
 							else {
 								assert(false);	// Unknown root product type 

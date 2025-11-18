@@ -46,7 +46,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 
 	clean(false);
 
-	m_bUpdteVertexBuffers = true;
+	m_bUpdateVertexBuffers = true;
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (owlInstance != 0) {

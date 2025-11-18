@@ -41,7 +41,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 
     clean(false);
 
-    m_bUpdteVertexBuffers = true;
+    m_bUpdateVertexBuffers = true;
 
     OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
     if (owlInstance != 0) {

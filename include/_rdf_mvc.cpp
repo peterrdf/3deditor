@@ -1417,8 +1417,9 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 	, m_pController(pController)
 {
 	assert(m_pController != nullptr);
-
+#ifdef _WINDOWS
 	create(WORLD_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
@@ -1455,7 +1456,9 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
+#ifdef _WINDOWS
 	create(WORLD_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
@@ -1495,8 +1498,9 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 	, m_pController(pController)
 {
 	assert(m_pController != nullptr);
-
+#ifdef _WINDOWS
 	create(MODEL_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
@@ -1504,7 +1508,9 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
+#ifdef _WINDOWS
 	create(MODEL_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ void _model_coordinate_system_model::preLoad() /*override*/
@@ -1854,13 +1860,13 @@ void _navigator_model::create()
 			1., 1., 1.);
 		SetNameOfInstance(owlInstance, "#back-bottom-right");
 	}
-#endif
 
 	createLabels(owlModel);
 
 	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
 
 	attachModel(NAVIGATOR, owlModel);
+#endif
 }
 
 void _navigator_model::createLabels(OwlModel owlModel)

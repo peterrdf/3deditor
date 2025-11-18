@@ -13,9 +13,8 @@ _model::_model(_log* pLog)
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
-	, m_pWorld(nullptr)
-	, m_mapID2Instance()
-	, m_bUpdteVertexBuffers(true)
+	, m_pWorld(nullptr)	
+	, m_bUpdateVertexBuffers(true)
 	, m_dOriginalBoundingSphereDiameter(2.)
 	, m_fXmin(-1.f)
 	, m_fXmax(1.f)
@@ -26,6 +25,7 @@ _model::_model(_log* pLog)
 	, m_fBoundingSphereDiameter(2.f)
 	, m_vecGeometries()
 	, m_vecInstances()
+	, m_mapID2Instance()
 	, m_mapTextures()
 {
 	setLog(pLog);
@@ -467,7 +467,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 		return;
 	}
 
-	if (m_bUpdteVertexBuffers) {
+	if (m_bUpdateVertexBuffers) {
 		if (m_pWorld == nullptr) {
 			_vector3d vecOriginalBBMin;
 			_vector3d vecOriginalBBMax;
@@ -495,7 +495,7 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 				// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 				ClearedExternalBuffers(getOwlModel());
 
-				m_bUpdteVertexBuffers = false;
+				m_bUpdateVertexBuffers = false;
 			}
 		} // if (m_pWorld == nullptr)
 		else {
@@ -521,9 +521,9 @@ void _model::setVertexBufferOffset(OwlInstance owlInstance)
 			// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 			ClearedExternalBuffers(getOwlModel());
 
-			m_bUpdteVertexBuffers = false;
+			m_bUpdateVertexBuffers = false;
 		} // else if (m_pWorld == nullptr)		
-	} // if (m_bUpdteVertexBuffers)
+	} // if (m_bUpdateVertexBuffers)
 }
 
 /*virtual*/ void _model::addGeometry(_geometry* pGeometry)

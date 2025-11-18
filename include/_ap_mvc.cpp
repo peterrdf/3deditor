@@ -1,5 +1,6 @@
 #include "_host.h"
 #include "_ap_mvc.h"
+#include "_ptr.h"
 
 #include <string>
 using namespace std;
@@ -63,7 +64,7 @@ _geometry* _ap_model::getGeometryByInstance(SdaiInstance sdaiInstance) const
 {
     assert(sdaiInstance != 0);
 
-	// Search in cache
+    // Search in cache
     auto itGeometry = m_mapGeometries.find(sdaiInstance);
     if (itGeometry != m_mapGeometries.end()) {
         return itGeometry->second;
@@ -125,15 +126,17 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
     setVertexBufferOffset(owlInstance);
 }
 
-void _ap_model::addGeometry(_ap_geometry* pGeometry)
+void _ap_model::addGeometry(_geometry* pGeometry)
 {
     _model::addGeometry(pGeometry);
 
-    assert(m_mapGeometries.find(pGeometry->getSdaiInstance()) == m_mapGeometries.end());
-    m_mapGeometries[pGeometry->getSdaiInstance()] = pGeometry;
+    _ptr<_ap_geometry> apGeometry(pGeometry);
 
-    assert(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-    m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+    assert(m_mapGeometries.find(apGeometry->getSdaiInstance()) == m_mapGeometries.end());
+    m_mapGeometries[apGeometry->getSdaiInstance()] = apGeometry;
+
+    assert(m_mapExpressID2Geometry.find(apGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+    m_mapExpressID2Geometry[apGeometry->getExpressID()] = apGeometry;
 }
 
 /*virtual*/ void _ap_model::clean(bool bCloseModel/* = true*/) /*override*/

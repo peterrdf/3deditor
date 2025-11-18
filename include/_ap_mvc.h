@@ -63,7 +63,9 @@ protected: // Methods
 
     virtual void attachModelCore() = 0;
     virtual void preLoadInstance(OwlInstance owlInstance);
-    void addGeometry(_ap_geometry* pGeometry);
+
+    // _model
+    virtual void addGeometry(_geometry* pGeometry);
 
     virtual void clean(bool bCloseModel = true) override;
 
