@@ -61,6 +61,7 @@ namespace _bin2gltf
 		_model* m_pModel;
 
 		bool m_bEmbeddedBuffers;
+		bool m_bTextureFlipV;
 
 		_material* m_pPolygonsMaterial;
 		vector<const _material*> m_vecMaterials;
@@ -80,7 +81,7 @@ namespace _bin2gltf
 
 	public: // Methods
 
-		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers);
+		_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers, bool bTextureFlipV = false);
 		virtual ~_exporter();
 
 		void execute();

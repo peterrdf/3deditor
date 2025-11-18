@@ -447,7 +447,7 @@ void CMy3DEditorDoc::OnExportAsGltf()
 
 	_c_log log(nullptr);
 
-	_bin2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
+	_bin2gltf::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true, true);
 	exporter.setLog(&log);
 	exporter.execute();
 }
@@ -473,7 +473,7 @@ void CMy3DEditorDoc::OnExportAsGltfBinary()
 
 	_c_log log(nullptr);
 
-	_bin2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()));
+	_bin2glb::_exporter exporter(getModels()[0], (LPCSTR)CW2A(dlgFile.GetPathName()), true);
 	exporter.setLog(&log);
 	exporter.execute();
 }

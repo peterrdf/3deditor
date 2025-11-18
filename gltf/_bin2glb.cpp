@@ -6,14 +6,12 @@
 // ************************************************************************************************
 namespace _bin2glb
 {
-	_exporter::_exporter(_model* pModel, const char* szOutputFile)
-		: _bin2gltf::_exporter(pModel, szOutputFile, true)
-	{
-	}
+	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bTextureFlipV/* = false*/)
+		: _bin2gltf::_exporter(pModel, szOutputFile, true, bTextureFlipV)
+	{}
 
 	/*virtual*/ _exporter::~_exporter()
-	{
-	}
+	{}
 
 	/*virtual*/ bool _exporter::createOuputStream() /*override*/
 	{
@@ -75,7 +73,9 @@ namespace _bin2glb
 			for (int64_t iVertex = 0; iVertex < pNode->getGeometry()->getVerticesCount(); iVertex++) {
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
+				fValue = m_bTextureFlipV ?
+					-pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7] :
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
 				binaryStream.write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -87,7 +87,7 @@ namespace _bin2glb
 						binaryStream.write(reinterpret_cast<const char*>(&iIndexValue), sizeof(GLuint));
 					}
 				}
-			};
+				};
 
 			writeIndices(pNode->getGeometry()->concFacesCohorts());
 			writeIndices(pNode->getGeometry()->concFacePolygonsCohorts());

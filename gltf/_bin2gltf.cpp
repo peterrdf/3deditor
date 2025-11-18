@@ -6,10 +6,11 @@
 // ************************************************************************************************
 namespace _bin2gltf
 {
-	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
+	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers, bool bTextureFlipV/* = false*/)
 		: _log_client()
 		, m_pModel(pModel)
 		, m_bEmbeddedBuffers(bEmbeddedBuffers)
+		, m_bTextureFlipV(bTextureFlipV)
 		, m_pPolygonsMaterial(nullptr)
 		, m_vecMaterials()
 		, m_mapMaterials()
@@ -484,7 +485,9 @@ namespace _bin2gltf
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
+				fValue = m_bTextureFlipV ?
+					-pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7] :
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -833,17 +836,17 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("min", vector<string> 
-				{ 
+				*getOutputStream() << buildArrayProperty("min", vector<string>
+				{
 					_string::format("%.10g", fUmin),
-					_string::format("%.10g", fVmin)
+						_string::format("%.10g", fVmin)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("max", vector<string> { 
+				*getOutputStream() << buildArrayProperty("max", vector<string> {
 					_string::format("%.10g", fUmax),
-					_string::format("%.10g", fVmax)
+						_string::format("%.10g", fVmax)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC2");
