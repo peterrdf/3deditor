@@ -152,7 +152,7 @@ namespace _eng
 		}
 
 		template<class T>
-		void textureFlipY(vector<T>& vecInOut)
+		void textureFlipV(vector<T>& vecInOut)
 		{
 			VERIFY_STLOBJ_IS_NOT_EMPTY(vecInOut);
 			for (size_t i = 0; i < vecInOut.size(); i += 2) {

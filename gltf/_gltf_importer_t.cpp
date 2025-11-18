@@ -607,7 +607,7 @@ namespace _eng
 
 			convertType<float, double>(vecUVsF, vecUVs);
 			if (m_bTextureFlipV) {
-				textureFlipY<double>(vecUVs);
+				textureFlipV<double>(vecUVs);
 			}
 		}
 		// attributes/TEXCOORD_0 accessor
