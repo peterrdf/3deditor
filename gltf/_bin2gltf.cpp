@@ -725,16 +725,23 @@ namespace _bin2gltf
 		int iBufferViewIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->getGeometry()->concFacesCohorts().size() +
-				pNode->getGeometry()->concFacePolygonsCohorts().size() +
-				pNode->getGeometry()->linesCohorts().size() +
-				pNode->getGeometry()->pointsCohorts().size());
+				pGeometry->concFacesCohorts().size() +
+				pGeometry->concFacePolygonsCohorts().size() +
+				pGeometry->linesCohorts().size() +
+				pGeometry->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
+
+			float fUmin = FLT_MAX;
+			float fUmax = -FLT_MAX;
+			float fVmin = FLT_MAX;
+			float fVmax = -FLT_MAX;
+			pGeometry->calculateUVMinMax(fUmin, fUmax, fVmin, fVmax);
 
 			// vertices/ARRAY_BUFFER/POSITION
 			{
@@ -826,11 +833,18 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("min", vector<string> { "-1.0", "-1.0" }).c_str();
+				*getOutputStream() << buildArrayProperty("min", vector<string> 
+				{ 
+					_string::format("%.10g", fUmin),
+					_string::format("%.10g", fVmin)
+				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("max", vector<string> { "1.0", "1.0" }).c_str();
+				*getOutputStream() << buildArrayProperty("max", vector<string> { 
+					_string::format("%.10g", fUmax),
+					_string::format("%.10g", fVmax)
+				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC2");
 				indent()--;

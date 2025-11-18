@@ -225,6 +225,10 @@ public: // Methods
         float& fYmin, float& fYmax,
         float& fZmin, float& fZmax) const;
 
+    void calculateUVMinMax(
+        float& fUmin, float& fUmax,
+        float& fVmin, float& fVmax) const;
+
     void scale(float fScaleFactor);
     void translate(float fX, float fY, float fZ);
 

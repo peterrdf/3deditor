@@ -206,6 +206,24 @@ void _geometry::calculateVerticesMinMax(
 	}
 }
 
+void _geometry::calculateUVMinMax(
+    float& fUmin, float& fUmax,
+    float& fVmin, float& fVmax) const
+{
+    if (getVerticesCount() == 0) {
+        return;
+    }
+    const auto VERTEX_LENGTH = getVertexLength();
+	assert(VERTEX_LENGTH >= 8);
+
+    for (int64_t iVertex = 0; iVertex < m_pVertexBuffer->size(); iVertex++) {
+        fUmin = (float)fmin(fUmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 6]);
+        fUmax = (float)fmax(fUmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 6]);
+        fVmin = (float)fmin(fVmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 7]);
+        fVmax = (float)fmax(fVmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 7]);
+	}
+}
+
 void _geometry::scale(float fScaleFactor)
 {
     if (getVerticesCount() == 0) {
