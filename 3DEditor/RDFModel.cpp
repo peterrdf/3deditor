@@ -108,7 +108,7 @@ void CRDFModel::LoadEngineExtensions(OwlModel model)
 				TRACE("       Loading %s...\n", dllPath);
 
 				if (auto lib = LoadLibraryA(dllPath)) {
-					
+
 					m_loadedModules.push_back(lib);
 
 					if (auto funcInit = (RDFGEOM_LOAD_EXTENSION_FUNC_TYPE)GetProcAddress(lib, RDFGEOM_LOAD_EXTENSION_FUNC_NAME)) {
@@ -139,10 +139,10 @@ void CRDFModel::LoadEngineExtensions(OwlModel model)
 
 void CRDFModel::RdfgeomLogCallback(RDFGEOM_LOG_LEVEL level, const char* msg, void* me)
 {
-    auto pThis = (CRDFModel*)me;
+	auto pThis = (CRDFModel*)me;
 	if (pThis != nullptr) {
-        pThis->logWrite((enumLogEvent)level, msg);
-    }
+		pThis->logWrite((enumLogEvent)level, msg);
+	}
 }
 
 // ************************************************************************************************
@@ -194,11 +194,7 @@ public: // Methods
 		CString strExtension = PathFindExtension(m_szPath);
 		strExtension.MakeUpper();
 
-#ifdef _DXF_SUPPORT
-		if (strExtension == L".DXF") {
-			m_pModel->LoadDXFModel(m_szPath);
-		}
-		else if (strExtension == L".OBJ") {
+		if (strExtension == L".OBJ") {
 			if (m_bAdd) {
 				m_pModel->setTextureSearchPath(fs::path(m_szPath).parent_path().wstring());
 				m_pModel->LoadOBJModel(m_pModel->getOwlModel(), m_szPath);
@@ -224,6 +220,10 @@ public: // Methods
 				m_pModel->attachModel(m_szPath, owlModel);
 			}
 		}
+#ifdef _DXF_SUPPORT
+		else if (strExtension == L".DXF") {
+			m_pModel->LoadDXFModel(m_szPath);
+		}
 #endif
 #ifdef _GIS_SUPPORT
 		else if ((strExtension == L".GML") ||
@@ -244,33 +244,31 @@ public: // Methods
 				m_pModel->attachModel(m_szPath, owlModel);
 			}
 		}
-		else
 #endif
 #ifdef IMPORT_PLY
-			if (strExtension == L".PLY") {
-				CStringA filePath(m_szPath);
-				char errors[512];
-				auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), errors);
-				CString err(errors);
-				CString msg;
-				msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
-				AfxMessageBox(msg, (inst != NULL) ? MB_OK : MB_ICONSTOP);
-				m_pModel->load();
-			}
-			else
+		else if (strExtension == L".PLY") {
+			CStringA filePath(m_szPath);
+			char errors[512];
+			auto inst = RDFImportPLY(filePath, m_pModel->getOwlModel(), errors);
+			CString err(errors);
+			CString msg;
+			msg.Format(L"File %s was %s %s\n%s", m_szPath, inst ? L"imported" : L"NOT imported", err.IsEmpty() ? L"without issues" : L"", err.GetString());
+			AfxMessageBox(msg, (inst != NULL) ? MB_OK : MB_ICONSTOP);
+			m_pModel->load();
+		}
 #endif
-			{
-				if (m_bAdd) {
-					m_pModel->importModel(m_szPath);
-				}
-				else {
-					OwlModel owlModel = OpenModelW(m_szPath);
-					if (owlModel) {
-						m_pModel->LoadEngineExtensions(owlModel);
-						m_pModel->attachModel(m_szPath, owlModel);
-					}
+		else {
+			if (m_bAdd) {
+				m_pModel->importModel(m_szPath);
+			}
+			else {
+				OwlModel owlModel = OpenModelW(m_szPath);
+				if (owlModel) {
+					m_pModel->LoadEngineExtensions(owlModel);
+					m_pModel->attachModel(m_szPath, owlModel);
 				}
 			}
+		}
 
 		if (m_pModel->getOwlModel() == 0) {
 			CString strError;
