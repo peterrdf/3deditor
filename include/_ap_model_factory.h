@@ -31,7 +31,14 @@ static size_t m_iZipEntrySize = 0;
 static size_t m_iZipEntryOffset = 0;
 
 // ************************************************************************************************
-static int_t __stdcall ReadCallBackFunction(unsigned char* szContent)
+// Define calling convention conditionally
+#ifdef _WINDOWS
+#define CALLBACK_CONVENTION __stdcall
+#else
+#define CALLBACK_CONVENTION
+#endif
+
+static int_t CALLBACK_CONVENTION ReadCallBackFunction(unsigned char* szContent)
 {
 	if (m_szZipEntryBuffer == nullptr) {
 		return -1;
@@ -212,7 +219,7 @@ public: // Methods
 			m_iZipEntryOffset = 0;
 			zip_entry_read(pZip, (void**)&m_szZipEntryBuffer, &m_iZipEntrySize);
 
-			vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, ReadCallBackFunction, "") });
+			vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, (void*)ReadCallBackFunction, "") });
 
 			zip_entry_close(pZip);
 		}
