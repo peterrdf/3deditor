@@ -9,6 +9,9 @@
 #include "_oglUtils.h"
 #include "_ptr.h"
 
+#include "../DragFace/DragManipulator.h"
+
+
 // ************************************************************************************************
 class CRDFOpenGLView : public _oglView
 {
@@ -22,9 +25,7 @@ private: // Fields
 
 public:
 	//#dragface
-	BOOL m_bDragFaceMode;
-	_instance* m_pDragFaceInstance;
-	int64_t m_iDragFace;
+	DragManipulator  m_dragManipulator;
 
 public: // Methods
 	

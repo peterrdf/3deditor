@@ -1,7 +1,8 @@
 #include "pch.h"
-#include "DragFace.h"
+#include "DragManipulator.h"
 #include "GeomLib.h"
 
+#if 0
 static SEGMENT3& TrimLineToBox(
     const SEGMENT3& line,
     double          box[6])
@@ -44,6 +45,7 @@ static SEGMENT3& TrimLineToBox(
 
     return segment;
 }
+#endif
 
 static void TrimLineToSize(SEGMENT3& line, double size)
 {
@@ -55,7 +57,7 @@ static void TrimLineToSize(SEGMENT3& line, double size)
     line.pt[1] = pt0 + offset;
 }
 
-static OwlInstance DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
+static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
 {
     char full_name[256];
     sprintf_s(full_name, "%s (%g, %g, %g)", name, pt.x, pt.y, pt.z);
@@ -184,70 +186,177 @@ static bool TryModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
 }
 
 
-extern OwlInstance DragFace(
-    OwlInstance					instance,
-    int							iConceptualFace,
-	VECTOR3 const&				startDragPoint,
-	SEGMENT3 const&				endDragLine
-)
+/// <summary>
+/// 
+/// </summary>
+DragManipulator::DragManipulator()
 {
-    /*
-    iConceptualFace = 0;
-    (VECTOR3&)startDragPoint = Vec3Make( -5.96576, 0.539311, 2.68788 );
-    (VECTOR3&)endDragLine.pt[0] = Vec3Make(5.44445, 42.6429, -65.3029);
-    (VECTOR3&)endDragLine.pt[1] = Vec3Make(-12.4988, -12.4964, 24.3789);
-    */
+    Cleanup();
+}
 
 
-    TRACE("DragFace called on instance 0x%p, conceptual face %d\n", instance, iConceptualFace);
+/// <summary>
+/// 
+/// </summary>
+DragManipulator::~DragManipulator()
+{
+    AssertIsClean();
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::AssertIsClean()
+{
+    ASSERT(!m_instance && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::Cleanup()
+{
+    m_instance = NULL;
+    m_drawDynamic = NULL;
+    m_drawStartPoint = NULL;
+    m_drawTargetPoints[0] = NULL;
+    m_drawTargetPoints[1] = NULL;
+
+    AssertIsClean();
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
+{
+    TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
-    TRACE("   end drag line: (%g, %g, %g) - (%g, %g, %g)\n",
-        endDragLine.pt[0].x, endDragLine.pt[0].y, endDragLine.pt[0].z,
-        endDragLine.pt[1].x, endDragLine.pt[1].y, endDragLine.pt[1].z
+
+    AssertIsClean();
+    Cleanup();
+
+    VECTOR3 normal;
+    if (FindNormal(normal, startDragPoint, inst, iConceptualFace)) {
+        m_instance = inst;
+        m_startNormal.pt[0] = startDragPoint;
+        m_startNormal.pt[1] = startDragPoint + normal;
+
+        PrepareDynamicDraw();
+    }
+    else {
+        TRACE(__FUNCTION__ ": failed to find normal at start drag point\n");
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::Dragging(SEGMENT3 const& targetLine)
+{
+    if (!m_instance)
+        return;
+
+    TRACE(__FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
+        targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z,
+        targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z
     );
 
+    SEGMENT3 targetPoints;
+    if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
+        UpdateDynamicDraw(targetPoints);
+        /*
+                SEGMENT3 directrix;
+                directrix.pt[0] = startDragPoint;
+                directrix.pt[1] = closest.pt[1];
+                //debug.push_back(DrawPoint(model, directrix.pt[1], size, "final point"));
+
+                TryModifyInstance (instance, directrix);
+         */
+    }
+
+}
+
+/// <summary>
+/// 
+/// </summary>
+OwlInstance DragManipulator::FinishDrag(bool apply)
+{
+    if (!m_instance)
+        return NULL;
+
+    if (!apply) {
+        //restore original instance
+    }
+
+    ClearDynamicDraw();
+
+    OwlInstance result = m_instance;
+    Cleanup();
+    
+    return result;
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::PrepareDynamicDraw()
+{
+    if (!m_instance)
+        return;
+
     double box[6] = { 0,0,0,0,0,0 };
-    GetBoundingBox(instance, box, box + 3);
+    GetBoundingBox(m_instance, box, box + 3);
 
     double size = 0;
     for (int i = 0; i < 3; i++) {
         size = max(size, (box[i + 3] - box[i]) / 30);
     }
 
-    auto model = GetModel(instance);
+    auto model = GetModel(m_instance);
 
-    std::vector<OwlInstance> debug;
-    //debug.push_back(DrawPoint(model, startDragPoint, size, "start drag"));
+    m_drawStartPoint = DrawPoint(model, m_startNormal.pt[0], size, "start point");
+    m_drawTargetPoints[0] = DrawPoint(model, m_startNormal.pt[1], size, "target point");
+    m_drawTargetPoints[1] = DrawPoint(model, m_startNormal.pt[1], size, "target point on normal");
 
-    //SEGMENT3 line = TrimLineToBox(endDragLine, box);
-    //debug.push_back(DrawPoint(model, line.pt[0], size, "end drag 1"));
-    //debug.push_back(DrawPoint(model, line.pt[1], size, "end drag 2"));
+    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1], m_instance };
 
-    VECTOR3 normal;
-    if (FindNormal(normal, startDragPoint, instance, iConceptualFace)) {
-        SEGMENT3 normalLine;
-        normalLine.pt[0] = startDragPoint;
-        normalLine.pt[1] = startDragPoint + normal;
-
-        SEGMENT3 closest;
-        if (LineLineClosestPoints(closest, normalLine, endDragLine)) {
-            //debug.push_back(DrawPoint(model, closest.pt[0], size, "normal closest"));
-            //debug.push_back(DrawPoint(model, closest.pt[1], size, "end drag closest"));
-
-            SEGMENT3 directrix;
-            directrix.pt[0] = startDragPoint;
-            directrix.pt[1] = closest.pt[1];
-            debug.push_back(DrawPoint(model, directrix.pt[0], size, "start point"));
-            debug.push_back(DrawPoint(model, directrix.pt[1], size, "final point"));
-
-            TryModifyInstance(instance, directrix);
-        }        
-    }
-    
-    if (!debug.empty()) {
-        auto collection = GEOM::Collection::Create(model);
-        collection.set_objects(debug.data(), debug.size());
-        return collection;
-    }
-    return NULL;
+    m_drawDynamic = GEOM::Collection::Create(model, "dragging drawing");
+    m_drawDynamic.set_objects(collection, _countof(collection));
 }
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::UpdateDynamicDraw(const SEGMENT3& targetPoints)
+{
+    for (int i = 0; i < 2; i++) {
+        auto& pt = targetPoints.pt[i];
+
+        GEOM::Matrix* M = const_cast<GEOM::Matrix*>(m_drawTargetPoints[i].get_matrix());
+        ASSERT(M);
+        if (M) {
+            M[0].set__41(pt.x);
+            M[0].set__42(pt.y);
+            M[0].set__43(pt.z);
+        }
+    }
+}
+
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::ClearDynamicDraw()
+    {
+#if 0
+    RemoveInstance(m_drawDynamic);
+    RemoveInstanceRecursive(m_drawStartPoint);
+    RemoveInstanceRecursive(m_drawTargetPoints[0]);
+    RemoveInstanceRecursivw(m_drawTargetPoints[1]);
+#else
+    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1]};
+    m_drawDynamic.set_objects(collection, _countof(collection));
+#endif
+    }
+
