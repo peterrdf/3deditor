@@ -226,14 +226,17 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 				if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
 
 					auto dynamicInstance = m_dragManipulator.GetDynamicDraw();
+		
 					//TODO DRAG FACE - cleanup drawing of dynamicInstance
                     
 					m_dragManipulator.Dragging(targetLine);
 
 					dynamicInstance = m_dragManipulator.GetDynamicDraw();
+					
 					//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
 					_ptr<_rdf_model>(getController()->getModel())->reload();
 					getController()->onModelUpdated();
+
 				}
 			}
 		}
@@ -266,9 +269,11 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	else if (m_dragManipulator.IsActive()) {
 		//finish dragging
 		auto dynamicInstance = m_dragManipulator.GetDynamicDraw();
-        //TODO DRAG FACE - cleanup drawing of dynamicInstance
+
+		//TODO DRAG FACE - cleanup drawing of dynamicInstance
 
 		auto modifiedInstance = m_dragManipulator.FinishDrag(true);
+
 		//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
 		_ptr<_rdf_model>(getController()->getModel())->reload();
 		getController()->onModelUpdated();

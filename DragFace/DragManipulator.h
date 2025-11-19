@@ -31,9 +31,15 @@ class DragManipulator
         void UpdateDynamicDraw (const SEGMENT3& targetPoints);
         void ClearDynamicDraw ();
 
+        void RestoreInstance();
+        void ModifyInstance(const VECTOR3& targetPoint);
+
     private:
         OwlInstance          m_instance;
         SEGMENT3             m_startNormal;   //start drag point and point at normal direction
+
+        RdfProperty          m_changedProperty;
+        double               m_oldValue;
 
         GEOM::Collection     m_drawDynamic;
         GEOM::Transformation m_drawStartPoint;

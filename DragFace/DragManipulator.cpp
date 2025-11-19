@@ -47,6 +47,7 @@ static SEGMENT3& TrimLineToBox(
 }
 #endif
 
+#if 0
 static void TrimLineToSize(SEGMENT3& line, double size)
 {
     VECTOR3 lineDir = line.pt[1] - line.pt[0];
@@ -56,6 +57,7 @@ static void TrimLineToSize(SEGMENT3& line, double size)
     line.pt[0] = pt0 - offset;
     line.pt[1] = pt0 + offset;
 }
+#endif
 
 static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
 {
@@ -100,25 +102,26 @@ static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfP
 struct PropertyResult
 {
     RdfProperty    prop;
-    double         value;
-    double         position; //along ray from target point; signed positive in direction to start drag point,
+    double         oldValue;
+    double         newValue;
+    double         distance; //along ray from target point; signed positive in direction to start drag point,
 };
 
 static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ray)
 {
     bool better = false;
 
-    double v[2] = { result.value, NAN };
-    double p[2] = { result.position, NAN };
+    double v[2] = { result.oldValue, NAN };
+    double p[2] = { result.distance, NAN };
 
-    v[1] = fabs(result.value) > 0.1 ? result.value * 1.1 : 1;
+    v[1] = fabs(result.oldValue) > 0.1 ? result.oldValue * 1.1 : 1;
     p[1] = GetMinIntersectionPosition(inst, ray, result.prop, v[1]);
 
-    if (fabs(p[1]) < fabs(result.position)) {
+    if (fabs(p[1]) < fabs(result.distance)) {
         //better position found
         better = true;
-        result.value = v[1];
-        result.position = p[1];
+        result.newValue = v[1];
+        result.distance = p[1];
     }
 
     if (fabs(p[1]-p[0]) > LENGTH_TOLERANCE) {
@@ -126,63 +129,15 @@ static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ra
         double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
         double pos = GetMinIntersectionPosition(inst, ray, result.prop, val);
      
-        if (fabs(pos) < fabs(result.position)) {
+        if (fabs(pos) < fabs(result.distance)) {
             //better position found
             better = true;
-            result.value = val;
-            result.position = pos;
+            result.newValue = val;
+            result.distance = pos;
         }
     }
 
     return better;
-}
-
-static bool TryModifyInstance(OwlInstance instance, const SEGMENT3& directrix)
-{
-    RAY3 ray;
-    ray.org = directrix.pt[1];
-    ray.dir = directrix.pt[0] - directrix.pt[1];
-    double startDistance = Vec3Normalize(ray.dir);
-
-    std::map<double, PropertyResult> results; //property results sorted by distance
-
-    RdfProperty prop = NULL;
-    while (NULL!=(prop = GetInstancePropertyByIterator(instance, prop))) {
-        
-        auto propType = GetPropertyType(prop);
-        if (propType == DATATYPEPROPERTY_TYPE_DOUBLE) {
-        
-            double* values = NULL;
-            int_t card = 0;
-            GetDatatypeProperty(instance, prop, (void**) &values, &card);
-            if (card == 1) {
-
-                double oldValue = values[0];
-
-                PropertyResult result;
-                result.prop = prop;
-                result.value = oldValue;
-                result.position = startDistance;
-
-                if (TryProperty(result, instance, ray)) {
-                    results[fabs(result.position)] = result;
-                }
-
-                SetDatatypeProperty(instance, prop, oldValue);//restore property
-            }
-        }
-    }
-
-    if (results.size() > 0) {
-        //apply best result
-        auto& best = *results.begin();
-        if (best.first < startDistance / 2) {
-            SetDatatypeProperty(instance, best.second.prop, best.second.value);
-            return true;
-        }
-    }
-
-    return false;
 }
 
 
@@ -208,7 +163,7 @@ DragManipulator::~DragManipulator()
 /// </summary>
 void DragManipulator::AssertIsClean()
 {
-    ASSERT(!m_instance && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+    ASSERT(!m_instance && !m_changedProperty && isnan(m_oldValue) && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
 
 /// <summary>
@@ -217,6 +172,8 @@ void DragManipulator::AssertIsClean()
 void DragManipulator::Cleanup()
 {
     m_instance = NULL;
+    m_changedProperty = NULL;
+    m_oldValue = NAN;
     m_drawDynamic = NULL;
     m_drawStartPoint = NULL;
     m_drawTargetPoints[0] = NULL;
@@ -265,14 +222,8 @@ void DragManipulator::Dragging(SEGMENT3 const& targetLine)
     SEGMENT3 targetPoints;
     if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
         UpdateDynamicDraw(targetPoints);
-        /*
-                SEGMENT3 directrix;
-                directrix.pt[0] = startDragPoint;
-                directrix.pt[1] = closest.pt[1];
-                //debug.push_back(DrawPoint(model, directrix.pt[1], size, "final point"));
-
-                TryModifyInstance (instance, directrix);
-         */
+        RestoreInstance();
+        ModifyInstance(targetPoints.pt[1]);
     }
 
 }
@@ -286,7 +237,7 @@ OwlInstance DragManipulator::FinishDrag(bool apply)
         return NULL;
 
     if (!apply) {
-        //restore original instance
+        RestoreInstance();
     }
 
     ClearDynamicDraw();
@@ -360,3 +311,69 @@ void DragManipulator::ClearDynamicDraw()
 #endif
     }
 
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::RestoreInstance()
+{
+    if (m_instance && m_changedProperty) {
+        SetDatatypeProperty(m_instance, m_changedProperty, m_oldValue);
+    }
+
+    m_changedProperty = NULL;
+    m_oldValue = NAN;
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragManipulator::ModifyInstance(const VECTOR3& targetPoint)
+{
+    if (!m_instance)
+        return;
+
+    RAY3 directrix; //from target to start point
+    directrix.org = targetPoint;
+    directrix.dir = m_startNormal.pt[0] - targetPoint;
+    double startDistance = Vec3Normalize(directrix.dir);
+
+    std::map<double, PropertyResult> results; //property results sorted by distance
+
+    RdfProperty prop = NULL;
+    while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
+
+        auto propType = GetPropertyType(prop);
+        if (propType == DATATYPEPROPERTY_TYPE_DOUBLE) {
+
+            double* values = NULL;
+            int_t card = 0;
+            GetDatatypeProperty(m_instance, prop, (void**)&values, &card);
+            if (card == 1) {
+
+                double oldValue = values[0];
+
+                PropertyResult result;
+                result.prop = prop;
+                result.oldValue = oldValue;
+                result.newValue = oldValue;
+                result.distance = startDistance;
+
+                if (TryProperty(result, m_instance, directrix)) {
+                    results[fabs(result.distance)] = result;
+                }
+
+                SetDatatypeProperty(m_instance, prop, oldValue);
+            }
+        }
+    }
+
+    if (results.size() > 0) {
+        //apply best result
+        auto& best = *results.begin();
+        if (best.first < startDistance / 2) {
+            SetDatatypeProperty(m_instance, best.second.prop, best.second.newValue);
+            m_changedProperty = best.second.prop;
+            m_oldValue = best.second.oldValue;
+        }
+    }
+}
