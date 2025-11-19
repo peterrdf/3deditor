@@ -27,26 +27,26 @@ class _string
 
 public: //  Methods
 
-	static inline void ltrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+	static inline void ltrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
 	static inline void ltrim(string& strInput, char cToTrim)
 	{
-		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(strInput.begin(), find_if(strInput.begin(), strInput.end(), not1(fnTrim)));
 	}
 
-	static inline void rtrim(string& strInput, function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
+	static inline void rtrim(string& strInput, std::function<int(int)> fnTrim = [](int c) { return isblank((unsigned char)c); })
 	{
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
 
 	static inline void rtrim(string& strInput, char cToTrim)
 	{
-		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		strInput.erase(find_if(strInput.rbegin(), strInput.rend(), not1(fnTrim)).base(), strInput.end());
 	}
@@ -67,7 +67,7 @@ public: //  Methods
 
 	static inline void trim(string& strInput, char cToTrim)
 	{
-		function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
+		std::function<int(int)> fnTrim = [cToTrim](int c) { return c == cToTrim; };
 
 		rtrim(strInput, fnTrim);
 		ltrim(strInput, fnTrim);
