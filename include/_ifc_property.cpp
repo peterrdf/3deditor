@@ -177,7 +177,7 @@ _ifc_property_provider::_ifc_property_provider(SdaiModel sdaiModel, _ifc_unit_pr
 _ifc_property_set_collection* _ifc_property_provider::getPropertySetCollection(SdaiInstance sdaiInstance)
 {
 	if (sdaiInstance == 0) {
-		assert(FALSE);
+		assert(false);
 
 		return nullptr;
 	}

@@ -59,8 +59,10 @@ void _ap242_model_structure::print(int iLevel, _ap242_node* pNode)
 	}
 	
 	strId += L"Node ID: ";
-	strId += (wchar_t*)CA2W(pNode->getId().c_str());
+	strId += (const wchar_t*)CA2W(pNode->getId().c_str());
+#ifdef _WINDOWS
 	TRACE(L"%s", strId.c_str());
+#endif
 
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);

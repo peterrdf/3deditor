@@ -664,11 +664,11 @@ void _ifc_unit_provider::loadUnits(SdaiInstance sdaiProjectInstance)
                     m_mapUnits[pUnit->getType()] = pUnit;
                 }
                 else {
-                    assert(FALSE);
+                    assert(false);
                 }
             } // if (sdaiConversionFactorInstance != 0) 
             else {
-                assert(FALSE);
+                assert(false);
             }
         } // IFCCONVERSIONBASEDUNIT
         else {

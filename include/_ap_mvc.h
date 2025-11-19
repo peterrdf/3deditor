@@ -65,7 +65,7 @@ protected: // Methods
     virtual void preLoadInstance(OwlInstance owlInstance);
 
     // _model
-    virtual void addGeometry(_geometry* pGeometry);
+    virtual void addGeometry(_geometry* pGeometry) override;
 
     virtual void clean(bool bCloseModel = true) override;
 

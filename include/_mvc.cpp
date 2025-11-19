@@ -907,7 +907,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 
 	auto pModel = getModelByInstance((*setInstances.begin())->getOwlModel());
 	if (pModel == nullptr) {
-		assert(FALSE);
+		assert(false);
 
 		return;
 	}

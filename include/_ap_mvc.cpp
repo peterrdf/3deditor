@@ -126,7 +126,7 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
     setVertexBufferOffset(owlInstance);
 }
 
-void _ap_model::addGeometry(_geometry* pGeometry)
+/*virtual*/ void _ap_model::addGeometry(_geometry* pGeometry) /*override*/
 {
     _model::addGeometry(pGeometry);
 

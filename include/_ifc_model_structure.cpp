@@ -74,7 +74,9 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 	const wchar_t* szGlobalId = pNode->getGlobalId();
 	strGlobalId += L"Node GlobalId: ";
 	strGlobalId += szGlobalId != nullptr ? szGlobalId : L"(null)";
+#ifdef _WINDOWS
 	TRACE(L"%s", strGlobalId.c_str());
+#endif
 
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);
