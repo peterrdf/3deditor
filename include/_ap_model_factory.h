@@ -80,14 +80,18 @@ public: // Methods
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return nullptr;
 		}
 
 		wchar_t* szFileSchema = 0;
 		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
 		if (szFileSchema == nullptr) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return nullptr;
 		}
 
@@ -295,7 +299,9 @@ public: // Methods
 
 		FILE* f = fopen(pathStepGZip.string().c_str(), "rb");
 		if (f == NULL) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif // _WINDOWS			
 			return vecSdaiModels;
 		}
 
@@ -309,7 +315,9 @@ public: // Methods
 
 		vector<unsigned char> uncompressed;
 		if (!gzipInflate(compressed, uncompressed)) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed decompress the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return vecSdaiModels;
 		}
 
