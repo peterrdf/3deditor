@@ -299,17 +299,20 @@ void DragFace::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 /// 
 /// </summary>
 void DragFace::ClearDynamicDraw()
-    {
+{
 #if 0
-    RemoveInstance(m_drawDynamic);
-    RemoveInstanceRecursive(m_drawStartPoint);
-    RemoveInstanceRecursive(m_drawTargetPoints[0]);
-    RemoveInstanceRecursivw(m_drawTargetPoints[1]);
+    auto res = RemoveInstance(m_drawDynamic);
+    ASSERT(res == 0);
+    res += RemoveInstanceRecursively(m_drawStartPoint);
+    res += RemoveInstanceRecursively(m_drawTargetPoints[0]);
+    res += RemoveInstanceRecursively(m_drawTargetPoints[1]);
+    ASSERT(res == 9);
 #else
-    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1]};
+    //left for debugging
+    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1] };
     m_drawDynamic.set_objects(collection, _countof(collection));
 #endif
-    }
+}
 
 /// <summary>
 /// 
