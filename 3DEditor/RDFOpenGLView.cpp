@@ -219,19 +219,19 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 
 	// #dragface
 	if (GetKeyState(VK_CONTROL) & 0x8000) {
-		if (m_dragManipulator.IsActive()) {
+		if (m_dragFace.IsActive()) {
 			//update dragging position
 			SEGMENT3 targetLine;
 			if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
 				if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
 
-					auto dynamicInstance = m_dragManipulator.GetDynamicDraw();
+					auto dynamicInstance = m_dragFace.GetDynamicDraw();
 		
-					//TODO DRAG FACE - cleanup drawing of dynamicInstance
+                    //TODO DRAG FACE - cleanup draw old dynamicInstance - if needed
                     
-					m_dragManipulator.Dragging(targetLine);
+					m_dragFace.Dragging(targetLine);
 
-					dynamicInstance = m_dragManipulator.GetDynamicDraw();
+					dynamicInstance = m_dragFace.GetDynamicDraw();
 					
 					//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
 					_ptr<_rdf_model>(getController()->getModel())->reload();
@@ -258,7 +258,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 					startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
 					startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
-					m_dragManipulator.StartDrag(
+					m_dragFace.StartDrag(
 						m_pPointedInstance->getOwlInstance(),
 						(int)m_iPointedFace,
 						startDragPoint);
@@ -266,13 +266,13 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			}
 		}
 	}
-	else if (m_dragManipulator.IsActive()) {
+	else if (m_dragFace.IsActive()) {
 		//finish dragging
-		auto dynamicInstance = m_dragManipulator.GetDynamicDraw();
+		auto dynamicInstance = m_dragFace.GetDynamicDraw();
 
-		//TODO DRAG FACE - cleanup drawing of dynamicInstance
+		//TODO DRAG FACE - cleanup drawing of dynamicInstance - if needed
 
-		auto modifiedInstance = m_dragManipulator.FinishDrag(true);
+		auto modifiedInstance = m_dragFace.FinishDrag(true);
 
 		//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
 		_ptr<_rdf_model>(getController()->getModel())->reload();

@@ -1,11 +1,11 @@
 #pragma once
 
 
-class DragManipulator
+class DragFace
     {
     public:
-        DragManipulator ();
-        ~DragManipulator ();
+        DragFace ();
+        ~DragFace ();
 
         //call to start dragging operation
         void StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint);

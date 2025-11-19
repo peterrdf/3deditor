@@ -181,12 +181,12 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DragManipulator.h" />
+    <ClInclude Include="DragFace.h" />
     <ClInclude Include="GeomLib.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DragManipulator.cpp" />
+    <ClCompile Include="DragFace.cpp" />
     <ClCompile Include="GeomLib.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

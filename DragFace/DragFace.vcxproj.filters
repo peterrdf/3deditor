@@ -18,7 +18,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DragManipulator.h">
+    <ClInclude Include="DragFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeomLib.h">
@@ -29,7 +29,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DragManipulator.cpp">
+    <ClCompile Include="DragFace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeomLib.cpp">

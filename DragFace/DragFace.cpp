@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DragManipulator.h"
+#include "DragFace.h"
 #include "GeomLib.h"
 
 #if 0
@@ -144,7 +144,7 @@ static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ra
 /// <summary>
 /// 
 /// </summary>
-DragManipulator::DragManipulator()
+DragFace::DragFace()
 {
     Cleanup();
 }
@@ -153,7 +153,7 @@ DragManipulator::DragManipulator()
 /// <summary>
 /// 
 /// </summary>
-DragManipulator::~DragManipulator()
+DragFace::~DragFace()
 {
     AssertIsClean();
 }
@@ -161,7 +161,7 @@ DragManipulator::~DragManipulator()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::AssertIsClean()
+void DragFace::AssertIsClean()
 {
     ASSERT(!m_instance && !m_changedProperty && isnan(m_oldValue) && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
@@ -169,7 +169,7 @@ void DragManipulator::AssertIsClean()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::Cleanup()
+void DragFace::Cleanup()
 {
     m_instance = NULL;
     m_changedProperty = NULL;
@@ -185,7 +185,7 @@ void DragManipulator::Cleanup()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
+void DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
@@ -209,7 +209,7 @@ void DragManipulator::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 c
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::Dragging(SEGMENT3 const& targetLine)
+void DragFace::Dragging(SEGMENT3 const& targetLine)
 {
     if (!m_instance)
         return;
@@ -231,7 +231,7 @@ void DragManipulator::Dragging(SEGMENT3 const& targetLine)
 /// <summary>
 /// 
 /// </summary>
-OwlInstance DragManipulator::FinishDrag(bool apply)
+OwlInstance DragFace::FinishDrag(bool apply)
 {
     if (!m_instance)
         return NULL;
@@ -251,7 +251,7 @@ OwlInstance DragManipulator::FinishDrag(bool apply)
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::PrepareDynamicDraw()
+void DragFace::PrepareDynamicDraw()
 {
     if (!m_instance)
         return;
@@ -279,7 +279,7 @@ void DragManipulator::PrepareDynamicDraw()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::UpdateDynamicDraw(const SEGMENT3& targetPoints)
+void DragFace::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 {
     for (int i = 0; i < 2; i++) {
         auto& pt = targetPoints.pt[i];
@@ -298,7 +298,7 @@ void DragManipulator::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::ClearDynamicDraw()
+void DragFace::ClearDynamicDraw()
     {
 #if 0
     RemoveInstance(m_drawDynamic);
@@ -314,7 +314,7 @@ void DragManipulator::ClearDynamicDraw()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::RestoreInstance()
+void DragFace::RestoreInstance()
 {
     if (m_instance && m_changedProperty) {
         SetDatatypeProperty(m_instance, m_changedProperty, m_oldValue);
@@ -327,7 +327,7 @@ void DragManipulator::RestoreInstance()
 /// <summary>
 /// 
 /// </summary>
-void DragManipulator::ModifyInstance(const VECTOR3& targetPoint)
+void DragFace::ModifyInstance(const VECTOR3& targetPoint)
 {
     if (!m_instance)
         return;

@@ -9,7 +9,7 @@
 #include "_oglUtils.h"
 #include "_ptr.h"
 
-#include "../DragFace/DragManipulator.h"
+#include "../DragFace/DragFace.h"
 
 
 // ************************************************************************************************
@@ -25,7 +25,7 @@ private: // Fields
 
 public:
 	//#dragface
-	DragManipulator  m_dragManipulator;
+	DragFace  m_dragFace;
 
 public: // Methods
 	
