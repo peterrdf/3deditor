@@ -6174,6 +6174,9 @@ static	inline	bool	GetConceptualFaceXYZ2UV(
 //				double					* x									IN / OUT
 //				double					* y									IN / OUT
 //				double					* z									IN / OUT
+//				double					* Nx								IN / OUT
+//				double					* Ny								IN / OUT
+//				double					* Nz								IN / OUT
 //				double					u									IN
 //				double					v									IN
 //
@@ -6203,6 +6206,9 @@ bool			DECL STDC	GetConceptualFaceUV2XYZ(
 									double					* x,
 									double					* y,
 									double					* z,
+									double					* Nx,
+									double					* Ny,
+									double					* Nz,
 									double					u,
 									double					v
 								);
@@ -6210,6 +6216,28 @@ bool			DECL STDC	GetConceptualFaceUV2XYZ(
 #ifdef __cplusplus
 	}
 //{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	bool	GetConceptualFaceUV2XYZ(
+								ConceptualFace			conceptualFace,
+								double					* vector__VEC3,
+								double					* normal__VEC3,
+								const double			* in__VEC2
+							)
+{
+	return	GetConceptualFaceUV2XYZ(
+					conceptualFace,
+					&vector__VEC3[0],					//	x
+					&vector__VEC3[1],					//	y
+					&vector__VEC3[2],					//	z
+					&normal__VEC3[0],					//	Nx
+					&normal__VEC3[1],					//	Ny
+					&normal__VEC3[2],					//	Nz
+					in__VEC2[0],						//	u
+					in__VEC2[1]							//	v
+				);
+}
 
 //
 //
@@ -6224,6 +6252,9 @@ static	inline	bool	GetConceptualFaceUV2XYZ(
 					&out__VEC3[0],						//	x
 					&out__VEC3[1],						//	y
 					&out__VEC3[2],						//	z
+					nullptr,							//	Nx
+					nullptr,							//	Ny
+					nullptr,							//	Nz
 					in__VEC2[0],						//	u
 					in__VEC2[1]							//	v
 				);
