@@ -12,7 +12,9 @@
 #ifndef __RDF_LTD__RDFGEOM_H
 #define __RDF_LTD__RDFGEOM_H
 
-#include "engine.h"
+
+#include    "engine.h"
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Geometry representation of instances
@@ -301,16 +303,42 @@ static	inline		void	Vec3Invert(
 	pV->z = - pV->z;
 }
 
-void	Vec3Transform(
-				VECTOR3						* pInOut,
-				const MATRIX				* pM
-			);
+//void	Vec3Transform(
+//				VECTOR3						* pInOut,
+//				const MATRIX				* pM
+//			);
 
-void	Vec3Transform(
-				VECTOR3						* pOut,
-				const VECTOR3				* pV,
-				const MATRIX				* pM
-			);
+
+static inline void	Vec3Transform(
+				VECTOR3			* pInOut,
+				const MATRIX	* pM
+			)
+{
+	double	x = pInOut->x * pM->_11 + pInOut->y * pM->_21 + pInOut->z * pM->_31 + pM->_41,
+			y = pInOut->x * pM->_12 + pInOut->y * pM->_22 + pInOut->z * pM->_32 + pM->_42;
+	pInOut->z = pInOut->x * pM->_13 + pInOut->y * pM->_23 + pInOut->z * pM->_33 + pM->_43;
+
+	pInOut->x = x;
+	pInOut->y = y;
+}
+
+static inline void	Vec3Transform(
+				VECTOR3			* pOut,
+				const VECTOR3	* pV,
+				const MATRIX	* pM
+			)
+{
+	VECTOR3	pTmp;
+
+	pTmp.x = pV->x * pM->_11 + pV->y * pM->_21 + pV->z * pM->_31 + pM->_41;
+	pTmp.y = pV->x * pM->_12 + pV->y * pM->_22 + pV->z * pM->_32 + pM->_42;
+	pTmp.z = pV->x * pM->_13 + pV->y * pM->_23 + pV->z * pM->_33 + pM->_43;
+
+	pOut->x = pTmp.x;
+	pOut->y = pTmp.y;
+	pOut->z = pTmp.z;
+}
+
 
 void	Vec3TransformNoTranslation(
 				VECTOR3						* pInOut,
@@ -482,16 +510,16 @@ static inline SEGMENT3 Seg3Make(const double coords[6])
     return seg;
 }
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 void	MatrixMultiply(
 				MATRIX						* pOut,
 				const MATRIX				* pM1,
 				const MATRIX				* pM2
 			);
 
-
-#ifdef __cplusplus
-    extern "C" {
-#endif
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //

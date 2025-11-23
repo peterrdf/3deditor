@@ -269,10 +269,12 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	else if (m_dragFace.IsActive()) {
 		//finish dragging
 		auto dynamicInstance = m_dragFace.GetDynamicDraw();
+        printf("Dynamic instance ID: %lld\n", dynamicInstance);
 
 		//TODO DRAG FACE - cleanup drawing of dynamicInstance - if needed
 
 		auto modifiedInstance = m_dragFace.FinishDrag(true);
+        printf("Modified instance ID: %lld\n", modifiedInstance);
 
 		//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
 		_ptr<_rdf_model>(getController()->getModel())->reload();
