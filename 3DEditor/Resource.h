@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by 3DEditor.rc
 //
+#define VERSION_MINOR                   0
+#define VERSION_MAJOR                   1
+#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_POPUP_EDIT                  119
@@ -119,6 +122,8 @@
 #define IDC_EDIT_NAME                   1010
 #define IDC_EDIT_PROGRESS               1011
 #define IDC_EDIT_MESSAGES               1012
+#define IDC_BUTTON_CLEAR_LOG            1013
+#define VERSION_BUILD                   2199
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -179,7 +184,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32845
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           317
 #endif
 #endif

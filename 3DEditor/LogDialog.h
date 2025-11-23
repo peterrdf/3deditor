@@ -31,4 +31,5 @@ protected:
 public:
 	CEdit m_editMessages;
 	virtual BOOL OnInitDialog();
+	afx_msg void OnClearLog();
 };
