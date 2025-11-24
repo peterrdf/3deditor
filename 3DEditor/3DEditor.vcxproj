@@ -972,6 +972,7 @@
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="ClassViewConsts.h" />
     <ClInclude Include="conceptMesh.h" />
+    <ClInclude Include="SelectDragPropsDialog.h" />
     <ClInclude Include="CustomStatusBar.h" />
     <ClInclude Include="LogDialog.h" />
     <ClInclude Include="ProgressDialog.h" />
@@ -1519,6 +1520,7 @@
     <ClCompile Include="3DEditorView.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="conceptMesh.cpp" />
+    <ClCompile Include="SelectDragPropsDialog.cpp" />
     <ClCompile Include="CustomStatusBar.cpp" />
     <ClCompile Include="LogDialog.cpp" />
     <ClCompile Include="ProgressDialog.cpp" />

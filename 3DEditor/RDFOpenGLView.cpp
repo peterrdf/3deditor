@@ -5,6 +5,7 @@
 #include "ProgressIndicator.h"
 #include "_test.h"
 #include "_ptr.h"
+#include "SelectDragPropsDialog.h"
 
 #include <chrono>
 
@@ -294,6 +295,13 @@ void CRDFOpenGLView::EndDrag(bool accept)
 						m_pPointedInstance->getOwlInstance(),
 						(int)m_iPointedFace,
 						startDragPoint);
+
+					if (m_dragFace.IsActive()) {
+						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
+						if (IDOK != dlg.DoModal()) {
+							m_dragFace.FinishDrag(false);
+						}
+					}
 				}
 			}
 		}

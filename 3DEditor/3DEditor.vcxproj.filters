@@ -285,6 +285,9 @@
     <ClInclude Include="..\parsers\_xml.h">
       <Filter>parsers</Filter>
     </ClInclude>
+    <ClInclude Include="SelectDragPropsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">
@@ -442,6 +445,9 @@
     </ClCompile>
     <ClCompile Include="..\parsers\_xml.cpp">
       <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectDragPropsDialog.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
