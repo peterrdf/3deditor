@@ -144,7 +144,7 @@ void DragFace::AssertIsClean()
 void DragFace::Cleanup()
 {
     m_instance = NULL;
-    m_effectiveProperties.clear();
+    m_activeProperties.clear();
     m_changedProperty = NULL;
     m_drawDynamic = NULL;
     m_drawStartPoint = NULL;
@@ -173,7 +173,7 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
 
         CollectEffectiveProperties();
             
-        if (m_effectiveProperties.size()) {
+        if (m_activeProperties.size()) {
             PrepareDynamicDraw();
             return true;
         }
@@ -314,7 +314,7 @@ void DragFace::RestoreInstance()
 /// </summary>
 void DragFace::CollectEffectiveProperties()
 {
-    m_effectiveProperties.clear();
+    m_activeProperties.clear();
 
     RAY3 directrix; //from target to start point
     directrix.org = m_startNormal.pt[0];
@@ -345,7 +345,7 @@ void DragFace::CollectEffectiveProperties()
                     propEffect.prop = prop;
                     propEffect.initialValue = oldValue;
                     propEffect.distStartToStep = effect;
-                    m_effectiveProperties.push_back(propEffect);
+                    m_activeProperties.push_back(propEffect);
                 }
             }
         }
@@ -417,7 +417,7 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
 
     std::map<double, std::pair<PropertyEffect*, double>> results; //map of distFromTarget to (property, suggestedValue)
 
-    for (auto& propEffect : m_effectiveProperties) {
+    for (auto& propEffect : m_activeProperties) {
         
         double suggestedValue = NAN;
         double distFromTarget = NAN;
@@ -437,4 +437,49 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
         m_changedProperty = best.first; 
         SetDatatypeProperty(m_instance, m_changedProperty->prop, best.second);
     }
+}
+
+/// <summary>
+/// 
+/// </summary>
+RdfProperty DragFace::GetActivePropertyByIterator(RdfProperty prev, double& effect)
+{
+    if (m_activeProperties.empty()) {
+        return NULL;
+    }
+
+    auto it = m_activeProperties.begin();
+
+    if (prev) {
+        while (it != m_activeProperties.end() && it->prop != prev) {
+            it++;
+        }
+
+        if (it != m_activeProperties.end()) {
+            it++;
+        }
+        else assert(false);
+    }
+
+    if (it != m_activeProperties.end()) {
+        effect = it->distStartToStep;
+        return it->prop;
+    }
+    else {
+        return NULL;
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragFace::RemoveActiveProperty(RdfProperty prop)
+{
+    for (auto it = m_activeProperties.begin(); it != m_activeProperties.end(); ++it) {
+        if (it->prop == prop) {
+            m_activeProperties.erase(it);
+            return;
+        }
+    }
+    assert(!"property not found");
 }

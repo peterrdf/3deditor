@@ -10,7 +10,11 @@ class DragFace
         //call to start dragging operation
         bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint);
 
-        RdfProperty GetEffectivePropertyByIterator(RdfProperty prev, double& effect);
+        //list properties detected as useful for drag 
+        RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
+        
+        //do not use this property
+        void RemoveActiveProperty(RdfProperty prop);
 
         //update dragging state
         void Dragging (SEGMENT3 const& targetLine);
@@ -55,7 +59,7 @@ class DragFace
         OwlInstance          m_instance;
         SEGMENT3             m_startNormal;   //start drag point and point at normal direction
 
-        PropertyEffects      m_effectiveProperties;
+        PropertyEffects      m_activeProperties;
 
         PropertyEffect       *m_changedProperty;
 
