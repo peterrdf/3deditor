@@ -8,7 +8,9 @@ class DragFace
         ~DragFace ();
 
         //call to start dragging operation
-        void StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint);
+        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint);
+
+        RdfProperty GetEffectivePropertyByIterator(RdfProperty prev, double& effect);
 
         //update dragging state
         void Dragging (SEGMENT3 const& targetLine);
@@ -24,19 +26,19 @@ class DragFace
         OwlInstance GetDynamicDraw () const { return m_drawDynamic; }
 
     private:
-        struct PropertyResult
+        struct PropertyEffect //how standard step of property affects position along normal
         {
             RdfProperty    prop;
-            double         oldValue;
-            double         newValue;
-            double         distance; //along ray from target point; signed positive in direction to start drag point,
+            double         initialValue;     //initial property value
+            double         distStartToStep;  //distance from start point to result along in-normal direction when property is changed by 'StandardStep'
         };
 
-        typedef std::map<RdfProperty, PropertyResult>   PropertyResults;
+        typedef std::vector<PropertyEffect>   PropertyEffects;
 
     private:
         void Cleanup();
         void AssertIsClean();
+        void LogError(const char*) { assert(false); }
 
         void PrepareDynamicDraw ();
         void UpdateDynamicDraw (const SEGMENT3& targetPoints);
@@ -44,16 +46,18 @@ class DragFace
 
         void RestoreInstance();
         void ModifyInstance(const VECTOR3& targetPoint);
-        bool TryProperty(PropertyResult& result, const RAY3& ray);
-        void CollectEffectiveProperties(PropertyResults& results, const VECTOR3& targetPoint);
-        PropertyResult* FindBestProperty(PropertyResults& results);
+        bool TryModifyByProperty(const PropertyEffect& prop, const RAY3& ray, double distTargetToStart, double& suggestedValue, double& distFromTarget);
+        void CollectEffectiveProperties();
+
+        double StandardStep(double oldValue);
 
     private:
         OwlInstance          m_instance;
         SEGMENT3             m_startNormal;   //start drag point and point at normal direction
 
-        RdfProperty          m_changedProperty;
-        double               m_oldValue;
+        PropertyEffects      m_effectiveProperties;
+
+        PropertyEffect       *m_changedProperty;
 
         GEOM::Collection     m_drawDynamic;
         GEOM::Transformation m_drawStartPoint;

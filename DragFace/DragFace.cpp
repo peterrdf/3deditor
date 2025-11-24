@@ -86,9 +86,8 @@ static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double 
 /// <summary>
 /// 
 /// </summary>
-static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfProperty prop, double value)
+static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray)
 {
-    SetDatatypeProperty(inst, prop, value);
     CalculateInstance(inst);
 
     std::vector<VECTOR3> intersections;
@@ -108,40 +107,9 @@ static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfP
 /// <summary>
 /// 
 /// </summary>
-bool DragFace::TryProperty(PropertyResult& result, const RAY3& ray)
+double DragFace::StandardStep(double oldValue)
 {
-    if (!m_instance)
-        return false;
-
-    bool better = false;
-
-    double v[2] = { result.oldValue, NAN };
-    double p[2] = { result.distance, NAN };
-
-    v[1] = fabs(result.oldValue) > 0.1 ? result.oldValue * 1.1 : 1;
-    p[1] = GetMinIntersectionPosition(m_instance, ray, result.prop, v[1]);
-
-    if (fabs(p[1]) < fabs(result.distance)) {
-        //better position found
-        better = true;
-        result.newValue = v[1];
-        result.distance = p[1];
-    }
-
-    if (fabs(p[1]-p[0]) > LENGTH_TOLERANCE) {
-        //linear interpolation to zero position
-        double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
-        double pos = GetMinIntersectionPosition(m_instance, ray, result.prop, val);
-     
-        if (fabs(pos) < fabs(result.distance)) {
-            //better position found
-            better = true;
-            result.newValue = val;
-            result.distance = pos;
-        }
-    }
-
-    return better;
+    return fabs(oldValue) > 0.1 ? oldValue * 1.1 : 1;
 }
 
 
@@ -176,8 +144,8 @@ void DragFace::AssertIsClean()
 void DragFace::Cleanup()
 {
     m_instance = NULL;
+    m_effectiveProperties.clear();
     m_changedProperty = NULL;
-    m_oldValue = NAN;
     m_drawDynamic = NULL;
     m_drawStartPoint = NULL;
     m_drawTargetPoints[0] = NULL;
@@ -189,7 +157,7 @@ void DragFace::Cleanup()
 /// <summary>
 /// 
 /// </summary>
-void DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
+bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
@@ -203,11 +171,22 @@ void DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
         m_startNormal.pt[0] = startDragPoint;
         m_startNormal.pt[1] = startDragPoint + normal;
 
-        PrepareDynamicDraw();
+        CollectEffectiveProperties();
+            
+        if (m_effectiveProperties.size()) {
+            PrepareDynamicDraw();
+            return true;
+        }
+        else {
+            LogError("No effective properties found for dragging");
+        }
     }
     else {
-        TRACE(__FUNCTION__ ": failed to find normal at start drag point\n");
+        LogError("Failed to find normal at start drag point");
     }
+
+    Cleanup();
+    return false;
 }
 
 /// <summary>
@@ -227,7 +206,7 @@ void DragFace::Dragging(SEGMENT3 const& targetLine)
     if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
         UpdateDynamicDraw(targetPoints);
         RestoreInstance();
-        ModifyInstance(targetPoints.pt[1]);
+        ModifyInstance(targetPoints.pt[0]);
     }
 
 }
@@ -324,40 +303,22 @@ void DragFace::ClearDynamicDraw()
 void DragFace::RestoreInstance()
 {
     if (m_instance && m_changedProperty) {
-        SetDatatypeProperty(m_instance, m_changedProperty, m_oldValue);
+        SetDatatypeProperty(m_instance, m_changedProperty->prop, m_changedProperty->initialValue);
     }
-
     m_changedProperty = NULL;
-    m_oldValue = NAN;
 }
+
 
 /// <summary>
 /// 
 /// </summary>
-DragFace::PropertyResult* DragFace::FindBestProperty(PropertyResults& results)
+void DragFace::CollectEffectiveProperties()
 {
-    DragFace::PropertyResult* best = NULL;
-    for (auto& entry : results) {
-        auto& result = entry.second;
-        if (!best || fabs(result.distance) < fabs(best->distance)) {
-            best = &result;
-        }
-    }
-    return best;
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFace::CollectEffectiveProperties(PropertyResults& results, const VECTOR3& targetPoint)
-{
-    if (!m_instance)
-        return;
+    m_effectiveProperties.clear();
 
     RAY3 directrix; //from target to start point
-    directrix.org = targetPoint;
-    directrix.dir = m_startNormal.pt[0] - targetPoint;
-    double startDistance = Vec3Normalize(directrix.dir);
+    directrix.org = m_startNormal.pt[0];
+    directrix.dir = m_startNormal.pt[0] - m_startNormal.pt[1];
 
     RdfProperty prop = NULL;
     while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
@@ -372,22 +333,68 @@ void DragFace::CollectEffectiveProperties(PropertyResults& results, const VECTOR
 
                 double oldValue = values[0];
 
-                PropertyResult result;
-                result.prop = prop;
-                result.oldValue = oldValue;
-                result.newValue = oldValue;
-                result.distance = startDistance;
+                double newValue = StandardStep(oldValue);
+                SetDatatypeProperty(m_instance, prop, newValue);
 
-                if (TryProperty(result, directrix)) {
-                    results[prop] = result;
-                }
+                double effect = GetMinIntersectionPosition(m_instance, directrix);
 
                 SetDatatypeProperty(m_instance, prop, oldValue);
+
+                if (fabs(effect) > 1e-3) {
+                    PropertyEffect propEffect;
+                    propEffect.prop = prop;
+                    propEffect.initialValue = oldValue;
+                    propEffect.distStartToStep = effect;
+                    m_effectiveProperties.push_back(propEffect);
+                }
             }
         }
     }
-
 }
+
+
+/// <summary>
+/// 
+/// </summary>
+bool DragFace::TryModifyByProperty(const PropertyEffect& prop, const RAY3& ray, double distTargetToStart, double& suggestedValue, double& distFromTarget)
+{
+    if (!m_instance)
+        return false;
+
+    double v[2] = { prop.initialValue,  StandardStep(prop.initialValue)};
+    double p[2] = { distTargetToStart,  distTargetToStart + prop.distStartToStep };
+
+    bool better = false;
+    suggestedValue = v[0];
+    distFromTarget = p[0];
+    
+    if (fabs(p[1]) < fabs(p[1])) {
+        //better position found
+        better = true;
+        suggestedValue = v[1];
+        distFromTarget = p[1];
+    }
+
+    if (fabs(p[1] - p[0]) > LENGTH_TOLERANCE) {
+        //linear interpolation to zero position
+        double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
+        
+        SetDatatypeProperty(m_instance, prop.prop, val);
+        double pos = GetMinIntersectionPosition(m_instance, ray);
+        SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
+
+        if (fabs(pos) < fabs(distFromTarget)) {
+            //better position found
+            better = true;
+            suggestedValue = val;
+            distFromTarget = pos;
+        }
+    }
+
+    return better;
+}
+
+
 
 /// <summary>
 /// 
@@ -397,14 +404,37 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
     if (!m_instance)
         return;
 
-    PropertyResults results;
-    CollectEffectiveProperties(results, targetPoint);
+    //restore previous change
+    if (m_changedProperty) {
+        SetDatatypeProperty(m_instance, m_changedProperty->prop, m_changedProperty->initialValue);
+        m_changedProperty = NULL;
+    }
+
+    RAY3 directrix; //from target to start point
+    directrix.org = targetPoint;
+    directrix.dir = m_startNormal.pt[0] - targetPoint;
+    double startDistance = Vec3Normalize(directrix.dir);
+
+    std::map<double, std::pair<PropertyEffect*, double>> results; //map of distFromTarget to (property, suggestedValue)
+
+    for (auto& propEffect : m_effectiveProperties) {
+        
+        double suggestedValue = NAN;
+        double distFromTarget = NAN;
+        
+        if (TryModifyByProperty(propEffect, directrix, startDistance, suggestedValue, distFromTarget)) {
+            auto& pair = results[fabs(distFromTarget)];
+            pair.first = &propEffect;
+            pair.second = suggestedValue;
+        }
+    }
 
     //apply best result
-    auto best = FindBestProperty(results);
-    if (best) {
-        SetDatatypeProperty(m_instance, best->prop, best->newValue);
-        m_changedProperty = best->prop;
-        m_oldValue = best->oldValue;
+    if (!results.empty())
+    {
+        auto& best = results.begin()->second;
+
+        m_changedProperty = best.first; 
+        SetDatatypeProperty(m_instance, m_changedProperty->prop, best.second);
     }
 }
