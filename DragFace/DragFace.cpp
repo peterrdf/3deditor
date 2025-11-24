@@ -59,6 +59,9 @@ static void TrimLineToSize(SEGMENT3& line, double size)
 }
 #endif
 
+/// <summary>
+/// 
+/// </summary>
 static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
 {
     char full_name[256];
@@ -80,6 +83,9 @@ static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double 
 	return trans;
 }
 
+/// <summary>
+/// 
+/// </summary>
 static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfProperty prop, double value)
 {
     SetDatatypeProperty(inst, prop, value);
@@ -99,23 +105,21 @@ static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, RdfP
     return minDot;
 }
 
-struct PropertyResult
+/// <summary>
+/// 
+/// </summary>
+bool DragFace::TryProperty(PropertyResult& result, const RAY3& ray)
 {
-    RdfProperty    prop;
-    double         oldValue;
-    double         newValue;
-    double         distance; //along ray from target point; signed positive in direction to start drag point,
-};
+    if (!m_instance)
+        return false;
 
-static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ray)
-{
     bool better = false;
 
     double v[2] = { result.oldValue, NAN };
     double p[2] = { result.distance, NAN };
 
     v[1] = fabs(result.oldValue) > 0.1 ? result.oldValue * 1.1 : 1;
-    p[1] = GetMinIntersectionPosition(inst, ray, result.prop, v[1]);
+    p[1] = GetMinIntersectionPosition(m_instance, ray, result.prop, v[1]);
 
     if (fabs(p[1]) < fabs(result.distance)) {
         //better position found
@@ -127,7 +131,7 @@ static bool TryProperty(PropertyResult& result, OwlInstance inst, const RAY3& ra
     if (fabs(p[1]-p[0]) > LENGTH_TOLERANCE) {
         //linear interpolation to zero position
         double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
-        double pos = GetMinIntersectionPosition(inst, ray, result.prop, val);
+        double pos = GetMinIntersectionPosition(m_instance, ray, result.prop, val);
      
         if (fabs(pos) < fabs(result.distance)) {
             //better position found
@@ -330,7 +334,22 @@ void DragFace::RestoreInstance()
 /// <summary>
 /// 
 /// </summary>
-void DragFace::ModifyInstance(const VECTOR3& targetPoint)
+DragFace::PropertyResult* DragFace::FindBestProperty(PropertyResults& results)
+{
+    DragFace::PropertyResult* best = NULL;
+    for (auto& entry : results) {
+        auto& result = entry.second;
+        if (!best || fabs(result.distance) < fabs(best->distance)) {
+            best = &result;
+        }
+    }
+    return best;
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragFace::CollectEffectiveProperties(PropertyResults& results, const VECTOR3& targetPoint)
 {
     if (!m_instance)
         return;
@@ -339,8 +358,6 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
     directrix.org = targetPoint;
     directrix.dir = m_startNormal.pt[0] - targetPoint;
     double startDistance = Vec3Normalize(directrix.dir);
-
-    std::map<double, PropertyResult> results; //property results sorted by distance
 
     RdfProperty prop = NULL;
     while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
@@ -361,8 +378,8 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
                 result.newValue = oldValue;
                 result.distance = startDistance;
 
-                if (TryProperty(result, m_instance, directrix)) {
-                    results[fabs(result.distance)] = result;
+                if (TryProperty(result, directrix)) {
+                    results[prop] = result;
                 }
 
                 SetDatatypeProperty(m_instance, prop, oldValue);
@@ -370,13 +387,24 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
         }
     }
 
-    if (results.size() > 0) {
-        //apply best result
-        auto& best = *results.begin();
-        if (best.first < startDistance / 2) {
-            SetDatatypeProperty(m_instance, best.second.prop, best.second.newValue);
-            m_changedProperty = best.second.prop;
-            m_oldValue = best.second.oldValue;
-        }
+}
+
+/// <summary>
+/// 
+/// </summary>
+void DragFace::ModifyInstance(const VECTOR3& targetPoint)
+{
+    if (!m_instance)
+        return;
+
+    PropertyResults results;
+    CollectEffectiveProperties(results, targetPoint);
+
+    //apply best result
+    auto best = FindBestProperty(results);
+    if (best) {
+        SetDatatypeProperty(m_instance, best->prop, best->newValue);
+        m_changedProperty = best->prop;
+        m_oldValue = best->oldValue;
     }
 }

@@ -24,6 +24,17 @@ class DragFace
         OwlInstance GetDynamicDraw () const { return m_drawDynamic; }
 
     private:
+        struct PropertyResult
+        {
+            RdfProperty    prop;
+            double         oldValue;
+            double         newValue;
+            double         distance; //along ray from target point; signed positive in direction to start drag point,
+        };
+
+        typedef std::map<RdfProperty, PropertyResult>   PropertyResults;
+
+    private:
         void Cleanup();
         void AssertIsClean();
 
@@ -33,6 +44,9 @@ class DragFace
 
         void RestoreInstance();
         void ModifyInstance(const VECTOR3& targetPoint);
+        bool TryProperty(PropertyResult& result, const RAY3& ray);
+        void CollectEffectiveProperties(PropertyResults& results, const VECTOR3& targetPoint);
+        PropertyResult* FindBestProperty(PropertyResults& results);
 
     private:
         OwlInstance          m_instance;
