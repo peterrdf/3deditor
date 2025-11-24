@@ -26,6 +26,8 @@ private: // Fields
 public:
 	//#dragface
 	DragFace  m_dragFace;
+private:
+	void EndDrag(bool accept);
 
 public: // Methods
 	
@@ -47,6 +49,8 @@ public: // Methods
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
+	virtual void _onMouseLButtonDown(const CPoint& point) override;
+	virtual void _onMouseRButtonDown(const CPoint& point) override;
 	virtual void _onMouseMove(const CPoint& point) override;
 	virtual void _onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) override;
 

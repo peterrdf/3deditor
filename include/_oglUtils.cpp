@@ -3191,9 +3191,23 @@ void _oglView::_onMouseEvent(enumMouseEvent enEvent, UINT nFlags, CPoint point)
 	break;
 
 	case enumMouseEvent::LBtnDown:
+	{
+		_onMouseLButtonDown(point);
+		m_ptStartMousePosition = point;
+		m_ptPrevMousePosition = point;
+	}
+	break;
+
 	case enumMouseEvent::MBtnDown:
+	{
+		m_ptStartMousePosition = point;
+		m_ptPrevMousePosition = point;
+	}
+	break;
+
 	case enumMouseEvent::RBtnDown:
 	{
+		_onMouseRButtonDown(point);
 		m_ptStartMousePosition = point;
 		m_ptPrevMousePosition = point;
 	}

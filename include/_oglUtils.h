@@ -2542,6 +2542,8 @@ protected: // Methods
     void _drawInstancesFrameBuffer();
     void _drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionFramebuffer* pSelectionFrameBuffer, bool bApplyApplicationSettings = true);
 
+    virtual void _onMouseLButtonDown(const CPoint& /*point*/) = NULL;
+    virtual void _onMouseRButtonDown(const CPoint& /*point*/) = NULL;
     virtual void _onMouseMove(const CPoint& /*point*/) {}
     virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
 

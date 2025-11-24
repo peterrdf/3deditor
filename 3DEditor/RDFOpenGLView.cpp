@@ -172,6 +172,39 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	DrawFacesFrameBuffer();
 }
 
+
+void CRDFOpenGLView::EndDrag(bool accept)
+{
+	//finish dragging
+	auto dynamicInstance = m_dragFace.GetDynamicDraw();
+	printf("Dynamic instance ID: %lld\n", dynamicInstance);
+
+	//TODO DRAG FACE - cleanup drawing of dynamicInstance - if needed
+
+	auto modifiedInstance = m_dragFace.FinishDrag(accept);
+	printf("Modified instance ID: %lld\n", modifiedInstance);
+
+	//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
+	_ptr<_rdf_model>(getController()->getModel())->reload();
+	getController()->onModelUpdated();
+}
+
+
+/*virtual*/ void CRDFOpenGLView::_onMouseLButtonDown(const CPoint& /*point*/) /*override*/
+{
+	if (m_dragFace.IsActive()) {
+		EndDrag(true);
+	}
+}
+
+/*virtual*/ void CRDFOpenGLView::_onMouseRButtonDown(const CPoint& /*point*/) /*override*/
+{
+	if (m_dragFace.IsActive()) {
+		EndDrag(false);
+	}
+}
+
+
 /*virtual*/ void CRDFOpenGLView::_onMouseMove(const CPoint& point) /*override*/
 {
 	if (m_pPointFaceFrameBuffer->isInitialized()) {
@@ -218,30 +251,29 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	// #dragface
-	if (GetKeyState(VK_CONTROL) & 0x8000) {
-		if (m_dragFace.IsActive()) {
-			//update dragging position
-			SEGMENT3 targetLine;
-			if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
-				if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
+	if (m_dragFace.IsActive()) {
+		//update dragging position
+		SEGMENT3 targetLine;
+		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
+			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
 
-					auto dynamicInstance = m_dragFace.GetDynamicDraw();
-		
-                    //TODO DRAG FACE - cleanup draw old dynamicInstance - if needed
-                    
-					m_dragFace.Dragging(targetLine);
+				auto dynamicInstance = m_dragFace.GetDynamicDraw();
 
-					dynamicInstance = m_dragFace.GetDynamicDraw();
-					
-					//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
-					_ptr<_rdf_model>(getController()->getModel())->reload();
-					getController()->onModelUpdated();
+				//TODO DRAG FACE - cleanup draw old dynamicInstance - if needed
 
-				}
+				m_dragFace.Dragging(targetLine);
+
+				dynamicInstance = m_dragFace.GetDynamicDraw();
+
+				//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
+				_ptr<_rdf_model>(getController()->getModel())->reload();
+				getController()->onModelUpdated();
+
 			}
 		}
-		else if (m_iPointedFace != -1) {
-            //start dragging
+	}
+	else if (GetKeyState(VK_CONTROL) & 0x8000) {
+		if (m_iPointedFace != -1) {
 			if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
 				GLdouble dX = 0.;
 				GLdouble dY = 0.;
@@ -266,21 +298,8 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			}
 		}
 	}
-	else if (m_dragFace.IsActive()) {
-		//finish dragging
-		auto dynamicInstance = m_dragFace.GetDynamicDraw();
-        printf("Dynamic instance ID: %lld\n", dynamicInstance);
-
-		//TODO DRAG FACE - cleanup drawing of dynamicInstance - if needed
-
-		auto modifiedInstance = m_dragFace.FinishDrag(true);
-        printf("Modified instance ID: %lld\n", modifiedInstance);
-
-		//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
-		_ptr<_rdf_model>(getController()->getModel())->reload();
-		getController()->onModelUpdated();
-    }
 }
+
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
 {
