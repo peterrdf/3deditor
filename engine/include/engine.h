@@ -5703,6 +5703,33 @@ bool			DECL STDC	IsUpToDate(
 								);
 
 //
+//		GetClassModificationMark                               (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
+//				OwlClass				owlClass							IN
+//
+//				int64_t					returns								OUT
+//
+//	This function returns value that indicated class modification time but it is not the time.
+//	If a class or any of its parents have been modified the value will increase.
+//	If a class or any of its parents have been modified later then another the value will be bigger.
+//
+int64_t			DECL STDC	GetClassModificationMark(
+									OwlClass				owlClass
+								);
+
+//
+//		UpdateClassModificationMark                            (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
+//				OwlClass				owlClass							IN
+//
+//				void					returns								OUT
+//
+//	This function informs class it has been changed externally.
+//  Application may want to call it when it changed its class external reference data. 
+//
+void			DECL STDC	UpdateClassModificationMark(
+									OwlClass				owlClass
+								);
+
+//
 //		InferenceInstance                                       (https://rdf.bg/gkdoc/CP64/InferenceInstance.html)
 //				OwlInstance				owlInstance							IN
 //
