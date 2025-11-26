@@ -6,10 +6,11 @@
 // ************************************************************************************************
 namespace _bin2gltf
 {
-	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers)
+	_exporter::_exporter(_model* pModel, const char* szOutputFile, bool bEmbeddedBuffers, bool bTextureFlipV/* = false*/)
 		: _log_client()
 		, m_pModel(pModel)
 		, m_bEmbeddedBuffers(bEmbeddedBuffers)
+		, m_bTextureFlipV(bTextureFlipV)
 		, m_pPolygonsMaterial(nullptr)
 		, m_vecMaterials()
 		, m_mapMaterials()
@@ -161,7 +162,7 @@ namespace _bin2gltf
 		if (!createOuputStream()) {
 			getLog()->logWrite(enumLogEvent::error, "Cannot create output stream.");
 			return false;
-		}		
+		}
 
 		for (auto pGeometry : m_pModel->getGeometries()) {
 			if (!pGeometry->isPlaceholder() && pGeometry->hasGeometry()) {
@@ -174,8 +175,7 @@ namespace _bin2gltf
 	}
 
 	/*virtual*/ void _exporter::postExecute()
-	{
-	}
+	{}
 
 	/*virtual*/ void _exporter::writeIndent()
 	{
@@ -444,7 +444,8 @@ namespace _bin2gltf
 			std::ostream* pNodeBinDataStream = nullptr;
 			if (m_bEmbeddedBuffers) {
 				pNodeBinDataStream = new std::stringstream();
-			} else {
+			}
+			else {
 				pNodeBinDataStream = new std::ofstream();
 				((std::ofstream*)pNodeBinDataStream)->open(pthNodeBinData.string(), std::ios::out | std::ios::binary | std::ios::trunc);
 			}
@@ -484,7 +485,9 @@ namespace _bin2gltf
 				float fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 6];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 
-				fValue = pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
+				fValue = m_bTextureFlipV ?
+					-pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7] :
+					pNode->getGeometry()->getVertices()[(iVertex * VERTEX_LENGTH) + 7];
 				pNodeBinDataStream->write(reinterpret_cast<const char*>(&fValue), sizeof(float));
 			}
 
@@ -560,7 +563,8 @@ namespace _bin2gltf
 				std::string strBase64BufferData = "data:application/octet-stream;base64,";
 				strBase64BufferData += base64_encode(reinterpret_cast<const unsigned char*>(strBufferData.data()), (unsigned int)strBufferData.size());
 				writeStringProperty("uri", strBase64BufferData);
-			} else {
+			}
+			else {
 				writeStringProperty("uri", pthNodeBinData.stem().string() + ".bin");
 			}
 			indent()--;
@@ -724,16 +728,23 @@ namespace _bin2gltf
 		int iBufferViewIndex = 0;
 		for (size_t iNodeIndex = 0; iNodeIndex < m_vecNodes.size(); iNodeIndex++) {
 			auto pNode = m_vecNodes[iNodeIndex];
+			auto pGeometry = pNode->getGeometry();
 
 			assert(pNode->indicesBufferViewsByteLength().size() ==
-				pNode->getGeometry()->concFacesCohorts().size() +
-				pNode->getGeometry()->concFacePolygonsCohorts().size() +
-				pNode->getGeometry()->linesCohorts().size() +
-				pNode->getGeometry()->pointsCohorts().size());
+				pGeometry->concFacesCohorts().size() +
+				pGeometry->concFacePolygonsCohorts().size() +
+				pGeometry->linesCohorts().size() +
+				pGeometry->pointsCohorts().size());
 
 			if (iNodeIndex > 0) {
 				*getOutputStream() << COMMA;
 			}
+
+			float fUmin = FLT_MAX;
+			float fUmax = -FLT_MAX;
+			float fVmin = FLT_MAX;
+			float fVmax = -FLT_MAX;
+			pGeometry->calculateUVMinMax(fUmin, fUmax, fVmin, fVmax);
 
 			// vertices/ARRAY_BUFFER/POSITION
 			{
@@ -753,18 +764,18 @@ namespace _bin2gltf
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("min", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMin()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
 				*getOutputStream() << buildArrayProperty("max", vector<string>
 				{
-					to_string((pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
-						to_string((pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
+					_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->x + vecVertexBufferOffset.x) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->y + vecVertexBufferOffset.y) / dScaleFactor),
+						_string::format("%.10g", (float)(pNode->getGeometry()->getBBMax()->z + vecVertexBufferOffset.z) / dScaleFactor)
 				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC3");
@@ -825,11 +836,18 @@ namespace _bin2gltf
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("min", vector<string> { "-1.0", "-1.0" }).c_str();
+				*getOutputStream() << buildArrayProperty("min", vector<string>
+				{
+					_string::format("%.10g", fUmin),
+						_string::format("%.10g", fVmin)
+				}).c_str();
 				*getOutputStream() << COMMA;
 				*getOutputStream() << getNewLine();
 				writeIndent();
-				*getOutputStream() << buildArrayProperty("max", vector<string> { "1.0", "1.0" }).c_str();
+				*getOutputStream() << buildArrayProperty("max", vector<string> {
+					_string::format("%.10g", fUmax),
+						_string::format("%.10g", fVmax)
+				}).c_str();
 				*getOutputStream() << COMMA;
 				writeStringProperty("type", "VEC2");
 				indent()--;
@@ -1350,28 +1368,30 @@ namespace _bin2gltf
 						*getOutputStream() << getNewLine();
 						writeIndent();
 						*getOutputStream() << buildArrayProperty("children", vecNodeChildren).c_str();
-						*getOutputStream() << COMMA;
-						*getOutputStream() << getNewLine();
-						writeIndent();
-						*getOutputStream() << buildArrayProperty("matrix", vector<string>
-						{
-							to_string(pTransformation->_11),
-								to_string(pTransformation->_12),
-								to_string(pTransformation->_13),
-								to_string(pTransformation->_14),
-								to_string(pTransformation->_21),
-								to_string(pTransformation->_22),
-								to_string(pTransformation->_23),
-								to_string(pTransformation->_24),
-								to_string(pTransformation->_31),
-								to_string(pTransformation->_32),
-								to_string(pTransformation->_33),
-								to_string(pTransformation->_34),
-								to_string(pTransformation->_41),
-								to_string(pTransformation->_42),
-								to_string(pTransformation->_43),
-								to_string(pTransformation->_44)
-						}).c_str();
+						if (pTransformation != nullptr) {
+							*getOutputStream() << COMMA;
+							*getOutputStream() << getNewLine();
+							writeIndent();
+							*getOutputStream() << buildArrayProperty("matrix", vector<string>
+							{
+								to_string(pTransformation->_11),
+									to_string(pTransformation->_12),
+									to_string(pTransformation->_13),
+									to_string(pTransformation->_14),
+									to_string(pTransformation->_21),
+									to_string(pTransformation->_22),
+									to_string(pTransformation->_23),
+									to_string(pTransformation->_24),
+									to_string(pTransformation->_31),
+									to_string(pTransformation->_32),
+									to_string(pTransformation->_33),
+									to_string(pTransformation->_34),
+									to_string(pTransformation->_41),
+									to_string(pTransformation->_42),
+									to_string(pTransformation->_43),
+									to_string(pTransformation->_44)
+							}).c_str();
+						}
 						indent()--;
 
 						writeEndObjectTag();
@@ -1501,7 +1521,8 @@ namespace _bin2gltf
 						if (itImage == m_mapImages.end()) {
 							iImageIndex = (uint32_t)m_mapImages.size();
 							m_mapImages[strTexture] = iImageIndex;
-						} else {
+						}
+						else {
 							iImageIndex = itImage->second;
 						}
 
@@ -1548,7 +1569,8 @@ namespace _bin2gltf
 							// pbrMetallicRoughness							
 						}
 						// texture
-					} else {
+					}
+					else {
 						// material					
 						indent()++;
 						writeStartObjectTag();
@@ -1665,7 +1687,7 @@ namespace _bin2gltf
 						// uri
 						{
 							indent()++;
-							writeStringProperty("uri", CW2A(itImageURI.second.c_str()).m_psz);
+							writeStringProperty("uri", (LPCSTR)CW2A(itImageURI.second.c_str()));
 							indent()--;
 						}
 

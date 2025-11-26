@@ -1,10 +1,6 @@
 ﻿#include "_host.h"
 
-#ifdef _WINDOWS
-#include "../include/engine.h"
-#else
-#include "../include/engine.h"
-#endif
+#include "engine.h"
 
 #include "_glb_importer.h"
 

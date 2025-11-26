@@ -621,7 +621,7 @@ namespace _xml
 	{
 		if (m_pRoot == nullptr)
 		{
-			assert(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -790,7 +790,7 @@ namespace _xml
 
 		if (document.m_pRoot == nullptr)
 		{
-			assert(FALSE);
+			assert(false);
 
 			return "";
 		}
@@ -809,7 +809,7 @@ namespace _xml
 
 		if (document.m_pRoot == nullptr)
 		{
-			assert(FALSE);
+			assert(false);
 
 			return "";
 		}
@@ -944,7 +944,7 @@ namespace _xml
 	{
 		if (m_pRoot == nullptr)
 		{
-			assert(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1294,7 +1294,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1337,7 +1337,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(FALSE);
+			assert(false);
 
 			return;
 		}
@@ -1375,7 +1375,7 @@ namespace _xml
 
 		if (!pXSDElement->hasAttribute(name_attr))
 		{
-			assert(FALSE);
+			assert(false);
 
 			return;
 		}

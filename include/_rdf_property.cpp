@@ -232,7 +232,7 @@ _rdf_property_provider::_rdf_property_provider()
 _rdf_property_collection* _rdf_property_provider::getPropertyCollection(OwlInstance owlInstance)
 {
 	if (owlInstance == 0) {
-		assert(FALSE);
+		assert(false);
 
 		return nullptr;
 	}
@@ -251,7 +251,7 @@ _rdf_property_collection* _rdf_property_provider::getPropertyCollection(OwlInsta
 _rdf_property_collection* _rdf_property_provider::loadPropertyCollection(OwlInstance owlInstance)
 {
 	if (owlInstance == 0) {
-		assert(FALSE);
+		assert(false);
 
 		return nullptr;
 	}

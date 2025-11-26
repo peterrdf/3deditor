@@ -3,14 +3,7 @@
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
 #include "_ptr.h"
-
-#ifdef __EMSCRIPTEN__
-	#include "../../gisengine/Parsers/_string.h"
-#else 
-	#ifdef __GNUG__ 
-	#include "_string.h"
-	#endif
-#endif
+#include "_string.h"
 
 #include <cfloat>
 
@@ -53,7 +46,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 
 	clean(false);
 
-	m_bUpdteVertexBuffers = true;
+	m_bUpdateVertexBuffers = true;
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (owlInstance != 0) {
@@ -275,10 +268,11 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 				iGeometriesCount++;
 			}
 		}
-
+#ifdef _WINDOWS
 		TRACE(L"\n*** _ifc_model *** Geometries: %lld", iGeometriesCount);
 		TRACE(L"\n*** _ifc_model *** Mapped Items: %lld", iMappedItemsCount);
 		TRACE(L"\n*** _ifc_model *** Mapped Instances: %lld", iMappedInstancesCount);
+#endif
 #endif // _DEBUG		 
 	}
 }

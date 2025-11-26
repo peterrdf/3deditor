@@ -19,7 +19,7 @@ CTest::CTest(CRDFOpenGLView* pOpenGLView)
 	int64_t iRevision = ::GetRevision(&szTimeStamp);
 
 	wchar_t szBuffer[1024];
-	swprintf(szBuffer, 1024, L"%lld; %s", iRevision, CA2W(szTimeStamp).m_psz);	
+	swprintf(szBuffer, 1024, L"%lld; %s", iRevision, (LPCWSTR)CA2W(szTimeStamp));	
 
 	m_strRevision = szBuffer;
 }

@@ -1,18 +1,10 @@
 #pragma once
 
-#ifdef _WINDOWS
 #include "engine.h"
 #include "_json.h"
 #include "_log.h"
 #include "_io.h"
 #include "_errors.h"
-#else
-#include "../include/engine.h"
-#include "../parsers/_json.h"
-#include "../parsers/_log.h"
-#include "../parsers/_io.h"
-#include "../parsers/_errors.h"
-#endif
 
 
 #include "_gltf_importer.h"

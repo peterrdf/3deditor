@@ -1,15 +1,11 @@
 #ifndef IFCUNIT_H
 #define IFCUNIT_H
 
-#ifdef _WINDOWS
 #include "engine.h"
 #include "ifcengine.h"
-#else
-#include "../../include/engine.h"
-#include "../../include/ifcengine.h"
-#endif
 
 #include <string>
+#include <tuple>
 #include <map>
 using namespace std;
 
@@ -55,7 +51,9 @@ private: // Members
     int m_iType;
     wstring m_strType;
     wstring m_strPrefix;
+    wstring m_strPrefixSymbol;
     wstring m_strName;
+    wstring m_strNameSymbol;
 
 public: // Methods
 
@@ -65,10 +63,13 @@ public: // Methods
 public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
-    wstring getType() const { return m_strType; }
-    wstring getPrefix() const { return m_strPrefix; }
-    wstring getName() const { return m_strName; }
-    wstring getUnit() const; // [PREFIX][SPACE][NAME]
+    const wstring& getType() const { return m_strType; }
+    const wstring& getPrefix() const { return m_strPrefix; }
+    const wstring& getPrefixSymbol() const { return m_strPrefixSymbol; }
+    const wstring& getName() const { return m_strName; }
+    const wstring& getNameSymbol()  const { return m_strNameSymbol; }
+    wstring getUnit() const; // [PREFIX][SPACE][NAME], e.g. 'Square Metre'
+    wstring getUnitSymbol() const; // [PREFIX SYMBOL][SYMBOL], e.g. 'm2'
 
 protected: // Methods
 
@@ -93,13 +94,13 @@ public: // Methods
 
     const _ifc_unit* getUnit(const wchar_t* szUnit) const;
 
-    pair<wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
-    pair<wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
-    pair<wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantity(SdaiInstance sdaiQuantityInstance, const char* szValueName, const wchar_t* szUnitName) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityLength(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityArea(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityVolume(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityCount(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityWeight(SdaiInstance sdaiQuantityInstance) const;
+    tuple<wstring, wstring, wstring, wstring> getQuantityTime(SdaiInstance sdaiQuantityInstance) const;
 
 protected: // Methods
 

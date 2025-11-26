@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef _WINDOWS
 #include "ifcengine.h"
-#else
-#include "../../include/ifcengine.h"
-#endif
 
 #include <map>
 #include <vector>

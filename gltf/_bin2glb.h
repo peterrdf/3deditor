@@ -43,7 +43,7 @@ namespace _bin2glb
 
 	public: // Methods
 
-		_exporter(_model* pModel, const char* szOutputFile);
+		_exporter(_model* pModel, const char* szOutputFile, bool bTextureFlipV = false);
 		virtual ~_exporter();
 
 	protected: // Methods
@@ -56,7 +56,7 @@ namespace _bin2glb
 
 	public: // Properties
 
-			virtual const char* getNewLine() const override { return ""; }
+		virtual const char* getNewLine() const override { return ""; }
 	};
 };
 

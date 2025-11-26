@@ -4,7 +4,7 @@
 #include "_string.h"
 #if _LOAD_SCHEMAS
 #include "_net.h"
-#endif _LOAD_SCHEMAS
+#endif // _LOAD_SCHEMAS
 
 #include <chrono>
 

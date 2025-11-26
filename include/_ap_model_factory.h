@@ -31,7 +31,14 @@ static size_t m_iZipEntrySize = 0;
 static size_t m_iZipEntryOffset = 0;
 
 // ************************************************************************************************
-static int_t __stdcall ReadCallBackFunction(unsigned char* szContent)
+// Define calling convention conditionally
+#ifdef _WINDOWS
+#define CALLBACK_CONVENTION __stdcall
+#else
+#define CALLBACK_CONVENTION
+#endif
+
+static int_t CALLBACK_CONVENTION ReadCallBackFunction(unsigned char* szContent)
 {
 	if (m_szZipEntryBuffer == nullptr) {
 		return -1;
@@ -80,14 +87,18 @@ public: // Methods
 
 		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
 		if (sdaiModel == 0) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return nullptr;
 		}
 
 		wchar_t* szFileSchema = 0;
 		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
 		if (szFileSchema == nullptr) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return nullptr;
 		}
 
@@ -208,7 +219,7 @@ public: // Methods
 			m_iZipEntryOffset = 0;
 			zip_entry_read(pZip, (void**)&m_szZipEntryBuffer, &m_iZipEntrySize);
 
-			vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, ReadCallBackFunction, "") });
+			vecSdaiModels.push_back({ pathEntry, engiOpenModelByStream(0, (void*)ReadCallBackFunction, "") });
 
 			zip_entry_close(pZip);
 		}
@@ -295,7 +306,9 @@ public: // Methods
 
 		FILE* f = fopen(pathStepGZip.string().c_str(), "rb");
 		if (f == NULL) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif // _WINDOWS			
 			return vecSdaiModels;
 		}
 
@@ -309,7 +322,9 @@ public: // Methods
 
 		vector<unsigned char> uncompressed;
 		if (!gzipInflate(compressed, uncompressed)) {
+#ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed decompress the model.", L"Error", MB_ICONERROR | MB_OK);
+#endif
 			return vecSdaiModels;
 		}
 

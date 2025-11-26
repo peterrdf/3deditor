@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef _WINDOWS
-#include "../include/engine.h"
-#else
-#include "../include/engine.h"
-#endif
+#include "engine.h"
 
 #include "_log.h"
 #include "_io.h"
@@ -14,6 +10,8 @@
 #include "_schema_embedded_storage.h"
 #include "_schema_embedded_storage_builder.h"
 #endif // _LOAD_SCHEMAS
+
+#include <cmath>
 
 #define PI 3.14159265
 

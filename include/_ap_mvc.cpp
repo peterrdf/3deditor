@@ -1,5 +1,6 @@
 #include "_host.h"
 #include "_ap_mvc.h"
+#include "_ptr.h"
 
 #include <string>
 using namespace std;
@@ -59,8 +60,11 @@ void _ap_model::attachModel(const wchar_t* szPath, SdaiModel sdaiModel, _model* 
     attachModelCore();
 }
 
-_geometry* _ap_model::getGeometryByInstance(SdaiInstance sdaiInstance)
+_geometry* _ap_model::getGeometryByInstance(SdaiInstance sdaiInstance) const
 {
+    assert(sdaiInstance != 0);
+
+    // Search in cache
     auto itGeometry = m_mapGeometries.find(sdaiInstance);
     if (itGeometry != m_mapGeometries.end()) {
         return itGeometry->second;
@@ -73,6 +77,7 @@ _geometry* _ap_model::getGeometryByExpressID(ExpressID iExpressID) const
 {
     assert(iExpressID != 0);
 
+    // Search in cache
     auto itExpressID2Geometry = m_mapExpressID2Geometry.find(iExpressID);
     if (itExpressID2Geometry != m_mapExpressID2Geometry.end()) {
         return itExpressID2Geometry->second;
@@ -121,15 +126,17 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
     setVertexBufferOffset(owlInstance);
 }
 
-void _ap_model::addGeometry(_ap_geometry* pGeometry)
+/*virtual*/ void _ap_model::addGeometry(_geometry* pGeometry) /*override*/
 {
     _model::addGeometry(pGeometry);
 
-    assert(m_mapGeometries.find(pGeometry->getSdaiInstance()) == m_mapGeometries.end());
-    m_mapGeometries[pGeometry->getSdaiInstance()] = pGeometry;
+    _ptr<_ap_geometry> apGeometry(pGeometry);
 
-    assert(m_mapExpressID2Geometry.find(pGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
-    m_mapExpressID2Geometry[pGeometry->getExpressID()] = pGeometry;
+    assert(m_mapGeometries.find(apGeometry->getSdaiInstance()) == m_mapGeometries.end());
+    m_mapGeometries[apGeometry->getSdaiInstance()] = apGeometry;
+
+    assert(m_mapExpressID2Geometry.find(apGeometry->getExpressID()) == m_mapExpressID2Geometry.end());
+    m_mapExpressID2Geometry[apGeometry->getExpressID()] = apGeometry;
 }
 
 /*virtual*/ void _ap_model::clean(bool bCloseModel/* = true*/) /*override*/

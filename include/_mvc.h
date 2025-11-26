@@ -71,7 +71,7 @@ protected: // Fields
 	const _model* m_pWorld;
 
 	// http://rdf.bg/gkdoc/CP64/SetVertexBufferOffset.html
-	bool m_bUpdteVertexBuffers;
+	bool m_bUpdateVertexBuffers;
 	double m_dOriginalBoundingSphereDiameter;
 
 	// World's dimensions
@@ -187,7 +187,6 @@ public: // Methods
 	virtual void onModelUpdated() {}
 	virtual void postModelLoaded() {}
 	virtual void onWorldDimensionsChanged() {}
-	virtual void onShowMetaInformation() {}
 	virtual void onTargetInstanceChanged(_view* /*pSender*/) {}
 	virtual void onInstanceSelected(_view* /*pSender*/) {}
 	// 0 - Enable/Disable
@@ -320,9 +319,11 @@ public: // Properties
 };
 
 // ************************************************************************************************
+#ifdef _WINDOWS
 static const wchar_t* WORLD_COORDINATE_SYSTEM = L"_WORLD_COORDINATE_SYSTEM_";
 static const wchar_t* MODEL_COORDINATE_SYSTEM = L"_MODEL_COORDINATE_SYSTEM_";
 static const wchar_t* NAVIGATOR = L"_NAVIGATOR_";
+#endif // _WINDOWS
 
 // ************************************************************************************************
 class _oglSelectionFramebuffer;

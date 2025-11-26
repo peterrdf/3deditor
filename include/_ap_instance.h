@@ -64,6 +64,9 @@ public:  // Methods
                 owlMatrixInstance);
 
             SaveInstanceTreeW(owlTransformationInstance, szPath);
+
+			RemoveInstance(owlTransformationInstance);
+			RemoveInstance(owlMatrixInstance);
         }
         else {
             SaveInstanceTreeW(owlInstance, szPath);
