@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="stb">
-      <UniqueIdentifier>{ebdf1f9f-1888-4054-b977-21b0a01a8b5a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{83c4a798-3ea6-428b-8b1d-5b9dccec0989}</UniqueIdentifier>
     </Filter>
@@ -65,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="..\3DEditor\ProgressIndicator.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\stb\stb_image.h">
-      <Filter>stb</Filter>
     </ClInclude>
     <ClInclude Include="..\include\_3DUtils.h">
       <Filter>include</Filter>
@@ -177,6 +171,9 @@
     <ClInclude Include="..\parsers\_xml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\stb\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RDFViewer.cpp">
@@ -206,17 +203,11 @@
     <ClCompile Include="..\3DEditor\conceptMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3DEditor\_dxf_parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InstancesList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\ProgressIndicator.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\stb\stb_image.cpp">
-      <Filter>stb</Filter>
     </ClCompile>
     <ClCompile Include="..\3DEditor\ProgressDialog.cpp">
       <Filter>Source Files</Filter>
@@ -266,47 +257,53 @@
     <ClCompile Include="..\include\_rdf_class.cpp">
       <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\parsers\_importer_t.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\parsers\_reader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\gltf\_bin2gltf.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3DEditor\_dxf_parser.cpp">
+      <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_glb_importer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\_gltf2bin.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_gltf_importer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\gltf\_gltf_importers.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\gltf\_gltf_importer_t.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\gltf\_node.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\gltf\_gltf_importers.cpp">
+      <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\obj\_obj2bin.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\gltf\_gltf2bin.cpp">
+      <Filter>include</Filter>
     </ClCompile>
-    <ClCompile Include="..\parsers\_net.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\parsers\_xml.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\parsers\_importer_t.cpp">
+      <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\parsers\_json.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_net.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gltf\_node.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\_obj2bin.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_reader.cpp">
+      <Filter>include</Filter>
     </ClCompile>
     <ClCompile Include="..\parsers\_serialization.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\_xml.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
