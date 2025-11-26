@@ -308,6 +308,9 @@
     <ClCompile Include="..\parsers\_serialization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\3DEditor\SelectDragPropsDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\RDFViewer.rc2">

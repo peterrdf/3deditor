@@ -135,7 +135,7 @@ DragFace::~DragFace()
 /// </summary>
 void DragFace::AssertIsClean()
 {
-    ASSERT(!m_instance && !m_changedProperty && isnan(m_oldValue) && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+    ASSERT(!m_instance && !m_changedProperty && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
 
 /// <summary>

@@ -17,7 +17,6 @@
 #include <map>
 
 #include "engine.h"
-#include "W:\DevArea\RDF\GK\RDFGeometryKernel\Code\include\rdfgeom.h"
 #include "rdfgeom.h"
 #include "geom.h"
 
