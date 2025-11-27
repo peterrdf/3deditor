@@ -787,6 +787,7 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 		return;
 	}
 	
+	/** Reset the search dialog */
 	m_pSearchDialog->Reset();
 
 	/** Disable the drawing */
@@ -1106,6 +1107,11 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 
 void CDesignTreeView::UpdateView()
 {
+	if (getRDFController()->getInteractiveEditInProgress()) {
+		return;
+	}
+
+	/** Reset the search dialog */
 	m_pSearchDialog->Reset();
 
 	/** Disable the drawing */

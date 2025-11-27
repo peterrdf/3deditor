@@ -2987,10 +2987,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.EnableDescriptionArea();
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
-
+	
 	if (getRDFController() == nullptr) {
 		ASSERT(false);
+		return;
+	}
 
+	if (getRDFController()->getInteractiveEditInProgress()) {
 		return;
 	}
 
