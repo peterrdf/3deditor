@@ -625,7 +625,7 @@ void CMy3DEditorView::OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI)
 
 BOOL CMy3DEditorView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-	if ((m_pOpenGLView != nullptr) && (m_pOpenGLView->m_dragFace.IsActive())) {
+	if ((m_pOpenGLView != nullptr) && (m_pOpenGLView->GetDragFace().IsActive())) {
 		::SetCursor(AfxGetApp()->LoadStandardCursor(IDC_CROSS));
 		return TRUE;
 	}

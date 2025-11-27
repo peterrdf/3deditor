@@ -733,6 +733,7 @@ _rdf_controller::_rdf_controller()
 	, m_bShowProgressDialog(false)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
+	, m_bInteractiveEditInProgress(false)
 {}
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
@@ -747,9 +748,16 @@ _rdf_controller::_rdf_controller()
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
 {
-	for (auto pDecoration : getDecorationModels()) {
-		_ptr<_decoration>(pDecoration)->onModelUpdated();
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
 	}
+
+	if (!m_bInteractiveEditInProgress) {
+		for (auto pDecoration : getDecorationModels()) {
+			_ptr<_decoration>(pDecoration)->onModelUpdated();
+		}
+	}	
 
 	_controller::onModelUpdated();
 }
@@ -1050,6 +1058,32 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		_ptr<_rdf_view> rdfView(*itView, false);
 		if (rdfView) {
 			rdfView->onInstancePropertyEdited(pSender, pInstance, pProperty);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditStart(_view* pSender)
+{
+	m_bInteractiveEditInProgress = true;
+	
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditStart(pSender);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditEnd(_view* pSender)
+{
+	m_bInteractiveEditInProgress = false;
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditEnd(pSender);
 		}
 	}
 }

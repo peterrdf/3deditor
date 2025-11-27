@@ -52,7 +52,24 @@ IMPLEMENT_SERIAL(CClassViewMenuButton, CMFCToolBarMenuButton, 1)
 
 /*virtual*/ void CClassView::onModelUpdated() /*override*/
 {
+	if (getRDFController()->getInteractiveEditInProgress()) {
+		return;
+	}
+
 	onModelLoaded();
+}
+
+/*virtual*/ void CClassView::onInteractiveEditStart(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	m_pSearchDialog->Reset();
+
+	m_treeCtrl.DeleteAllItems();
+
+	m_treeCtrl.InsertItem(_T("Interactive Edit in Progress..."), IMAGE_MODEL, IMAGE_MODEL);
 }
 
 /*virtual*/ CTreeCtrlEx* CClassView::GetTreeView() /*override*/
