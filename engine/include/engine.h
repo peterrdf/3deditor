@@ -5703,7 +5703,7 @@ bool			DECL STDC	IsUpToDate(
 								);
 
 //
-//		GetClassModificationMark                               (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
+//		GetClassModificationMark                                (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
 //				int64_t					returns								OUT
@@ -5717,13 +5717,13 @@ int64_t			DECL STDC	GetClassModificationMark(
 								);
 
 //
-//		UpdateClassModificationMark                            (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
+//		UpdateClassModificationMark                             (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
-//				void					returns								OUT
+//				void					returns
 //
 //	This function informs class it has been changed externally.
-//  Application may want to call it when it changed its class external reference data. 
+//	Application may want to call it when it changed its class external reference data. 
 //
 void			DECL STDC	UpdateClassModificationMark(
 									OwlClass				owlClass
