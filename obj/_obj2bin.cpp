@@ -7,9 +7,47 @@
 // ************************************************************************************************
 namespace _obj2bin
 {
+	// ************************************************************************************************
+	#define PI 3.14159265
+
 	// ********************************************************************************************
 	static const char default_material_name[] = "Default Material";
 	static const char default_color_name[] = "Default Color";
+
+	// ********************************************************************************************
+	static void	matrixRotateByEulerAngles(
+		_matrix* matrix,
+		double	alpha,
+		double	beta,
+		double	gamma)
+	{
+		//
+		//	https://en.wikipedia.org/wiki/Rotation_matrix
+		//
+		double	cos_alpha = cos(alpha), sin_alpha = sin(alpha),
+			cos_beta = cos(beta), sin_beta = sin(beta),
+			cos_gamma = cos(gamma), sin_gamma = sin(gamma);
+
+		matrix->_11 = 1. * cos_beta * cos_gamma;
+		matrix->_12 = 1. * cos_beta * sin_gamma;
+		matrix->_13 = -1. * sin_beta * 1.;
+
+		matrix->_21 = sin_alpha * sin_beta * cos_gamma
+			- cos_alpha * 1. * sin_gamma;
+		matrix->_22 = sin_alpha * sin_beta * sin_gamma
+			+ cos_alpha * 1. * cos_gamma;
+		matrix->_23 = sin_alpha * cos_beta * 1.;
+
+		matrix->_31 = cos_alpha * sin_beta * cos_gamma
+			+ sin_alpha * 1. * sin_gamma;
+		matrix->_32 = cos_alpha * sin_beta * sin_gamma
+			- sin_alpha * 1. * cos_gamma;
+		matrix->_33 = cos_alpha * cos_beta * 1.;
+
+		matrix->_41 = 0.;
+		matrix->_42 = 0.;
+		matrix->_43 = 0.;
+	}
 
 	// ********************************************************************************************
 	_exporter::_exporter(const char* szInputFile, bool bTextureFlipV/* = false*/)
@@ -102,6 +140,7 @@ namespace _obj2bin
 			assert(m_owlModel != 0);
 		}
 
+		vector<OwlInstance> vecBRepInstances;
 		for (size_t iBRep = 0; iBRep < m_vecBReps.size(); iBRep++) {
 			auto pBRep = m_vecBReps[iBRep];
 			VERIFY_POINTER(pBRep);
@@ -187,7 +226,57 @@ namespace _obj2bin
 				GetPropertyByName(m_owlModel,
 					"material"),
 				getMaterialInstance(iBRep));
+
+			vecBRepInstances.push_back(owlBRepInstance);
 		} // for (size_t iBRep = ...
+
+		OwlInstance owlCollectionInstance = CreateInstance(
+			GetClassByName(m_owlModel, 
+				"Collection"));
+		assert(owlCollectionInstance != 0);
+
+		SetObjectProperty(
+			owlCollectionInstance,
+			GetPropertyByName(m_owlModel, "objects"),
+			vecBRepInstances.data(),
+			vecBRepInstances.size());
+
+		OwlInstance owlMatrixInstance = CreateInstance(
+			GetClassByName(m_owlModel, 
+				"Matrix"));
+		VERIFY_INSTANCE(owlMatrixInstance != 0);
+
+		_matrix matrix;
+		memset(&matrix, 0, sizeof(_matrix));
+		matrixRotateByEulerAngles(&matrix, 2 * PI * -90. / 360., 0., 0.);
+
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_11"), &matrix._11, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_12"), &matrix._12, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_13"), &matrix._13, 1);
+
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_21"), &matrix._21, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_22"), &matrix._22, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_23"), &matrix._23, 1);
+
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_31"), &matrix._31, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_32"), &matrix._32, 1);
+		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_33"), &matrix._33, 1);
+
+		OwlInstance owlTransformationInstance = CreateInstance(
+			GetClassByName(m_owlModel, 
+				"Transformation"));
+		VERIFY_INSTANCE(owlTransformationInstance != 0);
+
+		SetObjectProperty(
+			owlTransformationInstance, 
+			GetPropertyByName(m_owlModel, "matrix"), 
+			&owlMatrixInstance, 
+			1);
+		SetObjectProperty(
+			owlTransformationInstance, 
+			GetPropertyByName(m_owlModel, "object"), 
+			&owlCollectionInstance, 
+			1);
 
 		SaveModel(m_owlModel, m_strOutputFile.c_str());
 	}
@@ -294,16 +383,16 @@ namespace _obj2bin
 		fs::path pathInputFolder = m_strInputFile;
 		pathInputFolder = pathInputFolder.parent_path();
 
-		for (const auto& strMaterialLibarary : m_setMaterialLibraries) {
-			fs::path pathMaterialLibarary = pathInputFolder;
-			pathMaterialLibarary.append(strMaterialLibarary);
+		for (const auto& strMaterialLibrary : m_setMaterialLibraries) {
+			fs::path pathMaterialLibrary = pathInputFolder;
+			pathMaterialLibrary.append(strMaterialLibrary);
 
-			if (!fs::exists(pathMaterialLibarary)) {
+			if (!fs::exists(pathMaterialLibrary)) {
 				continue;
 			}
 
 			auto pReader = new _file_reader();
-			if (!pReader->open(pathMaterialLibarary.string().c_str())) {
+			if (!pReader->open(pathMaterialLibrary.string().c_str())) {
 				THROW_ERROR(_err::_file);
 			}
 
