@@ -40,6 +40,7 @@ public:  // Methods
 	void assignModel(const wchar_t* szPath, OwlModel owlModel);
 	void importModel(const wchar_t* szPath);
 	void reload() { load(); }
+	void loadNewInstances();
 
 protected:
 

@@ -235,24 +235,25 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
 	if (m_dragFace.IsActive()) {
-		//update dragging position
+		// Update dragging position
 		SEGMENT3 targetLine;
 		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
 			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {				
+				m_dragFace.Dragging(targetLine);
+
 				auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
+				TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
 
 				_ptr<_rdf_model> rdfModel(getController()->getModel());
 				auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
 				if (pRdfInstance != nullptr) {
-					_ptr<_rdf_controller>(getController())->deleteInstance(this, pRdfInstance);
+					pRdfInstance->recalculate();
 				}
-
-				m_dragFace.Dragging(targetLine);
-
-				//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
-				owlDynamicInstance = m_dragFace.GetDynamicDraw();
-				rdfModel->reload();
-				getController()->onModelUpdated();
+				else {
+					rdfModel->loadNewInstances();
+				}
+				
+				_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 			}
 		}
 	}
@@ -1655,23 +1656,25 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 
 void CRDFOpenGLView::EndDrag(bool accept)
 {
-	//finish dragging
+	// Finish dragging
 	auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
-	printf("Dynamic instance ID: %lld\n", owlDynamicInstance);
+	TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
 
 	_ptr<_rdf_model> rdfModel(getController()->getModel());
 	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
-	if (pRdfInstance != nullptr) {
-		_ptr<_rdf_controller>(getController())->deleteInstance(this, pRdfInstance);
-	}
+	ASSERT(pRdfInstance != nullptr);
+	_ptr<_rdf_controller>(getController())->deleteInstance(this, pRdfInstance);
 
 	_ptr<_rdf_controller>(getController())->onInteractiveEditEnd(this);
 
-	//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
 	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
-	printf("Modified instance ID: %lld\n", owlModifiedInstance);	
-	rdfModel->reload();
-	getController()->onModelUpdated();
+	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
+
+	pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
+	ASSERT(pRdfInstance != nullptr);
+	pRdfInstance->recalculate();
+
+	getController()->onModelUpdated();	
 }
 
 void CRDFOpenGLView::_test_SetRotation(float fX, float fY, BOOL bRedraw)

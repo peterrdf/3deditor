@@ -238,6 +238,26 @@ void _rdf_model::importModel(const wchar_t* szPath)
 	load();
 }
 
+void _rdf_model::loadNewInstances()
+{
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		auto itInstance = m_mapInstances.find(owlInstance);
+		if (itInstance == m_mapInstances.end()) {
+			m_mapInstanceDefaultState[owlInstance] = true;
+
+			auto pGeometry = new _rdf_geometry(owlInstance);
+			addGeometry(pGeometry);
+
+			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			addInstance(pInstance);
+		}
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	} // while (owlInstance != 0)
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);
