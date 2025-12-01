@@ -252,8 +252,8 @@ namespace _eng
 				vecNodeInstances.push_back(owlNodeInstance);
 			} // for (size_t iNode = ...
 
-			// Z-up to Y-up transformation
-			OwlInstance owlCollectionInstance = createCollectionInstance(
+			// Y-up to Z-up transformation
+			/*OwlInstance owlCollectionInstance = createCollectionInstance(
 				"nodes",
 				_string::format("scene (%d) nodes", (int)iScene).c_str());
 			VERIFY_INSTANCE(owlCollectionInstance);
@@ -302,7 +302,18 @@ namespace _eng
 				owlSceneInstance,
 				createObjectPropertyInstance("nodes"),
 				&owlRotationTransformation,
-				1);
+				1);*/
+
+			OwlInstance owlSceneInstance = createInstance(
+				_importer_t::createClass("scene"),
+				_string::format("scene (%d)", (int)iScene));
+			VERIFY_INSTANCE(owlSceneInstance);
+
+			SetObjectProperty(
+				owlSceneInstance,
+				createObjectPropertyInstance("nodes"),
+				vecNodeInstances.data(),
+				vecNodeInstances.size());
 
 			vecSceneInstances.push_back(owlSceneInstance);
 		} // for (size_t iScene = ...

@@ -149,7 +149,8 @@ namespace _obj2bin
 			assert(m_owlModel != 0);
 		}
 
-		vector<OwlInstance> vecBRepInstances;
+		// Y-up to Z-up transformation
+		//vector<OwlInstance> vecBRepInstances;
 		for (size_t iBRep = 0; iBRep < m_vecBReps.size(); iBRep++) {
 			auto pBRep = m_vecBReps[iBRep];
 			VERIFY_POINTER(pBRep);
@@ -236,10 +237,12 @@ namespace _obj2bin
 					"material"),
 				getMaterialInstance(iBRep));
 
-			vecBRepInstances.push_back(owlBRepInstance);
+			// Y-up to Z-up transformation
+			//vecBRepInstances.push_back(owlBRepInstance);
 		} // for (size_t iBRep = ...
 
-		OwlInstance owlCollectionInstance = CreateInstance(
+		// Y-up to Z-up transformation
+		/*OwlInstance owlCollectionInstance = CreateInstance(
 			GetClassByName(m_owlModel, 
 				"Collection"));
 		assert(owlCollectionInstance != 0);
@@ -285,7 +288,7 @@ namespace _obj2bin
 			owlTransformationInstance, 
 			GetPropertyByName(m_owlModel, "object"), 
 			&owlCollectionInstance, 
-			1);
+			1);*/
 
 		SaveModel(m_owlModel, m_strOutputFile.c_str());
 	}
