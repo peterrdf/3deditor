@@ -15,6 +15,15 @@ namespace _obj2bin
 	static const char default_color_name[] = "Default Color";
 
 	// ********************************************************************************************
+	static void matrixIdentity(_matrix* pM)
+	{
+		assert(pM != nullptr);
+
+		memset(pM, 0, sizeof(_matrix));
+
+		pM->_11 = pM->_22 = pM->_33 = 1.;
+	}
+
 	static void	matrixRotateByEulerAngles(
 		_matrix* matrix,
 		double	alpha,
@@ -247,8 +256,8 @@ namespace _obj2bin
 		VERIFY_INSTANCE(owlMatrixInstance != 0);
 
 		_matrix matrix;
-		memset(&matrix, 0, sizeof(_matrix));
-		matrixRotateByEulerAngles(&matrix, 2 * PI * -90. / 360., 0., 0.);
+		matrixIdentity(&matrix);
+		matrixRotateByEulerAngles(&matrix, 2 * PI * 90. / 360., 0., 0.);
 
 		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_11"), &matrix._11, 1);
 		SetDatatypeProperty(owlMatrixInstance, GetPropertyByName(m_owlModel, "_12"), &matrix._12, 1);

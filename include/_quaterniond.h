@@ -67,8 +67,12 @@ public: // Methods
 
     // Quaternion to Euler Angles Conversion
     // yaw (Z), pitch (Y), roll (X) - radians
-    void toEulerAngle(double& roll, double& pitch, double& yaw)
+    void toEulerAngles(double& roll, double& pitch, double& yaw)
     {
+		roll = 0.;
+		pitch = 0.;
+		yaw = 0.;
+
         // roll (x-axis rotation)
         double sinr_cosp = +2.0 * (w() * x() + y() * z());
         double cosr_cosp = +1.0 - 2.0 * (x() * x() + y() * y());
