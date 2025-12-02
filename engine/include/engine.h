@@ -1843,7 +1843,11 @@ static	inline	char	* EncodeBase64(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	char	* output = (char*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(char));
+#else
 	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
+#endif
 
 	EncodeBase64(
 			output,
@@ -1910,7 +1914,11 @@ static	inline	wchar_t	* EncodeBase64W(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	wchar_t * output = (wchar_t*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(wchar_t));
+#else
 	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
+#endif
 
 	EncodeBase64W(
 			output,
