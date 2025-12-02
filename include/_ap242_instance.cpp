@@ -12,7 +12,12 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
     auto pProductDeifnition = getProductDefinition();
 
     wchar_t szBuffer[512];
-    swprintf(szBuffer, 512, L"#%lld %s %s", pProductDeifnition->getExpressID(), pProductDeifnition->getProductName(), L"(product)");
+    if (pProductDeifnition != nullptr) {
+        swprintf(szBuffer, 512, L"#%lld %s %s", pProductDeifnition->getExpressID(), pProductDeifnition->getProductName(), L"(product)");
+    }
+	else {
+        swprintf(szBuffer, 512, L"#%lld", pGeometry->getExpressID());
+	}    
 
     m_strName = szBuffer;
 }
