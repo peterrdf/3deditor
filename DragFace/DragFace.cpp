@@ -133,9 +133,30 @@ DragFace::~DragFace()
 /// <summary>
 /// 
 /// </summary>
+void DragFace::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
+{
+    va_list args;
+    va_start(args, msgFormat);
+
+    CStringA msg;
+    msg.FormatV(msgFormat, args);
+
+    va_end(args);
+
+    if (m_logger) {
+        m_logger(level, msg, m_hostData);
+    }
+    else {
+        OutputDebugStringA(msg);
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
 void DragFace::AssertIsClean()
 {
-    ASSERT(!m_instance && !m_changedProperty && isnan(m_oldValue) && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+    assert(!m_instance && !m_changedProperty && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
 
 /// <summary>
@@ -143,6 +164,8 @@ void DragFace::AssertIsClean()
 /// </summary>
 void DragFace::Cleanup()
 {
+    m_logger = NULL;
+    m_hostData = NULL;
     m_instance = NULL;
     m_activeProperties.clear();
     m_changedProperty = NULL;
@@ -157,10 +180,13 @@ void DragFace::Cleanup()
 /// <summary>
 /// 
 /// </summary>
-bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint)
+bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
-    TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
-    TRACE("   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
+    m_logger = logger;
+    m_hostData = hostData;
+
+    Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
+    Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
 
     AssertIsClean();
     Cleanup();
@@ -178,11 +204,11 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
             return true;
         }
         else {
-            LogError("No effective properties found for dragging");
+            Log(RDFGEOM_LOG_LEVEL::ERR, "No effective properties found for dragging");
         }
     }
     else {
-        LogError("Failed to find normal at start drag point");
+        Log(RDFGEOM_LOG_LEVEL::ERR, "Failed to find normal at start drag point");
     }
 
     Cleanup();
@@ -197,10 +223,12 @@ void DragFace::Dragging(SEGMENT3 const& targetLine)
     if (!m_instance)
         return;
 
-    TRACE(__FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
+/*
+    Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
         targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z,
         targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z
     );
+    */
 
     SEGMENT3 targetPoints;
     if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
@@ -268,7 +296,7 @@ void DragFace::UpdateDynamicDraw(const SEGMENT3& targetPoints)
         auto& pt = targetPoints.pt[i];
 
         GEOM::Matrix* M = const_cast<GEOM::Matrix*>(m_drawTargetPoints[i].get_matrix());
-        ASSERT(M);
+        assert(M);
         if (M) {
             M[0].set__41(pt.x);
             M[0].set__42(pt.y);
@@ -458,7 +486,7 @@ RdfProperty DragFace::GetActivePropertyByIterator(RdfProperty prev, double& effe
         if (it != m_activeProperties.end()) {
             it++;
         }
-        else assert(false);
+        else Log(RDFGEOM_LOG_LEVEL::ERR, __FUNCTION__ ": property is not in list");
     }
 
     if (it != m_activeProperties.end()) {
@@ -481,5 +509,5 @@ void DragFace::RemoveActiveProperty(RdfProperty prop)
             return;
         }
     }
-    assert(!"property not found");
+    Log(RDFGEOM_LOG_LEVEL::ERR, __FUNCTION__ ": property not found");
 }

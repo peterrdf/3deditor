@@ -8,7 +8,7 @@ class DragFace
         ~DragFace ();
 
         //call to start dragging operation
-        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint);
+        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData);
 
         //list properties detected as useful for drag 
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
@@ -42,7 +42,7 @@ class DragFace
     private:
         void Cleanup();
         void AssertIsClean();
-        void LogError(const char*) { assert(false); }
+        void Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...);
 
         void PrepareDynamicDraw ();
         void UpdateDynamicDraw (const SEGMENT3& targetPoints);
@@ -56,6 +56,9 @@ class DragFace
         double StandardStep(double oldValue);
 
     private:
+        RDFGEOM_CALLBACK_LOG m_logger;
+        void*                m_hostData;
+
         OwlInstance          m_instance;
         SEGMENT3             m_startNormal;   //start drag point and point at normal direction
 

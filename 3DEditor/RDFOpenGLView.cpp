@@ -294,7 +294,10 @@ void CRDFOpenGLView::EndDrag(bool accept)
 					m_dragFace.StartDrag(
 						m_pPointedInstance->getOwlInstance(),
 						(int)m_iPointedFace,
-						startDragPoint);
+						startDragPoint,
+                        CRDFModel::RdfgeomLogCallback,
+                        getController()->getModel()
+					);
 
 					if (m_dragFace.IsActive()) {
 						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
