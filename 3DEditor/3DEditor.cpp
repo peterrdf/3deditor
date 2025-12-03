@@ -7,9 +7,10 @@
 #include "afxdialogex.h"
 #include "3DEditor.h"
 #include "MainFrm.h"
-
 #include "3DEditorDoc.h"
 #include "3DEditorView.h"
+
+#include "version.h"
 
 #include <iostream>
 
@@ -301,7 +302,11 @@ CString CAboutDlg::GetVersionInfo(LPCTSTR lpszKey)
 
 void CAboutDlg::UpdateVersionInfo()
 {	
-	CString strProductVersion = GetVersionInfo(_T("ProductVersion"));
+	wchar_t* szRevision = nullptr;
+	auto iRevision = GetRevisionW(&szRevision);
+	CString strProductVersion;
+	strProductVersion.Format(L"%d.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, iRevision);
+	//CString strProductVersion = GetVersionInfo(_T("ProductVersion"));
 	CString strProductName = GetVersionInfo(_T("ProductName"));
 	if (!strProductName.IsEmpty() && !strProductVersion.IsEmpty()) {
 		CString strVersionText;
