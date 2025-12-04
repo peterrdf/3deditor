@@ -19,8 +19,6 @@ public:  // Methods
     _ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
     virtual ~_ap242_instance();
 
-public:  // Properties
-
 public: // Properties
 
     // _instance

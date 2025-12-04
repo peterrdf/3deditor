@@ -32,6 +32,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
+	, m_dragFace()
 {
 	assert(pWnd != nullptr);
 
@@ -173,24 +174,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	DrawFacesFrameBuffer();
 }
 
-
-void CRDFOpenGLView::EndDrag(bool accept)
-{
-	//finish dragging
-	auto dynamicInstance = m_dragFace.GetDynamicDraw();
-	printf("Dynamic instance ID: %lld\n", dynamicInstance);
-
-	//TODO DRAG FACE - cleanup drawing of dynamicInstance - if needed
-
-	auto modifiedInstance = m_dragFace.FinishDrag(accept);
-	printf("Modified instance ID: %lld\n", modifiedInstance);
-
-	//TODO DRAG FACE - avoid reloading entire model, just update modifiedInstance
-	_ptr<_rdf_model>(getController()->getModel())->reload();
-	getController()->onModelUpdated();
-}
-
-
 /*virtual*/ void CRDFOpenGLView::_onMouseLButtonDown(const CPoint& /*point*/) /*override*/
 {
 	if (m_dragFace.IsActive()) {
@@ -251,25 +234,26 @@ void CRDFOpenGLView::EndDrag(bool accept)
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
-	// #dragface
 	if (m_dragFace.IsActive()) {
-		//update dragging position
+		// Update dragging position
 		SEGMENT3 targetLine;
 		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
-			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
-
-				auto dynamicInstance = m_dragFace.GetDynamicDraw();
-
-				//TODO DRAG FACE - cleanup draw old dynamicInstance - if needed
-
+			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {				
 				m_dragFace.Dragging(targetLine);
 
-				dynamicInstance = m_dragFace.GetDynamicDraw();
+				auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
+				TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
 
-				//TODO DRAG FACE - only draw of dynamicInstance, avoid reloading entire model
-				_ptr<_rdf_model>(getController()->getModel())->reload();
-				getController()->onModelUpdated();
-
+				_ptr<_rdf_model> rdfModel(getController()->getModel());
+				auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
+				if (pRdfInstance != nullptr) {
+					pRdfInstance->recalculate();
+				}
+				else {
+					rdfModel->loadNewInstances();
+				}
+				
+				_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 			}
 		}
 	}
@@ -280,7 +264,6 @@ void CRDFOpenGLView::EndDrag(bool accept)
 				GLdouble dY = 0.;
 				GLdouble dZ = 0.;
 				if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
-
 					_vector3d vecVertexBufferOffset;
 					GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
 
@@ -303,6 +286,9 @@ void CRDFOpenGLView::EndDrag(bool accept)
 						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
 						if (IDOK != dlg.DoModal()) {
 							m_dragFace.FinishDrag(false);
+						}
+						else {
+							_ptr<_rdf_controller>(getController())->onInteractiveEditStart(this);
 						}
 					}
 				}
@@ -1669,6 +1655,29 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 	}
 
 	return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+}
+
+void CRDFOpenGLView::EndDrag(bool accept)
+{
+	// Finish dragging
+	auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
+	TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
+
+	_ptr<_rdf_model> rdfModel(getController()->getModel());
+	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
+	ASSERT(pRdfInstance != nullptr);
+	_ptr<_rdf_controller>(getController())->deleteInstance(this, pRdfInstance);
+
+	_ptr<_rdf_controller>(getController())->onInteractiveEditEnd(this);
+
+	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
+	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
+
+	pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
+	ASSERT(pRdfInstance != nullptr);
+	pRdfInstance->recalculate();
+
+	getController()->onModelUpdated();	
 }
 
 void CRDFOpenGLView::_test_SetRotation(float fX, float fY, BOOL bRedraw)

@@ -13,6 +13,8 @@
 #define __RDF_LTD__RDFGEOM_H
 
 
+#include    <cmath>
+
 #include    "engine.h"
 
 
@@ -49,7 +51,7 @@
     struct RAY3
     {
         VECTOR3    org;
-        VECTOR3    dir;//normalized direction
+        VECTOR3    dir; //  normalized direction
     };
 
     //
@@ -71,10 +73,10 @@
     //
     struct MATRIX 
     {
-	double	_11, _12, _13,
-			_21, _22, _23,
-			_31, _32, _33,
-			_41, _42, _43;
+	    double	_11, _12, _13,
+			    _21, _22, _23,
+			    _31, _32, _33,
+			    _41, _42, _43;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,9 +116,9 @@
     // Base geometry functions
     //
 
-static	inline		double	Sqr(
-										double		value
-									)
+static	inline  double	Sqr(
+								double		                value
+							)
 {
 	return value * value;
 }
@@ -124,7 +126,6 @@ static	inline		double	Sqr(
 //
 //	Vector2
 //
-
 
 void	Vec2Transform(
 				VECTOR2						* pInOut,
@@ -138,60 +139,60 @@ void	Vec2Transform(
 			);
 
 
-static	inline		void	Vec2Add(
-										VECTOR2						* pOut,
-										const VECTOR2				* pV1,
-										const VECTOR2				* pV2
-									)
+static	inline  void	Vec2Add(
+								VECTOR2						* pOut,
+								const VECTOR2				* pV1,
+								const VECTOR2				* pV2
+							)
 {
 	pOut->u = pV1->u + pV2->u;
 	pOut->v = pV1->v + pV2->v;
 }
 
-static	inline		double	Vec2DistanceSqr(
-										const VECTOR2				* pV1,
-										const VECTOR2				* pV2
-									)
+static	inline  double	Vec2DistanceSqr(
+								const VECTOR2				* pV1,
+								const VECTOR2				* pV2
+							)
 {
 	return Sqr(pV1->u - pV2->u) + Sqr(pV1->v - pV2->v);
 }
 
-static	inline		double	Vec2Distance(
-										const VECTOR2				* pV1,
-										const VECTOR2				* pV2
-									)
+static	inline  double	Vec2Distance(
+								const VECTOR2				* pV1,
+								const VECTOR2				* pV2
+							)
 {
-	return sqrt(
-					Vec2DistanceSqr(
-							pV1,
-							pV2
-						)
+	return std::sqrt(
+				Vec2DistanceSqr(
+						pV1,
+						pV2
+					)
 				);
 }
 
-static	inline		double	Vec2Dot(
-										const VECTOR2				* pV
-									)
+static	inline  double	Vec2Dot(
+								const VECTOR2				* pV
+							)
 {
 	return pV->u * pV->u + pV->v * pV->v;
 }
 
-static	inline		double	Vec2Dot(
-										const VECTOR2				* pV1,
-										const VECTOR2				* pV2
-									)
+static	inline  double	Vec2Dot(
+								const VECTOR2				* pV1,
+								const VECTOR2				* pV2
+							)
 {
 	return pV1->u * pV2->u + pV1->v * pV2->v;
 }
 
-static	inline		double	Vec2Normalize(
-										VECTOR2						* pInOut
-									)
+static	inline  double	Vec2Normalize(
+								VECTOR2						* pInOut
+							)
 {
 	double	size = Sqr(pInOut->u) + Sqr(pInOut->v);
 	
 	if (size > 0.0000000000000001) {
-		double	sqrtSize = sqrt(size);
+		double	sqrtSize = std::sqrt(size);
 
 		pInOut->u /= sqrtSize;
 		pInOut->v /= sqrtSize;
@@ -209,36 +210,47 @@ static	inline		double	Vec2Normalize(
 //	Vector3
 //
 
-inline double* Vec3Coordinates(VECTOR3& vec) { return &(vec.x); }
-inline const double* Vec3Coordinates(const VECTOR3& vec) { return &(vec.x); }
+inline  double      * Vec3Coordinates(
+                                VECTOR3&                        vec
+                            )
+{
+    return &(vec.x);
+}
 
-static inline void    Vec3Init(
-							VECTOR3& vec,
-							double	 x = 0,
-							double   y = 0,
-						    double   z = 0
-						)
+inline  const   double* Vec3Coordinates(
+                                const VECTOR3&              vec
+                            )
+{
+    return &(vec.x);
+}
+
+static  inline  void    Vec3Init(
+							    VECTOR3&                    vec,
+							    double	                    x   = 0,
+							    double                      y   = 0,
+						        double                      z   = 0
+						    )
 {
 	vec.x = x;
 	vec.y = y;
 	vec.z = z;
 }
 
-static inline void    Vec3Init(
-							VECTOR3&        vec,
-							const double	xyz[3]
-						)
+static  inline  void    Vec3Init(
+							    VECTOR3&                    vec,
+							    const double	            xyz[3]
+						    )
 {
 	double	* coord = Vec3Coordinates(vec);
 	for (int i = 0; i < 3; i++)
 		coord[i] = xyz[i];
 }
 
-static inline VECTOR3 Vec3Make(
-                            double	 x = 0,
-                            double   y = 0,
-                            double   z = 0
-                        )
+static  inline  VECTOR3 Vec3Make(
+                                double                      x   = 0,
+                                double                      y   = 0,
+                                double                      z   = 0
+                            )
 {
     VECTOR3 vec;
     vec.x = x;
@@ -247,32 +259,32 @@ static inline VECTOR3 Vec3Make(
     return vec;
 }
 
-static inline VECTOR3 Vec3Make(
-                            double    xyz[3]
-                        )
+static  inline  VECTOR3 Vec3Make(
+                                double                      xyz[3]
+                            )
 {
     VECTOR3 vec;
     Vec3Init(vec, xyz);
     return vec;
 }
 
-static	inline		void	Vec3Identity(
-										VECTOR3						* pV
-									)
+static	inline  void	Vec3Identity(
+								VECTOR3						* pV
+							)
 {
 	pV->x = 0.;
 	pV->y = 0.;
 	pV->z = 0.;
 }
 
-static	inline		double	Vec3Normalize(
-										VECTOR3						* pInOut
-									)
+static	inline  double	Vec3Normalize(
+								VECTOR3						* pInOut
+							)
 {
 	double	size = Sqr(pInOut->x) + Sqr(pInOut->y) + Sqr(pInOut->z);
 
 	if (size > 0.0000000000000001) {
-		double	sqrtSize = sqrt(size);
+		double	sqrtSize = std::sqrt(size);
 
 		pInOut->x /= sqrtSize;
 		pInOut->y /= sqrtSize;
@@ -289,30 +301,26 @@ static	inline		double	Vec3Normalize(
 	}
 }
 
-static inline double Vec3Normalize (VECTOR3& vInOut)
+static  inline  double  Vec3Normalize(
+                                VECTOR3&                    vInOut
+                            )
 {
     return Vec3Normalize(&vInOut);
 }
 
-static	inline		void	Vec3Invert(
-										VECTOR3						* pV
-									)
+static	inline  void	Vec3Invert(
+								VECTOR3						* pV
+							)
 {
 	pV->x = - pV->x;
 	pV->y = - pV->y;
 	pV->z = - pV->z;
 }
 
-//void	Vec3Transform(
-//				VECTOR3						* pInOut,
-//				const MATRIX				* pM
-//			);
-
-
-static inline void	Vec3Transform(
-				VECTOR3			* pInOut,
-				const MATRIX	* pM
-			)
+static  inline  void	Vec3Transform(
+				                VECTOR3			            * pInOut,
+				                const MATRIX	            * pM
+			                )
 {
 	double	x = pInOut->x * pM->_11 + pInOut->y * pM->_21 + pInOut->z * pM->_31 + pM->_41,
 			y = pInOut->x * pM->_12 + pInOut->y * pM->_22 + pInOut->z * pM->_32 + pM->_42;
@@ -322,11 +330,11 @@ static inline void	Vec3Transform(
 	pInOut->y = y;
 }
 
-static inline void	Vec3Transform(
-				VECTOR3			* pOut,
-				const VECTOR3	* pV,
-				const MATRIX	* pM
-			)
+static  inline  void	Vec3Transform(
+				                VECTOR3			            * pOut,
+				                const VECTOR3               * pV,
+				                const MATRIX                * pM
+			                )
 {
 	VECTOR3	pTmp;
 
@@ -358,49 +366,53 @@ void	Vec3TransformNoTranslation(
 				bool						invertNormal
 			);
 
-static	inline		void	Vec3Add(
-										VECTOR3						* pOut,
-										const VECTOR3				* pV
-									)
+
+static	inline  void	Vec3Add(
+								VECTOR3						* pOut,
+								const VECTOR3				* pV
+							)
 {
 	pOut->x += pV->x;
 	pOut->y += pV->y;
 	pOut->z += pV->z;
 }
 
-static	inline		void	Vec3Add(
-										VECTOR3						* pOut,
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static	inline  void	Vec3Add(
+								VECTOR3						* pOut,
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
 {
 	pOut->x = pV1->x + pV2->x;
 	pOut->y = pV1->y + pV2->y;
 	pOut->z = pV1->z + pV2->z;
 }
 
-static inline VECTOR3 operator+(const VECTOR3& v1, const VECTOR3& v2)
+static  inline  VECTOR3 operator+(
+                                const VECTOR3&              v1,
+                                const VECTOR3&              v2
+                            )
 {
     VECTOR3 result = v1;
     Vec3Add(&result, &v2);
     return result;
 }
 
-static	inline		void	Vec3Subtract(
-										VECTOR3						* pInOut,
-										const VECTOR3				* pV
-									)
+static	inline  void	Vec3Subtract(
+								VECTOR3						* pInOut,
+								const VECTOR3				* pV
+							)
 {
 	pInOut->x -= pV->x;
 	pInOut->y -= pV->y;
 	pInOut->z -= pV->z;
 }
 
-static	inline		void	Vec3Subtract(
-										VECTOR3						* pOut,
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static	inline  void	Vec3Subtract(
+								VECTOR3						* pOut,
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
 {
 	assert(pOut != pV1);
 
@@ -409,7 +421,10 @@ static	inline		void	Vec3Subtract(
 	pOut->z = pV1->z - pV2->z;
 }
 
-static inline VECTOR3 operator-(const VECTOR3& v1, const VECTOR3& v2)
+static  inline  VECTOR3 operator-(
+                                const VECTOR3&              v1,
+                                const VECTOR3&              v2
+                            )
 {
     VECTOR3 result = v1;
     Vec3Subtract(&result, &v2);
@@ -417,19 +432,24 @@ static inline VECTOR3 operator-(const VECTOR3& v1, const VECTOR3& v2)
 }
 
 
-static inline VECTOR3 operator*(const VECTOR3& v, double scalar)
+static  inline  VECTOR3 operator*(
+                                const VECTOR3&              v,
+                                double                      scalar
+                            )
 {
-    VECTOR3 result;
-    result.x = v.x * scalar;
-    result.y = v.y * scalar;
-    result.z = v.z * scalar;
+    VECTOR3 result = {
+                    v.x * scalar,
+                    v.y * scalar,
+                    v.z * scalar
+                };
+
     return result;
 }
 
-static	inline		double	Vec3Dot(
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static	inline	double	Vec3Dot(
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
 {
 	assert(pV1 != pV2);
 
@@ -438,44 +458,54 @@ static	inline		double	Vec3Dot(
 	return dotProduct;
 }
 
-static inline   double Vec3Dot(const VECTOR3& v1, const VECTOR3& v2)
+static  inline  double  Vec3Dot(
+                                const VECTOR3&              v1,
+                                const VECTOR3&              v2
+                            )
 {
     return Vec3Dot(&v1, &v2);
 }
 
-static	inline		void	Vec3Cross(
-										VECTOR3						* pOut,
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static	inline  void	Vec3Cross(
+								VECTOR3						* pOut,
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
 {
-	VECTOR3 v;
+    VECTOR3 v = {
+	                pV1->y * pV2->z - pV1->z * pV2->y,
+	                pV1->z * pV2->x - pV1->x * pV2->z,
+	                pV1->x * pV2->y - pV1->y * pV2->x
+                };
 
-	v.x = pV1->y * pV2->z - pV1->z * pV2->y;
-	v.y = pV1->z * pV2->x - pV1->x * pV2->z;
-	v.z = pV1->x * pV2->y - pV1->y * pV2->x;
 
 	pOut->x = v.x;
 	pOut->y = v.y;
 	pOut->z = v.z;
 }
 
-static	inline		double	Vec3DistanceSqr(
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static	inline  double	Vec3DistanceSqr(
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
 {
 	return Sqr(pV1->x - pV2->x) + Sqr(pV1->y - pV2->y) + Sqr(pV1->z - pV2->z);
 }
 
-static  inline double Vec3dDistanceSqr(const VECTOR3& pt1, const VECTOR3& pt2) { return Vec3DistanceSqr(&pt1, &pt2); }
-
-static	inline		double	Vec3Distance(
-										const VECTOR3				* pV1,
-										const VECTOR3				* pV2
-									)
+static  inline  double  Vec3dDistanceSqr(
+                                const VECTOR3& pt1,
+                                const VECTOR3& pt2
+                            )
 {
-	return sqrt(
+    return  Vec3DistanceSqr(&pt1, &pt2);
+}
+
+static	inline  double	Vec3Distance(
+								const VECTOR3				* pV1,
+								const VECTOR3				* pV2
+							)
+{
+	return std::sqrt(
 					Vec3DistanceSqr(
 							pV1,
 							pV2
@@ -483,26 +513,31 @@ static	inline		double	Vec3Distance(
 				);
 }
 
-static	inline		double	Vec3LengthSqr(
-    const VECTOR3* pV
-)
+static	inline  double	Vec3LengthSqr(
+                                const VECTOR3               * pV
+                            )
 {
     return Sqr(pV->x) + Sqr(pV->y) + Sqr(pV->z);
 }
 
-static	inline		double	Vec3Length(
-										const VECTOR3				* pV
-									)
+static	inline  double	Vec3Length(
+								const VECTOR3				* pV
+							)
 {
-	return sqrt(Vec3LengthSqr(pV));
+	return std::sqrt(Vec3LengthSqr(pV));
 }
 
-static inline bool Vec3IsUnit(const VECTOR3& v, double eps = 1e-7)
+static  inline  bool    Vec3IsUnit(
+                                const VECTOR3&              v,
+                                double                      eps     = 1e-7
+                            )
 {
-    return fabs(Vec3LengthSqr(&v)-1) < Sqr(eps);
+    return std::fabs(Vec3LengthSqr(&v)-1) < Sqr(eps);
 }
 
-static inline SEGMENT3 Seg3Make(const double coords[6])
+static  inline   SEGMENT3   Seg3Make(
+                                    const double            coords[6]
+                                )
 {
     SEGMENT3 seg;
     Vec3Init(seg.pt[0], coords);

@@ -41,6 +41,9 @@ public: // Methods
 	virtual void onModelLoaded() override;
 	virtual void onModelUpdated() override;
 
+	// _rdf_view
+	virtual void onInteractiveEditStart(_view* pSender) override;
+
 	// CSearchTreeCtrlDialogSite
 	virtual CTreeCtrlEx* GetTreeView() override;
 	virtual vector<CString> GetSearchFilters() override;

@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef _WINDOWS
 #include "ifcengine.h"
-#else
-#include "../../include/ifcengine.h"
-#endif
 
 #include "_ptr.h"
 #include "_mvc.h"
@@ -57,7 +53,7 @@ public: // Methods
     bool openModel(const wchar_t* szPath);
     void attachModel(const wchar_t* szPath, SdaiModel sdaiModel, _model* pWorld);
 
-    _geometry* getGeometryByInstance(SdaiInstance sdaiInstance);
+    _geometry* getGeometryByInstance(SdaiInstance sdaiInstance) const;
     _geometry* getGeometryByExpressID(ExpressID iExpressID) const;
     template<typename T>
     T* getGeometryByExpressIDAs(ExpressID iExpressID) const;
@@ -67,7 +63,9 @@ protected: // Methods
 
     virtual void attachModelCore() = 0;
     virtual void preLoadInstance(OwlInstance owlInstance);
-    void addGeometry(_ap_geometry* pGeometry);
+
+    // _model
+    virtual void addGeometry(_geometry* pGeometry) override;
 
     virtual void clean(bool bCloseModel = true) override;
 

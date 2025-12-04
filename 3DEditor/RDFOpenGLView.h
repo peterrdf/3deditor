@@ -23,11 +23,7 @@ private: // Fields
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
 
-public:
-	//#dragface
-	DragFace  m_dragFace;
-private:
-	void EndDrag(bool accept);
+	DragFace m_dragFace;	
 
 public: // Methods
 	
@@ -54,6 +50,8 @@ public: // Methods
 	virtual void _onMouseMove(const CPoint& point) override;
 	virtual void _onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) override;
 
+	const DragFace& GetDragFace() const { return m_dragFace; }
+
 private: // Methods
 
 	void TransformBBVertex(_vector3d& vecBBVertex, const _matrix* pBBTransformation, const _vector3d& vecVertexBufferOffset, double dScaleFactor);
@@ -65,6 +63,8 @@ private: // Methods
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
+
+	void EndDrag(bool accept);
 
 public:
 

@@ -1,1 +1,3 @@
-#include "../../stdafx.h"
+#ifdef _WINDOWS
+#include "../3DEditor/stdafx.h"
+#endif

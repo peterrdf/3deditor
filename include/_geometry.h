@@ -1,11 +1,6 @@
 #pragma once
 
-#ifdef _WINDOWS
 #include "engine.h"
-#else
-#include "../../include/engine.h"
-#endif
-
 #include "../glew-2.2.0/include/GL/glew.h"
 #ifdef _WINDOWS
 #include "wglew.h"
@@ -229,6 +224,10 @@ public: // Methods
         float& fXmin, float& fXmax,
         float& fYmin, float& fYmax,
         float& fZmin, float& fZmax) const;
+
+    void calculateUVMinMax(
+        float& fUmin, float& fUmax,
+        float& fVmin, float& fVmax) const;
 
     void scale(float fScaleFactor);
     void translate(float fX, float fY, float fZ);

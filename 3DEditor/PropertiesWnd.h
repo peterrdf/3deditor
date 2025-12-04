@@ -209,6 +209,8 @@ public: // Methods
 	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancesDeleted(_view* pSender) override;
+	virtual void onInteractiveEditStart(_view* pSender) override;
+	virtual void onInteractiveEditEnd(_view* pSender) override;
 
 protected: // Methods
 	

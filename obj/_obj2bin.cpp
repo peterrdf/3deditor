@@ -1,8 +1,8 @@
 #include "_host.h"
 #include "_obj2bin.h"
 
-#include "../parsers/_errors.h"
-#include "../parsers/_string.h"
+#include "_errors.h"
+#include "_string.h"
 
 // ************************************************************************************************
 namespace _obj2bin

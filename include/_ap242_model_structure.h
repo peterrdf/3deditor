@@ -10,11 +10,23 @@ using namespace std;
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
 
 // ************************************************************************************************
+enum class _ap242_node_type : int
+{
+	ProductDefinition = 0,
+	Assembly,
+	ProductInstance,
+	DraughtingModel,
+	AnnotationPlane,
+	DraughtingCallout,
+};
+
+// ************************************************************************************************
 class _ap242_node
 {
 
 private: // Members
 
+	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
 	string m_strId;
 	_ap242_node* m_pParent;
@@ -22,11 +34,12 @@ private: // Members
 
 public: // Methods
 
-	_ap242_node(SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode);
+	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode);
 	virtual ~_ap242_node();
 
 public: // Properties
 
+	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	const string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }

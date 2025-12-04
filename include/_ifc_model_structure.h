@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 using namespace std;
 
 // ************************************************************************************************
@@ -30,7 +31,7 @@ public: // Properties
 
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	_ifc_node* getParent() const { return m_pParent; }
-	virtual wchar_t* getGlobalId() const;
+	virtual const wchar_t* getGlobalId() const;
 	vector<_ifc_node*>& children() { return m_vecChildren; }
 };
 
@@ -44,7 +45,7 @@ public: // Methods
 
 public: // Properties
 
-	virtual wchar_t* getGlobalId() const override { return DECOMPOSITION_NODE; }
+	virtual const wchar_t* getGlobalId() const override { return DECOMPOSITION_NODE; }
 };
 
 // ************************************************************************************************
@@ -58,7 +59,7 @@ public: // Methods
 
 public: // Properties
 
-	virtual wchar_t* getGlobalId() const override { return CONTAINS_NODE; }
+	virtual const wchar_t* getGlobalId() const override { return CONTAINS_NODE; }
 };
 
 // ************************************************************************************************
@@ -69,6 +70,7 @@ private: // Members
 
 	_ifc_model* m_pModel;
 	_ifc_node* m_pProjectNode;
+	map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
 
 public: // Methods
 
@@ -87,6 +89,8 @@ protected: // Methods
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadContainsElements(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadBoundedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+	void loadHasOpenings(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void clean();
 

@@ -238,6 +238,26 @@ void _rdf_model::importModel(const wchar_t* szPath)
 	load();
 }
 
+void _rdf_model::loadNewInstances()
+{
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		auto itInstance = m_mapInstances.find(owlInstance);
+		if (itInstance == m_mapInstances.end()) {
+			m_mapInstanceDefaultState[owlInstance] = true;
+
+			auto pGeometry = new _rdf_geometry(owlInstance);
+			addGeometry(pGeometry);
+
+			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			addInstance(pInstance);
+		}
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	} // while (owlInstance != 0)
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);
@@ -733,6 +753,7 @@ _rdf_controller::_rdf_controller()
 	, m_bShowProgressDialog(false)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
+	, m_bInteractiveEditInProgress(false)
 {}
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
@@ -747,9 +768,16 @@ _rdf_controller::_rdf_controller()
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
 {
-	for (auto pDecoration : getDecorationModels()) {
-		_ptr<_decoration>(pDecoration)->onModelUpdated();
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
 	}
+
+	if (!m_bInteractiveEditInProgress) {
+		for (auto pDecoration : getDecorationModels()) {
+			_ptr<_decoration>(pDecoration)->onModelUpdated();
+		}
+	}	
 
 	_controller::onModelUpdated();
 }
@@ -1050,6 +1078,32 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		_ptr<_rdf_view> rdfView(*itView, false);
 		if (rdfView) {
 			rdfView->onInstancePropertyEdited(pSender, pInstance, pProperty);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditStart(_view* pSender)
+{
+	m_bInteractiveEditInProgress = true;
+	
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditStart(pSender);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditEnd(_view* pSender)
+{
+	m_bInteractiveEditInProgress = false;
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditEnd(pSender);
 		}
 	}
 }
@@ -1419,8 +1473,9 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 	, m_pController(pController)
 {
 	assert(m_pController != nullptr);
-
+#ifdef _WINDOWS
 	create(WORLD_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
@@ -1457,7 +1512,9 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _world_coordinate_system_model::onModelUpdated() /*override*/
 {
+#ifdef _WINDOWS
 	create(WORLD_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ void _world_coordinate_system_model::preLoad() /*override*/
@@ -1497,8 +1554,9 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 	, m_pController(pController)
 {
 	assert(m_pController != nullptr);
-
+#ifdef _WINDOWS
 	create(MODEL_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
@@ -1506,7 +1564,9 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
+#ifdef _WINDOWS
 	create(MODEL_COORDINATE_SYSTEM);
+#endif // _WINDOWS
 }
 
 /*virtual*/ void _model_coordinate_system_model::preLoad() /*override*/
@@ -1856,13 +1916,13 @@ void _navigator_model::create()
 			1., 1., 1.);
 		SetNameOfInstance(owlInstance, "#back-bottom-right");
 	}
-#endif
 
 	createLabels(owlModel);
 
 	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
 
 	attachModel(NAVIGATOR, owlModel);
+#endif
 }
 
 void _navigator_model::createLabels(OwlModel owlModel)

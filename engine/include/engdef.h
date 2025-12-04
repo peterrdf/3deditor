@@ -150,5 +150,15 @@
 	#endif
 #endif
 
+		enum class enum_error_code : unsigned char {
+			OK = 0,
+			INVALID_ARGUMENTS,
+			INVALID_DATA_TYPE,
+            NOT_FOUND,
+			UNKNOWN_ERROR = 255
+		};
+
+
+        typedef unsigned char Byte;
 
 #endif

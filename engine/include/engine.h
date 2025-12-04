@@ -1843,7 +1843,11 @@ static	inline	char	* EncodeBase64(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	char	* output = (char*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(char));
+#else
 	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
+#endif
 
 	EncodeBase64(
 			output,
@@ -1910,7 +1914,11 @@ static	inline	wchar_t	* EncodeBase64W(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	wchar_t * output = (wchar_t*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(wchar_t));
+#else
 	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
+#endif
 
 	EncodeBase64W(
 			output,
@@ -4941,6 +4949,27 @@ int64_t			DECL STDC	SetDatatypeProperty(
 									int64_t					card
 								);
 
+//
+//		SetDatatypePropertyDerived                        (https://rdf.bg/gkdoc/CP64/SetDatatypePropertyDerived.html)
+//				RdfsResource			rdfsResource						IN
+//				OwlDatatypeProperty		owlDatatypeProperty					IN
+//				const void				* values							IN
+//				int64_t					card								IN
+//				bool					derived							IN	
+//
+//				int64_t					returns								OUT
+// 
+//		Similar to SetDatatypeProperty, but with an extra parameter 'derived' to indicate if the property is derived or not.
+//
+int64_t			DECL STDC	SetDatatypePropertyDerived(
+									RdfsResource			rdfsResource,
+									OwlDatatypeProperty		owlDatatypeProperty,
+									const void				* values,
+									int64_t					card,
+									bool					derived
+								);
+
+
 #ifdef __cplusplus
 	}
 //{{ Begin C++ polymorphic versions
@@ -5217,6 +5246,26 @@ int64_t			DECL STDC	SetObjectProperty(
 									OwlObjectProperty		owlObjectProperty,
 									const RdfsResource		* values,
 									int64_t					card
+								);
+
+//
+//		SetObjectPropertyDerived                                (https://rdf.bg/gkdoc/CP64/SetObjectPropertyDerived.html)
+//				RdfsResource			rdfsResource						IN
+//				OwlObjectProperty		owlObjectProperty					IN
+//				const RdfsResource		* values							IN
+//				int64_t					card								IN
+//				bool					derived								IN
+//
+//				int64_t					returns								OUT
+//
+//		Similar to SetObjectProperty, but with an extra parameter 'derived' to indicate if the property is derived or not.
+//
+int64_t			DECL STDC	SetObjectPropertyDerived(
+									RdfsResource			rdfsResource,
+									OwlObjectProperty		owlObjectProperty,
+									const RdfsResource		* values,
+									int64_t					card,
+									bool					derived
 								);
 
 #ifdef __cplusplus
@@ -5679,7 +5728,7 @@ static	inline	int64_t	CalculateInstance(
 //
 //	This function prepares the content to be ready without filling the buffers
 //	as done within CalculateInstance(). CalculateInstance calls this function as a start.
-//	This function will also set the 'derived' values for the instance passed as argument.
+//	This function will also set the derived values for the instance passed as argument.
 //	For example the coordinates values of a MultiplicationMatrix will be set if the array is
 //	defined.
 //
@@ -5703,32 +5752,44 @@ bool			DECL STDC	IsUpToDate(
 								);
 
 //
-//		GetClassModificationMark                               (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
+//		IsPropertyDerived										(https://rdf.bg/gkdoc/CP64/IsPropertyDerived.html)
+//				OwlInstance				owlInstance							IN
+//
+//				bool					returns								OUT
+//
+//	This function returns true if instance, class or model has the property set as derived.
+//
+bool			DECL STDC	IsPropertyDerived(
+									RdfsResource			rdfsResource,
+									RdfProperty				property
+								);
+
+//
+//		GetClassModificationMark                                (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
 //				int64_t					returns								OUT
 //
 //	This function returns value that indicated class modification time but it is not the time.
-//  If a class or any of its parents have been modified the value will increase.
-//  If a class or any of its parents have been modified later then another the value will be bigger.
+//	If a class or any of its parents have been modified the value will increase.
+//	If a class or any of its parents have been modified later then another the value will be bigger.
 //
 int64_t			DECL STDC	GetClassModificationMark(
 									OwlClass				owlClass
 								);
 
 //
-//		UpdateClassModificationMark                            (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
+//		UpdateClassModificationMark                             (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
-//				void					returns								OUT
+//				void					returns
 //
 //	This function informs class it has been changed externally.
-//  Application may want to call it when it changed its class external reference data. 
+//	Application may want to call it when it changed its class external reference data. 
 //
 void			DECL STDC	UpdateClassModificationMark(
-	OwlClass				owlClass
-);
-
+									OwlClass				owlClass
+								);
 
 //
 //		InferenceInstance                                       (https://rdf.bg/gkdoc/CP64/InferenceInstance.html)

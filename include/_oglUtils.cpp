@@ -4,10 +4,6 @@
 #include "_string.h"
 #include "_ptr.h"
 
-#ifdef __EMSCRIPTEN__
-#include "../../gisengine/Parsers/_string.h"
-#endif
-
 // ************************************************************************************************
 static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
 {
@@ -2313,6 +2309,7 @@ void _oglView::_drawFaces()
 							// Restore Model-View Matrix
 							if (bRestoreModelViewMatrix) {
 								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+								m_pOGLProgram->_setNormalMatrix(m_matModelView);
 							}
 							continue;
 						}
@@ -2322,6 +2319,7 @@ void _oglView::_drawFaces()
 							// Restore Model-View Matrix
 							if (bRestoreModelViewMatrix) {
 								m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+								m_pOGLProgram->_setNormalMatrix(m_matModelView);
 							}
 							continue;
 						}
@@ -2359,6 +2357,7 @@ void _oglView::_drawFaces()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // auto pInstance : ...			
 		} // for (auto pGeometry : ...
@@ -2435,6 +2434,7 @@ void _oglView::_drawFacesPolygons()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2502,6 +2502,7 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApply
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2569,6 +2570,7 @@ void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSetting
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2649,6 +2651,7 @@ void _oglView::_drawPoints()
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (auto pInstance ...
 		} // for (auto pGeometry ...
@@ -2823,6 +2826,7 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 				// Restore Model-View Matrix
 				if (bRestoreModelViewMatrix) {					
 					m_pOGLProgram->_setModelViewMatrix(m_matModelView);
+					m_pOGLProgram->_setNormalMatrix(m_matModelView);
 				}
 			} // for (size_t iInstance = ...			
 		} // for (auto pGeometry ...
@@ -2834,53 +2838,6 @@ void _oglView::_drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionF
 
 	_oglUtils::checkForErrors();
 }
-
-//bool _oglView::getOGLPos(int iX, int iY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
-//{
-//	CRect rcClient;
-//	m_pWnd->GetClientRect(&rcClient);
-//
-//	GLfloat arModelViewMatrix[16];
-//	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ModelViewMatrix"), arModelViewMatrix);
-//
-//	GLfloat arProjectionMatrix[16];
-//	glGetUniformfv(m_pOGLProgram->_getID(), glGetUniformLocation(m_pOGLProgram->_getID(), "ProjectionMatrix"), arProjectionMatrix);
-//
-//	GLint arViewport[4] = { 0, 0, rcClient.Width(), rcClient.Height() };
-//
-//	GLdouble arModelView[16];
-//	GLdouble arProjection[16];
-//	for (int i = 0; i < 16; i++) {
-//		arModelView[i] = arModelViewMatrix[i];
-//		arProjection[i] = arProjectionMatrix[i];
-//	}
-//
-//	GLdouble dWinX = (double)iX;
-//	GLdouble dWinY = (double)arViewport[3] - (double)iY;
-//
-//	double dWinZ = 0.;
-//	if (fDepth == -FLT_MAX) {
-//		float fWinZ = 0.f;
-//		glReadPixels(iX, (int)dWinY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &fWinZ);
-//
-//		dWinZ = fWinZ;
-//
-//		_oglUtils::checkForErrors();
-//	}
-//	else {
-//		dWinZ = fDepth;
-//	}
-//
-//	if (dWinZ >= 1.) {
-//		return false;
-//	}
-//
-//	GLint iResult = gluUnProject(dWinX, dWinY, dWinZ, arModelView, arProjection, arViewport, &dX, &dY, &dZ);
-//
-//	_oglUtils::checkForErrors();
-//
-//	return iResult == GL_TRUE;
-//}
 
 bool _oglView::getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ)
 {

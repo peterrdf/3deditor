@@ -32,14 +32,14 @@ namespace _eng
 		, m_pMaterialsProperty(nullptr)
 		, m_pTexturesProperty(nullptr)
 		, m_pImagesProperty(nullptr)
-		, m_mapNodes()
-		, m_mapMeshes()
-		, m_mapMaterials()
-		, m_mapTextures()
 		, m_iRootInstance(0)
 		, m_bTextureFlipV(bTextureFlipV)
 		, m_rdfTextureFlipYProperty(0)
 		, m_mapClasses()
+		, m_mapNodes()
+		, m_mapMeshes()
+		, m_mapMaterials()
+		, m_mapTextures()		
 	{
 		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strRootFolder);
 		VERIFY_STLOBJ_IS_NOT_EMPTY(m_strOutputFolder);
@@ -607,7 +607,7 @@ namespace _eng
 
 			convertType<float, double>(vecUVsF, vecUVs);
 			if (m_bTextureFlipV) {
-				textureFlipY<double>(vecUVs);
+				textureFlipV<double>(vecUVs);
 			}
 		}
 		// attributes/TEXCOORD_0 accessor
@@ -1187,7 +1187,6 @@ namespace _eng
 
 		// bufferView
 		int iIndicesOffset = (int)getBINDataOffset();
-		int iIndicesByteLength = 0;
 		string strURI;
 		{
 			auto pBufferViewValue = pIndicesAccessorObject->getPropertyValueAs<_json::_simple>("bufferView");
@@ -1226,8 +1225,6 @@ namespace _eng
 			// byteLength
 			auto pByteLengthValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("byteLength");
 			VERIFY_POINTER(pByteLengthValue);
-
-			iIndicesByteLength = atoi(pByteLengthValue->getValue().c_str());
 
 			// byteOffset
 			auto pBufferViewByteOffsetValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("byteOffset");
@@ -1313,7 +1310,6 @@ namespace _eng
 
 		// bufferView
 		int iVerticesOffset = (int)getBINDataOffset();
-		int iVerticesByteLength = 0;
 		string strURI;
 		{
 			auto pBufferViewValue = pPositionAccessorObject->getPropertyValueAs<_json::_simple>("bufferView");
@@ -1352,8 +1348,6 @@ namespace _eng
 			// byteLength
 			auto pByteLengthValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("byteLength");
 			VERIFY_POINTER(pByteLengthValue);
-
-			iVerticesByteLength = atoi(pByteLengthValue->getValue().c_str());
 
 			// byteOffset
 			auto pBufferViewByteOffsetValue = pBufferViewObject->getPropertyValueAs<_json::_simple>("byteOffset");

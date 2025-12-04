@@ -7,8 +7,7 @@ _ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
 	: m_sdaiInstance(sdaiInstance)
 	, m_pParent(pParentNode)
 	, m_vecChildren()
-{
-}
+{}
 
 /*virtual*/ _ifc_node::~_ifc_node()
 {
@@ -17,7 +16,7 @@ _ifc_node::_ifc_node(SdaiInstance sdaiInstance, _ifc_node* pParentNode)
 	}
 }
 
-wchar_t* _ifc_node::getGlobalId() const
+const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;
 	sdaiGetAttrBN(m_sdaiInstance, "GlobalId", sdaiUNICODE, &szGlobalId);
@@ -29,27 +28,24 @@ wchar_t* _ifc_node::getGlobalId() const
 // ************************************************************************************************
 _ifc_decomposition_node::_ifc_decomposition_node(_ifc_node* pParentNode)
 	: _ifc_node(0, pParentNode)
-{
-}
+{}
 
 /*virtual*/ _ifc_decomposition_node::~_ifc_decomposition_node()
-{
-}
+{}
 
 // ************************************************************************************************
 _ifc_contains_node::_ifc_contains_node(_ifc_node* pParentNode)
 	: _ifc_node(0, pParentNode)
-{
-}
+{}
 
 /*virtual*/ _ifc_contains_node::~_ifc_contains_node()
-{
-}
+{}
 
 // ************************************************************************************************
 _ifc_model_structure::_ifc_model_structure(_ifc_model* pModel)
 	: m_pModel(pModel)
 	, m_pProjectNode(nullptr)
+	, m_mapInstance2Node()
 {
 	assert(m_pModel != nullptr);
 }
@@ -65,19 +61,23 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 	if (pNode == nullptr) {
 		pNode = m_pProjectNode;
 	}
+
 	if (pNode == nullptr) {
 		return;
 	}
+
+	wstring strGlobalId = L"\n";
 	for (int i = 0; i < iLevel; ++i) {
-		TRACE("  ");
+		strGlobalId += L"  ";
 	}
-	wchar_t* szGlobalId = pNode->getGlobalId();
-	if (szGlobalId != nullptr) {
-		TRACE(L"%s\n", szGlobalId);
-	}
-	else {
-		TRACE("(null)\n");
-	}
+
+	const wchar_t* szGlobalId = pNode->getGlobalId();
+	strGlobalId += L"Node GlobalId: ";
+	strGlobalId += szGlobalId != nullptr ? szGlobalId : L"(null)";
+#ifdef _WINDOWS
+	TRACE(L"%s", strGlobalId.c_str());
+#endif
+
 	for (auto pChild : pNode->children()) {
 		print(iLevel + 1, pChild);
 	}
@@ -110,7 +110,10 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 {
 	assert(sdaiProjectInstance != 0);
 	assert(m_pProjectNode == nullptr);
+
 	m_pProjectNode = new _ifc_node(sdaiProjectInstance, nullptr);
+	assert(m_mapInstance2Node.find(sdaiProjectInstance) == m_mapInstance2Node.end());
+	m_mapInstance2Node[sdaiProjectInstance] = m_pProjectNode;
 
 	auto pGeometry = m_pModel->getGeometryByInstance(sdaiProjectInstance);
 	if (pGeometry != nullptr) {
@@ -122,6 +125,8 @@ void _ifc_model_structure::loadProjectNode(SdaiInstance sdaiProjectInstance)
 		loadIsDecomposedBy(m_pProjectNode, sdaiProjectInstance);
 		loadIsNestedBy(m_pProjectNode, sdaiProjectInstance);
 		loadContainsElements(m_pProjectNode, sdaiProjectInstance);
+		loadBoundedBy(m_pProjectNode, sdaiProjectInstance);
+		loadHasOpenings(m_pProjectNode, sdaiProjectInstance);
 	}
 }
 
@@ -239,6 +244,55 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInst
 	} // for (SdaiInteger i = ...
 }
 
+void _ifc_model_structure::loadBoundedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
+{
+	assert(pParentNode != nullptr);
+	assert(sdaiInstance != 0);
+
+	SdaiAggr sdaiBoundedByAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "BoundedBy", sdaiAGGR, &sdaiBoundedByAggr);
+	if (sdaiBoundedByAggr == nullptr) {
+		return;
+	}
+
+	SdaiEntity sdaiRelSpaceBoundaryEntity = sdaiGetEntity(m_pModel->getSdaiModel(), "IFCRELSPACEBOUNDARY");
+	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
+	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i) {
+		SdaiInstance sdaiBoundedByInstance = 0;
+		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+
+		if (sdaiGetInstanceType(sdaiBoundedByInstance) != sdaiRelSpaceBoundaryEntity) {
+			continue;
+		}
+
+		loadInstance(pParentNode, sdaiBoundedByInstance);
+	}
+}
+
+void _ifc_model_structure::loadHasOpenings(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
+{
+	assert(pParentNode != nullptr);
+	assert(sdaiInstance != 0);
+
+	SdaiAggr sdaiHasOpeningsAggr = nullptr;
+	sdaiGetAttrBN(sdaiInstance, "HasOpenings", sdaiAGGR, &sdaiHasOpeningsAggr);
+	if (sdaiHasOpeningsAggr == nullptr) {
+		return;
+	}
+
+	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
+	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i) {
+		SdaiInstance sdaiHasOpeningsInstance = 0;
+		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+		assert(sdaiHasOpeningsInstance != 0);
+
+		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
+		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
+
+		loadInstance(pParentNode, sdaiRelatedOpeningElementInstance);
+	}
+}
+
 void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
 {
 	assert(pParentNode != nullptr);
@@ -251,12 +305,17 @@ void _ifc_model_structure::loadInstance(_ifc_node* pParentNode, SdaiInstance sda
 		assert(pGeometry->getInstances().size() == 1);
 
 		_ifc_node* pInstanceNode = new _ifc_node(sdaiInstance, pParentNode);
+		assert(m_mapInstance2Node.find(sdaiInstance) == m_mapInstance2Node.end());
+		m_mapInstance2Node[sdaiInstance] = pInstanceNode;
+
 		pParentNode->children().push_back(pInstanceNode);
 
 		// decomposition/contains
 		loadIsDecomposedBy(pInstanceNode, sdaiInstance);
 		loadIsNestedBy(pInstanceNode, sdaiInstance);
 		loadContainsElements(pInstanceNode, sdaiInstance);
+		loadBoundedBy(pInstanceNode, sdaiInstance);
+		loadHasOpenings(pInstanceNode, sdaiInstance);
 	}
 }
 
@@ -266,4 +325,6 @@ void _ifc_model_structure::clean()
 		delete m_pProjectNode;
 		m_pProjectNode = nullptr;
 	}
+
+	m_mapInstance2Node.clear();
 }

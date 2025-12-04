@@ -156,7 +156,7 @@ void DragFace::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
 /// </summary>
 void DragFace::AssertIsClean()
 {
-    assert(!m_instance && !m_changedProperty && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+    ASSERT(!m_instance && !m_changedProperty && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
 
 /// <summary>

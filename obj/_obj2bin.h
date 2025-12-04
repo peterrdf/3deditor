@@ -1,20 +1,12 @@
 #pragma once
 
-#ifdef _WINDOWS
 #include "engine.h"
-#else
-#include "../include/engine.h"
-#endif
 
-#include "../parsers/_log.h"
-#include "../parsers/_io.h"
-#include "../parsers/_errors.h"
-#include "../parsers/_reader.h"
-#ifdef _WINDOWS
+#include "_log.h"
+#include "_io.h"
+#include "_errors.h"
+#include "_reader.h"
 #include "_material.h"
-#else
-#include "../openglsdk/_material.h"
-#endif
 
 #include <set>
 #include <map>

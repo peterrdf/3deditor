@@ -8,6 +8,7 @@
 // ************************************************************************************************
 _node::_node(_geometry* pGeometry)
 	: m_pGeometry(pGeometry)
+	, m_iIndex(0)
 	, m_iBufferByteLength(0)
 	, m_strBufferBinFile("")
 	, m_iVerticesBufferViewByteLength(0)
@@ -18,6 +19,7 @@ _node::_node(_geometry* pGeometry)
 	, m_vecMeshes()
 {
 	VERIFY_POINTER(m_pGeometry);
+	VERIFY_EXPRESSION(m_iIndex >= 0);
 }
 
 /*virtual*/ _node::~_node()

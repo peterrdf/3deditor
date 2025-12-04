@@ -1120,6 +1120,28 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	}
 }
 
+/*virtual*/ void CPropertiesWnd::onInteractiveEditStart(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1) {
+		LoadInstanceProperties();
+	}
+}
+
+/*virtual*/ void CPropertiesWnd::onInteractiveEditEnd(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1) {
+		LoadInstanceProperties();
+	}
+}
+
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
 	if (_ptr<CRDFController>(getRDFController())->_test_IsTestMode()) {
@@ -2965,10 +2987,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.EnableDescriptionArea();
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
-
+	
 	if (getRDFController() == nullptr) {
 		ASSERT(false);
+		return;
+	}
 
+	if (getRDFController()->getInteractiveEditInProgress()) {
 		return;
 	}
 

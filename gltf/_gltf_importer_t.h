@@ -1,15 +1,8 @@
 #pragma once
 
 #include "_base64.h"
-#ifdef _WINDOWS
 #include "_importer_t.h"
 #include "_json.h"
-#else
-#include "../parsers/_importer_t.h"
-#include "../parsers/_json.h"
-#endif
-
-
 
 // ************************************************************************************************
 namespace _eng
@@ -159,7 +152,7 @@ namespace _eng
 		}
 
 		template<class T>
-		void textureFlipY(vector<T>& vecInOut)
+		void textureFlipV(vector<T>& vecInOut)
 		{
 			VERIFY_STLOBJ_IS_NOT_EMPTY(vecInOut);
 			for (size_t i = 0; i < vecInOut.size(); i += 2) {
