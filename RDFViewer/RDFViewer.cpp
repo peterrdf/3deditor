@@ -141,7 +141,7 @@ BOOL CRDFViewerApp::InitInstance()
 		return FALSE;
 
 	// The one and only window has been initialized, so show and update it
-	m_pMainWnd->ShowWindow(SW_SHOWMAXIMIZED);
+	m_pMainWnd->ShowWindow(SW_SHOWDEFAULT);
 	m_pMainWnd->UpdateWindow();
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
