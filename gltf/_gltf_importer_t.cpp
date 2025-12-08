@@ -2,6 +2,8 @@
 
 #include "_gltf_importer_t.h"
 #include "_guid.h"
+#include "_3DUtils.h"
+#include "_quaterniond.h"
 
 // ************************************************************************************************
 namespace _eng
@@ -250,6 +252,58 @@ namespace _eng
 				vecNodeInstances.push_back(owlNodeInstance);
 			} // for (size_t iNode = ...
 
+			// Y-up to Z-up transformation
+			/*OwlInstance owlCollectionInstance = createCollectionInstance(
+				"nodes",
+				_string::format("scene (%d) nodes", (int)iScene).c_str());
+			VERIFY_INSTANCE(owlCollectionInstance);
+
+			SetObjectProperty(owlCollectionInstance,
+				GetPropertyByName(getModel(), "objects"),
+				vecNodeInstances.data(),
+				vecNodeInstances.size());
+
+			_matrix matrix;
+			_matrix4x3Identity((_matrix4x3*)&matrix);
+			_matrixRotateByEulerAngles(&matrix, 2 * PI * 90. / 360., 0., 0.);
+
+			vector<double> vecMatrix;
+			vecMatrix.reserve(12);
+			vecMatrix.push_back(matrix._11);
+			vecMatrix.push_back(matrix._12);
+			vecMatrix.push_back(matrix._13);
+			vecMatrix.push_back(matrix._21);
+			vecMatrix.push_back(matrix._22);
+			vecMatrix.push_back(matrix._23);
+			vecMatrix.push_back(matrix._31);
+			vecMatrix.push_back(matrix._32);
+			vecMatrix.push_back(matrix._33);
+			vecMatrix.push_back(matrix._41);
+			vecMatrix.push_back(matrix._42);
+			vecMatrix.push_back(matrix._43);
+
+			OwlInstance owlRotationTransformation = createTransformation(
+				_string::format("scene (%d) Y-up Transformation", (int)iScene).c_str(),
+				vecMatrix);
+			VERIFY_INSTANCE(owlRotationTransformation);
+
+			SetObjectProperty(
+				owlRotationTransformation, 
+				GetPropertyByName(getModel(), "object"), 
+				&owlCollectionInstance, 
+				1);
+
+			OwlInstance owlSceneInstance = createInstance(
+				_importer_t::createClass("scene"),
+				_string::format("scene (%d)", (int)iScene));
+			VERIFY_INSTANCE(owlSceneInstance);
+
+			SetObjectProperty(
+				owlSceneInstance,
+				createObjectPropertyInstance("nodes"),
+				&owlRotationTransformation,
+				1);*/
+
 			OwlInstance owlSceneInstance = createInstance(
 				_importer_t::createClass("scene"),
 				_string::format("scene (%d)", (int)iScene));
@@ -327,6 +381,59 @@ namespace _eng
 						vecGeometries.data(),
 						vecGeometries.size());
 				}
+
+				auto pRotationProperty = pNodeObject->getProperty("rotation");
+				if (pRotationProperty != nullptr) {
+					auto pRotationValue = pRotationProperty->getValue()->as<_json::_array>();
+					VERIFY_POINTER(pRotationValue);
+					VERIFY_EXPRESSION(pRotationValue->getValues().size() == 4);
+					vector<double> vecQuaternion;
+					for (size_t i = 0; i < 4; i++) {
+						vecQuaternion.push_back(atof(pRotationValue->getValues()[i]->as<_json::_simple>()->getValue().c_str()));
+					}
+					_quaterniond quat(
+						vecQuaternion[0],
+						vecQuaternion[1],
+						vecQuaternion[2],
+						vecQuaternion[3]);
+					double roll, pitch, yaw;
+					quat.toEulerAngles(roll, pitch, yaw);
+
+					_matrix matrix;
+					_matrix4x3Identity((_matrix4x3*)&matrix);
+					_matrixRotateByEulerAngles(&matrix, roll, pitch, yaw);
+
+					vector<double> vecMatrix;
+					vecMatrix.reserve(12);
+					vecMatrix.push_back(matrix._11);
+					vecMatrix.push_back(matrix._12);
+					vecMatrix.push_back(matrix._13);
+					vecMatrix.push_back(matrix._21);
+					vecMatrix.push_back(matrix._22);
+					vecMatrix.push_back(matrix._23);
+					vecMatrix.push_back(matrix._31);
+					vecMatrix.push_back(matrix._32);
+					vecMatrix.push_back(matrix._33);
+					vecMatrix.push_back(matrix._41);
+					vecMatrix.push_back(matrix._42);
+					vecMatrix.push_back(matrix._43);
+
+					OwlInstance owlTransformationInstance = createTransformation(
+						"Transformation",
+						vecMatrix);
+					VERIFY_INSTANCE(owlTransformationInstance);
+
+					SetObjectProperty(
+						owlTransformationInstance,
+						GetPropertyByName(getModel(), "object"),
+						&owlNodeInstance,
+						1);
+
+					/* Cache */
+					m_mapNodes[iNodeIndex] = owlTransformationInstance;
+
+					return owlTransformationInstance;
+				} // if (pRotationProperty != nullptr)
 			} // if (pMeshProperty != nullptr)
 			else {
 				auto pCameraProperty = pNodeObject->getProperty("camera");

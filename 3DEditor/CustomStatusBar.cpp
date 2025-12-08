@@ -7,14 +7,17 @@
 
 BEGIN_MESSAGE_MAP(CCustomStatusBar, CMFCStatusBar)
     ON_WM_LBUTTONDOWN()
-    ON_MESSAGE(WM_UPDATE_LOG_STATUS, OnUpdateLogStatus)
+    ON_MESSAGE(WM_UPDATE_LOG_STATUS, OnUpdateLogStatus)   
+    ON_WM_CREATE()
     ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 CCustomStatusBar::CCustomStatusBar()
 	: m_pLogHub(nullptr)
-{
-	
+	, m_hIconInfo(nullptr)
+	, m_hIconWarn(nullptr)
+	, m_hIconErr(nullptr)
+{	
 }
 
 CCustomStatusBar::~CCustomStatusBar()
@@ -75,31 +78,22 @@ void CCustomStatusBar::UpdateLogStatus(enumLogEvent enLogEvent, const std::strin
 {
     int nIndex = CommandToIndex(ID_INDICATOR_LOG);
     if (nIndex != -1) {
-
-        ULONG_PTR iIcon = 0;
+		HICON hIcon = nullptr;
         switch (enLogEvent)
         {
             case enumLogEvent::info:
-				iIcon = IDI_ICON_INFO;
+                hIcon = m_hIconInfo;
                 break;
             case enumLogEvent::warning:
-				iIcon = IDI_ICON_WARN;
+                hIcon = m_hIconWarn;
                 break;
             case enumLogEvent::error:
-                iIcon = IDI_ICON_ERR; 
+                hIcon = m_hIconErr;
                 break;
 		}
 
-        if (iIcon != 0) {
-            HICON hIcon = (HICON)LoadImage(
-                AfxGetResourceHandle(),
-                MAKEINTRESOURCE(iIcon),
-                IMAGE_ICON,
-                16, 16, LR_DEFAULTCOLOR
-            );
-            if (hIcon) {
-                SetPaneIcon(nIndex, hIcon);
-            }
+        if (hIcon != nullptr) {
+            SetPaneIcon(nIndex, hIcon);
 		}        
 
         CString strMessage;
@@ -118,6 +112,36 @@ void CCustomStatusBar::HandlePaneClick(int nPane, CPoint /*point*/)
         }
 	}
 }
+
+int CCustomStatusBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+    if (__super::OnCreate(lpCreateStruct) == -1)
+        return -1;
+
+    m_hIconInfo = (HICON)LoadImage(
+        AfxGetResourceHandle(),
+        MAKEINTRESOURCE(IDI_ICON_INFO),
+        IMAGE_ICON,
+        16, 16, LR_DEFAULTCOLOR
+	);
+
+    m_hIconWarn = (HICON)LoadImage(
+        AfxGetResourceHandle(),
+        MAKEINTRESOURCE(IDI_ICON_WARN),
+        IMAGE_ICON,
+		16, 16, LR_DEFAULTCOLOR
+	);
+
+    m_hIconErr = (HICON)LoadImage(
+        AfxGetResourceHandle(),
+        MAKEINTRESOURCE(IDI_ICON_ERR),
+		IMAGE_ICON,
+		16, 16, LR_DEFAULTCOLOR
+	);
+
+    return 0;
+}
+
 void CCustomStatusBar::OnDestroy()
 {
     __super::OnDestroy();
@@ -125,4 +149,11 @@ void CCustomStatusBar::OnDestroy()
     if (m_pLogHub != nullptr) {
 		m_pLogHub->setLogView(nullptr);
     }
+
+	::DestroyIcon(m_hIconInfo);
+	m_hIconInfo = nullptr;
+	::DestroyIcon(m_hIconWarn);
+	m_hIconWarn = nullptr;
+	::DestroyIcon(m_hIconErr);
+	m_hIconErr = nullptr;
 }

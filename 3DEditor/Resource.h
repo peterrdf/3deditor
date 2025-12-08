@@ -126,7 +126,6 @@
 #define IDC_BUTTON_CLEAR_LOG            1013
 #define IDC_LIST1                       1014
 #define IDC_LIST_PROPS                  1014
-#define VERSION_BUILD                   2199
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778

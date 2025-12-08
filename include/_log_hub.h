@@ -54,6 +54,9 @@ public: // Methods
 	virtual void logWrite(enumLogEvent enLogEvent, const std::string& strEvent) override
 	{
 		m_vecMessages.push_back(make_pair(enLogEvent, _time::addDateTimeStamp(strEvent)));
+		if (m_vecMessages.size() > 200) {
+			m_vecMessages.erase(m_vecMessages.begin());
+		}
 
 		if (enLogEvent == enumLogEvent::warning) {
 			m_iWarningCount++;
