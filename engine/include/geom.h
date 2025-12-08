@@ -150,6 +150,7 @@ namespace GEOM
     class ToroidalSurface;
     class Torus;
     class Transformation;
+    class TransformationOfCurve;
     class TransitionalCurve;
     class TriangleCurve;
     class TriangleReduction;
@@ -8269,7 +8270,7 @@ namespace GEOM
     /// Provides utility methods to interact with an instance of OWL class Transformation
     /// You also can use object of this C++ class instead of int64_t handle of the OWL instance in any place where the handle is required
     /// </summary>
-    class Transformation : public Curve
+    class Transformation : public GeometricItem
     {
     public:
         /// <summary>
@@ -8295,11 +8296,68 @@ namespace GEOM
         /// <param name="instance">OWL instance to interact with</param>
         ///
         Transformation(int64_t instance = NULL)
-            : Curve(instance, "Transformation")
+            : GeometricItem(instance, "Transformation")
         {}
 
     protected:
         Transformation(int64_t instance, const char* checkClassName)
+            : GeometricItem(instance, checkClassName)
+        {}
+
+    public:
+       //
+       // Properties with known cardinality restrictions to Transformation
+       //
+
+        ///<summary>Sets relationship from this instance to an instance of Matrix</summary>
+        bool set_matrix(const Matrix& instance) { return SetObjectProperty<Matrix>("matrix", &instance, 1); }
+        ///<summary>Get related instance. The method returns pointer to internal buffer, a caller should not free or change it</summary>
+        const Matrix* get_matrix() { return GetObjectProperty<Matrix>("matrix", NULL); }
+        ///<summary>Sets relationship from this instance to an instance of GeometricItem</summary>
+        bool set_object(const GeometricItem& instance) { return SetObjectProperty<GeometricItem>("object", &instance, 1); }
+        ///<summary>Get related instance. The method returns pointer to internal buffer, a caller should not free or change it</summary>
+        const GeometricItem* get_object() { return GetObjectProperty<GeometricItem>("object", NULL); }
+        ///<summary>Sets value of recalculateBBox</summary>
+        bool set_recalculateBBox(bool value) { return SetDatatypeProperty ("recalculateBBox", &value, 1); }
+        ///<summary>Gets a value of recalculateBBox, returns NULL is the property was not set. The method returns pointer to internal buffer, a caller should not free or change it.</summary>
+        const bool* get_recalculateBBox() { return GetDatatypeProperty<bool>("recalculateBBox", NULL); }
+    };
+
+    /// <summary>
+    /// Provides utility methods to interact with an instance of OWL class TransformationOfCurve
+    /// You also can use object of this C++ class instead of int64_t handle of the OWL instance in any place where the handle is required
+    /// </summary>
+    class TransformationOfCurve : public Curve
+    {
+    public:
+        /// <summary>
+        /// Create new instance of OWL class TransformationOfCurve and returns object of this C++ class to interact with
+        /// </summary>
+        /// <param name="model">The handle to the model</param>
+        /// <param name="name">This attribute represents the name of the instance (given as char array / ASCII). The name is given by the host and the attribute is not changed</param>
+        /// <returns></returns>
+        static TransformationOfCurve Create(int64_t model, const char* name=NULL) { return TransformationOfCurve(Instance::Create(model, "TransformationOfCurve", name, NULL), "TransformationOfCurve");}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="name">This attribute represents the name of the instance (given as wchar_t array / Unicode). The name is given by the host and the attribute is not changed</param>
+        /// <returns></returns>
+        static TransformationOfCurve CreateW(int64_t model, const wchar_t* name = NULL) { return TransformationOfCurve(Instance::Create(model, "TransformationOfCurve", NULL, name), "TransformationOfCurve"); }
+
+    public:
+        /// <summary>
+        /// Constructs object of this C++ class that wraps existing OWL instance
+        /// </summary>
+        /// <param name="instance">OWL instance to interact with</param>
+        ///
+        TransformationOfCurve(int64_t instance = NULL)
+            : Curve(instance, "TransformationOfCurve")
+        {}
+
+    protected:
+        TransformationOfCurve(int64_t instance, const char* checkClassName)
             : Curve(instance, checkClassName)
         {}
 
