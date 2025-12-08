@@ -1843,7 +1843,11 @@ static	inline	char	* EncodeBase64(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	char	* output = (char*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(char));
+#else
 	char	* output = new char[(int_t) EncodeBase64(nullptr, input, size) / sizeof(char) + 1];
+#endif
 
 	EncodeBase64(
 			output,
@@ -1910,7 +1914,11 @@ static	inline	wchar_t	* EncodeBase64W(
 								int64_t					size
 							)
 {
+#ifdef _ALLOC
+	wchar_t * output = (wchar_t*) malloc((int_t) EncodeBase64(nullptr, input, size) + sizeof(wchar_t));
+#else
 	wchar_t * output = new wchar_t[(int_t) EncodeBase64(nullptr, input, size) / sizeof(wchar_t) + 1];
+#endif
 
 	EncodeBase64W(
 			output,
@@ -5703,7 +5711,7 @@ bool			DECL STDC	IsUpToDate(
 								);
 
 //
-//		GetClassModificationMark                               (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
+//		GetClassModificationMark                                (https://rdf.bg/gkdoc/CP64/GetClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
 //				int64_t					returns								OUT
@@ -5717,13 +5725,13 @@ int64_t			DECL STDC	GetClassModificationMark(
 								);
 
 //
-//		UpdateClassModificationMark                            (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
+//		UpdateClassModificationMark                             (https://rdf.bg/gkdoc/CP64/UpdateClassModificationMark.html)
 //				OwlClass				owlClass							IN
 //
-//				void					returns								OUT
+//				void					returns
 //
 //	This function informs class it has been changed externally.
-//  Application may want to call it when it changed its class external reference data. 
+//	Application may want to call it when it changed its class external reference data. 
 //
 void			DECL STDC	UpdateClassModificationMark(
 	OwlClass				owlClass
