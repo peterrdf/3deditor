@@ -4949,27 +4949,6 @@ int64_t			DECL STDC	SetDatatypeProperty(
 									int64_t					card
 								);
 
-//
-//		SetDatatypePropertyDerived                        (https://rdf.bg/gkdoc/CP64/SetDatatypePropertyDerived.html)
-//				RdfsResource			rdfsResource						IN
-//				OwlDatatypeProperty		owlDatatypeProperty					IN
-//				const void				* values							IN
-//				int64_t					card								IN
-//				bool					derived							IN	
-//
-//				int64_t					returns								OUT
-// 
-//		Similar to SetDatatypeProperty, but with an extra parameter 'derived' to indicate if the property is derived or not.
-//
-int64_t			DECL STDC	SetDatatypePropertyDerived(
-									RdfsResource			rdfsResource,
-									OwlDatatypeProperty		owlDatatypeProperty,
-									const void				* values,
-									int64_t					card,
-									bool					derived
-								);
-
-
 #ifdef __cplusplus
 	}
 //{{ Begin C++ polymorphic versions
@@ -5246,26 +5225,6 @@ int64_t			DECL STDC	SetObjectProperty(
 									OwlObjectProperty		owlObjectProperty,
 									const RdfsResource		* values,
 									int64_t					card
-								);
-
-//
-//		SetObjectPropertyDerived                                (https://rdf.bg/gkdoc/CP64/SetObjectPropertyDerived.html)
-//				RdfsResource			rdfsResource						IN
-//				OwlObjectProperty		owlObjectProperty					IN
-//				const RdfsResource		* values							IN
-//				int64_t					card								IN
-//				bool					derived								IN
-//
-//				int64_t					returns								OUT
-//
-//		Similar to SetObjectProperty, but with an extra parameter 'derived' to indicate if the property is derived or not.
-//
-int64_t			DECL STDC	SetObjectPropertyDerived(
-									RdfsResource			rdfsResource,
-									OwlObjectProperty		owlObjectProperty,
-									const RdfsResource		* values,
-									int64_t					card,
-									bool					derived
 								);
 
 #ifdef __cplusplus
@@ -5752,16 +5711,33 @@ bool			DECL STDC	IsUpToDate(
 								);
 
 //
-//		IsPropertyDerived										(https://rdf.bg/gkdoc/CP64/IsPropertyDerived.html)
-//				OwlInstance				owlInstance							IN
+//		SetPropertyDerived                                      (https://rdf.bg/gkdoc/CP64/SetPropertyDerived.html)
+//				RdfsResource			rdfsResource						IN
+//				RdfProperty				rdfProperty							IN
+//				bool					derived								IN
+//
+//				void					returns
+//
+//	This function sets if the property of an instance, class or model is derived.
+//
+void			DECL STDC	SetPropertyDerived(
+									RdfsResource			rdfsResource,
+									RdfProperty				rdfProperty,
+									bool					derived
+								);
+
+//
+//		GetPropertyDerived                                      (https://rdf.bg/gkdoc/CP64/GetPropertyDerived.html)
+//				RdfsResource			rdfsResource						IN
+//				RdfProperty				rdfProperty							IN
 //
 //				bool					returns								OUT
 //
 //	This function returns true if instance, class or model has the property set as derived.
 //
-bool			DECL STDC	IsPropertyDerived(
+bool			DECL STDC	GetPropertyDerived(
 									RdfsResource			rdfsResource,
-									RdfProperty				property
+									RdfProperty				rdfProperty
 								);
 
 //

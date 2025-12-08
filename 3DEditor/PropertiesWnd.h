@@ -104,6 +104,8 @@ public: // Properties
 
 	_rdf_controller* GetController() const { return m_pController; }
 	_rdf_instance* GetInstance() const { return m_pInstance; }
+
+	OwlInstance getOwlInstance() const;
 };
 
 // ************************************************************************************************
@@ -125,10 +127,13 @@ public: // Properties
 	_rdf_property * GetProperty() const;
 	int64_t GetCard() const;
 	void SetCard(int64_t iCard);
+
+	RdfProperty getRdfProperty() const { if (auto p = GetProperty()) return p->getRdfProperty(); return NULL; }
 };
 
+
 // ************************************************************************************************
-class CRDFInstanceProperty : public CMFCPropertyGridProperty
+class CRDFInstanceProperty : public CMFCPropertyGridProperty  //igor.sokolov 08.12.25 suggest rename to CRDFInstanceDatatypeProperty
 {
 
 public: // Methods
@@ -244,6 +249,12 @@ protected:
 // Implementation
 public:
 	virtual ~CPropertiesWnd();
+
+private:
+	void OnPropertyDerived();
+	void OnUpdatePropertyDerived(CCmdUI* pCmdUI);
+
+	CRDFInstancePropertyData* GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppProp = NULL);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

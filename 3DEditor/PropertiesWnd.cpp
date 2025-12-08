@@ -36,6 +36,15 @@ static char THIS_FILE[] = __FILE__;
 //#define USED_SUFFIX L" [used]"
 
 // ************************************************************************************************
+OwlInstance CRDFInstanceData::getOwlInstance() const
+{ 
+	if (auto p = GetInstance()) 
+		return p->getOwlInstance(); 
+	
+	return NULL; 
+}
+
+// ************************************************************************************************
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
 	: m_enPropertyType(enApplicationProperty)
 {}
@@ -2296,11 +2305,17 @@ void CPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
 void CPropertiesWnd::OnProperties2()
 {
 	// TODO: Add your command handler code here
+	
+	//igor.sokolov 06.12.25 - use for derived properties... not sure this is good solution, it just was simple to use, please rethink
+    OnPropertyDerived();
 }
 
-void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
+void CPropertiesWnd::OnUpdateProperties2(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
+
+	//igor.sokolov 06.12.25 - use for derived properties... not sure this is good solution, it just was simple to use, please rethink
+	OnUpdatePropertyDerived(pCmdUI);
 }
 
 void CPropertiesWnd::LoadApplicationProperties()
@@ -3148,6 +3163,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+                pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case OBJECTPROPERTY_TYPE:
@@ -3167,6 +3183,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
@@ -3188,6 +3205,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_STRING:
@@ -3207,6 +3225,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_CHAR_ARRAY:
@@ -3226,6 +3245,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_WCHAR_T_ARRAY:
@@ -3245,6 +3265,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
@@ -3264,6 +3285,7 @@ void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pP
 				CAddRDFInstanceProperty* pCardinality = new CAddRDFInstanceProperty(L"owl:cardinality", (_variant_t)strCardinality.c_str(), pProperty->getName(),
 					(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iCard));
 				pCardinality->AllowEdit(FALSE);
+				pCardinality->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 				pPropertyGroup->AddSubItem(pCardinality);
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
@@ -3306,10 +3328,12 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 
 							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)pObjectPropertyInstance->getUniqueName(), pProperty->getName(),
 								(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+							pInstanceObjectProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 						}
 						else {
 							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)EMPTY_INSTANCE, pProperty->getName(),
 								(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+							pInstanceObjectProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 						}
 
 						/*
@@ -3360,6 +3384,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						auto pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pbValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+						pInstanceProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstanceProperty);
 
@@ -3391,6 +3416,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+						pInstancProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstancProperty);
 
@@ -3420,6 +3446,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+						pInstancProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstancProperty);
 
@@ -3449,6 +3476,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceProperty* pInstancProperty = new CRDFInstanceProperty(L"value", (_variant_t)szValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+						pInstancProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstancProperty);
 
@@ -3478,6 +3506,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)pdValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
+						pInstanceProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstanceProperty);
 
@@ -3508,6 +3537,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 						CRDFInstanceProperty* pInstanceProperty = new CRDFInstanceProperty(L"value", (_variant_t)piValue[iValue], pProperty->getName(),
 							(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 						pInstanceProperty->EnableSpinControlInt64();
+						pInstanceProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 
 						pPropertyGroup->AddSubItem(pInstanceProperty);
 
@@ -4339,4 +4369,59 @@ void CPropertiesWnd::OnDestroy()
 	getRDFController()->unRegisterView(this);
 
 	__super::OnDestroy();
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppProp)
+{
+	if (auto propGridProperty = m_wndPropList.GetCurSel()) {
+		if (dynamic_cast<CRDFInstanceProperty*>(propGridProperty) 
+			|| dynamic_cast<CRDFInstanceObjectProperty*>(propGridProperty)
+            || dynamic_cast<CAddRDFInstanceProperty*>(propGridProperty)
+			) {
+			if (auto rawData = propGridProperty->GetData()) {
+				auto pData = (CRDFInstancePropertyData*)rawData;
+				if (pData->getOwlInstance() && pData->getRdfProperty()) {
+					if (ppProp) {
+                        *ppProp = propGridProperty;
+					}
+					return pData;
+				}
+			}
+		}
+	}
+	
+	return NULL;
+}
+
+void CPropertiesWnd::OnPropertyDerived()
+{
+    CMFCPropertyGridProperty* pProp = nullptr;
+	if (auto propData = GetSelectedInstanceProperty(&pProp)) {
+
+		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
+        derived = !derived;
+        SetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty(), derived);
+
+		auto pGroup = pProp->GetParent();
+		pGroup->Enable(!derived);
+		for (int iSubItem = 0; iSubItem < pGroup->GetSubItemsCount(); iSubItem++) {
+			auto pSubItem = pGroup->GetSubItem(iSubItem);
+			pSubItem->Enable(!derived);
+        }
+
+	}
+}
+
+void CPropertiesWnd::OnUpdatePropertyDerived(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(FALSE);
+	pCmdUI->Enable(FALSE);
+
+	if (auto propData = GetSelectedInstanceProperty()) {
+		
+		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
+
+		pCmdUI->Enable(TRUE);
+		pCmdUI->SetCheck(derived);
+	}
 }
