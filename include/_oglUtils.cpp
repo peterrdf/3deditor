@@ -1560,7 +1560,12 @@ void _oglRenderer::_prepare(
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
 	}
 	else {
-		glm::mat4 matProjection = glm::ortho<GLdouble>(-m_fScaleFactor, m_fScaleFactor, -m_fScaleFactor, m_fScaleFactor, zNear, zFar);
+		glm::mat4 matProjection = glm::ortho<GLdouble>(
+			-m_fScaleFactor * ((float)iViewportWidth / (float)iViewportHeight),
+			m_fScaleFactor * ((float)iViewportWidth / (float)iViewportHeight),
+			-m_fScaleFactor,
+			m_fScaleFactor,
+			zNear, zFar);
 		m_pOGLProgram->_setProjectionMatrix(matProjection);
 	}
 
