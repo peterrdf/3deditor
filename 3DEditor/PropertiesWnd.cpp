@@ -3304,9 +3304,9 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	switch (pProperty->getType()) {
 		case OBJECTPROPERTY_TYPE:
 			{
-				OwlInstance* pOwlInstances = nullptr;
+				RdfsResource* objValues = nullptr;
 				int64_t iCard = 0;
-				GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &pOwlInstances, &iCard);
+				GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &objValues, &iCard);
 				if (iCard > 0) {
 					int64_t	iMinCard = 0;
 					int64_t iMaxCard = 0;
@@ -3322,11 +3322,35 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					int64_t iValuesCount = iCard;
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceObjectProperty* pInstanceObjectProperty = nullptr;
-						if (pOwlInstances[iValue] != 0) {
-							auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(pOwlInstances[iValue]);
-							ASSERT(pObjectPropertyInstance != nullptr);
+						RdfsResource objVal = objValues[iValue];
+						if (objVal != 0) {
+							
+                            std::wstring strValue;
+							auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(objVal);
+							if (pObjectPropertyInstance != nullptr) {
+								strValue = pObjectPropertyInstance->getUniqueName();
+							}
+							else {
+								if (GetModel(objVal) != getRDFModel()->getOwlModel()) {
+									strValue += L"external ";
+								}
 
-							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)pObjectPropertyInstance->getUniqueName(), pProperty->getName(),
+								RdfsResource namedObj = objVal;
+								if (auto inst = IsInstance(objVal)) {
+									if (auto instName = GetNameOfInstanceW(inst)) {
+                                        strValue += instName;
+									}
+									else {
+										namedObj = GetInstanceClass(inst);
+									}
+								}
+
+								if (namedObj) {
+									strValue += DisplayName(namedObj);
+                                }
+							}
+
+							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)strValue.c_str(), pProperty->getName(),
 								(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 							pInstanceObjectProperty->Enable(!GetPropertyDerived(pInstance->getOwlInstance(), pProperty->getRdfProperty()));
 						}

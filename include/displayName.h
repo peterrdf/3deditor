@@ -14,6 +14,7 @@ static std::wstring DisplayName(RdfsResource res)
         internalName = GetNameOfProperty(prop);
     }
     else {
+        internalName = "<ERROR>";
         assert(false);
     }
 
