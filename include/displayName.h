@@ -37,7 +37,7 @@ static std::wstring DisplayName(RdfsResource res, OwlModel activeModel = NULL)
 
     std::string pfxName;
     if (!uriName.empty()) {
-        auto geomRepo = repo_GetFile(model, REPO_GEOM_URI);
+        auto geomRepo = repo_GetFile(activeModel ? activeModel : model, REPO_GEOM_URI);
         repo_SetPrefix(geomRepo, "", REPO_GEOM_URI "#"); //this can be done once
 
         pfxName = repo_GetPrefixedName(geomRepo, uriName.c_str(), '.');
