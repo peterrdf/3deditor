@@ -3331,23 +3331,7 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 								strValue = pObjectPropertyInstance->getUniqueName();
 							}
 							else {
-								if (GetModel(objVal) != getRDFModel()->getOwlModel()) {
-									strValue += L"external ";
-								}
-
-								RdfsResource namedObj = objVal;
-								if (auto inst = IsInstance(objVal)) {
-									if (auto instName = GetNameOfInstanceW(inst)) {
-                                        strValue += instName;
-									}
-									else {
-										namedObj = GetInstanceClass(inst);
-									}
-								}
-
-								if (namedObj) {
-									strValue += DisplayName(namedObj);
-                                }
+								strValue += DisplayName(objVal, getRDFModel()->getOwlModel());
 							}
 
 							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)strValue.c_str(), pProperty->getName(),
