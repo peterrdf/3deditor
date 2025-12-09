@@ -743,9 +743,9 @@ _rdf_controller::_rdf_controller()
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
 {
-	for (auto pDecoration : getDecorationModels()) {
-		_ptr<_decoration>(pDecoration)->onModelUpdated();
-	}
+		for (auto pDecoration : getDecorationModels()) {
+			_ptr<_decoration>(pDecoration)->onModelUpdated();
+		}
 
 	_controller::onModelUpdated();
 }
@@ -1132,12 +1132,12 @@ _coordinate_system_model_base::_coordinate_system_model_base(_log* pLog)
 	delete m_pTextBuilder;
 }
 
-/*static*/ void _coordinate_system_model_base::create(OwlModel owlModel, _text_builder* pTextBuilder)
+/*static*/ void _coordinate_system_model_base::create(OwlModel owlModel, double dAxisLength, _text_builder* pTextBuilder)
 {
 	assert(owlModel != 0);
 	assert(pTextBuilder != nullptr);
 
-	const double AXIS_LENGTH = 3.5;
+	const double AXIS_LENGTH = dAxisLength;
 	const double ARROW_OFFSET = AXIS_LENGTH;
 
 	// Coordinate System
@@ -1401,7 +1401,7 @@ void _coordinate_system_model_base::create(const wchar_t* szName)
 
 	m_pTextBuilder->initialize(owlModel);
 
-	create(owlModel, m_pTextBuilder);
+	create(owlModel, getAxisLength(), m_pTextBuilder);
 
 	attachModel(szName, owlModel);
 }
@@ -1484,6 +1484,15 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 	ClearedExternalBuffers(getOwlModel());
 }
 
+/*virtual*/ float _world_coordinate_system_model::getAxisLength() const /*override*/
+{
+	auto pModel = m_pController->getModel();
+	if (pModel == nullptr) {
+		return _coordinate_system_model_base::getAxisLength();
+	}
+	return pModel->getBoundingSphereDiameter() * 2.f;
+}
+
 // ************************************************************************************************
 _model_coordinate_system_model::_model_coordinate_system_model(_controller* pController)
 	: _coordinate_system_model_base(pController->getLog())
@@ -1531,6 +1540,15 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 
 	// http://rdf.bg/gkdoc/CP64/ClearedExternalBuffers.html
 	ClearedExternalBuffers(getOwlModel());
+}
+
+/*virtual*/ float _model_coordinate_system_model::getAxisLength() const /*override*/
+{
+	auto pModel = m_pController->getModel();
+	if (pModel == nullptr) {
+		return _coordinate_system_model_base::getAxisLength();
+	}
+	return pModel->getBoundingSphereDiameter() * 2.f;
 }
 
 // ************************************************************************************************
@@ -1852,7 +1870,7 @@ void _navigator_model::create()
 
 	createLabels(owlModel);
 
-	_coordinate_system_model_base::create(owlModel, m_pTextBuilder);
+	_coordinate_system_model_base::create(owlModel, 3.5, m_pTextBuilder);
 
 	attachModel(NAVIGATOR, owlModel);
 }
@@ -1981,3 +1999,33 @@ void _navigator_model::createLabels(OwlModel owlModel)
 		1., -1., 1.);
 	SetNameOfInstance(owlInstance, "#right-label");
 }
+
+// ************************************************************************************************
+_world_model::_world_model(
+	_log* pLog,
+	float fXmin, float fXmax,
+	float fYmin, float fYmax,
+	float fZmin, float fZmax)
+	: _rdf_model(pLog)
+{
+	OwlModel owlModel = CreateModel();
+	assert(owlModel != 0);
+
+	attachModel(L"WORLD", owlModel);
+
+	m_fXmin = fXmin;
+	m_fXmax = fXmax;
+	m_fYmin = fYmin;
+	m_fYmax = fYmax;
+	m_fZmin = fZmin;
+	m_fZmax = fZmax;
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
+}
+
+/*virtual*/ _world_model::~_world_model()
+{}
