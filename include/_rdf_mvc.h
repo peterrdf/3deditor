@@ -211,11 +211,12 @@ public: // Methods
 	// _model
 	virtual void scale() override {};
 
-	static void create(OwlModel owlModel, _text_builder* pTextBuilder);
+	static void create(OwlModel owlModel, double dAxisLength, _text_builder* pTextBuilder);
 
 protected: // Methods
 
 	void create(const wchar_t* szName);
+	virtual float getAxisLength() const { return 3.5f; }
 };
 
 // ************************************************************************************************
@@ -241,6 +242,9 @@ protected: // Methods
 
 	// _rdf_model
 	virtual void preLoad() override;
+
+	// _coordinate_system_model_base
+	virtual float getAxisLength() const override;
 };
 
 // ************************************************************************************************
@@ -265,6 +269,9 @@ protected: // Methods
 
 	// _rdf_model
 	virtual void preLoad() override;
+
+	// _coordinate_system_model_base
+	virtual float getAxisLength() const override;
 };
 
 // ************************************************************************************************
@@ -305,4 +312,23 @@ private: // Methods
 
 	void create();
 	void createLabels(OwlModel owlModel);
+};
+
+// ************************************************************************************************
+class _world_model : public _rdf_model
+{
+
+public: // Methods
+
+	_world_model(
+		_log* pLog,
+		float fXmin, float fXmax,
+		float fYmin, float fYmax,
+		float fZmin, float fZmax);
+	virtual ~_world_model();
+
+protected: // Methods
+
+	// _model
+	virtual void scale() override {};
 };

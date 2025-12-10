@@ -5929,6 +5929,124 @@ int64_t			DECL STDC	GetConceptualFaceCnt(
 								);
 
 //
+//		GetConceptualFaceDiscriminator                          (https://rdf.bg/gkdoc/CP64/GetConceptualFaceDiscriminator.html)
+//				OwlInstance				owlInstance							IN
+//				int64_t					index								IN
+//				const char				** name								IN / OUT
+//
+//				const char				* returns							OUT
+//
+//	This function returns a unique name for the conceptualFace.
+//	The name will be the same for each recalculation of the geometry.
+//	The return value (and optional name argument) have a valid content till thhe next call of this
+//	function or till the model is closed.
+//
+//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
+//	For example in case of a boolean operation where the type of placement of objects is changing. 
+//
+const char		DECL * STDC	GetConceptualFaceDiscriminator(
+									OwlInstance				owlInstance,
+									int64_t					index,
+									const char				** name
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	const char	* GetConceptualFaceDiscriminator(
+									OwlInstance				owlInstance,
+									int64_t					index,
+									char					** name
+								)
+{
+	return	GetConceptualFaceDiscriminator(
+					owlInstance,
+					index,
+					(const char**) name
+				);
+}
+
+//
+//
+static	inline	const char	* GetConceptualFaceDiscriminator(
+									OwlInstance				owlInstance,
+									int64_t					index
+								)
+{
+	return	GetConceptualFaceDiscriminator(
+					owlInstance,
+					index,
+					(const char**) nullptr				//	name
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceDiscriminatorW                         (https://rdf.bg/gkdoc/CP64/GetConceptualFaceDiscriminatorW.html)
+//				OwlInstance				owlInstance							IN
+//				int64_t					index								IN
+//				const wchar_t			** name								IN / OUT
+//
+//				const wchar_t			* returns							OUT
+//
+//	This function returns a unique name for the conceptualFace.
+//	The name will be the same for each recalculation of the geometry.
+//	The return value (and optional name argument) have a valid content till thhe next call of this
+//	function or till the model is closed.
+//
+//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
+//	For example in case of a boolean operation where the type of placement of objects is changing. 
+//
+const wchar_t	DECL * STDC	GetConceptualFaceDiscriminatorW(
+									OwlInstance				owlInstance,
+									int64_t					index,
+									const wchar_t			** name
+								);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	const wchar_t	* GetConceptualFaceDiscriminatorW(
+										OwlInstance				owlInstance,
+										int64_t					index,
+										wchar_t					** name
+									)
+{
+	return	GetConceptualFaceDiscriminatorW(
+					owlInstance,
+					index,
+					(const wchar_t**) name
+				);
+}
+
+//
+//
+static	inline	const wchar_t	* GetConceptualFaceDiscriminatorW(
+										OwlInstance				owlInstance,
+										int64_t					index
+									)
+{
+	return	GetConceptualFaceDiscriminatorW(
+					owlInstance,
+					index,
+					(const wchar_t**) nullptr			//	name
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
 //		GetConceptualFace                                       (https://rdf.bg/gkdoc/CP64/GetConceptualFace.html)
 //				OwlInstance				owlInstance							IN
 //				int64_t					index								IN
@@ -6077,112 +6195,6 @@ void			DECL STDC	GetConceptualFaceOriginEx(
 									int64_t					* originatingOwlInstance,
 									int64_t					* originatingConceptualFace
 								);
-
-//
-//		GetConceptualFaceGUID                                   (https://rdf.bg/gkdoc/CP64/GetConceptualFaceGUID.html)
-//				ConceptualFace			conceptualFace						IN
-//				const char				** name								IN / OUT
-//
-//				const char				* returns							OUT
-//
-//	This function returns a unique name for the conceptualFace.
-//	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till thhe next call of this
-//	function or till the model is closed.
-//
-//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
-//	For example in case of a boolean operation where the type of placement of objects is changing. 
-//
-const char		DECL * STDC	GetConceptualFaceGUID(
-									ConceptualFace			conceptualFace,
-									const char				** name
-								);
-
-#ifdef __cplusplus
-	}
-//{{ Begin C++ polymorphic versions
-
-//
-//
-static	inline	const char	* GetConceptualFaceGUID(
-									ConceptualFace			conceptualFace,
-									char					** name
-								)
-{
-	return	GetConceptualFaceGUID(
-					conceptualFace,
-					(const char**) name
-				);
-}
-
-//
-//
-static	inline	const char	* GetConceptualFaceGUID(
-									ConceptualFace			conceptualFace
-								)
-{
-	return	GetConceptualFaceGUID(
-					conceptualFace,
-					(const char**) nullptr				//	name
-				);
-}
-
-//}} End C++ polymorphic versions
-	extern "C" {
-#endif
-
-//
-//		GetConceptualFaceGUIDW                                  (https://rdf.bg/gkdoc/CP64/GetConceptualFaceGUIDW.html)
-//				ConceptualFace			conceptualFace						IN
-//				const wchar_t			** name								IN / OUT
-//
-//				const wchar_t			* returns							OUT
-//
-//	This function returns a unique name for the conceptualFace.
-//	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till thhe next call of this
-//	function or till the model is closed.
-//
-//	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
-//	For example in case of a boolean operation where the type of placement of objects is changing. 
-//
-const wchar_t	DECL * STDC	GetConceptualFaceGUIDW(
-									ConceptualFace			conceptualFace,
-									const wchar_t			** name
-								);
-
-#ifdef __cplusplus
-	}
-//{{ Begin C++ polymorphic versions
-
-//
-//
-static	inline	const wchar_t	* GetConceptualFaceGUIDW(
-										ConceptualFace			conceptualFace,
-										wchar_t					** name
-									)
-{
-	return	GetConceptualFaceGUIDW(
-					conceptualFace,
-					(const wchar_t**) name
-				);
-}
-
-//
-//
-static	inline	const wchar_t	* GetConceptualFaceGUIDW(
-										ConceptualFace			conceptualFace
-									)
-{
-	return	GetConceptualFaceGUIDW(
-					conceptualFace,
-					(const wchar_t**) nullptr			//	name
-				);
-}
-
-//}} End C++ polymorphic versions
-	extern "C" {
-#endif
 
 //
 //		GetConceptualFaceXYZ2UV                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceXYZ2UV.html)
