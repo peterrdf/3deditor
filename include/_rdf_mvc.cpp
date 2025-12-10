@@ -1235,8 +1235,13 @@ _coordinate_system_model_base::_coordinate_system_model_base(_log* pLog)
 
 	// Arrows (1 Cone => 3 Transformations)
 	{
+		double dArrowLength = AXIS_LENGTH / 15.;
+		if ((dArrowLength - 0.3) > 0.01) {
+			dArrowLength = 0.3;
+		}
+
 		auto pArrow = GEOM::Cone::Create(owlModel);
-		pArrow.set_height(AXIS_LENGTH / 15.);
+		pArrow.set_height(dArrowLength);
 		pArrow.set_radius(.075);
 
 		// +X
