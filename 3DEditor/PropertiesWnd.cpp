@@ -1828,7 +1828,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					delete[] pbNewValues;
 					pbNewValues = nullptr;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				break;
 
@@ -1862,7 +1870,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1897,7 +1913,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1934,7 +1958,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1961,7 +1993,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+					
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 				break;
 
@@ -1987,7 +2027,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_INTEGER:
 				break;
 
