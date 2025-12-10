@@ -181,7 +181,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
-				bHasButton = iCard > iMinCard ? TRUE : FALSE;
+				bHasButton = TRUE; // Always allow Remove property
+				//bHasButton = iCard > iMinCard ? TRUE : FALSE;
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -191,7 +192,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				char** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
-				bHasButton = iCard > iMinCard ? TRUE : FALSE;
+				bHasButton = TRUE; // Always allow Remove property
+				//bHasButton = iCard > iMinCard ? TRUE : FALSE;
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -201,7 +203,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				wchar_t** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
-				bHasButton = iCard > iMinCard ? TRUE : FALSE;
+				bHasButton = TRUE; // Always allow Remove property
+				//bHasButton = iCard > iMinCard ? TRUE : FALSE;
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -214,7 +217,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				double* pdValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
-				bHasButton = iCard > iMinCard ? TRUE : FALSE;
+				bHasButton = TRUE; // Always allow Remove property
+				//bHasButton = iCard > iMinCard ? TRUE : FALSE;
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
@@ -229,7 +233,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 
 				ASSERT(iCard > 0);
 
-				bHasButton = iCard > iMinCard ? TRUE : FALSE;
+				bHasButton = TRUE; // Always allow Remove property
+				//bHasButton = iCard > iMinCard ? TRUE : FALSE;
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
 			break;
 
@@ -275,8 +280,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 				SetCharacterSerialization(pData->GetInstance()->getOwlModel(), 0, 0, true);
 
-				ASSERT(iCard > 0);
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				// Always allow Remove property
+				/*ASSERT(iCard > 0);
+				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));*/
 
 				/*
 				* Remove a value
@@ -316,7 +322,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -329,8 +336,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				char** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
-				ASSERT(iCard > 0);
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				// Always allow Remove property
+				/*ASSERT(iCard > 0);
+				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));*/
 
 				/*
 				* Remove a value
@@ -368,7 +376,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -381,8 +390,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				wchar_t** szValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&szValue, &iCard);
 
-				ASSERT(iCard > 0);
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				// Always allow Remove property
+				/*ASSERT(iCard > 0);
+				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));*/
 
 				/*
 				* Remove a value
@@ -420,7 +430,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // case TYPE_CHAR_DATATYPE:
 			break;
 
@@ -433,8 +444,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				double* pdValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&pdValue, &iCard);
 
-				ASSERT(iCard > 0);
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				// Always allow Remove property
+				/*ASSERT(iCard > 0);
+				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));*/
 
 				/*
 				* Remove a value
@@ -458,7 +470,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
@@ -471,8 +484,9 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				int64_t* piValue = nullptr;
 				GetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)&piValue, &iCard);
 
-				ASSERT(iCard > 0);
-				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));
+				// Always allow Remove property
+				/*ASSERT(iCard > 0);
+				ASSERT((iCard - 1) >= (((iMinCard == -1) && (iMaxCard == -1)) ? 0 : iMinCard));*/
 
 				/*
 				* Remove a value
@@ -496,7 +510,8 @@ CRDFInstanceProperty::CRDFInstanceProperty(const CString& strName, const COleVar
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
 			break;
 
@@ -881,7 +896,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
@@ -930,7 +946,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case TYPE_CHAR_DATATYPE
 			break;
 
@@ -975,7 +992,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case TYPE_CHAR_DATATYPE
 			break;
 
@@ -1020,7 +1038,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case TYPE_CHAR_DATATYPE
 			break;
 
@@ -1055,7 +1074,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 			break;
 
@@ -1090,7 +1110,8 @@ CAddRDFInstanceProperty::CAddRDFInstanceProperty(const CString& strName, const C
 				/*
 				* Update the values
 				*/
-				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
+				m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)this, 0); // Reload all Properties
+				//m_pWndList->GetParent()->PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)this, 0);
 			} // case DATATYPEPROPERTY_TYPE_INTEGER:
 			break;
 
@@ -1859,7 +1880,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					delete[] pbNewValues;
 					pbNewValues = nullptr;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_BOOLEAN:
 				break;
 
@@ -1893,7 +1922,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1928,7 +1965,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1965,7 +2010,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					delete[] szNewValues;
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case TYPE_CHAR_DATATYPE:
 				break;
 
@@ -1992,7 +2045,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+					
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_DOUBLE:
 				break;
 
@@ -2018,7 +2079,15 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 
 					SetDatatypeProperty(pData->GetInstance()->getOwlInstance(), pData->GetProperty()->getRdfProperty(), (void**)vecValues.data(), vecValues.size());
 
+					/*
+					* Notify
+					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
+
+					/*
+					* Update UI
+					*/
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 				} // case DATATYPEPROPERTY_TYPE_INTEGER:
 				break;
 
