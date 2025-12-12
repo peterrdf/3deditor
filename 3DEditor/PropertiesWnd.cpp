@@ -4486,6 +4486,8 @@ void CPropertiesWnd::OnPropertyDerived()
 			pSubItem->Enable(!derived);
         }
 
+		propData->GetController()->onInstancePropertyEdited(this, propData->GetInstance(), propData->GetProperty());
+		PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
 	}
 }
 
