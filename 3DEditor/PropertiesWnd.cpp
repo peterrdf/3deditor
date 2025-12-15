@@ -3060,8 +3060,77 @@ void CPropertiesWnd::LoadApplicationProperties()
 	m_wndPropList.AddProperty(pViewGroup);
 }
 
+bool CPropertiesWnd::SelectProperty(RdfProperty prop, int subItem, CMFCPropertyGridProperty* scope)
+{
+	if (!prop) {
+		return false;
+	}
+
+	if (!scope) {
+		for (int i = 0; i < m_wndPropList.GetPropertyCount(); i++) {
+			if (auto root = m_wndPropList.GetProperty(i)) {
+				if (SelectProperty(prop, subItem, root)) {
+					return true;
+				}
+			}
+		}
+	}
+	else {
+		if (auto pData = GetSubitemInstanceProperty(scope)) {
+			if (pData->getRdfProperty() == prop) {
+				//group found
+				if (subItem >= 0) {
+					subItem = min(subItem, scope->GetSubItemsCount() - 1);
+					scope = scope->GetSubItem(subItem);
+				}
+				m_wndPropList.SetCurSel(scope);
+				return true;
+			}
+		}
+
+		//search sub-items
+		for (int i = 0; i < scope->GetSubItemsCount(); i++) {
+			if (auto subScope = scope->GetSubItem(i)) {
+				if (SelectProperty(prop, subItem, subScope)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+std::pair<RdfProperty, int> CPropertiesWnd::GetSelectedProperty()
+{
+	CMFCPropertyGridProperty* pGroup = NULL;
+	if (auto pData = GetSelectedInstanceProperty(&pGroup)) {
+		
+		auto prop = pData->getRdfProperty();
+		
+		int subItem = -1;
+		if (pGroup) {
+			auto curSel = m_wndPropList.GetCurSel();
+			for (int i = 0; i < pGroup->GetSubItemsCount(); i++) {
+				auto item = pGroup->GetSubItem(i);
+				if (item == curSel) {
+					subItem = i;
+					break;
+				}
+			}
+		}
+
+		return { prop, subItem };
+	}
+
+	return { NULL, -1 };
+}
+
+
 void CPropertiesWnd::LoadInstanceProperties()
 {
+	auto selectedProperty = GetSelectedProperty();
+
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
 
@@ -3166,6 +3235,8 @@ void CPropertiesWnd::LoadInstanceProperties()
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
+
+		SelectProperty(selectedProperty.first, selectedProperty.second);
 
 		return;
 	} // if (pSelectedInstance != nullptr)
@@ -4464,6 +4535,7 @@ CRDFInstancePropertyData* CPropertiesWnd::GetInstanceProperty(CMFCPropertyGridPr
 			}
 		}
 	}
+	return NULL;
 }
 
 CRDFInstancePropertyData* CPropertiesWnd::GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup)
@@ -4475,6 +4547,7 @@ CRDFInstancePropertyData* CPropertiesWnd::GetSubitemInstanceProperty(CMFCPropert
 			}
 		}
     }
+	return NULL;
 }
 
 CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup)

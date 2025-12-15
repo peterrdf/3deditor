@@ -256,7 +256,12 @@ private:
 
 	CRDFInstancePropertyData* GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup = NULL);
 	CRDFInstancePropertyData* GetInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup);
-	CRDFInstancePropertyData* GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup);
+	CRDFInstancePropertyData* GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup = NULL);
+
+	
+	bool SelectProperty(RdfProperty prop, int subItem, CMFCPropertyGridProperty* scope = NULL);
+	std::pair<RdfProperty, int> GetSelectedProperty();///returns property and sub-item index
+
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
