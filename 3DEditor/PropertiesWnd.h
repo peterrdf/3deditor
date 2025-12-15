@@ -254,7 +254,9 @@ private:
 	void OnPropertyDerived();
 	void OnUpdatePropertyDerived(CCmdUI* pCmdUI);
 
-	CRDFInstancePropertyData* GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppProp = NULL);
+	CRDFInstancePropertyData* GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup = NULL);
+	CRDFInstancePropertyData* GetInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup);
+	CRDFInstancePropertyData* GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -4448,38 +4448,68 @@ void CPropertiesWnd::OnDestroy()
 	__super::OnDestroy();
 }
 
-CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppProp)
+CRDFInstancePropertyData* CPropertiesWnd::GetInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup)
 {
-	if (auto propGridProperty = m_wndPropList.GetCurSel()) {
-		if (dynamic_cast<CRDFInstanceProperty*>(propGridProperty) 
-			|| dynamic_cast<CRDFInstanceObjectProperty*>(propGridProperty)
-            || dynamic_cast<CAddRDFInstanceProperty*>(propGridProperty)
-			) {
-			if (auto rawData = propGridProperty->GetData()) {
-				auto pData = (CRDFInstancePropertyData*)rawData;
-				if (pData->getOwlInstance() && pData->getRdfProperty()) {
-					if (ppProp) {
-                        *ppProp = propGridProperty;
-					}
-					return pData;
-				}
+	if (dynamic_cast<CRDFInstanceProperty*>(pGridProp)
+		|| dynamic_cast<CRDFInstanceObjectProperty*>(pGridProp)
+		|| dynamic_cast<CAddRDFInstanceProperty*>(pGridProp)
+		) {
+		if (auto rawData = pGridProp->GetData()) {
+			auto pData = (CRDFInstancePropertyData*)rawData;
+			if (pData->getOwlInstance() && pData->getRdfProperty()) {
+				if (ppGroup) {
+					*ppGroup = pGridProp->GetParent();
+                }
+				return pData;
 			}
 		}
 	}
-	
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup)
+{
+	for (int iSubItem = 0; iSubItem < pGridProp->GetSubItemsCount(); iSubItem++) {
+		if (auto pSubItem = pGridProp->GetSubItem(iSubItem)) {
+			if (auto pData = GetInstanceProperty(pSubItem, ppGroup)) {
+				return pData;
+			}
+		}
+    }
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup)
+{
+	if (auto pGridProp = m_wndPropList.GetCurSel()) {
+
+        //try itself first
+		if (auto pData = GetInstanceProperty(pGridProp, ppGroup)) {
+            return pData;
+		}
+
+		//is this a group?
+		if (auto pData = GetSubitemInstanceProperty(pGridProp, ppGroup)) {
+			return pData;
+        }
+		
+        //try parent group
+		if (auto pParentProp = pGridProp->GetParent()) {
+			if (auto pData = GetSubitemInstanceProperty(pParentProp, ppGroup)) {
+				return pData;
+			}
+		}
+	}	
 	return NULL;
 }
 
 void CPropertiesWnd::OnPropertyDerived()
 {
-    CMFCPropertyGridProperty* pProp = nullptr;
-	if (auto propData = GetSelectedInstanceProperty(&pProp)) {
+	CMFCPropertyGridProperty* pGroup = NULL;
+	if (auto propData = GetSelectedInstanceProperty(&pGroup)) {
 
 		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
         derived = !derived;
         SetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty(), derived);
 
-		auto pGroup = pProp->GetParent();
 		pGroup->Enable(!derived);
 		for (int iSubItem = 0; iSubItem < pGroup->GetSubItemsCount(); iSubItem++) {
 			auto pSubItem = pGroup->GetSubItem(iSubItem);
