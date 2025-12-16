@@ -182,14 +182,16 @@ void DragFace::Cleanup()
 /// </summary>
 bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
+    CalculateInstance(inst);
+
+    AssertIsClean();
+    Cleanup();
+
     m_logger = logger;
     m_hostData = hostData;
 
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
-
-    AssertIsClean();
-    Cleanup();
 
     VECTOR3 normal;
     if (FindNormal(normal, startDragPoint, inst, iConceptualFace)) {
@@ -212,6 +214,7 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
     }
 
     Cleanup();
+    CalculateInstance(inst);
     return false;
 }
 
@@ -235,6 +238,7 @@ void DragFace::Dragging(SEGMENT3 const& targetLine)
         UpdateDynamicDraw(targetPoints);
         RestoreInstance();
         ModifyInstance(targetPoints.pt[0]);
+        CalculateInstance(m_instance);
     }
 
 }
@@ -256,6 +260,8 @@ OwlInstance DragFace::FinishDrag(bool apply)
     OwlInstance result = m_instance;
     Cleanup();
     
+    CalculateInstance(m_instance);
+
     return result;
 }
 

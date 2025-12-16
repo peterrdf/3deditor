@@ -286,22 +286,32 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 
 //
 //
-static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, const CONCEPTUAL_FACE& cface, const VECTOR3* points, int_t numPoints, const MATRIX* transform)
+static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform)
 {
-    MATRIX buffer;
-    transform = GetCurrentTransform(cface, transform, buffer);
+    if (auto inst = rdfgeom_cface_GetInstance(&cface))
+    {
+        if (auto shell = rdfgeom_GetBRep(inst)) {
+            if (const VECTOR3* points = rdfgeom_GetPoints(shell)) {
+                if (int_t numPoints = rdfgeom_GetNumOfPoints(shell)) {
 
-    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
-        PLANE plane;
-        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
-        if (pos > GeomPosition::Outside) {
-            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-            normals.push_back(normal);
+                    MATRIX buffer;
+                    transform = GetCurrentTransform(cface, transform, buffer);
+
+                    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+                        PLANE plane;
+                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
+                        if (pos > GeomPosition::Outside) {
+                            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
+                            normals.push_back(normal);
+                        }
+                    }
+
+                    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
+                        FindNormals(normals, pt, *child, transform);
+                    }
+                }
+            }
         }
-    }
-
-    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-        FindNormals(normals, pt, *child, points, numPoints, transform);
     }
 }
 
@@ -318,31 +328,28 @@ extern bool FindNormal (
     outNormal = Vec3Make(0, 0, 0);
 
     if (auto shell = rdfgeom_GetBRep(inst)) {
-        if (auto points = rdfgeom_GetPoints(shell)) {
-            auto numPoints = rdfgeom_GetNumOfPoints(shell);
 
-            std::list<VECTOR3> normals;
+        std::list<VECTOR3> normals;
 
-            auto cface = *rdfgeom_GetConceptualFaces(shell);
-            if (iConceptualFace >= 0) {
-                auto cnt = iConceptualFace;
-                while (cnt && cface) {
-                    cface = *rdfgeom_cface_GetNext(cface);
-                    cnt--;
-                }
+        auto cface = *rdfgeom_GetConceptualFaces(shell);
+        if (iConceptualFace >= 0) {
+            auto cnt = iConceptualFace;
+            while (cnt && cface) {
+                cface = *rdfgeom_cface_GetNext(cface);
+                cnt--;
             }
+        }
 
-            for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
-                FindNormals(normals, pt, *cface, points, numPoints, NULL);
-                if (iConceptualFace >= 0)
-                    break;
-            }
+        for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
+            FindNormals(normals, pt, *cface, NULL);
+            if (iConceptualFace >= 0)
+                break;
+        }
 
-            if (!normals.empty()) {
-                outNormal = AverageVector(normals);
-                Vec3Invert(&outNormal);
-                return true; //>>>> found normal
-            }
+        if (!normals.empty()) {
+            outNormal = AverageVector(normals);
+            Vec3Invert(&outNormal);
+            return true; //>>>> found normal
         }
     }
     
