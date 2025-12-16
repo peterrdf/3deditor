@@ -110,9 +110,7 @@ extern void IntersectLineInstance(
 extern void IntersectLineCFace(
     std::vector<VECTOR3>&   outPoints, 
     const RAY3&             line,
-    const CONCEPTUAL_FACE&  cface, 
-    const VECTOR3*          shellPoints, 
-    int_t                   numShellPoints,
+    const CONCEPTUAL_FACE&  cface,
     const MATRIX*           transform
     );
 

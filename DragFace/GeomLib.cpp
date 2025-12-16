@@ -413,12 +413,8 @@ extern void IntersectLineInstance(
 )
 {
     if (auto shell = rdfgeom_GetBRep(instance)) {
-        if (auto points = rdfgeom_GetPoints(shell)) {
-            auto numPoints = rdfgeom_GetNumOfPoints(shell);
-
-            for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
-                IntersectLineCFace(outPoints, line, *cface, points, numPoints, NULL);
-            }
+        for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
+            IntersectLineCFace(outPoints, line, *cface, NULL);
         }
     }
 }
@@ -429,20 +425,27 @@ extern void IntersectLineCFace(
     std::vector<VECTOR3>&   outPoints,
     const RAY3&             line,
     const CONCEPTUAL_FACE&  cface,
-    const VECTOR3*          shellPoints,
-    int_t                   numShellPoints,
     const MATRIX*           transform
 )
 {
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
 
-    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
-        IntersectLineFace(outPoints, line, *face, shellPoints, numShellPoints, transform);
+    if (auto inst = rdfgeom_cface_GetInstance(PTR(cface))) {
+        if (auto shell = rdfgeom_GetBRep(inst)) {
+            if (auto shellPoints = rdfgeom_GetPoints(shell)) {
+                if (auto numShellPoints = rdfgeom_GetNumOfPoints(shell)) {
+
+                    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+                        IntersectLineFace(outPoints, line, *face, shellPoints, numShellPoints, transform);
+                    }
+                }
+            }
+        }
     }
 
     for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-        IntersectLineCFace(outPoints, line, *child, shellPoints, numShellPoints, transform);
+        IntersectLineCFace(outPoints, line, *child, transform);
     }
 
 }

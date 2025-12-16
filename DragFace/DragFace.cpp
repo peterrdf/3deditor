@@ -146,9 +146,8 @@ void DragFace::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
     if (m_logger) {
         m_logger(level, msg, m_hostData);
     }
-    else {
-        OutputDebugStringA(msg);
-    }
+
+    OutputDebugStringA(msg);
 }
 
 /// <summary>
@@ -208,7 +207,7 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
             return true;
         }
         else {
-            Log(RDFGEOM_LOG_LEVEL::ERR, "No effective properties found for dragging");
+            AfxMessageBox(L"No effective properties found for dragging", MB_ICONSTOP|MB_TOPMOST);
         }
     }
     else {
@@ -376,7 +375,7 @@ void DragFace::CollectEffectiveProperties()
 
                 SetDatatypeProperty(m_instance, prop, oldValue);
 
-                if (fabs(effect) > 1e-3) {
+                if (fabs(effect) > 1e-3 && fabs(effect) < FLT_MAX-1) {
                     PropertyEffect propEffect;
                     propEffect.prop = prop;
                     propEffect.initialValue = oldValue;
