@@ -3,12 +3,14 @@
 #include "_ap242_product_definition.h"
 #include "_ap242_draughting_model.h"
 #include "_ap242_instance.h"
+#include "_ap242_model_structure.h"
 #include "_rdf_instance.h"
 
 // ************************************************************************************************
 _ap242_model::_ap242_model(_log* pLog, bool bLoadInstancesOnDemand/* = false*/)
     : _ap_model(pLog, enumAP::STEP)
     , m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
+	, m_pModelStructure(nullptr)
     , m_pPropertyProvider(nullptr)
     , m_mapExpressID2Assembly()
     , m_vecDraughtingModels()	
@@ -67,6 +69,9 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
     _ap_model::clean(bCloseModel);
 
     if (bCloseModel) {
+		delete m_pModelStructure;
+		m_pModelStructure = nullptr;
+
         delete m_pPropertyProvider;
         m_pPropertyProvider = nullptr;
     }
@@ -318,11 +323,19 @@ void _ap242_model::save(const wchar_t* /*szPath*/)
     assert(0); //#todo
 }
 
+_ap242_model_structure* _ap242_model::getModelStructure()
+{
+    if (m_pModelStructure == nullptr) {
+        m_pModelStructure = new _ap242_model_structure(this);
+        m_pModelStructure->build();
+    }
+    return m_pModelStructure;
+}
+
 _ap242_property_provider* _ap242_model::getPropertyProvider()
 {
     if (m_pPropertyProvider == nullptr) {
         m_pPropertyProvider = new _ap242_property_provider(getSdaiModel());
 	}
-
     return m_pPropertyProvider;
 }

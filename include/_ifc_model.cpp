@@ -2,6 +2,7 @@
 #include "_ifc_model.h"
 #include "_ifc_geometry.h"
 #include "_ifc_instance.h"
+#include "_ifc_model_structure.h"
 #include "_ptr.h"
 #include "_string.h"
 
@@ -28,6 +29,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_sdaiReinforcingElementEntity(0)
 	, m_sdaiTransportElementEntity(0)
 	, m_sdaiVirtualElementEntity(0)
+	, m_pModelStructure(nullptr)
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_vecMappedItemPendingUpdate()
@@ -143,6 +145,9 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	_ap_model::clean(bCloseModel);
 
 	if (bCloseModel) {
+		delete m_pModelStructure;
+		m_pModelStructure = nullptr;
+
 		delete m_pUnitProvider;
 		m_pUnitProvider = nullptr;
 
@@ -848,6 +853,15 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 	return	nullptr;
 }
 
+_ifc_model_structure* _ifc_model::getModelStructure()
+{
+	if (m_pModelStructure == nullptr) {
+		m_pModelStructure = new _ifc_model_structure(this);
+		m_pModelStructure->build();
+	}
+
+	return m_pModelStructure;
+}
 
 _ifc_unit_provider* _ifc_model::getUnitProvider()
 {

@@ -9,6 +9,7 @@ class _ap242_assembly;
 class _ap242_draughting_model;
 class _ap242_annotation_plane;
 class _ap242_draughting_callout;
+class _ap242_model_structure;
 
 // ************************************************************************************************
 class _ap242_model : public _ap_model
@@ -18,6 +19,7 @@ private: // Members
 
     bool m_bLoadInstancesOnDemand;
 
+	_ap242_model_structure* m_pModelStructure;
     _ap242_property_provider* m_pPropertyProvider;
 
     map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
@@ -58,5 +60,6 @@ public: // Properties
 
     const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
     const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
+    _ap242_model_structure* getModelStructure();
     _ap242_property_provider* getPropertyProvider();
 };

@@ -84,6 +84,73 @@ void _ifc_model_structure::print(int iLevel/* = 0*/, _ifc_node* pNode/* = nullpt
 }
 #endif
 
+void _ifc_model_structure::getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath)
+{
+	vecPath.clear();
+	auto it = m_mapInstance2Node.find(sdaiInstance);
+	if (it == m_mapInstance2Node.end()) {
+		return;
+	}
+	_ifc_node* pNode = it->second;
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+	std::reverse(vecPath.begin(), vecPath.end());
+}
+
+void _ifc_model_structure::getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive)
+{
+	assert(sdaiInstance != 0);
+
+	auto it = m_mapInstance2Node.find(sdaiInstance);
+	if (it == m_mapInstance2Node.end()) {
+		return;
+	}
+
+	if (!bRecursive) {
+		vecChildren.clear();
+	}
+
+	_ifc_node* pNode = it->second;
+	for (auto pChildNode : pNode->children()) {
+		SdaiInstance sdaiChildInstance = pChildNode->getSdaiInstance();
+		if (sdaiChildInstance != 0) {
+			vecChildren.push_back(sdaiChildInstance);
+			if (bRecursive) {
+				getInstanceChildren(sdaiChildInstance, vecChildren, bRecursive);
+			}
+		}
+		else {
+			// Decomposition/Contains nodes
+			for (auto pGrandChildNode : pChildNode->children()) {
+				SdaiInstance sdaiGrandChildInstance = pGrandChildNode->getSdaiInstance();
+				if (sdaiGrandChildInstance != 0) {
+					vecChildren.push_back(sdaiGrandChildInstance);
+					if (bRecursive) {
+						getInstanceChildren(sdaiGrandChildInstance, vecChildren, bRecursive);
+					}
+				}
+			}
+		}
+	}
+}
+
+bool _ifc_model_structure::hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance)
+{
+	assert(pParentNode != nullptr);
+
+	for (auto pChildNode : pParentNode->children()) {
+		if (pChildNode->getSdaiInstance() == sdaiInstance) {
+			return true;
+		}
+
+		return hasChild(pChildNode, sdaiInstance);
+	}
+
+	return false;
+}
+
 void _ifc_model_structure::build()
 {
 	// Clean
