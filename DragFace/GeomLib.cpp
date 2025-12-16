@@ -14,8 +14,8 @@ static const MATRIX* GetCurrentTransform(
 )
 {
     if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(PTR(cface))) {
-        assert(!"not tested");
         if (parentTransform) {
+            assert(!"not tested");
             MatrixMultiply(&buffer, parentTransform, locatTransform);
             return &buffer;
         }
@@ -71,7 +71,6 @@ extern bool GetVertexPoint(
     outPoint = shellPoints[index];
 
     if (transform) {
-        assert(!"not tested");
         Vec3Transform(&outPoint, transform);
     }
 
@@ -287,13 +286,13 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 //
 static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform)
 {
+    MATRIX buffer;
+    transform = GetCurrentTransform(cface, transform, buffer);
+
     if (auto inst = rdfgeom_cface_GetInstance(&cface)) {
         if (auto shell = rdfgeom_GetBRep(inst)) {
             if (const VECTOR3* points = rdfgeom_GetPoints(shell)) {
                 if (int_t numPoints = rdfgeom_GetNumOfPoints(shell)) {
-
-                    MATRIX buffer;
-                    transform = GetCurrentTransform(cface, transform, buffer);
 
                     for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
                         PLANE plane;
