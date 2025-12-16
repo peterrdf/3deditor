@@ -182,6 +182,8 @@ void DragFace::Cleanup()
 /// </summary>
 bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
+    iConceptualFace = -1;//this index is wired in case of nested objects
+
     CalculateInstance(inst);
 
     AssertIsClean();
