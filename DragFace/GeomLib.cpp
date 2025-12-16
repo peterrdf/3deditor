@@ -186,7 +186,6 @@ extern GeomPosition ClassifyPointToFaceFast(
         return GeomPosition::AbovePlane;
     }
     if (dist < -eps) {
-        assert(!"not tested. Expect start point is inside solid?");
         return GeomPosition::BelowPlane;
     }
 
@@ -288,8 +287,7 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 //
 static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform)
 {
-    if (auto inst = rdfgeom_cface_GetInstance(&cface))
-    {
+    if (auto inst = rdfgeom_cface_GetInstance(&cface)) {
         if (auto shell = rdfgeom_GetBRep(inst)) {
             if (const VECTOR3* points = rdfgeom_GetPoints(shell)) {
                 if (int_t numPoints = rdfgeom_GetNumOfPoints(shell)) {
@@ -305,13 +303,13 @@ static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTU
                             normals.push_back(normal);
                         }
                     }
-
-                    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-                        FindNormals(normals, pt, *child, transform);
-                    }
                 }
             }
         }
+    }
+
+    for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
+        FindNormals(normals, pt, *child, transform);
     }
 }
 
@@ -353,7 +351,6 @@ extern bool FindNormal (
         }
     }
     
-    assert(!"normal not found");
     return false;
 }
 
