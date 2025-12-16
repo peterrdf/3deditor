@@ -311,7 +311,7 @@ void DragFace::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 /// </summary>
 void DragFace::ClearDynamicDraw()
 {
-#if 0
+#if 1
     auto res = RemoveInstance(m_drawDynamic);
     ASSERT(res == 0);
     res += RemoveInstanceRecursively(m_drawStartPoint);

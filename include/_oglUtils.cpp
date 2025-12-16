@@ -2260,6 +2260,10 @@ void _oglView::_drawFaces()
 		glBindVertexArray(itCohort.first);
 
 		for (auto pGeometry : itCohort.second) {
+			auto owlModel = pGeometry->getOwlModel();
+			if (!owlModel)
+				continue;
+
 			auto pModel = getController()->getModelByInstance(pGeometry->getOwlModel());
 			assert(pModel->getEnable());
 
