@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // ************************************************************************************************
-#define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
+//#define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
 #define WM_LOAD_INSTANCE_PROPERTIES WM_USER + 2
 
 // ************************************************************************************************
@@ -1701,7 +1701,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // REMOVE_OBJECT_PROPERTY_COMMAND
 			else {
 				if (strValue == SELECT_OBJECT_PROPERTY_COMMAND) {
@@ -1756,7 +1757,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 					auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-					PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+					//PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 				} // EMPTY_INSTANCE
 				else {
 					ASSERT(FALSE); // Internal error!
@@ -2264,7 +2266,7 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_CBN_SELENDOK(ID_COMBO_PROPERTIES_VIEW, OnViewModeChanged)
-	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTY_VALUES, OnLoadInstancePropertyValues)
+	//ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTY_VALUES, OnLoadInstancePropertyValues)
 	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTIES, OnLoadInstanceProperties)
 END_MESSAGE_MAP()
 
@@ -4425,6 +4427,7 @@ void CPropertiesWnd::OnViewModeChanged()
 	}
 }
 
+#if 0
 LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam != 0);
@@ -4480,6 +4483,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 
 	return 0;
 }
+#endif
 
 LRESULT CPropertiesWnd::OnLoadInstanceProperties(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
