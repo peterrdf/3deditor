@@ -79,7 +79,8 @@ extern bool FindNormal (
     VECTOR3&                outNormal,
     const VECTOR3&          pt,
     OwlInstance             inst,
-    int                     iConceptualFace = -1 // -1 - search all faces
+    int                     iConceptualFace = -1,   // -1 - search all faces
+    double                  eps = LENGTH_TOLERANCE  
 );  
 
 /// <summary>

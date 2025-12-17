@@ -284,7 +284,7 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 
 //
 //
-static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform)
+static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform, double eps)
 {
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
@@ -296,7 +296,7 @@ static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTU
 
                     for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
                         PLANE plane;
-                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, 1e-1);
+                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps);
                         if (pos > GeomPosition::Outside) {
                             VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
                             normals.push_back(normal);
@@ -308,7 +308,7 @@ static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTU
     }
 
     for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-        FindNormals(normals, pt, *child, transform);
+        FindNormals(normals, pt, *child, transform, eps);
     }
 }
 
@@ -319,8 +319,9 @@ extern bool FindNormal (
     VECTOR3&                outNormal,
     const VECTOR3&          pt,
     OwlInstance             inst,
-    int                     iConceptualFace // -1 - search all faces
-) 
+    int                     iConceptualFace, // -1 - search all faces
+    double                  eps //= LENGTH_TOLERANCE  
+)
 {
     outNormal = Vec3Make(0, 0, 0);
 
@@ -338,7 +339,7 @@ extern bool FindNormal (
         }
 
         for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
-            FindNormals(normals, pt, *cface, NULL);
+            FindNormals(normals, pt, *cface, NULL, eps);
             if (iConceptualFace >= 0)
                 break;
         }

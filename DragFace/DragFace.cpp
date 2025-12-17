@@ -86,7 +86,7 @@ static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double 
 /// <summary>
 /// 
 /// </summary>
-static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray)
+static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin = NULL)
 {
     CalculateInstance(inst);
 
@@ -98,7 +98,13 @@ static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray)
     for (auto& pt : intersections) {
         auto vecToPoint = pt - ray.org;
         double dot = Vec3Dot(&ray.dir, &vecToPoint);
-        minDot = min(minDot, dot);
+
+        if (dot < minDot) {
+            minDot = dot;
+            if (ptMin) {
+                *ptMin = pt;
+            }
+        }
     }
 
     return minDot;
@@ -179,6 +185,20 @@ void DragFace::Cleanup()
 /// <summary>
 /// 
 /// </summary>
+static void SnapStartDragPointToSurface(VECTOR3& stratDragPoint, const VECTOR3& normal, OwlInstance inst)
+{
+    RAY3 ray;
+    ray.org = stratDragPoint;
+    ray.dir = normal * -1; //towards inside
+
+    GetMinIntersectionPosition(inst, ray, &stratDragPoint);
+
+    ASSERT(Vec3Distance(&stratDragPoint, &ray.org) < 1e-1);
+}
+
+/// <summary>
+/// 
+/// </summary>
 bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
     iConceptualFace = -1;//this index is wired in case of nested objects
@@ -195,10 +215,15 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
 
     VECTOR3 normal;
-    if (FindNormal(normal, startDragPoint, inst, iConceptualFace)) {
+    if (FindNormal(normal, startDragPoint, inst, iConceptualFace, 1e-1)) {
+
+        //correct starting point to be exactly on surface - as staring point comes with bad tolerance
+        VECTOR3 snapStartPoint = startDragPoint;
+        SnapStartDragPointToSurface(snapStartPoint, normal, inst);
+
         m_instance = inst;
-        m_startNormal.pt[0] = startDragPoint;
-        m_startNormal.pt[1] = startDragPoint + normal;
+        m_startNormal.pt[0] = snapStartPoint;
+        m_startNormal.pt[1] = m_startNormal.pt[0] + normal;
 
         CollectEffectiveProperties();
             
