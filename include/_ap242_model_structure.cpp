@@ -11,6 +11,7 @@
 _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode)
 	: m_type(type)
 	, m_sdaiInstance(sdaiInstance)
+	, m_iId(-1)
 	, m_strId(strId)
 	, m_pParent(pParentNode)
 	, m_vecChildren()
@@ -57,7 +58,7 @@ void _ap242_model_structure::print(int iLevel, _ap242_node* pNode)
 	for (int i = 0; i < iLevel; ++i) {
 		strId += L"  ";
 	}
-	
+
 	strId += L"Node ID: ";
 	strId += (const wchar_t*)CA2W(pNode->getId().c_str());
 #ifdef _WINDOWS
@@ -81,11 +82,11 @@ void _ap242_model_structure::build()
 
 	for (auto pGeometry : m_pModel->getGeometries()) {
 		auto pProduct = dynamic_cast<_ap242_product_definition*>(pGeometry);
-		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {			
+		if ((pProduct != nullptr) && (pProduct->getRelatedProducts() == 0)) {
 			loadProductNode(nullptr, pProduct);
 		}
 	}
-	
+
 	// Draughitng models
 	for (auto pDraughtingModel : m_pModel->getDraughtingModels()) {
 		auto pDraughtingModelNode = new _ap242_node(
@@ -100,6 +101,7 @@ void _ap242_model_structure::build()
 				pAnnotationPlane->getSdaiInstance(),
 				_string::format("#%lld:0", pAnnotationPlane->getExpressID()),
 				pDraughtingModelNode));
+			pDraughtingModelNode->children().back()->id() = pAnnotationPlane->getInstances().front()->getID();
 		}
 
 		for (auto pDraughtingCallout : pDraughtingModel->getDraughtingCallouts()) {
@@ -108,8 +110,37 @@ void _ap242_model_structure::build()
 				pDraughtingCallout->getSdaiInstance(),
 				_string::format("#%lld:0", pDraughtingCallout->getExpressID()),
 				pDraughtingModelNode));
+			pDraughtingModelNode->children().back()->id() = pDraughtingCallout->getInstances().front()->getID();
 		}
 	}
+}
+
+void _ap242_model_structure::getNodeChildren(_ap242_node* pNode, vector<_ap242_node*>& vecChildren, bool bRecursive)
+{
+	assert(pNode != nullptr);
+	if (!bRecursive) {
+		vecChildren.clear();
+	}
+	for (auto pChildNode : pNode->children()) {
+		vecChildren.push_back(pChildNode);
+		if (bRecursive) {
+			getNodeChildren(pChildNode, vecChildren, bRecursive);
+		}
+	}
+}
+
+bool _ap242_model_structure::hasChild(_ap242_node* pParentNode, int64_t iId)
+{
+	assert(pParentNode != nullptr);
+	for (auto pChildNode : pParentNode->children()) {
+		if (pChildNode->id() == iId) {
+			return true;
+		}
+		if (hasChild(pChildNode, iId)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_product_definition* pProduct)
@@ -136,6 +167,7 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 			apProductInstance->getSdaiInstance(),
 			_string::format("#%lld:%lld", apProductInstance->getExpressID(), pInstanceIterator->index()),
 			pParentNode));
+		vecChildren.back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
 
 		pParentNode = vecChildren.back();
 	}

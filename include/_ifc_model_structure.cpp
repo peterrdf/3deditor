@@ -144,10 +144,10 @@ bool _ifc_model_structure::hasChild(_ifc_node* pParentNode, SdaiInstance sdaiIns
 		if (pChildNode->getSdaiInstance() == sdaiInstance) {
 			return true;
 		}
-
-		return hasChild(pChildNode, sdaiInstance);
+		if (hasChild(pChildNode, sdaiInstance)) {
+			return true;
+		}
 	}
-
 	return false;
 }
 

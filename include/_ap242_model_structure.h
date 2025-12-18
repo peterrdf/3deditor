@@ -28,6 +28,7 @@ private: // Members
 
 	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
+	int64_t m_iId;
 	string m_strId;
 	_ap242_node* m_pParent;
 	vector<_ap242_node*> m_vecChildren;
@@ -41,6 +42,7 @@ public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	int64_t& id() { return m_iId; }
 	const string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
 	vector<_ap242_node*>& children() { return m_vecChildren; }
@@ -69,6 +71,9 @@ public: // Methods
 	void print();
 	void print(int iLevel, _ap242_node* pNode);
 #endif
+
+	void getNodeChildren(_ap242_node* pNode, vector<_ap242_node*>& vecChildren, bool bRecursive);
+	bool hasChild(_ap242_node* pParentNode, int64_t iId);
 
 protected: // Methods
 
