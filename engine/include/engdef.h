@@ -150,5 +150,6 @@
 	#endif
 #endif
 
+        typedef unsigned char Byte;
 
 #endif
