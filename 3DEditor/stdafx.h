@@ -14,6 +14,8 @@
 
 #include "targetver.h"
 
+#include <map>
+
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
 
 // turns off MFC's hiding of some common and often safely ignored warning messages
@@ -49,7 +51,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "..\engine\include\engine.h"
-#include "..\engine\include\geom.h"
-#include "..\engine\include\rdfgeom.h"
+#include "engine.h"
+#include "geom.h"
+#include "rdfgeom.h"
 

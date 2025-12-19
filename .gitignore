@@ -171,3 +171,4 @@ Win32/Release/ImportPLY.*
 Win32/Debug/ImportPLY.*
 DragFace/obj/
 x64/*/DragFace.*
+x64/Debug/ParaLib.dll

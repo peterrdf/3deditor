@@ -62,6 +62,23 @@ static void TrimLineToSize(SEGMENT3& line, double size)
 /// <summary>
 /// 
 /// </summary>
+DragFace::PropertyState::PropertyState()
+{
+    value = formula_NewValue();
+}
+
+/// <summary>
+/// 
+/// </summary>
+DragFace::PropertyState::~PropertyState()
+{
+    formula_DeleteValue(value);
+    value = NULL;
+}
+
+/// <summary>
+/// 
+/// </summary>
 static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
 {
     char full_name[256];
@@ -161,7 +178,7 @@ void DragFace::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
 /// </summary>
 void DragFace::AssertIsClean()
 {
-    ASSERT(!m_instance && !m_changedProperty && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
+    ASSERT(!m_instance && !m_changed && m_savedState.empty() && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
 }
 
 /// <summary>
@@ -173,7 +190,8 @@ void DragFace::Cleanup()
     m_hostData = NULL;
     m_instance = NULL;
     m_activeProperties.clear();
-    m_changedProperty = NULL;
+    m_savedState.clear();
+    m_changed = false;
     m_drawDynamic = NULL;
     m_drawStartPoint = NULL;
     m_drawTargetPoints[0] = NULL;
@@ -262,7 +280,10 @@ void DragFace::Dragging(SEGMENT3 const& targetLine)
     SEGMENT3 targetPoints;
     if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
         UpdateDynamicDraw(targetPoints);
-        RestoreInstance();
+        if (m_changed) {
+            RestoreInstance(false);
+        }
+        RestoreInstance(false);
         ModifyInstance(targetPoints.pt[0]);
         CalculateInstance(m_instance);
     }
@@ -278,12 +299,13 @@ OwlInstance DragFace::FinishDrag(bool apply)
         return NULL;
 
     if (!apply) {
-        RestoreInstance();
+        RestoreInstance(true);
     }
 
     ClearDynamicDraw();
 
     OwlInstance result = m_instance;
+    
     Cleanup();
     
     CalculateInstance(m_instance);
@@ -360,14 +382,20 @@ void DragFace::ClearDynamicDraw()
 /// <summary>
 /// 
 /// </summary>
-void DragFace::RestoreInstance()
+void DragFace::RestoreInstance(bool cleanSavedState)
 {
-    if (m_instance && m_changedProperty) {
-        SetDatatypeProperty(m_instance, m_changedProperty->prop, m_changedProperty->initialValue);
+    if (m_instance) {
+        for (auto& propState : m_savedState) {
+            SetPropertyDerived(m_instance, propState.first, propState.second.derived);
+            if (!propState.second.derived) {
+                formula_SetPropertyValue(m_instance, propState.first, *propState.second.value);
+            }
+        }
+        m_changed = false;
+        if (cleanSavedState)
+            m_savedState.clear();
     }
-    m_changedProperty = NULL;
 }
-
 
 /// <summary>
 /// 
@@ -380,11 +408,22 @@ void DragFace::CollectEffectiveProperties()
     directrix.org = m_startNormal.pt[0];
     directrix.dir = m_startNormal.pt[0] - m_startNormal.pt[1];
 
+    //save initial state
+    m_savedState.clear();
     RdfProperty prop = NULL;
     while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
+        auto& state = m_savedState[prop];
+        state.derived = GetPropertyDerived(m_instance, prop);
+        if (!state.derived) {
+            formula_GetPropertyValue(m_instance, prop, *state.value);
+        }
+    }
+    m_changed = false;  
 
+    //effects of properties
+    while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
         auto propType = GetPropertyType(prop);
-        if (propType == DATATYPEPROPERTY_TYPE_DOUBLE) {
+        if (!GetPropertyDerived(m_instance, prop) && (propType == DATATYPEPROPERTY_TYPE_DOUBLE)) {
 
             double* values = NULL;
             int_t card = 0;
@@ -464,12 +503,6 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
     if (!m_instance)
         return;
 
-    //restore previous change
-    if (m_changedProperty) {
-        SetDatatypeProperty(m_instance, m_changedProperty->prop, m_changedProperty->initialValue);
-        m_changedProperty = NULL;
-    }
-
     RAY3 directrix; //from target to start point
     directrix.org = targetPoint;
     directrix.dir = m_startNormal.pt[0] - targetPoint;
@@ -494,8 +527,8 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
     {
         auto& best = results.begin()->second;
 
-        m_changedProperty = best.first; 
-        SetDatatypeProperty(m_instance, m_changedProperty->prop, best.second);
+        m_changed = true; 
+        SetDatatypeProperty(m_instance, best.first->prop, best.second);
     }
 }
 

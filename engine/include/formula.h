@@ -249,3 +249,10 @@ bool            DECL STDC   formula_GetPropertyValue(RdfsResource propHolder, Rd
 /// returns false if fails, paralib_GetLastError will provide the error details
 /// </summary>
 bool            DECL STDC   formula_SetPropertyValue(RdfsResource propHolder, RdfProperty prop, FormulaValue const& value);
+
+
+/// <summary>
+/// 
+/// </summary>
+FormulaValue*   DECL STDC   formula_NewValue();
+void            DECL STDC   formula_DeleteValue(FormulaValue* value);

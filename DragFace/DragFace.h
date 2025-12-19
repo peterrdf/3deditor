@@ -1,5 +1,6 @@
 #pragma once
 
+struct FormulaValue;
 
 class DragFace
     {
@@ -39,11 +40,16 @@ class DragFace
 
         typedef std::vector<PropertyEffect>   PropertyEffects;
 
-        struct PropertyValue
+        struct PropertyState
         {
+            PropertyState();
+            ~PropertyState();
+
             bool                derived;
-            std::vector<double> dvals;
+            FormulaValue*       value;
         };
+
+        typedef std::map<RdfProperty, PropertyState>   InstantState;
 
     private:
         void Cleanup();
@@ -54,7 +60,7 @@ class DragFace
         void UpdateDynamicDraw (const SEGMENT3& targetPoints);
         void ClearDynamicDraw ();
 
-        void RestoreInstance();
+        void RestoreInstance(bool cleanSavedState);
         void ModifyInstance(const VECTOR3& targetPoint);
         bool TryModifyByProperty(const PropertyEffect& prop, const RAY3& ray, double distTargetToStart, double& suggestedValue, double& distFromTarget);
         void CollectEffectiveProperties();
@@ -70,7 +76,8 @@ class DragFace
 
         PropertyEffects      m_activeProperties;
 
-        PropertyEffect       *m_changedProperty;
+        InstantState         m_savedState;
+        bool                 m_changed;
 
         GEOM::Collection     m_drawDynamic;
         GEOM::Transformation m_drawStartPoint;
