@@ -28,5 +28,12 @@ echo Update RDF engine binaries
 REM always use release GK build because of assertions
 copy "%RDF_ENGINE_LIB%Release\engine.lib" "%LIB_DIR%engine.lib" /y
 copy "%RDF_ENGINE_LIB%Release\engine.dll" "%DLL_DIR%engine.dll" /y
-
 :LibUpdated
+
+if .%RDF_PARALIB%.==.. goto ParaLibUpdated
+echo Update RDF ParaLib
+copy "%RDF_PARALIB%ParaLib\include\*.h" "%INC_DIR%" /y
+copy "%RDF_PARALIB%output\%PLATFORM%\%CONFIG%\ParaLib.lib" "%LIB_DIR%" /y
+copy "%RDF_PARALIB%output\%PLATFORM%\Release\ParaLib.dll" "%DLL_DIR%" /y
+:ParaLibUpdated
+

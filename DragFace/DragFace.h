@@ -39,6 +39,12 @@ class DragFace
 
         typedef std::vector<PropertyEffect>   PropertyEffects;
 
+        struct PropertyValue
+        {
+            bool                derived;
+            std::vector<double> dvals;
+        };
+
     private:
         void Cleanup();
         void AssertIsClean();
