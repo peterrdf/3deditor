@@ -203,15 +203,14 @@ void DragFace::Cleanup()
 /// <summary>
 /// 
 /// </summary>
-static void SnapStartDragPointToSurface(VECTOR3& stratDragPoint, const VECTOR3& normal, OwlInstance inst)
+static void SnapRayOriginToSurface(RAY3& ray, OwlInstance inst)
 {
-    RAY3 ray;
-    ray.org = stratDragPoint;
-    ray.dir = normal * -1; //towards inside
+    VECTOR3 snap;
+    GetMinIntersectionPosition(inst, ray, &snap);
 
-    GetMinIntersectionPosition(inst, ray, &stratDragPoint);
-
-    ASSERT(Vec3Distance(&stratDragPoint, &ray.org) < 1e-1);
+    ASSERT(Vec3Distance(&snap, &ray.org) < 1e-1);
+    
+    ray.org = snap;
 }
 
 /// <summary>
@@ -232,16 +231,15 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
 
-    VECTOR3 normal;
-    if (FindNormal(normal, startDragPoint, inst, iConceptualFace, 1e-1)) {
+    m_ray.org = startDragPoint;
+    if (FindNormal(m_ray.dir, startDragPoint, inst, iConceptualFace, 1e-1)) {
+
+        Vec3Invert(&m_ray.dir); //inward normal
 
         //correct starting point to be exactly on surface - as staring point comes with bad tolerance
-        VECTOR3 snapStartPoint = startDragPoint;
-        SnapStartDragPointToSurface(snapStartPoint, normal, inst);
+        SnapRayOriginToSurface(m_ray, inst);
 
         m_instance = inst;
-        m_startNormal.pt[0] = snapStartPoint;
-        m_startNormal.pt[1] = m_startNormal.pt[0] + normal;
 
         CollectEffectiveProperties();
             
@@ -254,6 +252,8 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
         }
     }
     else {
+        Vec3Init(m_ray.org);
+        Vec3Init(m_ray.dir);    
         Log(RDFGEOM_LOG_LEVEL::ERR, "Failed to find normal at start drag point");
     }
 
@@ -270,21 +270,21 @@ void DragFace::Dragging(SEGMENT3 const& targetLine)
     if (!m_instance)
         return;
 
-/*
-    Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
+
+    TRACE(__FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
         targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z,
         targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z
     );
-    */
+    
 
     SEGMENT3 targetPoints;
-    if (LineLineClosestPoints(targetPoints, m_startNormal, targetLine)) {
+    if (LineLineClosestPoints(targetPoints, targetLine, m_ray)) {
         UpdateDynamicDraw(targetPoints);
         if (m_changed) {
             RestoreInstance(false);
         }
         RestoreInstance(false);
-        ModifyInstance(targetPoints.pt[0]);
+        ModifyInstance(targetPoints.pt[1]);
         CalculateInstance(m_instance);
     }
 
@@ -331,9 +331,9 @@ void DragFace::PrepareDynamicDraw()
 
     auto model = GetModel(m_instance);
 
-    m_drawStartPoint = DrawPoint(model, m_startNormal.pt[0], size, "start point");
-    m_drawTargetPoints[0] = DrawPoint(model, m_startNormal.pt[1], size, "target point");
-    m_drawTargetPoints[1] = DrawPoint(model, m_startNormal.pt[1], size, "target point on normal");
+    m_drawStartPoint = DrawPoint(model, m_ray.org, size, "start point");
+    m_drawTargetPoints[0] = DrawPoint(model, m_ray.org, size, "target point");
+    m_drawTargetPoints[1] = DrawPoint(model, m_ray.org, size, "target point on normal");
 
     OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1], m_instance };
 
@@ -404,10 +404,6 @@ void DragFace::CollectEffectiveProperties()
 {
     m_activeProperties.clear();
 
-    RAY3 directrix; //from target to start point
-    directrix.org = m_startNormal.pt[0];
-    directrix.dir = m_startNormal.pt[0] - m_startNormal.pt[1];
-
     //save initial state
     m_savedState.clear();
     RdfProperty prop = NULL;
@@ -435,7 +431,7 @@ void DragFace::CollectEffectiveProperties()
                 double newValue = StandardStep(oldValue);
                 SetDatatypeProperty(m_instance, prop, newValue);
 
-                double effect = GetMinIntersectionPosition(m_instance, directrix);
+                double effect = GetMinIntersectionPosition(m_instance, m_ray);
 
                 SetDatatypeProperty(m_instance, prop, oldValue);
 
@@ -455,38 +451,38 @@ void DragFace::CollectEffectiveProperties()
 /// <summary>
 /// 
 /// </summary>
-bool DragFace::TryModifyByProperty(const PropertyEffect& prop, const RAY3& ray, double distTargetToStart, double& suggestedValue, double& distFromTarget)
+bool DragFace::TryModifyByProperty(const PropertyEffect& prop, double distDesired, double& suggestedValue, double& distResult)
 {
     if (!m_instance)
         return false;
 
     double v[2] = { prop.initialValue,  StandardStep(prop.initialValue)};
-    double p[2] = { distTargetToStart,  distTargetToStart + prop.distStartToStep };
+    double p[2] = { 0,                  prop.distStartToStep };
 
     bool better = false;
     suggestedValue = v[0];
-    distFromTarget = p[0];
+    distResult = p[0];
     
-    if (fabs(p[1]) < fabs(p[1])) {
+    if (fabs(p[1]-distDesired) < fabs(p[0]-distDesired)) {
         //better position found
         better = true;
         suggestedValue = v[1];
-        distFromTarget = p[1];
+        distResult = p[1];
     }
 
     if (fabs(p[1] - p[0]) > LENGTH_TOLERANCE) {
         //linear interpolation to zero position
-        double val = v[0] - p[0] * (v[1] - v[0]) / (p[1] - p[0]);
+        double val = v[0] + (distDesired - p[0]) * (v[1] - v[0]) / (p[1] - p[0]);
         
         SetDatatypeProperty(m_instance, prop.prop, val);
-        double pos = GetMinIntersectionPosition(m_instance, ray);
+        double pos = GetMinIntersectionPosition(m_instance, m_ray);
         SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
 
-        if (fabs(pos) < fabs(distFromTarget)) {
+        if (fabs(pos-distDesired) < fabs(distResult-distDesired)) {
             //better position found
             better = true;
             suggestedValue = val;
-            distFromTarget = pos;
+            distResult = pos;
         }
     }
 
@@ -503,20 +499,18 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
     if (!m_instance)
         return;
 
-    RAY3 directrix; //from target to start point
-    directrix.org = targetPoint;
-    directrix.dir = m_startNormal.pt[0] - targetPoint;
-    double startDistance = Vec3Normalize(directrix.dir);
+    VECTOR3 targetDir = targetPoint - m_ray.org;
+    double distDesired = Vec3Dot(m_ray.dir, targetDir);
 
     std::map<double, std::pair<PropertyEffect*, double>> results; //map of distFromTarget to (property, suggestedValue)
 
     for (auto& propEffect : m_activeProperties) {
         
         double suggestedValue = NAN;
-        double distFromTarget = NAN;
+        double distResult = NAN;
         
-        if (TryModifyByProperty(propEffect, directrix, startDistance, suggestedValue, distFromTarget)) {
-            auto& pair = results[fabs(distFromTarget)];
+        if (TryModifyByProperty(propEffect, distDesired, suggestedValue, distResult)) {
+            auto& pair = results[fabs(distResult-distDesired)];
             pair.first = &propEffect;
             pair.second = suggestedValue;
         }
@@ -529,6 +523,12 @@ void DragFace::ModifyInstance(const VECTOR3& targetPoint)
 
         m_changed = true; 
         SetDatatypeProperty(m_instance, best.first->prop, best.second);
+
+        TRACE(__FUNCTION__ " sets %s=%g\n", GetNameOfProperty(best.first->prop), best.second);
+    }
+    else
+    {
+        TRACE(__FUNCTION__ " does not found good change\n");
     }
 }
 

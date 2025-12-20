@@ -94,6 +94,11 @@ extern bool LineLineClosestPoints(
     const SEGMENT3& lineII
 );
 
+extern bool LineLineClosestPoints(
+    SEGMENT3& closestPoints,
+    const SEGMENT3& lineI,
+    const RAY3& lineII
+);
 
 
 /// <summary>

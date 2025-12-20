@@ -62,7 +62,7 @@ class DragFace
 
         void RestoreInstance(bool cleanSavedState);
         void ModifyInstance(const VECTOR3& targetPoint);
-        bool TryModifyByProperty(const PropertyEffect& prop, const RAY3& ray, double distTargetToStart, double& suggestedValue, double& distFromTarget);
+        bool TryModifyByProperty(const PropertyEffect& prop, double distDesired, double& suggestedValue, double& distResult);
         void CollectEffectiveProperties();
 
         double StandardStep(double oldValue);
@@ -72,7 +72,7 @@ class DragFace
         void*                m_hostData;
 
         OwlInstance          m_instance;
-        SEGMENT3             m_startNormal;   //start drag point and point at normal direction
+        RAY3                 m_ray;   //start drag point and inward normal direction
 
         PropertyEffects      m_activeProperties;
 

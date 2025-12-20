@@ -354,22 +354,14 @@ extern bool FindNormal (
     return false;
 }
 
-//
-//
-extern bool LineLineClosestPoints(
-    SEGMENT3&       closestPoints,
-    const SEGMENT3& lineI,
-    const SEGMENT3& lineII
+static bool LineLineClosestPoints(
+    SEGMENT3& closestPoints,
+    const VECTOR3& A, //lineI A + t*u
+    const VECTOR3& u,
+    const VECTOR3& B, //lineII B + s*v
+    const VECTOR3& v
 )
 {
-    //lineI A + t*u
-    const VECTOR3& A = lineI.pt[0];
-    VECTOR3 u = lineI.pt[1] - lineI.pt[0];
-
-    //lineII B + s*v
-    const VECTOR3& B = lineII.pt[0];
-    VECTOR3 v = lineII.pt[1] - lineII.pt[0];
-
     VECTOR3 w0 = A - B;
 
     double a = Vec3LengthSqr(&u);
@@ -402,6 +394,40 @@ extern bool LineLineClosestPoints(
     closestPoints.pt[1] = B + v * s;
 
     return true;
+}
+
+//
+//
+extern bool LineLineClosestPoints(
+    SEGMENT3&       closestPoints,
+    const SEGMENT3& lineI,
+    const SEGMENT3& lineII
+)
+{
+    //lineI A + t*u
+    const VECTOR3& A = lineI.pt[0];
+    VECTOR3 u = lineI.pt[1] - lineI.pt[0];
+
+    //lineII B + s*v
+    const VECTOR3& B = lineII.pt[0];
+    VECTOR3 v = lineII.pt[1] - lineII.pt[0];
+
+    return LineLineClosestPoints(closestPoints, A, u, B, v);
+}
+
+//
+//
+extern bool LineLineClosestPoints(
+    SEGMENT3& closestPoints,
+    const SEGMENT3& lineI,
+    const RAY3& lineII
+)
+{
+    //lineI A + t*u
+    const VECTOR3& A = lineI.pt[0];
+    VECTOR3 u = lineI.pt[1] - lineI.pt[0];
+
+    return LineLineClosestPoints(closestPoints, A, u, lineII.org, lineII.dir);
 }
 
 
