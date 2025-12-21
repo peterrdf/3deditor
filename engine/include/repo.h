@@ -258,6 +258,17 @@ bool            DECL STDC   repo_SetClassPropertyCardRestriction    (RdfFile fil
 //
 bool            DECL STDC   repo_GetClassPropertyCardRestriction   (RdfFile file, OwlClass cls, RdfProperty prop, int64_t* cmin, int64_t* cmax);
 
+// Specify range restriction and knowledge record in RdfFile
+// If the RdfFile already contains knowledge about this property range, it will be updated
+// Returns success flag
+//
+bool            DECL STDC   repo_SetPropertyRangeResctriction(RdfFile file, RdfProperty prop, OwlClass* rClasses, int_t nClasses);
+
+// Returns range restriction known only in this RdfFile, not taking into account other files and embedded knowledge
+// Returns success flag
+//
+bool            DECL STDC   repo_GetPropertyRangeResctriction(RdfFile file, RdfProperty prop, OwlClass** rClasses, int_t* nClasses);
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// 
 /// Go through information presented in RdfFile
@@ -298,6 +309,11 @@ bool            DECL STDC   repo_IsKnowledgeExposedParent               (RepoKno
 // If yes, *pCls and *pParent will return related classes  
 //
 bool            DECL STDC   repo_IsKnowledgeSetClassPropertyCardinalityRestriction    (RepoKnowledge knowledge, OwlClass* pCls, RdfProperty* pProp, int64_t* cmin, int64_t* cmax);
+
+// Checks if the 'knowledge' information record is property range restriction
+// If yes, pProp will return property and rClasses[nClasses] array of relevant classes and *pParent will return related classes  
+//
+bool            DECL STDC   repo_IsKnowledgePropertyRangeRestriction                 (RepoKnowledge knowledge, RdfProperty* pProp, OwlClass** rClasses, int_t* nClasses);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// 

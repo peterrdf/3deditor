@@ -254,5 +254,5 @@ bool            DECL STDC   formula_SetPropertyValue(RdfsResource propHolder, Rd
 /// <summary>
 /// 
 /// </summary>
-FormulaValue*   DECL STDC   formula_NewValue();
+FormulaValue    DECL * STDC   formula_NewValue();
 void            DECL STDC   formula_DeleteValue(FormulaValue* value);
