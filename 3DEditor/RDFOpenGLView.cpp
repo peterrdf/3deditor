@@ -1659,23 +1659,18 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 
 void CRDFOpenGLView::EndDrag(bool accept)
 {
-	// Finish dragging
-	auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
-	TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
-
-	_ptr<_rdf_model> rdfModel(getController()->getModel());
-	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
-	ASSERT(pRdfInstance != nullptr);
-	_ptr<_rdf_controller>(getController())->deleteInstance(this, pRdfInstance);
-
+	// Finish dragging	
 	_ptr<_rdf_controller>(getController())->onInteractiveEditEnd(this);
 
 	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
 	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
 
-	pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
+	_ptr<_rdf_model> rdfModel(getController()->getModel());
+	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
 	ASSERT(pRdfInstance != nullptr);
 	pRdfInstance->recalculate();
+
+	rdfModel->deleteObsoleteInstances();
 
 	getController()->onModelUpdated();	
 }

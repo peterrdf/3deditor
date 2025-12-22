@@ -256,6 +256,33 @@ void _rdf_model::loadNewInstances()
 	} // while (owlInstance != 0)
 }
 
+void _rdf_model::deleteObsoleteInstances()
+{
+	// Instances
+	auto itInstance = m_mapInstances.begin();
+	while (itInstance != m_mapInstances.end()) {
+		OwlInstance owlInstance = itInstance->first;
+		auto itNextInstance = std::next(itInstance);
+		if (!IsInstance(owlInstance)) {
+			auto pInstance = itInstance->second;
+			_model::deleteGeometry(pInstance->getGeometry());
+			m_mapInstances.erase(itInstance);
+		}
+		itInstance = itNextInstance;
+	}
+
+	// Default states
+	for (auto it = m_mapInstanceDefaultState.begin(); it != m_mapInstanceDefaultState.end(); ) {
+		OwlInstance owlInstance = it->first;
+		if (!IsInstance(owlInstance)) {
+			it = m_mapInstanceDefaultState.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);
@@ -585,6 +612,12 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 
 	// _model
 	_model::deleteGeometry(pInstance->getGeometry());
+
+	// Default state
+	auto itDefaultState = m_mapInstanceDefaultState.find(pInstance->getOwlInstance());
+	if (itDefaultState != m_mapInstanceDefaultState.end()) {
+		m_mapInstanceDefaultState.erase(itDefaultState);
+	}
 
 	return bResult;
 }
