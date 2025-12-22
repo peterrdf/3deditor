@@ -51,14 +51,9 @@ BOOL CSelectDragPropsDialog::OnInitDialog()
 		auto name = DisplayName(prop);
 		auto item = m_wndPropsList.InsertItem(0, name.c_str());
 		m_wndPropsList.SetCheck(item);
-
-		wchar_t str[80];
-		swprintf_s(str, L"%g", fabs(effect)*100);
-		m_wndPropsList.SetItemText(item, 1, str);
-
+		m_wndPropsList.SetItemText(item, 1, std::to_wstring(fabs(effect) * 100).c_str());
 		m_wndPropsList.SetItemData(item, prop);
 	}
-
 
 	for (int i = 0; i < m_wndPropsList.GetHeaderCtrl()->GetItemCount(); ++i)
 		m_wndPropsList.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
