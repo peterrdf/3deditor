@@ -1670,7 +1670,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 	ASSERT(pRdfInstance != nullptr);
 	pRdfInstance->recalculate();
 
-	rdfModel->deleteObsoleteInstances();
+	rdfModel->removeObsoleteInstances();
 
 	getController()->onModelUpdated();	
 }

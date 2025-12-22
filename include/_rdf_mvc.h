@@ -41,7 +41,7 @@ public:  // Methods
 	void importModel(const wchar_t* szPath);
 	void reload() { load(); }
 	void loadNewInstances();
-	void deleteObsoleteInstances();
+	void removeObsoleteInstances();
 
 protected:
 

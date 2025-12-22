@@ -256,7 +256,7 @@ void _rdf_model::loadNewInstances()
 	} // while (owlInstance != 0)
 }
 
-void _rdf_model::deleteObsoleteInstances()
+void _rdf_model::removeObsoleteInstances()
 {
 	// Instances
 	auto itInstance = m_mapInstances.begin();
