@@ -11,6 +11,7 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
     , m_szProductName(nullptr)
     , m_iRelatingProducts(0)
     , m_iRelatedProducts(0)
+	, m_pProductShape(nullptr)
 {
     sdaiGetAttrBN(sdaiInstance, "id", sdaiUNICODE, &m_szId);
     sdaiGetAttrBN(sdaiInstance, "name", sdaiUNICODE, &m_szName);
@@ -28,7 +29,58 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 }
 
 /*virtual*/ _ap242_product_definition::~_ap242_product_definition()
-{}
+{
+}
+
+// ************************************************************************************************
+_ap242_product_shape::_ap242_product_shape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiInstance)
+    : _ap242_geometry(0, sdaiInstance)
+    , m_pProductDefinition(pProductDefinition)
+	, m_vecProductShapeRepresentations()
+{
+    assert(m_pProductDefinition != nullptr);
+}
+
+/*virtual*/ _ap242_product_shape::~_ap242_product_shape()
+{
+}
+
+void _ap242_product_shape::addProductShapeRepresentation(_ap242_product_shape_representation* pProductShapeRepresentation)
+{
+    assert(pProductShapeRepresentation != nullptr);
+    m_vecProductShapeRepresentations.push_back(pProductShapeRepresentation);
+}
+
+// ************************************************************************************************
+_ap242_product_shape_representation::_ap242_product_shape_representation(_ap242_product_shape* pProductShape, SdaiInstance sdaiInstance)
+    : _ap242_geometry(0, sdaiInstance)
+    , m_pProductShape(pProductShape)
+    , m_vecRepresentationItems()
+{
+    assert(m_pProductShape != nullptr);
+}
+
+/*virtual*/ _ap242_product_shape_representation::~_ap242_product_shape_representation()
+{
+}
+
+void _ap242_product_shape_representation::addRepresentationItem(_ap242_product_shape_representation_item* pRepresentationItem)
+{
+    assert(pRepresentationItem != nullptr);
+    m_vecRepresentationItems.push_back(pRepresentationItem);
+}
+
+// ************************************************************************************************
+_ap242_product_shape_representation_item::_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance)
+    : _ap242_geometry(owlInstance, sdaiInstance)
+    , m_pProductShapeRepresentation(pProductShapeRepresentation)
+{
+    assert(m_pProductShapeRepresentation != nullptr);
+}
+
+/*virtual*/ _ap242_product_shape_representation_item::~_ap242_product_shape_representation_item()
+{
+}
 
 // ************************************************************************************************
 _ap242_assembly::_ap242_assembly(SdaiInstance sdaiInstance, _ap242_product_definition* pRelatingProductDefinition, _ap242_product_definition* pRelatedProductDefinition)

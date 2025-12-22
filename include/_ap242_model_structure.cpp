@@ -170,6 +170,51 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 		vecChildren.back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
 
 		pParentNode = vecChildren.back();
+
+		if (pProduct->getProductShape()) {
+			auto pProductShape = pProduct->getProductShape();
+
+			auto pProductShapeNode = new _ap242_node(
+				_ap242_node_type::ProductShape,
+				pProductShape->getSdaiInstance(),
+				_string::format("#%lld", pProductShape->getExpressID()),
+				pParentNode);
+			pParentNode->children().push_back(pProductShapeNode);
+
+			for (auto pProductShapeRepresentation : pProductShape->getProductShapeRepresentations()) {
+				auto pProductShapeRepresentationNode = new _ap242_node(
+					_ap242_node_type::ProductShapeRepresentation,
+					pProductShapeRepresentation->getSdaiInstance(),
+					_string::format("#%lld", pProductShapeRepresentation->getExpressID()),
+					pProductShapeNode);
+					pProductShapeNode->children().push_back(pProductShapeRepresentationNode);
+
+				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
+					pInstanceIterator = nullptr;
+					auto itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
+					if (itInstanceIterator == m_mapInstanceIterators.end()) {
+						pInstanceIterator = new _instance_iterator(pRepresentationItem->getInstances());
+						m_mapInstanceIterators[pRepresentationItem] = pInstanceIterator;
+					}
+					else {
+						pInstanceIterator = itInstanceIterator->second;
+					}
+
+					_ptr<_ap242_product_shape_representation_item_instance> apRepresentationItemInstance(pInstanceIterator->getNextItem());
+					if (apRepresentationItemInstance) {
+						pProductShapeRepresentationNode->children().push_back(new _ap242_node(
+							_ap242_node_type::ProductShapeRepresentationItem,
+							apRepresentationItemInstance->getSdaiInstance(),
+							_string::format("#%lld:%lld", apRepresentationItemInstance->getExpressID(), pInstanceIterator->index()),
+							pProductShapeRepresentationNode));
+						pProductShapeRepresentationNode->children().back()->id() = pInstanceIterator->data()[pInstanceIterator->index()]->getID();
+					}
+					else {
+						assert(false);
+					}
+				}
+			}
+		}
 	}
 	else {
 		assert(false);

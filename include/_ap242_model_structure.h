@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_ap242_model.h"
+#include "_ap242_geometry.h"
 
 #include <string>
 #include <vector>
@@ -13,6 +14,9 @@ typedef _vector_sequential_iterator<_instance> _instance_iterator;
 enum class _ap242_node_type : int
 {
 	ProductDefinition = 0,
+	ProductShape,
+	ProductShapeRepresentation,
+	ProductShapeRepresentationItem,
 	Assembly,
 	ProductInstance,
 	DraughtingModel,
@@ -58,7 +62,7 @@ private: // Members
 	vector<_ap242_node*> m_vecRootProducts;
 
 	// Cache	
-	map<_ap242_product_definition*, _instance_iterator*> m_mapInstanceIterators;
+	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 
 public: // Methods
 
