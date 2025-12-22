@@ -118,7 +118,7 @@ public: // Methods
 			(strFileSchema.find(L"AP209") == 0) ||
 			(strFileSchema.find(L"AP214") == 0) ||
 			(strFileSchema.find(L"AP242") == 0)) {
-			auto pModel = new _ap242_model(pLog, bLoadInstancesOnDemand);
+			auto pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
 			pModel->attachModel(szModel, sdaiModel, nullptr);
 
 			return pModel;
@@ -173,7 +173,7 @@ public: // Methods
 			return vecModels;
 		}
 
-		auto pModel = new _ap242_model(pLog);
+		auto pModel = new _ap242_model(pLog, true, false);
 		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
 		vecModels.push_back(pModel);
 

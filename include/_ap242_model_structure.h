@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_ap242_model.h"
+#include "_ap242_geometry.h"
 
 #include <string>
 #include <vector>
@@ -13,6 +14,9 @@ typedef _vector_sequential_iterator<_instance> _instance_iterator;
 enum class _ap242_node_type : int
 {
 	ProductDefinition = 0,
+	ProductShape,
+	ProductShapeRepresentation,
+	ProductShapeRepresentationItem,
 	Assembly,
 	ProductInstance,
 	DraughtingModel,
@@ -28,6 +32,7 @@ private: // Members
 
 	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
+	int64_t m_iId;
 	string m_strId;
 	_ap242_node* m_pParent;
 	vector<_ap242_node*> m_vecChildren;
@@ -41,6 +46,7 @@ public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	int64_t& id() { return m_iId; }
 	const string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
 	vector<_ap242_node*>& children() { return m_vecChildren; }
@@ -56,7 +62,7 @@ private: // Members
 	vector<_ap242_node*> m_vecRootProducts;
 
 	// Cache	
-	map<_ap242_product_definition*, _instance_iterator*> m_mapInstanceIterators;
+	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 
 public: // Methods
 
@@ -69,6 +75,9 @@ public: // Methods
 	void print();
 	void print(int iLevel, _ap242_node* pNode);
 #endif
+
+	void getNodeChildren(_ap242_node* pNode, vector<_ap242_node*>& vecChildren, bool bRecursive);
+	bool hasChild(_ap242_node* pParentNode, int64_t iId);
 
 protected: // Methods
 

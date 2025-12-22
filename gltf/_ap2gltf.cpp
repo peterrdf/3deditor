@@ -3399,12 +3399,12 @@ namespace _ap2gltf
 				else {
 					_ptr<_ap242_annotation_plane> annotationPlane(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 					if (annotationPlane) {
-						strName = wstring_to_utf8(annotationPlane->getName());
+						strName = wstring_to_utf8(((_geometry*)annotationPlane)->getName());
 					}
 					else {
 						_ptr<_ap242_draughting_callout> draughtingCallout(pAP242Model->getGeometryByInstance(pRootProduct->getSdaiInstance()), false);
 						if (draughtingCallout) {
-							strName = wstring_to_utf8(draughtingCallout->getName());
+							strName = wstring_to_utf8(((_geometry*)draughtingCallout)->getName());
 						}
 						else {
 							if (pRootProduct->getType() == _ap242_node_type::DraughtingModel) {
@@ -3505,8 +3505,8 @@ namespace _ap2gltf
 		// Product
 		//
 
-		_ptr<_ap242_product_definition> product(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
-		if (product) {
+		_ptr<_ap242_product_definition> apProduct(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (apProduct) {
 			*getOutputStream() << COMMA;
 
 			indent()++;
@@ -3515,7 +3515,7 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", wstring_to_utf8(product->getProductName()));
+			writeStringProperty("name", wstring_to_utf8(apProduct->getProductName()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
@@ -3535,7 +3535,7 @@ namespace _ap2gltf
 				writeStartArrayTag(false);
 				indent()++;
 
-				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(product->getSdaiInstance());
+				auto pPropertyCollection = pPropertyProvider->getPropertyCollection(apProduct->getSdaiInstance());
 				if (pPropertyCollection != nullptr) {
 					int iIndex = 0;
 					for (auto pProperty : pPropertyCollection->properties()) {
@@ -3565,7 +3565,86 @@ namespace _ap2gltf
 			}
 
 			return;
-		} // if (product)
+		} // if (apProduct)
+
+		//
+		// Shape
+		//
+
+		_ptr<_ap242_product_shape> apShape(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (apShape) {
+			*getOutputStream() << COMMA;
+			indent()++;
+			writeStartObjectTag();
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(((_geometry*)apShape)->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			indent()--;
+			writeEndObjectTag();
+			indent()--;
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (apShape)
+
+		//
+		// Shape Representation
+		// 
+
+		_ptr<_ap242_product_shape_representation> apShapeRepresentation(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (apShapeRepresentation) {
+			*getOutputStream() << COMMA;
+			indent()++;
+			writeStartObjectTag();
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(((_geometry*)apShapeRepresentation)->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			indent()--;
+			writeEndObjectTag();
+			indent()--;
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (apShapeRepresentation)
+
+		//
+		// Shape Representation Item
+		_ptr<_ap242_product_shape_representation_item> apShapeRepresentationItem(ap242Model->getGeometryByInstance(pNode->getSdaiInstance()), false);
+		if (apShapeRepresentationItem) {
+			*getOutputStream() << COMMA;
+			indent()++;
+			writeStartObjectTag();
+			indent()++;
+			writeStringProperty("id", pNode->getId());
+			*getOutputStream() << COMMA;
+			writeStringProperty("name", wstring_to_utf8(((_geometry*)apShapeRepresentationItem)->getName()));
+			*getOutputStream() << COMMA;
+			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
+			*getOutputStream() << COMMA;
+			writeStringProperty("parent", pNode->getParent() != nullptr ? pNode->getParent()->getId() : "null");
+			indent()--;
+			writeEndObjectTag();
+			indent()--;
+			for (auto pChildNode : pNode->children()) {
+				writeMetadataObjectChildrenSTEP(pChildNode, pAP242Model, pPropertyProvider);
+			}
+
+			return;
+		} // if (apShapeRepresentationItem)
 
 		//
 		// Assembly
@@ -3614,7 +3693,7 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", wstring_to_utf8(annotationPlane->getName()));
+			writeStringProperty("name", wstring_to_utf8(((_geometry*)annotationPlane)->getName()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;
@@ -3680,7 +3759,7 @@ namespace _ap2gltf
 			indent()++;
 			writeStringProperty("id", pNode->getId());
 			*getOutputStream() << COMMA;
-			writeStringProperty("name", wstring_to_utf8(draughtingCallout->getName()));
+			writeStringProperty("name", wstring_to_utf8(((_geometry*)draughtingCallout)->getName()));
 			*getOutputStream() << COMMA;
 			writeStringProperty("type", wstring_to_utf8(_ap_geometry::getEntityName(pNode->getSdaiInstance())));
 			*getOutputStream() << COMMA;

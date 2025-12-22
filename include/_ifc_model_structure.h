@@ -83,8 +83,12 @@ public: // Methods
 	void print(int iLevel = 0, _ifc_node* pNode = nullptr);
 #endif
 
+	void getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath);
+	void getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive);
+	bool hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
+
 protected: // Methods
-	
+
 	void loadProjectNode(SdaiInstance sdaiProjectInstance);
 	void loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 	void loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
@@ -98,5 +102,5 @@ public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
+	const map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
 };
-

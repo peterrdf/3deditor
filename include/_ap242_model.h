@@ -5,10 +5,13 @@
 
 // ************************************************************************************************
 class _ap242_product_definition;
+class _ap242_product_shape;
+class _ap242_product_shape_representation;
 class _ap242_assembly;
 class _ap242_draughting_model;
 class _ap242_annotation_plane;
 class _ap242_draughting_callout;
+class _ap242_model_structure;
 
 // ************************************************************************************************
 class _ap242_model : public _ap_model
@@ -16,8 +19,10 @@ class _ap242_model : public _ap_model
 
 private: // Members
 
+    bool m_bLoadProductRepresentationItems;
     bool m_bLoadInstancesOnDemand;
 
+	_ap242_model_structure* m_pModelStructure;
     _ap242_property_provider* m_pPropertyProvider;
 
     map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
@@ -25,7 +30,7 @@ private: // Members
 
 public: // Methods
 
-    _ap242_model(_log* pLog, bool bLoadInstancesOnDemand = false);
+    _ap242_model(_log* pLog, bool bLoadProductRepresentationItem, bool bLoadInstancesOnDemand);
     virtual ~_ap242_model();
 
     _ap242_assembly* getAssemblyByInstance(SdaiInstance sdaiInstance) const;
@@ -42,6 +47,10 @@ protected: // Methods
 private: // Methods
 
     void loadProductDefinitions();
+    void loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition);
+    void loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance);
+    void loadShapeRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance);
+    void loadRepresentationItems(_ap242_product_shape_representation* pProductShapeRepresentation, SdaiInstance sdaiRepresentationInstance);
     _ap242_product_definition* loadProductDefinition(SdaiInstance sdaiProductDefinitionInstance);
     _ap242_product_definition* getProductDefinition(SdaiInstance sdaiProductDefinitionInstance, bool bRelatingProduct, bool bRelatedProduct);
     void loadAssemblies();
@@ -58,5 +67,6 @@ public: // Properties
 
     const map<ExpressID, _ap242_assembly*>& getExpressID2Assembly() const { return m_mapExpressID2Assembly; }
     const vector<_ap242_draughting_model*>& getDraughtingModels() const { return m_vecDraughtingModels; }
+    _ap242_model_structure* getModelStructure();
     _ap242_property_provider* getPropertyProvider();
 };

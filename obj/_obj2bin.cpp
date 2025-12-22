@@ -3,6 +3,7 @@
 
 #include "_errors.h"
 #include "_string.h"
+#include <cmath>
 
 // ************************************************************************************************
 namespace _obj2bin

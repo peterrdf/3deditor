@@ -45,34 +45,18 @@ public: // Properties
 class _ap242_annotation_plane : public _ap242_geometry
 {
 
-private: // Members
-
-    wstring m_strName;
-
 public: // Methods
 
     _ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance);
     virtual ~_ap242_annotation_plane();
-
-public: // Properties
-
-    const wchar_t* getName() const { return m_strName.c_str(); }
 };
 
 // ************************************************************************************************
 class _ap242_draughting_callout : public _ap242_geometry
 {
 
-private: // Members
-
-    wstring m_strName;
-
 public: // Methods
 
     _ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance);
     virtual ~_ap242_draughting_callout();
-
-public: // Properties
-
-    const wchar_t* getName() const { return m_strName.c_str(); }
 };

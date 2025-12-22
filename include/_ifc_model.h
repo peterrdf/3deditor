@@ -56,6 +56,7 @@ struct STRUCT_IFC_PRODUCT
 // ************************************************************************************************
 class _ifc_geometry;
 class _ifc_instance;
+class _ifc_model_structure;
 
 // ************************************************************************************************
 class _ifc_model : public _ap_model
@@ -82,6 +83,7 @@ private: // Fields
     SdaiEntity m_sdaiTransportElementEntity;
     SdaiEntity m_sdaiVirtualElementEntity;
 
+    _ifc_model_structure* m_pModelStructure;
     _ifc_unit_provider* m_pUnitProvider;
     _ifc_property_provider* m_pPropertyProvider;
 
@@ -129,6 +131,7 @@ private: // Methods
 
 public: // Properties
 
+	_ifc_model_structure* getModelStructure();
     _ifc_unit_provider* getUnitProvider();
     _ifc_property_provider* getPropertyProvider();
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 struct FormulaValue;
 
 class DragFace
