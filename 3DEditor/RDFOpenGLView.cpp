@@ -223,6 +223,13 @@ void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstri
 	float fVertexZ = 0.f;
 	pair<int64_t, int64_t> prVertexIndex = GetNearestVertex(dX, dY, dZ, fVertexX, fVertexY, fVertexZ);
 	if (prVertexIndex.first != -1) {
+		const wchar_t* szConceptualFaceDiscriminator = GetConceptualFaceDiscriminatorW(
+			getController()->getSelectedInstance()->getOwlInstance(),
+			m_iPointedFace);
+
+		strInformation += L"\n";
+		strInformation += L"Face Discriminator: ";
+		strInformation += szConceptualFaceDiscriminator != nullptr ? szConceptualFaceDiscriminator : L"NA";
 		strInformation += L"\n";
 		strInformation += L"Nearest Vertex: ";
 		strInformation += to_wstring(prVertexIndex.first).c_str();
