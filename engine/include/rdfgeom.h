@@ -206,6 +206,20 @@ static	inline  double	Vec2Normalize(
 	}
 }
 
+static	inline  double	Vec2LengthSqr(
+                                const VECTOR2               * pV
+                            )
+{
+    return Sqr(pV->u) + Sqr(pV->v);
+}
+
+static	inline  double	Vec2Length(
+								const VECTOR2				* pV
+							)
+{
+	return std::sqrt(Vec2LengthSqr(pV));
+}
+
 //
 //	Vector3
 //
