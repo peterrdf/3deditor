@@ -192,6 +192,8 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 	assert(pProductShapeRepresentation != nullptr);
 	assert(sdaiRepresentationInstance != 0);
 
+	bool bAdded = false;
+	
 	SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
 	SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
 	if (shapeRepresentationRelationshipInstancesCnt) {
@@ -207,15 +209,18 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 			if (sdaiRep_2Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
 				sdaiRep_1Instance == sdaiRepresentationInstance) {
 				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_2Instance);
+				bAdded = true;
 			}
 
 			if (sdaiRep_1Instance && sdaiRep_1Instance != sdaiRep_2Instance &&
 				sdaiRep_2Instance == sdaiRepresentationInstance) {
 				loadRepresentationItems(pProductShapeRepresentation, sdaiRep_1Instance);
+				bAdded = true;
 			}
 		}
 	}
-	else {
+	
+	if (!bAdded) {
 		loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 	}
 }
@@ -375,21 +380,19 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 	} // for (; itAssembly != ...
 
 	// Create instance for current product definition
-	auto pInstance = new _ap242_instance(
+	addInstance(new _ap242_instance(
 		_model::getNextInstanceID(),
 		pProductDefinition,
-		pParentMatrix);
-	addInstance(pInstance);
+		pParentMatrix));
 
 	// Create instances for product shape representation items
 	if (m_bLoadProductRepresentationItems) {
 		for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
 			for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
-				auto pInstance = new _ap242_product_shape_representation_item_instance(
+				addInstance(new _ap242_product_shape_representation_item_instance(
 					_model::getNextInstanceID(),
 					pRepresentationItem,
-					pParentMatrix);
-				addInstance(pInstance);
+					pParentMatrix));
 			}
 		}
 	}
