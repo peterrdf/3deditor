@@ -69,7 +69,8 @@ extern GeomPosition ClassifyPointToFaceFast(
     int_t                   numShellPoints,
     const MATRIX*           localTransform,
     PLANE*                  plane = nullptr,
-    double                  eps = LENGTH_TOLERANCE
+    double                  maxDistToPlane = LENGTH_TOLERANCE, //distance to consider point in the face plane
+    double*                 foundDistToPlane = NULL
 );
 
 /// <summary>

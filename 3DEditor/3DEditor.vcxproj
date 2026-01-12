@@ -499,7 +499,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy ..\x64\Release\*.dll ..\x64\Debug /Y</Command>
+      <Command>xcopy ..\x64\Release\*gine.dll ..\x64\Debug /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_stepengine|x64'">

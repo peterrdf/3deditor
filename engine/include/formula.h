@@ -71,7 +71,8 @@ enum class FormulaType : unsigned char
     Sqr,
     Sqrt,
     Tranc,
-    FindRoot, //find root of rule
+    FindRoot, //find root of equation
+    SetPropertyDerived, 
 
     //terminal constant production
     Number,   //Numeric constant

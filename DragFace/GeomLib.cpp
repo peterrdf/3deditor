@@ -15,7 +15,6 @@ static const MATRIX* GetCurrentTransform(
 {
     if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(PTR(cface))) {
         if (parentTransform) {
-            assert(!"not tested");
             MatrixMultiply(&buffer, parentTransform, locatTransform);
             return &buffer;
         }
@@ -165,9 +164,12 @@ extern GeomPosition ClassifyPointToFaceFast(
     int_t                   numShellPoints,
     const MATRIX*           transform,
     PLANE*                  plane,
-    double                  eps
+    double                  maxDistToPlane,   //= LENGTH_TOLERANCE, //distance to consider point in the face plane
+    double*                 foundDistToPlane  //= NULL
 )
 {
+    const double eps2D = 1e-9;
+
     //DumpFace(face, shellPoints, numShellPoints, transform);
 
     PLANE plane_;
@@ -181,10 +183,15 @@ extern GeomPosition ClassifyPointToFaceFast(
 
     //
     double dist = plane->a * pt.x + plane->b * pt.y + plane->c * pt.z + plane->d;
-    if (dist > eps) {
+
+    if (foundDistToPlane) {
+        *foundDistToPlane = dist;
+    }
+
+    if (dist > maxDistToPlane) {
         return GeomPosition::AbovePlane;
     }
-    if (dist < -eps) {
+    if (dist < -maxDistToPlane) {
         return GeomPosition::BelowPlane;
     }
 
@@ -207,7 +214,7 @@ extern GeomPosition ClassifyPointToFaceFast(
 
     VECTOR2 uv1;
     ProjectToCoordPlane(pt1, coord, uv1);
-    if (Vec2DistanceSqr(&uv, &uv1) < eps) {
+    if (Vec2DistanceSqr(&uv, &uv1) < eps2D) {
         return GeomPosition::Vertex;
     }
 
@@ -221,16 +228,16 @@ extern GeomPosition ClassifyPointToFaceFast(
 
         VECTOR2 uv2;
         ProjectToCoordPlane(pt2, coord, uv2);
-        if (Vec2DistanceSqr(&uv, &uv2) < eps) {
+        if (Vec2DistanceSqr(&uv, &uv2) < eps2D) {
             return GeomPosition::Vertex;
         }
 
         //TRACE("   uv1 =(%g, %g) uv2=(%g, %g)\n", uv1.u, uv1.v, uv2.u, uv2.v);
 
         // Ray intersect segment test
-        if (fabs(uv1.v - uv2.v) < eps) {
+        if (fabs(uv1.v - uv2.v) < eps2D) {
             //horizontal segment
-            if (fabs(uv.v - uv1.v) < eps) {
+            if (fabs(uv.v - uv1.v) < eps2D) {
                 assert(!"not tested");
                 //point is on the same horizontal line
                 if ((uv.u > min(uv1.u, uv2.u)) && (uv.u < max(uv1.u, uv2.u))) {
@@ -250,7 +257,7 @@ extern GeomPosition ClassifyPointToFaceFast(
             if ((uv1.v > uv.v) != (uv2.v > uv.v)) { 
                 //horizontal line cross the segment
                 auto u = (uv2.u - uv1.u) * (uv.v - uv1.v) / (uv2.v - uv1.v) + uv1.u;
-                if (fabs(u-uv.u) < eps) {
+                if (fabs(u-uv.u) < eps2D) {
                     return GeomPosition::OnEdge;
                 }
                 else if (u > uv.u) {
@@ -265,6 +272,8 @@ extern GeomPosition ClassifyPointToFaceFast(
 }
 
 
+#if 0
+can produce 0
 //
 //
 static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
@@ -280,11 +289,11 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 
     return average;
 }
-
+#endif
 
 //
 //
-static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform, double eps)
+static void FindNormals(std::map<double, VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform, double eps)
 {
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
@@ -296,10 +305,11 @@ static void FindNormals(std::list<VECTOR3>& normals, const VECTOR3& pt, CONCEPTU
 
                     for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
                         PLANE plane;
-                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps);
+                        double dist = 0;
+                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps, &dist);
                         if (pos > GeomPosition::Outside) {
                             VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-                            normals.push_back(normal);
+                            normals[fabs(dist)] = normal;
                         }
                     }
                 }
@@ -327,7 +337,7 @@ extern bool FindNormal (
 
     if (auto shell = rdfgeom_GetBRep(inst)) {
 
-        std::list<VECTOR3> normals;
+        std::map<double, VECTOR3> normals;
 
         auto cface = *rdfgeom_GetConceptualFaces(shell);
         if (iConceptualFace >= 0) {
@@ -345,7 +355,7 @@ extern bool FindNormal (
         }
 
         if (!normals.empty()) {
-            outNormal = AverageVector(normals);
+            outNormal = normals.begin()->second;
             Vec3Invert(&outNormal);
             return true; //>>>> found normal
         }

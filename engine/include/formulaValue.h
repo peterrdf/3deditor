@@ -5,7 +5,7 @@
 /// </summary>
 
 //scalar (simple) type of a value element
-enum class FormulaValueType : char { Undef, Number, String, Instance, Class };
+enum class FormulaValueType : char { Undef, Number, String, Instance, Class, SetPropertyDerived, UnsetPropertyDerived };
 
 //class carries scalar (single) value element
 class __declspec(dllexport) FormulaValueElem
