@@ -3,7 +3,7 @@
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 0
 #define VERSION_PATCH 1
-#define VERSION_BUILD 2260
+#define VERSION_BUILD 2263
 
 #define STRINGIFY(x) #x
 #define STRINGIFY_HELPER(x) STRINGIFY(x)
