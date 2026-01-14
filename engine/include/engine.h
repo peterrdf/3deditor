@@ -5938,8 +5938,8 @@ int64_t			DECL STDC	GetConceptualFaceCnt(
 //
 //	This function returns a unique name for the conceptualFace.
 //	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till thhe next call of this
-//	function or till the model is closed.
+//	The return value (and optional name argument) have a valid content till the next call of
+//  this function or till the model is closed.
 //
 //	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
 //	For example in case of a boolean operation where the type of placement of objects is changing. 
@@ -5997,7 +5997,7 @@ static	inline	const char	* GetConceptualFaceDiscriminator(
 //
 //	This function returns a unique name for the conceptualFace.
 //	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till thhe next call of this
+//	The return value (and optional name argument) have a valid content till the next call of this
 //	function or till the model is closed.
 //
 //	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
@@ -6198,7 +6198,8 @@ void			DECL STDC	GetConceptualFaceOriginEx(
 
 //
 //		GetConceptualFaceXYZ2UV                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceXYZ2UV.html)
-//				ConceptualFace			conceptualFace						IN
+//				OwlInstance				owlInstance							IN
+//				int64_t					index								IN
 //				double					* u									IN / OUT
 //				double					* v									IN / OUT
 //				double					x									IN
@@ -6211,7 +6212,8 @@ void			DECL STDC	GetConceptualFaceOriginEx(
 //	The UV coordinates are expected to be both (inclusive) between 0. and 1., i.e. [0..1].
 //
 bool			DECL STDC	GetConceptualFaceXYZ2UV(
-									ConceptualFace			conceptualFace,
+									OwlInstance				owlInstance,
+									int64_t					index,
 									double					* u,
 									double					* v,
 									double					x,
@@ -6226,13 +6228,15 @@ bool			DECL STDC	GetConceptualFaceXYZ2UV(
 //
 //
 static	inline	bool	GetConceptualFaceXYZ2UV(
-								ConceptualFace			conceptualFace,
+								OwlInstance				owlInstance,
+								int64_t					index,
 								double					* out__VEC2,
 								const double			* in__VEC3
 							)
 {
 	return	GetConceptualFaceXYZ2UV(
-					conceptualFace,
+					owlInstance,
+					index,
 					&out__VEC2[0],						//	u
 					&out__VEC2[1],						//	v
 					in__VEC3[0],						//	x
@@ -6247,7 +6251,8 @@ static	inline	bool	GetConceptualFaceXYZ2UV(
 
 //
 //		GetConceptualFaceUV2XYZ                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceUV2XYZ.html)
-//				ConceptualFace			conceptualFace						IN
+//				OwlInstance				owlInstance							IN
+//				int64_t					index								IN
 //				double					* x									IN / OUT
 //				double					* y									IN / OUT
 //				double					* z									IN / OUT
@@ -6279,7 +6284,8 @@ static	inline	bool	GetConceptualFaceXYZ2UV(
 //	    GetConceptualFaceUV2XYZ(conceptualFace, &x, &y, &z, u, v);
 //
 bool			DECL STDC	GetConceptualFaceUV2XYZ(
-									ConceptualFace			conceptualFace,
+									OwlInstance				owlInstance,
+									int64_t					index,
 									double					* x,
 									double					* y,
 									double					* z,
@@ -6297,14 +6303,16 @@ bool			DECL STDC	GetConceptualFaceUV2XYZ(
 //
 //
 static	inline	bool	GetConceptualFaceUV2XYZ(
-								ConceptualFace			conceptualFace,
+								OwlInstance				owlInstance,
+								int64_t					index,
 								double					* vector__VEC3,
 								double					* normal__VEC3,
 								const double			* in__VEC2
 							)
 {
 	return	GetConceptualFaceUV2XYZ(
-					conceptualFace,
+					owlInstance,
+					index,
 					&vector__VEC3[0],					//	x
 					&vector__VEC3[1],					//	y
 					&vector__VEC3[2],					//	z
@@ -6319,13 +6327,15 @@ static	inline	bool	GetConceptualFaceUV2XYZ(
 //
 //
 static	inline	bool	GetConceptualFaceUV2XYZ(
-								ConceptualFace			conceptualFace,
+								OwlInstance				owlInstance,
+								int64_t					index,
 								double					* out__VEC3,
 								const double			* in__VEC2
 							)
 {
 	return	GetConceptualFaceUV2XYZ(
-					conceptualFace,
+					owlInstance,
+					index,
 					&out__VEC3[0],						//	x
 					&out__VEC3[1],						//	y
 					&out__VEC3[2],						//	z
