@@ -182,7 +182,10 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
 {
     iConceptualFace = -1;
 
-    CalculateInstance(inst);
+    if (!IsUpToDate(inst)) {
+        assert(false);
+        CalculateInstance(inst);
+    }
 
     AssertIsClean();
     Cleanup();
