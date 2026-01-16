@@ -77,11 +77,11 @@ extern GeomPosition ClassifyPointToFaceFast(
 /// Find normal at point on instance surface
 /// </summary>
 extern bool FindNormal (
-    VECTOR3&                outNormal,
-    const VECTOR3&          pt,
+    VECTOR3&                outNormal,              //OUT: inward normal
+    VECTOR3&                ptBase,                 //IN: the point close to surface where to find normal, OUT: projected to surface
     OwlInstance             inst,
-    int                     iConceptualFace = -1,   // -1 - search all faces
-    double                  eps = LENGTH_TOLERANCE  
+    int                     iConceptualFace  = -1,  // -1 - search all faces
+    double                  maxDistToSurface = LENGTH_TOLERANCE  //allowable distance from input ptBase to surface
 );  
 
 /// <summary>
@@ -132,3 +132,5 @@ extern void IntersectLineFace(
     int_t                   numShellPoints,
     const MATRIX*           transform
 );
+
+extern double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin = NULL);

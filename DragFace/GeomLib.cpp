@@ -322,15 +322,59 @@ static void FindNormals(std::map<double, VECTOR3>& normals, const VECTOR3& pt, C
     }
 }
 
+/// <summary>
+/// 
+/// </summary>
+extern double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin)
+{
+    CalculateInstance(inst);
+
+    std::vector<VECTOR3> intersections;
+    IntersectLineInstance(intersections, ray, inst);
+
+    double minDot = FLT_MAX;
+
+    for (auto& pt : intersections) {
+        auto vecToPoint = pt - ray.org;
+        double dot = Vec3Dot(&ray.dir, &vecToPoint);
+
+        if (dot < minDot) {
+            minDot = dot;
+            if (ptMin) {
+                *ptMin = pt;
+            }
+        }
+    }
+
+    return minDot;
+}
+
+/// <summary>
+/// 
+/// </summary>
+static void ProjectPointToInstance(VECTOR3& pt, const VECTOR3& normal, OwlInstance inst)
+{
+    RAY3 ray;
+    ray.org = pt;
+    ray.dir = normal;
+
+    VECTOR3 snap;
+    GetMinIntersectionPosition(inst, ray, &snap);
+
+    ASSERT(Vec3Distance(&snap, &ray.org) < 1e-1);
+
+    pt = snap;
+}
+
 
 //
 //
 extern bool FindNormal (
     VECTOR3&                outNormal,
-    const VECTOR3&          pt,
+    VECTOR3&                ptBase,                 //IN: the point close to surface where to find normal, OUT: projected to surface
     OwlInstance             inst,
-    int                     iConceptualFace, // -1 - search all faces
-    double                  eps //= LENGTH_TOLERANCE  
+    int                     iConceptualFace,  //= -1,  // -1 - search all faces
+    double                  maxDistToSurface  //= LENGTH_TOLERANCE  //allowable distance from input ptBase to surface
 )
 {
     outNormal = Vec3Make(0, 0, 0);
@@ -349,14 +393,17 @@ extern bool FindNormal (
         }
 
         for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
-            FindNormals(normals, pt, *cface, NULL, eps);
+            FindNormals(normals, ptBase, *cface, NULL, maxDistToSurface);
             if (iConceptualFace >= 0)
                 break;
         }
 
         if (!normals.empty()) {
             outNormal = normals.begin()->second;
-            Vec3Invert(&outNormal);
+
+            //correct starting point to be exactly on surface - as staring point comes with bad tolerance
+            ProjectPointToInstance(ptBase, outNormal, inst);
+
             return true; //>>>> found normal
         }
     }

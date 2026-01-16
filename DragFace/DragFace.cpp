@@ -100,32 +100,6 @@ static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double 
 	return trans;
 }
 
-/// <summary>
-/// 
-/// </summary>
-static double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin = NULL)
-{
-    CalculateInstance(inst);
-
-    std::vector<VECTOR3> intersections;
-    IntersectLineInstance(intersections, ray, inst);
-
-    double minDot = FLT_MAX;
-
-    for (auto& pt : intersections) {
-        auto vecToPoint = pt - ray.org;
-        double dot = Vec3Dot(&ray.dir, &vecToPoint);
-
-        if (dot < minDot) {
-            minDot = dot;
-            if (ptMin) {
-                *ptMin = pt;
-            }
-        }
-    }
-
-    return minDot;
-}
 
 /// <summary>
 /// 
@@ -200,25 +174,13 @@ void DragFace::Cleanup()
     AssertIsClean();
 }
 
-/// <summary>
-/// 
-/// </summary>
-static void SnapRayOriginToSurface(RAY3& ray, OwlInstance inst)
-{
-    VECTOR3 snap;
-    GetMinIntersectionPosition(inst, ray, &snap);
-
-    ASSERT(Vec3Distance(&snap, &ray.org) < 1e-1);
-    
-    ray.org = snap;
-}
 
 /// <summary>
 /// 
 /// </summary>
 bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
-    iConceptualFace = -1;//this index is wired in case of nested objects
+    iConceptualFace = -1;
 
     CalculateInstance(inst);
 
@@ -232,12 +194,7 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
 
     m_ray.org = startDragPoint;
-    if (FindNormal(m_ray.dir, startDragPoint, inst, iConceptualFace, 1e-1)) {
-
-        Vec3Invert(&m_ray.dir); //inward normal
-
-        //correct starting point to be exactly on surface - as staring point comes with bad tolerance
-        SnapRayOriginToSurface(m_ray, inst);
+    if (FindNormal(m_ray.dir, m_ray.org, inst, iConceptualFace, 1e-1)) {
 
         m_instance = inst;
 
