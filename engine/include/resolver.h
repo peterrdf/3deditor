@@ -166,8 +166,8 @@ struct ResolverInterfaceProperty
     
     //source of requirement
     std::list<RdfRule> rules;              //requiring (undefined in) rules
-    int_t              cmin = -1;          //cardinality restrictions
-    int_t              cmax = -1;
+    int64_t            cmin = -1;          //cardinality restrictions
+    int64_t            cmax = -1;
 
     bool IsRequired() { return hasDefaultValue.empty() && (cmin > 0 || !rules.empty()); }
 };

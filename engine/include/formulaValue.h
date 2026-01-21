@@ -12,7 +12,7 @@ class __declspec(dllexport) FormulaValueElem
 {
 public:
 	FormulaValueElem(double val) : m_type(FormulaValueType::Number), m_dVal(val) {}
-	FormulaValueElem(int_t val) : m_type(FormulaValueType::Number), m_dVal((double)val) {}
+	FormulaValueElem(int64_t val) : m_type(FormulaValueType::Number), m_dVal((double)val) {}
 	FormulaValueElem(const char* str);
 	FormulaValueElem(bool val) : m_type(FormulaValueType::Number), m_dVal((double)val) {}
 	FormulaValueElem(char val) : m_type(FormulaValueType::Number), m_dVal((double)val) {}

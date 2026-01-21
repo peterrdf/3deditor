@@ -127,6 +127,20 @@ static	inline  double	Sqr(
 //	Vector2
 //
 
+inline  double* Vec2Coordinates(
+    VECTOR2& vec
+)
+{
+    return &(vec.u);
+}
+
+inline  const   double* Vec2Coordinates(
+    const VECTOR2& vec
+)
+{
+    return &(vec.u);
+}
+
 void	Vec2Transform(
 				VECTOR2						* pInOut,
 				const MATRIX				* pM

@@ -31,6 +31,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -38,6 +39,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -100,7 +102,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform)</Command>
+      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform) x86</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Update Engine</Message>
@@ -125,7 +127,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform)</Command>
+      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform) x86</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Update Engine</Message>
@@ -148,7 +150,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform)</Command>
+      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform) $(Platform)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Update Engine</Message>
@@ -174,7 +176,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform)</Command>
+      <Command>"$(ProjectDir)UpdateEngine.bat" "$(ProjectDir)" $(Configuration) $(Platform) $(Platform)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Update Engine</Message>

@@ -1,5 +1,7 @@
 #pragma once
 
+//#define DRAG_FACE_UV
+
 #include <map>
 
 struct FormulaValue;
@@ -74,6 +76,14 @@ class DragFace
         void*                m_hostData;
 
         OwlInstance          m_instance;
+
+#ifdef DRAG_FACE_UV
+        int                  m_cfaceIndex;
+        std::string          m_cfaceDiscriminator;
+        VECTOR2              m_dragPointUV;
+
+#else
+#endif
         RAY3                 m_ray;   //start drag point and inward normal direction
 
         PropertyEffects      m_activeProperties;

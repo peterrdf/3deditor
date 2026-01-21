@@ -163,6 +163,9 @@ void DragFace::Cleanup()
     m_logger = NULL;
     m_hostData = NULL;
     m_instance = NULL;
+#ifdef DRAG_FACE_UV
+    m_cfaceIndex = -1;
+#endif
     m_activeProperties.clear();
     m_savedState.clear();
     m_changed = false;
@@ -180,8 +183,6 @@ void DragFace::Cleanup()
 /// </summary>
 bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
-    iConceptualFace = -1;
-
     if (!IsUpToDate(inst)) {
         assert(false);
         CalculateInstance(inst);
@@ -195,6 +196,16 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
 
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
+
+#ifdef DRAG_FACE_UV
+    m_cfaceDiscriminator = GetConceptualFaceDiscriminator(inst, iConceptualFace);
+
+    if (GetConceptualFaceXYZ2UV(iConceptualFace, inst, Vec2Coordinates(m_dragPointUV), Vec3Coordinates(startDragPoint))) {
+        m_cfaceIndex = iConceptualFace;
+    }
+#else
+    iConceptualFace = -1; //use all faces
+#endif
 
     m_ray.org = startDragPoint;
     if (FindNormal(m_ray.dir, m_ray.org, inst, iConceptualFace, 1e-1)) {
@@ -382,7 +393,7 @@ void DragFace::CollectEffectiveProperties()
         if (!GetPropertyDerived(m_instance, prop) && (propType == DATATYPEPROPERTY_TYPE_DOUBLE)) {
 
             double* values = NULL;
-            int_t card = 0;
+            int64_t card = 0;
             GetDatatypeProperty(m_instance, prop, (void**)&values, &card);
             if (card == 1) {
 
