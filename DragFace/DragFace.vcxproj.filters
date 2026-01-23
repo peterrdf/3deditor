@@ -30,6 +30,9 @@
     <ClInclude Include="DragFaceImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DragFaceUV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DragFace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DragFaceUV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

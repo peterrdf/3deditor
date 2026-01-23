@@ -5,6 +5,9 @@ class DragFaceImpl;
 class DragFace
     {
     public:
+        enum class Method { XYZ, UV };
+
+    public:
         DragFace ();
         ~DragFace ();
 
@@ -12,7 +15,7 @@ class DragFace
         bool IsActive() const { return m_pImpl != NULL; }
 
         //call to start dragging operation
-        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData);
 
         //list properties detected as useful for drag 
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);

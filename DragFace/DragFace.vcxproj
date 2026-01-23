@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -185,12 +185,14 @@
   <ItemGroup>
     <ClInclude Include="DragFace.h" />
     <ClInclude Include="DragFaceImpl.h" />
+    <ClInclude Include="DragFaceUV.h" />
     <ClInclude Include="DragFaceXYZ.h" />
     <ClInclude Include="GeomLib.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DragFace.cpp" />
+    <ClCompile Include="DragFaceUV.cpp" />
     <ClCompile Include="DragFaceXYZ.cpp" />
     <ClCompile Include="GeomLib.cpp" />
     <ClCompile Include="pch.cpp">

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DragFace.h"
 #include "DragFaceXYZ.h"
+#include "DragFaceUV.h"
 
 /// <summary>
 /// 
@@ -26,13 +27,18 @@ DragFace::~DragFace()
 /// <summary>
 /// 
 /// </summary>
-bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
+bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
     if (m_pImpl) {
         delete m_pImpl;
     }
 
-    m_pImpl = new DragFaceXYZ();
+    if (method == Method::UV) {
+        m_pImpl = new DragFaceUV();
+    }
+    else {
+        m_pImpl = new DragFaceXYZ();
+    }
     
     if (!m_pImpl->StartDrag(inst, iConceptualFace, startDragPoint, logger, hostData)){
         delete m_pImpl;

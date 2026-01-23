@@ -257,7 +257,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			}
 		}
 	}
-	else if (GetKeyState(VK_CONTROL) & 0x8000) {
+	else if (GetKeyState(VK_CONTROL) & 0x8000 || GetKeyState(VK_SHIFT) & 0x8000) {
 		if (m_iPointedFace != -1) {
 			if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
 				GLdouble dX = 0.;
@@ -278,6 +278,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 						m_pPointedInstance->getOwlInstance(),
 						(int)m_iPointedFace,
 						startDragPoint,
+                        (GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
                         CRDFModel::RdfgeomLogCallback,
                         getController()->getModel()
 					);
