@@ -34,6 +34,9 @@ public:
 	RdfsResource get(FormulaValueType type) const;
 
 	std::string ToString() const;
+
+    bool ToBool() const;
+
 	int compare(const FormulaValueElem& v2) const;
 
 private:

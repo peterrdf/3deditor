@@ -58,6 +58,16 @@ enum class FormulaType : unsigned char
     Pow, //exponent
     Reference, //reference to property value <ObjectProperty>::<Property>
 
+    Less,
+    Greater,
+    LessOrEqual,
+    GreaterOrEqual,
+    Equal,
+    NotEqual,
+    And,
+    Or,
+    Not,
+
     List, //a,b,c
 
     //functions
@@ -81,7 +91,7 @@ enum class FormulaType : unsigned char
     Property, //rdfProperty (variable)
 
     //rules
-    Equality,
+    Equation,
     Assignment,
     DefaultValue, //aka soft assignment
 
@@ -90,7 +100,9 @@ enum class FormulaType : unsigned char
     CloseParenthis,
     OpenCurlyBrace,
     CloseCurlyBrace,
-    Sentinel
+    Sentinel,
+
+    _Undefined
 };
 
 /// <summary>
