@@ -1,18 +1,75 @@
 #pragma once
 
-
 class DragFaceImpl
     {
     public:
-        DragFaceImpl () {}
+        DragFaceImpl();
         virtual ~DragFaceImpl () {}
 
-    public:
-        virtual bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData) = 0;
-        virtual RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect) = 0;
-        virtual void RemoveActiveProperty(RdfProperty prop) = 0;
-        virtual void Dragging(SEGMENT3 const& targetLine) = 0;
-        virtual OwlInstance FinishDrag(bool apply) = 0;
-        virtual OwlInstance GetDynamicDraw() = 0;
+        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+        RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
+        void RemoveActiveProperty(RdfProperty prop);
+        void Dragging(SEGMENT3 const& targetLine);
+        OwlInstance FinishDrag(bool apply);
+        OwlInstance GetDynamicDraw() { return m_drawDynamic; }
 
-    };
+    protected:
+        struct PropertyEffect //how standard step of property affects position along normal
+        {
+            RdfProperty    prop;
+            double         initialValue;     //initial property value
+            VECTOR3        effect;           //describes effect of changing property by 'StandardStep', meaning vary by implementation:
+                                             //     UV-  vector from start point to result
+                                             //     XYZ- x is distance from start point to result along in-normal direction
+        };
+
+        typedef std::vector<PropertyEffect>   PropertyEffects;
+
+    private:
+        struct PropertyState
+        {
+            PropertyState();
+            ~PropertyState();
+
+            bool          derived;
+            FormulaValue* value;
+        };
+
+        typedef std::map<RdfProperty, PropertyState>   InstantState;
+
+    protected:
+        virtual bool   OnStartDrag(VECTOR3 const& startPoint) = 0;
+        virtual void   CalculateEffect(VECTOR3& effect) = 0; //calculate current 'effect' 
+        virtual void   OnDragging(SEGMENT3 const& targetLine) = 0;
+
+    protected:
+        void   CollectEffectiveProperties();
+        double StandardStep(double oldValue);
+        void   RestoreInstance(bool cleanSavedState);
+        void   UpdateDynamicDraw(const SEGMENT3& targetPoints);
+
+        void Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...);
+
+    private:
+        void PrepareDynamicDraw();
+        void ClearDynamicDraw();
+
+    protected:
+        OwlInstance          m_instance = NULL;
+        int                  m_iConceptualFace = 0;
+
+        RAY3                 m_dragRay;   //start drag point and inward normal direction
+        PropertyEffects      m_activeProperties;
+
+        bool                 m_changed;
+
+    private:
+        RDFGEOM_CALLBACK_LOG m_logger = NULL;
+        void*                m_hostData = nullptr;
+
+        InstantState         m_savedState;
+
+        GEOM::Collection     m_drawDynamic;
+        GEOM::Transformation m_drawStartPoint;
+        GEOM::Transformation m_drawTargetPoints[2]; //[0] - closest point on target line, [1] - closest point on normal
+};

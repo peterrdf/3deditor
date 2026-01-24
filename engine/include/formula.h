@@ -82,6 +82,7 @@ enum class FormulaType : unsigned char
     Sqrt,
     Tranc,
     FindRoot, //find root of equation
+    Select,   //select(condition, valTrue, valFalse)
     SetPropertyDerived, 
 
     //terminal constant production

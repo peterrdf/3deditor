@@ -561,3 +561,31 @@ extern void IntersectLineFace(
         }
     }
 }
+
+/// <summary>
+/// Calculate distance from point to infinite line and return closest point on line
+/// </summary>
+extern double LinePointDistance(
+    const SEGMENT3&  line,
+    const VECTOR3&   point,
+    VECTOR3*         linePoint
+)
+{
+    VECTOR3 lineDir = line.pt[1] - line.pt[0];
+
+    if (Vec3Normalize(lineDir) < LENGTH_TOLERANCE) {
+        return FLT_MAX;
+    }
+
+    VECTOR3 ptDir = point - line.pt[0];
+    double t = Vec3Dot(&ptDir, &lineDir);
+
+    VECTOR3 buff;
+    if (!linePoint) {
+        linePoint = &buff;
+    }   
+
+    *linePoint = line.pt[0] + lineDir * t;
+
+    return Vec3Distance(&point, linePoint);
+}

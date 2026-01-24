@@ -192,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DragFace.cpp" />
+    <ClCompile Include="DragFaceImpl.cpp" />
     <ClCompile Include="DragFaceUV.cpp" />
     <ClCompile Include="DragFaceXYZ.cpp" />
     <ClCompile Include="GeomLib.cpp" />

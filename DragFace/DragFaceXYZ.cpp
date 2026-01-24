@@ -59,63 +59,12 @@ static void TrimLineToSize(SEGMENT3& line, double size)
 }
 #endif
 
-/// <summary>
-/// 
-/// </summary>
-DragFaceXYZ::PropertyState::PropertyState()
-{
-    value = formula_NewValue();
-}
-
-/// <summary>
-/// 
-/// </summary>
-DragFaceXYZ::PropertyState::~PropertyState()
-{
-    formula_DeleteValue(value);
-    value = NULL;
-}
-
-/// <summary>
-/// 
-/// </summary>
-static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
-{
-    char full_name[256];
-    sprintf_s(full_name, "%s (%g, %g, %g)", name, pt.x, pt.y, pt.z);
-
-	auto sphere = GEOM::Sphere::Create(model, full_name);
-	sphere.set_radius(size);
-	sphere.set_segmentationParts(36);
-
-	auto T = GEOM::Matrix::Create(model);
-	T.set__41(pt.x);
-	T.set__42(pt.y);
-	T.set__43(pt.z);
-
-	auto trans = GEOM::Transformation::Create(model, name);
-	trans.set_object(sphere);
-	trans.set_matrix(T);
-
-	return trans;
-}
-
-
-/// <summary>
-/// 
-/// </summary>
-double DragFaceXYZ::StandardStep(double oldValue)
-{
-    return fabs(oldValue) > 0.1 ? oldValue * 1.1 : 1;
-}
-
 
 /// <summary>
 /// 
 /// </summary>
 DragFaceXYZ::DragFaceXYZ()
 {
-    Cleanup();
 }
 
 
@@ -124,286 +73,51 @@ DragFaceXYZ::DragFaceXYZ()
 /// </summary>
 DragFaceXYZ::~DragFaceXYZ()
 {
-    AssertIsClean();
 }
 
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
-{
-    va_list args;
-    va_start(args, msgFormat);
-
-    CStringA msg;
-    msg.FormatV(msgFormat, args);
-
-    va_end(args);
-
-    if (m_logger) {
-        m_logger(level, msg, m_hostData);
-    }
-
-    OutputDebugStringA(msg);
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::AssertIsClean()
-{
-    ASSERT(!m_instance && !m_changed && m_savedState.empty() && !m_drawDynamic && !m_drawStartPoint && !m_drawTargetPoints[0] && !m_drawTargetPoints[1]);
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::Cleanup()
-{
-    m_logger = NULL;
-    m_hostData = NULL;
-    m_instance = NULL;
-    m_activeProperties.clear();
-    m_savedState.clear();
-    m_changed = false;
-    m_drawDynamic = NULL;
-    m_drawStartPoint = NULL;
-    m_drawTargetPoints[0] = NULL;
-    m_drawTargetPoints[1] = NULL;
-
-    AssertIsClean();
-}
 
 
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceXYZ::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
+bool DragFaceXYZ::OnStartDrag(VECTOR3 const& startDragPoint)
 {
-    if (!IsUpToDate(inst)) {
-        assert(false);
-        CalculateInstance(inst);
-    }
+    m_iConceptualFace = -1; //use all faces
 
-    AssertIsClean();
-    Cleanup();
-
-    m_logger = logger;
-    m_hostData = hostData;
-
-    Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
-    Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startDragPoint.x, startDragPoint.y, startDragPoint.z);
-
-    iConceptualFace = -1; //use all faces
-
-    m_ray.org = startDragPoint;
-    if (FindNormal(m_ray.dir, m_ray.org, inst, iConceptualFace, 1e-1)) {
-
-        m_instance = inst;
-
-        CollectEffectiveProperties();
-            
-        if (m_activeProperties.size()) {
-            PrepareDynamicDraw();
-            return true;
-        }
-        else {
-            AfxMessageBox(L"No effective properties found for dragging", MB_ICONSTOP|MB_TOPMOST);
-        }
+    m_dragRay.org = startDragPoint;
+    if (FindNormal(m_dragRay.dir, m_dragRay.org, m_instance, m_iConceptualFace, 1e-1)) {
+        return true;
     }
     else {
-        Vec3Init(m_ray.org);
-        Vec3Init(m_ray.dir);    
         Log(RDFGEOM_LOG_LEVEL::ERR, "Failed to find normal at start drag point");
     }
 
-    Cleanup();
-    CalculateInstance(inst);
     return false;
 }
 
 /// <summary>
 /// 
 /// </summary>
-void DragFaceXYZ::Dragging(SEGMENT3 const& targetLine)
+void DragFaceXYZ::CalculateEffect(VECTOR3& effect)
 {
-    if (!m_instance)
-        return;
+    effect.x = GetMinIntersectionPosition(m_instance, m_dragRay);
+    effect.y = 0;
+    effect.z = 0;
+}
 
-
-    TRACE(__FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
-        targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z,
-        targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z
-    );
-    
-
+/// <summary>
+/// 
+/// </summary>
+void DragFaceXYZ::OnDragging(SEGMENT3 const& targetLine)
+{    
     SEGMENT3 targetPoints;
-    if (LineLineClosestPoints(targetPoints, targetLine, m_ray)) {
+    if (LineLineClosestPoints(targetPoints, targetLine, m_dragRay)) {
+
         UpdateDynamicDraw(targetPoints);
-        if (m_changed) {
-            RestoreInstance(false);
-        }
+
         RestoreInstance(false);
         ModifyInstance(targetPoints.pt[1]);
         CalculateInstance(m_instance);
-    }
-
-}
-
-/// <summary>
-/// 
-/// </summary>
-OwlInstance DragFaceXYZ::FinishDrag(bool apply)
-{
-    if (!m_instance)
-        return NULL;
-
-    if (!apply) {
-        RestoreInstance(true);
-    }
-
-    ClearDynamicDraw();
-
-    OwlInstance result = m_instance;
-    
-    Cleanup();
-    
-    CalculateInstance(m_instance);
-
-    return result;
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::PrepareDynamicDraw()
-{
-    if (!m_instance)
-        return;
-
-    double box[6] = { 0,0,0,0,0,0 };
-    GetBoundingBox(m_instance, box, box + 3);
-
-    double size = 0;
-    for (int i = 0; i < 3; i++) {
-        size = max(size, (box[i + 3] - box[i]) / 30);
-    }
-
-    auto model = GetModel(m_instance);
-
-    m_drawStartPoint = DrawPoint(model, m_ray.org, size, "start point");
-    m_drawTargetPoints[0] = DrawPoint(model, m_ray.org, size, "target point");
-    m_drawTargetPoints[1] = DrawPoint(model, m_ray.org, size, "target point on normal");
-
-    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1], m_instance };
-
-    m_drawDynamic = GEOM::Collection::Create(model, "dragging drawing");
-    m_drawDynamic.set_objects(collection, _countof(collection));
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::UpdateDynamicDraw(const SEGMENT3& targetPoints)
-{
-    for (int i = 0; i < 2; i++) {
-        auto& pt = targetPoints.pt[i];
-
-        GEOM::Matrix* M = const_cast<GEOM::Matrix*>(m_drawTargetPoints[i].get_matrix());
-        assert(M);
-        if (M) {
-            M[0].set__41(pt.x);
-            M[0].set__42(pt.y);
-            M[0].set__43(pt.z);
-        }
-    }
-}
-
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::ClearDynamicDraw()
-{
-#if 1
-    auto res = RemoveInstance(m_drawDynamic);
-    ASSERT(res == 0);
-    res += RemoveInstanceRecursively(m_drawStartPoint);
-    res += RemoveInstanceRecursively(m_drawTargetPoints[0]);
-    res += RemoveInstanceRecursively(m_drawTargetPoints[1]);
-    ASSERT(res == 9);
-#else
-    //left for debugging
-    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1] };
-    m_drawDynamic.set_objects(collection, _countof(collection));
-#endif
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::RestoreInstance(bool cleanSavedState)
-{
-    if (m_instance) {
-        for (auto& propState : m_savedState) {
-            SetPropertyDerived(m_instance, propState.first, propState.second.derived);
-            if (!propState.second.derived) {
-                formula_SetPropertyValue(m_instance, propState.first, *propState.second.value);
-            }
-        }
-        m_changed = false;
-        if (cleanSavedState)
-            m_savedState.clear();
-    }
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::CollectEffectiveProperties()
-{
-    m_activeProperties.clear();
-
-    //save initial state
-    m_savedState.clear();
-    RdfProperty prop = NULL;
-    while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
-        auto& state = m_savedState[prop];
-        state.derived = GetPropertyDerived(m_instance, prop);
-        if (!state.derived) {
-            formula_GetPropertyValue(m_instance, prop, *state.value);
-        }
-    }
-    m_changed = false;  
-
-    //effects of properties
-    while (NULL != (prop = GetInstancePropertyByIterator(m_instance, prop))) {
-        auto propType = GetPropertyType(prop);
-        if (!GetPropertyDerived(m_instance, prop) && (propType == DATATYPEPROPERTY_TYPE_DOUBLE)) {
-
-            double* values = NULL;
-            int64_t card = 0;
-            GetDatatypeProperty(m_instance, prop, (void**)&values, &card);
-            if (card == 1) {
-
-                double oldValue = values[0];
-
-                double newValue = StandardStep(oldValue);
-                SetDatatypeProperty(m_instance, prop, newValue);
-
-                double effect = GetMinIntersectionPosition(m_instance, m_ray);
-
-                SetDatatypeProperty(m_instance, prop, oldValue);
-
-                if (fabs(effect) > 1e-3 && fabs(effect) < FLT_MAX-1) {
-                    PropertyEffect propEffect;
-                    propEffect.prop = prop;
-                    propEffect.initialValue = oldValue;
-                    propEffect.distStartToStep = effect;
-                    m_activeProperties.push_back(propEffect);
-                }
-            }
-        }
     }
 }
 
@@ -417,7 +131,7 @@ bool DragFaceXYZ::TryModifyByProperty(const PropertyEffect& prop, double distDes
         return false;
 
     double v[2] = { prop.initialValue,  StandardStep(prop.initialValue)};
-    double p[2] = { 0,                  prop.distStartToStep };
+    double p[2] = { 0,                  prop.effect.x };
 
     bool better = false;
     suggestedValue = v[0];
@@ -435,7 +149,7 @@ bool DragFaceXYZ::TryModifyByProperty(const PropertyEffect& prop, double distDes
         double val = v[0] + (distDesired - p[0]) * (v[1] - v[0]) / (p[1] - p[0]);
         
         SetDatatypeProperty(m_instance, prop.prop, val);
-        double pos = GetMinIntersectionPosition(m_instance, m_ray);
+        double pos = GetMinIntersectionPosition(m_instance, m_dragRay);
         SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
 
         if (fabs(pos-distDesired) < fabs(distResult-distDesired)) {
@@ -459,8 +173,8 @@ void DragFaceXYZ::ModifyInstance(const VECTOR3& targetPoint)
     if (!m_instance)
         return;
 
-    VECTOR3 targetDir = targetPoint - m_ray.org;
-    double distDesired = Vec3Dot(m_ray.dir, targetDir);
+    VECTOR3 targetDir = targetPoint - m_dragRay.org;
+    double distDesired = Vec3Dot(m_dragRay.dir, targetDir);
 
     std::map<double, std::pair<PropertyEffect*, double>> results; //map of distFromTarget to (property, suggestedValue)
 
@@ -492,47 +206,3 @@ void DragFaceXYZ::ModifyInstance(const VECTOR3& targetPoint)
     }
 }
 
-/// <summary>
-/// 
-/// </summary>
-RdfProperty DragFaceXYZ::GetActivePropertyByIterator(RdfProperty prev, double& effect)
-{
-    if (m_activeProperties.empty()) {
-        return NULL;
-    }
-
-    auto it = m_activeProperties.begin();
-
-    if (prev) {
-        while (it != m_activeProperties.end() && it->prop != prev) {
-            it++;
-        }
-
-        if (it != m_activeProperties.end()) {
-            it++;
-        }
-        else Log(RDFGEOM_LOG_LEVEL::ERR, __FUNCTION__ ": property is not in list");
-    }
-
-    if (it != m_activeProperties.end()) {
-        effect = it->distStartToStep;
-        return it->prop;
-    }
-    else {
-        return NULL;
-    }
-}
-
-/// <summary>
-/// 
-/// </summary>
-void DragFaceXYZ::RemoveActiveProperty(RdfProperty prop)
-{
-    for (auto it = m_activeProperties.begin(); it != m_activeProperties.end(); ++it) {
-        if (it->prop == prop) {
-            m_activeProperties.erase(it);
-            return;
-        }
-    }
-    Log(RDFGEOM_LOG_LEVEL::ERR, __FUNCTION__ ": property not found");
-}

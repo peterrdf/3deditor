@@ -101,6 +101,15 @@ extern bool LineLineClosestPoints(
     const RAY3& lineII
 );
 
+/// <summary>
+/// Calculate distance from point to infinite line and return closest point on line
+/// </summary>
+extern double LinePointDistance(
+    const SEGMENT3&  line,
+    const VECTOR3&   point,
+    VECTOR3*         linePoint
+);
+
 
 /// <summary>
 /// Find intersection points of infinite line with instance BRep geometry 
