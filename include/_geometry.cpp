@@ -160,6 +160,120 @@ void _geometry::calculateBB(
     fZmax = (float)fmax(fZmax, vecPoint.z);
 }
 
+void _geometry::calculateBB_Faces(
+    _instance* pInstance,
+    float& fXmin, float& fXmax,
+    float& fYmin, float& fYmax,
+    float& fZmin, float& fZmax)
+{
+    assert(pInstance != nullptr);
+
+    if (ignoreBB() || !hasGeometry()) {
+        return;
+    }
+
+    float fBBXmin = FLT_MAX;
+    float fBBXmax = -FLT_MAX;
+    float fBBYmin = FLT_MAX;
+    float fBBYmax = -FLT_MAX;
+    float fBBZmin = FLT_MAX;
+    float fBBZmax = -FLT_MAX;
+    calculateBB_Faces(
+        fBBXmin, fBBXmax,
+        fBBYmin, fBBYmax,
+		fBBZmin, fBBZmax);
+
+    if ((fBBXmin == FLT_MAX) ||
+        (fBBXmax == -FLT_MAX) ||
+        (fBBYmin == FLT_MAX) ||
+        (fBBYmax == -FLT_MAX) ||
+        (fBBZmin == FLT_MAX) ||
+        (fBBZmax == -FLT_MAX)) {
+        return;
+    }
+
+    calculateBB(
+        fBBXmin, fBBYmin, fBBZmin,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmin, fBBYmin, fBBZmax,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmin, fBBYmax, fBBZmin,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmin, fBBYmax, fBBZmax,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmax, fBBYmin, fBBZmin,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmax, fBBYmin, fBBZmax,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmax, fBBYmax, fBBZmin,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+
+    calculateBB(
+        fBBXmax, fBBYmax, fBBZmax,
+        pInstance->getTransformationMatrix(),
+        fXmin, fXmax,
+        fYmin, fYmax,
+        fZmin, fZmax);
+}
+
+void _geometry::calculateBB_Faces(
+    float& fXmin, float& fXmax,
+    float& fYmin, float& fYmax,
+    float& fZmin, float& fZmax)
+{
+    if (getVerticesCount() == 0) {
+        return;
+    }
+
+    const auto VERTEX_LENGTH = getVertexLength();
+
+    for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++) {
+        _primitives& triangle = m_vecTriangles[iTriangle];
+        for (int64_t iIndex = triangle.startIndex(); iIndex < triangle.startIndex() + triangle.indicesCount(); iIndex++) {
+            int64_t iVertex = m_pIndexBuffer->data()[iIndex];
+            fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+            fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
+            fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+            fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
+            fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
+            fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
+        }
+    }
+}
+
 /*static*/ void _geometry::calculateBB(
     OwlInstance owlInstance,
     double& dXmin, double& dXmax,
