@@ -5938,7 +5938,7 @@ int64_t			DECL STDC	GetConceptualFaceCnt(
 //
 //	This function returns a unique name for the conceptualFace.
 //	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till the next call of
+//	The return value (and optional argument name) have a valid content till the next call of
 //  this function or till the model is closed.
 //
 //	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
@@ -5997,7 +5997,7 @@ static	inline	const char	* GetConceptualFaceDiscriminator(
 //
 //	This function returns a unique name for the conceptualFace.
 //	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional name argument) have a valid content till the next call of this
+//	The return value (and optional argument name) have a valid content till the next call of this
 //	function or till the model is closed.
 //
 //	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
@@ -6131,6 +6131,46 @@ static	inline	ConceptualFace	GetConceptualFace(
 					nullptr,		//	noIndicesLines
 					nullptr,		//	startIndexPoints
 					nullptr			//	noIndicesPoints
+				);
+}
+
+//}} End C++ polymorphic versions
+	extern "C" {
+#endif
+
+//
+//		GetConceptualFaceMatrix	                               (https://rdf.bg/gkdoc/CP64/GetConceptualFaceMatrix.html)
+//				ConceptualFace			conceptualFace						IN
+//
+//				OwlInstance				returns								OUT
+//
+//	This function returns the transformation matrix of the conceptual face.
+// 
+// 	The matrix is defined as a 12 element matrix.
+// 
+//	In case matrix is not allocated by the host the matrix is outdated the moment the same call is called again.
+//
+double	DECL * STDC	GetConceptualFaceMatrix(
+							OwlInstance				owlInstance,
+							int64_t					index,
+							double					* matrix
+						);
+
+#ifdef __cplusplus
+	}
+//{{ Begin C++ polymorphic versions
+
+//
+//
+static	inline	double	* GetConceptualFaceMatrix(
+								OwlInstance				owlInstance,
+								int64_t					index
+							)
+{
+	return	GetConceptualFaceMatrix(
+					owlInstance,
+					index,
+					nullptr			//	matrix
 				);
 }
 
