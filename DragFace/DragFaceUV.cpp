@@ -184,7 +184,7 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
         suggestion.prop = prop.prop;
         suggestion.value = val;
         suggestion.points.pt[0] = facePoint;
-        suggestion.points.pt[1] = targetPoints.pt[1]; 
+        suggestion.points.pt[1] = targetPoints.pt[0]; 
         return fabs(mistake);
     }
     else if (fabs(d[1]) < fabs(d[0])) {
@@ -192,7 +192,7 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
         suggestion.prop = prop.prop;
         suggestion.value = v[1];
         suggestion.points.pt[0] = effectLine.pt[1];
-        suggestion.points.pt[1] = targetPoints.pt[1];   
+        suggestion.points.pt[1] = targetPoints.pt[0];   
         return fabs(d[1]);
     }
     else {
