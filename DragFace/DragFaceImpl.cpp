@@ -30,7 +30,6 @@ static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double 
 /// </summary>
 DragFaceImpl::PropertyState::PropertyState()
 {
-    value = formula_NewValue();
 }
 
 /// <summary>
@@ -38,8 +37,6 @@ DragFaceImpl::PropertyState::PropertyState()
 /// </summary>
 DragFaceImpl::PropertyState::~PropertyState()
 {
-    formula_DeleteValue(value);
-    value = NULL;
 }
 
 /// <summary>
@@ -223,7 +220,7 @@ void DragFaceImpl::RestoreInstance(bool cleanSavedState)
         for (auto& propState : m_savedState) {
             SetPropertyDerived(m_instance, propState.first, propState.second.derived);
             if (!propState.second.derived) {
-                formula_SetPropertyValue(m_instance, propState.first, *propState.second.value);
+                propState.second.value.SetToProperty(m_instance, propState.first);
             }
         }
         m_changed = false;
@@ -247,7 +244,7 @@ void DragFaceImpl::CollectEffectiveProperties()
         auto& state = m_savedState[prop];
         state.derived = GetPropertyDerived(m_instance, prop);
         if (!state.derived) {
-            formula_GetPropertyValue(m_instance, prop, *state.value);
+            state.value.GetFromProperty(m_instance, prop);
         }
     }
     m_changed = false;

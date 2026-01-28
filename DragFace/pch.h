@@ -22,9 +22,6 @@
 #include "engine.h"
 #include "rdfgeom.h"
 #include "geom.h"
-#include "repo.h"
-#include "paralib.h"
-#include "formula.h"
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))

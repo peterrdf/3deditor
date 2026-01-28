@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PropertyValue.h"
+
 class DragFaceImpl
     {
     public:
@@ -31,8 +33,8 @@ class DragFaceImpl
             PropertyState();
             ~PropertyState();
 
-            bool          derived;
-            FormulaValue* value;
+            bool           derived;
+            PropertyValue  value;
         };
 
         typedef std::map<RdfProperty, PropertyState>   InstantState;
