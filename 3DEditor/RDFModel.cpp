@@ -60,17 +60,26 @@ void CRDFModel::LoadEngineExtensions(OwlModel model)
 
 #ifdef _WINDOWS
 
+	std::list<std::string> pathList;
+
+#if 0
 	const char* pathListEnv = getenv("RDF_ENGINE_EXTENSIONS_PATH");
 	if (!pathListEnv) {
 		return;
 	}
 
-	std::list<std::string> pathList;
 	std::stringstream ss(pathListEnv);
 	std::string item;
 	while (std::getline(ss, item, ';')) {
 		pathList.push_back(item);
 	}
+#else
+	char exePath[_MAX_PATH];
+	if (GetModuleFileNameA(NULL, exePath, sizeof(exePath) - 1)) {
+		PathRemoveFileSpecA(exePath);
+        pathList.push_back(exePath);
+	}
+#endif
 
 	char saveCWD[4096];
 	_getcwd(saveCWD, sizeof(saveCWD) - 1);
