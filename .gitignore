@@ -179,3 +179,4 @@ Win32/Release/DragFace.lib
 Win32/Release/DragFace.pdb
 x64/Release/3DEditor.exp
 x64/Release/3DEditor.lib
+x64/Debug/GKExtension_ParaLib.dll

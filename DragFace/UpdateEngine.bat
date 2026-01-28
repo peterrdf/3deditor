@@ -36,5 +36,6 @@ echo Update RDF ParaLib
 copy "%RDF_PARALIB%ParaLib\include\*.h" "%INC_DIR%" /y
 copy "%RDF_PARALIB%output\%PLATFORM%\Release\ParaLib.lib" "%LIB_DIR%" /y
 copy "%RDF_PARALIB%output\%PLATFORM%\Release\ParaLib.dll" "%DLL_DIR%" /y
+copy "%RDF_PARALIB%output\%PLATFORM%\Release\GKExtension_ParaLib.dll" "%DLL_DIR%" /y
 :ParaLibUpdated
 
