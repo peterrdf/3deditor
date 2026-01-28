@@ -70,6 +70,13 @@ DragFaceImpl::DragFaceImpl()
 /// </summary>
 bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
+    //auto& p = (VECTOR3&)startPoint;
+    //p.x = 0;
+    //p.y = 3.5;
+    //p.z = 7;
+
+    TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
+    TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
 
@@ -87,7 +94,7 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
         CollectEffectiveProperties();
 
         if (m_activeProperties.size()) {
-            PrepareDynamicDraw();
+            InitDynamicDraw();
             return true;
         }
         else {
@@ -149,7 +156,14 @@ void DragFaceImpl::RemoveActiveProperty(RdfProperty prop)
 /// </summary>
 void DragFaceImpl::Dragging(SEGMENT3 const& targetLine)
 {
-    TRACE(__FUNCTION__ ": targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
+    //static double d = 10;
+    //auto& tl = (SEGMENT3&)targetLine;
+    //tl.pt[0] = Vec3Make(0, 0, d);
+    //tl.pt[1] = Vec3Make(1, 0, d);
+
+
+    TRACE(__FUNCTION__ ": start point (%g, %g, %g) targetLine: (%g, %g, %g) - (%g, %g, %g)\n",
+        m_dragRay.org.x, m_dragRay.org.y, m_dragRay.org.z,
         targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z,
         targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z
     );
@@ -196,7 +210,7 @@ void DragFaceImpl::Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...)
         m_logger(level, msg, m_hostData);
     }
 
-    OutputDebugStringA(msg);
+    TRACE("%s\n", msg.GetString());
 }
 
 
@@ -281,7 +295,7 @@ double DragFaceImpl::StandardStep(double oldValue)
 /// <summary>
 /// 
 /// </summary>
-void DragFaceImpl::PrepareDynamicDraw()
+void DragFaceImpl::InitDynamicDraw()
 {
     if (!m_instance)
         return;
@@ -291,7 +305,7 @@ void DragFaceImpl::PrepareDynamicDraw()
 
     double size = 0;
     for (int i = 0; i < 3; i++) {
-        size = max(size, (box[i + 3] - box[i]) / 30);
+        size = max(size, (box[i + 3] - box[i]) / 40);
     }
 
     auto model = GetModel(m_instance);
@@ -331,12 +345,15 @@ void DragFaceImpl::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 void DragFaceImpl::ClearDynamicDraw()
 {
 #if 1
-    auto res = RemoveInstance(m_drawDynamic);
-    ASSERT(res == 0);
-    res += RemoveInstanceRecursively(m_drawStartPoint);
-    res += RemoveInstanceRecursively(m_drawTargetPoints[0]);
-    res += RemoveInstanceRecursively(m_drawTargetPoints[1]);
-    ASSERT(res == 9);
+    if (m_drawDynamic) {
+        auto res = RemoveInstance(m_drawDynamic);
+        ASSERT(res == 0);
+        res += RemoveInstanceRecursively(m_drawStartPoint);
+        res += RemoveInstanceRecursively(m_drawTargetPoints[0]);
+        res += RemoveInstanceRecursively(m_drawTargetPoints[1]);
+        ASSERT(res == 9);
+    }
+    m_drawDynamic = NULL;
 #else
     //left for debugging
     OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1] };

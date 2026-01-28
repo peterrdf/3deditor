@@ -51,7 +51,7 @@ class DragFaceImpl
         void Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...);
 
     private:
-        void PrepareDynamicDraw();
+        void InitDynamicDraw();
         void ClearDynamicDraw();
 
     protected:

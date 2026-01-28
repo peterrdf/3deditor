@@ -60,7 +60,7 @@ bool DragFaceUV::GetCurrentXYZ(VECTOR3& xyz)
 /// </summary>
 void DragFaceUV::CalculateEffect(VECTOR3& effect)
 {
-    if (GetCurrentXYZ(effect)) {
+    if (GetCurrentXYZ(effect)) {//try on normal.
         effect = effect - m_dragRay.org;
     }
     else {
@@ -86,7 +86,7 @@ void DragFaceUV::OnDragging(SEGMENT3 const& targetLine)
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceUV::ModifyInstance(SEGMENT3 targetLine, SEGMENT3& resultPoints)
+bool DragFaceUV::ModifyInstance(const SEGMENT3 targetLine, SEGMENT3& resultPoints)
 {
     if (!m_instance)
         return false;
@@ -122,49 +122,78 @@ bool DragFaceUV::ModifyInstance(SEGMENT3 targetLine, SEGMENT3& resultPoints)
     }
 }
 
+double DragFaceUV::MeasureOfMistake(PropertyEffect& prop, const VECTOR3& targetPoint, const VECTOR3& xyzPoint)
+{
+    //signed measure equivalent to distance from xyzPoint to target point
+    VECTOR3 dirToTarget = targetPoint - xyzPoint;
+    double measure = Vec3Dot(prop.effect, dirToTarget);
+    return measure;
+}
+
 double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffect prop, PropertySuggestion& suggestion)
 {    
     double  v[2] = { prop.initialValue,  StandardStep(prop.initialValue) };
 
-    double  d[2]; //distance to target line
-    VECTOR3 pts[2];  //closest points on target line 
+    double  d[2]; //measure of mistake from desired
+
+    SEGMENT3 effectLine;
+    effectLine.pt[0] = m_dragRay.org;
+    effectLine.pt[1] = m_dragRay.org + prop.effect;
+
+    TRACE("Effect line: (%g, %g, %g) - (%g, %g, %g)\n",
+        effectLine.pt[0].x, effectLine.pt[0].y, effectLine.pt[0].z,
+        effectLine.pt[1].x, effectLine.pt[1].y, effectLine.pt[1].z
+    );
+
+    SEGMENT3 targetPoints;
+    LineLineClosestPoints(targetPoints, targetLine, effectLine);
     
-    d[0] = LinePointDistance(targetLine, m_dragRay.org, pts);
-    d[1] = LinePointDistance(targetLine, m_dragRay.org + prop.effect, pts + 1);
+    TRACE("Closest points: target line (%g, %g, %g) - effect line (%g, %g, %g)\n",
+        targetPoints.pt[0].x, targetPoints.pt[0].y, targetPoints.pt[0].z,
+        targetPoints.pt[1].x, targetPoints.pt[1].y, targetPoints.pt[1].z
+    );
+
+    d[0] = MeasureOfMistake(prop, targetPoints.pt[0], effectLine.pt[0]);
+    d[1] = MeasureOfMistake(prop, targetPoints.pt[0], effectLine.pt[1]);
+
+    TRACE("Measure of mistake for start point %g, standard step %g\n", d[0], d[1]);
 
     if (fabs(d[1] - d[0]) < LENGTH_TOLERANCE) {
         return FLT_MAX; //no change in distance
     }
 
     //linear interpolation to zero position
-    double val = v[0] + d[0] * (v[1] - v[0]) / (d[1] - d[0]);
+    double val = v[0] - d[0] * (v[1] - v[0]) / (d[1] - d[0]);
 
-    VECTOR3 facePoint;
-    VECTOR3 linePoint;
-    Vec3Init(linePoint);
-    double dist = FLT_MAX;
+    double mistake = FLT_MAX;
 
     SetDatatypeProperty(m_instance, prop.prop, val);
+    VECTOR3 facePoint;
     if (GetCurrentXYZ(facePoint)) {
-        dist = LinePointDistance(targetLine, facePoint, &linePoint);
+        mistake = MeasureOfMistake(prop, targetPoints.pt[0], facePoint);
+        TRACE("Interpolated point (%g, %g, %g) has mistake: %g\n", facePoint.x, facePoint.y, facePoint.z, mistake);
     }
+    else {
+        TRACE("Failed to get interpolated point\n");
+    }
+    
     SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
 
-    if (dist < d[0] && dist < d[1]) {
+    if (fabs(mistake) < fabs(d[0]) && fabs(mistake) < fabs(d[1])) {
         //better position from interpolation
         suggestion.prop = prop.prop;
         suggestion.value = val;
         suggestion.points.pt[0] = facePoint;
-        suggestion.points.pt[1] = linePoint;
-        return dist;
+        suggestion.points.pt[1] = targetPoints.pt[1]; 
+        return fabs(mistake);
     }
-    else if (d[1] < d[0]) {
+    else if (fabs(d[1]) < fabs(d[0])) {
         //better position from standard step
         suggestion.prop = prop.prop;
         suggestion.value = v[1];
-        suggestion.points.pt[0] = m_dragRay.org + prop.effect;
-        suggestion.points.pt[1] = pts[1];
-        return d[1];
+        suggestion.points.pt[0] = effectLine.pt[1];
+        suggestion.points.pt[1] = targetPoints.pt[1];   
+        return fabs(d[1]);
     }
     else {
         return FLT_MAX;

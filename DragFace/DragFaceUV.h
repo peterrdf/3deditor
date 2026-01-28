@@ -26,8 +26,9 @@ class DragFaceUV : public DragFaceImpl
 
     private:
         bool GetCurrentXYZ(VECTOR3& xyz);
-        bool ModifyInstance(SEGMENT3 targetLine, SEGMENT3& resultPoints);
+        bool ModifyInstance(const SEGMENT3 targetLine, SEGMENT3& resultPoints);
         double TryModifyByProperty (const SEGMENT3& targetLine, PropertyEffect prop, PropertySuggestion& suggestion);
+        double MeasureOfMistake(PropertyEffect& prop, const VECTOR3& targetPoint, const VECTOR3& xyzPoint);
      
 
     private:
