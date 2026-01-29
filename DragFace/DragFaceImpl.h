@@ -59,6 +59,7 @@ class DragFaceImpl
     protected:
         OwlInstance          m_instance = NULL;
         int                  m_iConceptualFace = 0;
+        std::string          m_faceDiscriminator;
 
         RAY3                 m_dragRay;   //start drag point and inward normal direction
         PropertyEffects      m_activeProperties;

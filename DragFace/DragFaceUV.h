@@ -30,8 +30,6 @@ class DragFaceUV : public DragFaceImpl
         double TryModifyByProperty (const SEGMENT3& targetLine, PropertyEffect prop, PropertySuggestion& suggestion);
         double MeasureOfMistake(PropertyEffect& prop, const VECTOR3& targetPoint, const VECTOR3& xyzPoint);
      
-
     private:
         VECTOR2     m_uvPoint;
-        std::string m_faceDiscriminator;
     };

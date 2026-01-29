@@ -67,11 +67,6 @@ DragFaceImpl::DragFaceImpl()
 /// </summary>
 bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
 {
-    //auto& p = (VECTOR3&)startPoint;
-    //p.x = 0;
-    //p.y = 3.5;
-    //p.z = 7;
-
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
@@ -86,6 +81,13 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
     m_iConceptualFace = iConceptualFace;
     m_logger = logger;
     m_hostData = hostData;
+
+    auto descr = GetConceptualFaceDiscriminator(m_instance, m_iConceptualFace);
+    if (!descr || !*descr){
+        Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceDiscriminator(%lld, %d)", m_instance, m_iConceptualFace);
+        return false;
+    }
+    m_faceDiscriminator = descr;
 
     if (OnStartDrag(startPoint)) {
         CollectEffectiveProperties();

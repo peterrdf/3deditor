@@ -7,25 +7,19 @@
 /// </summary>
 bool DragFaceUV::OnStartDrag(VECTOR3 const& startPoint)
 {
-    if (auto descr = GetConceptualFaceDiscriminator(m_instance, m_iConceptualFace)) {
-        if (GetConceptualFaceXYZ2UV(m_instance, m_iConceptualFace, Vec2Coordinates(m_uvPoint), Vec3Coordinates(startPoint))) {
-            if (GetConceptualFaceUV2XYZ(m_instance, m_iConceptualFace, Vec3Coordinates(m_dragRay.org), Vec3Coordinates(m_dragRay.dir), Vec2Coordinates(m_uvPoint))) {
-                
-                Vec3Invert(&m_dragRay.dir);
-                m_faceDiscriminator = descr;
+    if (GetConceptualFaceXYZ2UV(m_instance, m_iConceptualFace, Vec2Coordinates(m_uvPoint), Vec3Coordinates(startPoint))) {
+        if (GetConceptualFaceUV2XYZ(m_instance, m_iConceptualFace, Vec3Coordinates(m_dragRay.org), Vec3Coordinates(m_dragRay.dir), Vec2Coordinates(m_uvPoint))) {
 
-                return true;
-            }
-            else {
-                Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceUV2XYZ(%lld, %d, %g, %g)", m_instance, m_iConceptualFace, m_uvPoint.u, m_uvPoint.v);
-            }
+            Vec3Invert(&m_dragRay.dir);
+
+            return true;
         }
         else {
-            Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceXYZ2UV(%lld, %d, %g, %g, %g)", m_instance, m_iConceptualFace, startPoint.x, startPoint.y, startPoint.z);
+            Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceUV2XYZ(%lld, %d, %g, %g)", m_instance, m_iConceptualFace, m_uvPoint.u, m_uvPoint.v);
         }
     }
     else {
-        Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceDiscriminator(%lld, %d)", m_instance, m_iConceptualFace);
+        Log(RDFGEOM_LOG_LEVEL::ERR, "Failed GetConceptualFaceXYZ2UV(%lld, %d, %g, %g, %g)", m_instance, m_iConceptualFace, startPoint.x, startPoint.y, startPoint.z);
     }
 
     return false;
