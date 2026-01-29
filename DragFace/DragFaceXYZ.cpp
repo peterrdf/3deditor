@@ -82,10 +82,8 @@ DragFaceXYZ::~DragFaceXYZ()
 /// </summary>
 bool DragFaceXYZ::OnStartDrag(VECTOR3 const& startDragPoint)
 {
-    m_iConceptualFace = -1; //use all faces
-
     m_dragRay.org = startDragPoint;
-    if (FindNormal(m_dragRay.dir, m_dragRay.org, m_instance, m_iConceptualFace, 1e-1)) {
+    if (FindNormal(m_dragRay.dir, m_dragRay.org, m_instance, m_faceDiscriminator.c_str(), 1e-1)) {
         return true;
     }
     else {

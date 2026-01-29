@@ -80,7 +80,7 @@ extern bool FindNormal (
     VECTOR3&                outNormal,              //OUT: inward normal
     VECTOR3&                ptBase,                 //IN: the point close to surface where to find normal, OUT: projected to surface
     OwlInstance             inst,
-    int                     iConceptualFace  = -1,  // -1 - search all faces
+    const char*             cfaceDiscriminator  = NULL,  // NULL - search all faces
     double                  maxDistToSurface = LENGTH_TOLERANCE  //allowable distance from input ptBase to surface
 );  
 

@@ -291,35 +291,89 @@ static VECTOR3 AverageVector(std::list<VECTOR3>& lst)
 }
 #endif
 
-//
-//
-static void FindNormals(std::map<double, VECTOR3>& normals, const VECTOR3& pt, CONCEPTUAL_FACE& cface, const MATRIX* transform, double eps)
+// 0 - mismatch
+// 1 - current is start of discriminator
+// 2 - match exact
+static int MatchDiscriminator(const std::string& current, const char* discriminator)
 {
+    if (!discriminator)
+        return 2; //match all
+
+    for (auto ch : current) {
+        if (ch != *discriminator)
+            return 0; //mismatch
+        discriminator++;
+    }
+
+    if (*discriminator == '\0')
+        return 2; //match exact
+    else
+        return 1; //current is start of discriminator
+}
+
+// returns true to cancel further search
+//
+static bool FindNormals(
+        std::map<double, VECTOR3>&  normals, 
+        const VECTOR3&              pt, 
+        CONCEPTUAL_FACE&            cface, 
+        const MATRIX*               transform, 
+        std::string&                currentDiscriminator, 
+        const char*                 cfaceDiscriminator,
+        double                      eps
+        )
+{
+    int match = MatchDiscriminator(currentDiscriminator, cfaceDiscriminator);
+
+    if (!match) {
+        return false;
+    }
+
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
 
-    if (auto inst = rdfgeom_cface_GetInstance(&cface)) {
-        if (auto shell = rdfgeom_GetBRep(inst)) {
-            if (const VECTOR3* points = rdfgeom_GetPoints(shell)) {
-                if (int_t numPoints = rdfgeom_GetNumOfPoints(shell)) {
+    if (match == 2){
+        if (auto inst = rdfgeom_cface_GetInstance(&cface)) {
+            if (auto shell = rdfgeom_GetBRep(inst)) {
+                if (const VECTOR3* points = rdfgeom_GetPoints(shell)) {
+                    if (int_t numPoints = rdfgeom_GetNumOfPoints(shell)) {
 
-                    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
-                        PLANE plane;
-                        double dist = 0;
-                        auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps, &dist);
-                        if (pos > GeomPosition::Outside) {
-                            VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-                            normals[fabs(dist)] = normal;
+                        for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+                            PLANE plane;
+                            double dist = 0;
+                            auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps, &dist);
+                            if (pos > GeomPosition::Outside) {
+                                VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
+                                normals[fabs(dist)] = normal;
+                            }
                         }
                     }
                 }
             }
         }
+
+        if (cfaceDiscriminator) {
+            return true; //found exact match - cancel further search
+        }
     }
 
+    currentDiscriminator.push_back('.');
+    currentDiscriminator.push_back('?');
+
     for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-        FindNormals(normals, pt, *child, transform, eps);
+
+        currentDiscriminator.back() = rdfgeom_cface_GetDiscriminatorId(child);
+        
+        if (FindNormals(normals, pt, *child, transform, currentDiscriminator, cfaceDiscriminator, eps)) {
+            //found exact match - cancel further search
+            return true;
+        }   
     }
+
+    currentDiscriminator.pop_back();
+    currentDiscriminator.pop_back();
+
+    return false;
 }
 
 /// <summary>
@@ -373,7 +427,7 @@ extern bool FindNormal (
     VECTOR3&                outNormal,
     VECTOR3&                ptBase,                 //IN: the point close to surface where to find normal, OUT: projected to surface
     OwlInstance             inst,
-    int                     iConceptualFace,  //= -1,  // -1 - search all faces
+    const char*             cfaceDiscriminator,  // NULL - search all faces
     double                  maxDistToSurface  //= LENGTH_TOLERANCE  //allowable distance from input ptBase to surface
 )
 {
@@ -383,19 +437,14 @@ extern bool FindNormal (
 
         std::map<double, VECTOR3> normals;
 
-        auto cface = *rdfgeom_GetConceptualFaces(shell);
-        if (iConceptualFace >= 0) {
-            auto cnt = iConceptualFace;
-            while (cnt && cface) {
-                cface = *rdfgeom_cface_GetNext(cface);
-                cnt--;
-            }
-        }
+        std::string currentDiscriminator = "?";
+        for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
 
-        for (; cface; cface = *rdfgeom_cface_GetNext(cface)) {
-            FindNormals(normals, ptBase, *cface, NULL, maxDistToSurface);
-            if (iConceptualFace >= 0)
+            currentDiscriminator[0] = rdfgeom_cface_GetDiscriminatorId(cface);
+
+            if (FindNormals(normals, ptBase, *cface, NULL, currentDiscriminator, cfaceDiscriminator, maxDistToSurface)) {
                 break;
+            }
         }
 
         if (!normals.empty()) {

@@ -709,8 +709,8 @@ void	MatrixMultiply(
     //
     // Get iterator for nested conceptual faces
     // It can return NULL only if input argument is invalid.
-    // To get pointer to conceptual face just dereference the iterator.
-    // Dereferenced iterator can be a pointer to existing CONCEPTUAL_FACE or NULL for end of conceptual faces list.
+    // To get pointer to conceptual face just de-reference the iterator.
+    // De-referenced iterator can be a pointer to existing CONCEPTUAL_FACE or NULL for end of conceptual faces list.
     // Child conceptual face can be a conceptual face of another instance.
     //
     extern CONCEPTUAL_FACE** rdfgeom_cface_GetChildren(CONCEPTUAL_FACE* cface);
@@ -720,6 +720,11 @@ void	MatrixMultiply(
     // Children are usually conceptual faces of another instance 
     //
     extern void rdfgeom_cface_SetChildren(CONCEPTUAL_FACE* cface, CONCEPTUAL_FACE* children);
+
+    //
+    // Get conceptual face identifier used in discriminator string
+    //
+    extern char rdfgeom_cface_GetDiscriminatorId(CONCEPTUAL_FACE* cface);
 
     //
     // Get instance of the conceptual face
