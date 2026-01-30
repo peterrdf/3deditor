@@ -15,7 +15,7 @@ static const MATRIX* GetCurrentTransform(
 {
     if (auto locatTransform = rdfgeom_cface_GetLocalTransformation(PTR(cface))) {
         if (parentTransform) {
-            MatrixMultiply(&buffer, parentTransform, locatTransform);
+            MatrixMultiply(&buffer, locatTransform, parentTransform);
             return &buffer;
         }
         else {
@@ -46,6 +46,7 @@ extern void DumpFace(
     }
     TRACE("-------\n");
 }
+
 //
 //
 extern bool GetVertexPoint(
@@ -126,7 +127,7 @@ extern bool FindFacePlane(
     plane.c = normal.z / length;
     plane.d = -(plane.a * pt0.x + plane.b * pt0.y + plane.c * pt0.z);
 
-    TRACE("Face plane: %g x + %g y + %g z + %g = 0\n", plane.a, plane.b, plane.c, plane.d);
+    //TRACE("Face plane: %g x + %g y + %g z + %g = 0\n", plane.a, plane.b, plane.c, plane.d);
     return true;
 }
 
@@ -244,7 +245,7 @@ extern GeomPosition ClassifyPointToFaceFast(
                     return GeomPosition::OnEdge;
                 }
                 else {
-                    TRACE("same line but outside of edge - do not move uv1 and go to next vertex\n");
+                    //TRACE("same line but outside of edge - do not move uv1 and go to next vertex\n");
                 }
             }
             else {
