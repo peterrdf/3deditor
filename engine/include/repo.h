@@ -337,11 +337,6 @@ bool            DECL STDC   repo_IsCorrectName(const char* name, char nameType);
 //
 const char     DECL* STDC   repo_MakeCorrectName(RdfFile file, const char* name, char nameType);
 
-///////////////////////////////////////////////////////////////////////////////////////////
-/// 
-// Utility functions
-//
-
 // Repo supports errors messages buffer.
 // This function returns all messages in the buffer.
 // !!! Returned pointer us valid until next call to any function from repo.h
@@ -363,6 +358,11 @@ void           DECL  STDC   repo_AddError(OwlModel model, const char* error);
 // Returns NULL in case of error.
 //
 const char     DECL* STDC  repo_SplitIRI(const char* iriName, char* uriPathBuff = NULL, int_t uriPathBuffSize = 0);
+
+// 
+// Generates TTL knowledges from classes and properties of OwlModel which located in the file
+// 
+bool           DECL  STDC   repo_GenerateKnowleges(RdfFile file);
 
 #ifdef __cplusplus
 }
