@@ -111,15 +111,23 @@ void _ap242_property::load()
 }
 
 // ************************************************************************************************
-_ap242_property_collection::_ap242_property_collection()
-	: m_vecProperties()
-{}
+_ap242_property_collection::_ap242_property_collection(SdaiInstance sdaiInstance)
+	: m_sdaiInstance(sdaiInstance)
+	, m_vecProperties()
+{
+	assert(m_sdaiInstance != 0);
+}
 
 /*virtual*/ _ap242_property_collection::~_ap242_property_collection()
 {
 	for (auto pProperty : m_vecProperties) {
 		delete pProperty;
 	}
+}
+
+wstring _ap242_property_collection::getName() const
+{	
+	return _ap_geometry::getName(m_sdaiInstance);
 }
 
 // ************************************************************************************************
@@ -157,7 +165,7 @@ _ap242_property_collection* _ap242_property_provider::getPropertyCollection(Sdai
 
 _ap242_property_collection* _ap242_property_provider::loadPropertyCollection(SdaiInstance sdaiInstance)
 {
-	auto pPropertyCollection = new _ap242_property_collection();
+	auto pPropertyCollection = new _ap242_property_collection(sdaiInstance);
 	loadProperties(sdaiInstance, pPropertyCollection);
 
 	return pPropertyCollection;
