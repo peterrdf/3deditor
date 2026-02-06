@@ -191,7 +191,7 @@ void _ap242_model_structure::loadProductNode(_ap242_node* pParentNode, _ap242_pr
 
 				for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 					pInstanceIterator = nullptr;
-					auto itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
+					itInstanceIterator = m_mapInstanceIterators.find(pRepresentationItem);
 					if (itInstanceIterator == m_mapInstanceIterators.end()) {
 						pInstanceIterator = new _instance_iterator(pRepresentationItem->getInstances());
 						m_mapInstanceIterators[pRepresentationItem] = pInstanceIterator;

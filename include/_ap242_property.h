@@ -74,15 +74,18 @@ class _ap242_property_collection
 
 private: // Members
 
+	SdaiInstance m_sdaiInstance;
 	vector<_ap242_property*> m_vecProperties;
 
 public: // Methods
 
-	_ap242_property_collection();
+	_ap242_property_collection(SdaiInstance sdaiInstance);
 	virtual ~_ap242_property_collection();
 
 public: // Properties
 
+	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+	wstring getName() const;
 	vector<_ap242_property*>& properties() { return m_vecProperties; }
 };
 

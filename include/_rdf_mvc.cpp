@@ -117,7 +117,11 @@ _rdf_model::_rdf_model(_log* pLog)
 			continue;
 		}
 
+#ifdef __EMSCRIPTEN__
+		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / .2f);
+#else
 		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
+#endif
 	}
 
 	// Min/Max
@@ -1576,7 +1580,7 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 
 /*virtual*/ float _world_coordinate_system_model::getAxisLength() const /*override*/
 {
-	auto pModel = m_pController->getModel();
+	auto pModel = !m_pController->getModels().empty() ? m_pController->getModels()[0] : nullptr;
 	if (pModel == nullptr) {
 		return _coordinate_system_model_base::getAxisLength();
 	}
@@ -1634,7 +1638,7 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 
 /*virtual*/ float _model_coordinate_system_model::getAxisLength() const /*override*/
 {
-	auto pModel = m_pController->getModel();
+	auto pModel = !m_pController->getModels().empty() ? m_pController->getModels()[0] : nullptr;
 	if (pModel == nullptr) {
 		return _coordinate_system_model_base::getAxisLength();
 	}
