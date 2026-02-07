@@ -240,7 +240,7 @@ void _rdf_model::importModel(const wchar_t* szPath)
 	load();
 }
 
-void _rdf_model::loadNewInstances()
+void _rdf_model::loadNewInstances(bool bScale)
 {
 	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
 	while (owlInstance != 0) {
@@ -254,6 +254,10 @@ void _rdf_model::loadNewInstances()
 			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
 			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
 			addInstance(pInstance);
+
+			if (bScale) {
+				pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
+			}
 		}
 
 		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
@@ -391,8 +395,7 @@ void _rdf_model::loadInstances()
 /*virtual*/ void  _rdf_model::preLoad()
 {
 	getInstancesDefaultEnableState();
-	//#dragface
-	//updateVertexBufferOffset();
+	updateVertexBufferOffset();
 }
 
 void _rdf_model::load()
@@ -405,8 +408,7 @@ void _rdf_model::load()
 
 	postLoad();
 
-	//#dragface
-	//scale();
+	scale();
 }
 
 void _rdf_model::getInstancesDefaultEnableState()
