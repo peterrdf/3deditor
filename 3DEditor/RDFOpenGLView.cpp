@@ -300,6 +300,9 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 						}
 						else {
 							rdfController->onInteractiveEditStart(this);
+
+							_ptr<_rdf_instance> rdfInstance(m_pPointedInstance);
+							rdfInstance->setEnable(false);
 						}
 					}
 				}
@@ -1687,6 +1690,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 	
 	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
 	ASSERT(pRdfInstance != nullptr);
+	pRdfInstance->setEnable(true);
 	pRdfInstance->recalculate();
 	if (rdfController->getScaleAndCenterAllVisibleGeometry()) {
 		pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
