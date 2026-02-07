@@ -352,7 +352,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -383,7 +383,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -414,7 +414,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -445,7 +445,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -476,7 +476,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -507,7 +507,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -539,7 +539,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -571,7 +571,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;_DEBUG;_ENABLE_OPENGL_DEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -605,7 +605,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -636,7 +636,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_GISENGINE_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;_GISENGINE_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf</AdditionalIncludeDirectories>
     </ClCompile>
@@ -667,7 +667,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -698,7 +698,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -729,7 +729,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -760,7 +760,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;W:\DevArea\RDF\RDFApps\ImportPLY\</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -792,7 +792,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;_GISENGINE_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;_GISENGINE_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;W:\DevArea\RDF\RDFApps\ImportPLY\</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -824,7 +824,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -856,7 +856,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
@@ -888,7 +888,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__RDF_ADVANCED_FEATURES__;GLEW_STATIC;IMPORT_PLY;NDEBUG;WIN64;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_DXF_SUPPORT;_GIS_SUPPORT;_PROGRESS_UI_SUPPORT;_TOOLTIPS_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)include;$(SolutionDir)engine/include;$(SolutionDir)gisengine/include;$(SolutionDir)glew-2.2.0/include/GL;$(SolutionDir)glm/glm;$(SolutionDir)/zip;$(SolutionDir)/parsers;$(SolutionDir)/obj;$(SolutionDir)gltf;</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>

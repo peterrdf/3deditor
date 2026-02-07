@@ -2309,9 +2309,6 @@ void _oglView::_drawFaces()
 							fTransparency = m_fGhostViewTransparency;
 						}
 					}
-					else if (pMaterial == m_pPointedInstanceMaterial) {
-						fTransparency = m_fGhostViewTransparency;
-					}
 
 					if (bTransparent) {
 						if (fTransparency == 1.0f) {

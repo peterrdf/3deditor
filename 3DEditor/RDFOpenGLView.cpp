@@ -234,26 +234,41 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
+	_ptr<_rdf_controller> rdfController(getController());
+	_ptr<_rdf_model> rdfModel(rdfController->getModel());
+
+	_vector3d vecVertexBufferOffset;
+	GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+	auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
+
 	if (m_dragFace.IsActive()) {
 		// Update dragging position
 		SEGMENT3 targetLine;
 		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
-			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {				
+			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
+				targetLine.pt[0].x = -vecVertexBufferOffset.x + (targetLine.pt[0].x * dScaleFactor);
+				targetLine.pt[0].y = -vecVertexBufferOffset.y + (targetLine.pt[0].y * dScaleFactor);
+				targetLine.pt[0].z = -vecVertexBufferOffset.z + (targetLine.pt[0].z * dScaleFactor);
+				targetLine.pt[1].x = -vecVertexBufferOffset.x + (targetLine.pt[1].x * dScaleFactor);
+				targetLine.pt[1].y = -vecVertexBufferOffset.y + (targetLine.pt[1].y * dScaleFactor);
+				targetLine.pt[1].z = -vecVertexBufferOffset.z + (targetLine.pt[1].z * dScaleFactor);
+
 				m_dragFace.Dragging(targetLine);
 
 				auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
 				TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
-
-				_ptr<_rdf_model> rdfModel(getController()->getModel());
+				
 				auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
 				if (pRdfInstance != nullptr) {
 					pRdfInstance->recalculate();
+					pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
 				}
 				else {
-					rdfModel->loadNewInstances();
+					rdfModel->loadNewInstances(true);
 				}
 				
-				_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
+				_load(rdfController->getScaleAndCenterAllVisibleGeometry());
 			}
 		}
 	}
@@ -264,11 +279,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 				GLdouble dY = 0.;
 				GLdouble dZ = 0.;
 				if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
-					_vector3d vecVertexBufferOffset;
-					GetVertexBufferOffset(pModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-					auto dScaleFactor = pModel->getOriginalBoundingSphereDiameter() / 2.;
-
 					VECTOR3 startDragPoint;
 					startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
 					startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
@@ -289,7 +299,10 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 							m_dragFace.FinishDrag(false);
 						}
 						else {
-							_ptr<_rdf_controller>(getController())->onInteractiveEditStart(this);
+							rdfController->onInteractiveEditStart(this);
+
+							_ptr<_rdf_instance> rdfInstance(m_pPointedInstance);
+							rdfInstance->setEnable(false);
 						}
 					}
 				}
@@ -297,7 +310,6 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 		}
 	}
 }
-
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
 {
@@ -1668,15 +1680,21 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 void CRDFOpenGLView::EndDrag(bool accept)
 {
 	// Finish dragging	
-	_ptr<_rdf_controller>(getController())->onInteractiveEditEnd(this);
+	_ptr<_rdf_controller> rdfController(getController());
+	_ptr<_rdf_model> rdfModel(getController()->getModel());
+
+	rdfController->onInteractiveEditEnd(this);
 
 	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
 	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
-
-	_ptr<_rdf_model> rdfModel(getController()->getModel());
+	
 	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
 	ASSERT(pRdfInstance != nullptr);
+	pRdfInstance->setEnable(true);
 	pRdfInstance->recalculate();
+	if (rdfController->getScaleAndCenterAllVisibleGeometry()) {
+		pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
+	}
 
 	rdfModel->removeObsoleteInstances();
 

@@ -62,6 +62,11 @@ _rdf_geometry::_rdf_geometry(OwlInstance owlInstance)
 	m_pVertexBuffer->data() = new float[(uint32_t)m_pOriginalVertexBuffer->size() * (int64_t)VERTEX_LENGTH];
 	memcpy(m_pVertexBuffer->data(), m_pOriginalVertexBuffer->data(), (uint32_t)m_pOriginalVertexBuffer->size() * (int64_t)VERTEX_LENGTH * sizeof(float));
 
+#ifndef __RDF_ADVANCED_FEATURES__
+	delete m_pOriginalVertexBuffer;
+	m_pOriginalVertexBuffer = nullptr;
+#endif
+
 	GetBoundingBox(
 		getOwlInstance(),
 		(double*)m_pmtxBBTransformation,
@@ -274,6 +279,7 @@ void _rdf_geometry::reload()
 
 	// Vertices
 	assert(m_pVertexBuffer != nullptr);
+	assert(m_pOriginalVertexBuffer != nullptr);
 	m_pVertexBuffer->copyFrom(m_pOriginalVertexBuffer);
 
 	assert(m_pmtxBBTransformation != nullptr);
@@ -311,6 +317,7 @@ void _rdf_geometry::recalculate()
 
 void _rdf_geometry::setRDFFormatSettings()
 {
+#ifdef __RDF_ADVANCED_FEATURES__
 	string strSettings = "111111000000001111000001110001";
 
 	bitset<64> bitSettings(strSettings);
@@ -321,5 +328,37 @@ void _rdf_geometry::setRDFFormatSettings()
 	int64_t iMask = bitMask.to_ulong();
 
 	SetFormat(getOwlModel(), (int64_t)iSettings, (int64_t)iMask);
+	SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);	
+#else
+	uint64_t mask = 0;
+	mask += FORMAT_SIZE_VERTEX_DOUBLE;
+	mask += FORMAT_SIZE_INDEX_INT64;
+	mask += FORMAT_VERTEX_NORMAL;
+	mask += FORMAT_VERTEX_TEXTURE_UV;
+	mask += FORMAT_EXPORT_TRIANGLES;
+	mask += FORMAT_EXPORT_LINES;
+	mask += FORMAT_EXPORT_POINTS;
+	mask += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+	mask += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+	mask += FORMAT_VERTEX_COLOR_AMBIENT;
+	mask += FORMAT_VERTEX_COLOR_DIFFUSE;
+	mask += FORMAT_VERTEX_COLOR_EMISSIVE;
+	mask += FORMAT_VERTEX_COLOR_SPECULAR;
+
+	uint64_t setting = 0;
+	setting += FORMAT_VERTEX_NORMAL;
+	setting += FORMAT_VERTEX_TEXTURE_UV;
+	setting += FORMAT_EXPORT_TRIANGLES;
+	setting += FORMAT_EXPORT_LINES;
+	setting += FORMAT_EXPORT_POINTS;
+	setting += FORMAT_EXPORT_CONCEPTUAL_FACE_POLYGONS;
+	setting += FORMAT_EXPORT_POLYGONS_AS_TUPLES;
+	setting += FORMAT_VERTEX_COLOR_AMBIENT;
+	setting += FORMAT_VERTEX_COLOR_DIFFUSE;
+	setting += FORMAT_VERTEX_COLOR_EMISSIVE;
+	setting += FORMAT_VERTEX_COLOR_SPECULAR;
+
+	SetFormat(getOwlModel(), setting, mask);
 	SetBehavior(getOwlModel(), 2048 + 4096, 2048 + 4096);
+#endif
 }

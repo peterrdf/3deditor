@@ -105,7 +105,11 @@ _model::_model(_log* pLog)
 			continue;
 		}
 
+#ifdef __EMSCRIPTEN__
+		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / .2f);
+#else
 		pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
+#endif
 	}
 
 	// Min/Max

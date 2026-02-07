@@ -238,14 +238,14 @@ static	inline  double	Vec2Length(
 //	Vector3
 //
 
-inline  double      * Vec3Coordinates(
+inline  double          * Vec3Coordinates(
                                 VECTOR3&                        vec
                             )
 {
     return &(vec.x);
 }
 
-inline  const   double* Vec3Coordinates(
+inline  const   double  * Vec3Coordinates(
                                 const VECTOR3&              vec
                             )
 {

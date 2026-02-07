@@ -214,6 +214,17 @@ public: // Methods
         float& fYmin, float& fYmax,
         float& fZmin, float& fZmax) const;
 
+    void calculateBB_Faces(
+        _instance* pInstance,
+        float& fXmin, float& fXmax,
+        float& fYmin, float& fYmax,
+        float& fZmin, float& fZmax);
+
+    void calculateBB_Faces(
+        float& fXmin, float& fXmax,
+        float& fYmin, float& fYmax,
+        float& fZmin, float& fZmax);
+
     static void calculateBB(
         OwlInstance owlInstance,
         double& dXmin, double& dXmax,
