@@ -312,16 +312,22 @@ static int MatchDiscriminator(const std::string& current, const char* discrimina
         return 1; //current is start of discriminator
 }
 
+struct NormalInfo
+{
+    VECTOR3  normal;
+    VECTOR3  pointOnSurface;
+};
+
 // returns true to cancel further search
 //
 static bool FindNormals(
-        std::map<double, VECTOR3>&  normals, 
-        const VECTOR3&              pt, 
-        CONCEPTUAL_FACE&            cface, 
-        const MATRIX*               transform, 
-        std::string&                currentDiscriminator, 
-        const char*                 cfaceDiscriminator,
-        double                      eps
+        std::map<double, NormalInfo>&   normals, 
+        const VECTOR3&                  pt, 
+        CONCEPTUAL_FACE&                cface, 
+        const MATRIX*                   transform, 
+        std::string&                    currentDiscriminator, 
+        const char*                     cfaceDiscriminator,
+        double                          eps
         )
 {
     int match = MatchDiscriminator(currentDiscriminator, cfaceDiscriminator);
@@ -344,8 +350,15 @@ static bool FindNormals(
                             double dist = 0;
                             auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps, &dist);
                             if (pos > GeomPosition::Outside) {
-                                VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-                                normals[fabs(dist)] = normal;
+                                double denom = plane.a * plane.a + plane.b * plane.b + plane.c * plane.c;
+                                if (fabs(denom) > ANGLE_TOLERANCE) {
+
+                                    auto& info = normals[fabs(dist)];
+                                    info.normal = Vec3Make(plane.a, plane.b, plane.c);
+
+                                    double t = -(plane.a * pt.x + plane.b * pt.y + plane.c * pt.z + plane.d) / denom;
+                                    info.pointOnSurface = pt + info.normal * t;
+                                }
                             }
                         }
                     }
@@ -441,7 +454,7 @@ extern bool FindNormal (
 
     if (auto shell = rdfgeom_GetBRep(inst)) {
 
-        std::map<double, VECTOR3> normals;
+        std::map<double, NormalInfo> normals;
 
         std::string currentDiscriminator = "?";
         for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
@@ -454,10 +467,10 @@ extern bool FindNormal (
         }
 
         if (!normals.empty()) {
-            outNormal = normals.begin()->second;
+            auto& info = normals.begin()->second;
 
-            //correct starting point to be exactly on surface - as staring point comes with bad tolerance
-            ProjectPointToInstance(ptBase, outNormal, inst);
+            outNormal = info.normal;
+            ptBase = info.pointOnSurface;
 
             return true; //>>>> found normal
         }
@@ -563,7 +576,7 @@ static void IntersectLineCFace(
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
 
-    if (match > 1) {
+    if (match == 2) {
         if (auto inst = rdfgeom_cface_GetInstance(PTR(cface))) {
             if (auto shell = rdfgeom_GetBRep(inst)) {
                 if (auto shellPoints = rdfgeom_GetPoints(shell)) {
@@ -575,6 +588,10 @@ static void IntersectLineCFace(
                     }
                 }
             }
+        }
+
+        if (cfaceDiscriminator) {
+            return; //found exact match - cancel further search
         }
     }
 
