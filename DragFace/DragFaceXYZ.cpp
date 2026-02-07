@@ -111,7 +111,10 @@ void DragFaceXYZ::OnDragging(SEGMENT3 const& targetLine)
     SEGMENT3 targetPoints;
     if (LineLineClosestPoints(targetPoints, targetLine, m_dragRay)) {
 
-        UpdateDynamicDraw(targetPoints);
+        m_workingPoints[0] = targetPoints.pt[0];
+        m_workingPoints[1] = targetPoints.pt[1];
+
+        UpdateDynamicDraw();
 
         RestoreInstance(false);
         ModifyInstance(targetPoints.pt[1]);
@@ -147,7 +150,7 @@ bool DragFaceXYZ::TryModifyByProperty(const PropertyEffect& prop, double distDes
         double val = v[0] + (distDesired - p[0]) * (v[1] - v[0]) / (p[1] - p[0]);
         
         SetDatatypeProperty(m_instance, prop.prop, val);
-        double pos = GetMinIntersectionPosition(m_instance, m_dragRay);
+        double pos = GetMinIntersectionPosition(m_instance, m_dragRay, m_workingPoints+2);
         SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
 
         if (fabs(pos-distDesired) < fabs(distResult-distDesired)) {
