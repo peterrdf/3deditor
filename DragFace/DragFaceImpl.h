@@ -8,7 +8,7 @@ class DragFaceImpl
         DragFaceImpl();
         virtual ~DragFaceImpl () {}
 
-        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
         void RemoveActiveProperty(RdfProperty prop);
         void Dragging(SEGMENT3 const& targetLine);
@@ -75,6 +75,7 @@ class DragFaceImpl
     private:
         RDFGEOM_CALLBACK_LOG m_logger = NULL;
         void*                m_hostData = nullptr;
+        bool                 m_dynamicCursor = false;
 
         InstantState         m_savedState;
 
