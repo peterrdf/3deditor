@@ -268,7 +268,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 					rdfModel->loadNewInstances(true);
 				}
 				
-				_load(rdfController->getScaleAndCenterAllVisibleGeometry());
+				_load(false);
 			}
 		}
 	}
