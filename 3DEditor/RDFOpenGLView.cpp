@@ -151,6 +151,60 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
+/*virtual*/ void CRDFOpenGLView::_onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
+{
+	_oglRenderer::_onKeyDown(nChar, nRepCnt, nFlags);
+
+	if (!m_dragFace.IsActive() && (nChar == VK_CONTROL) && (m_iPointedFace != -1)) {
+		if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
+			_ptr<_rdf_controller> rdfController(getController());
+			_ptr<_rdf_model> rdfModel(rdfController->getModel());
+
+			_vector3d vecVertexBufferOffset;
+			GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+			auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
+
+			CPoint point;
+			::GetCursorPos(&point);
+			::ScreenToClient(m_pWnd->GetSafeHwnd(), &point);
+
+			GLdouble dX = 0.;
+			GLdouble dY = 0.;
+			GLdouble dZ = 0.;
+			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+				VECTOR3 startDragPoint;
+				startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+				startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+				startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+
+				m_dragFace.StartDrag(
+					m_pPointedInstance->getOwlInstance(),
+					(int)m_iPointedFace,
+					startDragPoint,
+					(GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
+					CRDFModel::RdfgeomLogCallback,
+					getController()->getModel(),
+					GetKeyState(VK_MENU) & 0x8000
+				);
+
+				if (m_dragFace.IsActive()) {
+					CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
+					if (IDOK != dlg.DoModal()) {
+						m_dragFace.FinishDrag(false);
+					}
+					else {
+						rdfController->onInteractiveEditStart(this);
+
+						_ptr<_rdf_instance> rdfInstance(m_pPointedInstance);
+						rdfInstance->setEnable(false);
+					}
+				}
+			}
+		}
+	}
+}
+
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
 	for (auto pModel : getController()->getModels()) {
@@ -234,15 +288,15 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
 
-	_ptr<_rdf_controller> rdfController(getController());
-	_ptr<_rdf_model> rdfModel(rdfController->getModel());
-
-	_vector3d vecVertexBufferOffset;
-	GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
-
-	auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
-
 	if (m_dragFace.IsActive()) {
+		_ptr<_rdf_controller> rdfController(getController());
+		_ptr<_rdf_model> rdfModel(rdfController->getModel());
+
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+		auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
+
 		// Update dragging position
 		SEGMENT3 targetLine;
 		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
@@ -258,7 +312,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 
 				auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
 				TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
-				
+
 				auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
 				if (pRdfInstance != nullptr) {
 					pRdfInstance->recalculate();
@@ -267,46 +321,8 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 				else {
 					rdfModel->loadNewInstances(true);
 				}
-				
+
 				_load(false);
-			}
-		}
-	}
-	else if (GetKeyState(VK_CONTROL) & 0x8000 || GetKeyState(VK_SHIFT) & 0x8000) {
-		if (m_iPointedFace != -1) {
-			if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
-				GLdouble dX = 0.;
-				GLdouble dY = 0.;
-				GLdouble dZ = 0.;
-				if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
-					VECTOR3 startDragPoint;
-					startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
-					startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
-					startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
-
-					m_dragFace.StartDrag(
-						m_pPointedInstance->getOwlInstance(),
-						(int)m_iPointedFace,
-						startDragPoint,
-                        (GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
-                        CRDFModel::RdfgeomLogCallback,
-                        getController()->getModel(),
-						GetKeyState(VK_MENU) & 0x8000
-					);
-
-					if (m_dragFace.IsActive()) {
-						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
-						if (IDOK != dlg.DoModal()) {
-							m_dragFace.FinishDrag(false);
-						}
-						else {
-							rdfController->onInteractiveEditStart(this);
-
-							_ptr<_rdf_instance> rdfInstance(m_pPointedInstance);
-							rdfInstance->setEnable(false);
-						}
-					}
-				}
 			}
 		}
 	}
@@ -1688,7 +1704,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 
 	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
 	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
-	
+
 	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
 	ASSERT(pRdfInstance != nullptr);
 	pRdfInstance->setEnable(true);
@@ -1699,7 +1715,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 
 	rdfModel->removeObsoleteInstances();
 
-	getController()->onModelUpdated();	
+	getController()->onModelUpdated();
 }
 
 void CRDFOpenGLView::_test_SetRotation(float fX, float fY, BOOL bRedraw)

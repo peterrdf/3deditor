@@ -42,6 +42,9 @@ public: // Methods
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
+	// _oglRenderer
+	virtual void _onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) override;
+
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;

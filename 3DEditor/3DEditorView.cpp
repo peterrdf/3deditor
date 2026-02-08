@@ -111,6 +111,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_WM_MOUSEMOVE()
 	ON_WM_DROPFILES()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_KEYDOWN()
 	ON_WM_KEYUP()
 	ON_COMMAND(ID_VIEW_TOP, &CMy3DEditorView::OnViewTop)
 	ON_COMMAND(ID_VIEW_LEFT, &CMy3DEditorView::OnViewLeft)
@@ -141,7 +142,7 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_BI_NORMAL_VECTORS, &CMy3DEditorView::OnUpdateShowBiNormalVectors)
 	ON_COMMAND(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnShowBoundingBoxes)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnUpdateShowBoundingBoxes)
-	ON_WM_SETCURSOR()
+	ON_WM_SETCURSOR()	
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -384,6 +385,15 @@ BOOL CMy3DEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+void CMy3DEditorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->_onKeyDown(nChar, nRepCnt, nFlags);
+	}
+
+	__super::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 void CMy3DEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)

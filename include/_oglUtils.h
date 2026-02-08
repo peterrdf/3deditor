@@ -2459,7 +2459,8 @@ private: //  Methods
 public: // Methods
 
     virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/);
-    virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);
+    virtual void _onKeyDown(UINT /*nChar*/, UINT /*nRepCnt*/, UINT /*nFlags*/) {}
+    virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);    
 
     void _showTooltip(LPCTSTR szTitle, LPCTSTR szText);
     void _hideTooltip();
