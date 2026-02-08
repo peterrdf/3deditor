@@ -155,7 +155,7 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 {
 	_oglRenderer::_onKeyDown(nChar, nRepCnt, nFlags);
 
-	if (!m_dragFace.IsActive() && (nChar == VK_CONTROL) && (m_iPointedFace != -1)) {
+	if (!m_dragFace.IsActive() && (nChar == VK_CONTROL || nChar == VK_SHIFT) && (m_iPointedFace != -1)) {
 		if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
 			_ptr<_rdf_controller> rdfController(getController());
 			_ptr<_rdf_model> rdfModel(rdfController->getModel());
