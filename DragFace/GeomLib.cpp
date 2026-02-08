@@ -312,16 +312,22 @@ static int MatchDiscriminator(const std::string& current, const char* discrimina
         return 1; //current is start of discriminator
 }
 
+struct NormalInfo
+{
+    VECTOR3  normal;
+    VECTOR3  pointOnSurface;
+};
+
 // returns true to cancel further search
 //
 static bool FindNormals(
-        std::map<double, VECTOR3>&  normals, 
-        const VECTOR3&              pt, 
-        CONCEPTUAL_FACE&            cface, 
-        const MATRIX*               transform, 
-        std::string&                currentDiscriminator, 
-        const char*                 cfaceDiscriminator,
-        double                      eps
+        std::map<double, NormalInfo>&   normals, 
+        const VECTOR3&                  pt, 
+        CONCEPTUAL_FACE&                cface, 
+        const MATRIX*                   transform, 
+        std::string&                    currentDiscriminator, 
+        const char*                     cfaceDiscriminator,
+        double                          eps
         )
 {
     int match = MatchDiscriminator(currentDiscriminator, cfaceDiscriminator);
@@ -344,8 +350,15 @@ static bool FindNormals(
                             double dist = 0;
                             auto pos = ClassifyPointToFaceFast(pt, *face, points, numPoints, transform, &plane, eps, &dist);
                             if (pos > GeomPosition::Outside) {
-                                VECTOR3 normal = Vec3Make(plane.a, plane.b, plane.c);
-                                normals[fabs(dist)] = normal;
+                                double denom = plane.a * plane.a + plane.b * plane.b + plane.c * plane.c;
+                                if (fabs(denom) > ANGLE_TOLERANCE) {
+
+                                    auto& info = normals[fabs(dist)];
+                                    info.normal = Vec3Make(plane.a, plane.b, plane.c);
+
+                                    double t = -(plane.a * pt.x + plane.b * pt.y + plane.c * pt.z + plane.d) / denom;
+                                    info.pointOnSurface = pt + info.normal * t;
+                                }
                             }
                         }
                     }
@@ -380,12 +393,17 @@ static bool FindNormals(
 /// <summary>
 /// 
 /// </summary>
-extern double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin)
+extern double GetMinIntersectionPosition(
+    OwlInstance inst, 
+    const char* cfaceDiscriminator,  // NULL - search all faces
+    const RAY3& ray,
+    VECTOR3*    ptMin //= NULL
+)
 {
     CalculateInstance(inst);
 
     std::vector<VECTOR3> intersections;
-    IntersectLineInstance(intersections, ray, inst);
+    IntersectLineInstance(intersections, ray, inst, cfaceDiscriminator);
 
     double minDot = FLT_MAX;
 
@@ -414,7 +432,7 @@ static void ProjectPointToInstance(VECTOR3& pt, const VECTOR3& normal, OwlInstan
     ray.dir = normal;
 
     VECTOR3 snap;
-    GetMinIntersectionPosition(inst, ray, &snap);
+    GetMinIntersectionPosition(inst, NULL, ray, &snap);
 
     ASSERT(Vec3Distance(&snap, &ray.org) < 1e-1);
 
@@ -436,7 +454,7 @@ extern bool FindNormal (
 
     if (auto shell = rdfgeom_GetBRep(inst)) {
 
-        std::map<double, VECTOR3> normals;
+        std::map<double, NormalInfo> normals;
 
         std::string currentDiscriminator = "?";
         for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
@@ -449,10 +467,10 @@ extern bool FindNormal (
         }
 
         if (!normals.empty()) {
-            outNormal = normals.begin()->second;
+            auto& info = normals.begin()->second;
 
-            //correct starting point to be exactly on surface - as staring point comes with bad tolerance
-            ProjectPointToInstance(ptBase, outNormal, inst);
+            outNormal = info.normal;
+            ptBase = info.pointOnSurface;
 
             return true; //>>>> found normal
         }
@@ -540,49 +558,77 @@ extern bool LineLineClosestPoints(
 
 //
 //
-extern void IntersectLineInstance(
-    std::vector<VECTOR3>&   outPoints,
-    const RAY3&             line,
-    OwlInstance             instance
+static void IntersectLineCFace(
+    std::vector<VECTOR3>& outPoints,
+    const RAY3& line,
+    const CONCEPTUAL_FACE& cface,
+    const MATRIX* transform,
+    const char* cfaceDiscriminator,  // NULL - search all faces
+    std::string& currentDiscriminator
 )
 {
-    if (auto shell = rdfgeom_GetBRep(instance)) {
-        for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
-            IntersectLineCFace(outPoints, line, *cface, NULL);
-        }
-    }
-}
+    auto match = MatchDiscriminator(currentDiscriminator, cfaceDiscriminator);
 
-//
-//
-extern void IntersectLineCFace(
-    std::vector<VECTOR3>&   outPoints,
-    const RAY3&             line,
-    const CONCEPTUAL_FACE&  cface,
-    const MATRIX*           transform
-)
-{
+    if (!match) {
+        return; //mismatch - do not search in this branch
+    }
+
     MATRIX buffer;
     transform = GetCurrentTransform(cface, transform, buffer);
 
-    if (auto inst = rdfgeom_cface_GetInstance(PTR(cface))) {
-        if (auto shell = rdfgeom_GetBRep(inst)) {
-            if (auto shellPoints = rdfgeom_GetPoints(shell)) {
-                if (auto numShellPoints = rdfgeom_GetNumOfPoints(shell)) {
+    if (match == 2) {
+        if (auto inst = rdfgeom_cface_GetInstance(PTR(cface))) {
+            if (auto shell = rdfgeom_GetBRep(inst)) {
+                if (auto shellPoints = rdfgeom_GetPoints(shell)) {
+                    if (auto numShellPoints = rdfgeom_GetNumOfPoints(shell)) {
 
-                    for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
-                        IntersectLineFace(outPoints, line, *face, shellPoints, numShellPoints, transform);
+                        for (auto face = *rdfgeom_cface_GetFaces(PTR(cface)); face; face = *rdfgeom_face_GetNext(face)) {
+                            IntersectLineFace(outPoints, line, *face, shellPoints, numShellPoints, transform);
+                        }
                     }
                 }
             }
         }
+
+        if (cfaceDiscriminator) {
+            return; //found exact match - cancel further search
+        }
     }
+
+    currentDiscriminator.push_back('.');
+    currentDiscriminator.push_back('?');
 
     for (auto child = *rdfgeom_cface_GetChildren(PTR(cface)); child; child = *rdfgeom_cface_GetNext(child)) {
-        IntersectLineCFace(outPoints, line, *child, transform);
+        currentDiscriminator.back() = rdfgeom_cface_GetDiscriminatorId(child);
+        IntersectLineCFace(outPoints, line, *child, transform, cfaceDiscriminator, currentDiscriminator);
     }
 
+    currentDiscriminator.pop_back();
+    currentDiscriminator.pop_back();
 }
+
+//
+//
+extern void IntersectLineInstance(
+    std::vector<VECTOR3>&   outPoints,
+    const RAY3&             line,
+    OwlInstance             instance,
+    const char*             cfaceDiscriminator  // NULL - search all faces
+)
+{
+
+    if (auto shell = rdfgeom_GetBRep(instance)) {
+        
+        std::string currentDiscriminator = "?";
+
+        for (auto cface = *rdfgeom_GetConceptualFaces(shell); cface; cface = *rdfgeom_cface_GetNext(cface)) {
+
+            currentDiscriminator[0] = rdfgeom_cface_GetDiscriminatorId(cface);
+            IntersectLineCFace(outPoints, line, *cface, NULL, cfaceDiscriminator, currentDiscriminator);
+        }
+    }
+}
+
 
 //
 //

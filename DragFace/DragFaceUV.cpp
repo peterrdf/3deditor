@@ -69,9 +69,8 @@ void DragFaceUV::OnDragging(SEGMENT3 const& targetLine)
 {
     RestoreInstance(false);
 
-    SEGMENT3 resultPoints;
-    if (ModifyInstance(targetLine, resultPoints)) {
-        UpdateDynamicDraw(resultPoints);
+    if (ModifyInstance(targetLine)) {
+        UpdateDynamicDraw();
     }
 
     CalculateInstance(m_instance);
@@ -80,7 +79,7 @@ void DragFaceUV::OnDragging(SEGMENT3 const& targetLine)
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceUV::ModifyInstance(const SEGMENT3 targetLine, SEGMENT3& resultPoints)
+bool DragFaceUV::ModifyInstance(const SEGMENT3& targetLine)
 {
     if (!m_instance)
         return false;
@@ -104,7 +103,9 @@ bool DragFaceUV::ModifyInstance(const SEGMENT3 targetLine, SEGMENT3& resultPoint
         m_changed = true;
         SetDatatypeProperty(m_instance, best.prop, best.value);
 
-        resultPoints = best.points;
+        for (int i = 0; i < 3; i++) {
+            m_workingPoints[i] = best.workingPoints[i];
+        }
 
         TRACE(__FUNCTION__ " sets %s=%g\n", GetNameOfProperty(best.prop), best.value);
         return true;
@@ -141,7 +142,10 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
 
     SEGMENT3 targetPoints;
     LineLineClosestPoints(targetPoints, targetLine, effectLine);
-    
+
+    suggestion.workingPoints[0] = targetPoints.pt[0];
+    suggestion.workingPoints[1] = targetPoints.pt[1];
+
     TRACE("Closest points: target line (%g, %g, %g) - effect line (%g, %g, %g)\n",
         targetPoints.pt[0].x, targetPoints.pt[0].y, targetPoints.pt[0].z,
         targetPoints.pt[1].x, targetPoints.pt[1].y, targetPoints.pt[1].z
@@ -177,16 +181,14 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
         //better position from interpolation
         suggestion.prop = prop.prop;
         suggestion.value = val;
-        suggestion.points.pt[0] = facePoint;
-        suggestion.points.pt[1] = targetPoints.pt[0]; 
+        suggestion.workingPoints[2] = facePoint; 
         return fabs(mistake);
     }
     else if (fabs(d[1]) < fabs(d[0])) {
         //better position from standard step
         suggestion.prop = prop.prop;
         suggestion.value = v[1];
-        suggestion.points.pt[0] = effectLine.pt[1];
-        suggestion.points.pt[1] = targetPoints.pt[0];   
+        suggestion.workingPoints[2] = effectLine.pt[1];
         return fabs(d[1]);
     }
     else {

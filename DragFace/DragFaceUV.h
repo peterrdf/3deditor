@@ -19,14 +19,14 @@ class DragFaceUV : public DragFaceImpl
         {
             RdfProperty prop;
             double      value;
-            SEGMENT3    points; //point on face corresponding to UV and closest point on drag line to facePoint
+            VECTOR3     workingPoints[3];
         };
 
         typedef std::map<double, PropertySuggestion>   PropertySuggestions; //maps distance of point from targetLine to suggestion
 
     private:
         bool GetCurrentXYZ(VECTOR3& xyz);
-        bool ModifyInstance(const SEGMENT3 targetLine, SEGMENT3& resultPoints);
+        bool ModifyInstance(const SEGMENT3& targetLine);
         double TryModifyByProperty (const SEGMENT3& targetLine, PropertyEffect prop, PropertySuggestion& suggestion);
         double MeasureOfMistake(PropertyEffect& prop, const VECTOR3& targetPoint, const VECTOR3& xyzPoint);
      

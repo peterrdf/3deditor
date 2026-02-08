@@ -117,18 +117,10 @@ extern double LinePointDistance(
 extern void IntersectLineInstance(
     std::vector<VECTOR3>&   outPoints,
     const RAY3&             line,
-    OwlInstance             instance
+    OwlInstance             instance,
+    const char*             cfaceDiscriminator  // NULL - search all faces
 );
 
-/// <summary>
-/// Find intersection points of infinite line with conceptual face 
-/// </summary>
-extern void IntersectLineCFace(
-    std::vector<VECTOR3>&   outPoints, 
-    const RAY3&             line,
-    const CONCEPTUAL_FACE&  cface,
-    const MATRIX*           transform
-    );
 
 /// <summary>
 /// Find intersection points of infinite line with face 
@@ -142,4 +134,9 @@ extern void IntersectLineFace(
     const MATRIX*           transform
 );
 
-extern double GetMinIntersectionPosition(OwlInstance inst, const RAY3& ray, VECTOR3* ptMin = NULL);
+extern double GetMinIntersectionPosition(
+    OwlInstance inst, 
+    const char* cfaceDiscriminator,  // NULL - search all faces
+    const RAY3& ray,
+    VECTOR3*    ptMin = NULL
+);

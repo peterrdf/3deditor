@@ -15,7 +15,7 @@ class DragFace
         bool IsActive() const { return m_pImpl != NULL; }
 
         //call to start dragging operation
-        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+        bool StartDrag (OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
 
         //list properties detected as useful for drag 
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);

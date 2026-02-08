@@ -8,7 +8,7 @@ class DragFaceImpl
         DragFaceImpl();
         virtual ~DragFaceImpl () {}
 
-        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData);
+        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
         void RemoveActiveProperty(RdfProperty prop);
         void Dragging(SEGMENT3 const& targetLine);
@@ -48,7 +48,7 @@ class DragFaceImpl
         void   CollectEffectiveProperties();
         double StandardStep(double oldValue);
         void   RestoreInstance(bool cleanSavedState);
-        void   UpdateDynamicDraw(const SEGMENT3& targetPoints);
+        void   UpdateDynamicDraw();
 
         void Log(RDFGEOM_LOG_LEVEL level, const char* msgFormat, ...);
 
@@ -66,13 +66,20 @@ class DragFaceImpl
 
         bool                 m_changed;
 
+    protected:
+        //dynamic view
+        VECTOR3              m_workingPoints[3]; //[0] - closest point on target (mouse) line, 
+                                                 //[1] - closest point on normal / effect line,
+                                                 //[2] - found point on dragging surface
+
     private:
         RDFGEOM_CALLBACK_LOG m_logger = NULL;
         void*                m_hostData = nullptr;
+        bool                 m_dynamicCursor = false;
 
         InstantState         m_savedState;
 
         GEOM::Collection     m_drawDynamic;
         GEOM::Transformation m_drawStartPoint;
-        GEOM::Transformation m_drawTargetPoints[2]; //[0] - closest point on target line, [1] - closest point on normal
+        GEOM::Transformation m_drawWorkingPoints[3]; 
 };

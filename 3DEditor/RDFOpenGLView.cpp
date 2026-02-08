@@ -290,7 +290,8 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 						startDragPoint,
                         (GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
                         CRDFModel::RdfgeomLogCallback,
-                        getController()->getModel()
+                        getController()->getModel(),
+						GetKeyState(VK_MENU) & 0x8000
 					);
 
 					if (m_dragFace.IsActive()) {

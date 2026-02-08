@@ -4,23 +4,29 @@
 /// <summary>
 /// 
 /// </summary>
-static GEOM::Transformation DrawPoint(OwlModel model, VECTOR3 const& pt, double size, const char* name)
+static GEOM::Transformation MarkPoint(OwlModel model, VECTOR3 const& pt, OwlInstance marker, const char* name, double r, double g, double b)
 {
-    char full_name[256];
-    sprintf_s(full_name, "%s (%g, %g, %g)", name, pt.x, pt.y, pt.z);
-
-    auto sphere = GEOM::Sphere::Create(model, full_name);
-    sphere.set_radius(size);
-    sphere.set_segmentationParts(36);
-
     auto T = GEOM::Matrix::Create(model);
     T.set__41(pt.x);
     T.set__42(pt.y);
     T.set__43(pt.z);
 
+    auto clr = GEOM::ColorComponent::Create(model);
+    clr.set_R(r);
+    clr.set_G(g);
+    clr.set_B(b);
+    clr.set_W(0.5);
+
+    auto color = GEOM::Color::Create(model);
+    color.set_ambient(clr);
+
+    auto material = GEOM::Material::Create(model, name);
+    material.set_color(color);
+
     auto trans = GEOM::Transformation::Create(model, name);
-    trans.set_object(sphere);
+    trans.set_object(marker);
     trans.set_matrix(T);
+    trans.set_material(material);
 
     return trans;
 }
@@ -58,14 +64,16 @@ DragFaceImpl::DragFaceImpl()
 
     m_drawDynamic = NULL;
     m_drawStartPoint = NULL;
-    m_drawTargetPoints[0] = NULL;
-    m_drawTargetPoints[1] = NULL;
+    for (int i = 0; i < 3; i++) {
+        Vec3Init(m_workingPoints[i]);
+        m_drawWorkingPoints[i] = NULL;
+    }
 }
 
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData)
+bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
@@ -81,6 +89,7 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
     m_iConceptualFace = iConceptualFace;
     m_logger = logger;
     m_hostData = hostData;
+    m_dynamicCursor = dynamicCursor;
 
     auto descr = GetConceptualFaceDiscriminator(m_instance, m_iConceptualFace);
     if (!descr || !*descr){
@@ -299,21 +308,32 @@ void DragFaceImpl::InitDynamicDraw()
     if (!m_instance)
         return;
 
+    auto model = GetModel(m_instance);
+
+    if (!m_dynamicCursor) {
+        m_drawDynamic = GEOM::Collection::Create(model, "dragging drawing");
+        m_drawDynamic.set_objects(&m_instance, 1);
+        return;
+    }
+
     double box[6] = { 0,0,0,0,0,0 };
     GetBoundingBox(m_instance, box, box + 3);
 
     double size = 0;
     for (int i = 0; i < 3; i++) {
-        size = max(size, (box[i + 3] - box[i]) / 40);
+        size = max(size, (box[i + 3] - box[i]) / 80);
     }
 
-    auto model = GetModel(m_instance);
+    auto sphere = GEOM::Sphere::Create(model, "marker");
+    sphere.set_radius(size);
+    sphere.set_segmentationParts(36);
 
-    m_drawStartPoint = DrawPoint(model, m_dragRay.org, size, "start point");
-    m_drawTargetPoints[0] = DrawPoint(model, m_dragRay.org, size, "target point");
-    m_drawTargetPoints[1] = DrawPoint(model, m_dragRay.org, size, "target point on normal");
+    m_drawStartPoint       = MarkPoint(model, m_dragRay.org, sphere, "start point",                  1,1,0);
+    m_drawWorkingPoints[0] = MarkPoint(model, m_dragRay.org, sphere, "target point on mouse line",   0,0,1);
+    m_drawWorkingPoints[1] = MarkPoint(model, m_dragRay.org, sphere, "target point on normal",       0,1,0);
+    m_drawWorkingPoints[2] = MarkPoint(model, m_dragRay.org, sphere, "found point on surface",       0,1,1);
 
-    OwlInstance collection[] = { m_drawStartPoint, m_drawTargetPoints[0], m_drawTargetPoints[1], m_instance };
+    OwlInstance collection[] = { m_drawStartPoint, m_drawWorkingPoints[0], m_drawWorkingPoints[1], m_drawWorkingPoints[2], m_instance };
 
     m_drawDynamic = GEOM::Collection::Create(model, "dragging drawing");
     m_drawDynamic.set_objects(collection, _countof(collection));
@@ -322,12 +342,15 @@ void DragFaceImpl::InitDynamicDraw()
 /// <summary>
 /// 
 /// </summary>
-void DragFaceImpl::UpdateDynamicDraw(const SEGMENT3& targetPoints)
+void DragFaceImpl::UpdateDynamicDraw()
 {
-    for (int i = 0; i < 2; i++) {
-        auto& pt = targetPoints.pt[i];
+    if (!m_dynamicCursor)
+        return;
 
-        GEOM::Matrix* M = const_cast<GEOM::Matrix*>(m_drawTargetPoints[i].get_matrix());
+    for (int i = 0; i < 3; i++) {
+        auto& pt = m_workingPoints[i];
+
+        GEOM::Matrix* M = const_cast<GEOM::Matrix*>(m_drawWorkingPoints[i].get_matrix());
         assert(M);
         if (M) {
             M[0].set__41(pt.x);
@@ -343,14 +366,18 @@ void DragFaceImpl::UpdateDynamicDraw(const SEGMENT3& targetPoints)
 /// </summary>
 void DragFaceImpl::ClearDynamicDraw()
 {
+
 #if 1
     if (m_drawDynamic) {
         auto res = RemoveInstance(m_drawDynamic);
         ASSERT(res == 0);
-        res += RemoveInstanceRecursively(m_drawStartPoint);
-        res += RemoveInstanceRecursively(m_drawTargetPoints[0]);
-        res += RemoveInstanceRecursively(m_drawTargetPoints[1]);
-        ASSERT(res == 9);
+        if (m_dynamicCursor) {
+            res += RemoveInstanceRecursively(m_drawStartPoint);
+            for (int i = 0; i < 3; i++) {
+                res += RemoveInstanceRecursively(m_drawWorkingPoints[i]);
+            }
+            ASSERT(res == 21);
+        }
     }
     m_drawDynamic = NULL;
 #else
