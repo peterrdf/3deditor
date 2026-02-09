@@ -223,6 +223,7 @@ protected: // Methods
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 	void OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 	void OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
+	void OnHighlightFaceMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 
 private: // Methods
 

@@ -1598,6 +1598,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
+				case enumApplicationProperty::HighlightFaceMaterial:
+					{
+						OnHighlightFaceMaterialPropertyChanged(pApplicationProperty);
+					}
+					break;
+
 				default:
 					ASSERT(FALSE);
 					break;
@@ -1634,6 +1640,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::HighlightMaterial:
 					{
 						OnHighlightMaterialPropertyChanged(pColorSelectorProperty);
+					}
+					break;
+
+				case enumApplicationProperty::HighlightFaceMaterial:
+					{
+						OnHighlightFaceMaterialPropertyChanged(pColorSelectorProperty);
 					}
 					break;
 
@@ -2242,6 +2254,53 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 	}
 }
 
+void CPropertiesWnd::OnHighlightFaceMaterialPropertyChanged(CMFCPropertyGridProperty* pProp)
+{
+	if (pProp == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pMaterialProperty = pProp->GetParent();
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 3);
+
+	// Validate transparency value
+	auto strValue = pMaterialProperty->GetSubItem(2)->GetValue();
+	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+	if (fTransparency > 1.f) {
+		fTransparency = 1.f;
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);		
+	}
+	else if (fTransparency < 0.f) {
+		fTransparency = 0.f;
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+	}
+
+	_material material;
+	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+
+	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		pOGLRenderer->setPointedFaceMaterial(material);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightFaceMaterial);
+	}
+}
+
 CPropertiesWnd::CPropertiesWnd()
 {
 	m_nComboHeight = 0;
@@ -2798,6 +2857,57 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
 	}
 	// Highlight Material
+
+	// Highlight Face Material
+	{
+		auto pMaterial = pOGLRenderer->getPointedFaceMaterial();
+
+		auto pPointedFaceMateriaGroup = new CMFCPropertyGridProperty(_T("Highlight Face Material"));
+
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Face Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 255, 0));
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Face Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 255, 0));
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->AllowEdit(TRUE);
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		pViewGroup->AddSubItem(pPointedFaceMateriaGroup);
+	}
+	// Highlight Face Material
 #pragma endregion
 
 #pragma region UI

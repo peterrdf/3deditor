@@ -52,6 +52,7 @@ _oglRendererSettings::_oglRendererSettings()
 	, m_pBackgroundColor(new _color())
 	, m_pSelectedInstanceMaterial(new _material())
 	, m_pPointedInstanceMaterial(new _material())
+	, m_pPointedFaceMaterial(new _material())
 	, m_bMultiSelect(false)
 {
 	_reset();
@@ -62,6 +63,7 @@ _oglRendererSettings::_oglRendererSettings()
 	delete m_pBackgroundColor;
 	delete m_pSelectedInstanceMaterial;
 	delete m_pPointedInstanceMaterial;
+	delete m_pPointedFaceMaterial;
 }
 
 /*virtual*/ void _oglRendererSettings::_reset()
@@ -113,6 +115,15 @@ _oglRendererSettings::_oglRendererSettings()
 		.0f, .0f, 1.f,
 		.0f, .0f, 1.f,
 		.5f,
+		nullptr,
+		false);
+
+	m_pPointedFaceMaterial->init(
+		.0f, 1.f, .0f,
+		.0f, 1.f, .0f,
+		.0f, 1.f, .0f,
+		.0f, 1.f, .0f,
+		1.f,
 		nullptr,
 		false);
 }
@@ -588,6 +599,27 @@ void _oglRendererSettings::_setView(enumView enView)
 			}
 		}
 	}
+
+	{
+		string strSettingName(typeid(this).raw_name());
+		strSettingName += NAMEOFVAR(m_pPointedFaceMaterial);
+
+		string strValue = loadSetting(strSettingName);
+		if (!strValue.empty()) {
+			vector<string> arMaterial;
+			_string::split(strValue, ":", arMaterial);
+			if (arMaterial.size() == 13) {
+				m_pPointedFaceMaterial->init(
+					(float)atof(arMaterial[0].c_str()), (float)atof(arMaterial[1].c_str()), (float)atof(arMaterial[2].c_str()),
+					(float)atof(arMaterial[3].c_str()), (float)atof(arMaterial[4].c_str()), (float)atof(arMaterial[5].c_str()),
+					(float)atof(arMaterial[6].c_str()), (float)atof(arMaterial[7].c_str()), (float)atof(arMaterial[8].c_str()),
+					(float)atof(arMaterial[9].c_str()), (float)atof(arMaterial[10].c_str()), (float)atof(arMaterial[11].c_str()),
+					(float)atof(arMaterial[12].c_str()),
+					nullptr,
+					false);
+			}
+		}
+	}
 }
 
 enumProjection _oglRendererSettings::_getProjection() const
@@ -921,6 +953,29 @@ void _oglRendererSettings::setPointedInstanceMaterial(const _material& material)
 
 	string strSettingName(typeid(this).raw_name());
 	strSettingName += NAMEOFVAR(m_pPointedInstanceMaterial);
+
+	string strValue =
+		to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
+		to_string(material.getDiffuseColor().r()) + ":" + to_string(material.getDiffuseColor().g()) + ":" + to_string(material.getDiffuseColor().b()) + ":" +
+		to_string(material.getSpecularColor().r()) + ":" + to_string(material.getSpecularColor().g()) + ":" + to_string(material.getSpecularColor().b()) + ":" +
+		to_string(material.getEmissiveColor().r()) + ":" + to_string(material.getEmissiveColor().g()) + ":" + to_string(material.getEmissiveColor().b()) + ":" +
+		to_string(material.getA());
+	saveSetting(strSettingName, strValue);
+}
+
+void _oglRendererSettings::setPointedFaceMaterial(const _material& material)
+{
+	m_pPointedFaceMaterial->init(
+		material.getAmbientColor().r(), material.getAmbientColor().g(), material.getAmbientColor().b(),
+		material.getDiffuseColor().r(), material.getDiffuseColor().g(), material.getDiffuseColor().b(),
+		material.getSpecularColor().r(), material.getSpecularColor().g(), material.getSpecularColor().b(),
+		material.getEmissiveColor().r(), material.getEmissiveColor().g(), material.getEmissiveColor().b(),
+		material.getA(),
+		nullptr,
+		false);
+	
+	string strSettingName(typeid(this).raw_name());
+	strSettingName += NAMEOFVAR(m_pPointedFaceMaterial);
 
 	string strValue =
 		to_string(material.getAmbientColor().r()) + ":" + to_string(material.getAmbientColor().g()) + ":" + to_string(material.getAmbientColor().b()) + ":" +
@@ -1776,6 +1831,7 @@ _oglView::_oglView()
 		case enumApplicationProperty::BackgroundColor:
 		case enumApplicationProperty::SelectionMaterial:
 		case enumApplicationProperty::HighlightMaterial:
+		case enumApplicationProperty::HighlightFaceMaterial:
 		case enumApplicationProperty::GhostView:
 		case enumApplicationProperty::GhostViewTransparency:
 		case enumApplicationProperty::ShowFaces:

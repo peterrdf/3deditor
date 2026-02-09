@@ -2237,6 +2237,7 @@ protected: // Fields
     // Selection
     _material* m_pSelectedInstanceMaterial;
     _material* m_pPointedInstanceMaterial;
+    _material* m_pPointedFaceMaterial;
     bool m_bMultiSelect;
 
 public: // Methods
@@ -2326,6 +2327,9 @@ public: // Properties
 
 	void setPointedInstanceMaterial(const _material& material);
 	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
+
+	void setPointedFaceMaterial(const _material& material);
+    _material* getPointedFaceMaterial() const { return m_pPointedFaceMaterial; }
 };
 
 // ************************************************************************************************
