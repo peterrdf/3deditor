@@ -1000,6 +1000,8 @@ void _oglRenderer::_initialize(CWnd* pWnd,
 	m_pOGLContext = new _oglContext(*(m_pWnd->GetDC()), iSamples);
 	m_pOGLContext->makeCurrent();
 
+	m_pOGLContext->setDebugSettings();
+
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram = new _oglBlinnPhongProgram(bSupportsTexture);
 #else
@@ -1494,10 +1496,6 @@ void _oglRenderer::_prepare(
 
 	BOOL bResult = m_pOGLContext->makeCurrent();
 	VERIFY(bResult);
-
-#ifdef _ENABLE_OPENGL_DEBUG
-	m_pOGLContext->enableDebug();
-#endif
 
 	m_pOGLProgram->_use();
 
