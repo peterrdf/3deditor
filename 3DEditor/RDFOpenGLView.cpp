@@ -1709,9 +1709,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 	ASSERT(pRdfInstance != nullptr);
 	pRdfInstance->setEnable(true);
 	pRdfInstance->recalculate();
-	if (rdfController->getScaleAndCenterAllVisibleGeometry()) {
-		pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
-	}
+	pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
 
 	rdfModel->removeObsoleteInstances();
 
