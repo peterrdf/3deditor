@@ -1572,12 +1572,12 @@ void CRDFOpenGLView::DrawPointedFace()
 	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 #ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_enableBlinnPhongModel(true);
 #else
-	m_pOGLProgram->_enableLighting(false);
+	m_pOGLProgram->_enableLighting(true);
 #endif
-	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
-	m_pOGLProgram->_setTransparency(1.f);
+	auto pHighLightFaceMaterial = getPointedFaceMaterial();
+	m_pOGLProgram->_setMaterial(pHighLightFaceMaterial);
 
 	_oglUtils::checkForErrors();
 
@@ -1595,6 +1595,12 @@ void CRDFOpenGLView::DrawPointedFace()
 		assert(false);
 
 		return;
+	}
+
+	if (pHighLightFaceMaterial->getA() < 1.f) {
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	glBindVertexArray(iVAO);
@@ -1618,9 +1624,14 @@ void CRDFOpenGLView::DrawPointedFace()
 			pGeometry->VBOOffset());
 
 		if (m_iNearestVertex != -1) {
-			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
-
+#ifdef _BLINN_PHONG_SHADERS
+			m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+			m_pOGLProgram->_enableLighting(false);
+#endif
 			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+
+			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };			
 
 			glDisable(GL_DEPTH_TEST);
 			glEnable(GL_PROGRAM_POINT_SIZE);
@@ -1639,6 +1650,10 @@ void CRDFOpenGLView::DrawPointedFace()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	if (pHighLightFaceMaterial->getA() < 1.f) {
+		glDisable(GL_BLEND);
+	}
 
 	_oglUtils::checkForErrors();
 }
