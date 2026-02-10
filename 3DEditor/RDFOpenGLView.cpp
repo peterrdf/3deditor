@@ -189,15 +189,17 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 				);
 
 				if (m_dragFace.IsActive()) {
-					CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
-					if (IDOK != dlg.DoModal()) {
-						m_dragFace.FinishDrag(false);
+					bool bStartInteractiveEdit = true;
+					if (GetKeyState(VK_MENU) & 0x8000) {
+						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
+						if (IDOK != dlg.DoModal()) {
+							m_dragFace.FinishDrag(false);
+							bStartInteractiveEdit = false;
+						}
 					}
-					else {
+					
+					if (bStartInteractiveEdit) {
 						rdfController->onInteractiveEditStart(this);
-
-						_ptr<_rdf_instance> rdfInstance(m_pPointedInstance);
-						rdfInstance->setEnable(false);
 					}
 				}
 			}
@@ -323,6 +325,9 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 				if (pRdfInstance != nullptr) {
 					pRdfInstance->recalculate();
 					pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
+
+					_ptr<_rdf_instance> rdfInstance(rdfController->getSelectedInstance());
+					rdfInstance->setEnable(false);
 				}
 				else {
 					rdfModel->loadNewInstances(true);
