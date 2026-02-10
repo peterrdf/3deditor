@@ -3031,61 +3031,62 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 		((nFlags & MK_MBUTTON) != MK_MBUTTON) &&
 		((nFlags & MK_RBUTTON) != MK_RBUTTON)) {
 		BOOL bResult = m_pOGLContext->makeCurrent();
-		VERIFY(bResult);
-
-		CRect rcClient;
-		m_pWnd->GetClientRect(&rcClient);
-
-		int iWidth = rcClient.Width();
-		int iHeight = rcClient.Height();
+		VERIFY(bResult);		
 
 		_instance* pPointedInstance = nullptr;
-		if (m_pSelectInstanceFrameBuffer->isInitialized()) {
-			GLubyte arPixels[4];
-			memset(arPixels, 0, sizeof(GLubyte) * 4);
+		if (getPointInstance()) {
+			CRect rcClient;
+			m_pWnd->GetClientRect(&rcClient);
 
-			double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
-			double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
+			int iWidth = rcClient.Width();
+			int iHeight = rcClient.Height();
+			if (m_pSelectInstanceFrameBuffer->isInitialized()) {
+				GLubyte arPixels[4];
+				memset(arPixels, 0, sizeof(GLubyte) * 4);
 
-			m_pSelectInstanceFrameBuffer->bind();
-			glReadPixels(
-				(GLint)dX,
-				(GLint)dY,
-				1, 1,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				arPixels);
-			m_pSelectInstanceFrameBuffer->unbind();
+				double dX = (double)point.x * ((double)BUFFER_SIZE / (double)iWidth);
+				double dY = ((double)iHeight - (double)point.y) * ((double)BUFFER_SIZE / (double)iHeight);
 
-			if (arPixels[3] != 0) {
-				int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
-				pPointedInstance = getController()->getInstanceByID(iInstanceID);
-				assert(pPointedInstance != nullptr);
-			}
-		} // if (m_pSelectInstanceFrameBuffer->isInitialized())
+				m_pSelectInstanceFrameBuffer->bind();
+				glReadPixels(
+					(GLint)dX,
+					(GLint)dY,
+					1, 1,
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					arPixels);
+				m_pSelectInstanceFrameBuffer->unbind();
 
-		if (pPointedInstance == nullptr) {
-			for (auto pBuffer : m_vecDecorationBuffers) {
-				if (!pBuffer->getModel()->getEnable()) {
-					continue;
-				}
-
-				if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
-					continue;
-				}
-
-				int64_t iInstanceID = _ptr<_decoration>(pBuffer->getModel())->pointInstance(
-					pBuffer->getSelectInstanceFrameBuffer(),
-					point.x, point.y,
-					iWidth, iHeight,
-					BUFFER_SIZE);
-
-				if (iInstanceID != 0) {
+				if (arPixels[3] != 0) {
+					int64_t iInstanceID = _i64RGBCoder::decode(arPixels[0], arPixels[1], arPixels[2]);
 					pPointedInstance = getController()->getInstanceByID(iInstanceID);
 					assert(pPointedInstance != nullptr);
 				}
-			}
-		} // if (pPointedInstance == nullptr)
+			} // if (m_pSelectInstanceFrameBuffer->isInitialized())
+
+			if (pPointedInstance == nullptr) {
+				for (auto pBuffer : m_vecDecorationBuffers) {
+					if (!pBuffer->getModel()->getEnable()) {
+						continue;
+					}
+
+					if (!_ptr<_decoration>(pBuffer->getModel())->getSupportsInstanceSelection()) {
+						continue;
+					}
+
+					int64_t iInstanceID = _ptr<_decoration>(pBuffer->getModel())->pointInstance(
+						pBuffer->getSelectInstanceFrameBuffer(),
+						point.x, point.y,
+						iWidth, iHeight,
+						BUFFER_SIZE);
+
+					if (iInstanceID != 0) {
+						pPointedInstance = getController()->getInstanceByID(iInstanceID);
+						assert(pPointedInstance != nullptr);
+					}
+				}
+			} // if (pPointedInstance == nullptr)
+		} // if (getPointInstance())		
 
 		if ((pPointedInstance != nullptr) && (pPointedInstance->getOwner() != nullptr)) {
 			pPointedInstance = pPointedInstance->getOwner();

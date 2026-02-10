@@ -44,6 +44,7 @@ public: // Methods
 
 	// _oglRenderer
 	virtual void _onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) override;
+	virtual bool getPointInstance() const override;
 
 	// _oglView
 	virtual void _postDraw() override;

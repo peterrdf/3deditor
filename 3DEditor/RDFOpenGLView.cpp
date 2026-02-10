@@ -205,6 +205,12 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	}
 }
 
+/*virtual*/ bool CRDFOpenGLView::getPointInstance() const /*override*/
+{
+	_ptr<_rdf_controller> rdfController(getController());
+	return !rdfController->getInteractiveEditInProgress();
+}
+
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
 	for (auto pModel : getController()->getModels()) {

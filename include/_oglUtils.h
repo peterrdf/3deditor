@@ -2332,6 +2332,8 @@ public: // Properties
 	void setSelectedInstanceMaterial(const _material& material);
 	_material* getSelectedInstanceMaterial() const { return m_pSelectedInstanceMaterial; }
 
+	virtual bool getPointInstance() const { return true; }
+
 	void setPointedInstanceMaterial(const _material& material);
 	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
 
