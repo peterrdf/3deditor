@@ -68,6 +68,7 @@ public: // Methods
 	virtual void onInstancesDeleted(_view* pSender) override;
 	virtual void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
+	virtual void onInteractiveEditStart(_view* pSender) override;
 
 	// CItemStateProvider
 	virtual bool IsSelected(HTREEITEM hItem) override;

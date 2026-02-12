@@ -21,6 +21,7 @@ enum class enumApplicationProperty : int
 	BackgroundColor,
 	SelectionMaterial,
 	HighlightMaterial,
+	HighlightFaceMaterial,
 	GhostView,
 	GhostViewTransparency,	
 	ShowFaces,

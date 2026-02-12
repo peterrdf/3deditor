@@ -9,6 +9,9 @@
 #include "_oglUtils.h"
 #include "_ptr.h"
 
+#include "../DragFace/DragFace.h"
+
+
 // ************************************************************************************************
 class CRDFOpenGLView : public _oglView
 {
@@ -19,6 +22,8 @@ private: // Fields
 	_oglSelectionFramebuffer* m_pPointFaceFrameBuffer;
 	int64_t m_iPointedFace;
 	int64_t m_iNearestVertex;
+
+	DragFace m_dragFace;	
 
 public: // Methods
 	
@@ -37,11 +42,19 @@ public: // Methods
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 
+	// _oglRenderer
+	virtual void _onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) override;
+	virtual bool getPointInstance() const override;
+
 	// _oglView
 	virtual void _postDraw() override;
 	virtual void _drawBuffers() override;
+	virtual void _onMouseLButtonDown(const CPoint& point) override;
+	virtual void _onMouseRButtonDown(const CPoint& point) override;
 	virtual void _onMouseMove(const CPoint& point) override;
 	virtual void _onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) override;
+
+	const DragFace& GetDragFace() const { return m_dragFace; }
 
 private: // Methods
 
@@ -54,6 +67,8 @@ private: // Methods
 	void DrawFacesFrameBuffer();
 	void DrawPointedFace();
 	pair<int64_t, int64_t> GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ);
+
+	void EndDrag(bool accept);
 
 public:
 

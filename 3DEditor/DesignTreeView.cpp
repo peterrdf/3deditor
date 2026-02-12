@@ -66,6 +66,10 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 
 /*virtual*/ void CDesignTreeView::onModelUpdated()
 {
+	if (getRDFController()->getInteractiveEditInProgress()) {
+		return;
+	}
+
 	onModelLoaded();
 }
 
@@ -777,6 +781,27 @@ IMPLEMENT_SERIAL(CDesignTreeViewMenuButton, CMFCToolBarMenuButton, 1)
 	} // switch (pPropertyItem->GetProperty()->GetType())
 }
 
+/*virtual*/ void CDesignTreeView::onInteractiveEditStart(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+	
+	/** Reset the search dialog */
+	m_pSearchDialog->Reset();
+
+	/** Disable the drawing */
+	m_bUpdateInProgress = true;
+
+	m_treeCtrl.DeleteAllItems();
+	Clean();
+
+	m_treeCtrl.InsertItem(_T("Interactive Edit in Progress..."), IMAGE_MODEL, IMAGE_MODEL);
+
+	/** Enable the drawing */
+	m_bUpdateInProgress = false;
+}
+
 /*virtual*/ bool CDesignTreeView::IsSelected(HTREEITEM hItem) /*override*/
 {
 	auto pItem = (CRDFItem*)m_treeCtrl.GetItemData(hItem);
@@ -1082,6 +1107,11 @@ void CDesignTreeView::RemoveItemData(HTREEITEM hItem)
 
 void CDesignTreeView::UpdateView()
 {
+	if (getRDFController()->getInteractiveEditInProgress()) {
+		return;
+	}
+
+	/** Reset the search dialog */
 	m_pSearchDialog->Reset();
 
 	/** Disable the drawing */

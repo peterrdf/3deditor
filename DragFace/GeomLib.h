@@ -1,0 +1,142 @@
+#pragma once
+
+#define LENGTH_TOLERANCE 1e-7
+#define ANGLE_TOLERANCE 1e-10
+
+/// <summary>
+/// 
+/// </summary>
+enum class GeomPosition
+{
+    Undefined = 0,
+    AbovePlane,
+    BelowPlane,
+    Outside,
+    // > Outside when inside or on edge
+    Vertex,
+    OnEdge,
+    // < Inside when outside or on edge
+    Inside
+};
+
+/// <summary>
+/// 
+/// </summary>
+enum class CoordPlane
+{
+    YZ = 0,
+    XZ = 1,
+    XY = 2
+};
+
+extern void DumpFace(
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           localTransform
+);
+
+/// <summary>
+/// 
+/// </summary>
+extern bool GetVertexPoint(
+    VECTOR3&                outPoint,
+    const STRUCT_VERTEX*    vertex,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           localTransform
+    );
+
+
+/// <summary>
+/// 
+/// </summary>
+extern bool FindFacePlane(
+    PLANE&                  plane,
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           localTransform
+);
+
+/// <summary>
+/// 
+/// </summary>
+extern GeomPosition ClassifyPointToFaceFast(
+    const VECTOR3&          pt,    
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           localTransform,
+    PLANE*                  plane = nullptr,
+    double                  maxDistToPlane = LENGTH_TOLERANCE, //distance to consider point in the face plane
+    double*                 foundDistToPlane = NULL
+);
+
+/// <summary>
+/// Find normal at point on instance surface
+/// </summary>
+extern bool FindNormal (
+    VECTOR3&                outNormal,              //OUT: inward normal
+    VECTOR3&                ptBase,                 //IN: the point close to surface where to find normal, OUT: projected to surface
+    OwlInstance             inst,
+    const char*             cfaceDiscriminator  = NULL,  // NULL - search all faces
+    double                  maxDistToSurface = LENGTH_TOLERANCE  //allowable distance from input ptBase to surface
+);  
+
+/// <summary>
+/// Find closest point on infinite lineI and lineII
+/// closedPoints.pt[0] - point on lineI
+/// closedPoints.pt[1] - point on lineII
+/// </summary>
+extern bool LineLineClosestPoints(
+    SEGMENT3&       closestPoints,
+    const SEGMENT3& lineI,
+    const SEGMENT3& lineII
+);
+
+extern bool LineLineClosestPoints(
+    SEGMENT3& closestPoints,
+    const SEGMENT3& lineI,
+    const RAY3& lineII
+);
+
+/// <summary>
+/// Calculate distance from point to infinite line and return closest point on line
+/// </summary>
+extern double LinePointDistance(
+    const SEGMENT3&  line,
+    const VECTOR3&   point,
+    VECTOR3*         linePoint
+);
+
+
+/// <summary>
+/// Find intersection points of infinite line with instance BRep geometry 
+/// </summary>
+extern void IntersectLineInstance(
+    std::vector<VECTOR3>&   outPoints,
+    const RAY3&             line,
+    OwlInstance             instance,
+    const char*             cfaceDiscriminator  // NULL - search all faces
+);
+
+
+/// <summary>
+/// Find intersection points of infinite line with face 
+/// </summary>
+extern void IntersectLineFace(
+    std::vector<VECTOR3>&   outPoints,
+    const RAY3&             line,
+    const STRUCT_FACE&      face,
+    const VECTOR3*          shellPoints,
+    int_t                   numShellPoints,
+    const MATRIX*           transform
+);
+
+extern double GetMinIntersectionPosition(
+    OwlInstance inst, 
+    const char* cfaceDiscriminator,  // NULL - search all faces
+    const RAY3& ray,
+    VECTOR3*    ptMin = NULL
+);

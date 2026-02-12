@@ -4,10 +4,13 @@
 #include "RDFController.h"
 #include "ProgressIndicator.h"
 #include "_test.h"
+#include "_ptr.h"
+#include "SelectDragPropsDialog.h"
 
 #include <chrono>
 
 #include "Resource.h"
+
 
 extern BOOL TEST_MODE;
 
@@ -29,6 +32,7 @@ CRDFOpenGLView::CRDFOpenGLView(CWnd* pWnd)
 	, m_pPointFaceFrameBuffer(new _oglSelectionFramebuffer())
 	, m_iPointedFace(-1)
 	, m_iNearestVertex(-1)
+	, m_dragFace()
 {
 	assert(pWnd != nullptr);
 
@@ -147,6 +151,68 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
+/*virtual*/ void CRDFOpenGLView::_onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
+{
+	_oglRenderer::_onKeyDown(nChar, nRepCnt, nFlags);
+
+	if (!m_dragFace.IsActive() && (nChar == VK_CONTROL || nChar == VK_SHIFT) && (m_iPointedFace != -1)) {
+		if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
+			_ptr<_rdf_controller> rdfController(getController());
+			_ptr<_rdf_model> rdfModel(rdfController->getModel());
+
+			_vector3d vecVertexBufferOffset;
+			GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+			auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
+
+			CPoint point;
+			::GetCursorPos(&point);
+			::ScreenToClient(m_pWnd->GetSafeHwnd(), &point);
+
+			GLdouble dX = 0.;
+			GLdouble dY = 0.;
+			GLdouble dZ = 0.;
+			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+				VECTOR3 startDragPoint;
+				startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
+				startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
+				startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
+
+				m_dragFace.StartDrag(
+					m_pPointedInstance->getOwlInstance(),
+					(int)m_iPointedFace,
+					startDragPoint,
+					(GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
+					CRDFModel::RdfgeomLogCallback,
+					getController()->getModel(),
+					GetKeyState(VK_MENU) & 0x8000
+				);
+
+				if (m_dragFace.IsActive()) {
+					bool bStartInteractiveEdit = true;
+					if (GetKeyState(VK_MENU) & 0x8000) {
+						CSelectDragPropsDialog dlg(m_dragFace, AfxGetMainWnd());
+						if (IDOK != dlg.DoModal()) {
+							m_dragFace.FinishDrag(false);
+							bStartInteractiveEdit = false;
+						}
+					}
+					
+					if (bStartInteractiveEdit) {
+						rdfController->onInteractiveEditStart(this);
+					}
+				}
+			}
+		}
+	}
+}
+
+/*virtual*/ bool CRDFOpenGLView::getPointInstance() const /*override*/
+{
+	_ptr<_rdf_controller> rdfController(getController());
+	return !rdfController->getInteractiveEditInProgress();
+}
+
 /*virtual*/ void CRDFOpenGLView::_postDraw() /*override*/
 {
 	for (auto pModel : getController()->getModels()) {
@@ -169,6 +235,21 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 
 	DrawFacesFrameBuffer();
 }
+
+/*virtual*/ void CRDFOpenGLView::_onMouseLButtonDown(const CPoint& /*point*/) /*override*/
+{
+	if (m_dragFace.IsActive()) {
+		EndDrag(true);
+	}
+}
+
+/*virtual*/ void CRDFOpenGLView::_onMouseRButtonDown(const CPoint& /*point*/) /*override*/
+{
+	if (m_dragFace.IsActive()) {
+		EndDrag(false);
+	}
+}
+
 
 /*virtual*/ void CRDFOpenGLView::_onMouseMove(const CPoint& point) /*override*/
 {
@@ -214,6 +295,48 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 			_redraw();
 		}
 	} // if (m_pPointFaceFrameBuffer->isInitialized())
+
+	if (m_dragFace.IsActive()) {
+		_ptr<_rdf_controller> rdfController(getController());
+		_ptr<_rdf_model> rdfModel(rdfController->getModel());
+
+		_vector3d vecVertexBufferOffset;
+		GetVertexBufferOffset(rdfModel->getOwlModel(), (double*)&vecVertexBufferOffset);
+
+		auto dScaleFactor = rdfModel->getOriginalBoundingSphereDiameter() / 2.;
+
+		// Update dragging position
+		SEGMENT3 targetLine;
+		if (getOGLPos(point.x, point.y, -FLT_MAX, targetLine.pt[0].x, targetLine.pt[0].y, targetLine.pt[0].z)) {
+			if (getOGLPos(point.x, point.y, 0, targetLine.pt[1].x, targetLine.pt[1].y, targetLine.pt[1].z)) {
+				targetLine.pt[0].x = -vecVertexBufferOffset.x + (targetLine.pt[0].x * dScaleFactor);
+				targetLine.pt[0].y = -vecVertexBufferOffset.y + (targetLine.pt[0].y * dScaleFactor);
+				targetLine.pt[0].z = -vecVertexBufferOffset.z + (targetLine.pt[0].z * dScaleFactor);
+				targetLine.pt[1].x = -vecVertexBufferOffset.x + (targetLine.pt[1].x * dScaleFactor);
+				targetLine.pt[1].y = -vecVertexBufferOffset.y + (targetLine.pt[1].y * dScaleFactor);
+				targetLine.pt[1].z = -vecVertexBufferOffset.z + (targetLine.pt[1].z * dScaleFactor);
+
+				m_dragFace.Dragging(targetLine);
+
+				auto owlDynamicInstance = m_dragFace.GetDynamicDraw();
+				TRACE("Dynamic instance ID: %lld\n", owlDynamicInstance);
+
+				auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlDynamicInstance);
+				if (pRdfInstance != nullptr) {
+					pRdfInstance->recalculate();
+					pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
+
+					_ptr<_rdf_instance> rdfInstance(rdfController->getSelectedInstance());
+					rdfInstance->setEnable(false);
+				}
+				else {
+					rdfModel->loadNewInstances(true);
+				}
+
+				_load(false);
+			}
+		}
+	}
 }
 
 void CRDFOpenGLView::_onShowTooltip(GLdouble dX, GLdouble dY, GLdouble dZ, wstring& strInformation) /*override*/
@@ -652,7 +775,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 			//
 			// Points
 			//
-			
+
 			for (size_t iPoint = 0; iPoint < vecPoints.size(); iPoint++) {
 				auto pPoint = const_cast<_primitives*>(&vecPoints[iPoint]);
 
@@ -1446,7 +1569,7 @@ void CRDFOpenGLView::DrawPointedFace()
 
 	if (m_iPointedFace == -1) {
 		return;
-	}	
+	}
 
 	/*
 	* Triangles
@@ -1460,12 +1583,12 @@ void CRDFOpenGLView::DrawPointedFace()
 	assert((m_iPointedFace >= 0) && (m_iPointedFace < (int64_t)vecTriangles.size()));
 
 #ifdef _BLINN_PHONG_SHADERS
-	m_pOGLProgram->_enableBlinnPhongModel(false);
+	m_pOGLProgram->_enableBlinnPhongModel(true);
 #else
-	m_pOGLProgram->_enableLighting(false);
+	m_pOGLProgram->_enableLighting(true);
 #endif
-	m_pOGLProgram->_setAmbientColor(0.f, 1.f, 0.f);
-	m_pOGLProgram->_setTransparency(1.f);
+	auto pHighLightFaceMaterial = getPointedFaceMaterial();
+	m_pOGLProgram->_setMaterial(pHighLightFaceMaterial);
 
 	_oglUtils::checkForErrors();
 
@@ -1483,6 +1606,12 @@ void CRDFOpenGLView::DrawPointedFace()
 		assert(false);
 
 		return;
+	}
+
+	if (pHighLightFaceMaterial->getA() < 1.f) {
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	glBindVertexArray(iVAO);
@@ -1506,9 +1635,14 @@ void CRDFOpenGLView::DrawPointedFace()
 			pGeometry->VBOOffset());
 
 		if (m_iNearestVertex != -1) {
-			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };
-
+#ifdef _BLINN_PHONG_SHADERS
+			m_pOGLProgram->_enableBlinnPhongModel(false);
+#else
+			m_pOGLProgram->_enableLighting(false);
+#endif
 			m_pOGLProgram->_setAmbientColor(0.f, 0.f, 0.f);
+
+			vecIndices = vector<unsigned int>{ (unsigned int)m_iNearestVertex };			
 
 			glDisable(GL_DEPTH_TEST);
 			glEnable(GL_PROGRAM_POINT_SIZE);
@@ -1528,18 +1662,20 @@ void CRDFOpenGLView::DrawPointedFace()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	if (pHighLightFaceMaterial->getA() < 1.f) {
+		glDisable(GL_BLEND);
+	}
+
 	_oglUtils::checkForErrors();
 }
 
 pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, float fZ, float& fVertexX, float& fVertexY, float& fVertexZ)
 {
-	if (getController()->getSelectedInstance() == nullptr)
-	{
+	if (getController()->getSelectedInstance() == nullptr) {
 		return pair<int64_t, int64_t>(-1, -1);
 	}
 
-	if (m_iPointedFace == -1)
-	{
+	if (m_iPointedFace == -1) {
 		return pair<int64_t, int64_t>(-1, -1);
 	}
 
@@ -1568,22 +1704,42 @@ pair<int64_t, int64_t> CRDFOpenGLView::GetNearestVertex(float fX, float fY, floa
 	int64_t iZeroBasedIndex = 0;
 	for (int64_t iIndex = pConceptulFace->startIndex();
 		iIndex < pConceptulFace->startIndex() + pConceptulFace->indicesCount();
-		iIndex++, iZeroBasedIndex++)
-	{
+		iIndex++, iZeroBasedIndex++) {
 		fVertexX = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 0];
 		fVertexY = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 1];
 		fVertexZ = pVertices[(pIndices[iIndex] * VERTEX_LENGTH) + 2];
 
 		double dDistance = sqrt(pow(fX - fVertexX, 2.f) + pow(fY - fVertexY, 2.f) + pow(fZ - fVertexZ, 2.f));
-		if (dMinDistance > dDistance)
-		{
+		if (dMinDistance > dDistance) {
 			iConcFaceVertexIndex = iZeroBasedIndex;
-			iVertexIndex = pIndices[iIndex];			
+			iVertexIndex = pIndices[iIndex];
 			dMinDistance = dDistance;
 		}
 	}
 
 	return pair<int64_t, int64_t>(iConcFaceVertexIndex, iVertexIndex);
+}
+
+void CRDFOpenGLView::EndDrag(bool accept)
+{
+	// Finish dragging	
+	_ptr<_rdf_controller> rdfController(getController());
+	_ptr<_rdf_model> rdfModel(getController()->getModel());
+
+	rdfController->onInteractiveEditEnd(this);
+
+	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
+	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
+
+	auto pRdfInstance = rdfModel->getInstanceByOwlInstance(owlModifiedInstance);
+	ASSERT(pRdfInstance != nullptr);
+	pRdfInstance->setEnable(true);
+	pRdfInstance->recalculate();
+	pRdfInstance->getGeometry()->scale(rdfModel->getOriginalBoundingSphereDiameter() / 2.f);
+
+	rdfModel->removeObsoleteInstances();
+
+	getController()->onModelUpdated();
 }
 
 void CRDFOpenGLView::_test_SetRotation(float fX, float fY, BOOL bRedraw)

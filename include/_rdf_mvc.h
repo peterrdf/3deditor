@@ -39,6 +39,9 @@ public:  // Methods
 	void attachModel(const wchar_t* szPath, OwlModel owlModel);
 	void assignModel(const wchar_t* szPath, OwlModel owlModel);
 	void importModel(const wchar_t* szPath);
+	void reload() { load(); }
+	void loadNewInstances(bool bScale);
+	void removeObsoleteInstances();
 
 protected:
 
@@ -115,6 +118,8 @@ public: // Methods
 	virtual void onInstancesDeleted(_view* /*pSender*/) {}
 	virtual void onMeasurementsAdded(_view* /*pSender*/, _rdf_instance* /*pInstance*/) {}
 	virtual void onInstancePropertyEdited(_view* /*pSender*/, _rdf_instance* /*pInstance*/, _rdf_property* /*pProperty*/) {}
+	virtual void onInteractiveEditStart(_view* /*pSender*/) {}
+	virtual void onInteractiveEditEnd(_view* /*pSender*/) {}
 
 public: // Properties
 
@@ -139,6 +144,8 @@ private: // Fields
 
 	// OpenGL View
 	bool m_bScaleAndCenterAllVisibleGeometry;
+
+	bool m_bInteractiveEditInProgress;
 
 public: // Methods
 
@@ -169,6 +176,8 @@ public: // Methods
 	bool deleteInstances(_view* pSender, const vector<_rdf_instance*>& vecInstances);
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
+	virtual void onInteractiveEditStart(_view* pSender);
+	virtual void onInteractiveEditEnd(_view* pSender);
 
 protected: // Methods
 
@@ -184,6 +193,7 @@ public: // Properties
 	void setVisibleValuesCountLimit(int iNewValue);
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }
 	void setScaleAndCenterAllVisibleGeometry(bool bNewValue);
+	bool getInteractiveEditInProgress() const { return m_bInteractiveEditInProgress; }
 };
 
 // ************************************************************************************************

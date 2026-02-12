@@ -240,6 +240,57 @@ void _rdf_model::importModel(const wchar_t* szPath)
 	load();
 }
 
+void _rdf_model::loadNewInstances(bool bScale)
+{
+	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+	while (owlInstance != 0) {
+		auto itInstance = m_mapInstances.find(owlInstance);
+		if (itInstance == m_mapInstances.end()) {
+			m_mapInstanceDefaultState[owlInstance] = true;
+
+			auto pGeometry = new _rdf_geometry(owlInstance);
+			addGeometry(pGeometry);
+
+			auto pInstance = new _rdf_instance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setEnable(m_mapInstanceDefaultState.at(owlInstance));
+			addInstance(pInstance);
+
+			if (bScale) {
+				pGeometry->scale((float)m_dOriginalBoundingSphereDiameter / 2.f);
+			}
+		}
+
+		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+	} // while (owlInstance != 0)
+}
+
+void _rdf_model::removeObsoleteInstances()
+{
+	// Instances
+	auto itInstance = m_mapInstances.begin();
+	while (itInstance != m_mapInstances.end()) {
+		OwlInstance owlInstance = itInstance->first;
+		auto itNextInstance = std::next(itInstance);
+		if (!IsInstance(owlInstance)) {
+			auto pInstance = itInstance->second;
+			_model::deleteGeometry(pInstance->getGeometry());
+			m_mapInstances.erase(itInstance);
+		}
+		itInstance = itNextInstance;
+	}
+
+	// Default states
+	for (auto it = m_mapInstanceDefaultState.begin(); it != m_mapInstanceDefaultState.end(); ) {
+		OwlInstance owlInstance = it->first;
+		if (!IsInstance(owlInstance)) {
+			it = m_mapInstanceDefaultState.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
 /*virtual*/ void _rdf_model::addInstance(_instance* pInstance) /*override*/
 {
 	_model::addInstance(pInstance);
@@ -568,6 +619,12 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 	// _model
 	_model::deleteGeometry(pInstance->getGeometry());
 
+	// Default state
+	auto itDefaultState = m_mapInstanceDefaultState.find(pInstance->getOwlInstance());
+	if (itDefaultState != m_mapInstanceDefaultState.end()) {
+		m_mapInstanceDefaultState.erase(itDefaultState);
+	}
+
 	return bResult;
 }
 
@@ -733,6 +790,7 @@ _rdf_controller::_rdf_controller()
 	, m_bShowProgressDialog(false)
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
+	, m_bInteractiveEditInProgress(false)
 {}
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
@@ -747,9 +805,16 @@ _rdf_controller::_rdf_controller()
 
 /*virtual*/ void _rdf_controller::onModelUpdated() /*override*/
 {
+	if (getModel() == nullptr) {
+		assert(false);
+		return;
+	}
+
+	if (!m_bInteractiveEditInProgress) {
 		for (auto pDecoration : getDecorationModels()) {
 			_ptr<_decoration>(pDecoration)->onModelUpdated();
 		}
+	}	
 
 	_controller::onModelUpdated();
 }
@@ -1050,6 +1115,32 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 		_ptr<_rdf_view> rdfView(*itView, false);
 		if (rdfView) {
 			rdfView->onInstancePropertyEdited(pSender, pInstance, pProperty);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditStart(_view* pSender)
+{
+	m_bInteractiveEditInProgress = true;
+	
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditStart(pSender);
+		}
+	}
+}
+
+/*virtual*/ void _rdf_controller::onInteractiveEditEnd(_view* pSender)
+{
+	m_bInteractiveEditInProgress = false;
+
+	auto itView = getViews().begin();
+	for (; itView != getViews().end(); itView++) {
+		_ptr<_rdf_view> rdfView(*itView, false);
+		if (rdfView) {
+			rdfView->onInteractiveEditEnd(pSender);
 		}
 	}
 }

@@ -350,7 +350,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
+      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;DragFace.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;uafxcwd.lib;LIBCMTD.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>uafxcwd.lib;LIBCMTD.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;$(SolutionDir)lib/x86;$(SolutionDir)engine/lib/x86;$(SolutionDir)gisengine/lib/x86;$(SolutionDir)glew-2.2.0/lib/Release/Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -460,7 +460,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Debug\;./../lib/x64;./../engine/lib/x64;./../gisengine/lib/x64;./../glew-2.2.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -727,7 +727,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib;</AdditionalDependencies>
+      <AdditionalDependencies>DragFace.lib;ExtensionConepts.lib;ImportPLY.lib;engine.lib;opengl32.lib;glu32.lib;glew32s.lib;gisengine.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\Release\;./../lib/x64;./../engine/lib/x64;./../glew-2.2.0/lib/Release/x64;./../gisengine/lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -932,6 +932,7 @@
     <ClCompile Include="..\3DEditor\RDFOpenGLView.cpp" />
     <ClCompile Include="..\3DEditor\RenameDialog.cpp" />
     <ClCompile Include="..\3DEditor\SearchTreeCtrlDialog.cpp" />
+    <ClCompile Include="..\3DEditor\SelectDragPropsDialog.cpp" />
     <ClCompile Include="..\3DEditor\TreeCtrlEx.cpp" />
     <ClCompile Include="..\3DEditor\_dxf_parser.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_cis2engine|Win32'">stdafx.h</PrecompiledHeaderFile>

@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // ************************************************************************************************
-#define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
+//#define WM_LOAD_INSTANCE_PROPERTY_VALUES WM_USER + 1
 #define WM_LOAD_INSTANCE_PROPERTIES WM_USER + 2
 
 // ************************************************************************************************
@@ -34,6 +34,15 @@ static char THIS_FILE[] = __FILE__;
 
 // Moved in CSelectInstanceDialog
 //#define USED_SUFFIX L" [used]"
+
+// ************************************************************************************************
+OwlInstance CRDFInstanceData::getOwlInstance() const
+{ 
+	if (auto p = GetInstance()) 
+		return p->getOwlInstance(); 
+	
+	return NULL; 
+}
 
 // ************************************************************************************************
 CApplicationPropertyData::CApplicationPropertyData(enumApplicationProperty enApplicationProperty)
@@ -1141,6 +1150,28 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 	}
 }
 
+/*virtual*/ void CPropertiesWnd::onInteractiveEditStart(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1) {
+		LoadInstanceProperties();
+	}
+}
+
+/*virtual*/ void CPropertiesWnd::onInteractiveEditEnd(_view* pSender) /*override*/
+{
+	if (pSender == this) {
+		return;
+	}
+
+	if (m_wndObjectCombo.GetCurSel() == 1) {
+		LoadInstanceProperties();
+	}
+}
+
 /*virtual*/ void CPropertiesWnd::postModelLoaded() /*override*/
 {
 	if (_ptr<CRDFController>(getRDFController())->_test_IsTestMode()) {
@@ -1567,6 +1598,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					}
 					break;
 
+				case enumApplicationProperty::HighlightFaceMaterial:
+					{
+						OnHighlightFaceMaterialPropertyChanged(pApplicationProperty);
+					}
+					break;
+
 				default:
 					ASSERT(FALSE);
 					break;
@@ -1603,6 +1640,12 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				case enumApplicationProperty::HighlightMaterial:
 					{
 						OnHighlightMaterialPropertyChanged(pColorSelectorProperty);
+					}
+					break;
+
+				case enumApplicationProperty::HighlightFaceMaterial:
+					{
+						OnHighlightFaceMaterialPropertyChanged(pColorSelectorProperty);
 					}
 					break;
 
@@ -1670,7 +1713,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 				ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 				auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-				PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+				PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+				//PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 			} // REMOVE_OBJECT_PROPERTY_COMMAND
 			else {
 				if (strValue == SELECT_OBJECT_PROPERTY_COMMAND) {
@@ -1725,7 +1769,8 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					ASSERT(pProperty->GetSubItemsCount() >= 3/*range, cardinality and at least 1 value*/);
 
 					auto pValue = pProperty->GetSubItem((int)pData->GetCard() + 2/*range and cardinality*/);
-					PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
+					PostMessage(WM_LOAD_INSTANCE_PROPERTIES, (WPARAM)pValue, 0); // Reload all Properties
+					//PostMessage(WM_LOAD_INSTANCE_PROPERTY_VALUES, (WPARAM)pValue, 0);
 				} // EMPTY_INSTANCE
 				else {
 					ASSERT(FALSE); // Internal error!
@@ -2209,6 +2254,53 @@ void CPropertiesWnd::OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty
 	}
 }
 
+void CPropertiesWnd::OnHighlightFaceMaterialPropertyChanged(CMFCPropertyGridProperty* pProp)
+{
+	if (pProp == nullptr) {
+		ASSERT(FALSE);
+		return;
+	}
+
+	auto pMaterialProperty = pProp->GetParent();
+	ASSERT(pMaterialProperty->GetSubItemsCount() == 3);
+
+	// Validate transparency value
+	auto strValue = pMaterialProperty->GetSubItem(2)->GetValue();
+	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
+	if (fTransparency > 1.f) {
+		fTransparency = 1.f;
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);		
+	}
+	else if (fTransparency < 0.f) {
+		fTransparency = 0.f;
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
+	}
+
+	_material material;
+	material.init(
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(0)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetRValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetGValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		(float)GetBValue(((CColorSelectorProperty*)(pMaterialProperty->GetSubItem(1)))->GetSelectedColor()) / 255.f,
+		fTransparency,
+		nullptr,
+		false);
+
+	auto pOGLRenderer = getController()->getViewAs<_oglRenderer>();
+	if (pOGLRenderer != nullptr) {
+		pOGLRenderer->setPointedFaceMaterial(material);
+		getController()->onApplicationPropertyChanged(this, enumApplicationProperty::HighlightFaceMaterial);
+	}
+}
+
 CPropertiesWnd::CPropertiesWnd()
 {
 	m_nComboHeight = 0;
@@ -2233,7 +2325,7 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_CBN_SELENDOK(ID_COMBO_PROPERTIES_VIEW, OnViewModeChanged)
-	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTY_VALUES, OnLoadInstancePropertyValues)
+	//ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTY_VALUES, OnLoadInstancePropertyValues)
 	ON_MESSAGE(WM_LOAD_INSTANCE_PROPERTIES, OnLoadInstanceProperties)
 END_MESSAGE_MAP()
 
@@ -2343,11 +2435,17 @@ void CPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
 void CPropertiesWnd::OnProperties2()
 {
 	// TODO: Add your command handler code here
+	
+	//igor.sokolov 06.12.25 - use for derived properties... not sure this is good solution, it just was simple to use, please rethink
+    OnPropertyDerived();
 }
 
-void CPropertiesWnd::OnUpdateProperties2(CCmdUI* /*pCmdUI*/)
+void CPropertiesWnd::OnUpdateProperties2(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
+
+	//igor.sokolov 06.12.25 - use for derived properties... not sure this is good solution, it just was simple to use, please rethink
+	OnUpdatePropertyDerived(pCmdUI);
 }
 
 void CPropertiesWnd::LoadApplicationProperties()
@@ -2759,6 +2857,57 @@ void CPropertiesWnd::LoadApplicationProperties()
 		pViewGroup->AddSubItem(pPointedInstanceMateriaGroup);
 	}
 	// Highlight Material
+
+	// Highlight Face Material
+	{
+		auto pMaterial = pOGLRenderer->getPointedFaceMaterial();
+
+		auto pPointedFaceMateriaGroup = new CMFCPropertyGridProperty(_T("Highlight Face Material"));
+
+		// Ambient
+		{
+			auto pProperty = new CColorSelectorProperty(L"Ambient",
+				RGB((BYTE)(pMaterial->getAmbientColor().r() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().g() * 255.f),
+					(BYTE)(pMaterial->getAmbientColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Face Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 255, 0));
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Diffuse
+		{
+			auto pProperty = new CColorSelectorProperty(L"Diffuse",
+				RGB((BYTE)(pMaterial->getDiffuseColor().r() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().g() * 255.f),
+					(BYTE)(pMaterial->getDiffuseColor().b() * 255.f)),
+				nullptr,
+				L"Highlight Face Color",
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->EnableOtherButton(_T("Other..."));
+			pProperty->EnableAutomaticButton(_T("Default"), RGB(0, 255, 0));
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		// Transparency
+		{
+			auto pProperty = new CApplicationProperty(_T("Transparency"),
+				(_variant_t)pMaterial->getA(),
+				_T("Transparency"),
+				(DWORD_PTR)new CApplicationPropertyData(enumApplicationProperty::HighlightFaceMaterial));
+			pProperty->AllowEdit(TRUE);
+
+			pPointedFaceMateriaGroup->AddSubItem(pProperty);
+		}
+
+		pViewGroup->AddSubItem(pPointedFaceMateriaGroup);
+	}
+	// Highlight Face Material
 #pragma endregion
 
 #pragma region UI
@@ -3023,8 +3172,86 @@ void CPropertiesWnd::LoadApplicationProperties()
 	m_wndPropList.AddProperty(pViewGroup);
 }
 
+bool CPropertiesWnd::SelectProperty(RdfProperty prop, int subItem, CMFCPropertyGridProperty* scope)
+{
+	if (!prop) {
+		return false;
+	}
+
+	if (!scope) {
+		for (int i = 0; i < m_wndPropList.GetPropertyCount(); i++) {
+			if (auto root = m_wndPropList.GetProperty(i)) {
+				if (SelectProperty(prop, subItem, root)) {
+					return true;
+				}
+			}
+		}
+	}
+	else {
+		if (auto pData = GetSubitemInstanceProperty(scope)) {
+			if (pData->getRdfProperty() == prop) {
+				//group found
+				if (subItem >= 0) {
+					subItem = min(subItem, scope->GetSubItemsCount() - 1);
+					scope = scope->GetSubItem(subItem);
+				}
+				m_wndPropList.SetCurSel(scope);
+				return true;
+			}
+		}
+
+		//search sub-items
+		for (int i = 0; i < scope->GetSubItemsCount(); i++) {
+			if (auto subScope = scope->GetSubItem(i)) {
+				if (SelectProperty(prop, subItem, subScope)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+std::pair<RdfProperty, int> CPropertiesWnd::GetSelectedProperty()
+{
+	CMFCPropertyGridProperty* pGroup = NULL;
+	if (auto pData = GetSelectedInstanceProperty(&pGroup)) {
+		
+		auto prop = pData->getRdfProperty();
+		
+		int subItem = -1;
+		if (pGroup) {
+			auto curSel = m_wndPropList.GetCurSel();
+			for (int i = 0; i < pGroup->GetSubItemsCount(); i++) {
+				auto item = pGroup->GetSubItem(i);
+				if (item == curSel) {
+					subItem = i;
+					break;
+				}
+			}
+		}
+
+		return { prop, subItem };
+	}
+
+	return { NULL, -1 };
+}
+
+static void EnableWithSubitems(CMFCPropertyGridProperty* pProp, bool enable)
+{
+	pProp->Enable(enable);	
+	for (int iSubItem = 0; iSubItem < pProp->GetSubItemsCount(); iSubItem++) {
+		auto pSubItem = pProp->GetSubItem(iSubItem);
+		EnableWithSubitems(pSubItem, enable);
+	}
+
+}
+
 void CPropertiesWnd::LoadInstanceProperties()
 {
+	auto selectedProperty = GetSelectedProperty();
+
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
 
@@ -3034,10 +3261,13 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.EnableDescriptionArea();
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
-
+	
 	if (getRDFController() == nullptr) {
 		ASSERT(false);
+		return;
+	}
 
+	if (getRDFController()->getInteractiveEditInProgress()) {
 		return;
 	}
 
@@ -3120,18 +3350,23 @@ void CPropertiesWnd::LoadInstanceProperties()
 
 			_rdf_property* pProperty = itProperty->second;
 
-			AddInstanceProperty(pInstanceGroup, rdfInstance, pProperty);
+			auto pGridProp = AddInstanceProperty(pInstanceGroup, rdfInstance, pProperty);
+			if (pGridProp) {
+				EnableWithSubitems(pGridProp, !GetPropertyDerived(pSelectedInstance->getOwlInstance(), pProperty->getRdfProperty()));
+			}
 
 			iPropertyInstance = GetInstancePropertyByIterator(pSelectedInstance->getOwlInstance(), iPropertyInstance);
 		}
 
 		m_wndPropList.AddProperty(pInstanceGroup);
 
+		SelectProperty(selectedProperty.first, selectedProperty.second);
+
 		return;
 	} // if (pSelectedInstance != nullptr)
 }
 
-void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
+CMFCPropertyGridProperty* CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
 {
 	auto pPropertyGroup = new CMFCPropertyGridProperty(pProperty->getName());
 	pInstanceGroup->AddSubItem(pPropertyGroup);
@@ -3173,6 +3408,8 @@ void CPropertiesWnd::AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGrou
 	* values
 	*/
 	AddInstancePropertyValues(pPropertyGroup, pInstance, pProperty);
+
+	return pPropertyGroup;
 }
 
 void CPropertiesWnd::AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty)
@@ -3326,9 +3563,9 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 	switch (pProperty->getType()) {
 		case OBJECTPROPERTY_TYPE:
 			{
-				OwlInstance* pOwlInstances = nullptr;
+				RdfsResource* objValues = nullptr;
 				int64_t iCard = 0;
-				GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &pOwlInstances, &iCard);
+				GetObjectProperty(pInstance->getOwlInstance(), pProperty->getRdfProperty(), &objValues, &iCard);
 				if (iCard > 0) {
 					int64_t	iMinCard = 0;
 					int64_t iMaxCard = 0;
@@ -3344,11 +3581,19 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 					int64_t iValuesCount = iCard;
 					for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
 						CRDFInstanceObjectProperty* pInstanceObjectProperty = nullptr;
-						if (pOwlInstances[iValue] != 0) {
-							auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(pOwlInstances[iValue]);
-							ASSERT(pObjectPropertyInstance != nullptr);
+						RdfsResource objVal = objValues[iValue];
+						if (objVal != 0) {
+							
+                            std::wstring strValue;
+							auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(objVal);
+							if (pObjectPropertyInstance != nullptr) {
+								strValue = pObjectPropertyInstance->getUniqueName();
+							}
+							else {
+								strValue += DisplayName(objVal, getRDFModel()->getOwlModel());
+							}
 
-							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)pObjectPropertyInstance->getUniqueName(), pProperty->getName(),
+							pInstanceObjectProperty = new CRDFInstanceObjectProperty(L"value", (_variant_t)strValue.c_str(), pProperty->getName(),
 								(DWORD_PTR)new CRDFInstancePropertyData(getRDFController(), pInstance, pProperty, iValue));
 						}
 						else {
@@ -4292,6 +4537,7 @@ void CPropertiesWnd::OnViewModeChanged()
 	}
 }
 
+#if 0
 LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam != 0);
@@ -4347,6 +4593,7 @@ LRESULT CPropertiesWnd::OnLoadInstancePropertyValues(WPARAM wParam, LPARAM /*lPa
 
 	return 0;
 }
+#endif
 
 LRESULT CPropertiesWnd::OnLoadInstanceProperties(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
@@ -4383,4 +4630,91 @@ void CPropertiesWnd::OnDestroy()
 	getRDFController()->unRegisterView(this);
 
 	__super::OnDestroy();
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup)
+{
+	if (dynamic_cast<CRDFInstanceProperty*>(pGridProp)
+		|| dynamic_cast<CRDFInstanceObjectProperty*>(pGridProp)
+		|| dynamic_cast<CAddRDFInstanceProperty*>(pGridProp)
+		) {
+		if (auto rawData = pGridProp->GetData()) {
+			auto pData = (CRDFInstancePropertyData*)rawData;
+			if (pData->getOwlInstance() && pData->getRdfProperty()) {
+				if (ppGroup) {
+					*ppGroup = pGridProp->GetParent();
+                }
+				return pData;
+			}
+		}
+	}
+	return NULL;
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup)
+{
+	for (int iSubItem = 0; iSubItem < pGridProp->GetSubItemsCount(); iSubItem++) {
+		if (auto pSubItem = pGridProp->GetSubItem(iSubItem)) {
+			if (auto pData = GetInstanceProperty(pSubItem, ppGroup)) {
+				return pData;
+			}
+		}
+    }
+	return NULL;
+}
+
+CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup)
+{
+	if (auto pGridProp = m_wndPropList.GetCurSel()) {
+
+        //try itself first
+		if (auto pData = GetInstanceProperty(pGridProp, ppGroup)) {
+            return pData;
+		}
+
+		//is this a group?
+		if (auto pData = GetSubitemInstanceProperty(pGridProp, ppGroup)) {
+			return pData;
+        }
+		
+        //try parent group
+		if (auto pParentProp = pGridProp->GetParent()) {
+			if (auto pData = GetSubitemInstanceProperty(pParentProp, ppGroup)) {
+				return pData;
+			}
+		}
+	}	
+	return NULL;
+}
+
+void CPropertiesWnd::OnPropertyDerived()
+{
+	CMFCPropertyGridProperty* pGroup = NULL;
+	if (auto propData = GetSelectedInstanceProperty(&pGroup)) {
+
+		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
+
+        derived = !derived;
+
+        SetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty(), derived);
+
+		EnableWithSubitems(pGroup, !derived);
+
+		propData->GetController()->onInstancePropertyEdited(this, propData->GetInstance(), propData->GetProperty());
+		PostMessage(WM_LOAD_INSTANCE_PROPERTIES, 0, 0);
+	}
+}
+
+void CPropertiesWnd::OnUpdatePropertyDerived(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(FALSE);
+	pCmdUI->Enable(FALSE);
+
+	if (auto propData = GetSelectedInstanceProperty()) {
+		
+		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
+
+		pCmdUI->Enable(TRUE);
+		pCmdUI->SetCheck(derived);
+	}
 }

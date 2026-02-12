@@ -79,4 +79,6 @@ public: // Methods
 	const vector<pair<enumLogEvent, string>>& getMessages() const { return m_vecMessages; }
 	int getWarningsCount() const { return m_iWarningCount; }
 	int getErrorsCount() const { return m_iErrorCount; }
+
+	void clearMessages() { m_vecMessages.clear(); m_iWarningCount = 0; m_iErrorCount = 0; }
 };

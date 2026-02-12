@@ -284,6 +284,8 @@ void CMy3DEditorDoc::OnViewScaleAndCenterAllGeometry()
 {
 	_ptr<_rdf_model>(getModel())->reloadGeometries();
 	getModel()->scale();
+
+	_controller::onModelUpdated();
 }
 
 void CMy3DEditorDoc::OnFileOpen()

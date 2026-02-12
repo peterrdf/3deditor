@@ -104,6 +104,8 @@ public: // Properties
 
 	_rdf_controller* GetController() const { return m_pController; }
 	_rdf_instance* GetInstance() const { return m_pInstance; }
+
+	OwlInstance getOwlInstance() const;
 };
 
 // ************************************************************************************************
@@ -125,10 +127,13 @@ public: // Properties
 	_rdf_property * GetProperty() const;
 	int64_t GetCard() const;
 	void SetCard(int64_t iCard);
+
+	RdfProperty getRdfProperty() const { if (auto p = GetProperty()) return p->getRdfProperty(); return NULL; }
 };
 
+
 // ************************************************************************************************
-class CRDFInstanceProperty : public CMFCPropertyGridProperty
+class CRDFInstanceProperty : public CMFCPropertyGridProperty  //igor.sokolov 08.12.25 suggest rename to CRDFInstanceDatatypeProperty
 {
 
 public: // Methods
@@ -209,6 +214,8 @@ public: // Methods
 	virtual void onInstanceCreated(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstanceDeleted(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancesDeleted(_view* pSender) override;
+	virtual void onInteractiveEditStart(_view* pSender) override;
+	virtual void onInteractiveEditEnd(_view* pSender) override;
 
 protected: // Methods
 	
@@ -216,6 +223,7 @@ protected: // Methods
 	afx_msg LRESULT OnPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 	void OnSelectionMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 	void OnHighlightMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
+	void OnHighlightFaceMaterialPropertyChanged(CMFCPropertyGridProperty* pProp);
 
 private: // Methods
 
@@ -243,6 +251,19 @@ protected:
 public:
 	virtual ~CPropertiesWnd();
 
+private:
+	void OnPropertyDerived();
+	void OnUpdatePropertyDerived(CCmdUI* pCmdUI);
+
+	CRDFInstancePropertyData* GetSelectedInstanceProperty(CMFCPropertyGridProperty** ppGroup = NULL);
+	CRDFInstancePropertyData* GetInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup);
+	CRDFInstancePropertyData* GetSubitemInstanceProperty(CMFCPropertyGridProperty* pGridProp, CMFCPropertyGridProperty** ppGroup = NULL);
+
+	
+	bool SelectProperty(RdfProperty prop, int subItem, CMFCPropertyGridProperty* scope = NULL);
+	std::pair<RdfProperty, int> GetSelectedProperty();///returns property and sub-item index
+
+
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -257,14 +278,14 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 	afx_msg void OnViewModeChanged();
-	afx_msg LRESULT OnLoadInstancePropertyValues(WPARAM wParam, LPARAM lParam);
+	//afx_msg LRESULT OnLoadInstancePropertyValues(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLoadInstanceProperties(WPARAM wParam, LPARAM lParam);
 
 	DECLARE_MESSAGE_MAP()
 
 	void LoadApplicationProperties();
 	void LoadInstanceProperties();
-	void AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
+	CMFCPropertyGridProperty* AddInstanceProperty(CMFCPropertyGridProperty* pInstanceGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void AddInstancePropertyCardinality(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void AddInstancePropertyValues(CMFCPropertyGridProperty* pPropertyGroup, _rdf_instance* pInstance, _rdf_property* pProperty);
 	void LoadBaseInformation(_rdf_instance* pInstance);

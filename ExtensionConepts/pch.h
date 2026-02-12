@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <float.h>
+#include <math.h>
 
 #include "engine.h"
 #include "rdfgeom.h"

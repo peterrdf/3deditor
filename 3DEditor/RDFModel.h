@@ -65,7 +65,7 @@ public: // Methods
 
 	void LoadEngineExtensions(OwlModel model);
 
-private:
+public:
 	static void RdfgeomLogCallback(RDFGEOM_LOG_LEVEL level, const char* msg, void* me);
 
 private:

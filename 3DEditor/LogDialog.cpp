@@ -30,6 +30,7 @@ void CLogDialog::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CLogDialog, CDialogEx)
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR_LOG, &CLogDialog::OnClearLog)
 END_MESSAGE_MAP()
 
 
@@ -61,4 +62,10 @@ BOOL CLogDialog::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CLogDialog::OnClearLog()
+{
+    m_pLogHub->clearMessages();
+    m_editMessages.SetWindowTextW(L"");
 }
