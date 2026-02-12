@@ -2241,11 +2241,11 @@ protected: // Fields
 	// Background
 	_color* m_pBackgroundColor;
 
-    // Selection
-    _material* m_pSelectedInstanceMaterial;
-    _material* m_pPointedInstanceMaterial;
-    _material* m_pPointedFaceMaterial;
-    bool m_bMultiSelect;
+	// Selection
+	_material* m_pSelectedInstanceMaterial;
+	_material* m_pPointedInstanceMaterial;
+	_material* m_pPointedFaceMaterial;
+	bool m_bMultiSelect;
 
 public: // Methods
 
@@ -2338,7 +2338,7 @@ public: // Properties
 	_material* getPointedInstanceMaterial() const { return m_pPointedInstanceMaterial; }
 
 	void setPointedFaceMaterial(const _material& material);
-    _material* getPointedFaceMaterial() const { return m_pPointedFaceMaterial; }
+	_material* getPointedFaceMaterial() const { return m_pPointedFaceMaterial; }
 };
 
 // ************************************************************************************************
@@ -2471,9 +2471,9 @@ private: //  Methods
 
 public: // Methods
 
-    virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/);
-    virtual void _onKeyDown(UINT /*nChar*/, UINT /*nRepCnt*/, UINT /*nFlags*/) {}
-    virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);    
+	virtual void _onMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/);
+	virtual void _onKeyDown(UINT /*nChar*/, UINT /*nRepCnt*/, UINT /*nFlags*/) {}
+	virtual void _onKeyUp(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/);
 
 	void _showTooltip(LPCTSTR szTitle, LPCTSTR szText);
 	void _hideTooltip();
@@ -2556,14 +2556,14 @@ protected: // Methods
 	void _drawInstancesFrameBuffer();
 	void _drawInstancesFrameBuffer(_oglBuffers& oglBuffers, _oglSelectionFramebuffer* pSelectionFrameBuffer, bool bApplyApplicationSettings = true);
 
-    virtual void _onMouseLButtonDown(const CPoint& /*point*/) = NULL;
-    virtual void _onMouseRButtonDown(const CPoint& /*point*/) = NULL;
-    virtual void _onMouseMove(const CPoint& /*point*/) {}
-    virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
+	virtual void _onMouseLButtonDown(const CPoint& /*point*/) {}
+	virtual void _onMouseRButtonDown(const CPoint& /*point*/) {}
+	virtual void _onMouseMove(const CPoint& /*point*/) {}
+	virtual void _onShowTooltip(GLdouble /*dX*/, GLdouble /*dY*/, GLdouble /*dZ*/, wstring& /*strInformation*/) {}
 
-    // http://nehe.gamedev.net/article/using_gluunproject/16013/
-    bool getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
-    bool getScreenPos(GLdouble dX, GLdouble dY, GLdouble dZ, int& iScreenX, int& iScreenY);
+	// http://nehe.gamedev.net/article/using_gluunproject/16013/
+	bool getOGLPos(int iScreenX, int iScreenY, float fDepth, GLdouble& dX, GLdouble& dY, GLdouble& dZ);
+	bool getScreenPos(GLdouble dX, GLdouble dY, GLdouble dZ, int& iScreenX, int& iScreenY);
 
 public: // Methods
 
