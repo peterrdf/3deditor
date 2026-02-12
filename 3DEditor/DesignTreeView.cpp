@@ -1396,9 +1396,7 @@ void CDesignTreeView::AddProperties(HTREEITEM hParent, _rdf_instance* pInstance)
 					for (int64_t iInstance = 0; iInstance < iInstancesCount; iInstance++) {
 						if (piInstances[iInstance] != 0) {
 							auto pChildInstance = pModel->getInstanceByOwlInstance(piInstances[iInstance]);
-							assert(pChildInstance != nullptr);
-
-							AddInstance(hProperty, pChildInstance);
+							if (pChildInstance) AddInstance(hProperty, pChildInstance);
 						} else {
 							m_treeCtrl.InsertItem(EMPTY_INSTANCE, IMAGE_INSTANCE, IMAGE_INSTANCE, hProperty);
 						}
