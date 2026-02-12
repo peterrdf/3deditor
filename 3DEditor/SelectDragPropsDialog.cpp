@@ -52,7 +52,7 @@ BOOL CSelectDragPropsDialog::OnInitDialog()
 		auto item = m_wndPropsList.InsertItem(0, name.c_str());
 		m_wndPropsList.SetCheck(item);
 		m_wndPropsList.SetItemText(item, 1, std::to_wstring(fabs(effect) * 100).c_str());
-		m_wndPropsList.SetItemData(item, prop);
+		m_wndPropsList.SetItemData(item, (DWORD_PTR)prop);
 	}
 
 	for (int i = 0; i < m_wndPropsList.GetHeaderCtrl()->GetItemCount(); ++i)
