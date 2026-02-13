@@ -41,6 +41,7 @@ public: // Methods
 	void onInstancesDeleted(_view* pSender);
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
+	void onInteractiveEditEnd(_view* /*pSender*/);
 
 	// _oglRenderer
 	virtual void _onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) override;

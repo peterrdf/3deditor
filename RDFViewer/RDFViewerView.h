@@ -15,6 +15,7 @@ class CRDFViewerView
 private: // Fields
 
 	CRDFOpenGLView* m_pOpenGLView;
+	bool m_bIgnoreScaleAndCentering;
 	CInstancesDialog * m_pInstancesDialog;
 
 public: // Methods
@@ -22,6 +23,9 @@ public: // Methods
 	// _view
 	virtual void onModelLoaded() override;
 	virtual void onModelUpdated() override;
+
+	// _rdf_view
+	virtual void onInteractiveEditEnd(_view* pSender) override;
 
 	CRDFController* GetController();
 

@@ -38,13 +38,19 @@ CRDFController* CMy3DEditorView::GetController()
 
 	m_pOpenGLView = new CRDFOpenGLView(this);
 	m_pOpenGLView->setController(pController);
-	m_pOpenGLView->_load();
+	m_pOpenGLView->_load(GetController()->getScaleAndCenterAllVisibleGeometry());
 }
 
 /*virtual*/ void CMy3DEditorView::onModelUpdated() /*override*/
 {
 	if (m_pOpenGLView != nullptr) {
-		m_pOpenGLView->_load();
+		if (m_bIgnoreScaleAndCentering) {
+			m_bIgnoreScaleAndCentering = false;
+			m_pOpenGLView->_load(false);
+		}
+		else {
+			m_pOpenGLView->_load(GetController()->getScaleAndCenterAllVisibleGeometry());
+		}
 	}
 }
 
@@ -88,6 +94,15 @@ CRDFController* CMy3DEditorView::GetController()
 	if (m_pOpenGLView != nullptr) {
 		m_pOpenGLView->onInstancePropertyEdited(pSender, pInstance, pProperty);
 	}
+}
+
+/*virtual*/ void CMy3DEditorView::onInteractiveEditEnd(_view* pSender) /*override*/
+{
+	if (m_pOpenGLView != nullptr) {
+		m_pOpenGLView->onInteractiveEditEnd(pSender);
+	}
+
+	m_bIgnoreScaleAndCentering = true;
 }
 
 // ************************************************************************************************

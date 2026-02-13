@@ -15,6 +15,7 @@ class CMy3DEditorView
 private: // Fields
 
 	CRDFOpenGLView* m_pOpenGLView;
+	bool m_bIgnoreScaleAndCentering;
 
 public: // Methods
 
@@ -29,6 +30,7 @@ public: // Methods
 	virtual void onInstancesDeleted(_view* pSender) override;
 	virtual void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance) override;
 	virtual void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty) override;
+	virtual void onInteractiveEditEnd(_view* pSender) override;
 
 private: // Methods
 

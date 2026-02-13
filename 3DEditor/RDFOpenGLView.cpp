@@ -151,6 +151,13 @@ void CRDFOpenGLView::onInstancePropertyEdited(_view* pSender, _rdf_instance* /*p
 	_load(_ptr<_rdf_controller>(getController())->getScaleAndCenterAllVisibleGeometry());
 }
 
+void CRDFOpenGLView::onInteractiveEditEnd(_view* /*pSender*/)
+{
+	m_pPointFaceFrameBuffer->encoding().clear();
+	m_iPointedFace = -1;
+	m_iNearestVertex = -1;
+}
+
 /*virtual*/ void CRDFOpenGLView::_onKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) /*override*/
 {
 	_oglRenderer::_onKeyDown(nChar, nRepCnt, nFlags);
@@ -1726,8 +1733,6 @@ void CRDFOpenGLView::EndDrag(bool accept)
 	_ptr<_rdf_controller> rdfController(getController());
 	_ptr<_rdf_model> rdfModel(getController()->getModel());
 
-	rdfController->onInteractiveEditEnd(this);
-
 	auto owlModifiedInstance = m_dragFace.FinishDrag(accept);
 	TRACE("Modified instance ID: %lld\n", owlModifiedInstance);
 
@@ -1739,6 +1744,7 @@ void CRDFOpenGLView::EndDrag(bool accept)
 
 	rdfModel->removeObsoleteInstances();
 
+	rdfController->onInteractiveEditEnd(this);
 	getController()->onModelUpdated();
 }
 
