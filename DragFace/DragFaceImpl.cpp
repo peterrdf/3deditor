@@ -77,8 +77,10 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
+    TRACE("   normalized eye vector: (%g, %g, %g)\n", eyeVector.x, eyeVector.y, eyeVector.z);
     Log(RDFGEOM_LOG_LEVEL::INFO, __FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     Log(RDFGEOM_LOG_LEVEL::INFO, "   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
+    Log(RDFGEOM_LOG_LEVEL::INFO, "   normalized eye vector: (%g, %g, %g)\n", eyeVector.x, eyeVector.y, eyeVector.z);
 
     if (!IsUpToDate(inst)) {
         assert(false);
@@ -270,23 +272,40 @@ void DragFaceImpl::CollectEffectiveProperties()
             int64_t card = 0;
             GetDatatypeProperty(m_instance, prop, (void**)&values, &card);
             if (card == 1) {
+                double  startValue  = values[0],
+                        endValue = StandardStep(startValue),
+                        midValue  = (startValue + endValue) / 2.;
 
-                double oldValue = values[0];
+                VECTOR3 midEffect__VEC3;
 
-                double newValue = StandardStep(oldValue);
-                SetDatatypeProperty(m_instance, prop, newValue);
+                {
+                    SetDatatypeProperty(m_instance, prop, midValue);
 
-                PropertyEffect propEffect;
-                propEffect.prop = prop;
-                propEffect.initialValue = oldValue;
+                    CalculateEffect(midEffect__VEC3);
+                }
 
-                CalculateEffect(propEffect.effect);
+                if (Vec3Length(&midEffect__VEC3)) {
+                    PropertyEffect propEffect;
 
-                SetDatatypeProperty(m_instance, prop, oldValue);
+                    {
+                        SetDatatypeProperty(m_instance, prop, endValue);
 
-                auto effect = Vec3LengthSqr(&propEffect.effect);
-                if (fabs(effect) > 1e-5 && fabs(effect) < FLT_MAX - 1) {
-                    m_activeProperties.push_back(propEffect);
+                        propEffect.prop = prop;
+                        propEffect.initialValue = startValue;
+
+                        CalculateEffect(propEffect.effect);
+                    }
+
+                    SetDatatypeProperty(m_instance, prop, startValue);
+
+                    if (std::fabs(propEffect.effect.x - 2. * midEffect__VEC3.x) < 0.00000001 &&
+                        std::fabs(propEffect.effect.y - 2. * midEffect__VEC3.y) < 0.00000001 &&
+                        std::fabs(propEffect.effect.z - 2. * midEffect__VEC3.z) < 0.00000001) {
+                        double  effect = Vec3LengthSqr(&propEffect.effect);
+                        if (fabs(effect) > 1e-5 && fabs(effect) < FLT_MAX - 1) {
+                            m_activeProperties.push_back(propEffect);
+                        }
+                    }
                 }
             }
         }
