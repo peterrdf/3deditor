@@ -73,7 +73,7 @@ DragFaceImpl::DragFaceImpl()
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
+bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
@@ -90,6 +90,7 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
     m_logger = logger;
     m_hostData = hostData;
     m_dynamicCursor = dynamicCursor;
+    m_eyeVector = eyeVector;
 
     auto descr = GetConceptualFaceDiscriminator(m_instance, m_iConceptualFace);
     if (!descr || !*descr){

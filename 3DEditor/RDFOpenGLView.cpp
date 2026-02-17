@@ -176,19 +176,24 @@ void CRDFOpenGLView::onInteractiveEditEnd(_view* /*pSender*/)
 			::GetCursorPos(&point);
 			::ScreenToClient(m_pWnd->GetSafeHwnd(), &point);
 
-			GLdouble dX = 0.;
-			GLdouble dY = 0.;
-			GLdouble dZ = 0.;
-			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ)) {
+			GLdouble dX = 0., oX = 0.;
+			GLdouble dY = 0., oY = 0.;
+			GLdouble dZ = 0., oZ = 0.;
+			if (getOGLPos(point.x, point.y, -FLT_MAX, dX, dY, dZ) &&
+				getOGLPos(point.x, point.y, 0., oX, oY, oZ)) {
 				VECTOR3 startDragPoint;
 				startDragPoint.x = -vecVertexBufferOffset.x + (dX * dScaleFactor);
 				startDragPoint.y = -vecVertexBufferOffset.y + (dY * dScaleFactor);
 				startDragPoint.z = -vecVertexBufferOffset.z + (dZ * dScaleFactor);
 
+				VECTOR3 eyeVector = { dX - oX, dY - oY, dZ - oZ };
+				Vec3Normalize(&eyeVector);
+
 				m_dragFace.StartDrag(
 					m_pPointedInstance->getOwlInstance(),
 					(int)m_iPointedFace,
 					startDragPoint,
+					eyeVector,
 					(GetKeyState(VK_CONTROL) & 0x8000) ? DragFace::Method::XYZ : DragFace::Method::UV,
 					CRDFModel::RdfgeomLogCallback,
 					getController()->getModel(),

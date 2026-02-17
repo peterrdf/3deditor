@@ -8,7 +8,7 @@ class DragFaceImpl
         DragFaceImpl();
         virtual ~DragFaceImpl () {}
 
-        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
+        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
         void RemoveActiveProperty(RdfProperty prop);
         void Dragging(SEGMENT3 const& targetLine);
@@ -62,6 +62,7 @@ class DragFaceImpl
         std::string          m_faceDiscriminator;
 
         RAY3                 m_dragRay;   //start drag point and inward normal direction
+        VECTOR3              m_eyeVector;
         PropertyEffects      m_activeProperties;
 
         bool                 m_changed;

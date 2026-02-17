@@ -27,7 +27,7 @@ DragFace::~DragFace()
 /// <summary>
 /// 
 /// </summary>
-bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
+bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startDragPoint, VECTOR3 const& eyeVector, Method method, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
 {
     if (m_pImpl) {
         delete m_pImpl;
@@ -40,7 +40,7 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
         m_pImpl = new DragFaceXYZ();
     }
     
-    if (!m_pImpl->StartDrag(inst, iConceptualFace, startDragPoint, logger, hostData, dynamicCursor)){
+    if (!m_pImpl->StartDrag(inst, iConceptualFace, startDragPoint, eyeVector, logger, hostData, dynamicCursor)){
         delete m_pImpl;
         m_pImpl = NULL;
     }
