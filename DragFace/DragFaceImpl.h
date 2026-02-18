@@ -8,7 +8,7 @@ class DragFaceImpl
         DragFaceImpl();
         virtual ~DragFaceImpl () {}
 
-        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor);
+        bool StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor, bool advanced);
         RdfProperty GetActivePropertyByIterator(RdfProperty prev, double& effect);
         void RemoveActiveProperty(RdfProperty prop);
         void Dragging(SEGMENT3 const& targetLine);
@@ -19,7 +19,8 @@ class DragFaceImpl
         struct PropertyEffect //how standard step of property affects position along normal
         {
             RdfProperty    prop;
-            double         initialValue;     //initial property value
+            double         initialValue_;     //initial property value
+            double         factor;           //if non-zero new factor to use directly
             VECTOR3        effect;           //describes effect of changing property by 'StandardStep', meaning vary by implementation:
                                              //     UV-  vector from start point to result
                                              //     XYZ- x is distance from start point to result along in-normal direction

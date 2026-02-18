@@ -33,14 +33,18 @@ bool DragFace::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& s
         delete m_pImpl;
     }
 
+    bool    advanced;
+
     if (method == Method::UV) {
         m_pImpl = new DragFaceUV();
+        advanced = true;
     }
     else {
         m_pImpl = new DragFaceXYZ();
+        advanced = false;
     }
     
-    if (!m_pImpl->StartDrag(inst, iConceptualFace, startDragPoint, eyeVector, logger, hostData, dynamicCursor)){
+    if (!m_pImpl->StartDrag(inst, iConceptualFace, startDragPoint, eyeVector, logger, hostData, dynamicCursor, advanced)){
         delete m_pImpl;
         m_pImpl = NULL;
     }

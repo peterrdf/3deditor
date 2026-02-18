@@ -18,7 +18,8 @@ class DragFaceUV : public DragFaceImpl
         struct PropertySuggestion
         {
             RdfProperty prop;
-            double      value;
+            double      value_;
+            double      factor;
             VECTOR3     workingPoints[3];
         };
 

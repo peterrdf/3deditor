@@ -101,13 +101,14 @@ bool DragFaceUV::ModifyInstance(const SEGMENT3& targetLine)
         auto& best = suggestions.begin()->second;
 
         m_changed = true;
-        SetDatatypeProperty(m_instance, best.prop, best.value);
+        if (best.factor == 0.)
+            SetDatatypeProperty(m_instance, best.prop, best.value_);
 
         for (int i = 0; i < 3; i++) {
             m_workingPoints[i] = best.workingPoints[i];
         }
 
-        TRACE(__FUNCTION__ " sets %s=%g\n", GetNameOfProperty(best.prop), best.value);
+        TRACE(__FUNCTION__ " sets %s=%g\n", GetNameOfProperty(best.prop), best.value_);
         return true;
     }
     else
@@ -127,13 +128,17 @@ double DragFaceUV::MeasureOfMistake(PropertyEffect& prop, const VECTOR3& targetP
 
 double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffect prop, PropertySuggestion& suggestion)
 {    
-    double  v[2] = { prop.initialValue,  StandardStep(prop.initialValue) };
+    double  v[2] = { prop.initialValue_,  StandardStep(prop.initialValue_) };
 
     double  d[2]; //measure of mistake from desired
 
     SEGMENT3 effectLine;
     effectLine.pt[0] = m_dragRay.org;
-    effectLine.pt[1] = m_dragRay.org + prop.effect;
+
+    if (prop.factor == 0.)
+        effectLine.pt[1] = m_dragRay.org + prop.effect;
+    else
+        effectLine.pt[1] = m_dragRay.org + m_dragRay.dir;
 
     TRACE("Effect line: (%g, %g, %g) - (%g, %g, %g)\n",
         effectLine.pt[0].x, effectLine.pt[0].y, effectLine.pt[0].z,
@@ -145,6 +150,21 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
 
     suggestion.workingPoints[0] = targetPoints.pt[0];
     suggestion.workingPoints[1] = targetPoints.pt[1];
+
+    double len = 0.;
+    if (prop.factor) {
+        VECTOR3 pnt = targetPoints.pt[1];
+        Vec3Subtract(&pnt, &m_dragRay.org);
+        len = Vec3Length(&pnt);
+
+        if (len) {
+            double  dotproduct = Vec3Dot(&pnt, &m_dragRay.dir);
+
+            if (dotproduct < 0.) {
+                len = - len;
+            }
+        }
+    }
 
     TRACE("Closest points: target line (%g, %g, %g) - effect line (%g, %g, %g)\n",
         targetPoints.pt[0].x, targetPoints.pt[0].y, targetPoints.pt[0].z,
@@ -165,7 +185,21 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
 
     double mistake = FLT_MAX;
 
-    SetDatatypeProperty(m_instance, prop.prop, val);
+    if (prop.factor) {
+
+        if (prop.factor != -1.) {
+            int u = 0;
+        }
+
+        SetDatatypeProperty(m_instance, prop.prop, prop.initialValue_ + len * prop.factor);
+
+        Log(RDFGEOM_LOG_LEVEL::ERR, "LEN: %g", len);
+
+    }
+    else {
+        SetDatatypeProperty(m_instance, prop.prop, val);
+    }
+
     VECTOR3 facePoint;
     if (GetCurrentXYZ(facePoint)) {
         mistake = MeasureOfMistake(prop, targetPoints.pt[0], facePoint);
@@ -175,19 +209,22 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
         TRACE("Failed to get interpolated point\n");
     }
     
-    SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
+    if (prop.factor == 0.)
+        SetDatatypeProperty(m_instance, prop.prop, prop.initialValue_);
 
     if (fabs(mistake) < fabs(d[0]) && fabs(mistake) < fabs(d[1])) {
         //better position from interpolation
         suggestion.prop = prop.prop;
-        suggestion.value = val;
-        suggestion.workingPoints[2] = facePoint; 
+        suggestion.value_ = val;
+        suggestion.factor = prop.factor;
+        suggestion.workingPoints[2] = facePoint;
         return fabs(mistake);
     }
     else if (fabs(d[1]) < fabs(d[0])) {
         //better position from standard step
         suggestion.prop = prop.prop;
-        suggestion.value = v[1];
+        suggestion.value_ = v[1];
+        suggestion.factor = prop.factor;
         suggestion.workingPoints[2] = effectLine.pt[1];
         return fabs(d[1]);
     }

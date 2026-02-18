@@ -74,7 +74,7 @@ bool DragFaceXYZ::TryModifyByProperty(const PropertyEffect& prop, double distDes
     if (!m_instance)
         return false;
 
-    double v[2] = { prop.initialValue,  StandardStep(prop.initialValue)};
+    double v[2] = { prop.initialValue_,  StandardStep(prop.initialValue_)};
     double p[2] = { 0,                  prop.effect.x };
 
     bool better = false;
@@ -94,7 +94,7 @@ bool DragFaceXYZ::TryModifyByProperty(const PropertyEffect& prop, double distDes
         
         SetDatatypeProperty(m_instance, prop.prop, val);
         double pos = GetMinIntersectionPosition(m_instance, m_faceDiscriminator.c_str(), m_dragRay, m_workingPoints + 2);
-        SetDatatypeProperty(m_instance, prop.prop, prop.initialValue);
+        SetDatatypeProperty(m_instance, prop.prop, prop.initialValue_);
 
         if (fabs(pos-distDesired) < fabs(distResult-distDesired)) {
             //better position found

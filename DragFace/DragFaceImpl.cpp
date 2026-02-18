@@ -70,10 +70,45 @@ DragFaceImpl::DragFaceImpl()
     }
 }
 
+static	inline		double	Vec3Dot__(
+										const VECTOR3				* pV
+									)
+{
+	return Sqr(pV->x) + Sqr(pV->y) + Sqr(pV->z);
+}
+
+double	LinePointDistanceFactor__(
+				const VECTOR3	* point,
+				const VECTOR3	* linePointI,
+				const VECTOR3	* linePointII
+			)
+{
+	VECTOR3	v, w;
+	v.x = linePointII->x - linePointI->x;
+	v.y = linePointII->y - linePointI->y;
+	v.z = linePointII->z - linePointI->z;
+	w.x = point->x - linePointI->x;
+	w.y = point->y - linePointI->y;
+	w.z = point->z - linePointI->z;
+
+	double	c1 = Vec3Dot(&w, &v),
+			c2 = Vec3Dot__(&v),
+			b;
+	if (c2 < -0.0000000000000001 || c2 > 0.0000000000000001) {
+		b = c1 / c2;
+	}
+	else {
+		assert(false);
+		b = 0.;
+	}
+
+	return b;
+}
+
 /// <summary>
 /// 
 /// </summary>
-bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor)
+bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 const& startPoint, VECTOR3 const& eyeVector, RDFGEOM_CALLBACK_LOG logger, void* hostData, bool dynamicCursor, bool advanced)
 {
     TRACE(__FUNCTION__ ": instance 0x%p, conceptual face %d\n", inst, iConceptualFace);
     TRACE("   start drag point: (%g, %g, %g)\n", startPoint.x, startPoint.y, startPoint.z);
@@ -105,6 +140,58 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
         CollectEffectiveProperties();
 
         if (m_activeProperties.size()) {
+            ////if (method == Method::UV)
+            if (advanced) {
+                //
+                //  Now we need to differentiate between different interactions, for now we support two:
+                //      1. - Push & Pull, for now 1 property selected, closest to te normal vector
+                //      2. - Drag & Move, for now 1 or 2 properties selected, most far from normal vector
+                //
+
+                VECTOR3 normal = m_dragRay.dir,
+                        eye = eyeVector;
+                if (std::fabs(Vec3Dot(&normal, &eye)) < 0.5) {
+                    //  Push & Pull is preferred
+                    double  maxDotProduct = 0.;
+                    RdfProperty prop = 0;
+
+                    for (auto it = m_activeProperties.begin(); it != m_activeProperties.end(); ++it) {
+                        VECTOR3 normalizedEffect = it->effect;
+                        Vec3Normalize(&normalizedEffect);
+                        double  dotProduct = Vec3Dot(&normal, &normalizedEffect);
+
+                        if (maxDotProduct < std::fabs(dotProduct)) {
+                            maxDotProduct = std::fabs(dotProduct);
+                            prop = it->prop;
+                        }
+                    }
+
+                    if (prop) {
+                        auto it = m_activeProperties.begin();
+                        while (it != m_activeProperties.end()) {
+                            if (it->prop != prop) {
+                               m_activeProperties.erase(it);
+                               it = m_activeProperties.begin();
+                            }
+                            else {
+                                VECTOR3 pntI = m_dragRay.org, pntII, pntO = { 0., 0., 0. };
+//                                Vec3Add(&pntII, &pntI, &normal)
+                                double  factor = LinePointDistanceFactor__(&it->effect, &pntO, &m_dragRay.dir);
+
+                                factor /= StandardStep(it->initialValue_) - it->initialValue_;
+                                if (factor)
+                                    it->factor = 1. / factor;
+                                ++it;
+                            }
+                        }
+                    }
+                }
+                else {
+                    //  Drag & Move is preferred
+                    int u = 0;
+                }
+            }
+
             InitDynamicDraw();
             return true;
         }
@@ -291,7 +378,8 @@ void DragFaceImpl::CollectEffectiveProperties()
                         SetDatatypeProperty(m_instance, prop, endValue);
 
                         propEffect.prop = prop;
-                        propEffect.initialValue = startValue;
+                        propEffect.initialValue_ = startValue;
+                        propEffect.factor = 0.;
 
                         CalculateEffect(propEffect.effect);
                     }
