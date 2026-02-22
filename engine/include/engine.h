@@ -8432,6 +8432,10 @@ int64_t			DECL STDC	GetParentsByIterator(
 									int64_t					parentOwlClassOrRdfProperty
 								);
 
+int64_t			DECL STDC	ValidateResource(
+									RdfsResource			rdfsResource
+								);
+
 
 #ifdef __cplusplus
 	}
