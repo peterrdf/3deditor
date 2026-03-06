@@ -959,6 +959,19 @@ static	inline	void	GetInternalCheckIssueW(
 #endif
 
 //
+//		ValidateResource                                        (https://rdf.bg/gkdoc/CP64/ValidateResource.html)
+//				RdfsResource			rdfsResource						IN
+//
+//				int64_t					returns								OUT
+//
+//	This function starts an internal validation on a resource. Any rdfsResource can be used as input.
+//	If nothing unexpected is found the return value is 0.
+//
+int64_t			DECL STDC	ValidateResource(
+									RdfsResource			rdfsResource
+								);
+
+//
 //		CloseSession                                            (https://rdf.bg/gkdoc/CP64/CloseSession.html)
 //				int64_t					returns								OUT
 //
@@ -5938,8 +5951,8 @@ int64_t			DECL STDC	GetConceptualFaceCnt(
 //
 //	This function returns a unique name for the conceptualFace.
 //	The name will be the same for each recalculation of the geometry.
-//	The return value (and optional argument name) have a valid content till the next call of
-//  this function or till the model is closed.
+//	The return value (and optional argument name) have a valid content till the next call of this
+//	function or till the model is closed.
 //
 //	Note: This allows to keep track of conceptual faces if te number of conceptual faces changes.
 //	For example in case of a boolean operation where the type of placement of objects is changing. 
@@ -6139,22 +6152,24 @@ static	inline	ConceptualFace	GetConceptualFace(
 #endif
 
 //
-//		GetConceptualFaceMatrix	                               (https://rdf.bg/gkdoc/CP64/GetConceptualFaceMatrix.html)
-//				ConceptualFace			conceptualFace						IN
+//		GetConceptualFaceMatrix                                 (https://rdf.bg/gkdoc/CP64/GetConceptualFaceMatrix.html)
+//				OwlInstance				owlInstance							IN
+//				int64_t					index								IN
+//				double					* matrix							IN / OUT
 //
-//				OwlInstance				returns								OUT
+//				double					* returns							OUT
 //
 //	This function returns the transformation matrix of the conceptual face.
-// 
-// 	The matrix is defined as a 12 element matrix.
-// 
+//
+//	The matrix is defined as a 12 element matrix.
+//
 //	In case matrix is not allocated by the host the matrix is outdated the moment the same call is called again.
 //
-double	DECL * STDC	GetConceptualFaceMatrix(
-							OwlInstance				owlInstance,
-							int64_t					index,
-							double					* matrix
-						);
+double			DECL * STDC	GetConceptualFaceMatrix(
+									OwlInstance				owlInstance,
+									int64_t					index,
+									double					* matrix
+								);
 
 #ifdef __cplusplus
 	}
@@ -6170,7 +6185,7 @@ static	inline	double	* GetConceptualFaceMatrix(
 	return	GetConceptualFaceMatrix(
 					owlInstance,
 					index,
-					nullptr			//	matrix
+					nullptr								//	matrix
 				);
 }
 
