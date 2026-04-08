@@ -3040,7 +3040,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 
 			int iWidth = rcClient.Width();
 			int iHeight = rcClient.Height();
-			if (m_pSelectInstanceFrameBuffer->isInitialized()) {
+			if (getShowFaces() && m_pSelectInstanceFrameBuffer->isInitialized()) {
 				GLubyte arPixels[4];
 				memset(arPixels, 0, sizeof(GLubyte) * 4);
 
@@ -3062,7 +3062,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 					pPointedInstance = getController()->getInstanceByID(iInstanceID);
 					assert(pPointedInstance != nullptr);
 				}
-			} // if (m_pSelectInstanceFrameBuffer->isInitialized())
+			} // if (getShowFaces() && ...
 
 			if (pPointedInstance == nullptr) {
 				for (auto pBuffer : m_vecDecorationBuffers) {
