@@ -608,6 +608,13 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 {
 	assert(pInstance != nullptr);
 
+	// Default state
+	auto itDefaultState = m_mapInstanceDefaultState.find(pInstance->getOwlInstance());
+	if (itDefaultState != m_mapInstanceDefaultState.end()) {
+		m_mapInstanceDefaultState.erase(itDefaultState);
+	}
+
+	// Geometry Kernel
 	bool bResult = RemoveInstance(pInstance->getOwlInstance()) == 0 ? true : false;
 	assert(bResult);
 
@@ -618,12 +625,6 @@ bool _rdf_model::deleteInstance(_rdf_instance* pInstance)
 
 	// _model
 	_model::deleteGeometry(pInstance->getGeometry());
-
-	// Default state
-	auto itDefaultState = m_mapInstanceDefaultState.find(pInstance->getOwlInstance());
-	if (itDefaultState != m_mapInstanceDefaultState.end()) {
-		m_mapInstanceDefaultState.erase(itDefaultState);
-	}
 
 	return bResult;
 }
