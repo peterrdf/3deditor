@@ -37,11 +37,11 @@ static char THIS_FILE[] = __FILE__;
 
 // ************************************************************************************************
 OwlInstance CRDFInstanceData::getOwlInstance() const
-{ 
-	if (auto p = GetInstance()) 
-		return p->getOwlInstance(); 
-	
-	return NULL; 
+{
+	if (auto p = GetInstance())
+		return p->getOwlInstance();
+
+	return NULL;
 }
 
 // ************************************************************************************************
@@ -2063,7 +2063,7 @@ void CAddRDFInstanceProperty::SetModified(BOOL bModified)
 					* Notify
 					*/
 					getRDFController()->onInstancePropertyEdited(this, pData->GetInstance(), pData->GetProperty());
-					
+
 					/*
 					* Update UI
 					*/
@@ -2269,7 +2269,7 @@ void CPropertiesWnd::OnHighlightFaceMaterialPropertyChanged(CMFCPropertyGridProp
 	float fTransparency = (float)_wtof(((LPCTSTR)(CString)strValue));
 	if (fTransparency > 1.f) {
 		fTransparency = 1.f;
-		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);		
+		pMaterialProperty->GetSubItem(2)->SetValue(fTransparency);
 	}
 	else if (fTransparency < 0.f) {
 		fTransparency = 0.f;
@@ -2435,9 +2435,9 @@ void CPropertiesWnd::OnUpdateProperties1(CCmdUI* /*pCmdUI*/)
 void CPropertiesWnd::OnProperties2()
 {
 	// TODO: Add your command handler code here
-	
+
 	//igor.sokolov 06.12.25 - use for derived properties... not sure this is good solution, it just was simple to use, please rethink
-    OnPropertyDerived();
+	OnPropertyDerived();
 }
 
 void CPropertiesWnd::OnUpdateProperties2(CCmdUI* pCmdUI)
@@ -3217,9 +3217,9 @@ std::pair<RdfProperty, int> CPropertiesWnd::GetSelectedProperty()
 {
 	CMFCPropertyGridProperty* pGroup = NULL;
 	if (auto pData = GetSelectedInstanceProperty(&pGroup)) {
-		
+
 		auto prop = pData->getRdfProperty();
-		
+
 		int subItem = -1;
 		if (pGroup) {
 			auto curSel = m_wndPropList.GetCurSel();
@@ -3240,7 +3240,7 @@ std::pair<RdfProperty, int> CPropertiesWnd::GetSelectedProperty()
 
 static void EnableWithSubitems(CMFCPropertyGridProperty* pProp, bool enable)
 {
-	pProp->Enable(enable);	
+	pProp->Enable(enable);
 	for (int iSubItem = 0; iSubItem < pProp->GetSubItemsCount(); iSubItem++) {
 		auto pSubItem = pProp->GetSubItem(iSubItem);
 		EnableWithSubitems(pSubItem, enable);
@@ -3250,7 +3250,8 @@ static void EnableWithSubitems(CMFCPropertyGridProperty* pProp, bool enable)
 
 void CPropertiesWnd::LoadInstanceProperties()
 {
-	auto selectedProperty = GetSelectedProperty();
+	auto selectedProperty = getRDFController()->getSelectedInstance() != nullptr ?
+		GetSelectedProperty() : std::pair<RdfProperty, int>(0, -1);
 
 	m_wndPropList.RemoveAll();
 	m_wndPropList.AdjustLayout();
@@ -3261,7 +3262,7 @@ void CPropertiesWnd::LoadInstanceProperties()
 	m_wndPropList.EnableDescriptionArea();
 	m_wndPropList.SetVSDotNetLook();
 	m_wndPropList.MarkModifiedProperties();
-	
+
 	if (getRDFController() == nullptr) {
 		ASSERT(false);
 		return;
@@ -3583,8 +3584,8 @@ void CPropertiesWnd::AddInstancePropertyValues(CMFCPropertyGridProperty* pProper
 						CRDFInstanceObjectProperty* pInstanceObjectProperty = nullptr;
 						RdfsResource objVal = objValues[iValue];
 						if (objVal != 0) {
-							
-                            std::wstring strValue;
+
+							std::wstring strValue;
 							auto pObjectPropertyInstance = getRDFModel()->getInstanceByOwlInstance(objVal);
 							if (pObjectPropertyInstance != nullptr) {
 								strValue = pObjectPropertyInstance->getUniqueName();
@@ -4643,7 +4644,7 @@ CRDFInstancePropertyData* CPropertiesWnd::GetInstanceProperty(CMFCPropertyGridPr
 			if (pData->getOwlInstance() && pData->getRdfProperty()) {
 				if (ppGroup) {
 					*ppGroup = pGridProp->GetParent();
-                }
+				}
 				return pData;
 			}
 		}
@@ -4659,7 +4660,7 @@ CRDFInstancePropertyData* CPropertiesWnd::GetSubitemInstanceProperty(CMFCPropert
 				return pData;
 			}
 		}
-    }
+	}
 	return NULL;
 }
 
@@ -4667,23 +4668,23 @@ CRDFInstancePropertyData* CPropertiesWnd::GetSelectedInstanceProperty(CMFCProper
 {
 	if (auto pGridProp = m_wndPropList.GetCurSel()) {
 
-        //try itself first
+		//try itself first
 		if (auto pData = GetInstanceProperty(pGridProp, ppGroup)) {
-            return pData;
+			return pData;
 		}
 
 		//is this a group?
 		if (auto pData = GetSubitemInstanceProperty(pGridProp, ppGroup)) {
 			return pData;
-        }
-		
-        //try parent group
+		}
+
+		//try parent group
 		if (auto pParentProp = pGridProp->GetParent()) {
 			if (auto pData = GetSubitemInstanceProperty(pParentProp, ppGroup)) {
 				return pData;
 			}
 		}
-	}	
+	}
 	return NULL;
 }
 
@@ -4694,9 +4695,9 @@ void CPropertiesWnd::OnPropertyDerived()
 
 		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
 
-        derived = !derived;
+		derived = !derived;
 
-        SetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty(), derived);
+		SetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty(), derived);
 
 		EnableWithSubitems(pGroup, !derived);
 
@@ -4711,7 +4712,7 @@ void CPropertiesWnd::OnUpdatePropertyDerived(CCmdUI* pCmdUI)
 	pCmdUI->Enable(FALSE);
 
 	if (auto propData = GetSelectedInstanceProperty()) {
-		
+
 		auto derived = GetPropertyDerived(propData->getOwlInstance(), propData->getRdfProperty());
 
 		pCmdUI->Enable(TRUE);
