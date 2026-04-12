@@ -495,6 +495,7 @@ BEGIN
             MENUITEM "glTF",                        ID_EXPORT_AS_GLTF
             MENUITEM "glTF Binary",                 ID_EXPORT_AS_GLTF_BINARY
         END
+        MENUITEM "Save Screenshot",             ID_FILE_SAVE_SCREENSHOT
         MENUITEM SEPARATOR
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW

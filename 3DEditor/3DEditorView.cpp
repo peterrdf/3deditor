@@ -158,6 +158,8 @@ BEGIN_MESSAGE_MAP(CMy3DEditorView, CView)
 	ON_COMMAND(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnShowBoundingBoxes)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_BOUNDING_BOXES, &CMy3DEditorView::OnUpdateShowBoundingBoxes)
 	ON_WM_SETCURSOR()	
+	ON_COMMAND(ID_FILE_SAVE_SCREENSHOT, &CMy3DEditorView::OnFileSaveScreenshot)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SCREENSHOT, &CMy3DEditorView::OnUpdateFileSaveScreenshot)
 END_MESSAGE_MAP()
 
 // CMy3DEditorView construction/destruction
@@ -656,4 +658,22 @@ BOOL CMy3DEditorView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	}
 
 	return __super::OnSetCursor(pWnd, nHitTest, message);
+}
+
+void CMy3DEditorView::OnFileSaveScreenshot()
+{
+
+	TCHAR szFilters[] = _T("Bitmap Files (*.bmp)|*.bmp|All Files (*.*)|*.*||");
+	CFileDialog dlgFile(FALSE, _T(""), _T("Screenshot"),
+		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
+	if (dlgFile.DoModal() != IDOK) {
+		return;
+	}
+
+	m_pOpenGLView->_test_SaveScreenshot(dlgFile.GetPathName());
+}
+
+void CMy3DEditorView::OnUpdateFileSaveScreenshot(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pOpenGLView != nullptr);
 }

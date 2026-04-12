@@ -1796,16 +1796,20 @@ void CRDFOpenGLView::_test_TakeScreenshot(unsigned char*& arPixels, unsigned int
 	iWidth = rcClient.Width();
 	iHeight = rcClient.Height();
 
-	arPixels = (unsigned char*)malloc(iWidth * iHeight * 3);
+	arPixels = new unsigned char[iWidth * iHeight * 3];
 
 	_redraw();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glReadPixels(0, 0, iWidth, iHeight, GL_RGB, GL_UNSIGNED_BYTE, arPixels);
 
-	unsigned char temp;
+	// Ensure glReadPixels writes exactly iWidth*3 bytes per row (no padding)
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(0, 0, iWidth, iHeight, GL_RGB, GL_UNSIGNED_BYTE, arPixels);
+	glPixelStorei(GL_PACK_ALIGNMENT, 4); // restore default
+
+	// Swap R and B channels (GL_RGB -> BGR for BMP)
 	for (unsigned int i = 0; i < iWidth * iHeight * 3; i += 3) {
-		temp = arPixels[i];
+		unsigned char temp = arPixels[i];
 		arPixels[i] = arPixels[i + 2];
 		arPixels[i + 2] = temp;
 	}
@@ -1814,14 +1818,14 @@ void CRDFOpenGLView::_test_TakeScreenshot(unsigned char*& arPixels, unsigned int
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
 bool CRDFOpenGLView::_test_SaveScreenshot(const wchar_t* szFilePath)
 {
-	unsigned char* arPixels;
-	unsigned int iWidth;
-	unsigned int iHeight;
+	unsigned char* arPixels = nullptr;
+	unsigned int iWidth = 0;
+	unsigned int iHeight = 0;
 	_test_TakeScreenshot(arPixels, iWidth, iHeight);
 
 	bool bResult = ::SaveScreenshot(arPixels, iWidth, iHeight, szFilePath);
 
-	free(arPixels);
+	delete[] arPixels;
 
 	return bResult;
 }

@@ -932,6 +932,7 @@
     <ClInclude Include="..\include\displayName.h" />
     <ClInclude Include="..\include\stb\stb_easy_font.h" />
     <ClInclude Include="..\include\stb\stb_image.h" />
+    <ClInclude Include="..\include\stb\stb_image_write.h" />
     <ClInclude Include="..\include\_3DUtils.h" />
     <ClInclude Include="..\include\_geometry.h" />
     <ClInclude Include="..\include\_host.h" />

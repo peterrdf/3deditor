@@ -116,6 +116,8 @@ public:
 	afx_msg void OnShowBoundingBoxes();
 	afx_msg void OnUpdateShowBoundingBoxes(CCmdUI* pCmdUI);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnFileSaveScreenshot();
+	afx_msg void OnUpdateFileSaveScreenshot(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in 3DEditorView.cpp
