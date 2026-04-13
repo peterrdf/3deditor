@@ -663,7 +663,7 @@ BOOL CMy3DEditorView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 void CMy3DEditorView::OnFileSaveScreenshot()
 {
 
-	TCHAR szFilters[] = _T("Bitmap Files (*.bmp)|*.bmp|All Files (*.*)|*.*||");
+	TCHAR szFilters[] = _T("JPEG Files (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG Files (*.png)|*.png|Bitmap Files (*.bmp)|*.bmp|All Files (*.*)|*.*||");
 	CFileDialog dlgFile(FALSE, _T(""), _T("Screenshot"),
 		OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, szFilters);
 	if (dlgFile.DoModal() != IDOK) {

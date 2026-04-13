@@ -452,6 +452,9 @@
     <ClCompile Include="SelectDragPropsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\stb\stb_image_write.cpp">
+      <Filter>include\stb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DEditor.rc">

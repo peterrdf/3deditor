@@ -3,14 +3,13 @@
 #include "RDFOpenGLView.h"
 #include "RDFController.h"
 #include "ProgressIndicator.h"
-#include "_test.h"
-#include "_ptr.h"
 #include "SelectDragPropsDialog.h"
-
-#include <chrono>
-
 #include "Resource.h"
 
+#include "_test.h"
+#include "_ptr.h"
+
+#include <chrono>
 
 extern BOOL TEST_MODE;
 
@@ -1802,17 +1801,10 @@ void CRDFOpenGLView::_test_TakeScreenshot(unsigned char*& arPixels, unsigned int
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// Ensure glReadPixels writes exactly iWidth*3 bytes per row (no padding)
+	// glReadPixels writes iWidth * 3 bytes per row (no padding)
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(0, 0, iWidth, iHeight, GL_RGB, GL_UNSIGNED_BYTE, arPixels);
-	glPixelStorei(GL_PACK_ALIGNMENT, 4); // restore default
-
-	// Swap R and B channels (GL_RGB -> BGR for BMP)
-	for (unsigned int i = 0; i < iWidth * iHeight * 3; i += 3) {
-		unsigned char temp = arPixels[i];
-		arPixels[i] = arPixels[i + 2];
-		arPixels[i + 2] = temp;
-	}
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
 }
 
 // https://community.khronos.org/t/taking-screenshots-how-to/19154/3
@@ -1824,7 +1816,6 @@ bool CRDFOpenGLView::_test_SaveScreenshot(const wchar_t* szFilePath)
 	_test_TakeScreenshot(arPixels, iWidth, iHeight);
 
 	bool bResult = ::SaveScreenshot(arPixels, iWidth, iHeight, szFilePath);
-
 	delete[] arPixels;
 
 	return bResult;
