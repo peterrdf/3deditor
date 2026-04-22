@@ -63,6 +63,19 @@ static int_t CALLBACK_CONVENTION ReadCallBackFunction(unsigned char* szContent)
 class _ap_model_factory
 {
 
+private: // Methods
+
+	static std::wstring getSchemaName(SdaiModel sdaiModel)
+    {
+		const wchar_t* schema = nullptr;
+		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&schema);
+
+		std::wstring strFileSchema = schema ? schema : L"";
+		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::towupper);
+
+		return strFileSchema;
+	}
+
 public: // Methods
 
 	static _ap_model* load(_log* pLog, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
@@ -85,68 +98,106 @@ public: // Methods
 			return nullptr;
 		}
 
-		auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
-		if (sdaiModel == 0) {
+		//
+		// Read header and recognize schema
+		//
+		std::wstring schemaName;
+		if (auto header = sdaiOpenModelBNUnicode(0, szModel, NULL)) {
+			schemaName = getSchemaName(header);
+			sdaiCloseModel(header);
+		}
+
+		if (schemaName.empty()) {
 #ifdef _WINDOWS
-			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to open the model.", L"Error", MB_ICONERROR | MB_OK);
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to get schema name form file header.", L"Error", MB_ICONERROR | MB_OK);
 #endif
 			return nullptr;
 		}
 
-		wchar_t* szFileSchema = 0;
-		GetSPFFHeaderItem(sdaiModel, 9, 0, sdaiUNICODE, (char**)&szFileSchema);
-		if (szFileSchema == nullptr) {
-#ifdef _WINDOWS
-			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Unknown file schema.", L"Error", MB_ICONERROR | MB_OK);
-#endif
-			return nullptr;
-		}
+		//
+		// Create appropriate sdaiModel wrapper
+		//
 
-		wstring strFileSchema = szFileSchema;
-		std::transform(strFileSchema.begin(), strFileSchema.end(), strFileSchema.begin(), ::towupper);
+		_ap_model* pModel = nullptr;
 
 		/*
 		* STEP
 		*/
-		if ((strFileSchema.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
-			(strFileSchema.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
-			(strFileSchema.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
-			(strFileSchema.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
-			(strFileSchema.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
-			(strFileSchema.find(L"AUTOMOTIVE_DESIGN") == 0) ||
-			(strFileSchema.find(L"AP203") == 0) ||
-			(strFileSchema.find(L"AP209") == 0) ||
-			(strFileSchema.find(L"AP214") == 0) ||
-			(strFileSchema.find(L"AP242") == 0)) {
-			auto pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
-			pModel->attachModel(szModel, sdaiModel, nullptr);
+		if ((schemaName.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
+			(schemaName.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
+			(schemaName.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
+			(schemaName.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
+			(schemaName.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
+			(schemaName.find(L"AUTOMOTIVE_DESIGN") == 0) ||
+			(schemaName.find(L"AP203") == 0) ||
+			(schemaName.find(L"AP209") == 0) ||
+			(schemaName.find(L"AP214") == 0) ||
+			(schemaName.find(L"AP242") == 0)) {
 
-			return pModel;
+			pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
 		}
 
 		/*
 		* IFC
 		*/
-		if (strFileSchema.find(L"IFC") == 0) {
-			auto pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
-			pModel->attachModel(szModel, sdaiModel, pWorld);
+		else if (schemaName.find(L"IFC") == 0) {
 
-			return pModel;
+			pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
 		}
 
 #ifdef _CIS2_EXPERIMENTAL
 		/*
 		* CIS2
 		*/
-		if (strFileSchema.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
-			auto pModel = new CCIS2Model(pLog);
-			pModel->attachModel(szModel, sdaiModel, nullptr);
+		else if (schemaName.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
 
-			return pModel;
+			pModel = new CCIS2Model(pLog);
 		}
 #endif // _CIS2_EXPERIMENTAL
 
-		return nullptr;
+		/*
+		** Generic model
+		*/
+		else {
+			pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
+		}
+
+		//
+		// Read model file
+		//
+		if (pModel) {
+			auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, schemaName.c_str());
+			if (!sdaiModel) { // embedded schema not found, ask to locate schema file
+#ifdef _WINDOWS
+				CFileDialog dlgOpen(TRUE, L"exp", NULL, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
+					L"EXPRESS Schema Files (*.exp)|*.exp|All Files (*.*)|*.*||", ::AfxGetMainWnd());
+
+				CString title;
+				title.Format(L"Locate EXPRESS schema %s", schemaName.c_str());
+				dlgOpen.m_ofn.lpstrTitle = title;
+
+				if (dlgOpen.DoModal() == IDOK) {
+					auto schemaFilePath = dlgOpen.GetPathName();
+					sdaiModel = sdaiOpenModelBNUnicode(0, szModel, schemaFilePath);
+				}
+			}
+#endif	
+			if (sdaiModel) {
+				pModel->attachModel(szModel, sdaiModel, nullptr);
+			}
+			else {
+				delete pModel;
+				pModel = nullptr;
+			}
+		}
+
+		if (!pModel) {
+#ifdef _WINDOWS
+			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to load model.", L"Error", MB_ICONERROR | MB_OK);
+#endif
+		}
+
+		return pModel;
 	}
 
 	static vector<_model*> loadIFCZIP(_log* pLog, const wchar_t* szIFCZIP)

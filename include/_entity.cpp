@@ -87,6 +87,36 @@ _entity_provider::_entity_provider(SdaiModel sdaiModel)
     }
 }
 
+static void GetEntityParentsToDisplay(SdaiEntity entity, vector<SdaiEntity>& parents)
+{
+    // Get all parents
+    SdaiInteger iParent = 0;
+    while (SdaiEntity parent = engiGetEntityParentEx(entity, iParent++)) {
+        parents.push_back(parent);
+    }
+
+    //for complex entity filter only top/leaf parents to display
+    if (engiIsComplexEntity(entity)) {
+        for (size_t i = 0; i < parents.size();) {
+
+            bool isParent = false;
+            for (size_t j = 0; j < parents.size() && !isParent; j++) {
+                if (i != j && engiIsParentOf(parents[i], parents[j])) {
+                    isParent = true;
+                }
+            }
+
+            if (isParent) {
+                parents.erase(parents.begin() + i);
+            }
+            else {
+                i++;
+            }
+        }
+    }
+        
+}
+
 void _entity_provider::load()
 {
     SdaiInteger iEntitiesCount = engiGetEntityCount(m_sdaiModel);
@@ -106,18 +136,19 @@ void _entity_provider::load()
 
     // Connect the Entities
     for (auto itEntity : m_mapEntities) {
-        SdaiEntity iParentEntity = engiGetEntityParent(itEntity.first);
-        if (iParentEntity == 0) {
-            continue;
+        vector<SdaiEntity> parents;
+        GetEntityParentsToDisplay(itEntity.first, parents);
+
+        for (auto iParentEntity : parents) {
+
+            auto itParentEntity = m_mapEntities.find(iParentEntity);
+            assert(itParentEntity != m_mapEntities.end());
+
+            itEntity.second->setParent(itParentEntity->second);
+
+            itParentEntity->second->addSubType(itEntity.second);
         }
-
-        auto itParentEntity = m_mapEntities.find(iParentEntity);
-        assert(itParentEntity != m_mapEntities.end());
-
-        itEntity.second->setParent(itParentEntity->second);
-
-        itParentEntity->second->addSubType(itEntity.second);
-    } // for (; itEntities != ...	
+    }
 
     // Post-processing
     for (auto itEntity : m_mapEntities) {

@@ -4,6 +4,8 @@
 
 #include "_geometry.h"
 
+#include <algorithm>
+
 // ************************************************************************************************
 class _ap_geometry : public _geometry
 {
@@ -18,7 +20,7 @@ public: // Methods
         : _geometry(owlInstance)
         , m_sdaiInstance(sdaiInstance)
     {
-        m_strName = m_strUniqueName = getName(sdaiInstance);
+        m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
     }
 
     virtual ~_ap_geometry()
@@ -94,36 +96,25 @@ public: // Properties
     SdaiEntity getSdaiEntity() const { return getSdaiEntity(m_sdaiInstance); }
     const wchar_t* getEntityName() const { return getEntityName(m_sdaiInstance); }
 
-    static wstring getName(SdaiInstance sdaiInstance)
+    static wstring getDisplayString(SdaiInstance sdaiInstance, bool full = true)
     {
-        wstring strUniqueName;
-
         int64_t iExpressID = internalGetP21Line(sdaiInstance);
-        if (iExpressID != 0) {
-            wchar_t szBuffer[512];
-            swprintf(szBuffer, 512, L"#%lld", iExpressID);
+        wchar_t szStepId[512];
+        swprintf(szStepId, 512, L"#%lld", iExpressID);
 
-            strUniqueName = szBuffer;
-            strUniqueName += L" ";
+        wstring strUniqueName (szStepId);
+        strUniqueName += L"=";
+
+        auto entity = sdaiGetInstanceType(sdaiInstance);
+        if (engiIsComplexEntity(entity) && full) {
+            // do nothing, follow full display string
+        }
+        else {
             strUniqueName += getEntityName(sdaiInstance);
         }
 
-        wchar_t* szName = nullptr;
-        sdaiGetAttrBN(sdaiInstance, "Name", sdaiUNICODE, &szName);
-
-        if ((szName != nullptr) && (wcslen(szName) > 0)) {
-            strUniqueName += L" '";
-            strUniqueName += szName;
-            strUniqueName += L"'";
-        }
-
-        wchar_t* szDescription = nullptr;
-        sdaiGetAttrBN(sdaiInstance, "Description", sdaiUNICODE, &szDescription);
-
-        if ((szDescription != nullptr) && (wcslen(szDescription) > 0)) {
-            strUniqueName += L" (";
-            strUniqueName += szDescription;
-            strUniqueName += L")";
+        if (full) {
+            strUniqueName += InstanceContentToString(sdaiInstance);
         }
 
         return strUniqueName;
@@ -141,4 +132,130 @@ public: // Properties
 
         return szEntityName;
     }
+
+    private:
+
+        static std::wstring InstanceContentToString(SdaiInstance sdaiInstance)
+        {
+            engiEnableDerivedAttributes(sdaiGetInstanceModel(sdaiInstance), false); //want to show * for derived
+
+            auto entity = sdaiGetInstanceType(sdaiInstance);
+            if (engiIsComplexEntity(entity)) {
+
+                std::wstring content (L"(");
+                SdaiInteger index = 0;
+                while (SdaiEntity component = engiGetEntityParentEx(entity, index++)) {
+                    SdaiString componentName = nullptr;
+                    engiGetEntityNameEx(component, sdaiSTRING, &componentName, false);
+                    content += CA2W(componentName);
+                    content += DirectAttributesToString(sdaiInstance, component, true);
+                }
+                content += L")";
+                return content;
+            }
+            else {
+                return DirectAttributesToString(sdaiInstance, entity, false);
+            }
+        }
+
+        static std::wstring AdbToString(SdaiADB adb)
+        {
+            std::wstring content;
+
+            auto typePath = sdaiGetADBTypePath(adb, 0);
+            if (typePath && *typePath) {
+                content += CA2W(typePath);
+                content += L"(";
+            }
+
+            SdaiString strValue = NULL;
+            SdaiInstance instVal = NULL;
+            SdaiAggr aggrVal = NULL;
+
+            sdaiGetADBValue(adb, sdaiEXPRESSSTRING, &strValue);
+            if (strValue) {
+                content += CA2W(strValue);
+            }
+            else if (sdaiGetADBValue(adb, sdaiINSTANCE, &instVal) && instVal) {
+                auto stepId = internalGetP21Line(instVal);
+                content += L"#";
+                content += std::to_wstring(stepId);
+            }
+            else if (sdaiGetADBValue(adb, sdaiAGGR, &aggrVal) && aggrVal) {
+                content += AggregationToString(aggrVal);
+            }
+            else {
+                ASSERT(!"TODO: handle attribute type");
+            }
+
+            if (typePath && *typePath) {
+                content += L")";
+            }
+            return content;
+        }
+
+        static std::wstring DirectAttributesToString(SdaiInstance instance, SdaiEntity entity, bool partOfComplexEntity)
+        {
+            std::wstring content = L"(";
+
+            SdaiInteger attributeIndex = 0;
+            while (SdaiAttr attribute = engiGetEntityAttributeByIndex(entity, attributeIndex++, !partOfComplexEntity, false)) {
+
+                if (attributeIndex > 1) {
+                    content += L",";
+                }
+
+                SdaiADB adb = NULL;
+                if (sdaiGetAttr(instance, attribute, sdaiADB, &adb)) {
+                    content += AdbToString(adb);
+                    sdaiDeleteADB(adb);
+                }
+                else {
+                    SdaiString strValue = NULL;
+                    auto res = sdaiGetAttr(instance, attribute, sdaiEXPRESSSTRING, &strValue);
+                    ASSERT(!res && strValue); // expected everything except $/* will return ADB
+                    if (strValue)
+                        content += CA2W(strValue);
+                }
+            }
+
+            content += L")";
+
+            return content;
+        }
+
+        static std::wstring AggregationToString(SdaiAggr aggr)
+        {
+            std::wstring content = L"(";
+            
+            SdaiInteger N = min(sdaiGetMemberCount(aggr), (SdaiInteger)3);
+            for (SdaiAggrIndex index = 0; index < N; index++) {
+                
+                if (index > 0) {
+                    content += L",";
+                }
+
+                SdaiADB adb = NULL;
+                if (sdaiGetAggrByIndex(aggr, index, sdaiADB, &adb)) {
+                    content += AdbToString(adb);
+                    sdaiDeleteADB(adb);
+                }
+                else {
+                    SdaiString strValue = NULL;
+                    auto res = sdaiGetAggrByIndex(aggr, index, sdaiEXPRESSSTRING, &strValue);
+                    ASSERT(!res && strValue); // expected everything except $/* will return ADB
+                    if (strValue)
+                        content += CA2W(strValue);
+
+                }
+            }
+
+            if (N < sdaiGetMemberCount(aggr)) {
+                content += L"...";
+            }
+
+            content += L")";
+
+            return content;
+        }
 };

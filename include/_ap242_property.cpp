@@ -127,7 +127,7 @@ _ap242_property_collection::_ap242_property_collection(SdaiInstance sdaiInstance
 
 wstring _ap242_property_collection::getName() const
 {	
-	return _ap_geometry::getName(m_sdaiInstance);
+	return _ap_geometry::getDisplayString(m_sdaiInstance);
 }
 
 // ************************************************************************************************
