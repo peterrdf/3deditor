@@ -41,6 +41,111 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	clean();
 }
 
+OwlInstance _ifc_model::createMapConversionTransformation()
+{
+	auto pAttributeProvider = getAttributeProvider();
+	if (pAttributeProvider == nullptr) {
+		return 0;
+	}
+
+	SdaiAggr sdaiAggr = sdaiGetEntityExtentBN(getSdaiModel(), (char*)"IFCMAPCONVERSION");
+	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
+	if (iMembersCount != 1) {
+		return 0;
+	}
+
+	SdaiInstance sdaiIfcMapConversionInstance = 0;
+	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
+
+	SdaiEntity sdaiIfcMapConversionEntity = sdaiGetInstanceType(sdaiIfcMapConversionInstance);
+
+	// Default: no translation
+	double dEastings = 0.;
+	double dNorthings = 0.;
+
+	// Default: no rotation
+	double dXAxisAbscissa = 1.;  
+	double dXAxisOrdinate = 0.;
+
+	bool bHasXAxisAbscissa = false;
+	bool bHasXAxisOrdinate = false;
+
+	const auto& vecAttributes = pAttributeProvider->getInstanceAttributes(sdaiIfcMapConversionInstance);
+	for (size_t i = 0; i < vecAttributes.size(); i++) {
+		auto pAttribute = vecAttributes[i];
+		const char* szAttributeName = nullptr;
+		engiGetEntityArgumentName(sdaiIfcMapConversionEntity,
+			(SdaiInteger)i,
+			sdaiSTRING,
+			&szAttributeName);
+
+		if (string(szAttributeName) == "Eastings") {
+			sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dEastings);
+		}
+
+		if (string(szAttributeName) == "Northings") {
+			sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dNorthings);
+		}
+
+		if (string(szAttributeName) == "XAxisAbscissa") {
+			if (sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dXAxisAbscissa)) {
+				bHasXAxisAbscissa = true;
+			}
+		}
+
+		if (string(szAttributeName) == "XAxisOrdinate") {
+			if (sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dXAxisOrdinate)) {
+				bHasXAxisOrdinate = true;
+			}
+		}
+	}
+
+	if ((dEastings == 0.) && (dNorthings == 0.) && !bHasXAxisAbscissa && !bHasXAxisOrdinate) {
+		return 0;
+	}
+
+	// Calculate rotation angle from XAxisAbscissa and XAxisOrdinate (direction of the local X-axis in the map coordinate system)
+	double dRotationAngle = atan2(dXAxisOrdinate, dXAxisAbscissa);
+	double dCos = cos(dRotationAngle);
+	double dSin = sin(dRotationAngle);
+
+	OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+	assert(owlMatrixInstance != 0);
+
+	// Rotation around Z-axis (yaw), then translation - 2D rotation in the horizontal plane (XY plane)
+	vector<double> vecMatrix
+	{
+		dCos,       // _11
+		dSin,       // _12
+		0.,         // _13
+		-dSin,      // _21
+		dCos,       // _22
+		0.,         // _23
+		0.,         // _31
+		0.,         // _32
+		1.,         // _33
+		dEastings,  // _41
+		dNorthings, // _42
+		0.,         // _43
+	};
+
+	SetDatatypeProperty(
+		owlMatrixInstance,
+		GetPropertyByName(getOwlModel(), "coordinates"),
+		vecMatrix.data(),
+		vecMatrix.size());
+
+	OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+	assert(owlTransformationInstance != 0);
+
+	SetObjectProperty(
+		owlTransformationInstance,
+		GetPropertyByName(getOwlModel(), "matrix"),
+		owlMatrixInstance);
+
+	return owlTransformationInstance;
+}
+
 /*virtual*/ _instance* _ifc_model::loadInstance(int64_t iInstance) /*override*/
 {
 	assert(iInstance != 0);
@@ -195,8 +300,9 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 			double arOffset[3] = { 0., 0., 0. };
 			GetVertexBufferOffset(getOwlModel(), arOffset);
 
-			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
-				double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
+
+			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {				
 				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
 					auto pMappedItem = pMappedItemPendingUpdate.second;
 
@@ -248,6 +354,22 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 							-fYmin,
 							-fZmin);
 					}
+				}
+
+				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
+					auto pMappedItem = pMappedItemPendingUpdate.second;
+
+					pMappedItem->matrix._41 += -fXmin;
+					pMappedItem->matrix._42 += -fYmin;
+					pMappedItem->matrix._43 += -fZmin;
+
+					pMappedItem->matrix._41 /= dScaleFactor;
+					pMappedItem->matrix._42 /= dScaleFactor;
+					pMappedItem->matrix._43 /= dScaleFactor;
+
+					pMappedItemPendingUpdate.first->setTransformationMatrix(&pMappedItem->matrix);
+
+					delete pMappedItem;
 				}
 			} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
 		} // if (!m_vecMappedItemPendingUpdate.empty())
@@ -723,11 +845,13 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappedRepresentation", sdaiINSTANCE, &ifcRepresentationInstance);
 
 	OwlInstance		owlInstanceMatrix;
+	bool bDeleteInstanceMatrix = false;
 	if (owlInstanceCartesianTransformationOperatorMatrix && owlInstanceAxis2PlacementMatrix) {
 		OwlInstance	owlInstanceMatrixMultiplication = CreateInstance(GetClassByName(getOwlModel(), "MatrixMultiplication"));
 		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "firstMatrix"), owlInstanceCartesianTransformationOperatorMatrix);
 		SetObjectProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "secondMatrix"), owlInstanceAxis2PlacementMatrix);
 		owlInstanceMatrix = owlInstanceMatrixMultiplication;
+		bDeleteInstanceMatrix = true;
 	}
 	else {
 		owlInstanceMatrix = owlInstanceCartesianTransformationOperatorMatrix ? owlInstanceCartesianTransformationOperatorMatrix : owlInstanceAxis2PlacementMatrix;
@@ -743,6 +867,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 
 			STRUCT_INTERNAL* mappedItemData = new STRUCT_INTERNAL;
 			mappedItemData->owlInstanceMatrix = owlInstanceMatrix;
+			mappedItemData->bDeleteInstanceMatrix = bDeleteInstanceMatrix;
 			mappedItemData->ifcRepresentationInstance = ifcRepresentationItemInstance;
 			//mappedItemData->material = material;
 			(*pVectorMappedItemData).push_back(mappedItemData);
@@ -832,6 +957,16 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 			double* values = nullptr;
 			int64_t	card = 0;
 			GetDatatypeProperty(owlInstanceMatrixMultiplication, GetPropertyByName(getOwlModel(), "coordinates"), (void**)&values, &card);
+
+			// Clean up
+			if ((*mappedItemData)->bDeleteInstanceMatrix) {
+				RemoveInstance((*mappedItemData)->owlInstanceMatrix);
+				(*mappedItemData)->owlInstanceMatrix = 0;
+				(*mappedItemData)->bDeleteInstanceMatrix = false;
+			}
+			RemoveInstance(owlInstanceMatrixMultiplication);
+			owlInstanceMatrixMultiplication = 0;
+
 			if (card == sizeof(_matrix4x3) / sizeof(double)) {
 				STRUCT_MAPPED_ITEM* myMappedItem = new STRUCT_MAPPED_ITEM;
 				myMappedItem->ifcRepresentationInstance = (*mappedItemData)->ifcRepresentationInstance;

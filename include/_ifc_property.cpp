@@ -119,11 +119,14 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 			assert(false); // Failed to get NominalValue attribute
 		}
 	} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
-	else {
-		assert(sdaiIsKindOfBN(sdaiInstance, "IfcPhysicalQuantity"));
-
+	else if (strEntity == L"IFCPHYSICALQUANTITY") {
 		strIfcValueType = szEntityName;
 		strValueType = L"number";
+	} else {
+		assert(strEntity == L"IFCCOMPLEXPROPERTY");
+
+		strIfcValueType = szEntityName;
+		strValueType = L"object";
 	}
 
 	return pair <wstring, wstring>(strIfcValueType, strValueType);

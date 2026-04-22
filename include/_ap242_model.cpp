@@ -157,6 +157,12 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 	pProductDefinition->setProductShape(pProductShape);
 	addGeometry(pProductShape);
 
+	auto pInstance = new _ap242_instance(
+		_model::getNextInstanceID(),
+		pProductShape,
+		nullptr);
+	addInstance(pInstance);
+
 	SdaiAggr sdaiProductShapeDefinitionRepresentationAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_DEFINITION_REPRESENTATION");
 	SdaiInteger sdaiProductShapeDefinitionRepresentationInstancesCnt = sdaiGetMemberCount(sdaiProductShapeDefinitionRepresentationAggr);
 	for (SdaiInteger index = 0; index < sdaiProductShapeDefinitionRepresentationInstancesCnt; index++) {
@@ -176,6 +182,12 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance);
 			pProductShape->addProductShapeRepresentation(pProductShapeRepresentation);
 			addGeometry(pProductShapeRepresentation);
+
+			pInstance = new _ap242_instance(
+				_model::getNextInstanceID(),
+				pProductShapeRepresentation,
+				nullptr);
+			addInstance(pInstance);
 
 			if (sdaiGetInstanceType(sdaiRepresentationInstance) == sdaiGetEntity(getSdaiModel(), "SHAPE_REPRESENTATION")) {
 				loadShapeRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);

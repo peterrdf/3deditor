@@ -35,8 +35,9 @@ struct STRUCT_MATERIAL
 
 struct STRUCT_INTERNAL
 {
-    SdaiInstance ifcRepresentationInstance;
-    OwlInstance owlInstanceMatrix;
+    SdaiInstance ifcRepresentationInstance = 0;
+    OwlInstance owlInstanceMatrix = 0;
+    bool bDeleteInstanceMatrix = false;
     //STRUCT_MATERIAL* material;
 };
 
@@ -93,6 +94,8 @@ public: // Methods
 
     _ifc_model(_log* pLog, bool bUseWorldCoordinates = false, bool bLoadInstancesOnDemand = false);
     virtual ~_ifc_model();
+
+    OwlInstance createMapConversionTransformation();
 
 protected: // Methods
 
