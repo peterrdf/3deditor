@@ -273,7 +273,7 @@ void CTestManager::GenerateScreenshots()
 			pOpenGLView->_setView(enumView::Front);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_front.png", iTestIndex);
+			strScreenshotFileName.Format(L"test%d_front.jpg", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
@@ -290,7 +290,7 @@ void CTestManager::GenerateScreenshots()
 			pOpenGLView->_setView(enumView::Left);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_left.png", iTestIndex);
+			strScreenshotFileName.Format(L"test%d_left.jpg", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
@@ -309,7 +309,7 @@ void CTestManager::GenerateScreenshots()
 			pOpenGLView->_setView(enumView::Right);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_right.png", iTestIndex);
+			strScreenshotFileName.Format(L"test%d_right.jpg", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
@@ -325,7 +325,7 @@ void CTestManager::GenerateScreenshots()
 			pOpenGLView->_setView(enumView::Back);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_back.png", iTestIndex);
+			strScreenshotFileName.Format(L"test%d_back.jpg", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
