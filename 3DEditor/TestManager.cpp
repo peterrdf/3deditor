@@ -264,6 +264,12 @@ void CTestManager::GenerateScreenshots()
 		auto pOpenGLView = (CRDFOpenGLView*)(m_pController->getViewAs<CRDFOpenGLView>());
 		ASSERT(pOpenGLView != nullptr);
 
+		BOOL bShowCoordinateSystem = pOpenGLView->getShowCoordinateSystem();
+		pOpenGLView->setShowCoordinateSystem(FALSE);
+		BOOL bShowNavigator = pOpenGLView->getShowNavigator();
+		pOpenGLView->setShowNavigator(FALSE);
+		m_pController->updateDecorationModelsState();
+
 		int iTestIndex = 0;
 		CString strScreenshotFileName;
 		CString strScreenshotFilePath;
@@ -281,7 +287,6 @@ void CTestManager::GenerateScreenshots()
 				m_pController->_test_EndTestMode();
 				return;
 			}
-
 			iTestIndex++;
 		}
 
@@ -295,12 +300,9 @@ void CTestManager::GenerateScreenshots()
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
-
 				m_pController->_test_EndTestMode();
-
 				return;
 			}
-
 			iTestIndex++;
 		}
 
@@ -333,9 +335,11 @@ void CTestManager::GenerateScreenshots()
 				m_pController->_test_EndTestMode();
 				return;
 			}
-
 			iTestIndex++;
 		}
+
+		pOpenGLView->setShowCoordinateSystem(bShowCoordinateSystem);
+		pOpenGLView->setShowNavigator(bShowNavigator);
 	} // for (POSITION pos = ...	
 
 	m_pController->_test_EndTestMode();
