@@ -24,6 +24,7 @@ public: // Methods
 
 	// Tests
 	void GenerateTests(const CString& strInputDataDir, const CString& strWildcard);
+	void GenerateScreenshots(const CString& strInputDataDir);
 
 
 protected: // create from serialization only

@@ -12,15 +12,11 @@ using namespace std;
 // ------------------------------------------------------------------------------------------------
 CTestManager::CTestManager(CRDFController* pController, const wchar_t* szInputDataDir)
 	: m_pController(pController)
-	, m_pOpenGLView(nullptr)
 	, m_strInputDataDir(szInputDataDir)
 	, m_strTestsDir(_T(""))
 	, m_strTestReportDir(_T(""))
 {
 	assert(m_pController != nullptr);
-
-	m_pOpenGLView = (CRDFOpenGLView*)(m_pController->getViewAs<CRDFOpenGLView>());
-	assert(m_pOpenGLView != nullptr);
 
 	assert(!m_strInputDataDir.IsEmpty());
 }
@@ -129,7 +125,9 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		m_pController->_test_LoadModel((LPCTSTR)strInputFilePath);
 
-		m_pOpenGLView->_reset();
+		auto pOpenGLView = (CRDFOpenGLView*)(m_pController->getViewAs<CRDFOpenGLView>());
+		ASSERT(pOpenGLView != nullptr);
+		pOpenGLView->_reset();
 
 		int iTestIndex = 0;
 		CString strTestFilePath;
@@ -152,13 +150,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		// Test 1	
 		{
-			m_pOpenGLView->_test_SetRotation(30.f, 30.f, TRUE);
+			pOpenGLView->_test_SetRotation(30.f, 30.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 			
-			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -167,7 +165,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 				return;
 			}
 			
-			CTest test(m_pOpenGLView);
+			CTest test(pOpenGLView);
 			test.Save(strTestFilePath, strScreenshotFileName);
 
 			iTestIndex++;
@@ -175,13 +173,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 
 		// Test 2
 		{
-			m_pOpenGLView->_test_SetRotation(120.f, 120.f, TRUE);
+			pOpenGLView->_test_SetRotation(120.f, 120.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 
-			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -190,7 +188,7 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 				return;
 			}
 
-			CTest test(m_pOpenGLView);
+			CTest test(pOpenGLView);
 			test.Save(strTestFilePath, strScreenshotFileName);
 
 			iTestIndex++;
@@ -198,13 +196,13 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 		
 		// Test 3
 		{
-			m_pOpenGLView->_test_SetRotation(210.f, 210.f, TRUE);
+			pOpenGLView->_test_SetRotation(210.f, 210.f, TRUE);
 
 			strTestFilePath.Format(L"%s\\test%d.3deditortest", (LPCTSTR)stTestDir, iTestIndex);
 			strScreenshotFileName.Format(L"test%d.bmp", iTestIndex);
 			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)stTestDir, (LPCTSTR)strScreenshotFileName);
 
-			if (!m_pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath))
 			{
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
 
@@ -213,8 +211,114 @@ void CTestManager::GenerateTests(const CString& strWildcards)
 				return;
 			}
 
-			CTest test(m_pOpenGLView);
+			CTest test(pOpenGLView);
 			test.Save(strTestFilePath, strScreenshotFileName);
+
+			iTestIndex++;
+		}
+	} // for (POSITION pos = ...	
+
+	m_pController->_test_EndTestMode();
+}
+
+// --------------------------------------------------------------------------------------------
+void CTestManager::GenerateScreenshots()
+{
+	CString strScreenshotsDir = m_strInputDataDir;
+	strScreenshotsDir += L"\\Screenshots";
+	strScreenshotsDir += CTime::GetCurrentTime().Format(_T("-%Y-%m-%d-%H-%M-%S"));
+
+	if (!CreateDirectory((LPCTSTR)strScreenshotsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS)) {
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create screenshots folder.", L"Error", MB_ICONERROR | MB_OK);
+		return;
+	}
+
+	CStringList lsInputFiles;
+	FindFiles((LPCTSTR)m_strInputDataDir, L"*.bin", lsInputFiles);
+
+	if (lsInputFiles.IsEmpty()) {
+		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: there is no test data.", L"Error", MB_ICONERROR | MB_OK);
+		return;
+	}
+
+	m_pController->_test_BeginTestMode();
+
+	for (POSITION pos = lsInputFiles.GetHeadPosition(); pos != nullptr;) {
+		CString strInputFileName = lsInputFiles.GetNext(pos);
+
+		CString strModelScreenshotsDir = strScreenshotsDir;
+		strModelScreenshotsDir += "\\";
+		strModelScreenshotsDir += strInputFileName;
+
+		if (!CreateDirectory((LPCTSTR)strModelScreenshotsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS)) {
+			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create model screenshots folder.", L"Error", MB_ICONERROR | MB_OK);
+			continue;
+		}
+
+		CString strInputFilePath = m_strInputDataDir;
+		strInputFilePath += L"\\";
+		strInputFilePath += strInputFileName;
+
+		m_pController->_test_LoadModel((LPCTSTR)strInputFilePath);
+
+		auto pOpenGLView = (CRDFOpenGLView*)(m_pController->getViewAs<CRDFOpenGLView>());
+		ASSERT(pOpenGLView != nullptr);
+		pOpenGLView->_reset();
+
+		int iTestIndex = 0;
+		CString strScreenshotFileName;
+		CString strScreenshotFilePath;
+
+		// Test 1	
+		{
+			pOpenGLView->_test_SetRotation(30.f, 30.f, TRUE);
+
+			strScreenshotFileName.Format(L"test%d.png", iTestIndex);
+			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
+
+				m_pController->_test_EndTestMode();
+
+				return;
+			}
+
+			iTestIndex++;
+		}
+
+		// Test 2
+		{
+			pOpenGLView->_test_SetRotation(120.f, 120.f, TRUE);
+
+			strScreenshotFileName.Format(L"test%d.png", iTestIndex);
+			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
+
+				m_pController->_test_EndTestMode();
+
+				return;
+			}
+
+			iTestIndex++;
+		}
+
+		// Test 3
+		{
+			pOpenGLView->_test_SetRotation(210.f, 210.f, TRUE);
+
+			strScreenshotFileName.Format(L"test%d.png", iTestIndex);
+			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+
+			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
+				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
+
+				m_pController->_test_EndTestMode();
+
+				return;
+			}
 
 			iTestIndex++;
 		}

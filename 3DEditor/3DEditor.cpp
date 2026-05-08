@@ -81,8 +81,7 @@ BOOL CMy3DEditorApp::InitInstance()
 
 
 	// Initialize OLE libraries
-	if (!AfxOleInit())
-	{
+	if (!AfxOleInit()) {
 		AfxMessageBox(IDP_OLE_INIT_FAILED);
 		return FALSE;
 	}
@@ -136,46 +135,39 @@ BOOL CMy3DEditorApp::InitInstance()
 	*/
 	CString strInputDataDir;
 	CString strWildcard;
-	if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileOpen)
-	{
+	if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileOpen) {
 		CString stCommandLine = GetCommandLine();
 
 		int iTokenPos = 0;
 		CString strToken = stCommandLine.Tokenize(_T("#"), iTokenPos);
 
 		int iArgument = -1;
-		while (!strToken.IsEmpty())
-		{
+		while (!strToken.IsEmpty()) {
 			iArgument++;
 
-			if ((iArgument == 1) && (strToken != _T("GENERATE_TESTS")))			
-			{
+			if ((iArgument == 0) && (strToken.Find(_T("GENERATE_TESTS")) == -1)) {
 				break;
 			}
 
-			if (iArgument == 2)
-			{
+			if (iArgument == 1) {
 				strInputDataDir = strToken;
 			}
-			else if (iArgument == 3)
-			{
+			else if (iArgument == 2) {
 				strWildcard = strToken;
 			}
-			else if (iArgument > 3)
-			{
-				assert(false); // unsupported!
+			else if (iArgument > 2) {
+				ASSERT(FALSE); // unsupported!
 			}
 
 			strToken = stCommandLine.Tokenize(_T("#"), iTokenPos);
 		} // while (!strToken.IsEmpty())
 	} // if (cmdInfo.m_nShellCommand == ...
 
-	if (!strInputDataDir.IsEmpty() && !strWildcard.IsEmpty())
-	{
+	if (!strInputDataDir.IsEmpty() && !strWildcard.IsEmpty()) {
 		TEST_MODE = TRUE;
 
 		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
-	}	
+	}
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
@@ -186,15 +178,17 @@ BOOL CMy3DEditorApp::InitInstance()
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
 
-	if (TEST_MODE)
-	{
-		((CMainFrame*)m_pMainWnd)->GenerateTests(strInputDataDir, strWildcard);
+	if (TEST_MODE) {
+		if (strWildcard == _T("SCREENSHOTS"))
+			((CMainFrame*)m_pMainWnd)->GenerateScreenshots(strInputDataDir);
+		else
+			((CMainFrame*)m_pMainWnd)->GenerateTests(strInputDataDir, strWildcard);
 
 		// PATCH: see PATCH: AMD 6700 XT - Access violation
 		//TEST_MODE = FALSE;
 
 		return FALSE;
-	}	
+	}
 
 	return TRUE;
 }
@@ -217,7 +211,7 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
@@ -225,16 +219,15 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	CString GetVersionInfo(LPCTSTR lpszKey);
-	void UpdateVersionInfo();	
+	void UpdateVersionInfo();
 
-// Implementation
+	// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
-{
-}
+{}
 
 BOOL CAboutDlg::OnInitDialog()
 {
@@ -301,7 +294,7 @@ CString CAboutDlg::GetVersionInfo(LPCTSTR lpszKey)
 }
 
 void CAboutDlg::UpdateVersionInfo()
-{	
+{
 	wchar_t* szRevision = nullptr;
 	auto iRevision = GetRevisionW(&szRevision);
 	CString strProductVersion;
@@ -348,16 +341,14 @@ void CMy3DEditorApp::PreLoadState()
 	assert(bNameValid);
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
 
-	GetContextMenuManager()->AddMenu(L"Instances", IDR_POPUP_INSTANCES);	
+	GetContextMenuManager()->AddMenu(L"Instances", IDR_POPUP_INSTANCES);
 }
 
 void CMy3DEditorApp::LoadCustomState()
-{
-}
+{}
 
 void CMy3DEditorApp::SaveCustomState()
-{
-}
+{}
 
 // CMy3DEditorApp message handlers
 

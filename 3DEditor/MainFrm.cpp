@@ -117,6 +117,22 @@ void CMainFrame::GenerateTests(const CString& strInputDataDir, const CString& st
 	testLayout.Restore();
 }
 
+void CMainFrame::GenerateScreenshots(const CString& strInputDataDir)
+{
+	CWaitCursor waitCursor;
+
+	CView* pView = GetView();
+	assert(pView != nullptr);
+
+	CTestLayout testLayout(this, pView);
+	testLayout.Set();
+
+	CTestManager testManager(GetController(), strInputDataDir);
+	testManager.GenerateScreenshots();
+
+	testLayout.Restore();
+}
+
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
