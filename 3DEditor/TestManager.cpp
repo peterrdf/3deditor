@@ -226,7 +226,7 @@ void CTestManager::GenerateScreenshots()
 {
 	CString strScreenshotsDir = m_strInputDataDir;
 	strScreenshotsDir += L"\\Screenshots";
-	strScreenshotsDir += CTime::GetCurrentTime().Format(_T("-%Y-%m-%d-%H-%M-%S"));
+	//strScreenshotsDir += CTime::GetCurrentTime().Format(_T("-%Y-%m-%d-%H-%M-%S"));
 
 	if (!CreateDirectory((LPCTSTR)strScreenshotsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS)) {
 		::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create screenshots folder.", L"Error", MB_ICONERROR | MB_OK);
@@ -250,10 +250,10 @@ void CTestManager::GenerateScreenshots()
 		strModelScreenshotsDir += "\\";
 		strModelScreenshotsDir += strInputFileName;
 
-		if (!CreateDirectory((LPCTSTR)strModelScreenshotsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS)) {
+		/*if (!CreateDirectory((LPCTSTR)strModelScreenshotsDir, nullptr) && (GetLastError() != ERROR_ALREADY_EXISTS)) {
 			::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: can not create model screenshots folder.", L"Error", MB_ICONERROR | MB_OK);
 			continue;
-		}
+		}*/
 
 		CString strInputFilePath = m_strInputDataDir;
 		strInputFilePath += L"\\";
@@ -279,8 +279,8 @@ void CTestManager::GenerateScreenshots()
 			pOpenGLView->_setView(enumView::Front);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_front.jpg", iTestIndex);
-			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+			strScreenshotFileName.Format(L"%d_front.jpg", iTestIndex);
+			strScreenshotFilePath.Format(L"%s_%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
@@ -291,12 +291,12 @@ void CTestManager::GenerateScreenshots()
 		}
 
 		// Left View
-		{
+		/*{
 			pOpenGLView->_setView(enumView::Left);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_left.jpg", iTestIndex);
-			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+			strScreenshotFileName.Format(L"%d_left.jpg", iTestIndex);
+			strScreenshotFilePath.Format(L"%s_%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
@@ -304,15 +304,15 @@ void CTestManager::GenerateScreenshots()
 				return;
 			}
 			iTestIndex++;
-		}
+		}*/
 
 		// Right View
-		{
+		/*{
 			pOpenGLView->_setView(enumView::Right);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_right.jpg", iTestIndex);
-			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+			strScreenshotFileName.Format(L"%d_right.jpg", iTestIndex);
+			strScreenshotFilePath.Format(L"%s_%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
@@ -320,15 +320,15 @@ void CTestManager::GenerateScreenshots()
 				return;
 			}
 			iTestIndex++;
-		}
+		}*/
 
 		// Back View
-		{
+		/*{
 			pOpenGLView->_setView(enumView::Back);
 			pOpenGLView->_redraw();
 
-			strScreenshotFileName.Format(L"test%d_back.jpg", iTestIndex);
-			strScreenshotFilePath.Format(L"%s\\%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
+			strScreenshotFileName.Format(L"%d_back.jpg", iTestIndex);
+			strScreenshotFilePath.Format(L"%s_%s", (LPCTSTR)strModelScreenshotsDir, (LPCTSTR)strScreenshotFileName);
 
 			if (!pOpenGLView->_test_SaveScreenshot((LPCTSTR)strScreenshotFilePath)) {
 				::MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Error: Can not save the screenshot.", L"Error", MB_ICONERROR | MB_OK);
@@ -336,7 +336,7 @@ void CTestManager::GenerateScreenshots()
 				return;
 			}
 			iTestIndex++;
-		}
+		}*/
 
 		pOpenGLView->setShowCoordinateSystem(bShowCoordinateSystem);
 		pOpenGLView->setShowNavigator(bShowNavigator);
