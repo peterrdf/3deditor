@@ -174,8 +174,7 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
                                it = m_activeProperties.begin();
                             }
                             else {
-                                VECTOR3 pntI = m_dragRay.org, pntII, pntO = { 0., 0., 0. };
-//                                Vec3Add(&pntII, &pntI, &normal)
+                                VECTOR3 pntI = m_dragRay.org, pntO = { 0., 0., 0. };
                                 double  factor = LinePointDistanceFactor__(&it->effect, &pntO, &m_dragRay.dir);
 
                                 factor /= StandardStep(it->initialValue_) - it->initialValue_;
@@ -188,7 +187,7 @@ bool DragFaceImpl::StartDrag(OwlInstance inst, int iConceptualFace, VECTOR3 cons
                 }
                 else {
                     //  Drag & Move is preferred
-                    int u = 0;
+                    //int u = 0;
                 }
             }
 

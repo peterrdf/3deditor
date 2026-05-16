@@ -187,9 +187,9 @@ double DragFaceUV::TryModifyByProperty(const SEGMENT3& targetLine, PropertyEffec
 
     if (prop.factor) {
 
-        if (prop.factor != -1.) {
-            int u = 0;
-        }
+        //if (prop.factor != -1.) {
+        //    int u = 0;
+        //}
 
         SetDatatypeProperty(m_instance, prop.prop, prop.initialValue_ + len * prop.factor);
 
