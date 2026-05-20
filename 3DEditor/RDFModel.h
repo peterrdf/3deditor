@@ -11,6 +11,7 @@ using namespace std;
 // ************************************************************************************************
 static TCHAR SUPPORTED_FILES[] = _T("BIN Files (*.bin)|*.bin|\
 BIN Zip Files (*.binz)|*.binz|\
+RDF TTL Files (*.ttl)|*.ttl|\
 CityGML Files (*.gml;*citygml)|\
 *.gml;*citygml|LandXML Files (*.xml)|*.xml;|\
 CityJSON Files (*.city.json;*.json)|*.city.json;*.json|\
