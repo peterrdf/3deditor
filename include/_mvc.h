@@ -50,6 +50,7 @@ enum class enumApplicationProperty : int
 	ShowProgressDialog,
 	VisibleValuesCountLimit,
 	ScalelAndCenterAllVisibleGeometry,
+	FullDisplayName,
 };
 
 // ************************************************************************************************

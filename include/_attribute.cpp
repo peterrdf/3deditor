@@ -22,6 +22,12 @@ SdaiPrimitiveType _attribute::getSdaiPrimitiveType() const
     return sdaiPrimitiveType;
 }
 
+string _attribute::getName() const
+{
+    const char* szName = engiGetAttrName(m_sdaiAttr);
+    return szName != nullptr ? string(szName) : string();
+}
+
 // ************************************************************************************************
 _attribute_provider::_attribute_provider()
     : m_mapInstanceAttributes()

@@ -1863,6 +1863,7 @@ _oglView::_oglView()
 		case enumApplicationProperty::ShowProgressDialog:
 		case enumApplicationProperty::VisibleValuesCountLimit:
 		case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
+		case enumApplicationProperty::FullDisplayName:
 			{
 				// NA
 				break;

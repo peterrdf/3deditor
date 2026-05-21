@@ -4,6 +4,7 @@
 
 #include <map>
 #include <vector>
+#include <string>
 using namespace std;
 
 // ************************************************************************************************
@@ -21,6 +22,7 @@ public: // Methods
 
     SdaiAttr getSdaiAttr() const { return m_sdaiAttr; }
     SdaiPrimitiveType getSdaiPrimitiveType() const;
+    string getName() const;
 };
 
 // ************************************************************************************************

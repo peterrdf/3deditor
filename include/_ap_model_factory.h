@@ -98,16 +98,34 @@ public: // Methods
 			return nullptr;
 		}
 
+
+		//
+		//
+		// 
+		SdaiModel	sdaiModel = sdaiOpenModelBNUnicode(0, szModel, L"");
+
 		//
 		// Read header and recognize schema
 		//
 		std::wstring schemaName;
-		if (auto header = sdaiOpenModelBNUnicode(0, szModel, NULL)) {
-			schemaName = getSchemaName(header);
-			sdaiCloseModel(header);
+		if (sdaiModel) {
+			schemaName = getSchemaName(sdaiModel);
+		}
+		else {
+			if (auto header = sdaiOpenModelBNUnicode(0, szModel, nullptr)) {
+				schemaName = getSchemaName(header);
+				sdaiCloseModel(header);
+			}
+			else {
+				schemaName = nullptr;
+			}
 		}
 
 		if (schemaName.empty()) {
+			if (sdaiModel) {
+				sdaiCloseModel(sdaiModel);
+			}
+
 #ifdef _WINDOWS
 			MessageBox(::AfxGetMainWnd()->GetSafeHwnd(), L"Failed to get schema name form file header.", L"Error", MB_ICONERROR | MB_OK);
 #endif
@@ -121,27 +139,9 @@ public: // Methods
 		_ap_model* pModel = nullptr;
 
 		/*
-		* STEP
-		*/
-		if ((schemaName.find(L"CONFIG_CONTROL_DESIGN") == 0) ||
-			(schemaName.find(L"CONFIG_CONTROL_3D_DESIGN") == 0) ||
-			(schemaName.find(L"CONFIG_CONTROL_DESIGN_LINE") == 0) ||
-			(schemaName.find(L"CONFIGURATION_CONTROL_DESIGN") == 0) ||
-			(schemaName.find(L"CONFIGURATION_CONTROL_3D_DESIGN") == 0) ||
-			(schemaName.find(L"AUTOMOTIVE_DESIGN") == 0) ||
-			(schemaName.find(L"AP203") == 0) ||
-			(schemaName.find(L"AP209") == 0) ||
-			(schemaName.find(L"AP214") == 0) ||
-			(schemaName.find(L"AP242") == 0)) {
-
-			pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
-		}
-
-		/*
 		* IFC
 		*/
-		else if (schemaName.find(L"IFC") == 0) {
-
+		if (schemaName.find(L"IFC") == 0) {
 			pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
 		}
 
@@ -156,6 +156,13 @@ public: // Methods
 #endif // _CIS2_EXPERIMENTAL
 
 		/*
+		* STEP
+		*/
+		else if (sdaiModel) {
+			pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
+		}
+
+		/*
 		** Generic model
 		*/
 		else {
@@ -166,7 +173,6 @@ public: // Methods
 		// Read model file
 		//
 		if (pModel) {
-			auto sdaiModel = sdaiOpenModelBNUnicode(0, szModel, schemaName.c_str());
 			if (!sdaiModel) { // embedded schema not found, ask to locate schema file
 #ifdef _WINDOWS
 				CFileDialog dlgOpen(TRUE, L"exp", NULL, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
@@ -183,7 +189,7 @@ public: // Methods
 			}
 #endif	
 			if (sdaiModel) {
-				pModel->attachModel(szModel, sdaiModel, nullptr);
+				pModel->attachModel(szModel, sdaiModel, pWorld);
 			}
 			else {
 				delete pModel;

@@ -106,6 +106,10 @@ public: // Properties
 class _ap_controller : public _controller
 {
 
+private: // Members
+
+    bool m_bFullDisplayName;
+
 public: // Methods
 
     _ap_controller();
@@ -115,4 +119,13 @@ public: // Methods
     void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
     void onViewRelations(_view* pSender, _entity* pEntity);
     void onInstanceAttributeEdited(_view* pSender, SdaiInstance sdaiInstance, SdaiAttr sdaiAttr);
+
+protected: // Methods
+
+    void loadSettings();
+
+public: // Properties
+
+    void setFullDisplayName(bool bFullDisplayName);
+	bool getFullDisplayName() const { return m_bFullDisplayName; }
 };

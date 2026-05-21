@@ -18,7 +18,7 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 	, m_strValueType(L"")
 {
 	assert(m_sdaiInstance != 0);
-	assert(!m_strName.empty());	
+	assert(!m_strName.empty());
 
 	auto prValueTypes = getValueTypes(m_sdaiInstance);
 	assert(!prValueTypes.first.empty() && !prValueTypes.second.empty());
@@ -119,10 +119,17 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 			assert(false); // Failed to get NominalValue attribute
 		}
 	} // if (strEntity == "IFCPROPERTYSINGLEVALUE")
-	else if (strEntity == L"IFCPHYSICALQUANTITY") {
+	else if ((strEntity == L"IFCPHYSICALQUANTITY") ||
+		(strEntity == L"IFCQUANTITYLENGTH") ||
+		(strEntity == L"IFCQUANTITYAREA") ||
+		(strEntity == L"IFCQUANTITYVOLUME") ||
+		(strEntity == L"IFCQUANTITYCOUNT") ||
+		(strEntity == L"IFCQUANTITYWEIGHT") ||
+		(strEntity == L"IFCQUANTITYTIME")) {
 		strIfcValueType = szEntityName;
 		strValueType = L"number";
-	} else {
+	}
+	else {
 		assert(strEntity == L"IFCCOMPLEXPROPERTY");
 
 		strIfcValueType = szEntityName;
@@ -375,7 +382,7 @@ void _ifc_property_provider::loadIFCQuantityLength(SdaiInstance sdaiQuantityInst
 {
 	auto tpProperty = m_pUnitProvider->getQuantityLength(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 
@@ -383,7 +390,7 @@ void _ifc_property_provider::loadIFCQuantityArea(SdaiInstance sdaiQuantityInstan
 {
 	auto tpProperty = m_pUnitProvider->getQuantityArea(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 
@@ -391,7 +398,7 @@ void _ifc_property_provider::loadIFCQuantityVolume(SdaiInstance sdaiQuantityInst
 {
 	auto tpProperty = m_pUnitProvider->getQuantityVolume(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 
@@ -399,7 +406,7 @@ void _ifc_property_provider::loadIFCQuantityCount(SdaiInstance sdaiQuantityInsta
 {
 	auto tpProperty = m_pUnitProvider->getQuantityCount(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 
@@ -407,7 +414,7 @@ void _ifc_property_provider::loadIFCQuantityWeight(SdaiInstance sdaiQuantityInst
 {
 	auto tpProperty = m_pUnitProvider->getQuantityWeight(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 
@@ -415,7 +422,7 @@ void _ifc_property_provider::loadIFCQuantityTime(SdaiInstance sdaiQuantityInstan
 {
 	auto tpProperty = m_pUnitProvider->getQuantityTime(sdaiQuantityInstance);
 
-	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance, 
+	pPropertySet->properties().push_back(new _ifc_property(sdaiQuantityInstance,
 		std::get<0>(tpProperty), std::get<1>(tpProperty), std::get<2>(tpProperty), std::get<3>(tpProperty)));
 }
 

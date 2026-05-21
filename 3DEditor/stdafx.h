@@ -45,8 +45,8 @@
 #endif
 #endif
 
-#include "..\glew-2.2.0\include\GL\glew.h"
-#include "..\glew-2.2.0\include\GL\wglew.h"
+#include "..\glew-2.3.1\include\GL\glew.h"
+#include "..\glew-2.3.1\include\GL\wglew.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>

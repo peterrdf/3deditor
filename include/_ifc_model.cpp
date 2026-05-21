@@ -33,8 +33,7 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
 	, m_vecMappedItemPendingUpdate()
-{
-}
+{}
 
 /*virtual*/ _ifc_model::~_ifc_model()
 {
@@ -57,14 +56,12 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	SdaiInstance sdaiIfcMapConversionInstance = 0;
 	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
 
-	SdaiEntity sdaiIfcMapConversionEntity = sdaiGetInstanceType(sdaiIfcMapConversionInstance);
-
 	// Default: no translation
 	double dEastings = 0.;
 	double dNorthings = 0.;
 
 	// Default: no rotation
-	double dXAxisAbscissa = 1.;  
+	double dXAxisAbscissa = 1.;
 	double dXAxisOrdinate = 0.;
 
 	bool bHasXAxisAbscissa = false;
@@ -73,27 +70,20 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	const auto& vecAttributes = pAttributeProvider->getInstanceAttributes(sdaiIfcMapConversionInstance);
 	for (size_t i = 0; i < vecAttributes.size(); i++) {
 		auto pAttribute = vecAttributes[i];
-		const char* szAttributeName = nullptr;
-		engiGetEntityArgumentName(sdaiIfcMapConversionEntity,
-			(SdaiInteger)i,
-			sdaiSTRING,
-			&szAttributeName);
 
-		if (string(szAttributeName) == "Eastings") {
+		auto strAttributeName = pAttribute->getName();
+		if (strAttributeName == "Eastings") {
 			sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dEastings);
 		}
-
-		if (string(szAttributeName) == "Northings") {
+		else if (strAttributeName == "Northings") {
 			sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dNorthings);
 		}
-
-		if (string(szAttributeName) == "XAxisAbscissa") {
+		else if (strAttributeName == "XAxisAbscissa") {
 			if (sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dXAxisAbscissa)) {
 				bHasXAxisAbscissa = true;
 			}
 		}
-
-		if (string(szAttributeName) == "XAxisOrdinate") {
+		else if (strAttributeName == "XAxisOrdinate") {
 			if (sdaiGetAttr(sdaiIfcMapConversionInstance, pAttribute->getSdaiAttr(), sdaiREAL, &dXAxisOrdinate)) {
 				bHasXAxisOrdinate = true;
 			}
@@ -302,7 +292,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 
 			double dScaleFactor = getOriginalBoundingSphereDiameter() / 2.;
 
-			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {				
+			if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.) {
 				for (auto& pMappedItemPendingUpdate : m_vecMappedItemPendingUpdate) {
 					auto pMappedItem = pMappedItemPendingUpdate.second;
 

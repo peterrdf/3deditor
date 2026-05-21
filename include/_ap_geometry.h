@@ -185,7 +185,7 @@ public: // Properties
                 content += AggregationToString(aggrVal);
             }
             else {
-                ASSERT(!"TODO: handle attribute type");
+                assert(!"TODO: handle attribute type");
             }
 
             if (typePath && *typePath) {
@@ -213,8 +213,8 @@ public: // Properties
                 else {
                     SdaiString strValue = NULL;
                     auto res = sdaiGetAttr(instance, attribute, sdaiEXPRESSSTRING, &strValue);
-                    ASSERT(!res && strValue); // expected everything except $/* will return ADB
-                    if (strValue)
+                    assert(!res && strValue); // expected everything except $/* will return ADB
+                    if (!res && strValue)
                         content += CA2W(strValue);
                 }
             }
@@ -243,8 +243,8 @@ public: // Properties
                 else {
                     SdaiString strValue = NULL;
                     auto res = sdaiGetAggrByIndex(aggr, index, sdaiEXPRESSSTRING, &strValue);
-                    ASSERT(!res && strValue); // expected everything except $/* will return ADB
-                    if (strValue)
+                    assert(!res && strValue); // expected everything except $/* will return ADB
+                    if (!res && strValue)
                         content += CA2W(strValue);
 
                 }
