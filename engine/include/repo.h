@@ -127,6 +127,10 @@ bool           DECL STDC    repo_ChangePrefix(RdfFile file, const char* oldprefi
 //
 const char     DECL* STDC   repo_GetPrefixURI  (RdfFile file, const char* prefix);
 
+// Find existing prefix from the URI value. 
+// Returns NULL if there is no such prefix or in case of error.
+const char     DECL* STDC   repo_GetPrefixByURI(RdfFile file, const char* uri);
+
 // Iterates prefixes defined in context of the RdfFile
 //
 const char     DECL * STDC  repo_GetPrefixByIterator   (RdfFile file, const char* prev);
@@ -364,9 +368,13 @@ const char     DECL* STDC  repo_SplitIRI(const char* iriName, char* uriPathBuff 
 // 
 bool           DECL  STDC   repo_GenerateKnowleges(RdfFile file);
 
+//
+
+const char     DECL*  STDC   repo_XsdEncode(const char* str, bool encodeSpaces);
+const char     DECL*  STDC   repo_XsdDecode(const char* xsd);
+
 #ifdef __cplusplus
 }
-
 #endif //__cplusplus
 
 #undef DECL
