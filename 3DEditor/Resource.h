@@ -2,9 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by 3DEditor.rc
 //
-#define VERSION_MINOR                   0
-#define VERSION_MAJOR                   1
-#define VERSION_PATCH                   1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_POPUP_EDIT                  119
