@@ -136,6 +136,10 @@ typedef		int64_t										ConceptualFace;
 //get color comonents in range 0..1 to arry of 4 elements
 #define		COLOR_GET_COMPONENTS(r,clr)					{r[0]=COLOR_GET_R(clr); r[1]=COLOR_GET_G(clr); r[2]=COLOR_GET_B(clr); r[3]=COLOR_GET_W(clr);}
 
+#ifndef __cplusplus
+typedef unsigned char bool;
+#endif
+
 //
 //  Meta information API Calls
 //
