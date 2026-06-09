@@ -43,8 +43,8 @@
 /// 
 /// 
 
-#define REPO_GEOM_URI        "http://rdf.bg/geometry.ttl"
-
+#define REPO_URI_GEOM        "http://rdf.bg/geometry.ttl"
+#define REPO_URI_REFLECTION  "http://rdf.bg/reflection/"
 
 // base type for all types defined in Repo.h
 #ifdef __cplusplus
