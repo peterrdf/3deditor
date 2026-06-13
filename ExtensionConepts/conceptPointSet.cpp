@@ -112,7 +112,7 @@ template<typename TPoint> void PointSet::CopyPoints(TPoint* dstPoints, int_t num
         return;
     }
 
-    int_t numSrcPt = numSrcCoords / srcDim;
+    int_t numSrcPt = srcDim ? (numSrcCoords / srcDim) : 0;
 
     int_t i = 0;
     
@@ -162,7 +162,7 @@ void PointSet::CreateShell(OwlInstance inst, void*)
     double* texCoord = NULL;
     int64_t ntexCoord = Helper::GetDataProperyValue(inst, PROP_TEX_COORD, (void**)&texCoord);
 
-    int_t Npt = (int_t)(ncoords / dim);
+    int_t Npt = (dim > 0) ? (int_t)(ncoords / dim) : 0;
 
     // set vertices
     //
