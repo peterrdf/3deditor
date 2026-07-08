@@ -45,7 +45,7 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiIsDefinedByAggr);
 	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
 		SdaiInstance sdaiAggrInstance = 0;
-		engiGetAggrElement(sdaiIsDefinedByAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+		sdaiGetAggrByIndex(sdaiIsDefinedByAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
 		if ((sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(sdaiModel, "IFCRELDEFINESBYPROPERTIES")) ||
 			(sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(sdaiModel, "IFCRELDEFINESBYTYPE"))) {
@@ -226,7 +226,7 @@ void _ifc_property_provider::loadProperties(SdaiInstance sdaiInstance, _ifc_prop
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiIsDefinedByAggr);
 	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
 		SdaiInstance sdaiAggrInstance = 0;
-		engiGetAggrElement(sdaiIsDefinedByAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+		sdaiGetAggrByIndex(sdaiIsDefinedByAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
 		if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiRelDefinesByPropertiesEntity) {
 			loadRelDefinesByProperties(sdaiAggrInstance, pPropertySetCollection);
@@ -282,7 +282,7 @@ void _ifc_property_provider::loadPropertySet(SdaiInstance sdaiPropertySetInstanc
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiHasPropertiesAggr);
 	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
 		SdaiInstance sdaiAggrInstance = 0;
-		engiGetAggrElement(sdaiHasPropertiesAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+		sdaiGetAggrByIndex(sdaiHasPropertiesAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
 		strItem = getName(sdaiAggrInstance);
 
@@ -321,7 +321,7 @@ void _ifc_property_provider::loadRelDefinesByType(SdaiInstance sdaiRelDefinesByT
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiHasPropertySetsAggr);
 	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
 		SdaiInstance sdaiAggrInstance = 0;
-		engiGetAggrElement(sdaiHasPropertySetsAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+		sdaiGetAggrByIndex(sdaiHasPropertySetsAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 		if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiElementQuantityEntity) {
 			loadQuantites(sdaiAggrInstance, pPropertySetCollection);
 		}
@@ -348,7 +348,7 @@ void _ifc_property_provider::loadQuantites(SdaiInstance sdaiElementQuantityInsta
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiQuantitiesAggr);
 	for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
 		SdaiInstance sdaiAggrInstance = 0;
-		engiGetAggrElement(sdaiQuantitiesAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+		sdaiGetAggrByIndex(sdaiQuantitiesAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
 		if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(m_sdaiModel, "IFCQUANTITYLENGTH")) {
 			loadIFCQuantityLength(sdaiAggrInstance, pPropertySet);

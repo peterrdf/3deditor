@@ -3,6 +3,11 @@
 #include "_ap_mvc.h"
 #include "_ap242_property.h"
 
+#include <mutex>
+#include <thread>
+
+using namespace std;
+
 // ************************************************************************************************
 class _ap242_product_definition;
 class _ap242_product_shape;
@@ -17,6 +22,27 @@ class _ap242_model_structure;
 class _ap242_model : public _ap_model
 {
 
+private: // Classes
+
+    struct AP242_REPRESENTATION_ITEM
+    {
+		_ap242_product_shape_representation* pProductShapeRepresentation = nullptr;
+		SdaiInstance sdaiRepresentationInstance = 0;
+        SdaiInstance sdaiRepresentationItemInstance = 0;
+    };
+
+    struct AP242_ANNOTATION_PLANE
+    {
+        _ap242_draughting_model* pDraughtingModel = nullptr;
+        SdaiInstance sdaiInstance = 0;
+    };
+
+    struct AP242_DRAUGHTING_CALLOUT
+    {
+        _ap242_draughting_model* pDraughtingModel = nullptr;
+        SdaiInstance sdaiInstance = 0;
+    };
+
 private: // Members
 
     bool m_bLoadProductRepresentationItems;
@@ -24,6 +50,12 @@ private: // Members
 
 	_ap242_model_structure* m_pModelStructure;
     _ap242_property_provider* m_pPropertyProvider;
+
+	map <SdaiInstance, AP242_REPRESENTATION_ITEM> m_mapRepresentationItemsPendingLoad; // SDAI Instance : Representation Item
+	map<SdaiInstance, AP242_ANNOTATION_PLANE> m_mapAnnotationPlanesPendingLoad; // SDAI Instance : Annotation Plane
+	map<SdaiInstance, AP242_DRAUGHTING_CALLOUT> m_mapDraughtingCalloutsPendingLoad; // SDAI Instance : Draughting Callout
+    mutex m_mtxGeometriesPendingLoad;
+    mutex m_mtxUpdateModel;
 
     map<ExpressID, _ap242_assembly*> m_mapExpressID2Assembly; // Express ID : Assembly
     vector<_ap242_draughting_model*> m_vecDraughtingModels;
@@ -58,8 +90,8 @@ private: // Methods
     void walkAssemblyTreeRecursively(_ap242_product_definition* pProductDefinition, _ap242_assembly* pAssembly, _matrix4x3* pParentMatrix);
 
     void loadDraughtingModels();
-    _ap242_annotation_plane* loadAnnotationPlane(SdaiInstance sdaiInstance);
-    _ap242_draughting_callout* loadDraughtingCallout(SdaiInstance sdaiInstance);
+    _ap242_annotation_plane* loadAnnotationPlane(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance);
+    _ap242_draughting_callout* loadDraughtingCallout(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance);
 
     void save(const wchar_t* szPath);
 

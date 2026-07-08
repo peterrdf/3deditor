@@ -10,6 +10,7 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	: _model(pLog)
 	, m_sdaiModel(0)
 	, m_enAP(enAP)
+	, m_bMultiThreadedLoad(false)
 	, m_pEntityProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
 	, m_mapExpressID2Geometry()
@@ -195,10 +196,38 @@ _ap_controller* _ap_view::getAPController() const
 _ap_controller::_ap_controller()
 	: _controller()
 	, m_bFullDisplayName(true)
+	, m_bMultiThreadedLoad(false)
 {}
 
 /*virtual*/ _ap_controller::~_ap_controller()
 {}
+
+/*virtual*/ string _ap_controller::getSettingsNamespace() const /*override*/
+{
+	string strNamespace = "STEP";
+	if (!getModels().empty()) {
+		_ptr<_ap_model> apModel(getModels().front());
+		assert(apModel);
+
+		if (apModel) {
+			switch (apModel->getAP()) {
+			case enumAP::STEP:
+				strNamespace = "STEP";
+				break;
+			case enumAP::IFC:
+				strNamespace = "IFC";
+				break;
+			case enumAP::CIS2:
+				strNamespace = "CIS2";
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		}
+	}
+	return strNamespace;
+}
 
 void _ap_controller::onViewRelations(_view* pSender, SdaiInstance sdaiInstance)
 {
@@ -244,9 +273,21 @@ void _ap_controller::loadSettings()
 #endif
 	strSettingName += NAMEOFVAR(m_bFullDisplayName);
 
-	string strValue = getSettingsStorage()->getSetting(strSettingName);
+	string strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
 	if (!strValue.empty()) {
 		m_bFullDisplayName = strValue == "TRUE";
+	}
+
+#ifdef _WINDOWS
+	strSettingName = typeid(this).raw_name();
+#else
+	strSettingName = typeid(this).name();
+#endif
+	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
+
+	strValue = getSettingsStorage()->getSetting(GLOBAL_NAMESPACE + "::" + strSettingName);
+	if (!strValue.empty()) {
+		m_bMultiThreadedLoad = strValue == "TRUE";
 	}
 }
 
@@ -261,5 +302,19 @@ void _ap_controller::setFullDisplayName(bool bFullDisplayName)
 #endif
 	strSettingName += NAMEOFVAR(m_bFullDisplayName);
 
-	getSettingsStorage()->setSetting(strSettingName, bFullDisplayName ? "TRUE" : "FALSE");
+	getSettingsStorage()->setSetting(GLOBAL_NAMESPACE + "::" + strSettingName, bFullDisplayName ? "TRUE" : "FALSE");
+}
+
+void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
+{
+	m_bMultiThreadedLoad = bMultiThreadedLoad;
+
+#ifdef _WINDOWS
+	string strSettingName(typeid(this).raw_name());
+#else
+	string strSettingName(typeid(this).name());
+#endif
+	strSettingName += NAMEOFVAR(m_bMultiThreadedLoad);
+
+	getSettingsStorage()->setSetting(GLOBAL_NAMESPACE + "::" + strSettingName, bMultiThreadedLoad ? "TRUE" : "FALSE");
 }

@@ -619,7 +619,7 @@ void _ifc_unit_provider::load()
     SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiProjectAggr);
     if (iMembersCount > 0) {
         SdaiInstance sdaiProjectInstance = 0;
-        engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+        sdaiGetAggrByIndex(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
         if (sdaiProjectInstance != 0) {
             loadUnits(sdaiProjectInstance);
@@ -640,7 +640,7 @@ void _ifc_unit_provider::loadUnits(SdaiInstance sdaiProjectInstance)
     SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiUnitsAggr);
     for (SdaiInteger iMember = 0; iMember < iMembersCount; iMember++) {
         SdaiInstance sdaiAggrInstance = 0;
-        engiGetAggrElement(sdaiUnitsAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
+        sdaiGetAggrByIndex(sdaiUnitsAggr, iMember, sdaiINSTANCE, &sdaiAggrInstance);
 
         if (sdaiGetInstanceType(sdaiAggrInstance) == sdaiGetEntity(m_sdaiModel, "IFCCONVERSIONBASEDUNIT")) {
             SdaiInstance sdaiConversionFactorInstance = 0;

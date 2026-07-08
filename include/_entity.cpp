@@ -20,7 +20,7 @@ _entity::_entity(SdaiEntity sdaiEntity)
     m_szName = _entity::getName(m_sdaiEntity);
 
     // Attributes
-    SdaiInteger iAttributesCount = engiGetEntityNoArguments(sdaiEntity);
+    SdaiInteger iAttributesCount = engiGetEntityNoAttributes(sdaiEntity);
     for (SdaiInteger iIndex = 0; iIndex < iAttributesCount; iIndex++) {
         wchar_t* szArgumentName = 0;
         engiGetEntityArgumentName(m_sdaiEntity, iIndex, sdaiUNICODE, (const char**)&szArgumentName);

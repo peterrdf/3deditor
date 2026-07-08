@@ -19,6 +19,9 @@ namespace fs = std::filesystem;
 #define NAMEOFVAR(variable) ((void)((decltype(&variable))nullptr), #variable)
 
 // ************************************************************************************************
+static string GLOBAL_NAMESPACE = "GLOBAL";
+
+// ************************************************************************************************
 class _settings_storage
 {
 

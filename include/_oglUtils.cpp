@@ -367,7 +367,8 @@ void _oglRendererSettings::_setView(enumView enView)
 {
 	auto pController = _getController();
 	if (pController != nullptr) {
-		pController->getSettingsStorage()->setSetting(strName, strValue);
+		string strNameWithNamespace = pController->getSettingsNamespace() + "::" + strName;
+		pController->getSettingsStorage()->setSetting(strNameWithNamespace, strValue);
 	}
 }
 
@@ -375,7 +376,8 @@ void _oglRendererSettings::_setView(enumView enView)
 {
 	auto pController = _getController();
 	if (pController != nullptr) {
-		return pController->getSettingsStorage()->getSetting(strName);
+		string strNameWithNamespace = pController->getSettingsNamespace() + "::" + strName;
+		return pController->getSettingsStorage()->getSetting(strNameWithNamespace);
 	}
 
 	return "";
@@ -1863,6 +1865,7 @@ _oglView::_oglView()
 		case enumApplicationProperty::ShowProgressDialog:
 		case enumApplicationProperty::VisibleValuesCountLimit:
 		case enumApplicationProperty::ScalelAndCenterAllVisibleGeometry:
+		case enumApplicationProperty::MultiThreadedLoad:
 		case enumApplicationProperty::FullDisplayName:
 			{
 				// NA

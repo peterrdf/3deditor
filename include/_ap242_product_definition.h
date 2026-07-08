@@ -27,7 +27,7 @@ private: // Members
 
 public: // Methods
 
-	_ap242_product_definition(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+	_ap242_product_definition(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~_ap242_product_definition();
 
 public: // Properties
@@ -57,7 +57,7 @@ private: // Members
 
 public: // Methods
 
-	_ap242_product_shape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiInstance);
+	_ap242_product_shape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~_ap242_product_shape();
 
 	void addProductShapeRepresentation(_ap242_product_shape_representation* pProductShapeRepresentation);
@@ -80,7 +80,7 @@ private: // Members
 
 public: // Methods
 
-	_ap242_product_shape_representation(_ap242_product_shape* pProductShape, SdaiInstance sdaiInstance);
+	_ap242_product_shape_representation(_ap242_product_shape* pProductShape, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~_ap242_product_shape_representation();
 
 	void addRepresentationItem(_ap242_product_shape_representation_item* pRepresentationItem);
@@ -103,7 +103,7 @@ private: // Members
 
 public: // Methods
 
-	_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance);
+	_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 	virtual ~_ap242_product_shape_representation_item();
 
 public: // Properties

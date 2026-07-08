@@ -13,14 +13,18 @@ class _ap_geometry : public _geometry
 private: // Members
 
     SdaiInstance m_sdaiInstance;
+    MultiThreadOwlModelWrapper m_multiThreadOwlModelWrapper;
 
 public: // Methods
 
-    _ap_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+    _ap_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
         : _geometry(owlInstance)
         , m_sdaiInstance(sdaiInstance)
+		, m_multiThreadOwlModelWrapper(multiThreadOwlModelWrapper)
     {
-        m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
+        if (multiThreadOwlModelWrapper == 0) {
+            m_strName = m_strUniqueName = getDisplayString(sdaiInstance);
+        }        
     }
 
     virtual ~_ap_geometry()
@@ -29,6 +33,9 @@ public: // Methods
     // _geometry
     virtual OwlModel getOwlModel() const override
     {
+        if (OwlInstance owlInstance = getOwlInstance())
+            return GetModel(owlInstance);
+
         return getOwlModel(getSdaiModel());
     }
 
@@ -54,14 +61,25 @@ public: // Methods
     {
         assert(sdaiInstance != 0);
 
-        SdaiModel sdaiModel = sdaiGetInstanceModel(sdaiInstance);
-        assert(sdaiModel != 0);
-
-        OwlInstance owlInstance = 0;
-        owlBuildInstance(sdaiModel, sdaiInstance, &owlInstance);
+        OwlInstance owlInstance = owlBuildInstanceMT(sdaiInstance);
 
         return owlInstance;
     }
+
+    static OwlInstance buildOwlInstance(SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    {
+        assert(sdaiInstance != 0);
+		assert(multiThreadOwlModelWrapper != 0);
+
+        OwlInstance owlInstance = owlBuildInstanceMT(sdaiInstance, multiThreadOwlModelWrapper);
+
+        return owlInstance;
+    }
+
+    void loadDisplayString()
+    {
+        m_strName = m_strUniqueName = getDisplayString(getSdaiInstance());
+	}
 
     void setAPFormatSettings()
     {
@@ -91,6 +109,7 @@ public: // Methods
 public: // Properties
 
     SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
+    MultiThreadOwlModelWrapper getMultiThreadOwlModelWrapper() const { return m_multiThreadOwlModelWrapper; }
     ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
     SdaiModel getSdaiModel() const { return sdaiGetInstanceModel(m_sdaiInstance); }
     SdaiEntity getSdaiEntity() const { return getSdaiEntity(m_sdaiInstance); }

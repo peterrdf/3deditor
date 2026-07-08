@@ -32,6 +32,11 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_pModelStructure(nullptr)
 	, m_pUnitProvider(nullptr)
 	, m_pPropertyProvider(nullptr)
+	, m_mapGeometriesPendingLoad()
+	, m_mapMappedGeometriesPendingLoad()
+	, m_mtxGeometriesPendingLoad()
+	, m_mtxUpdateModel()
+	, m_vecIfcProducts()
 	, m_vecMappedItemPendingUpdate()
 {}
 
@@ -54,7 +59,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 
 	SdaiInstance sdaiIfcMapConversionInstance = 0;
-	engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
+	sdaiGetAggrByIndex(sdaiAggr, 0, sdaiINSTANCE, &sdaiIfcMapConversionInstance);
 
 	// Default: no translation
 	double dEastings = 0.;
@@ -250,6 +255,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 		m_pPropertyProvider = nullptr;
 	}
 
+	m_mapGeometriesPendingLoad.clear();
+	m_mapMappedGeometriesPendingLoad.clear();
+	m_vecIfcProducts.clear();
 	m_vecMappedItemPendingUpdate.clear();
 }
 
@@ -279,9 +287,136 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 
 	// Objects & Unreferenced
 	if (!m_bLoadInstancesOnDemand) {
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		retrieveGeometryRecursively(sdaiObjectEntity, DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCPROJECT", DEFAULT_CIRCLE_SEGMENTS);
 		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_CIRCLE_SEGMENTS);
+
+		if (getMultiThreadedLoad()) {
+			unsigned int threadsCount = thread::hardware_concurrency() / 4;
+			InitializeMultiThreading(getSdaiModel(), threadsCount);
+
+			double arOffset[3] = { 0., 0., 0. };
+			GetVertexBufferOffset(getOwlModel(), arOffset);
+
+			vector<OwlModel> vecOwlModels;
+			vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecOwlModels.push_back(CreateModel());
+				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
+				vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			}
+
+			// Load geometries
+			vector<thread> vecThreads;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						IFC_GEOMETRY geometry;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+							if (m_mapGeometriesPendingLoad.empty()) {
+								return;
+							}
+							auto itGeometry = m_mapGeometriesPendingLoad.begin();
+							geometry = itGeometry->second;
+							m_mapGeometriesPendingLoad.erase(itGeometry);
+						}
+						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
+					}
+					});
+			}			
+
+			// Wait for threads to end
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap_geometry>(pGeometry)->loadDisplayString();
+			}
+
+			// Load mapped items
+			SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
+
+			vecThreads.clear();
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				SetVertexBufferOffset(vecOwlModels[i], 0., 0., 0.);
+
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						IFC_GEOMETRY geometry;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+							if (m_mapMappedGeometriesPendingLoad.empty()) {
+								return;
+							}
+							auto itGeometry = m_mapMappedGeometriesPendingLoad.begin();
+							geometry = itGeometry->second;
+							m_mapMappedGeometriesPendingLoad.erase(itGeometry);
+						}
+						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
+					}
+					});
+			}
+
+			// Wait for threads to end
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Mapped items: post-processing
+			for (auto pProduct : m_vecIfcProducts) {
+				int64_t iParenInstanceID = _model::getNextInstanceID();
+
+				vector<_ifc_geometry*> vecMappedGeometries;
+				vector<_ifc_instance*> vecMappedInstances;
+
+				for (auto pMappedItem : pProduct->mappedItems) {
+					auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
+					assert(pMappedGeometry != nullptr);
+
+					vecMappedGeometries.push_back(pMappedGeometry);
+
+					auto pMappedInstance = createInstance(_model::getNextInstanceID(), pMappedGeometry, nullptr);
+					pMappedInstance->setEnable(true);
+					addInstance(pMappedInstance);
+
+					vecMappedInstances.push_back(pMappedInstance);
+
+					// Pending update
+					m_vecMappedItemPendingUpdate.push_back({ pMappedInstance, pMappedItem });
+				} // for (auto pMappedItem : ...
+
+				// Owner
+				auto pGeometry = new _ifc_geometry(0, pProduct->ifcProductInstance, vecMappedGeometries, 0);
+				pGeometry->setDefaultShowState();
+				addGeometry(pGeometry);
+
+				// Owner
+				auto pInstance = createInstance(iParenInstanceID, pGeometry, nullptr);
+				pInstance->setDefaultEnableState();
+				addInstance(pInstance);
+
+				for (auto pMappedInstance : vecMappedInstances) {
+					pMappedInstance->m_pOwner = pInstance;
+				}
+
+				delete pProduct;
+			}
+
+			SetVertexBufferOffset(getOwlModel(), arOffset);
+
+			for (auto& owlModel : vecOwlModels) {
+				CloseModel(owlModel);
+			}
+		}
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 
 		getObjectsReferencedState();
 
@@ -394,9 +529,9 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 	}
 }
 
-/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
+/*virtual*/ _ifc_geometry* _ifc_model::createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper/* = 0*/)
 {
-	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>());
+	return new _ifc_geometry(owlInstance, sdaiInstance, vector<_ifc_geometry*>(), multiThreadOwlModelWrapper);
 }
 
 /*virtual*/ _ifc_instance* _ifc_model::createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix)
@@ -410,7 +545,7 @@ void _ifc_model::getObjectsReferencedState()
 	SdaiInteger iMembersCount = sdaiGetMemberCount(sdaiAggr);
 	if (iMembersCount > 0) {
 		SdaiInstance sdaiProjectInstance = 0;
-		engiGetAggrElement(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+		sdaiGetAggrByIndex(sdaiAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 
 		getObjectsReferencedStateIsDecomposedBy(sdaiProjectInstance);
 		getObjectsReferencedStateIsNestedBy(sdaiProjectInstance);
@@ -469,7 +604,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstan
 	SdaiInteger iIsDecomposedByMembersCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
 	for (SdaiInteger i = 0; i < iIsDecomposedByMembersCount; ++i) {
 		SdaiInstance sdaiIsDecomposedByInstance = 0;
-		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
+		sdaiGetAggrByIndex(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
 		}
@@ -480,7 +615,7 @@ void _ifc_model::getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstan
 		SdaiInteger iRelatedObjectsMembersCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
 		}
@@ -502,7 +637,7 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 	SdaiInteger iIsNestedByMembersCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
 	for (SdaiInteger i = 0; i < iIsNestedByMembersCount; ++i) {
 		SdaiInstance sdaiIsNestedByInstance = 0;
-		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
+		sdaiGetAggrByIndex(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
 		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity) {
 			continue;
 		}
@@ -513,7 +648,7 @@ void _ifc_model::getObjectsReferencedStateIsNestedBy(SdaiInstance sdaiInstance)
 		SdaiInteger iRelatedObjectsMembersCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedObjectsInstance);
 		} // for (SdaiInteger j = ...
@@ -535,7 +670,7 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInst
 	SdaiInteger iContainsElementsMembersCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsMembersCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		if (sdaiGetInstanceType(sdaiContainsElementsInstance) != iIFCRelContainedInSpatialStructureEntity) {
 			continue;
@@ -547,7 +682,7 @@ void _ifc_model::getObjectsReferencedStateContainsElements(SdaiInstance sdaiInst
 		SdaiInteger iRelatedElementsMembersCount = sdaiGetMemberCount(sdaiRelatedElementsAggr);
 		for (SdaiInteger j = 0; j < iRelatedElementsMembersCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
-			engiGetAggrElement(sdaiRelatedElementsAggr, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedElementsAggr, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			getObjectsReferencedStateRecursively(sdaiRelatedElementsInstance);
 		} // for (SdaiInteger j = ...
@@ -567,7 +702,7 @@ void _ifc_model::getObjectsReferencedStateHasAssignments(SdaiInstance sdaiInstan
 	SdaiInteger iContainsElementsMembersCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsMembersCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		SdaiInstance sdaiRelatingProductInstance = 0;
 		sdaiGetAttrBN(sdaiContainsElementsInstance, "RelatingProduct", sdaiINSTANCE, &sdaiRelatingProductInstance);
@@ -592,7 +727,7 @@ void _ifc_model::getObjectsReferencedStateBoundedBy(SdaiInstance sdaiInstance)
 	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
 	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i) {
 		SdaiInstance sdaiBoundedByInstance = 0;
-		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+		sdaiGetAggrByIndex(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
 
 		if (sdaiIsKindOfBN(sdaiBoundedByInstance, "IFCRELSPACEBOUNDARY")) {
 			getObjectsReferencedStateRecursively(sdaiBoundedByInstance);
@@ -614,7 +749,7 @@ void _ifc_model::getObjectsReferencedStateHasOpenings(SdaiInstance sdaiInstance)
 	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
 	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i) {
 		SdaiInstance sdaiHasOpeningsInstance = 0;
-		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+		sdaiGetAggrByIndex(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 
 		SdaiInstance sdaiRelatedOpeningElementInstance = 0;
 		sdaiGetAttrBN(sdaiHasOpeningsInstance, "RelatedOpeningElement", sdaiINSTANCE, &sdaiRelatedOpeningElementInstance);
@@ -653,9 +788,9 @@ void _ifc_model::retrieveGeometry(const char* szEntityName, SdaiInteger iCircleS
 
 	for (SdaiInteger i = 0; i < iMembersCount; ++i) {
 		SdaiInstance sdaiInstance = 0;
-		engiGetAggrElement(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
+		sdaiGetAggrByIndex(sdaiAggr, i, sdaiINSTANCE, &sdaiInstance);
 
-		loadGeometry(szEntityName, sdaiInstance, false, iCircleSegements);
+		loadGeometry(sdaiInstance, false, iCircleSegements);
 	}
 }
 
@@ -694,18 +829,26 @@ void _ifc_model::retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiIn
 	}
 }
 
-_geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments)
+_geometry* _ifc_model::loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments)
 {
 	auto pGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(sdaiInstance));
 	if (pGeometry != nullptr) {
 		return pGeometry;
 	}
 
-	wstring strEntity = (const wchar_t*)CA2W(szEntityName);
-	std::transform(strEntity.begin(), strEntity.end(), strEntity.begin(), ::towupper);
-
 	auto pProduct = recognizeMappedItems(sdaiInstance);
 	if (pProduct != nullptr) {
+		if (getMultiThreadedLoad()) {
+			m_vecIfcProducts.push_back(pProduct);
+
+			for (auto pMappedItem : pProduct->mappedItems) {
+				if (m_mapMappedGeometriesPendingLoad.find(pMappedItem->ifcRepresentationInstance) == m_mapMappedGeometriesPendingLoad.end()) {
+					m_mapMappedGeometriesPendingLoad[pMappedItem->ifcRepresentationInstance] = { pMappedItem->ifcRepresentationInstance, iCircleSegments, true };
+				}
+			}
+			return nullptr;
+		}
+
 		double arOffset[3] = { 0., 0., 0. };
 		GetVertexBufferOffset(getOwlModel(), arOffset);
 		SetVertexBufferOffset(getOwlModel(), 0., 0., 0.);
@@ -718,7 +861,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		for (auto pMappedItem : pProduct->mappedItems) {
 			auto pMappedGeometry = dynamic_cast<_ifc_geometry*>(getGeometryByInstance(pMappedItem->ifcRepresentationInstance));
 			if (pMappedGeometry == nullptr) {
-				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(szEntityName, pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
+				pMappedGeometry = dynamic_cast<_ifc_geometry*>(loadGeometry(pMappedItem->ifcRepresentationInstance, true, iCircleSegments));
 			}
 
 			vecMappedGeometries.push_back(pMappedGeometry);
@@ -737,7 +880,7 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		pProduct = nullptr;
 
 		// Owner
-		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries);
+		pGeometry = new _ifc_geometry(0, sdaiInstance, vecMappedGeometries, 0);
 		pGeometry->setDefaultShowState();
 		addGeometry(pGeometry);
 
@@ -755,14 +898,27 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		return pGeometry;
 	} // if (pProduct != nullptr)
 
+	if (getMultiThreadedLoad()) {
+		if (!bMappedItem && m_bUpdateVertexBuffers) {
+			OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
+			if (owlInstance != 0) {
+				preLoadInstance(owlInstance);
+			}
+		}
+		if (m_mapGeometriesPendingLoad.find(sdaiInstance) == m_mapGeometriesPendingLoad.end()) {
+			m_mapGeometriesPendingLoad[sdaiInstance] = { sdaiInstance, iCircleSegments, false };
+		}
+		return nullptr;
+	}
+
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 	if (!bMappedItem && owlInstance != 0) {
 		preLoadInstance(owlInstance);
 	}
 
-	// Set up circleSegments()
+	// Set up segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(iCircleSegments, 5);
+		setSegmentation(getSdaiModel(), iCircleSegments, 5);
 	}
 
 	pGeometry = createGeometry(owlInstance, sdaiInstance);
@@ -780,9 +936,42 @@ _geometry* _ifc_model::loadGeometry(const char* szEntityName, SdaiInstance sdaiI
 		pGeometry->m_bIsReferenced = true;
 	}
 
-	// Restore circleSegments()
+	// Restore segmentation
 	if (iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
-		circleSegments(DEFAULT_CIRCLE_SEGMENTS, 5);
+		setSegmentation(getSdaiModel(), DEFAULT_CIRCLE_SEGMENTS, 5);
+	}
+
+	return pGeometry;
+}
+
+_geometry* _ifc_model::loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+{
+	// Set up segmentation
+	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		setSegmentation(multiThreadOwlModelWrapper, ifcGeometry.iCircleSegments, 5);
+	}
+
+	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
+	auto pGeometry = createGeometry(owlInstance, ifcGeometry.sdaiInstance, multiThreadOwlModelWrapper);
+	{
+		lock_guard<mutex> lock(m_mtxUpdateModel);
+
+		addGeometry(pGeometry);
+		if (!ifcGeometry.bMappedItem) {
+			pGeometry->setDefaultShowState();
+			auto pInstance = createInstance(_model::getNextInstanceID(), pGeometry, nullptr);
+			pInstance->setDefaultEnableState();
+			addInstance(pInstance);
+		}
+		else {
+			pGeometry->m_bIsMappedItem = true;
+			pGeometry->m_bIsReferenced = true;
+		}
+	}
+
+	// Restore segmentation
+	if (ifcGeometry.iCircleSegments != DEFAULT_CIRCLE_SEGMENTS) {
+		setSegmentation(multiThreadOwlModelWrapper, DEFAULT_CIRCLE_SEGMENTS, 5);
 	}
 
 	return pGeometry;
@@ -816,8 +1005,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	SdaiInstance	ifcCartesianTransformationOperatorInstance = 0;
 	sdaiGetAttrBN(ifcMappedItemInstance, "MappingTarget", sdaiINSTANCE, &ifcCartesianTransformationOperatorInstance);
 
-	OwlInstance		owlInstanceCartesianTransformationOperatorMatrix = 0;
-	owlBuildInstance(getSdaiModel(), ifcCartesianTransformationOperatorInstance, &owlInstanceCartesianTransformationOperatorMatrix);
+	OwlInstance		owlInstanceCartesianTransformationOperatorMatrix = owlBuildInstanceMT(ifcCartesianTransformationOperatorInstance);
 
 	if (GetInstanceClass(owlInstanceCartesianTransformationOperatorMatrix) == GetClassByName(getOwlModel(), "Transformation"))
 		owlInstanceCartesianTransformationOperatorMatrix = GetObjectProperty(owlInstanceCartesianTransformationOperatorMatrix, GetPropertyByName(getOwlModel(), "matrix"));
@@ -826,8 +1014,7 @@ void _ifc_model::parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector
 	SdaiInstance	ifcAxis2PlacementInstance = 0;
 	sdaiGetAttrBN(ifcRepresentationMapInstance, "MappingOrigin", sdaiINSTANCE, &ifcAxis2PlacementInstance);
 
-	OwlInstance		owlInstanceAxis2PlacementMatrix = 0;
-	owlBuildInstance(getSdaiModel(), ifcAxis2PlacementInstance, &owlInstanceAxis2PlacementMatrix);
+	OwlInstance		owlInstanceAxis2PlacementMatrix = owlBuildInstanceMT(ifcAxis2PlacementInstance);
 	assert((owlInstanceAxis2PlacementMatrix && GetInstanceClass(owlInstanceAxis2PlacementMatrix) == GetClassByName(getOwlModel(), "Matrix")) ||
 		!owlInstanceAxis2PlacementMatrix);
 
@@ -930,8 +1117,7 @@ STRUCT_IFC_PRODUCT* _ifc_model::recognizeMappedItems(SdaiInstance ifcProductInst
 		SdaiInstance	ifcObjectPlacementInstance = 0;
 		sdaiGetAttrBN(ifcProductInstance, "ObjectPlacement", sdaiINSTANCE, &ifcObjectPlacementInstance);
 
-		OwlInstance		owlInstanceObjectPlacementMatrix = 0;
-		owlBuildInstance(getSdaiModel(), ifcObjectPlacementInstance, &owlInstanceObjectPlacementMatrix);
+		OwlInstance		owlInstanceObjectPlacementMatrix = owlBuildInstanceMT(ifcObjectPlacementInstance);
 
 		assert(GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "Matrix") ||
 			GetInstanceClass(owlInstanceObjectPlacementMatrix) == GetClassByName(getOwlModel(), "InverseMatrix") ||

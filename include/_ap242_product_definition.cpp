@@ -2,8 +2,8 @@
 #include "_ap242_product_definition.h"
 
 // ************************************************************************************************
-_ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap242_geometry(owlInstance, sdaiInstance)
+_ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
     , m_szId(nullptr)
     , m_szName(nullptr)
     , m_szDescription(nullptr)
@@ -33,8 +33,8 @@ _ap242_product_definition::_ap242_product_definition(OwlInstance owlInstance, Sd
 }
 
 // ************************************************************************************************
-_ap242_product_shape::_ap242_product_shape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiInstance)
-    : _ap242_geometry(0, sdaiInstance)
+_ap242_product_shape::_ap242_product_shape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(0, sdaiInstance, multiThreadOwlModelWrapper)
     , m_pProductDefinition(pProductDefinition)
 	, m_vecProductShapeRepresentations()
 {
@@ -52,8 +52,8 @@ void _ap242_product_shape::addProductShapeRepresentation(_ap242_product_shape_re
 }
 
 // ************************************************************************************************
-_ap242_product_shape_representation::_ap242_product_shape_representation(_ap242_product_shape* pProductShape, SdaiInstance sdaiInstance)
-    : _ap242_geometry(0, sdaiInstance)
+_ap242_product_shape_representation::_ap242_product_shape_representation(_ap242_product_shape* pProductShape, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(0, sdaiInstance, multiThreadOwlModelWrapper)
     , m_pProductShape(pProductShape)
     , m_vecRepresentationItems()
 {
@@ -71,8 +71,8 @@ void _ap242_product_shape_representation::addRepresentationItem(_ap242_product_s
 }
 
 // ************************************************************************************************
-_ap242_product_shape_representation_item::_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap242_geometry(owlInstance, sdaiInstance)
+_ap242_product_shape_representation_item::_ap242_product_shape_representation_item(_ap242_product_shape_representation* pProductShapeRepresentation, OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
     , m_pProductShapeRepresentation(pProductShapeRepresentation)
 {
     assert(m_pProductShapeRepresentation != nullptr);

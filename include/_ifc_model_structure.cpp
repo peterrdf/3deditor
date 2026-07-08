@@ -164,7 +164,7 @@ void _ifc_model_structure::build()
 	SdaiInteger iProjectInstancesCount = sdaiGetMemberCount(sdaiProjectAggr);
 	if (iProjectInstancesCount > 0) {
 		SdaiInstance sdaiProjectInstance = 0;
-		engiGetAggrElement(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
+		sdaiGetAggrByIndex(sdaiProjectAggr, 0, sdaiINSTANCE, &sdaiProjectInstance);
 		assert(sdaiProjectInstance != 0);
 
 		loadProjectNode(sdaiProjectInstance);
@@ -214,7 +214,7 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstan
 	SdaiInteger iIsDecomposedByInstancesCount = sdaiGetMemberCount(sdaiIsDecomposedByAggr);
 	for (SdaiInteger i = 0; i < iIsDecomposedByInstancesCount; ++i) {
 		SdaiInstance sdaiIsDecomposedByInstance = 0;
-		engiGetAggrElement(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
+		sdaiGetAggrByIndex(sdaiIsDecomposedByAggr, i, sdaiINSTANCE, &sdaiIsDecomposedByInstance);
 
 		if (sdaiGetInstanceType(sdaiIsDecomposedByInstance) != sdaiRelAggregatesEntity) {
 			continue;
@@ -229,7 +229,7 @@ void _ifc_model_structure::loadIsDecomposedBy(_ifc_node* pParentNode, SdaiInstan
 		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
 		}
@@ -252,7 +252,7 @@ void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance s
 	SdaiInteger iIsNestedByInstancesCount = sdaiGetMemberCount(sdaiIsNestedByAggr);
 	for (SdaiInteger i = 0; i < iIsNestedByInstancesCount; ++i) {
 		SdaiInstance sdaiIsNestedByInstance = 0;
-		engiGetAggrElement(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
+		sdaiGetAggrByIndex(sdaiIsNestedByAggr, i, sdaiINSTANCE, &sdaiIsNestedByInstance);
 
 		if (sdaiGetInstanceType(sdaiIsNestedByInstance) != sdaiRelNestsEntity) {
 			continue;
@@ -267,7 +267,7 @@ void _ifc_model_structure::loadIsNestedBy(_ifc_node* pParentNode, SdaiInstance s
 		SdaiInteger iRelatedObjectsInstancesCount = sdaiGetMemberCount(sdaiRelatedObjectsAggr);
 		for (SdaiInteger j = 0; j < iRelatedObjectsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedObjectsInstance = 0;
-			engiGetAggrElement(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedObjectsAggr, j, sdaiINSTANCE, &sdaiRelatedObjectsInstance);
 
 			loadInstance(pDecompositioNode, sdaiRelatedObjectsInstance);
 		}
@@ -289,7 +289,7 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInst
 	SdaiInteger iContainsElementsInstancesCount = sdaiGetMemberCount(sdaiContainsElementsAggr);
 	for (SdaiInteger i = 0; i < iContainsElementsInstancesCount; ++i) {
 		SdaiInstance sdaiContainsElementsInstance = 0;
-		engiGetAggrElement(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
+		sdaiGetAggrByIndex(sdaiContainsElementsAggr, i, sdaiINSTANCE, &sdaiContainsElementsInstance);
 
 		if (sdaiGetInstanceType(sdaiContainsElementsInstance) != sdaiRelContainedInSpatialStructureEntity) {
 			continue;
@@ -304,7 +304,7 @@ void _ifc_model_structure::loadContainsElements(_ifc_node* pParentNode, SdaiInst
 		SdaiInteger iIFCRelatedElementsInstancesCount = sdaiGetMemberCount(sdaiRelatedElementsInstances);
 		for (SdaiInteger j = 0; j < iIFCRelatedElementsInstancesCount; ++j) {
 			SdaiInstance sdaiRelatedElementsInstance = 0;
-			engiGetAggrElement(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
+			sdaiGetAggrByIndex(sdaiRelatedElementsInstances, j, sdaiINSTANCE, &sdaiRelatedElementsInstance);
 
 			loadInstance(pContainsNode, sdaiRelatedElementsInstance);
 		}
@@ -326,7 +326,7 @@ void _ifc_model_structure::loadBoundedBy(_ifc_node* pParentNode, SdaiInstance sd
 	SdaiInteger iBoundedByInstancesCount = sdaiGetMemberCount(sdaiBoundedByAggr);
 	for (SdaiInteger i = 0; i < iBoundedByInstancesCount; ++i) {
 		SdaiInstance sdaiBoundedByInstance = 0;
-		engiGetAggrElement(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
+		sdaiGetAggrByIndex(sdaiBoundedByAggr, i, sdaiINSTANCE, &sdaiBoundedByInstance);
 
 		if (sdaiGetInstanceType(sdaiBoundedByInstance) != sdaiRelSpaceBoundaryEntity) {
 			continue;
@@ -350,7 +350,7 @@ void _ifc_model_structure::loadHasOpenings(_ifc_node* pParentNode, SdaiInstance 
 	SdaiInteger iHasOpeningsInstancesCount = sdaiGetMemberCount(sdaiHasOpeningsAggr);
 	for (SdaiInteger i = 0; i < iHasOpeningsInstancesCount; ++i) {
 		SdaiInstance sdaiHasOpeningsInstance = 0;
-		engiGetAggrElement(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
+		sdaiGetAggrByIndex(sdaiHasOpeningsAggr, i, sdaiINSTANCE, &sdaiHasOpeningsInstance);
 		assert(sdaiHasOpeningsInstance != 0);
 
 		SdaiInstance sdaiRelatedOpeningElementInstance = 0;

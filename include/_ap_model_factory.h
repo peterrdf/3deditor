@@ -2,6 +2,7 @@
 
 #include "_log.h"
 #include "_mvc.h"
+#include "_ap_mvc.h"
 #include "_ifc_model.h"
 #include "_ap242_model.h"
 #ifdef _CIS2_EXPERIMENTAL
@@ -78,7 +79,7 @@ private: // Methods
 
 public: // Methods
 
-	static _ap_model* load(_log* pLog, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
+	static _ap_model* load(_ap_controller* pController, const wchar_t* szModel, bool bMultipleModels, _model* pWorld, bool bLoadInstancesOnDemand)
 	{
 		fs::path pathModel = szModel;
 		string strExtension = pathModel.extension().string();
@@ -142,7 +143,8 @@ public: // Methods
 		* IFC
 		*/
 		if (schemaName.find(L"IFC") == 0) {
-			pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
+			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
 #ifdef _CIS2_EXPERIMENTAL
@@ -151,7 +153,8 @@ public: // Methods
 		*/
 		else if (schemaName.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
 
-			pModel = new CCIS2Model(pLog);
+			pModel = new CCIS2Model(pController->getLog());
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 #endif // _CIS2_EXPERIMENTAL
 
@@ -159,14 +162,16 @@ public: // Methods
 		* STEP
 		*/
 		else if (sdaiModel) {
-			pModel = new _ap242_model(pLog, true, bLoadInstancesOnDemand);
+			pModel = new _ap242_model(pController->getLog(), true, bLoadInstancesOnDemand);
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
 		/*
 		** Generic model
 		*/
 		else {
-			pModel = new _ifc_model(pLog, bMultipleModels, bLoadInstancesOnDemand);
+			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
 		//
@@ -206,13 +211,14 @@ public: // Methods
 		return pModel;
 	}
 
-	static vector<_model*> loadIFCZIP(_log* pLog, const wchar_t* szIFCZIP)
+	static vector<_model*> loadIFCZIP(_ap_controller* pController, const wchar_t* szIFCZIP)
 	{
 		vector<_model*> vecModels;
 
 		auto vecSdaiModels = openIFCZip(szIFCZIP);
 		for (auto prSdaiModel : vecSdaiModels) {
-			auto pModel = new _ifc_model(pLog, vecSdaiModels.size() > 1, false);
+			auto pModel = new _ifc_model(pController->getLog(), vecSdaiModels.size() > 1, false);
+			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 			pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
 
 			vecModels.push_back(pModel);
@@ -221,7 +227,7 @@ public: // Methods
 		return vecModels;
 	}
 
-	static vector<_model*> loadSTEPGZip(_log* pLog, const wchar_t* szIFCZIP)
+	static vector<_model*> loadSTEPGZip(_ap_controller* pController, const wchar_t* szIFCZIP)
 	{
 		vector<_model*> vecModels;
 
@@ -230,7 +236,8 @@ public: // Methods
 			return vecModels;
 		}
 
-		auto pModel = new _ap242_model(pLog, true, false);
+		auto pModel = new _ap242_model(pController->getLog(), true, false);
+		pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
 		vecModels.push_back(pModel);
 

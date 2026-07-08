@@ -16,7 +16,7 @@ private: // Members
 
 public: // Methods
 
-    _ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries);
+    _ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, const vector<_ifc_geometry*>& vecMappedGeometries, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
     virtual ~_ifc_geometry();
 
 protected: // Methods

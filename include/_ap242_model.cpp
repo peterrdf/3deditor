@@ -13,6 +13,11 @@ _ap242_model::_ap242_model(_log* pLog, bool bLoadProductRepresentationItems, boo
 	, m_bLoadInstancesOnDemand(bLoadInstancesOnDemand)
 	, m_pModelStructure(nullptr)
 	, m_pPropertyProvider(nullptr)
+	, m_mapRepresentationItemsPendingLoad()
+	, m_mapAnnotationPlanesPendingLoad()
+	, m_mapDraughtingCalloutsPendingLoad()
+	, m_mtxGeometriesPendingLoad()
+	, m_mtxUpdateModel()
 	, m_mapExpressID2Assembly()
 	, m_vecDraughtingModels()
 {}
@@ -51,7 +56,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		preLoadInstance(owlInstance);
 	}
 
-	auto pGeometry = new _ap242_geometry(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_geometry(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
 
 	auto pInstance = new _ap242_instance(
@@ -83,6 +88,10 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 	}
 	m_mapExpressID2Assembly.clear();
 
+	m_mapRepresentationItemsPendingLoad.clear();
+	m_mapAnnotationPlanesPendingLoad.clear();
+	m_mapDraughtingCalloutsPendingLoad.clear();
+
 	for (auto pDraughtingModel : m_vecDraughtingModels) {
 		delete pDraughtingModel;
 	}
@@ -92,11 +101,185 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 /*virtual*/ void _ap242_model::attachModelCore() /*override*/
 {
 	if (!m_bLoadInstancesOnDemand) {
-		loadProductDefinitions();
-		loadAssemblies();
-		loadGeometry();
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+		loadProductDefinitions();
 		loadDraughtingModels();
+
+		if (getMultiThreadedLoad()) {
+			unsigned int threadsCount = thread::hardware_concurrency() / 4;
+			InitializeMultiThreading(getSdaiModel(), threadsCount);
+
+			double arOffset[3] = { 0., 0., 0. };
+			GetVertexBufferOffset(getOwlModel(), arOffset);
+
+			vector<OwlModel> vecOwlModels;
+			vector<MultiThreadOwlModelWrapper> vecMultiThreadOwlModelWrappers;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecOwlModels.push_back(CreateModel());
+				SetVertexBufferOffset(vecOwlModels.back(), arOffset);
+
+				vecMultiThreadOwlModelWrappers.push_back(CreateOwlModelMultiThreadingWrapper(vecOwlModels.back(), i));
+			}
+
+			// Load geometries
+			vector<thread> vecThreads;
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						AP242_REPRESENTATION_ITEM representationItem;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+
+							if (m_mapRepresentationItemsPendingLoad.empty()) {
+								return;
+							}
+
+							auto itRepresentationItem = m_mapRepresentationItemsPendingLoad.begin();
+							representationItem = itRepresentationItem->second;
+							m_mapRepresentationItemsPendingLoad.erase(itRepresentationItem);
+						}
+						
+						OwlInstance owlInstance = owlBuildInstanceInContextMT(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance, vecMultiThreadOwlModelWrappers[i]);
+						if (owlInstance) {
+							auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(
+								representationItem.pProductShapeRepresentation, 
+								owlInstance, 
+								representationItem.sdaiRepresentationItemInstance, 
+								vecMultiThreadOwlModelWrappers[i]);
+							{
+								lock_guard<mutex> lock(m_mtxUpdateModel);
+								
+								addGeometry(pProductShapeRepresentationItem);
+								representationItem.pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+							}
+						}
+					}
+					});
+			}
+
+			// Wait for threads to end
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap242_product_shape_representation_item> ptrProductShapeRepresentationItem(pGeometry, false);
+				if (ptrProductShapeRepresentationItem) {
+					ptrProductShapeRepresentationItem->loadDisplayString();
+				}
+			}			
+
+			// Load Annotation Planes
+			vecThreads.clear();
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						AP242_ANNOTATION_PLANE annotationPlane;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+
+							if (m_mapAnnotationPlanesPendingLoad.empty()) {
+								return;
+							}
+
+							auto itAnnotationPlane = m_mapAnnotationPlanesPendingLoad.begin();
+							annotationPlane = itAnnotationPlane->second;
+							m_mapAnnotationPlanesPendingLoad.erase(itAnnotationPlane);
+						}
+
+						OwlInstance owlInstance = _ap_geometry::buildOwlInstance(annotationPlane.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+						auto pGeometry = new _ap242_annotation_plane(owlInstance, annotationPlane.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+
+						{
+							lock_guard<mutex> lock(m_mtxUpdateModel);
+
+							addGeometry(pGeometry);
+							annotationPlane.pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
+
+							auto pInstance = new _ap242_instance(
+								_model::getNextInstanceID(),
+								pGeometry,
+								nullptr);
+							addInstance(pInstance);							
+						}
+					}
+					});
+			}
+
+			// Wait for threads to end
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap242_annotation_plane> ptrAnnotationPlane(pGeometry, false);
+				if (ptrAnnotationPlane) {
+					ptrAnnotationPlane->loadDisplayString();
+				}
+			}
+
+			// Load Draughting Callouts
+			vecThreads.clear();
+			for (unsigned int i = 0; i < threadsCount; i++) {
+				vecThreads.emplace_back([this, i, &vecMultiThreadOwlModelWrappers]() {
+					while (true) {
+						AP242_DRAUGHTING_CALLOUT draughtingCallout;
+						{
+							lock_guard<mutex> lock(m_mtxGeometriesPendingLoad);
+
+							if (m_mapDraughtingCalloutsPendingLoad.empty()) {
+								return;
+							}
+							auto itDraughtingCallout = m_mapDraughtingCalloutsPendingLoad.begin();
+							draughtingCallout = itDraughtingCallout->second;
+							m_mapDraughtingCalloutsPendingLoad.erase(itDraughtingCallout);
+						}
+
+						OwlInstance owlInstance = _ap_geometry::buildOwlInstance(draughtingCallout.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+						auto pGeometry = new _ap242_draughting_callout(owlInstance, draughtingCallout.sdaiInstance, vecMultiThreadOwlModelWrappers[i]);
+
+						{
+							lock_guard<mutex> lock(m_mtxUpdateModel);
+
+							addGeometry(pGeometry);
+							draughtingCallout.pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
+
+							auto pInstance = new _ap242_instance(
+								_model::getNextInstanceID(),
+								pGeometry,
+								nullptr);
+							addInstance(pInstance);							
+						}
+					}
+					});
+			}
+
+			// Wait for threads to end
+			for (auto& thread : vecThreads) {
+				thread.join();
+			}
+
+			// Display names
+			for (auto pGeometry : getGeometries()) {
+				_ptr<_ap242_draughting_callout> ptrDraughtingCallout(pGeometry, false);
+				if (ptrDraughtingCallout) {
+					ptrDraughtingCallout->loadDisplayString();
+				}
+			}
+
+			for (auto& owlModel : vecOwlModels) {
+				CloseModel(owlModel);
+			}
+		}
+
+		loadAssemblies();
+		loadGeometry();		
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 
 		scale();
 	}
@@ -153,7 +336,7 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 	assert(sdaiProductDefinitionShapeInstance != 0);
 	assert(sdaiGetInstanceType(sdaiProductDefinitionShapeInstance) == sdaiGetEntity(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE"));
 
-	auto pProductShape = new _ap242_product_shape(pProductDefinition, sdaiProductDefinitionShapeInstance);
+	auto pProductShape = new _ap242_product_shape(pProductDefinition, sdaiProductDefinitionShapeInstance, 0);
 	pProductDefinition->setProductShape(pProductShape);
 	addGeometry(pProductShape);
 
@@ -179,7 +362,7 @@ void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProduc
 			sdaiGetAttrBN(sdaiProductShapeDefinitionRepresentationInstance, "used_representation", sdaiINSTANCE, &sdaiRepresentationInstance);
 			assert(sdaiRepresentationInstance != 0);
 
-			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance);
+			auto pProductShapeRepresentation = new _ap242_product_shape_representation(pProductShape, sdaiRepresentationInstance, 0);
 			pProductShape->addProductShapeRepresentation(pProductShapeRepresentation);
 			addGeometry(pProductShapeRepresentation);
 
@@ -205,7 +388,7 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 	assert(sdaiRepresentationInstance != 0);
 
 	bool bAdded = false;
-	
+
 	SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
 	SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
 	if (shapeRepresentationRelationshipInstancesCnt) {
@@ -231,7 +414,7 @@ void _ap242_model::loadShapeRepresentationItems(_ap242_product_shape_representat
 			}
 		}
 	}
-	
+
 	if (!bAdded) {
 		loadRepresentationItems(pProductShapeRepresentation, sdaiRepresentationInstance);
 	}
@@ -251,14 +434,21 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 		sdaiGetAggrByIndex(sdaiRepresentationItemsAggr, index, sdaiINSTANCE, &sdaiRepresentationItemInstance);
 		assert(sdaiRepresentationItemInstance);
 
-		OwlInstance owlInstance = 0;
-		owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
-		if (owlInstance) {
+		if (getMultiThreadedLoad()) {
+			if (m_mapRepresentationItemsPendingLoad.find(sdaiRepresentationItemInstance) == m_mapRepresentationItemsPendingLoad.end()) {
+				m_mapRepresentationItemsPendingLoad[sdaiRepresentationItemInstance] = { pProductShapeRepresentation, sdaiRepresentationInstance, sdaiRepresentationItemInstance };
+			}
+		}
+		else {
 			if (!getGeometryByInstance(sdaiRepresentationItemInstance)) {
-				auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance);
-				addGeometry(pProductShapeRepresentationItem);
+				OwlInstance owlInstance = 0;
+				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
+				if (owlInstance) {
+					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
+					addGeometry(pProductShapeRepresentationItem);
 
-				pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+					pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
+				}
 			}
 		}
 	}
@@ -270,7 +460,7 @@ _ap242_product_definition* _ap242_model::loadProductDefinition(SdaiInstance sdai
 	if (!m_bLoadProductRepresentationItems) {
 		owlInstance = _ap_geometry::buildOwlInstance(sdaiProductDefinitionInstance);
 	}
-	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance);
+	auto pGeometry = new _ap242_product_definition(owlInstance, sdaiProductDefinitionInstance, 0);
 	addGeometry(pGeometry);
 
 	return pGeometry;
@@ -294,16 +484,17 @@ _ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance sdaiP
 		return apProductDefinition;
 	} // if (pGeometry != nullptr)
 
-	auto pDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
+	auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
+	
 	if (bRelatingProduct) {
-		pDefinition->m_iRelatingProducts++;
+		pProductDefinition->m_iRelatingProducts++;
 	}
 
 	if (bRelatedProduct) {
-		pDefinition->m_iRelatedProducts++;
+		pProductDefinition->m_iRelatedProducts++;
 	}
 
-	return pDefinition;
+	return pProductDefinition;
 }
 
 void _ap242_model::loadAssemblies()
@@ -354,8 +545,7 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 		auto pAssembly = itExpressID2Assembly->second;
 
 		if (pAssembly->getRelatingProductDefinition() == pProductDefinition) {
-			int64_t	owlInstanceMatrix = 0;
-			owlBuildInstance(getSdaiModel(), internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->getExpressID()), &owlInstanceMatrix);
+			int64_t	owlInstanceMatrix = owlBuildInstanceMT(internalGetInstanceFromP21Line(getSdaiModel(), pAssembly->getExpressID()));
 
 			if (owlInstanceMatrix && GetInstanceClass(owlInstanceMatrix) == GetClassByName(::GetModel(owlInstanceMatrix), "Transformation")) {
 				owlInstanceMatrix = _model::getInstanceObjectProperty(owlInstanceMatrix, "matrix");
@@ -398,7 +588,7 @@ void _ap242_model::walkAssemblyTreeRecursively(_ap242_product_definition* pProdu
 		pParentMatrix));
 
 	// Create instances for product shape representation items
-	if (m_bLoadProductRepresentationItems) {
+	if (m_bLoadProductRepresentationItems && (pProductDefinition->getProductShape() != nullptr)) {
 		for (auto pProductShapeRepresentation : pProductDefinition->getProductShape()->getProductShapeRepresentations()) {
 			for (auto pRepresentationItem : pProductShapeRepresentation->getRepresentationItems()) {
 				addInstance(new _ap242_product_shape_representation_item_instance(
@@ -438,29 +628,38 @@ void _ap242_model::loadDraughtingModels()
 			if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "ANNOTATION_PLANE")) {
 				auto pGeometry = getGeometryByInstance(sdaiItemInstance);
 				if (pGeometry == nullptr) {
-					pDraughtingModel->m_vecAnnotationPlanes.push_back(loadAnnotationPlane(sdaiItemInstance));
+					loadAnnotationPlane(pDraughtingModel, sdaiItemInstance);
 				}
 			}
 			else if (sdaiGetInstanceType(sdaiItemInstance) == sdaiGetEntity(getSdaiModel(), "DRAUGHTING_CALLOUT")) {
 				auto pGeometry = getGeometryByInstance(sdaiItemInstance);
 				if (pGeometry == nullptr) {
-					pDraughtingModel->m_vecDraughtingCallouts.push_back(loadDraughtingCallout(sdaiItemInstance));
+					loadDraughtingCallout(pDraughtingModel, sdaiItemInstance);
 				}
 			}
 		}
 	} // for (SdaiInteger i = ...
 }
 
-_ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInstance)
+_ap242_annotation_plane* _ap242_model::loadAnnotationPlane(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance)
 {
+	assert(pDraughtingModel != nullptr);
 	assert(sdaiInstance != 0);
+
+	if (getMultiThreadedLoad()) {
+		if (m_mapAnnotationPlanesPendingLoad.find(sdaiInstance) == m_mapAnnotationPlanesPendingLoad.end()) {
+			m_mapAnnotationPlanesPendingLoad[sdaiInstance] = { pDraughtingModel, sdaiInstance };
+		}
+		return nullptr;
+	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
-	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_annotation_plane(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
+	pDraughtingModel->m_vecAnnotationPlanes.push_back(pGeometry);
 
-	auto pInstance = new _ap_instance(
+	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);
@@ -469,16 +668,25 @@ _ap242_annotation_plane* _ap242_model::loadAnnotationPlane(SdaiInstance sdaiInst
 	return pGeometry;
 }
 
-_ap242_draughting_callout* _ap242_model::loadDraughtingCallout(SdaiInstance sdaiInstance)
+_ap242_draughting_callout* _ap242_model::loadDraughtingCallout(_ap242_draughting_model* pDraughtingModel, SdaiInstance sdaiInstance)
 {
+	assert(pDraughtingModel != nullptr);
 	assert(sdaiInstance != 0);
+
+	if (getMultiThreadedLoad()) {
+		if (m_mapDraughtingCalloutsPendingLoad.find(sdaiInstance) == m_mapDraughtingCalloutsPendingLoad.end()) {
+			m_mapDraughtingCalloutsPendingLoad[sdaiInstance] = { pDraughtingModel, sdaiInstance };
+		}
+		return nullptr;
+	}
 
 	OwlInstance owlInstance = _ap_geometry::buildOwlInstance(sdaiInstance);
 
-	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance);
+	auto pGeometry = new _ap242_draughting_callout(owlInstance, sdaiInstance, 0);
 	addGeometry(pGeometry);
+	pDraughtingModel->m_vecDraughtingCallouts.push_back(pGeometry);
 
-	auto pInstance = new _ap_instance(
+	auto pInstance = new _ap242_instance(
 		_model::getNextInstanceID(),
 		pGeometry,
 		nullptr);

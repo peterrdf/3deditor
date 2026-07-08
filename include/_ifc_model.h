@@ -4,6 +4,8 @@
 #include "_ifc_unit.h"
 #include "_ifc_property.h"
 
+#include <mutex>
+#include <thread>
 #include <string>
 #include <map>
 #include <set>
@@ -63,6 +65,15 @@ class _ifc_model_structure;
 class _ifc_model : public _ap_model
 {
 
+private: // Classes
+
+    struct IFC_GEOMETRY
+    {
+		SdaiInstance sdaiInstance = 0;
+		SdaiInteger iCircleSegments = 0;
+        bool bMappedItem = false;
+	};
+
 private: // Fields
 
     // Load
@@ -88,6 +99,12 @@ private: // Fields
     _ifc_unit_provider* m_pUnitProvider;
     _ifc_property_provider* m_pPropertyProvider;
 
+    map<SdaiInstance, IFC_GEOMETRY> m_mapGeometriesPendingLoad;
+    map<SdaiInstance, IFC_GEOMETRY> m_mapMappedGeometriesPendingLoad;
+    mutex m_mtxGeometriesPendingLoad;
+    mutex m_mtxUpdateModel;
+
+    vector< STRUCT_IFC_PRODUCT*> m_vecIfcProducts;
     vector<pair<_instance*, STRUCT_MAPPED_ITEM*>> m_vecMappedItemPendingUpdate;
 
 public: // Methods
@@ -110,7 +127,7 @@ protected: // Methods
 
 protected: // Methods
 
-    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+    virtual _ifc_geometry* createGeometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper = 0);
     virtual _ifc_instance* createInstance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* pTransformationMatrix);
 
 private: // Methods
@@ -127,7 +144,8 @@ private: // Methods
 
     void retrieveGeometryRecursively(SdaiEntity sdaiParentEntity, SdaiInteger iCircleSegments);
     void retrieveGeometry(const char* szEntityName, SdaiInteger iCircleSegements);
-    _geometry* loadGeometry(const char* szEntityName, SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+    _geometry* loadGeometry(SdaiInstance sdaiInstance, bool bMappedItem, SdaiInteger iCircleSegments);
+    _geometry* loadGeometry(const IFC_GEOMETRY& ifcGeometry, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
 
     STRUCT_IFC_PRODUCT* recognizeMappedItems(SdaiInstance ifcProductInstance);
     void parseMappedItem(SdaiInstance ifcMappedItemInstance, std::vector<STRUCT_INTERNAL*>* pVectorMappedItemData);

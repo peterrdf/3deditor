@@ -33,6 +33,7 @@ private: // Members
     // Model
     SdaiModel m_sdaiModel;
     enumAP m_enAP;
+    bool m_bMultiThreadedLoad;
 
     // Helpers
     _entity_provider* m_pEntityProvider;
@@ -75,6 +76,10 @@ public: // Properties
     SdaiModel getSdaiModel() const { return m_sdaiModel; }
     enumAP getAP() const { return m_enAP; }
 
+	// Multi-threaded load
+	void setMultiThreadedLoad(bool bMultiThreadedLoad) { m_bMultiThreadedLoad = bMultiThreadedLoad; }
+	bool getMultiThreadedLoad() const { return m_bMultiThreadedLoad; }
+
     // Cache	
     const map<ExpressID, _geometry*>& getExpressID2Geometry() const { return m_mapExpressID2Geometry; }
 
@@ -109,11 +114,15 @@ class _ap_controller : public _controller
 private: // Members
 
     bool m_bFullDisplayName;
+	bool m_bMultiThreadedLoad;
 
 public: // Methods
 
     _ap_controller();
     virtual ~_ap_controller();
+
+	// _controller
+    virtual string getSettingsNamespace() const override;
 
     // Events
     void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
@@ -128,4 +137,6 @@ public: // Properties
 
     void setFullDisplayName(bool bFullDisplayName);
 	bool getFullDisplayName() const { return m_bFullDisplayName; }
+    void setMultiThreadedLoad(bool bMultiThreadedLoad);
+	bool getMultiThreadedLoad() const { return m_bMultiThreadedLoad; }
 };

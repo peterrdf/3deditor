@@ -36,8 +36,8 @@ void _ap242_draughting_model::enableInstances(bool bEnable)
 }
 
 // ************************************************************************************************
-_ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap242_geometry(owlInstance, sdaiInstance)
+_ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 {
 }
 
@@ -45,8 +45,8 @@ _ap242_annotation_plane::_ap242_annotation_plane(OwlInstance owlInstance, SdaiIn
 {}
 
 // ************************************************************************************************
-_ap242_draughting_callout::_ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap242_geometry(owlInstance, sdaiInstance)
+_ap242_draughting_callout::_ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap242_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 {
 }
 

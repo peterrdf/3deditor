@@ -47,7 +47,7 @@ class _ap242_annotation_plane : public _ap242_geometry
 
 public: // Methods
 
-    _ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+    _ap242_annotation_plane(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
     virtual ~_ap242_annotation_plane();
 };
 
@@ -57,6 +57,6 @@ class _ap242_draughting_callout : public _ap242_geometry
 
 public: // Methods
 
-    _ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance);
+    _ap242_draughting_callout(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper);
     virtual ~_ap242_draughting_callout();
 };

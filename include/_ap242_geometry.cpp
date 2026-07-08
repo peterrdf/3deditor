@@ -2,8 +2,8 @@
 #include "_ap242_geometry.h"
 
 // ************************************************************************************************
-_ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance)
-    : _ap_geometry(owlInstance, sdaiInstance)
+_ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
+    : _ap_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
 {
     calculate();
 }
@@ -17,10 +17,22 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
     setAPFormatSettings();
 
     // Extra settings
-    setSegmentation(getSdaiModel(), 16, 0.);
+    if (getMultiThreadOwlModelWrapper() != 0) {
+        setSegmentation(getMultiThreadOwlModelWrapper(), 16, 0.);
+    }
+    else {
+        setSegmentation(getSdaiModel(), 16, 0.);
+    }
 }
 
 /*virtual*/ void _ap242_geometry::postCalculate() /*override*/
 {
-    cleanCachedGeometry();
+    _geometry::cleanCachedGeometry();
+
+    if (getMultiThreadOwlModelWrapper() != 0) {
+        cleanMemory(getMultiThreadOwlModelWrapper(), 1);
+    }
+    else {
+        cleanMemory(getSdaiModel(), 1);
+    }
 }
