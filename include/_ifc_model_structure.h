@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using namespace std;
 
 // ************************************************************************************************
 #define DECOMPOSITION_NODE	L"decomposition"
@@ -20,7 +19,7 @@ private: // Members
 
 	SdaiInstance m_sdaiInstance;
 	_ifc_node* m_pParent;
-	vector<_ifc_node*> m_vecChildren;
+	std::vector<_ifc_node*> m_vecChildren;
 
 public: // Methods
 
@@ -32,7 +31,7 @@ public: // Properties
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	_ifc_node* getParent() const { return m_pParent; }
 	virtual const wchar_t* getGlobalId() const;
-	vector<_ifc_node*>& children() { return m_vecChildren; }
+	std::vector<_ifc_node*>& children() { return m_vecChildren; }
 };
 
 // ************************************************************************************************
@@ -70,7 +69,7 @@ private: // Members
 
 	_ifc_model* m_pModel;
 	_ifc_node* m_pProjectNode;
-	map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
+	std::map<SdaiInstance, _ifc_node*> m_mapInstance2Node;
 
 public: // Methods
 
@@ -83,8 +82,8 @@ public: // Methods
 	void print(int iLevel = 0, _ifc_node* pNode = nullptr);
 #endif
 
-	void getInstancePath(SdaiInstance sdaiInstance, vector<_ifc_node*>& vecPath);
-	void getInstanceChildren(SdaiInstance sdaiInstance, vector<SdaiInstance>& vecChildren, bool bRecursive);
+	void getInstancePath(SdaiInstance sdaiInstance, std::vector<_ifc_node*>& vecPath);
+	void getInstanceChildren(SdaiInstance sdaiInstance, std::vector<SdaiInstance>& vecChildren, bool bRecursive);
 	bool hasChild(_ifc_node* pParentNode, SdaiInstance sdaiInstance);
 
 protected: // Methods
@@ -102,5 +101,5 @@ public: // Properties
 
 	_ifc_model* getModel() const { return m_pModel; }
 	_ifc_node* getProjectNode() const { return m_pProjectNode; }
-	const map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
+	const std::map<SdaiInstance, _ifc_node*>& getInstance2Node() const { return m_mapInstance2Node; }
 };

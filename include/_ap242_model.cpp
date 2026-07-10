@@ -101,8 +101,9 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 /*virtual*/ void _ap242_model::attachModelCore() /*override*/
 {
 	if (!m_bLoadInstancesOnDemand) {
+#ifdef _WINDOWS
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
+#endif
 		loadProductDefinitions();
 		loadDraughtingModels();
 
@@ -278,9 +279,10 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		loadAssemblies();
 		loadGeometry();		
 
+#ifdef _WINDOWS
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
-
+#endif
 		scale();
 	}
 }

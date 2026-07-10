@@ -6,7 +6,7 @@
 #include "_oglScene.h"
 
 #include <map>
-using namespace std;
+#include <vector>
 
 // ************************************************************************************************
 class _rdf_controller;
@@ -21,10 +21,10 @@ private: // Fields
 
 	OwlModel m_owlModel;
 	bool m_bExternalModel;
-	map<OwlInstance, _rdf_instance*> m_mapInstances;
-	map<OwlClass, _rdf_class*> m_mapClasses;
-	map<RdfProperty, _rdf_property*> m_mapProperties;
-	map<OwlInstance, bool> m_mapInstanceDefaultState;
+	std::map<OwlInstance, _rdf_instance*> m_mapInstances;
+	std::map<OwlClass, _rdf_class*> m_mapClasses;
+	std::map<RdfProperty, _rdf_property*> m_mapProperties;
+	std::map<OwlInstance, bool> m_mapInstanceDefaultState;
 
 public:  // Methods
 
@@ -65,8 +65,8 @@ public:  // Methods
 
 	_rdf_instance* getInstanceByOwlInstance(OwlInstance owlInstance);
 
-	void getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, vector<OwlInstance>& vecCompatibleInstances) const;
-	void getClassAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestors) const;
+	void getCompatibleInstances(_rdf_instance* pInstance, _rdf_property* pProperty, std::vector<OwlInstance>& vecCompatibleInstances) const;
+	void getClassAncestors(OwlClass owlClass, std::vector<OwlClass>& vecAncestors) const;
 
 	_rdf_instance* createInstance(OwlClass owlClass);
 	bool deleteInstance(_rdf_instance* pInstance);
@@ -95,8 +95,8 @@ public:  // Methods
 
 public: // Properties
 
-	const map<OwlClass, _rdf_class*>& getClasses() const { return m_mapClasses; }
-	const map<RdfProperty, _rdf_property*>& getProperties() const { return m_mapProperties; }
+	const std::map<OwlClass, _rdf_class*>& getClasses() const { return m_mapClasses; }
+	const std::map<RdfProperty, _rdf_property*>& getProperties() const { return m_mapProperties; }
 };
 
 // ************************************************************************************************
@@ -153,7 +153,7 @@ public: // Methods
 	virtual ~_rdf_controller();
 
 	// _controller
-	virtual void selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd = false) override;
+	virtual void selectInstances(_view* pSender, const std::vector<_instance*>& vecInstance, bool bAdd = false) override;
 
 protected: // Methods
 
@@ -173,7 +173,7 @@ public: // Methods
 	bool deleteInstance(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstanceTree(_view* pSender, _rdf_instance* pInstance);
 	bool deleteInstanceTreeRecursive(_view* pSender, _rdf_instance* pInstance);
-	bool deleteInstances(_view* pSender, const vector<_rdf_instance*>& vecInstances);
+	bool deleteInstances(_view* pSender, const std::vector<_rdf_instance*>& vecInstances);
 	void onMeasurementsAdded(_view* pSender, _rdf_instance* pInstance);
 	void onInstancePropertyEdited(_view* pSender, _rdf_instance* pInstance, _rdf_property* pProperty);
 	virtual void onInteractiveEditStart(_view* pSender);

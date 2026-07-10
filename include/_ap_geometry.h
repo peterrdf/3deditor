@@ -3,6 +3,7 @@
 #include "ifcengine.h"
 
 #include "_geometry.h"
+#include "_string.h"
 
 #include <algorithm>
 

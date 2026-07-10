@@ -5,7 +5,7 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+#include <map>
 
 // ************************************************************************************************
 typedef _vector_sequential_iterator<_instance> _instance_iterator;
@@ -33,13 +33,13 @@ private: // Members
 	_ap242_node_type m_type;
 	SdaiInstance m_sdaiInstance;
 	int64_t m_iId;
-	string m_strId;
+	std::string m_strId;
 	_ap242_node* m_pParent;
-	vector<_ap242_node*> m_vecChildren;
+	std::vector<_ap242_node*> m_vecChildren;
 
 public: // Methods
 
-	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const string& strId, _ap242_node* pParentNode);
+	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, const std::string& strId, _ap242_node* pParentNode);
 	virtual ~_ap242_node();
 
 public: // Properties
@@ -47,9 +47,9 @@ public: // Properties
 	_ap242_node_type getType() const { return m_type; }
 	SdaiInstance getSdaiInstance() const { return m_sdaiInstance; }
 	int64_t& id() { return m_iId; }
-	const string& getId() const { return m_strId; }
+	const std::string& getId() const { return m_strId; }
 	_ap242_node* getParent() const { return m_pParent; }
-	vector<_ap242_node*>& children() { return m_vecChildren; }
+	std::vector<_ap242_node*>& children() { return m_vecChildren; }
 };
 
 // ************************************************************************************************
@@ -59,10 +59,10 @@ class _ap242_model_structure
 private: // Members
 
 	_ap242_model* m_pModel;
-	vector<_ap242_node*> m_vecRootProducts;
+	std::vector<_ap242_node*> m_vecRootProducts;
 
 	// Cache	
-	map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
+	std::map<_ap242_geometry*, _instance_iterator*> m_mapInstanceIterators;
 
 public: // Methods
 
@@ -87,6 +87,6 @@ protected: // Methods
 public: // Properties
 
 	_ap242_model* getModel() const { return m_pModel; }
-	const vector<_ap242_node*>& getRootProducts() { return m_vecRootProducts; }
+	const std::vector<_ap242_node*>& getRootProducts() { return m_vecRootProducts; }
 };
 

@@ -4,7 +4,7 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+#include <map>
 
 // ************************************************************************************************
 class _ap242_annotation_plane;
@@ -18,11 +18,11 @@ class _ap242_draughting_model
 private: // Members
 
     SdaiInstance m_sdaiInstance;
-    wstring m_strName;
+    std::wstring m_strName;
 
     // Representation
-    vector<_ap242_annotation_plane*> m_vecAnnotationPlanes;
-    vector<_ap242_draughting_callout*> m_vecDraughtingCallouts;
+    std::vector<_ap242_annotation_plane*> m_vecAnnotationPlanes;
+    std::vector<_ap242_draughting_callout*> m_vecDraughtingCallouts;
 
 public: // Methods
 
@@ -37,8 +37,8 @@ public: // Properties
     ExpressID getExpressID() const { return internalGetP21Line(m_sdaiInstance); }
     const wchar_t* getName() const { return m_strName.c_str(); }
 
-    const vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
-    const vector<_ap242_draughting_callout*> getDraughtingCallouts() const { return m_vecDraughtingCallouts; }
+    const std::vector<_ap242_annotation_plane*>& getAnnotationPlanes() const { return m_vecAnnotationPlanes; }
+    const std::vector<_ap242_draughting_callout*>& getDraughtingCallouts() const { return m_vecDraughtingCallouts; }
 };
 
 // ************************************************************************************************

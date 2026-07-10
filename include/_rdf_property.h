@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using namespace std;
 
 // ************************************************************************************************
 class _rdf_property
@@ -21,22 +20,22 @@ public: // Methods
     _rdf_property(RdfProperty rdfProperty);
     virtual ~_rdf_property();
 
-    wstring getRangeAsString() const { return getRangeAsString(getRdfProperty()); }
-    static wstring getRangeAsString(RdfProperty rdfProperty);
-    wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
-    static wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
+    std::wstring getRangeAsString() const { return getRangeAsString(getRdfProperty()); }
+    static std::wstring getRangeAsString(RdfProperty rdfProperty);
+    std::wstring getCardinality(OwlInstance owlInstance) const { return getCardinality(owlInstance, getRdfProperty()); }
+    static std::wstring getCardinality(OwlInstance owlInstance, RdfProperty rdfProperty);
     void getCardinalityRestriction(OwlInstance owlInstance, int64_t& iMinCard, int64_t& iMaxCard) const { return getCardinalityRestriction(owlInstance, getRdfProperty(), iMinCard, iMaxCard); }
     static void getCardinalityRestriction(OwlInstance owlInstance, RdfProperty rdfProperty, int64_t& iMinCard, int64_t& iMaxCard);
-    void getRangeRestrictions(vector<OwlClass>& vecRestrictionClasses) const { getRangeRestrictions(getRdfProperty(), vecRestrictionClasses); };
-    static void getRangeRestrictions(RdfProperty rdfProperty, vector<OwlClass>& vecRestrictionClasses);
+    void getRangeRestrictions(std::vector<OwlClass>& vecRestrictionClasses) const { getRangeRestrictions(getRdfProperty(), vecRestrictionClasses); };
+    static void getRangeRestrictions(RdfProperty rdfProperty, std::vector<OwlClass>& vecRestrictionClasses);
 
 public: // Properties
 
     RdfProperty getRdfProperty() const { return m_rdfProperty; }
     RdfPropertyType getType() const { return getType(m_rdfProperty); }
     static RdfPropertyType getType(RdfProperty rdfProperty) { return GetPropertyType(rdfProperty); }
-    wstring getTypeAsString() { return getTypeAsString(getType()); }
-    static wstring getTypeAsString(RdfPropertyType rdfPropertyType);
+    std::wstring getTypeAsString() { return getTypeAsString(getType()); }
+    static std::wstring getTypeAsString(RdfPropertyType rdfPropertyType);
     const wchar_t* getName() const;
 };
 
@@ -46,7 +45,7 @@ class _rdf_property_collection
 
 private: // Fields
 
-    vector<_rdf_property*> m_vecProperties;
+    std::vector<_rdf_property*> m_vecProperties;
 
 public: // Methods
 
@@ -55,7 +54,7 @@ public: // Methods
 
 public: // Properties
 
-    vector<_rdf_property*>& properties() { return m_vecProperties; }
+    std::vector<_rdf_property*>& properties() { return m_vecProperties; }
 };
 
 // ************************************************************************************************
@@ -64,7 +63,7 @@ class _rdf_property_provider
 
 private: // Fields
 
-    map<OwlInstance, _rdf_property_collection*> m_mapPropertyCollections;
+    std::map<OwlInstance, _rdf_property_collection*> m_mapPropertyCollections;
 
 public: // Methods
 

@@ -4,7 +4,6 @@
 
 #include <string>
 #include <vector>
-using namespace std;
 
 // ************************************************************************************************
 class _rdf_property_restriction;
@@ -17,9 +16,9 @@ private: // Fields
 
 	OwlClass m_owlClass;
 	std::wstring m_strName;
-	vector<OwlClass> m_vecParentClasses;
-	vector<OwlClass> m_vecAncestorClasses;
-	vector<_rdf_property_restriction*> m_vecPropertyRestrictions;
+	std::vector<OwlClass> m_vecParentClasses;
+	std::vector<OwlClass> m_vecAncestorClasses;
+	std::vector<_rdf_property_restriction*> m_vecPropertyRestrictions;
 
 public: // Methods
 
@@ -28,14 +27,14 @@ public: // Methods
 
 	void addPropertyRestriction(_rdf_property_restriction* pPropertyRestriction);
 
-	static void getAncestors(OwlClass owlClass, vector<OwlClass>& vecAncestorClasses);
-	static wstring getAncestors(OwlClass owlClass);
+	static void getAncestors(OwlClass owlClass, std::vector<OwlClass>& vecAncestorClasses);
+	static std::wstring getAncestors(OwlClass owlClass);
 
 	OwlClass getOwlClass() const { return m_owlClass; }
 	const wchar_t* getName() const { return m_strName.c_str(); }
-	const vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
-	const vector<OwlClass>& getAncestorClasses() const { return m_vecAncestorClasses; }
-	const vector<_rdf_property_restriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
+	const std::vector<OwlClass>& getParentClasses() const { return m_vecParentClasses; }
+	const std::vector<OwlClass>& getAncestorClasses() const { return m_vecAncestorClasses; }
+	const std::vector<_rdf_property_restriction*>& getPropertyRestrictions() const { return m_vecPropertyRestrictions; }
 };
 
 // ************************************************************************************************

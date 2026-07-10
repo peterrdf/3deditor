@@ -118,7 +118,7 @@ public: // Methods
 				sdaiCloseModel(header);
 			}
 			else {
-				schemaName = nullptr;
+				schemaName = L"";
 			}
 		}
 
@@ -191,8 +191,9 @@ public: // Methods
 					auto schemaFilePath = dlgOpen.GetPathName();
 					sdaiModel = sdaiOpenModelBNUnicode(0, szModel, schemaFilePath);
 				}
+#endif
 			}
-#endif	
+	
 			if (sdaiModel) {
 				pModel->attachModel(szModel, sdaiModel, pWorld);
 			}
