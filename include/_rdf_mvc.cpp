@@ -454,14 +454,18 @@ void _rdf_model::getInstanceDefaultEnableStateRecursive(OwlInstance owlInstance)
 			GetObjectProperty(owlInstance, rdfProperty, &pValues, &iValuesCount);
 
 			for (int64_t iValue = 0; iValue < iValuesCount; iValue++) {
-				if ((pValues[iValue] != 0) &&
-					!m_mapInstanceDefaultState.at(pValues[iValue])) {
-					// Enable to avoid infinity recursion
-					m_mapInstanceDefaultState.at(pValues[iValue]) = true;
+				if (pValues[iValue] != 0) {
+					auto itInstanceDefaultState = m_mapInstanceDefaultState.find(pValues[iValue]);
+					if (itInstanceDefaultState != m_mapInstanceDefaultState.end()) {
+						if (!itInstanceDefaultState->second) {
+							// Enable to avoid infinity recursion
+							itInstanceDefaultState->second = true;
 
-					if (!GetInstanceGeometryClass(pValues[iValue]) ||
-						!GetBoundingBox(pValues[iValue], nullptr, nullptr)) {
-						getInstanceDefaultEnableStateRecursive(pValues[iValue]);
+							if (!GetInstanceGeometryClass(pValues[iValue]) ||
+								!GetBoundingBox(pValues[iValue], nullptr, nullptr)) {
+								getInstanceDefaultEnableStateRecursive(pValues[iValue]);
+							}
+						}
 					}
 				}
 			}
