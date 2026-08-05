@@ -98,7 +98,7 @@ class _ap242_product_shape_representation_item : public _ap242_geometry
 	friend class _ap242_model;
 
 private: // Members
-
+	
 	_ap242_product_shape_representation* m_pProductShapeRepresentation;
 
 public: // Methods

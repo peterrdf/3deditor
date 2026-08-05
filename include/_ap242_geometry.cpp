@@ -4,6 +4,7 @@
 // ************************************************************************************************
 _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance, MultiThreadOwlModelWrapper multiThreadOwlModelWrapper)
     : _ap_geometry(owlInstance, sdaiInstance, multiThreadOwlModelWrapper)
+	, m_sdaiBuildContextInstance(0)
 {
     calculate();
 }

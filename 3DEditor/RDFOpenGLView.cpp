@@ -162,7 +162,7 @@ void CRDFOpenGLView::onInteractiveEditEnd(_view* /*pSender*/)
 	_oglRenderer::_onKeyDown(nChar, nRepCnt, nFlags);
 
 	if (!m_dragFace.IsActive() && (nChar == VK_CONTROL || nChar == VK_SHIFT) && (m_iPointedFace != -1)) {
-		if (auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel())) {
+		if (auto pModel = getController()->getOwlModelByInstance(m_pPointedInstance->getOwlModel())) {
 			_ptr<_rdf_controller> rdfController(getController());
 			_ptr<_rdf_model> rdfModel(rdfController->getModel());
 
@@ -591,7 +591,7 @@ void CRDFOpenGLView::DrawNormalVectors(_model* pModel)
 
 	_instance* pSelectedInstance = nullptr;
 	if (getController()->getSelectedInstances().size() == 1) {
-		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
+		auto pSelectedInstanceModel = getController()->getOwlModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
 		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
@@ -915,7 +915,7 @@ void CRDFOpenGLView::DrawTangentVectors(_model* pModel)
 
 	_instance* pSelectedInstance = nullptr;
 	if (getController()->getSelectedInstances().size() == 1) {
-		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
+		auto pSelectedInstanceModel = getController()->getOwlModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
 		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}
@@ -1239,7 +1239,7 @@ void CRDFOpenGLView::DrawBiNormalVectors(_model* pModel)
 
 	_instance* pSelectedInstance = nullptr;
 	if (getController()->getSelectedInstances().size() == 1) {
-		auto pSelectedInstanceModel = getController()->getModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
+		auto pSelectedInstanceModel = getController()->getOwlModelByInstance(getController()->getSelectedInstances()[0]->getOwlModel());
 		if (pSelectedInstanceModel == pModel) {
 			pSelectedInstance = getController()->getSelectedInstances()[0];
 		}

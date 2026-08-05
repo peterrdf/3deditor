@@ -1591,15 +1591,11 @@ void _oglRenderer::_prepare(
 	// Znear and Zfar
 	GLdouble dCenterZ = (fZmin + fZmax) / 2.0;
 	GLdouble dCameraDistance = abs(m_fZTranslation + dCenterZ);
-	GLdouble zNear = max(0.001, min(dCameraDistance * 0.001, (fBoundingSphereDiameter / 2.0) * 0.001));
-	GLdouble zFar = dCameraDistance + fBoundingSphereDiameter;
-	if (zFar < zNear * 2.0) {
+	GLdouble dEffectiveDiameter = fmax(fBoundingSphereDiameter, 0.001);
+	GLdouble zNear = fmax(1e-6, fmin(dCameraDistance * 0.001, (dEffectiveDiameter / 2.0) * 0.01));
+	GLdouble zFar = dCameraDistance + dEffectiveDiameter * 2.0;
+	if (zFar < zNear * 1000.0) {
 		zFar = zNear * 1000.0;
-	}
-
-	// Ensure a minimum zFar
-	if (zFar < 100.) {
-		zFar = 100.;
 	}
 
 	GLdouble fH = tan(fovY / 360 * M_PI) * zNear;
@@ -2317,7 +2313,7 @@ void _oglView::_drawFaces()
 			if (!owlModel)
 				continue;
 
-			auto pModel = getController()->getModelByInstance(pGeometry->getOwlModel());
+			auto pModel = getController()->getOwlModelByInstance(pGeometry->getOwlModel());
 			assert(pModel->getEnable());
 
 			if (!pGeometry->getShow()) {
@@ -3108,7 +3104,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 	if (m_pPointedInstance != nullptr) {
 		clock_t timeSpan = clock() - m_tmShowTooltip;
 		if (timeSpan >= 200) {
-			auto pModel = getController()->getModelByInstance(m_pPointedInstance->getOwlModel());
+			auto pModel = getController()->getOwlModelByInstance(m_pPointedInstance->getOwlModel());
 			assert(pModel != nullptr);
 
 			wstring strInstanceMetaData = m_pPointedInstance->getName();

@@ -124,6 +124,8 @@ public: // Methods
 	// _controller
     virtual string getSettingsNamespace() const override;
 
+    _ap_model* getSdaiModelByInstance(SdaiModel sdaiModel) const;
+
     // Events
     void onViewRelations(_view* pSender, SdaiInstance sdaiInstance);
     void onViewRelations(_view* pSender, _entity* pEntity);

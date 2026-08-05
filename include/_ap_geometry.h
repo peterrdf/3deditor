@@ -77,6 +77,17 @@ public: // Methods
         return owlInstance;
     }
 
+    static OwlInstance buildOwlInstanceInContext(SdaiInstance sdaiInstance, SdaiInstance sdaiBuildContextInstance)
+    {
+        assert(sdaiInstance != 0);
+        assert(sdaiBuildContextInstance != 0);
+
+        OwlInstance owlInstance = 0;
+        owlBuildInstanceInContext(sdaiInstance, sdaiBuildContextInstance, &owlInstance);
+
+        return owlInstance;
+    }
+
     void loadDisplayString()
     {
         m_strName = m_strUniqueName = getDisplayString(getSdaiInstance());

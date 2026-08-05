@@ -38,7 +38,8 @@ _ifc_model::_ifc_model(_log* pLog, bool bUseWorldCoordinates /*= false*/, bool b
 	, m_mtxUpdateModel()
 	, m_vecIfcProducts()
 	, m_vecMappedItemPendingUpdate()
-{}
+{
+}
 
 /*virtual*/ _ifc_model::~_ifc_model()
 {
@@ -189,21 +190,39 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 			for (auto pMappedItemGeometry : ifcGeometry->m_vecMappedGeometries) {
 				for (auto pMappedItemInstance : pMappedItemGeometry->getInstances()) {
 					if (pMappedItemInstance->getOwner() == pInstance) {
-						pMappedItemGeometry->calculateBB(
-							pMappedItemInstance,
-							m_fXmin, m_fXmax,
-							m_fYmin, m_fYmax,
-							m_fZmin, m_fZmax);
+						if (pMappedItemGeometry->getTriangles().empty()) {
+							pMappedItemGeometry->calculateBB(
+								pMappedItemInstance,
+								m_fXmin, m_fXmax,
+								m_fYmin, m_fYmax,
+								m_fZmin, m_fZmax);
+						}
+						else {
+							pMappedItemGeometry->calculateBB_Faces(
+								pMappedItemInstance,
+								m_fXmin, m_fXmax,
+								m_fYmin, m_fYmax,
+								m_fZmin, m_fZmax);
+						}
 					}
 				}
 			}
 		} // if (pInstance->getGeometry()->isPlaceholder())
 		else {
-			pInstance->getGeometry()->calculateBB(
-				pInstance,
-				m_fXmin, m_fXmax,
-				m_fYmin, m_fYmax,
-				m_fZmin, m_fZmax);
+			if (pInstance->getGeometry()->getTriangles().empty()) {
+				pInstance->getGeometry()->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+			else {
+				pInstance->getGeometry()->calculateBB_Faces(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
 		}
 	} // for (auto pInstance : ...
 
@@ -329,7 +348,7 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 						loadGeometry(geometry, vecMultiThreadOwlModelWrappers[i]);
 					}
 					});
-			}			
+			}
 
 			// Wait for threads to end
 			for (auto& thread : vecThreads) {
@@ -464,11 +483,20 @@ OwlInstance _ifc_model::createMapConversionTransformation()
 					}
 
 					for (auto pInstance : pGeometry->getInstances()) {
-						pGeometry->calculateBB(
-							pInstance,
-							fXmin, fXmax,
-							fYmin, fYmax,
-							fZmin, fZmax);
+						if (pGeometry->getTriangles().empty()) {
+							pGeometry->calculateBB(
+								pInstance,
+								fXmin, fXmax,
+								fYmin, fYmax,
+								fZmin, fZmax);
+						}
+						else {
+							pGeometry->calculateBB_Faces(
+								pInstance,
+								fXmin, fXmax,
+								fYmin, fYmax,
+								fZmin, fZmax);
+						}
 					}
 				} // for (auto pGeometry : ...
 

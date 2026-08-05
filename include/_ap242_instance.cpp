@@ -25,6 +25,69 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
 /*virtual*/ _ap242_instance::~_ap242_instance()
 {}
 
+/*virtual*/ void _ap242_instance::saveInstance(const wchar_t* szPath) /*override*/
+{
+    OwlInstance owlInstance = getOwlInstance();
+    if (owlInstance == 0) {
+		SdaiInstance sdaiBuildContextInstance = getGeometryAs<_ap242_geometry>()->getSdaiBuildContextInstance();
+        if (sdaiBuildContextInstance != 0) {
+            owlInstance = _ap_geometry::buildOwlInstanceInContext(getSdaiInstance(), sdaiBuildContextInstance);
+        }
+        else {
+            owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
+        }
+        assert(owlInstance != 0);
+    }
+
+    OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
+    assert(owlMatrixInstance != 0);
+
+    if (getTransformationMatrix()) {
+        vector<double> vecMatrix
+        {
+            getTransformationMatrix()->_11,
+            getTransformationMatrix()->_12,
+            getTransformationMatrix()->_13,
+            getTransformationMatrix()->_21,
+            getTransformationMatrix()->_22,
+            getTransformationMatrix()->_23,
+            getTransformationMatrix()->_31,
+            getTransformationMatrix()->_32,
+            getTransformationMatrix()->_33,
+            getTransformationMatrix()->_41,
+            getTransformationMatrix()->_42,
+            getTransformationMatrix()->_43,
+        };
+
+        SetDatatypeProperty(
+            owlMatrixInstance,
+            GetPropertyByName(getOwlModel(), "coordinates"),
+            vecMatrix.data(),
+            vecMatrix.size());
+
+        OwlInstance owlTransformationInstance = CreateInstance(GetClassByName(getOwlModel(), "Transformation"));
+        assert(owlTransformationInstance != 0);
+
+        SetObjectProperty(
+            owlTransformationInstance,
+            GetPropertyByName(getOwlModel(), "object"),
+            owlInstance);
+
+        SetObjectProperty(
+            owlTransformationInstance,
+            GetPropertyByName(getOwlModel(), "matrix"),
+            owlMatrixInstance);
+
+        SaveInstanceTreeW(owlTransformationInstance, szPath);
+
+        RemoveInstance(owlTransformationInstance);
+        RemoveInstance(owlMatrixInstance);
+    }
+    else {
+        SaveInstanceTreeW(owlInstance, szPath);
+    }
+}
+
 /*virtual*/ const wchar_t* _ap242_instance::getName() const /*override*/
 {
     return m_strName.c_str();

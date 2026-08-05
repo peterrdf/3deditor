@@ -13,7 +13,7 @@ _model::_model(_log* pLog)
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
-	, m_pWorld(nullptr)	
+	, m_pWorld(nullptr)
 	, m_bUpdateVertexBuffers(true)
 	, m_dOriginalBoundingSphereDiameter(2.)
 	, m_fXmin(-1.f)
@@ -58,11 +58,20 @@ _model::_model(_log* pLog)
 			}
 
 			for (auto pInstance : pGeometry->getInstances()) {
-				pGeometry->calculateBB(
-					pInstance,
-					m_fXmin, m_fXmax,
-					m_fYmin, m_fYmax,
-					m_fZmin, m_fZmax);
+				if (pGeometry->getTriangles().empty()) {
+					pGeometry->calculateBB(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
+				}
+				else {
+					pGeometry->calculateBB_Faces(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
+				}
 			}
 		} // for (auto pGeometry : ...
 
@@ -135,11 +144,20 @@ _model::_model(_log* pLog)
 
 			iEnabledInstances++;
 
-			pGeometry->calculateBB(
-				pInstance,
-				m_fXmin, m_fXmax,
-				m_fYmin, m_fYmax,
-				m_fZmin, m_fZmax);
+			if (pGeometry->getTriangles().empty()) {
+				pGeometry->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+			else {
+				pGeometry->calculateBB_Faces(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
 		}
 	}
 
@@ -153,11 +171,19 @@ _model::_model(_log* pLog)
 			}
 
 			for (auto pInstance : pGeometry->getInstances()) {
-				pGeometry->calculateBB(
-					pInstance,
-					m_fXmin, m_fXmax,
-					m_fYmin, m_fYmax,
-					m_fZmin, m_fZmax);
+				if (pGeometry->getTriangles().empty()) {
+					pGeometry->calculateBB(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
+				}
+				else
+					pGeometry->calculateBB_Faces(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
 			}
 		}
 	} // if (iEnabledInstances == 0)
@@ -206,11 +232,20 @@ _model::_model(_log* pLog)
 	m_fZmax = -FLT_MAX;
 
 	for (auto pInstance : setInstances) {
-		pInstance->getGeometry()->calculateBB(
-			pInstance,
-			m_fXmin, m_fXmax,
-			m_fYmin, m_fYmax,
-			m_fZmin, m_fZmax);
+		if (pInstance->getGeometry()->getTriangles().empty()) {
+			pInstance->getGeometry()->calculateBB(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
+		else {
+			pInstance->getGeometry()->calculateBB_Faces(
+				pInstance,
+				m_fXmin, m_fXmax,
+				m_fYmin, m_fYmax,
+				m_fZmin, m_fZmax);
+		}
 	}
 
 	if ((m_fXmin == FLT_MAX) ||
@@ -259,11 +294,20 @@ _model::_model(_log* pLog)
 	m_fZmin = FLT_MAX;
 	m_fZmax = -FLT_MAX;
 
-	pInstance->getGeometry()->calculateBB(
-		pInstance,
-		m_fXmin, m_fXmax,
-		m_fYmin, m_fYmax,
-		m_fZmin, m_fZmax);
+	if (pInstance->getGeometry()->getTriangles().empty()) {
+		pInstance->getGeometry()->calculateBB(
+			pInstance,
+			m_fXmin, m_fXmax,
+			m_fYmin, m_fYmax,
+			m_fZmin, m_fZmax);
+	}
+	else {
+		pInstance->getGeometry()->calculateBB_Faces(
+			pInstance,
+			m_fXmin, m_fXmax,
+			m_fYmin, m_fYmax,
+			m_fZmin, m_fZmax);
+	}
 
 	if ((m_fXmin == FLT_MAX) ||
 		(m_fXmax == -FLT_MAX) ||
@@ -314,11 +358,20 @@ _model::_model(_log* pLog)
 				continue;
 			}
 
-			pGeometry->calculateBB(
-				pInstance,
-				m_fXmin, m_fXmax,
-				m_fYmin, m_fYmax,
-				m_fZmin, m_fZmax);
+			if (pGeometry->getTriangles().empty()) {
+				pGeometry->calculateBB(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
+			else {
+				pGeometry->calculateBB_Faces(
+					pInstance,
+					m_fXmin, m_fXmax,
+					m_fYmin, m_fYmax,
+					m_fZmin, m_fZmax);
+			}
 		}
 	}
 
@@ -831,22 +884,20 @@ float _controller::getWorldBoundingSphereDiameter() const
 	return fWorldBoundingSphereDiameter;
 }
 
-_model* _controller::getModelByInstance(OwlModel owlModel) const
+_model* _controller::getOwlModelByInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
-	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel)
-		{
-			return pModel->getOwlModel() == owlModel;
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel) {
+		return pModel->getOwlModel() == owlModel;
 		});
 
 	if (itModel != m_vecModels.end()) {
 		return *itModel;
 	}
 
-	itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel)
-		{
-			return pModel->getOwlModel() == owlModel;
+	itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel) {
+		return pModel->getOwlModel() == owlModel;
 		});
 
 	if (itModel != m_vecDecorationModels.end()) {
@@ -909,7 +960,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 		return;
 	}
 
-	auto pModel = getModelByInstance((*setInstances.begin())->getOwlModel());
+	auto pModel = getOwlModelByInstance((*setInstances.begin())->getOwlModel());
 	if (pModel == nullptr) {
 		assert(false);
 
@@ -964,9 +1015,8 @@ void _controller::selectInstance(_view* pSender, _instance* pInstance, bool bAdd
 {
 	// Check for Decoration Instance
 	if (pInstance != nullptr) {
-		auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel)
-			{
-				return pModel->getOwlModel() == pInstance->getOwlModel();
+		auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel) {
+			return pModel->getOwlModel() == pInstance->getOwlModel();
 			});
 
 		if (itModel != m_vecDecorationModels.end()) {
@@ -1057,7 +1107,7 @@ void _controller::saveInstance(OwlInstance owlInstance)
 		return;
 	}
 
-	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName()); 
+	SaveInstanceTreeW(owlInstance, dlgFile.GetPathName());
 #endif
 }
 
@@ -1144,7 +1194,8 @@ void _controller::resetInstancesEnabledState(_view* pSender)
 			(enApplicationProperty == enumApplicationProperty::CoordinateSystemType)) {
 			showDecoration(WORLD_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && !pOGLRenderer->getModelCoordinateSystem());
 			showDecoration(MODEL_COORDINATE_SYSTEM, pOGLRenderer->getShowCoordinateSystem() && pOGLRenderer->getModelCoordinateSystem());
-		} else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
+		}
+		else if (enApplicationProperty == enumApplicationProperty::ShowNavigator) {
 			showDecoration(NAVIGATOR, pOGLRenderer->getShowNavigator());
 		}
 	}
@@ -1160,9 +1211,8 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 {
 	assert(szName != nullptr);
 
-	auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel)
-		{
-			return wcscmp(pModel->getPath(), szName) == 0;
+	auto itModel = find_if(m_vecDecorationModels.begin(), m_vecDecorationModels.end(), [&](_model* pModel) {
+		return wcscmp(pModel->getPath(), szName) == 0;
 		});
 
 	if (itModel != m_vecDecorationModels.end()) {

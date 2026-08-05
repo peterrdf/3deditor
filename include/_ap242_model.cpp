@@ -20,7 +20,8 @@ _ap242_model::_ap242_model(_log* pLog, bool bLoadProductRepresentationItems, boo
 	, m_mtxUpdateModel()
 	, m_mapExpressID2Assembly()
 	, m_vecDraughtingModels()
-{}
+{
+}
 
 /*virtual*/ _ap242_model::~_ap242_model()
 {
@@ -140,17 +141,18 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 							representationItem = itRepresentationItem->second;
 							m_mapRepresentationItemsPendingLoad.erase(itRepresentationItem);
 						}
-						
+
 						OwlInstance owlInstance = owlBuildInstanceInContextMT(representationItem.sdaiRepresentationItemInstance, representationItem.sdaiRepresentationInstance, vecMultiThreadOwlModelWrappers[i]);
 						if (owlInstance) {
 							auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(
-								representationItem.pProductShapeRepresentation, 
-								owlInstance, 
-								representationItem.sdaiRepresentationItemInstance, 
+								representationItem.pProductShapeRepresentation,
+								owlInstance,
+								representationItem.sdaiRepresentationItemInstance,
 								vecMultiThreadOwlModelWrappers[i]);
+							pProductShapeRepresentationItem->setSdaiBuildContextInstance(representationItem.sdaiRepresentationInstance);
 							{
 								lock_guard<mutex> lock(m_mtxUpdateModel);
-								
+
 								addGeometry(pProductShapeRepresentationItem);
 								representationItem.pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
 							}
@@ -170,7 +172,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 				if (ptrProductShapeRepresentationItem) {
 					ptrProductShapeRepresentationItem->loadDisplayString();
 				}
-			}			
+			}
 
 			// Load Annotation Planes
 			vecThreads.clear();
@@ -203,7 +205,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 								_model::getNextInstanceID(),
 								pGeometry,
 								nullptr);
-							addInstance(pInstance);							
+							addInstance(pInstance);
 						}
 					}
 					});
@@ -252,7 +254,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 								_model::getNextInstanceID(),
 								pGeometry,
 								nullptr);
-							addInstance(pInstance);							
+							addInstance(pInstance);
 						}
 					}
 					});
@@ -277,7 +279,7 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		}
 
 		loadAssemblies();
-		loadGeometry();		
+		loadGeometry();
 
 #ifdef _WINDOWS
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -328,8 +330,9 @@ void _ap242_model::loadProductDefinitionShapes(_ap242_product_definition* pProdu
 		}
 	}
 
-	assert(sdaiRelevantProductDefinitionShapeInstance);
-	loadProductDefinitionShape(pProductDefinition, sdaiRelevantProductDefinitionShapeInstance);
+	if (sdaiRelevantProductDefinitionShapeInstance != 0) {
+		loadProductDefinitionShape(pProductDefinition, sdaiRelevantProductDefinitionShapeInstance);
+	}
 }
 
 void _ap242_model::loadProductDefinitionShape(_ap242_product_definition* pProductDefinition, SdaiInstance sdaiProductDefinitionShapeInstance)
@@ -447,6 +450,7 @@ void _ap242_model::loadRepresentationItems(_ap242_product_shape_representation* 
 				owlBuildInstanceInContext(sdaiRepresentationItemInstance, sdaiRepresentationInstance, &owlInstance);
 				if (owlInstance) {
 					auto pProductShapeRepresentationItem = new _ap242_product_shape_representation_item(pProductShapeRepresentation, owlInstance, sdaiRepresentationItemInstance, 0);
+					pProductShapeRepresentationItem->setSdaiBuildContextInstance(sdaiRepresentationInstance);
 					addGeometry(pProductShapeRepresentationItem);
 
 					pProductShapeRepresentation->addRepresentationItem(pProductShapeRepresentationItem);
@@ -487,7 +491,7 @@ _ap242_product_definition* _ap242_model::getProductDefinition(SdaiInstance sdaiP
 	} // if (pGeometry != nullptr)
 
 	auto pProductDefinition = loadProductDefinition(sdaiProductDefinitionInstance);
-	
+
 	if (bRelatingProduct) {
 		pProductDefinition->m_iRelatingProducts++;
 	}
