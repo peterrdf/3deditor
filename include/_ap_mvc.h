@@ -77,7 +77,7 @@ public: // Properties
     enumAP getAP() const { return m_enAP; }
 
 	// Multi-threaded load
-	void setMultiThreadedLoad(bool bMultiThreadedLoad) { m_bMultiThreadedLoad = bMultiThreadedLoad; }
+    void setMultiThreadedLoad(bool bMultiThreadedLoad);
 	bool getMultiThreadedLoad() const { return m_bMultiThreadedLoad; }
 
     // Cache	

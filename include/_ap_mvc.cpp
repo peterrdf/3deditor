@@ -10,7 +10,11 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	: _model(pLog)
 	, m_sdaiModel(0)
 	, m_enAP(enAP)
+#ifdef _WINDOWS
 	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
+#else
+	, m_bMultiThreadedLoad(false)
+#endif
 	, m_pEntityProvider(nullptr)
 	, m_pAttributeProvider(nullptr)
 	, m_mapExpressID2Geometry()
@@ -162,6 +166,16 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
 	m_mapExpressID2Geometry.clear();
 }
 
+
+void _ap_model::setMultiThreadedLoad(bool bMultiThreadedLoad) 
+{ 
+#ifdef _WINDOWS
+	m_bMultiThreadedLoad = bMultiThreadedLoad; 
+#else
+	assert(false); // #todo: Not supported on non-Windows platforms
+#endif
+}
+
 _entity_provider* _ap_model::getEntityProvider()
 {
 	if ((m_pEntityProvider == nullptr) && (m_sdaiModel != 0)) {
@@ -199,7 +213,11 @@ _ap_controller* _ap_view::getAPController() const
 _ap_controller::_ap_controller()
 	: _controller()
 	, m_bFullDisplayName(true)
+#ifdef _WINDOWS
 	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
+#else
+	, m_bMultiThreadedLoad(false)
+#endif
 {
 }
 
@@ -336,7 +354,11 @@ void _ap_controller::setFullDisplayName(bool bFullDisplayName)
 
 void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
 {
+#ifdef _WINDOWS
 	m_bMultiThreadedLoad = bMultiThreadedLoad;
+#else
+	assert(false); // #todo: Not supported on non-Windows platforms
+#endif
 
 #ifdef _WINDOWS
 	string strSettingName(typeid(this).raw_name());
