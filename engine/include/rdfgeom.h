@@ -127,16 +127,16 @@ static	inline  double	Sqr(
 //	Vector2
 //
 
-inline  double* Vec2Coordinates(
-    VECTOR2& vec
-)
+static	inline  double  * Vec2Coordinates(
+                                VECTOR2&    vec
+                            )
 {
     return &(vec.u);
 }
 
-inline  const   double* Vec2Coordinates(
-    const VECTOR2& vec
-)
+static	inline  const double    * Vec2Coordinates(
+                                        const VECTOR2&  vec
+                                    )
 {
     return &(vec.u);
 }
@@ -233,6 +233,20 @@ static	inline  double	Vec2Length(
 {
 	return std::sqrt(Vec2LengthSqr(pV));
 }
+
+static	inline  double	Vec2Length(
+				                const VECTOR2	* pPoint2D__VEC2,
+				                const int_t	    pointCnt
+			                )
+{
+	double	length = 0.;
+
+	for (int_t i = 1; i < pointCnt; i++)
+		length += Vec2Distance(&pPoint2D__VEC2[i], &pPoint2D__VEC2[i - 1]);
+
+	return length;
+}
+
 
 //
 //	Vector3
@@ -571,6 +585,19 @@ static  inline   SEGMENT3   Seg3Make(
     Vec3Init(seg.pt[0], coords);
     Vec3Init(seg.pt[1], coords+3);
     return seg;
+}
+
+static	inline  double	Vec3Length(
+				                const VECTOR3	* pPoint3D__VEC3,
+				                const int_t	    pointCnt
+			                )
+{
+	double	length = 0.;
+
+	for (int_t i = 1; i < pointCnt; i++)
+		length += Vec3Distance(&pPoint3D__VEC3[i], &pPoint3D__VEC3[i - 1]);
+
+	return length;
 }
 
 #ifdef __cplusplus
