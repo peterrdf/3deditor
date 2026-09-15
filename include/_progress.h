@@ -10,25 +10,33 @@ typedef void(*_progress_callback)(int iCurrent, int iTotal, const char* szStage)
 #endif
 
 // ************************************************************************************************
-class _progress
-{
+class _progress {
 
 public: // Methods
 
 	_progress()
-	{}
+	{
+	}
 
 	virtual ~_progress()
-	{}
+	{
+	}
 
 public: // Methods
 
+	virtual void onProgressInit(int /*iTotal*/, const std::string& /*strStage*/)
+	{
+	}
+
 	virtual void report(int iCurrent, int iTotal, const char* szStage) = 0;
+
+	virtual void onProgressEnd()
+	{
+	}
 };
 
 // ************************************************************************************************
-class _c_progress : public _progress
-{
+class _c_progress : public _progress {
 
 private: // Members
 
@@ -39,10 +47,12 @@ public: // Methods
 	_c_progress(_progress_callback pProgressCallback)
 		: _progress()
 		, m_pProgressCallback(pProgressCallback)
-	{}
+	{
+	}
 
 	virtual ~_c_progress()
-	{}
+	{
+	}
 
 public: // Methods
 
@@ -55,8 +65,7 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class _progress_client
-{
+class _progress_client {
 
 private: // Members
 
@@ -72,10 +81,12 @@ public: // Methods
 		, m_iCurrent(0)
 		, m_iTotal(0)
 		, m_strStage("")
-	{}
+	{
+	}
 
 	virtual ~_progress_client()
-	{}
+	{
+	}
 
 	void setProgress(_progress* pProgress) { m_pProgress = pProgress; }
 	_progress* getProgress() { return m_pProgress; }
@@ -85,6 +96,10 @@ public: // Methods
 		m_iCurrent = 0;
 		m_iTotal = iTotal;
 		m_strStage = strStage;
+
+		if (m_pProgress != nullptr) {
+			m_pProgress->onProgressInit(iTotal, strStage);
+		}
 	}
 
 	void progressStep()
@@ -100,6 +115,13 @@ public: // Methods
 #endif
 		if (m_pProgress != nullptr) {
 			m_pProgress->report(iCurrent, iTotal, szStage);
+		}
+	}
+
+	void progressEnd()
+	{
+		if (m_pProgress != nullptr) {
+			m_pProgress->onProgressEnd();
 		}
 	}
 };

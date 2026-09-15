@@ -414,6 +414,10 @@ void _rdf_model::loadInstances()
 
 		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
 	} // while (owlInstance != 0)
+
+	if (bUseProgress) {
+		progressEnd();
+	}
 }
 
 /*virtual*/ void  _rdf_model::preLoad()

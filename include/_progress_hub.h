@@ -7,25 +7,33 @@
 using namespace std;
 
 // ************************************************************************************************
-class _progress_view
-{
+class _progress_view {
 
 public: // Methods
 
 	_progress_view()
-	{}
+	{
+	}
 
 	virtual ~_progress_view()
-	{}
+	{
+	}
+
+	virtual void onProgressInit(int /*iTotal*/, const std::string& /*strStage*/)
+	{
+	}
 
 	virtual void onReport(int /*iCurrent*/, int /*iTotal*/, const char* /*szStage*/) = 0;
+
+	virtual void onProgressEnd()
+	{
+	}
 };
 
 // ************************************************************************************************
 class _progress_hub
 	: public _progress
-	, public _progress_client
-{
+	, public _progress_client {
 
 private: // Members
 
@@ -42,12 +50,27 @@ public: // Methods
 	}
 
 	virtual ~_progress_hub()
-	{}
+	{
+	}
+
+	virtual void onProgressInit(int iTotal, const std::string& strStage) override
+	{
+		if (m_pProgressView != nullptr) {
+			m_pProgressView->onProgressInit(iTotal, strStage);
+		}
+	}
 
 	virtual void report(int iCurrent, int iTotal, const char* szStage) override
 	{
 		if (m_pProgressView != nullptr) {
 			m_pProgressView->onReport(iCurrent, iTotal, szStage);
+		}
+	}
+
+	virtual void onProgressEnd() override
+	{
+		if (m_pProgressView != nullptr) {
+			m_pProgressView->onProgressEnd();
 		}
 	}
 
