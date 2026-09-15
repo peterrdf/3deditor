@@ -123,6 +123,8 @@
 #define IDC_BUTTON_CLEAR_LOG            1013
 #define IDC_LIST1                       1014
 #define IDC_LIST_PROPS                  1014
+#define IDC_PROGRESS_CTRL               1015
+#define VERSION_BUILD                   2382
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778
@@ -184,7 +186,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        337
 #define _APS_NEXT_COMMAND_VALUE         32847
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           317
 #endif
 #endif

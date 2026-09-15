@@ -377,8 +377,12 @@ void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 	if (_ptr<_rdf_controller>(m_pController)->getShowProgressDialog() && !TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
 		g_pProgress = &dlgProgress;
+		m_pController->getProgressHub()->setProgressView(&dlgProgress);
+
 		dlgProgress.DoModal();
+
 		g_pProgress = nullptr;
+		m_pController->getProgressHub()->setProgressView(nullptr);
 	}
 	else
 #endif

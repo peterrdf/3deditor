@@ -28,6 +28,24 @@ using namespace std;
 	m_edtProgress.ReplaceSel(CA2W(strEntry.c_str()));
 }
 
+/*virtual*/ void CProgressDialog::onProgressInit(int iTotal, const std::string& /*strStage*/) /*override*/
+{
+	m_progressCtrl.SetRange32(0, iTotal);
+	m_progressCtrl.SetStep(1);
+}
+
+/*virtual*/ void CProgressDialog::onReport(int iCurrent, int /*iTotal*/, const char* /*szStage*/) /*override*/
+{	
+	m_progressCtrl.SetPos(iCurrent);
+}
+
+/*virtual*/ void CProgressDialog::onProgressEnd() /*override*/
+{
+	int iLower = 0, iUpper = 0;
+	m_progressCtrl.GetRange(iLower, iUpper);
+	m_progressCtrl.SetPos(iUpper);
+}
+
 /*static*/ UINT CProgressDialog::ThreadProc(LPVOID pParam)
 {
 	auto pDialog = (CProgressDialog*)pParam;
@@ -64,6 +82,7 @@ void CProgressDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT_PROGRESS, m_edtProgress);
+	DDX_Control(pDX, IDC_PROGRESS_CTRL, m_progressCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CProgressDialog, CDialogEx)

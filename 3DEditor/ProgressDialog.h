@@ -1,5 +1,7 @@
 #pragma once
 
+#include "_progress_hub.h"
+
 #include <string>
 using namespace std;
 
@@ -50,6 +52,7 @@ protected: // Methods
 class CProgressDialog
 	: public CDialogEx
 	, public CProgress
+	, public _progress_view
 {
 	DECLARE_DYNAMIC(CProgressDialog)
 
@@ -62,6 +65,11 @@ public: // Methods
 
 	// CProgress
 	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) override;
+
+	// _progress_view
+	virtual void onProgressInit(int iTotal, const std::string& strStage) override;
+	virtual void onReport(int iCurrent, int iTotal, const char* szStage) override;	
+	virtual void onProgressEnd() override;
 
 private: // Methods
 
@@ -84,5 +92,6 @@ private:
 	CEdit m_edtProgress;
 public:
 	virtual BOOL OnInitDialog();
+	CProgressCtrl m_progressCtrl;
 };
 #endif //  _PROGRESS_UI_SUPPORT

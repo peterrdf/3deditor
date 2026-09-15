@@ -291,6 +291,12 @@
     <ClInclude Include="..\include\stb\stb_image_write.h">
       <Filter>include\stb</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\_progress.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_progress_hub.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEditor.cpp">

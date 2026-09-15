@@ -110,9 +110,6 @@ public: // Methods
 
 	void report(int iCurrent, int iTotal, const char* szStage)
 	{
-#ifdef _WINDOWS
-		TRACE("\n|-----> Progress: %d/%d - %s", iCurrent, iTotal, szStage);
-#endif
 		if (m_pProgress != nullptr) {
 			m_pProgress->report(iCurrent, iTotal, szStage);
 		}

@@ -942,6 +942,8 @@
     <ClInclude Include="..\include\_mvc.h" />
     <ClInclude Include="..\include\_oglScene.h" />
     <ClInclude Include="..\include\_oglUtils.h" />
+    <ClInclude Include="..\include\_progress.h" />
+    <ClInclude Include="..\include\_progress_hub.h" />
     <ClInclude Include="..\include\_ptr.h" />
     <ClInclude Include="..\include\_quaterniond.h" />
     <ClInclude Include="..\include\_rdf_class.h" />
