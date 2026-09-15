@@ -10,6 +10,7 @@ using namespace std;
 // ************************************************************************************************
 _model::_model(_log* pLog)
 	: _log_client()
+	, _progress_client()
 	, m_strPath(L"")
 	, m_strTextureSearchPath(L"")
 	, m_bEnable(true)
@@ -686,6 +687,7 @@ void _model::setDimensions(_model* pSource)
 _controller::_controller()
 	: _log_client()
 	, m_pLogHub(new _log_hub())
+	, m_pProgressHub(new _progress_hub())
 	, m_vecModels()
 	, m_vecDecorationModels()
 	, m_setViews()
@@ -695,6 +697,7 @@ _controller::_controller()
 	, m_pTargetInstance(nullptr)
 {
 	setLog(m_pLogHub);
+	setProgress(m_pProgressHub);
 }
 
 /*virtual*/ _controller::~_controller()
@@ -702,6 +705,7 @@ _controller::_controller()
 	clean();
 
 	delete m_pLogHub;
+	delete m_pProgressHub;
 	delete m_pSettingsStorage;
 }
 
@@ -745,6 +749,75 @@ void _controller::setModels(const vector<_model*>& vecModels)
 	}
 
 	m_bUpdatingModel = false;
+}
+
+void _controller::addModel(_model* pModel)
+{
+	assert(pModel != nullptr);
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelLoaded();
+	}
+
+	m_vecModels.push_back(pModel);
+	logInfof("Loaded '%s'.", (LPCSTR)CW2A(pModel->getPath()));
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+bool _controller::removeModelByInstance(OwlModel owlModel)
+{
+	assert(owlModel != 0);
+
+	auto itModel = find_if(m_vecModels.begin(), m_vecModels.end(), [&](_model* pModel) {
+		return pModel->getOwlModel() == owlModel;
+		});
+
+	if (itModel == m_vecModels.end()) {
+		return false;
+	}
+
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelDeleted();
+	}
+
+	m_vecModels.erase(itModel);
+
+	// e.g. Coordinate System, Navigation, etc.
+	loadDecorationModels();
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelDeleted();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelDeleted();
+	}
+
+	m_bUpdatingModel = false;
+
+	return true;
 }
 
 void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)

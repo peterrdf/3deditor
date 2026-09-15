@@ -1577,6 +1577,8 @@ void _oglRenderer::_prepare(
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
 	// Projection Matrix
 	// fovY     - Field of vision in degrees in the y direction
 	// aspect   - Aspect ratio of the viewport
@@ -2406,6 +2408,7 @@ void _oglView::_drawFaces()
 
 					if (pTexture != nullptr) {
 						m_pOGLProgram->_enableTexture(false);
+						glBindTexture(GL_TEXTURE_2D, 0);
 					}
 				}
 
@@ -2650,8 +2653,6 @@ void _oglView::_drawPoints()
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #endif
-
-	glEnable(GL_PROGRAM_POINT_SIZE);
 
 #ifdef _BLINN_PHONG_SHADERS
 	m_pOGLProgram->_enableBlinnPhongModel(false);

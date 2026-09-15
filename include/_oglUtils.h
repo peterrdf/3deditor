@@ -1509,6 +1509,12 @@ public: // Methods
 
 		glDebugMessageCallbackARB(&_oglContext::debugCallback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+		// Disable 'Source: OpenGL	Type: Other	ID: 131185	Severity: Notification	Message: Buffer detailed info: Buffer object 1 (bound to GL_ARRAY_BUFFER_ARB, usage hint is GL_STATIC_DRAW) will use VIDEO memory as the source for buffer object operations.'
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+
+		// Disable 'Source: OpenGL	Type: Other	ID: 131204	Severity: Low	Message: Texture state usage warning: The texture object (0) bound to texture image unit 0 does not have a defined base level and cannot be used for texture mapping.'
+		glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_OTHER, GL_DONT_CARE, 0, nullptr, GL_FALSE);
 #else
 		glDisable(GL_DEBUG_OUTPUT);
 		glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
@@ -1562,8 +1568,13 @@ public: // Methods
 				strcpy(debSev, "Medium");
 			else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
 				strcpy(debSev, "Low");
+			else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+				strcpy(debSev, "Notification");
+			else {
+				strcpy(debSev, "Unknown");
+			}
 
-			fprintf(f, "Source:%s\tType:%s\tID:%d\tSeverity:%s\tMessage:%s\n", debSource, debType, id, debSev, message);
+			fprintf(f, "Source: %s\tType: %s\tID: %d\tSeverity: %s\tMessage: %s\n", debSource, debType, id, debSev, message);
 
 			fclose(f);
 		} // if (f)
@@ -1611,45 +1622,46 @@ public: // Methods
 			assert(m_iTextureBuffer == 0);
 			assert(m_iRenderBuffer == 0);
 
-			/*
-			* Frame buffer
-			*/
+			//
+			// Frame buffer
+			//
 			glGenFramebuffers(1, &m_iFrameBuffer);
 			assert(m_iFrameBuffer != 0);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, m_iFrameBuffer);
 
-			/*
-			* Texture buffer
-			*/
+			//
+			// Texture buffer
+			//
 			glGenTextures(1, &m_iTextureBuffer);
 			assert(m_iTextureBuffer != 0);
-
 			glBindTexture(GL_TEXTURE_2D, m_iTextureBuffer);
+
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_iTextureBuffer, 0);
 
-			/*
-			* Depth buffer
-			*/
+			// Causes 'Texture state usage warning: The texture object (0) bound to texture image unit 0 does not have a defined base level and cannot be used for texture mapping.'
+			//glBindTexture(GL_TEXTURE_2D, 0);
+
+			//
+			// Depth buffer
+			//
 			glGenRenderbuffers(1, &m_iRenderBuffer);
 			assert(m_iRenderBuffer != 0);
-
 			glBindRenderbuffer(GL_RENDERBUFFER, m_iRenderBuffer);
+
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, iWidth, iHeight);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iRenderBuffer);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_iRenderBuffer);
-
+			//
+			// Color attachment
+			//
 			GLenum arDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 			glDrawBuffers(1, arDrawBuffers);
 
