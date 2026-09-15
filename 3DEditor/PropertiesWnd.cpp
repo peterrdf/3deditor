@@ -3337,7 +3337,11 @@ void CPropertiesWnd::LoadInstanceProperties()
 			double* pdBValue = nullptr;
 			GetDatatypeProperty(pSelectedInstance->getOwlInstance(), iBProperty, (void**)&pdBValue, &iCard);
 
-			auto pColorSelectorProperty = new CRDFColorSelectorProperty(_T("Color"), RGB((BYTE)(*pdRValue * 255.), (BYTE)(*pdGValue * 255.), (BYTE)(*pdBValue * 255.)), nullptr, _T("Color"),
+			auto pColorSelectorProperty = new CRDFColorSelectorProperty(_T("Color"), 
+				RGB(pdRValue != nullptr ? (BYTE)(*pdRValue * 255.) : 0,
+					pdGValue != nullptr ? (BYTE)(*pdGValue * 255.) : 0,
+					pdBValue != nullptr ? (BYTE)(*pdBValue * 255.) : 0),
+				nullptr, _T("Color"),
 				(DWORD_PTR)new CRDFInstanceData(getRDFController(), rdfInstance));
 			pColorSelectorProperty->EnableOtherButton(_T("Other..."));
 			pColorSelectorProperty->EnableAutomaticButton(_T("Default"), ::GetSysColor(COLOR_3DFACE));
