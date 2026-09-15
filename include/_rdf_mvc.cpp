@@ -371,6 +371,26 @@ void _rdf_model::loadProperties()
 
 void _rdf_model::loadInstances()
 {
+	// Progress
+	bool bUseProgress = true;
+	{
+		if ((dynamic_cast<_coordinate_system_model_base*>(this) != nullptr) ||
+			(dynamic_cast<_navigator_model*>(this) != nullptr)) {
+			bUseProgress = false;
+		}
+
+		if (bUseProgress) {
+			int iTotal = 0;
+			OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
+			while (owlInstance != 0) {
+				iTotal++;
+				owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);
+			}
+
+			progressInit(iTotal, "Loading instances");
+		}
+	}
+
 	OwlInstance owlInstance = GetInstancesByIterator(getOwlModel(), 0);
 	while (owlInstance != 0) {
 		auto itInstance = m_mapInstances.find(owlInstance);
@@ -386,6 +406,10 @@ void _rdf_model::loadInstances()
 		else {
 			// Import Model
 			itInstance->second->recalculate();
+		}
+
+		if (bUseProgress) {
+			progressStep();
 		}
 
 		owlInstance = GetInstancesByIterator(getOwlModel(), owlInstance);

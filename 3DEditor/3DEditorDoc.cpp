@@ -241,6 +241,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		}
 
 		auto pModel = new CRDFModel(this);
+		pModel->setProgress(getProgress());
 		pModel->Load(strModel.c_str(), false);
 		setModel(pModel);
 
@@ -251,6 +252,7 @@ BOOL CMy3DEditorDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 	else {
 		auto pModel = new CRDFModel(this);
+		pModel->setProgress(getProgress());
 		pModel->Load(lpszPathName, false);
 		setModel(pModel);
 	}

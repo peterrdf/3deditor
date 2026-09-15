@@ -131,6 +131,7 @@ BOOL CRDFViewerDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 
 	auto pModel = new CRDFModel(this);
+	pModel->setProgress(getProgress());
 	pModel->Load(lpszPathName, false);
 
 	setModel(pModel);
