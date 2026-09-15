@@ -22,7 +22,8 @@ _rdf_model::_rdf_model(_log* pLog)
 	, m_mapClasses()
 	, m_mapProperties()
 	, m_mapInstanceDefaultState()
-{}
+{
+}
 
 /*virtual*/ _rdf_model::~_rdf_model()
 {
@@ -797,10 +798,12 @@ void _rdf_model::reloadGeometries()
 // ************************************************************************************************
 _rdf_view::_rdf_view()
 	: _view()
-{}
+{
+}
 
 /*virtual*/ _rdf_view::~_rdf_view()
-{}
+{
+}
 
 _rdf_controller* _rdf_view::getRDFController() const
 {
@@ -824,10 +827,12 @@ _rdf_controller::_rdf_controller()
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
 	, m_bInteractiveEditInProgress(false)
-{}
+{
+}
 
 /*virtual*/ _rdf_controller::~_rdf_controller()
-{}
+{
+}
 
 /*virtual*/ void _rdf_controller::selectInstances(_view* pSender, const vector<_instance*>& vecInstance, bool bAdd/* = false*/) /*override*/
 {
@@ -847,7 +852,7 @@ _rdf_controller::_rdf_controller()
 		for (auto pDecoration : getDecorationModels()) {
 			_ptr<_decoration>(pDecoration)->onModelUpdated();
 		}
-	}	
+	}
 
 	_controller::onModelUpdated();
 }
@@ -1155,7 +1160,7 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 /*virtual*/ void _rdf_controller::onInteractiveEditStart(_view* pSender)
 {
 	m_bInteractiveEditInProgress = true;
-	
+
 	auto itView = getViews().begin();
 	for (; itView != getViews().end(); itView++) {
 		_ptr<_rdf_view> rdfView(*itView, false);
@@ -1194,16 +1199,31 @@ void _rdf_controller::loadSettings()
 		}
 	}
 
+	{
 #ifdef _WINDOWS
-	string strSettingName(typeid(this).raw_name());
+		string strSettingName(typeid(this).raw_name());
 #else
-	string strSettingName(typeid(this).name());
+		string strSettingName(typeid(this).name());
 #endif
-	strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
+		strSettingName += NAMEOFVAR(m_bScaleAndCenterAllVisibleGeometry);
 
-	string strValue = getSettingsStorage()->getSetting(strSettingName);
-	if (!strValue.empty()) {
-		m_bScaleAndCenterAllVisibleGeometry = strValue == "TRUE";
+		string strValue = getSettingsStorage()->getSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_bScaleAndCenterAllVisibleGeometry = strValue == "TRUE";
+		}
+	}
+
+	{
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
+		strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+		string strValue = getSettingsStorage()->getSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_bShowProgressDialog = strValue == "TRUE";
+		}
 	}
 }
 
@@ -1253,7 +1273,8 @@ void _rdf_controller::setScaleAndCenterAllVisibleGeometry(bool bNewValue)
 _coordinate_system_model_base::_coordinate_system_model_base(_log* pLog)
 	: _rdf_model(pLog)
 	, m_pTextBuilder(new _text_builder())
-{}
+{
+}
 
 /*virtual*/ _coordinate_system_model_base::~_coordinate_system_model_base()
 {
@@ -1547,7 +1568,8 @@ _world_coordinate_system_model::_world_coordinate_system_model(_controller* pCon
 }
 
 /*virtual*/ _world_coordinate_system_model::~_world_coordinate_system_model()
-{}
+{
+}
 
 /*virtual*/ bool _world_coordinate_system_model::prepareScene(_oglScene* pScene) /*override*/
 {
@@ -1634,7 +1656,8 @@ _model_coordinate_system_model::_model_coordinate_system_model(_controller* pCon
 }
 
 /*virtual*/ _model_coordinate_system_model::~_model_coordinate_system_model()
-{}
+{
+}
 
 /*virtual*/ void _model_coordinate_system_model::onModelUpdated() /*override*/
 {
@@ -2157,4 +2180,5 @@ _world_model::_world_model(
 }
 
 /*virtual*/ _world_model::~_world_model()
-{}
+{
+}
