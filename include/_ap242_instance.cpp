@@ -29,6 +29,14 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
 {
     OwlInstance owlInstance = getOwlInstance();
     if (owlInstance == 0) {
+        SdaiModel sdaiModel = sdaiGetInstanceModel(getSdaiInstance());
+        assert(sdaiModel != 0);
+
+        int_t iSegmentationParts = 0;
+        double dSegmentationLength = 0.;
+        getSegmentation(sdaiModel, &iSegmentationParts, &dSegmentationLength);
+        setSegmentation(sdaiModel, DEFAULT_SEGMENTATION_PARTS, dSegmentationLength);
+
 		SdaiInstance sdaiBuildContextInstance = getGeometryAs<_ap242_geometry>()->getSdaiBuildContextInstance();
         if (sdaiBuildContextInstance != 0) {
             owlInstance = _ap_geometry::buildOwlInstanceInContext(getSdaiInstance(), sdaiBuildContextInstance);
@@ -37,6 +45,8 @@ _ap242_instance::_ap242_instance(int64_t iID, _ap242_geometry* pGeometry, _matri
             owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
         }
         assert(owlInstance != 0);
+
+        setSegmentation(sdaiModel, iSegmentationParts, dSegmentationLength);
     }
 
     OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));

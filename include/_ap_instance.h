@@ -20,8 +20,18 @@ public:  // Methods
     {
         OwlInstance owlInstance = getOwlInstance();
         if (owlInstance == 0) {
+			SdaiModel sdaiModel = sdaiGetInstanceModel(getSdaiInstance());
+			assert(sdaiModel != 0);
+
+            int_t iSegmentationParts = 0;
+			double dSegmentationLength = 0.;
+			getSegmentation(sdaiModel, &iSegmentationParts, &dSegmentationLength);
+			setSegmentation(sdaiModel, DEFAULT_SEGMENTATION_PARTS, dSegmentationLength);
+
             owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
             assert(owlInstance != 0);
+
+			setSegmentation(sdaiModel, iSegmentationParts, dSegmentationLength);
         }
 
         OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
@@ -116,8 +126,18 @@ public:  // Methods
         
         OwlInstance owlInstance = getOwlInstance();
         if (owlInstance == 0) {
+            SdaiModel sdaiModel = sdaiGetInstanceModel(getSdaiInstance());
+            assert(sdaiModel != 0);
+
+            int_t iSegmentationParts = 0;
+            double dSegmentationLength = 0.;
+            getSegmentation(sdaiModel, &iSegmentationParts, &dSegmentationLength);
+            setSegmentation(sdaiModel, DEFAULT_SEGMENTATION_PARTS, dSegmentationLength);
+
             owlInstance = _ap_geometry::buildOwlInstance(getSdaiInstance());
             assert(owlInstance != 0);
+
+            setSegmentation(sdaiModel, iSegmentationParts, dSegmentationLength);
         }
 
         OwlInstance	owlMatrixInstance = CreateInstance(GetClassByName(getOwlModel(), "Matrix"));
