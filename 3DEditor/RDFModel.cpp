@@ -38,14 +38,10 @@ extern BOOL TEST_MODE;
 
 // ************************************************************************************************
 _log_hub* g_pLogHub = nullptr;
-CProgress* g_pProgress = nullptr;
 
 // ************************************************************************************************
 void STDCALL LogCallbackImpl(int iEvent, const char* szEvent)
 {
-	if (g_pProgress != nullptr) {
-		g_pProgress->Log((int)iEvent, szEvent);
-	}
 	if (g_pLogHub != nullptr) {
 		g_pLogHub->logWrite((enumLogEvent)iEvent, szEvent);
 	}
@@ -181,7 +177,7 @@ public: // Methods
 
 	virtual void Run() override
 	{
-		if (g_pProgress != nullptr) {
+		if ((g_pLogHub != nullptr) && !TEST_MODE) {
 			CString strLog;
 			if (m_bAdd) {
 				strLog.Format(_T("*** Importing '%s' ***"), m_szPath);
@@ -190,14 +186,7 @@ public: // Methods
 				strLog.Format(_T("*** Loading '%s' ***"), m_szPath);
 			}
 
-			if (!TEST_MODE) {
-				if (g_pProgress != nullptr) {
-					g_pProgress->Log(0/*info*/, CW2A(strLog));
-				}
-				if (g_pLogHub != nullptr) {
-					g_pLogHub->logWrite(enumLogEvent::info, (LPCSTR)CW2A(strLog));
-				}
-			}
+			g_pLogHub->logWrite(enumLogEvent::info, (LPCSTR)CW2A(strLog));
 		}
 
 		CString strExtension = PathFindExtension(m_szPath);
@@ -284,9 +273,6 @@ public: // Methods
 			strError.Format(L"Failed to open '%s'.", m_szPath);
 
 			if (!TEST_MODE) {
-				if (g_pProgress != nullptr) {
-					g_pProgress->Log(2/*error*/, CW2A(strError));
-				}
 				if (g_pLogHub != nullptr) {
 					g_pLogHub->logWrite(enumLogEvent::error, (LPCSTR)CW2A(strError));
 				}
@@ -300,9 +286,6 @@ public: // Methods
 		}
 		else {
 			if (!TEST_MODE) {
-				if (g_pProgress != nullptr) {
-					g_pProgress->Log(0/*info*/, "*** Done. ***");
-				}
 				if (g_pLogHub != nullptr) {
 					g_pLogHub->logWrite(enumLogEvent::info, "*** Done. ***");
 				}
@@ -376,13 +359,13 @@ void CRDFModel::Load(const wchar_t* szPath, bool bAdd)
 #ifdef _PROGRESS_UI_SUPPORT
 	if (_ptr<_rdf_controller>(m_pController)->getShowProgressDialog() && !TEST_MODE) {
 		CProgressDialog dlgProgress(::AfxGetMainWnd(), &loadTask);
-		g_pProgress = &dlgProgress;
-		m_pController->getProgressHub()->setProgressView(&dlgProgress);
+		m_pController->getLogHub()->addLogView(&dlgProgress);
+		m_pController->getProgressHub()->addProgressView(&dlgProgress);
 
 		dlgProgress.DoModal();
 
-		g_pProgress = nullptr;
-		m_pController->getProgressHub()->setProgressView(nullptr);
+		m_pController->getLogHub()->removeLogView(&dlgProgress);
+		m_pController->getProgressHub()->removeProgressView(&dlgProgress);
 	}
 	else
 #endif

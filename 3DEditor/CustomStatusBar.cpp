@@ -29,7 +29,7 @@ void CCustomStatusBar::SetLogHub(_log_hub* pLogHub)
     ASSERT(pLogHub != nullptr);
 
     m_pLogHub = pLogHub;
-    m_pLogHub->setLogView(this);
+    m_pLogHub->addLogView(this);
 }
 
 /*virtual*/ void CCustomStatusBar::onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) /*override*/
@@ -147,7 +147,7 @@ void CCustomStatusBar::OnDestroy()
     __super::OnDestroy();
 
     if (m_pLogHub != nullptr) {
-		m_pLogHub->setLogView(nullptr);
+		m_pLogHub->removeLogView(this);
     }
 
 	::DestroyIcon(m_hIconInfo);

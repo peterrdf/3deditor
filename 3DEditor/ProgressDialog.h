@@ -1,5 +1,6 @@
 #pragma once
 
+#include "_log_hub.h"
 #include "_progress_hub.h"
 
 #include <string>
@@ -20,38 +21,10 @@ public: // Methods
 };
 
 // ************************************************************************************************
-class CProgress
-{
-
-public: // Methods
-
-	CProgress()
-	{}
-
-	virtual ~CProgress()
-	{}
-
-	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) PURE;
-
-protected: // Methods
-
-	string CreateLogEntry(int/*enumLogEvent*/ enLogEvent, const char* szEvent)
-	{
-		string strEntry =
-			enLogEvent == 0/*info*/ ? "Information: " :
-			enLogEvent == 1/*warning*/ ? "Warning: " :
-			enLogEvent == 2/*error*/ ? "Error: " : "Unknown: ";
-		strEntry += szEvent;
-
-		return strEntry;
-	}
-};
-
-// ************************************************************************************************
 #ifdef _PROGRESS_UI_SUPPORT
 class CProgressDialog
 	: public CDialogEx
-	, public CProgress
+	, public _log_view
 	, public _progress_view
 {
 	DECLARE_DYNAMIC(CProgressDialog)
@@ -63,8 +36,8 @@ private: // Fields
 
 public: // Methods
 
-	// CProgress
-	virtual void Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) override;
+	// _log_view
+	virtual void onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) override;
 
 	// _progress_view
 	virtual void onProgressInit(int iTotal, const std::string& strStage) override;
@@ -72,6 +45,8 @@ public: // Methods
 	virtual void onProgressEnd() override;
 
 private: // Methods
+
+	string CreateLogEntry(enumLogEvent enLogEvent, const char* szEvent);
 
 	static UINT ThreadProc(LPVOID pParam);
 

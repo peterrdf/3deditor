@@ -10,14 +10,14 @@
 using namespace std;
 
 #ifdef _PROGRESS_UI_SUPPORT
-/*virtual*/ void CProgressDialog::Log(int/*enumLogEvent*/ enLogEvent, const char* szEvent) /*override*/
+
+/*virtual*/ void CProgressDialog::onLogWrite(enumLogEvent enLogEvent, const std::string& strEvent) /*override*/
 {
-	string strEntry = CreateLogEntry(enLogEvent, szEvent);
+	string strEntry = CreateLogEntry(enLogEvent, strEvent.c_str());
 	strEntry += "\r\n";
 
 	int iLength = m_edtProgress.GetWindowTextLength();
-	if (iLength > 2048)
-	{
+	if (iLength > 2048) {
 		m_edtProgress.SetSel(0, iLength);
 		m_edtProgress.ReplaceSel(L"...\r\n");
 
@@ -44,6 +44,17 @@ using namespace std;
 	int iLower = 0, iUpper = 0;
 	m_progressCtrl.GetRange(iLower, iUpper);
 	m_progressCtrl.SetPos(iUpper);
+}
+
+string CProgressDialog::CreateLogEntry(enumLogEvent enLogEvent, const char* szEvent)
+{
+	string strEntry =
+		enLogEvent == enumLogEvent::info ? "[INF]: " :
+		enLogEvent == enumLogEvent::warning ? "[WARN]: " :
+		enLogEvent == enumLogEvent::error ? "[ERR]: " : "[UNK]: ";
+	strEntry += szEvent;
+
+	return strEntry;
 }
 
 /*static*/ UINT CProgressDialog::ThreadProc(LPVOID pParam)

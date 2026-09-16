@@ -37,14 +37,14 @@ class _progress_hub
 
 private: // Members
 
-	_progress_view* m_pProgressView;
+	std::vector< _progress_view*> m_vecProgressViews;
 
 public: // Methods
 
 	_progress_hub()
 		: _progress()
 		, _progress_client()
-		, m_pProgressView(nullptr)
+		, m_vecProgressViews()
 	{
 		setProgress(this);
 	}
@@ -55,27 +55,45 @@ public: // Methods
 
 	virtual void onProgressInit(int iTotal, const std::string& strStage) override
 	{
-		if (m_pProgressView != nullptr) {
-			m_pProgressView->onProgressInit(iTotal, strStage);
+		for (auto pProgressView : m_vecProgressViews) {
+			if (pProgressView != nullptr) {
+				pProgressView->onProgressInit(iTotal, strStage);
+			}
 		}
 	}
 
 	virtual void report(int iCurrent, int iTotal, const char* szStage) override
 	{
-		if (m_pProgressView != nullptr) {
-			m_pProgressView->onReport(iCurrent, iTotal, szStage);
+		for (auto pProgressView : m_vecProgressViews) {
+			if (pProgressView != nullptr) {
+				pProgressView->onReport(iCurrent, iTotal, szStage);
+			}
 		}
 	}
 
 	virtual void onProgressEnd() override
 	{
-		if (m_pProgressView != nullptr) {
-			m_pProgressView->onProgressEnd();
+		for (auto pProgressView : m_vecProgressViews) {
+			if (pProgressView != nullptr) {
+				pProgressView->onProgressEnd();
+			}
 		}
 	}
 
-	void setProgressView(_progress_view* pProgressView)
+	void addProgressView(_progress_view* pProgressView)
 	{
-		m_pProgressView = pProgressView;
+		if (pProgressView != nullptr) {
+			m_vecProgressViews.push_back(pProgressView);
+		}
+	}
+
+	void removeProgressView(_progress_view* pProgressView)
+	{
+		if (pProgressView != nullptr) {
+			auto it = std::find(m_vecProgressViews.begin(), m_vecProgressViews.end(), pProgressView);
+			if (it != m_vecProgressViews.end()) {
+				m_vecProgressViews.erase(it);
+			}
+		}
 	}
 };

@@ -33,7 +33,7 @@ private: // Members
 	int m_iWarningCount;
 	int m_iErrorCount;
 
-	_log_view* m_pLogView;
+	std::vector< _log_view*> m_vecLogViews;
 
 public: // Methods
 
@@ -43,7 +43,7 @@ public: // Methods
 		, m_vecMessages()
 		, m_iWarningCount(0)
 		, m_iErrorCount(0)
-		, m_pLogView(nullptr)
+		, m_vecLogViews()
 	{
 		setLog(this);
 	}
@@ -65,15 +65,29 @@ public: // Methods
 			m_iErrorCount++;
 		}
 
-		if (m_pLogView != nullptr) {
-			auto& lastMessage = m_vecMessages.back();
-			m_pLogView->onLogWrite(lastMessage.first, lastMessage.second);
+		for (auto pLogView : m_vecLogViews) {
+			if (pLogView != nullptr) {
+				auto& lastMessage = m_vecMessages.back();
+				pLogView->onLogWrite(lastMessage.first, lastMessage.second);
+			}
 		}
 	}
 
-	void setLogView(_log_view* pLogView)
+	void addLogView(_log_view* pLogView)
 	{
-		m_pLogView = pLogView;
+		if (pLogView != nullptr) {
+			m_vecLogViews.push_back(pLogView);
+		}
+	}
+
+	void removeLogView(_log_view* pLogView)
+	{
+		if (pLogView != nullptr) {
+			auto it = std::find(m_vecLogViews.begin(), m_vecLogViews.end(), pLogView);
+			if (it != m_vecLogViews.end()) {
+				m_vecLogViews.erase(it);
+			}
+		}
 	}
 
 	const vector<pair<enumLogEvent, string>>& getMessages() const { return m_vecMessages; }
