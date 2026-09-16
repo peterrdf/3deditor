@@ -266,7 +266,7 @@ public: // Methods
 	void getWorldDimensions(float& fXmin, float& fXmax, float& fYmin, float& fYmax, float& fZmin, float& fZmax) const;
 	float getWorldBoundingSphereDiameter() const;
 
-	_model* getOwlModelByInstance(OwlModel owlModel) const;	
+	_model* getModelByOwlInstance(OwlModel owlModel) const;
 	_instance* getInstanceByID(int64_t iID) const;
 
 	// Events

@@ -124,7 +124,6 @@
 #define IDC_LIST1                       1014
 #define IDC_LIST_PROPS                  1014
 #define IDC_PROGRESS_CTRL               1015
-#define VERSION_BUILD                   2382
 #define ID_INSTANCES_ZOOM_TO            32772
 #define ID_INSTANCES                    32773
 #define ID_INSTANCES_METAINFORMATION    32778

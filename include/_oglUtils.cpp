@@ -2315,7 +2315,7 @@ void _oglView::_drawFaces()
 			if (!owlModel)
 				continue;
 
-			auto pModel = getController()->getOwlModelByInstance(pGeometry->getOwlModel());
+			auto pModel = getController()->getModelByOwlInstance(pGeometry->getOwlModel());
 			assert(pModel->getEnable());
 
 			if (!pGeometry->getShow()) {
@@ -3105,7 +3105,7 @@ void _oglView::_onMouseMoveEvent(UINT nFlags, CPoint point)
 	if (m_pPointedInstance != nullptr) {
 		clock_t timeSpan = clock() - m_tmShowTooltip;
 		if (timeSpan >= 200) {
-			auto pModel = getController()->getOwlModelByInstance(m_pPointedInstance->getOwlModel());
+			auto pModel = getController()->getModelByOwlInstance(m_pPointedInstance->getOwlModel());
 			assert(pModel != nullptr);
 
 			wstring strInstanceMetaData = m_pPointedInstance->getName();

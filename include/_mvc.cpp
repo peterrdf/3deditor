@@ -957,7 +957,7 @@ float _controller::getWorldBoundingSphereDiameter() const
 	return fWorldBoundingSphereDiameter;
 }
 
-_model* _controller::getOwlModelByInstance(OwlModel owlModel) const
+_model* _controller::getModelByOwlInstance(OwlModel owlModel) const
 {
 	assert(owlModel != 0);
 
@@ -1033,7 +1033,7 @@ void _controller::zoomToInstances(const set<_instance*>& setInstances)
 		return;
 	}
 
-	auto pModel = getOwlModelByInstance((*setInstances.begin())->getOwlModel());
+	auto pModel = getModelByOwlInstance((*setInstances.begin())->getOwlModel());
 	if (pModel == nullptr) {
 		assert(false);
 
