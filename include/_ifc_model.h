@@ -137,6 +137,8 @@ protected: // Methods
 
 private: // Methods
 
+	int calculateGeometriesCount();
+
     void getObjectsReferencedState();
     void getObjectsReferencedStateGroups();
     void getObjectsReferencedStateIsDecomposedBy(SdaiInstance sdaiInstance);

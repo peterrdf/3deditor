@@ -66,6 +66,10 @@ string CProgressDialog::CreateLogEntry(enumLogEvent enLogEvent, const char* szEv
 
 	::EnableWindow(pDialog->GetDlgItem(IDCANCEL)->GetSafeHwnd(), TRUE);
 
+	// Auto close the dialog after 1 second
+	::Sleep(1000);
+	::PostMessage(pDialog->GetSafeHwnd(), WM_CLOSE, 0, 0);
+
 	return 0;
 }
 

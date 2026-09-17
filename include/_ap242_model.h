@@ -75,8 +75,11 @@ protected: // Methods
 
     // _ap_model
     virtual void attachModelCore() override;
+    virtual void addGeometry(_geometry* pGeometry) override;
 
 private: // Methods
+
+    int calculateGeometriesCount();
 
     void loadProductDefinitions();
     void loadProductDefinitionShapes(_ap242_product_definition* pProductDefinition);
