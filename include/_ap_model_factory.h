@@ -143,7 +143,11 @@ public: // Methods
 		* IFC
 		*/
 		if (schemaName.find(L"IFC") == 0) {
+			std::string strLog = _string::sformat("Loading IFC model: '%s'...", pathModel.string().c_str());
+			pController->getLog()->logWrite(enumLogEvent::info, strLog);
+
 			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -152,6 +156,8 @@ public: // Methods
 		* CIS2
 		*/
 		else if (schemaName.find(L"STRUCTURAL_FRAME_SCHEMA") == 0) {
+			std::string strLog = _string::sformat("Loading CIS2 model: '%s'...", pathModel.string().c_str());
+			pController->getLog()->logWrite(enumLogEvent::info, strLog);
 
 			pModel = new CCIS2Model(pController->getLog());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
@@ -162,7 +168,11 @@ public: // Methods
 		* STEP
 		*/
 		else if (sdaiModel) {
+			std::string strLog = _string::sformat("Loading STEP model: '%s'...", pathModel.string().c_str());
+			pController->getLog()->logWrite(enumLogEvent::info, strLog);
+
 			pModel = new _ap242_model(pController->getLog(), true, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -170,7 +180,11 @@ public: // Methods
 		** Generic model
 		*/
 		else {
+			std::string strLog = _string::sformat("Loading IFC model: '%s'...", pathModel.string().c_str());
+			pController->getLog()->logWrite(enumLogEvent::info, strLog);
+
 			pModel = new _ifc_model(pController->getLog(), bMultipleModels, bLoadInstancesOnDemand);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		}
 
@@ -196,6 +210,7 @@ public: // Methods
 	
 			if (sdaiModel) {
 				pModel->attachModel(szModel, sdaiModel, pWorld);
+				pController->getLog()->logWrite(enumLogEvent::info, "Model loaded successfully.");
 			}
 			else {
 				delete pModel;
@@ -212,35 +227,47 @@ public: // Methods
 		return pModel;
 	}
 
-	static vector<_model*> loadIFCZIP(_ap_controller* pController, const wchar_t* szIFCZIP)
+	static vector<_model*> loadIFCZip(_ap_controller* pController, const wchar_t* szIFCZip)
 	{
 		vector<_model*> vecModels;
 
-		auto vecSdaiModels = openIFCZip(szIFCZIP);
+		auto vecSdaiModels = openIFCZip(szIFCZip);
 		for (auto prSdaiModel : vecSdaiModels) {
+			std::string strLog = _string::sformat("Loading model from IFC Zip: '%s'...", prSdaiModel.first.string().c_str());			
+			pController->getLog()->logWrite(enumLogEvent::info, strLog);
+
 			auto pModel = new _ifc_model(pController->getLog(), vecSdaiModels.size() > 1, false);
+			pModel->setProgress(pController->getProgress());
 			pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 			pModel->attachModel(prSdaiModel.first.wstring().c_str(), prSdaiModel.second, !vecModels.empty() ? vecModels[0] : nullptr);
 
 			vecModels.push_back(pModel);
+
+			pController->getLog()->logWrite(enumLogEvent::info, "IFC Zip model loaded successfully.");
 		}
 
 		return vecModels;
 	}
 
-	static vector<_model*> loadSTEPGZip(_ap_controller* pController, const wchar_t* szIFCZIP)
+	static vector<_model*> loadSTEPGZip(_ap_controller* pController, const wchar_t* szSTEPGZip)
 	{
 		vector<_model*> vecModels;
 
-		auto vecSdaiModels = openSTEPGZip(szIFCZIP);
+		auto vecSdaiModels = openSTEPGZip(szSTEPGZip);
 		if (vecSdaiModels.size() != 1) {
 			return vecModels;
 		}
 
+		std::string strLog = _string::sformat("Loading STEP GZip model: '%s'...", (const char*)CW2A(szSTEPGZip));		
+		pController->getLog()->logWrite(enumLogEvent::info, strLog);
+
 		auto pModel = new _ap242_model(pController->getLog(), true, false);
+		pModel->setProgress(pController->getProgress());
 		pModel->setMultiThreadedLoad(pController->getMultiThreadedLoad());
 		pModel->attachModel(vecSdaiModels.front().first.wstring().c_str(), vecSdaiModels.front().second, nullptr);
 		vecModels.push_back(pModel);
+
+		pController->getLog()->logWrite(enumLogEvent::info, "STEP GZip model loaded successfully.");
 
 		return vecModels;
 	}
