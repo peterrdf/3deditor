@@ -304,8 +304,10 @@ void _ap_controller::onInstanceAttributeEdited(_view* pSender, SdaiInstance sdai
 	}
 }
 
-void _ap_controller::loadSettings()
+/*virtual*/ void _ap_controller::loadSettings() /*override*/
 {
+	_controller::loadSettings();
+
 #ifdef _WINDOWS
 	string strSettingName(typeid(this).raw_name());
 #else

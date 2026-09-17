@@ -133,7 +133,7 @@ public: // Methods
 
 protected: // Methods
 
-    void loadSettings();
+    virtual void loadSettings() override;
 
 public: // Properties
 

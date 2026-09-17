@@ -692,6 +692,7 @@ _controller::_controller()
 	, m_vecDecorationModels()
 	, m_setViews()
 	, m_pSettingsStorage(new _settings_storage())
+	, m_bShowProgressDialog(false)
 	, m_bUpdatingModel(false)
 	, m_vecSelectedInstances()
 	, m_pTargetInstance(nullptr)
@@ -1318,6 +1319,22 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 	m_pTargetInstance = nullptr;
 }
 
+/*virtual*/ void _controller::loadSettings()
+{
+	{
+#ifdef _WINDOWS
+		string strSettingName(typeid(this).raw_name());
+#else
+		string strSettingName(typeid(this).name());
+#endif
+		strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+		string strValue = getSettingsStorage()->getSetting(strSettingName);
+		if (!strValue.empty()) {
+			m_bShowProgressDialog = strValue == "TRUE";
+		}
+	}
+}
+
 _model* _controller::getModel() const
 {
 	if (!m_vecModels.empty()) {
@@ -1327,6 +1344,20 @@ _model* _controller::getModel() const
 	}
 
 	return nullptr;
+}
+
+void _controller::setShowProgressDialog(bool bNewValue)
+{
+	m_bShowProgressDialog = bNewValue;
+
+#ifdef _WINDOWS
+	string strSettingName(typeid(this).raw_name());
+#else
+	string strSettingName(typeid(this).name());
+#endif
+	strSettingName += NAMEOFVAR(m_bShowProgressDialog);
+
+	getSettingsStorage()->setSetting(strSettingName, m_bShowProgressDialog ? "TRUE" : "FALSE");
 }
 
 // ************************************************************************************************

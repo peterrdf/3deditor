@@ -822,8 +822,7 @@ _rdf_model* _rdf_view::getRDFModel() const
 // ************************************************************************************************
 _rdf_controller::_rdf_controller()
 	: _controller()
-	, m_pSelectedProperty(nullptr)
-	, m_bShowProgressDialog(false)
+	, m_pSelectedProperty(nullptr)	
 	, m_iVisibleValuesCountLimit(10000)
 	, m_bScaleAndCenterAllVisibleGeometry(true)
 	, m_bInteractiveEditInProgress(false)
@@ -1183,8 +1182,10 @@ void _rdf_controller::onInstancePropertyEdited(_view* pSender, _rdf_instance* pI
 	}
 }
 
-void _rdf_controller::loadSettings()
+/*virtual*/ void _rdf_controller::loadSettings() /*override*/
 {
+	_controller::loadSettings();
+
 	{
 #ifdef _WINDOWS
 		string strSettingName(typeid(this).raw_name());
@@ -1212,33 +1213,6 @@ void _rdf_controller::loadSettings()
 			m_bScaleAndCenterAllVisibleGeometry = strValue == "TRUE";
 		}
 	}
-
-	{
-#ifdef _WINDOWS
-		string strSettingName(typeid(this).raw_name());
-#else
-		string strSettingName(typeid(this).name());
-#endif
-		strSettingName += NAMEOFVAR(m_bShowProgressDialog);
-		string strValue = getSettingsStorage()->getSetting(strSettingName);
-		if (!strValue.empty()) {
-			m_bShowProgressDialog = strValue == "TRUE";
-		}
-	}
-}
-
-void _rdf_controller::setShowProgressDialog(bool bNewValue)
-{
-	m_bShowProgressDialog = bNewValue;
-
-#ifdef _WINDOWS
-	string strSettingName(typeid(this).raw_name());
-#else
-	string strSettingName(typeid(this).name());
-#endif
-	strSettingName += NAMEOFVAR(m_bShowProgressDialog);
-
-	getSettingsStorage()->setSetting(strSettingName, m_bShowProgressDialog ? "TRUE" : "FALSE");
 }
 
 void _rdf_controller::setVisibleValuesCountLimit(int iNewValue)

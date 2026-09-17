@@ -134,10 +134,7 @@ class _rdf_controller : public _controller
 private: // Fields	
 
 	// Selection
-	_rdf_property* m_pSelectedProperty;
-
-	// Progress
-	bool m_bShowProgressDialog;
+	_rdf_property* m_pSelectedProperty;	
 
 	// UI
 	int m_iVisibleValuesCountLimit;
@@ -181,14 +178,12 @@ public: // Methods
 
 protected: // Methods
 
-	void loadSettings();
+	virtual	void loadSettings() override;
 
 public: // Properties
 
 	_rdf_property* getSelectedInstanceProperty() const { return m_pSelectedProperty; }
-
-	bool getShowProgressDialog() const { return m_bShowProgressDialog; }
-	void setShowProgressDialog(bool bNewValue);
+	
 	int getVisibleValuesCountLimit() const { return m_iVisibleValuesCountLimit; }
 	void setVisibleValuesCountLimit(int iNewValue);
 	bool getScaleAndCenterAllVisibleGeometry() const { return m_bScaleAndCenterAllVisibleGeometry; }

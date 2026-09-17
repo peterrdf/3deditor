@@ -235,6 +235,9 @@ private: // Fields
 	set<_view*> m_setViews;
 	_settings_storage* m_pSettingsStorage;
 
+	// Progress
+	bool m_bShowProgressDialog;
+
 protected:
 
 	// Disable all notifications	
@@ -324,6 +327,8 @@ protected: // Methods
 	virtual void clean();
 	virtual void cleanSelection();
 
+	virtual void loadSettings();
+
 public: // Properties
 
 	_log_hub* getLogHub() const { return m_pLogHub; }
@@ -332,6 +337,9 @@ public: // Properties
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }
+
+	bool getShowProgressDialog() const { return m_bShowProgressDialog; }
+	void setShowProgressDialog(bool bNewValue);
 };
 
 // ************************************************************************************************
