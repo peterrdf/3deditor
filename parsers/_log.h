@@ -88,14 +88,14 @@ public: // Methods
 	void logWrite(enumLogEvent level, const std::string& strEvent)
 	{
 		if (m_pLog != nullptr) {
-			m_pLog->logWrite(level, _time::addDateTimeStamp(strEvent));
+			m_pLog->logWrite(level, strEvent);
 		}
 	}
 
 	void logInfo(const std::string& strEvent)
 	{
 		if (m_pLog != nullptr) {
-			m_pLog->logWrite(enumLogEvent::info, _time::addDateTimeStamp(strEvent));
+			m_pLog->logWrite(enumLogEvent::info, strEvent);
 		}
 	}
 
@@ -104,14 +104,14 @@ public: // Methods
 	{
 		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::info, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::info, strFormattedEvent);
 		}
 	}
 
 	void logWarn(const std::string& strEvent)
 	{
 		if (m_pLog != nullptr) {
-			m_pLog->logWrite(enumLogEvent::warning, _time::addDateTimeStamp(strEvent));
+			m_pLog->logWrite(enumLogEvent::warning, strEvent);
 		}
 	}
 
@@ -120,14 +120,14 @@ public: // Methods
 	{
 		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::warning, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::warning, strFormattedEvent);
 		}
 	}
 
 	void logErr(const std::string& strEvent)
 	{
 		if (m_pLog != nullptr) {
-			m_pLog->logWrite(enumLogEvent::error, _time::addDateTimeStamp(strEvent));
+			m_pLog->logWrite(enumLogEvent::error, strEvent);
 		}
 	}
 
@@ -136,7 +136,7 @@ public: // Methods
 	{
 		if (m_pLog != nullptr) {
 			string strFormattedEvent = _string::sformat(strEvent, args...);
-			m_pLog->logWrite(enumLogEvent::error, _time::addDateTimeStamp(strFormattedEvent));
+			m_pLog->logWrite(enumLogEvent::error, strFormattedEvent);
 		}
 	}
 };
