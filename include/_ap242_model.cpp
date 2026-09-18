@@ -334,9 +334,9 @@ int _ap242_model::calculateGeometriesCount()
 
 	SdaiAggr sdaiProductDefinitionAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION");
 	SdaiInteger iProductDefinitionsCount = sdaiGetMemberCount(sdaiProductDefinitionAggr);
-	for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++) {
+	for (SdaiInteger p = 0; p < iProductDefinitionsCount; p++) {
 		SdaiInstance sdaiProductDefinitionInstance = 0;
-		sdaiGetAggrByIndex(sdaiProductDefinitionAggr, i, sdaiINSTANCE, &sdaiProductDefinitionInstance);
+		sdaiGetAggrByIndex(sdaiProductDefinitionAggr, p, sdaiINSTANCE, &sdaiProductDefinitionInstance);
 		assert(sdaiProductDefinitionInstance != 0);
 		iTotal++;
 
@@ -344,9 +344,9 @@ int _ap242_model::calculateGeometriesCount()
 		SdaiAggr sdaiProductDefinitionShapeAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE");
 
 		SdaiInteger sdaiProductDefinitionShapeInstancesCnt = sdaiGetMemberCount(sdaiProductDefinitionShapeAggr);
-		for (SdaiInteger index = 0; index < sdaiProductDefinitionShapeInstancesCnt; index++) {
+		for (SdaiInteger i = 0; i < sdaiProductDefinitionShapeInstancesCnt; i++) {
 			SdaiInstance sdaiProductDefinitionShapeInstance = 0;
-			sdaiGetAggrByIndex(sdaiProductDefinitionShapeAggr, index, sdaiINSTANCE, &sdaiProductDefinitionShapeInstance);
+			sdaiGetAggrByIndex(sdaiProductDefinitionShapeAggr, i, sdaiINSTANCE, &sdaiProductDefinitionShapeInstance);
 			assert(sdaiProductDefinitionShapeInstance != 0);
 
 			SdaiInstance sdaiCharacterizedDefinitionInstance = 0;
@@ -360,9 +360,9 @@ int _ap242_model::calculateGeometriesCount()
 
 				SdaiAggr sdaiProductShapeDefinitionRepresentationAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_DEFINITION_REPRESENTATION");
 				SdaiInteger sdaiProductShapeDefinitionRepresentationInstancesCnt = sdaiGetMemberCount(sdaiProductShapeDefinitionRepresentationAggr);
-				for (SdaiInteger index = 0; index < sdaiProductShapeDefinitionRepresentationInstancesCnt; index++) {
+				for (SdaiInteger j = 0; j < sdaiProductShapeDefinitionRepresentationInstancesCnt; j++) {
 					SdaiInstance sdaiProductShapeDefinitionRepresentationInstance = 0;
-					sdaiGetAggrByIndex(sdaiProductShapeDefinitionRepresentationAggr, index, sdaiINSTANCE, &sdaiProductShapeDefinitionRepresentationInstance);
+					sdaiGetAggrByIndex(sdaiProductShapeDefinitionRepresentationAggr, j, sdaiINSTANCE, &sdaiProductShapeDefinitionRepresentationInstance);
 					assert(sdaiProductShapeDefinitionRepresentationInstance != 0);
 
 					SdaiInstance sdaiRepresentedDefinitionInstance = 0;
@@ -384,9 +384,9 @@ int _ap242_model::calculateGeometriesCount()
 						SdaiAggr sdaiShapeRepresentationRelationshipAggr = sdaiGetEntityExtentBN(getSdaiModel(), "SHAPE_REPRESENTATION_RELATIONSHIP");
 						SdaiInteger shapeRepresentationRelationshipInstancesCnt = sdaiGetMemberCount(sdaiShapeRepresentationRelationshipAggr);
 						if (shapeRepresentationRelationshipInstancesCnt) {
-							for (SdaiInteger index = 0; index < shapeRepresentationRelationshipInstancesCnt; index++) {
+							for (SdaiInteger k = 0; k < shapeRepresentationRelationshipInstancesCnt; k++) {
 								SdaiInstance sdaiShapeRepresentationRelationshipInstance = 0;
-								sdaiGetAggrByIndex(sdaiShapeRepresentationRelationshipAggr, index, sdaiINSTANCE, &sdaiShapeRepresentationRelationshipInstance);
+								sdaiGetAggrByIndex(sdaiShapeRepresentationRelationshipAggr, k, sdaiINSTANCE, &sdaiShapeRepresentationRelationshipInstance);
 
 								SdaiInstance sdaiRep_1Instance = 0;
 								sdaiGetAttrBN(sdaiShapeRepresentationRelationshipInstance, "rep_1", sdaiINSTANCE, &sdaiRep_1Instance);
@@ -414,9 +414,9 @@ int _ap242_model::calculateGeometriesCount()
 					else {
 						funcLoadRepresentationItems(sdaiRepresentationInstance);
 					}
-				} // for (SdaiInteger index = 0; index < sdaiProductShapeDefinitionRepresentationInstancesCnt; index++)
+				} // for (SdaiInteger j = 0; j < sdaiProductShapeDefinitionRepresentationInstancesCnt; j++)
 			} // if (sdaiCharacterizedDefinitionInstance == sdaiProductDefinitionInstance)
-		} // for (SdaiInteger index = 0; index < sdaiProductDefinitionShapeInstancesCnt; index++)
+		} // for (SdaiInteger i = 0; i < sdaiProductDefinitionShapeInstancesCnt; i++)
 	} // for (SdaiInteger i = 0; i < iProductDefinitionsCount; i++)
 	iTotal += (int)(setRepresentationItemInstances.size());
 
