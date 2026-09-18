@@ -52,19 +52,20 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 
 	m_bUpdateVertexBuffers = true;
 
-#ifdef _WINDOWS
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-#endif
-
 	//
 	// Progress
 	//
 	int iTotal = calculateGeometriesCount();
 	progressInit(iTotal, "Loading instances");
 
-	retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_SEGMENTATION_PARTS);
-	retrieveGeometry("IFCPROJECT", DEFAULT_SEGMENTATION_PARTS);
-	retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_SEGMENTATION_PARTS);
+	{
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		retrieveGeometryRecursively(m_sdaiObjectEntity, DEFAULT_SEGMENTATION_PARTS);
+		retrieveGeometry("IFCPROJECT", DEFAULT_SEGMENTATION_PARTS);
+		retrieveGeometry("IFCRELSPACEBOUNDARY", DEFAULT_SEGMENTATION_PARTS);
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		logInfof("Retrieving geometry: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+	}
 
 	if (getMultiThreadedLoad()) {
 		unsigned int threadsCount = thread::hardware_concurrency() / 4;
@@ -186,17 +187,21 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 		for (auto& owlModel : vecOwlModels) {
 			CloseModel(owlModel);
 		}
+	} // if (getMultiThreadedLoad())
+
+	{
+		logInfo("Calculating instances referenced state...");
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		getObjectsReferencedState();
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		logInfof("Calculating instances referenced state: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 	}
 
-#ifdef _WINDOWS
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
-#endif
-
-	getObjectsReferencedState();
-
-	// Post-processing
+	// Mapped items: update transformation matrix
 	if (!m_vecMappedItemPendingUpdate.empty()) {
+		logInfo("Loading mapped items...");
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		double arOffset[3] = { 0., 0., 0. };
 		GetVertexBufferOffset(getOwlModel(), arOffset);
 
@@ -281,12 +286,21 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 				delete pMappedItem;
 			}
 		} // else if ((arOffset[0] + arOffset[1] + arOffset[2]) != 0.)
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		logInfof("Loading mapped items: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 	} // if (!m_vecMappedItemPendingUpdate.empty())
 
 	// Progress
 	progressEnd();
 
-	scale();
+	{
+		logInfo("Scaling model...");
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		scale();
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		logInfof("Scaling model: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+	}
 
 #ifdef _DEBUG
 	int64_t iGeometriesCount = 0;

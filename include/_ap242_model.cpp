@@ -108,11 +108,21 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 	progressInit(iTotal, "Loading instances");
 
 	if (!m_bLoadInstancesOnDemand) {
-#ifdef _WINDOWS
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-#endif
-		loadProductDefinitions();
-		loadDraughtingModels();
+		{
+			logInfo("Loading product definitions...");
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			loadProductDefinitions();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			logInfof("Loading product definitions: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		}		
+
+		{
+			logInfo("Loading draughting models...");
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			loadDraughtingModels();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			logInfof("Loading draughting models: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		}
 
 		if (getMultiThreadedLoad()) {
 			unsigned int threadsCount = thread::hardware_concurrency() / 4;
@@ -284,17 +294,32 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 			}
 		}
 
-		loadAssemblies();
-		loadGeometry();
+		{
+			logInfo("Loading assemblies...");
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			loadAssemblies();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			logInfof("Loading assemblies: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		}
 
-#ifdef _WINDOWS
-		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-		TRACE(L"\n*** attachModelCore() - Load Geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
-#endif
+		{
+			logInfo("Loading geometries...");
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			loadGeometry();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			logInfof("Loading geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		}
+
 		// Progress
 		progressEnd();
 
-		scale();
+		{
+			logInfo("Scaling model...");
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			scale();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			logInfof("Scaling model: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+		}
 	}
 }
 
@@ -340,6 +365,11 @@ int _ap242_model::calculateGeometriesCount()
 		assert(sdaiProductDefinitionInstance != 0);
 		iTotal++;
 
+		if (!m_bLoadProductRepresentationItems) {
+			continue;
+		}
+
+		// Load Product Definition Shapes and Shape Representation Items
 		SdaiInstance sdaiRelevantProductDefinitionShapeInstance = 0;
 		SdaiAggr sdaiProductDefinitionShapeAggr = sdaiGetEntityExtentBN(getSdaiModel(), "PRODUCT_DEFINITION_SHAPE");
 
@@ -433,9 +463,6 @@ int _ap242_model::calculateGeometriesCount()
 		SdaiInstance sdaiDraughtingModelInstance = 0;
 		sdaiGetAggrByIndex(sdaiDraughtingModelAggr, i, sdaiINSTANCE, &sdaiDraughtingModelInstance);
 		assert(sdaiDraughtingModelInstance != 0);
-
-		//auto pDraughtingModel = new _ap242_draughting_model(sdaiDraughtingModelInstance);
-		//m_vecDraughtingModels.push_back(pDraughtingModel);
 
 		SdaiAttr sdaiItemsAttr = sdaiGetAttrDefinition(sdaiGetEntity(getSdaiModel(), "REPRESENTATION"), "items");
 		assert(sdaiItemsAttr != nullptr);
