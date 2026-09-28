@@ -181,8 +181,7 @@ void _geometry::calculateBB_Faces(
     calculateBB_Faces(
         fBBXmin, fBBXmax,
         fBBYmin, fBBYmax,
-		fBBZmin, fBBZmax);
-
+        fBBZmin, fBBZmax);
     if ((fBBXmin == FLT_MAX) ||
         (fBBXmax == -FLT_MAX) ||
         (fBBYmin == FLT_MAX) ||
@@ -192,61 +191,27 @@ void _geometry::calculateBB_Faces(
         return;
     }
 
-    calculateBB(
-        fBBXmin, fBBYmin, fBBZmin,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
+    if (pInstance->getTransformationMatrix() != nullptr) {
+        _vector3 vecMin = { fBBXmin, fBBYmin, fBBZmin };
+        _transform(&vecMin, pInstance->getTransformationMatrix(), &vecMin);
+        fXmin = fmin(fXmin, (float)vecMin.x);
+        fYmin = fmin(fYmin, (float)vecMin.y);
+        fZmin = fmin(fZmin, (float)vecMin.z);
 
-    calculateBB(
-        fBBXmin, fBBYmin, fBBZmax,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmin, fBBYmax, fBBZmin,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmin, fBBYmax, fBBZmax,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmax, fBBYmin, fBBZmin,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmax, fBBYmin, fBBZmax,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmax, fBBYmax, fBBZmin,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
-
-    calculateBB(
-        fBBXmax, fBBYmax, fBBZmax,
-        pInstance->getTransformationMatrix(),
-        fXmin, fXmax,
-        fYmin, fYmax,
-        fZmin, fZmax);
+        _vector3 vecMax = { fBBXmax, fBBYmax, fBBZmax };
+        _transform(&vecMax, pInstance->getTransformationMatrix(), &vecMax);
+        fXmax = fmax(fXmax, (float)vecMax.x);
+        fYmax = fmax(fYmax, (float)vecMax.y);
+        fZmax = fmax(fZmax, (float)vecMax.z);
+    }
+    else {
+        fXmin = fmin(fXmin, fBBXmin);
+        fXmax = fmin(fXmax, fBBXmax);
+        fYmin = fmin(fYmin, fBBYmin);
+        fYmax = fmax(fXmax, fBBYmax);
+        fZmin = fmax(fYmax, fBBZmin);
+        fZmax = fmax(fZmax, fBBZmax);
+	}
 }
 
 void _geometry::calculateBB_Faces(

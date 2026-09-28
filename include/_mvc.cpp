@@ -24,6 +24,8 @@ _model::_model(_log* pLog)
 	, m_fZmin(-1.f)
 	, m_fZmax(1.f)
 	, m_fBoundingSphereDiameter(2.f)
+	, m_vecBBMin({-1.f, -1.f, -1.f})
+	, m_vecBBMax({1.f, 1.f, 1.f })
 	, m_vecGeometries()
 	, m_vecInstances()
 	, m_mapID2Instance()
@@ -42,6 +44,8 @@ _model::_model(_log* pLog)
 	// World
 	m_dOriginalBoundingSphereDiameter = 2.;
 	m_fBoundingSphereDiameter = 2.f;
+	m_vecBBMin = { -1.f, -1.f, -1.f };
+	m_vecBBMax = { 1.f, 1.f, 1.f };
 
 	if (m_pWorld == nullptr) {
 		// Min/Max
@@ -91,6 +95,9 @@ _model::_model(_log* pLog)
 		m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 		m_fBoundingSphereDiameter = fmax(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+		m_vecBBMin = { m_fXmin, m_fYmin, m_fZmin };
+		m_vecBBMax = { m_fXmax, m_fYmax, m_fZmax };
 
 		m_dOriginalBoundingSphereDiameter = m_fBoundingSphereDiameter;
 
@@ -204,6 +211,9 @@ _model::_model(_log* pLog)
 	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+
+	m_vecBBMin = { m_fXmin, m_fYmin, m_fZmin };
+	m_vecBBMax = { m_fXmax, m_fYmax, m_fZmax };
 
 #ifdef _WINDOWS
 	TRACE(L"\n*** Scale II *** => Xmin/max, Ymin/max, Zmin/max: %.16f, %.16f, %.16f, %.16f, %.16f, %.16f",

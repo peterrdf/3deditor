@@ -49,6 +49,7 @@ public: // Methods
     virtual ~_ap_model();
 
     // _model
+    virtual void zoomOut() override;
     virtual OwlModel getOwlModel() const override;
 
     bool openModel(const wchar_t* szPath);

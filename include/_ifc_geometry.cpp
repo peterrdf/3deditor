@@ -28,10 +28,10 @@ _ifc_geometry::_ifc_geometry(OwlInstance owlInstance, SdaiInstance sdaiInstance,
 	// Extra settings
 	setFilter(getSdaiModel(), FLAGBIT(1), FLAGBIT(1));
 	if (getMultiThreadOwlModelWrapper() != 0) {
-		setSegmentation(getMultiThreadOwlModelWrapper(), 16, 0.);
+		setSegmentation(getMultiThreadOwlModelWrapper(), 36, 0.);
 	}
 	else {
-		setSegmentation(getSdaiModel(), 16, 0.);
+		setSegmentation(getSdaiModel(), 36, 0.);
 	}
 }
 

@@ -89,6 +89,10 @@ protected: // Fields
 	float m_fZmax;
 	float m_fBoundingSphereDiameter;
 
+	// BB
+	vector<float> m_vecBBMin;
+	vector<float> m_vecBBMax;
+
 private: // Fields
 
 	vector<_geometry*> m_vecGeometries;

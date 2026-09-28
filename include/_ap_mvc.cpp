@@ -27,6 +27,22 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	clean();
 }
 
+/*virtual*/  void _ap_model::zoomOut() /*override*/
+{
+	assert((m_vecBBMin.size() == 3) && (m_vecBBMax.size() == 3));
+
+	m_fXmin = m_vecBBMin[0];
+	m_fXmax = m_vecBBMax[0];
+	m_fYmin = m_vecBBMin[1];
+	m_fYmax = m_vecBBMax[1];
+	m_fZmin = m_vecBBMin[2];
+	m_fZmax = m_vecBBMax[2];
+
+	m_fBoundingSphereDiameter = m_fXmax - m_fXmin;
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fYmax - m_fYmin);
+	m_fBoundingSphereDiameter = max(m_fBoundingSphereDiameter, m_fZmax - m_fZmin);
+}
+
 /*virtual*/ OwlModel _ap_model::getOwlModel() const /*override*/
 {
 	assert(m_sdaiModel != 0);
