@@ -19,10 +19,10 @@ _ap242_geometry::_ap242_geometry(OwlInstance owlInstance, SdaiInstance sdaiInsta
 
     // Extra settings
     if (getMultiThreadOwlModelWrapper() != 0) {
-        setSegmentation(getMultiThreadOwlModelWrapper(), 16, 0.);
+        setSegmentation(getMultiThreadOwlModelWrapper(), 36, 0.);
     }
     else {
-        setSegmentation(getSdaiModel(), 16, 0.);
+        setSegmentation(getSdaiModel(), 36, 0.);
     }
 }
 

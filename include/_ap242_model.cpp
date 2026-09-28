@@ -381,7 +381,9 @@ int _ap242_model::calculateGeometriesCount()
 
 			SdaiInstance sdaiCharacterizedDefinitionInstance = 0;
 			sdaiGetAttrBN(sdaiProductDefinitionShapeInstance, "definition", sdaiINSTANCE, &sdaiCharacterizedDefinitionInstance);
-			assert(sdaiCharacterizedDefinitionInstance != 0);
+			if (sdaiCharacterizedDefinitionInstance == 0) {
+				continue;
+			}
 
 			if (sdaiCharacterizedDefinitionInstance == sdaiProductDefinitionInstance) {
 				assert(sdaiRelevantProductDefinitionShapeInstance == 0);
@@ -521,7 +523,9 @@ void _ap242_model::loadProductDefinitionShapes(_ap242_product_definition* pProdu
 
 		SdaiInstance sdaiCharacterizedDefinitionInstance = 0;
 		sdaiGetAttrBN(sdaiProductDefinitionShapeInstance, "definition", sdaiINSTANCE, &sdaiCharacterizedDefinitionInstance);
-		assert(sdaiCharacterizedDefinitionInstance != 0);
+		if (sdaiCharacterizedDefinitionInstance == 0) {
+			continue;
+		}
 
 		if (sdaiCharacterizedDefinitionInstance == pProductDefinition->getSdaiInstance()) {
 			assert(sdaiRelevantProductDefinitionShapeInstance == 0);
