@@ -1368,6 +1368,10 @@ static	inline	OwlInstance	ImportModelA(
 //
 //	This function saves the selected instance and its dependencies on location file name.
 //
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - file at path location cannot be created/overwritten
+//
 int64_t						DECL STDC	SaveInstanceTree(
 												OwlInstance				owlInstance,
 												const char				* fileName
@@ -1402,6 +1406,10 @@ static	inline	int64_t	SaveInstanceTree(
 //				int64_t					returns								OUT
 //
 //	This function saves the selected instance and its dependencies on location file name.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - file at path location cannot be created/overwritten
 //
 int64_t						DECL STDC	SaveInstanceTreeW(
 												OwlInstance				owlInstance,
@@ -1439,6 +1447,10 @@ static	inline	int64_t	SaveInstanceTreeW(
 //
 //	This function saves the selected instance and its dependencies in a stream.
 //
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - callback unknown or size is zero
+//
 int64_t						DECL STDC	SaveInstanceTreeS(
 												OwlInstance				owlInstance,
 												const void				* callback,
@@ -1455,6 +1467,10 @@ int64_t						DECL STDC	SaveInstanceTreeS(
 //
 //	This function saves the selected instance and its dependencies in an array.
 //
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - content or size is zero
+//
 int64_t						DECL STDC	SaveInstanceTreeA(
 												OwlInstance				owlInstance,
 												unsigned char			* content,
@@ -1470,6 +1486,10 @@ int64_t						DECL STDC	SaveInstanceTreeA(
 //				int64_t					returns								OUT
 //
 //	This function saves the selected instance and its dependencies on location file name.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - file at path location cannot be created/overwritten
 //
 int64_t						DECL STDC	SaveInstanceNetwork(
 												OwlInstance				owlInstance,
@@ -1509,6 +1529,10 @@ static	inline	int64_t	SaveInstanceNetwork(
 //				int64_t					returns								OUT
 //
 //	This function saves the selected instance and its dependencies on location file name.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - file at path location cannot be created/overwritten
 //
 int64_t						DECL STDC	SaveInstanceNetworkW(
 												OwlInstance				owlInstance,
@@ -1550,6 +1574,10 @@ static	inline	int64_t	SaveInstanceNetworkW(
 //
 //	This function saves the selected instance and its dependencies in a stream.
 //
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - callback unknown or size is zero
+//
 int64_t						DECL STDC	SaveInstanceNetworkS(
 												OwlInstance				owlInstance,
 												bool					includeInverseRelations,
@@ -1568,6 +1596,10 @@ int64_t						DECL STDC	SaveInstanceNetworkS(
 //
 //	This function saves the selected instance and its dependencies in an array.
 //
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - content or size is zero
+//
 int64_t						DECL STDC	SaveInstanceNetworkA(
 												OwlInstance				owlInstance,
 												bool					includeInverseRelations,
@@ -1583,6 +1615,12 @@ int64_t						DECL STDC	SaveInstanceNetworkA(
 //				int64_t					returns								OUT
 //
 //	This function saves the current model on location file name.
+//
+//	It is allowed to use a class, property or instance handle instead of the model handle.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - model is NULL or not recognized as an model (or class/property/instance) handle
+//		2 - content or size is zero
 //
 int64_t						DECL STDC	SaveModel(
 												OwlModel				model,
@@ -1618,6 +1656,12 @@ static	inline	int64_t	SaveModel(
 //				int64_t					returns								OUT
 //
 //	This function saves the current model on location file name.
+//
+//	It is allowed to use a class, property or instance handle instead of the model handle.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - model is NULL or not recognized as an model (or class/property/instance) handle
+//		2 - content or size is zero
 //
 int64_t						DECL STDC	SaveModelW(
 												OwlModel				model,
@@ -1655,6 +1699,12 @@ static	inline	int64_t	SaveModelW(
 //
 //	This function saves the current model in a stream.
 //
+//	It is allowed to use a class, property or instance handle instead of the model handle.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - callback unknown or size is zero
+//
 int64_t						DECL STDC	SaveModelS(
 												OwlModel				model,
 												const void				* callback,
@@ -1670,6 +1720,12 @@ int64_t						DECL STDC	SaveModelS(
 //				int64_t					returns								OUT
 //
 //	This function saves the current model in an array.
+//
+//	It is allowed to use a class, property or instance handle instead of the model handle.
+//
+//	If save operation finished succesfully the return value will be 0, in case of non-zero value:
+//		1 - owlInstance is NULL or not recognized as an instance handle
+//		2 - content or size is zero
 //
 int64_t						DECL STDC	SaveModelA(
 												OwlModel				model,
