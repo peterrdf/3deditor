@@ -7621,38 +7621,6 @@ static	inline	double	GetDistance(
 
 //
 //
-static	inline	uint32_t	GetColorOfComponent(
-									OwlInstance				owlInstanceColorComponent
-								)
-{
-	assert(IsInstanceOfClass(owlInstanceColorComponent, "ColorComponent"));
-
-	int64_t	model = GetModel(owlInstanceColorComponent);
-
-	const char	* rgbwNames[4] = { "R", "G", "B", "W" };
-	double		rgbwValues[4] = { 0., 0., 0., 0. };
-
-	for (size_t i = 0; i < 4; i++) {
-		double	* values = nullptr;
-		int64_t	card = 0;
-		GetDatatypeProperty(
-				owlInstanceColorComponent,
-				GetPropertyByName(
-						model,
-						rgbwNames[i]
-					),
-				(const void**) &values,
-				&card
-			);
-		assert(card == 0 || card == 1);
-		rgbwValues[i] = (card == 1) ? values[0] : ((i == 3) ? 1. : 0.);
-	}
-
-	return	COLOR_ARR_RGBW(rgbwValues);
-}
-
-//
-//
 static	inline	void	SetColorOfComponent(
 								OwlInstance				owlInstanceColorComponent,
 								uint32_t				color
@@ -7682,49 +7650,34 @@ static	inline	void	SetColorOfComponent(
 
 //
 //
-static	inline	void	GetColor(
-								OwlInstance				owlInstanceColor,
-								uint32_t				* ambient,
-								uint32_t				* diffuse,
-								uint32_t				* emissive,
-								uint32_t				* specular
-							)
+static	inline	uint32_t	GetColorOfComponent(
+									OwlInstance				owlInstanceColorComponent
+								)
 {
-	assert(IsInstanceOfClass(owlInstanceColor, "Color"));
+	assert(IsInstanceOfClass(owlInstanceColorComponent, "ColorComponent"));
 
-	int64_t	model = GetModel(owlInstanceColor);
+	int64_t	model = GetModel(owlInstanceColorComponent);
 
-	GetDefaultColor(
-			model,
-			ambient,
-			diffuse,
-			emissive,
-			specular
-		);
-
-	const char	* componentNames[4] = { "ambient", "diffuse", "emissive", "specular" };
-	uint32_t	* componentColors[4] = { ambient, diffuse, emissive, specular };
+	const char	* rgbwNames[4] = { "R", "G", "B", "W" };
+	double		rgbwValues[4] = { 0., 0., 0., 0. };
 
 	for (size_t i = 0; i < 4; i++) {
-		if (componentColors[i]) {
-			OwlInstance	* values = nullptr;
-			int64_t		card = 0;
-			GetObjectProperty(
-					owlInstanceColor,
-					GetPropertyByName(
-							model,
-							componentNames[i]
-						),
-					(const OwlInstance**) &values,
-					&card
-				);
-
-			int64_t owlInstanceColorComponent = (card == 1) ? values[0] : 0;
-			if (owlInstanceColorComponent) {
-				(*componentColors[i]) = GetColorOfComponent(owlInstanceColorComponent);
-			}
-		}
+		double	* values = nullptr;
+		int64_t	card = 0;
+		GetDatatypeProperty(
+				owlInstanceColorComponent,
+				GetPropertyByName(
+						model,
+						rgbwNames[i]
+					),
+				(const void**) &values,
+				&card
+			);
+		assert(card == 0 || card == 1);
+		rgbwValues[i] = (card == 1) ? values[0] : ((i == 3) ? 1. : 0.);
 	}
+
+	return	COLOR_ARR_RGBW(rgbwValues);
 }
 
 //
@@ -7846,6 +7799,92 @@ static	inline	void	SetColor(
 
 //
 //
+static	inline	void	GetColor(
+								OwlInstance				owlInstanceColor,
+								uint32_t				* ambient,
+								uint32_t				* diffuse,
+								uint32_t				* emissive,
+								uint32_t				* specular
+							)
+{
+	assert(IsInstanceOfClass(owlInstanceColor, "Color"));
+
+	int64_t	model = GetModel(owlInstanceColor);
+
+	GetDefaultColor(
+			model,
+			ambient,
+			diffuse,
+			emissive,
+			specular
+		);
+
+	const char	* componentNames[4] = { "ambient", "diffuse", "emissive", "specular" };
+	uint32_t	* componentColors[4] = { ambient, diffuse, emissive, specular };
+
+	for (size_t i = 0; i < 4; i++) {
+		if (componentColors[i]) {
+			OwlInstance	* values = nullptr;
+			int64_t		card = 0;
+			GetObjectProperty(
+					owlInstanceColor,
+					GetPropertyByName(
+							model,
+							componentNames[i]
+						),
+					(const OwlInstance**) &values,
+					&card
+				);
+
+			int64_t owlInstanceColorComponent = (card == 1) ? values[0] : 0;
+			if (owlInstanceColorComponent) {
+				(*componentColors[i]) = GetColorOfComponent(owlInstanceColorComponent);
+			}
+		}
+	}
+}
+
+//
+//
+static	inline	void	SetMaterialColor(
+								OwlInstance				owlInstanceMaterial,
+								uint32_t				ambient,
+								uint32_t				diffuse,
+								uint32_t				emissive,
+								uint32_t				specular
+							)
+{
+	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
+
+	int64_t	* values = nullptr, card = 0;
+	GetObjectProperty(
+			owlInstanceMaterial,
+			GetPropertyByName(
+					GetModel(owlInstanceMaterial),
+					"color"
+				),
+			&values,
+			&card
+		);
+
+	SetColor(
+			(card == 1) ?
+				values[0] :
+				CreateInstance(
+						GetClassByName(
+								GetModel(owlInstanceMaterial),
+								"color"
+							)
+					),
+			ambient,
+			diffuse,
+			emissive,
+			specular
+		);
+}
+
+//
+//
 static	inline	void	GetMaterialColor(
 								OwlInstance				owlInstanceMaterial,
 								uint32_t				* ambient,
@@ -7888,46 +7927,6 @@ static	inline	void	GetMaterialColor(
 				specular
 			);
 	}
-}
-
-
-//
-//
-static	inline	void	SetMaterialColor(
-								OwlInstance				owlInstanceMaterial,
-								uint32_t				ambient,
-								uint32_t				diffuse,
-								uint32_t				emissive,
-								uint32_t				specular
-							)
-{
-	assert(IsInstanceOfClass(owlInstanceMaterial, "Material"));
-
-	int64_t	* values = nullptr, card = 0;
-	GetObjectProperty(
-			owlInstanceMaterial,
-			GetPropertyByName(
-					GetModel(owlInstanceMaterial),
-					"color"
-				),
-			&values,
-			&card
-		);
-
-	SetColor(
-			(card == 1) ?
-				values[0] :
-				CreateInstance(
-						GetClassByName(
-								GetModel(owlInstanceMaterial),
-								"color"
-							)
-					),
-			ambient,
-			diffuse,
-			emissive,
-			specular
-		);
 }
 
 //
