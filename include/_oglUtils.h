@@ -2266,7 +2266,7 @@ public: // Methods
 
 	virtual void _reset();
 
-	void _setView(enumView enView);
+	virtual void _setView(enumView enView);
 
 	virtual void saveSetting(const string& strName, const string& strValue);
 	virtual string loadSetting(const string& strName);
@@ -2412,9 +2412,11 @@ protected: // Fields
 
 	// Camera
 	bool m_bCameraSettings;
+	bool m_bCameraSettingsChanged;
 	_vector3d m_vecViewPoint;
 	_vector3d m_vecDirection;
 	_vector3d m_vecUpVector;
+	double m_dViewToWorldScale;
 	double m_dFieldOfView;
 	double m_dAspectRatio;
 
@@ -2426,8 +2428,9 @@ public: // Methods
 	_oglRenderer();
 	virtual ~_oglRenderer();
 
-	// _oglRendererSettings
+	// _oglRendererSettings	
 	virtual void _reset() override;
+	virtual void _setView(enumView enView) override;
 
 	// _oglScene
 	virtual void _getDimensions(int& iWidth, int& iHeight) override;
@@ -2465,7 +2468,7 @@ public: // Methods
 		double dAspectRatio,
 		double dLengthConversionFactor);
 
-	void _getCameraSettings(
+	bool _getCameraSettings(
 		bool& bPerspective,
 		double arViewPoint[3],
 		double arDirection[3],

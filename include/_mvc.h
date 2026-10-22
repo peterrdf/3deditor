@@ -260,9 +260,11 @@ public: // Methods
 
 	void setModel(_model* pModel);
 	void setModels(const vector<_model*>& vecModels);
-	void addModel(_model* pModel);
+	void addModel(_model* model);
+	void addModelDisabled(_model* model);//it will not update views, use enableModels() after adding all models
+	void removeModels(const std::set<const _model*>& models, bool enableRemaining);
 	bool removeModelByInstance(OwlModel owlModel);
-	void enableModelsAddIfNeeded(const vector<_model*>& vecModels);
+	void enableModels (const std::vector<std::wstring>* enableModelsByPath = nullptr); //enable all if NULL
 
 	virtual void loadDecorationModels() {}
 	void addDecorationModel(_model* pModel);
@@ -328,7 +330,7 @@ protected: // Methods
 
 	void showDecoration(const wchar_t* szName, bool bShow);
 
-	virtual void clean();
+    virtual void clean();
 	virtual void cleanSelection();
 
 	virtual void loadSettings();
@@ -336,8 +338,10 @@ protected: // Methods
 public: // Properties
 
 	_log_hub* getLogHub() const { return m_pLogHub; }
+	_model* getModel(bool assertOnlyOneModel = true) const; // kept for backward compatibility
+	_model* getModel(const wchar_t* pathName);
+	_model* getFirstModel()  const { return getModel(false); };
 	_progress_hub* getProgressHub() const { return m_pProgressHub; }
-	_model* getModel() const; // kept for backward compatibility
 	const vector<_model*>& getModels() const { return m_vecModels; }
 	const vector<_model*>& getDecorationModels() const { return m_vecDecorationModels; }
 	_settings_storage* getSettingsStorage() const { return m_pSettingsStorage; }

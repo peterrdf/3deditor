@@ -191,27 +191,36 @@ void _geometry::calculateBB_Faces(
         return;
     }
 
-    if (pInstance->getTransformationMatrix() != nullptr) {
-        _vector3 vecMin = { fBBXmin, fBBYmin, fBBZmin };
-        _transform(&vecMin, pInstance->getTransformationMatrix(), &vecMin);
-        fXmin = fmin(fXmin, (float)vecMin.x);
-        fYmin = fmin(fYmin, (float)vecMin.y);
-        fZmin = fmin(fZmin, (float)vecMin.z);
+    const _matrix4x4* pMatrix = pInstance->getTransformationMatrix();
+    if (pMatrix != nullptr) {
+        const double arX[2] = { fBBXmin, fBBXmax };
+        const double arY[2] = { fBBYmin, fBBYmax };
+        const double arZ[2] = { fBBZmin, fBBZmax };
 
-        _vector3 vecMax = { fBBXmax, fBBYmax, fBBZmax };
-        _transform(&vecMax, pInstance->getTransformationMatrix(), &vecMax);
-        fXmax = fmax(fXmax, (float)vecMax.x);
-        fYmax = fmax(fYmax, (float)vecMax.y);
-        fZmax = fmax(fZmax, (float)vecMax.z);
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 2; k++) {
+                    _vector3 vecPoint = { arX[i], arY[j], arZ[k] };
+                    _transform(&vecPoint, pMatrix, &vecPoint);
+
+                    fXmin = fmin(fXmin, (float)vecPoint.x);
+                    fXmax = fmax(fXmax, (float)vecPoint.x);
+                    fYmin = fmin(fYmin, (float)vecPoint.y);
+                    fYmax = fmax(fYmax, (float)vecPoint.y);
+                    fZmin = fmin(fZmin, (float)vecPoint.z);
+                    fZmax = fmax(fZmax, (float)vecPoint.z);
+                }
+            }
+        }
     }
     else {
         fXmin = fmin(fXmin, fBBXmin);
-        fXmax = fmin(fXmax, fBBXmax);
+        fXmax = fmax(fXmax, fBBXmax);
         fYmin = fmin(fYmin, fBBYmin);
-        fYmax = fmax(fXmax, fBBYmax);
-        fZmin = fmax(fYmax, fBBZmin);
+        fYmax = fmax(fYmax, fBBYmax);
+        fZmin = fmin(fZmin, fBBZmin);
         fZmax = fmax(fZmax, fBBZmax);
-	}
+    }
 }
 
 void _geometry::calculateBB_Faces(
@@ -224,19 +233,35 @@ void _geometry::calculateBB_Faces(
     }
 
     const auto VERTEX_LENGTH = getVertexLength();
+    const auto* pVertices = m_pVertexBuffer->data();
+    const auto* pIndices = m_pIndexBuffer->data();
 
-    for (size_t iTriangle = 0; iTriangle < m_vecTriangles.size(); iTriangle++) {
-        _primitives& triangle = m_vecTriangles[iTriangle];
-        for (int64_t iIndex = triangle.startIndex(); iIndex < triangle.startIndex() + triangle.indicesCount(); iIndex++) {
-            int64_t iVertex = m_pIndexBuffer->data()[iIndex];
-            fXmin = (float)fmin(fXmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
-            fXmax = (float)fmax(fXmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 0]);
-            fYmin = (float)fmin(fYmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
-            fYmax = (float)fmax(fYmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 1]);
-            fZmin = (float)fmin(fZmin, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
-            fZmax = (float)fmax(fZmax, m_pVertexBuffer->data()[(iVertex * VERTEX_LENGTH) + 2]);
+    // Local accumulators stay in registers
+    float fMinX = fXmin, fMaxX = fXmax;
+    float fMinY = fYmin, fMaxY = fYmax;
+    float fMinZ = fZmin, fMaxZ = fZmax;
+
+    for (auto& triangle : m_vecTriangles) {
+        const int64_t iEnd = triangle.startIndex() + triangle.indicesCount();
+        for (int64_t iIndex = triangle.startIndex(); iIndex < iEnd; iIndex++) {
+            const auto* pVertex = pVertices + (pIndices[iIndex] * VERTEX_LENGTH);
+
+            const float fX = (float)pVertex[0];
+            const float fY = (float)pVertex[1];
+            const float fZ = (float)pVertex[2];
+
+            if (fX < fMinX) fMinX = fX;
+            if (fX > fMaxX) fMaxX = fX;
+            if (fY < fMinY) fMinY = fY;
+            if (fY > fMaxY) fMaxY = fY;
+            if (fZ < fMinZ) fMinZ = fZ;
+            if (fZ > fMaxZ) fMaxZ = fZ;
         }
     }
+
+    fXmin = fMinX; fXmax = fMaxX;
+    fYmin = fMinY; fYmax = fMaxY;
+    fZmin = fMinZ; fZmax = fMaxZ;
 }
 
 /*static*/ void _geometry::calculateBB(

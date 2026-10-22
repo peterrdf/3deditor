@@ -90,7 +90,7 @@ _rdf_model::_rdf_model(_log* pLog)
 		(m_fYmax == -FLT_MAX) ||
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX)) {
-		// TODO: new status bar for messages
+		logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 		return;
 	}
 
@@ -181,7 +181,7 @@ _rdf_model::_rdf_model(_log* pLog)
 		(m_fYmax == -FLT_MAX) ||
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX)) {
-		// TODO: new status bar for messages
+		logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 		return;
 	}
 

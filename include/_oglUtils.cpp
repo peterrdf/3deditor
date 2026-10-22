@@ -4,6 +4,42 @@
 #include "_string.h"
 #include "_ptr.h"
 
+#ifdef _DEBUG
+
+static void ASSERT_REAL_VALID(double v)
+{
+	if(isnan(v) || isinf(v))
+        assert(!"wrong double value");
+}
+
+static void ASSERT_MATRIX_VALID(glm::mat4& m)
+{
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			ASSERT_REAL_VALID(m[i][j]);
+}
+
+static void ASSERT_ARRAY_VALID(double* arr, int size)
+{
+	for (int i = 0; i < size; i++)
+		ASSERT_REAL_VALID(arr[i]);
+}
+
+static void ASSERT_UNIT_DIR(double* v)
+{
+	double l = 0;
+	for (int i = 0; i < 3; i++)
+		l += v[i] * v[i];
+	assert(fabs(1 - l) < 1e-4);
+}
+
+#else
+#define ASSERT_REAL_VALID(v) /*noop*/
+#define ASSERT_MATRIX_VALID(m) /*noop*/
+#define ASSERT_ARRAY_VALID(arr, size) /*noop*/
+#define ASSERT_UNIT_DIR(v) /*noop*/
+#endif
+
 // ************************************************************************************************
 static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::vec3& upVector)
 {
@@ -20,6 +56,13 @@ static glm::vec3 directionToEulerAngles(const glm::vec3& direction, const glm::v
 	glm::vec3 eulerAngles = glm::eulerAngles(glm::quat_cast(rotationMatrix));
 
 	return eulerAngles;
+}
+
+// Screen-space rotation -> world-space rotation for a given camera orientation
+static glm::mat4 toCameraSpaceRotation(const glm::mat4& matCamera, const glm::mat4& matRotation)
+{
+	const glm::mat4 matCameraRotation = glm::mat4(glm::mat3(matCamera)); // no translation
+	return glm::transpose(matCameraRotation) * matRotation * matCameraRotation;
 }
 
 #ifdef _WINDOWS
@@ -128,7 +171,7 @@ _oglRendererSettings::_oglRendererSettings()
 		false);
 }
 
-void _oglRendererSettings::_setView(enumView enView)
+/*virtual*/ void _oglRendererSettings::_setView(enumView enView)
 {
 	// Note: OpenGL/Quaternions - CW/CCW
 
@@ -1023,9 +1066,11 @@ _oglRenderer::_oglRenderer()
 	, m_fScaleFactorMax(2.f)
 	, m_fScaleFactorInterval(2.f)
 	, m_bCameraSettings(false)
+	, m_bCameraSettingsChanged(false)
 	, m_vecViewPoint({ 0., 0, 0. })
 	, m_vecDirection({ 0., 0, 0. })
 	, m_vecUpVector({ 0., 0, 0. })
+	, m_dViewToWorldScale(0.)
 	, m_dFieldOfView(45.)
 	, m_dAspectRatio(1.)
 	, m_bDrawSelectInstanceBufferInProgress(false)
@@ -1208,14 +1253,23 @@ void _oglRenderer::_setCameraSettings(
 	double dAspectRatio,
 	double dLengthConversionFactor)
 {
-	_reset();
+	ASSERT_ARRAY_VALID(arViewPoint, 3);
+	ASSERT_ARRAY_VALID(arDirection, 3);
+	ASSERT_ARRAY_VALID(arUpVector, 3);
+	ASSERT_UNIT_DIR(arUpVector);
+	ASSERT_UNIT_DIR(arDirection);
+	ASSERT_REAL_VALID(dViewToWorldScale);
+	ASSERT_REAL_VALID(dFieldOfView);
+	ASSERT_REAL_VALID(dAspectRatio);
+	ASSERT_REAL_VALID(dLengthConversionFactor);
 
-	auto pWorld = _getController()->getModel();
+	auto pWorld = _getController()->getFirstModel();
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
 	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
 
 	m_bCameraSettings = true;
+	m_bCameraSettingsChanged = false;
 
 	m_enProjection = bPerspective ? enumProjection::Perspective : enumProjection::Orthographic;
 
@@ -1228,29 +1282,23 @@ void _oglRenderer::_setCameraSettings(
 
 	m_vecUpVector = { arUpVector[0], arUpVector[1], arUpVector[2] };
 
-	m_fScaleFactor = (float)dViewToWorldScale;
+	m_dViewToWorldScale = dViewToWorldScale;
+	m_fScaleFactor = static_cast<float>(
+		dViewToWorldScale / dLengthConversionFactor / dScaleFactor / 2.);
 
 	m_dFieldOfView = dFieldOfView;
 	m_dAspectRatio = dAspectRatio;
 
-	// I. Rotation and View point
-	glm::mat4 matRotation = glm::lookAt(
-		glm::vec3(m_vecViewPoint.x, m_vecViewPoint.y, -m_vecViewPoint.z),
-		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
-		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
-	glm::quat quatRotation = glm::quat_cast(matRotation);
-	m_rotation = _quaterniond(quatRotation.w, quatRotation.x, quatRotation.y, quatRotation.z);
-
-	// II. Only rotation; View point is not set
-	/*glm::vec3 eulerAngles = directionToEulerAngles(
-		glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
-		glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
-	m_rotation = _quaterniond::toQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z);*/
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+	m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+	m_rotation = _quaterniond();
 
 	_redraw();
 }
 
-void _oglRenderer::_getCameraSettings(
+bool _oglRenderer::_getCameraSettings(
 	bool& bPerspective,
 	double arViewPoint[3],
 	double arDirection[3],
@@ -1260,35 +1308,75 @@ void _oglRenderer::_getCameraSettings(
 	double& dAspectRatio,
 	double dLengthConversionFactor)
 {
-	auto pWorld = _getController()->getModel();
+	auto pWorld = _getController()->getFirstModel();
+	if (!pWorld)
+		return false;
+
 	_vector3d vecVertexBufferOffset;
 	GetVertexBufferOffset(pWorld->getOwlModel(), (double*)&vecVertexBufferOffset);
 	auto dScaleFactor = pWorld->getOriginalBoundingSphereDiameter() / 2.;
 
 	bPerspective = m_enProjection == enumProjection::Perspective;
+	if (m_bCameraSettings && !m_bCameraSettingsChanged) {
+		arViewPoint[0] = m_vecViewPoint.x * dScaleFactor;
+		arViewPoint[1] = m_vecViewPoint.y * dScaleFactor;
+		arViewPoint[2] = m_vecViewPoint.z * dScaleFactor;
+		arViewPoint[0] -= vecVertexBufferOffset.x;
+		arViewPoint[1] -= vecVertexBufferOffset.y;
+		arViewPoint[2] -= vecVertexBufferOffset.z;
+		arViewPoint[0] *= dLengthConversionFactor;
+		arViewPoint[1] *= dLengthConversionFactor;
+		arViewPoint[2] *= dLengthConversionFactor;
 
-	arViewPoint[0] = -m_matModelView[3][0] * dScaleFactor;
-	arViewPoint[1] = -m_matModelView[3][1] * dScaleFactor;
-	arViewPoint[2] = -m_matModelView[3][2] * dScaleFactor;
-	arViewPoint[0] -= vecVertexBufferOffset.x;
-	arViewPoint[1] -= vecVertexBufferOffset.y;
-	arViewPoint[2] -= vecVertexBufferOffset.z;
-	arViewPoint[0] *= dLengthConversionFactor;
-	arViewPoint[1] *= dLengthConversionFactor;
-	arViewPoint[2] *= dLengthConversionFactor;
+		arDirection[0] = m_vecDirection.x;
+		arDirection[1] = m_vecDirection.y;
+		arDirection[2] = m_vecDirection.z;
 
-	arDirection[0] = -m_matModelView[2][0];
-	arDirection[1] = -m_matModelView[2][1];
-	arDirection[2] = -m_matModelView[2][2];
+		arUpVector[0] = m_vecUpVector.x;
+		arUpVector[1] = m_vecUpVector.y;
+		arUpVector[2] = m_vecUpVector.z;
 
-	arUpVector[0] = m_matModelView[0][0];
-	arUpVector[1] = m_matModelView[0][1];
-	arUpVector[2] = m_matModelView[0][2];
+		dViewToWorldScale = bPerspective ? 0. : m_dViewToWorldScale;
+	}
+	else {
+		const glm::mat4 inverseModelView = glm::inverse(m_matModelView);
+		arViewPoint[0] = inverseModelView[3][0] * dScaleFactor;
+		arViewPoint[1] = inverseModelView[3][1] * dScaleFactor;
+		arViewPoint[2] = inverseModelView[3][2] * dScaleFactor;
+		arViewPoint[0] -= vecVertexBufferOffset.x;
+		arViewPoint[1] -= vecVertexBufferOffset.y;
+		arViewPoint[2] -= vecVertexBufferOffset.z;
+		arViewPoint[0] *= dLengthConversionFactor;
+		arViewPoint[1] *= dLengthConversionFactor;
+		arViewPoint[2] *= dLengthConversionFactor;
 
-	dViewToWorldScale = m_enProjection == enumProjection::Perspective ? 0. : m_fScaleFactor;
+		arDirection[0] = -inverseModelView[2][0];
+		arDirection[1] = -inverseModelView[2][1];
+		arDirection[2] = -inverseModelView[2][2];
 
-	dFieldOfView = 45.0;
-	dAspectRatio = 1.;
+		arUpVector[0] = inverseModelView[1][0];
+		arUpVector[1] = inverseModelView[1][1];
+		arUpVector[2] = inverseModelView[1][2];
+
+		dViewToWorldScale = bPerspective
+			? 0.
+			: 2. * m_fScaleFactor * dScaleFactor * dLengthConversionFactor;
+	}
+
+	dFieldOfView = bPerspective ? m_dFieldOfView : 0.;
+	dAspectRatio = m_dAspectRatio;
+
+	ASSERT_ARRAY_VALID(arViewPoint, 3);
+	ASSERT_ARRAY_VALID(arDirection, 3);
+	ASSERT_ARRAY_VALID(arUpVector, 3);
+	ASSERT_UNIT_DIR(arUpVector);
+	ASSERT_UNIT_DIR(arDirection);
+	ASSERT_REAL_VALID(dViewToWorldScale);
+	ASSERT_REAL_VALID(dFieldOfView);
+	ASSERT_REAL_VALID(dAspectRatio);
+	ASSERT_REAL_VALID(dLengthConversionFactor);
+
+	return true;
 }
 
 void _oglRenderer::_rotate(float fXAngle, float fYAngle)
@@ -1309,6 +1397,7 @@ void _oglRenderer::_rotate(float fXAngle, float fYAngle)
 		m_fYAngle += 360.f;
 	}
 
+	m_bCameraSettingsChanged = m_bCameraSettings;
 	_redraw();
 }
 
@@ -1326,6 +1415,7 @@ void _oglRenderer::_zoom(float fZTranslation)
 				}*/
 
 				m_fZTranslation = fNewZTranslation;
+				m_bCameraSettingsChanged = m_bCameraSettings;
 			}
 			break;
 
@@ -1338,6 +1428,7 @@ void _oglRenderer::_zoom(float fZTranslation)
 				}
 
 				m_fScaleFactor = fNewScaleFactor;
+				m_bCameraSettingsChanged = m_bCameraSettings;
 			}
 			break;
 
@@ -1372,6 +1463,7 @@ void _oglRenderer::_pan(float fX, float fY)
 	}
 
 	if (bRedraw) {
+		m_bCameraSettingsChanged = m_bCameraSettings;
 		_redraw();
 	}
 }
@@ -1485,11 +1577,103 @@ void _oglRenderer::_reset()
 	m_fScaleFactor = fWorldBoundingSphereDiameter;
 
 	m_bCameraSettings = false;
+	m_bCameraSettingsChanged = false;
 	m_vecViewPoint = { 0., 0, 0. };
 	m_vecDirection = { 0., 0, 0. };
 	m_vecUpVector = { 0., 0, 0. };
+	m_dViewToWorldScale = 0.;
 	m_dFieldOfView = 45.;
 	m_dAspectRatio = 1.;
+}
+
+// Camera direction/up for the standard views (model space, Z-up)
+static void getViewVectors(enumView enView, glm::dvec3& vecDirection, glm::dvec3& vecUp)
+{
+	vecUp = glm::dvec3(0., 0., 1.);
+
+	switch (enView) {
+		case enumView::Front: vecDirection = glm::dvec3(0., 1., 0.); 
+			break;
+		case enumView::Back: vecDirection = glm::dvec3(0., -1., 0.); 
+			break;
+		case enumView::Left: vecDirection = glm::dvec3(1., 0., 0.); 
+			break;
+		case enumView::Right: vecDirection = glm::dvec3(-1., 0., 0.); 
+			break;
+		case enumView::Top:
+			vecDirection = glm::dvec3(0., 0., -1.);
+			vecUp = glm::dvec3(0., 1., 0.);
+			break;
+		case enumView::Bottom:
+			vecDirection = glm::dvec3(0., 0., 1.);
+			vecUp = glm::dvec3(0., 1., 0.);
+			break;
+		case enumView::FrontTopLeft:	vecDirection = glm::dvec3(1., 1., -1.); 
+			break;
+		case enumView::FrontTopRight:	vecDirection = glm::dvec3(-1., 1., -1.); 
+			break;
+		case enumView::FrontBottomLeft:	vecDirection = glm::dvec3(1., 1., 1.); 
+			break;
+		case enumView::FrontBottomRight:vecDirection = glm::dvec3(-1., 1., 1.); 
+			break;
+		default:
+			assert(false);
+			vecDirection = glm::dvec3(0., 0., -1.);
+			vecUp = glm::dvec3(0., 1., 0.);
+			break;
+	}
+
+	vecDirection = glm::normalize(vecDirection);
+
+	// Orthogonalize the up vector
+	vecUp = glm::normalize(vecUp - glm::dot(vecUp, vecDirection) * vecDirection);
+}
+
+/*virtual*/ void _oglRenderer::_setView(enumView enView) /*override*/
+{
+	if (!m_bCameraSettings) {
+		_oglRendererSettings::_setView(enView);
+		return;
+	}
+
+	// BCF: the camera is defined by view point/direction/up vector
+	glm::dvec3 vecDirection;
+	glm::dvec3 vecUp;
+	getViewVectors(enView, vecDirection, vecUp);
+
+	float fXmin = FLT_MAX, fXmax = -FLT_MAX;
+	float fYmin = FLT_MAX, fYmax = -FLT_MAX;
+	float fZmin = FLT_MAX, fZmax = -FLT_MAX;
+	_getController()->getWorldDimensions(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+
+	const glm::dvec3 vecCenter(
+		(fXmin + fXmax) / 2.,
+		(fYmin + fYmax) / 2.,
+		(fZmin + fZmax) / 2.);
+
+	// Keep the current distance to the model
+	const glm::dvec3 vecOldEye(m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z);
+	double dDistance = glm::length(vecOldEye - vecCenter);
+	if (dDistance < 1e-6) {
+		dDistance = fmax(fXmax - fXmin, fmax(fYmax - fYmin, fZmax - fZmin)) * 2.;
+	}
+
+	const glm::dvec3 vecEye = vecCenter - vecDirection * dDistance;
+
+	m_vecViewPoint = { vecEye.x, vecEye.y, vecEye.z };
+	m_vecDirection = { vecDirection.x, vecDirection.y, vecDirection.z };
+	m_vecUpVector = { vecUp.x, vecUp.y, vecUp.z };
+
+	// The preset is absolute: no extra interaction
+	m_fXTranslation = 0.f;
+	m_fYTranslation = 0.f;
+	m_fZTranslation = 0.f;
+	m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+	m_rotation = _quaterniond::toQuaternion(0., 0., 0.);
+
+	m_bCameraSettingsChanged = true;
+
+	_redraw();
 }
 
 void _oglRenderer::_getDimensions(int& iWidth, int& iHeight) /*override*/
@@ -1522,11 +1706,18 @@ void _oglRenderer::_prepare(
 	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fYmax - m_fYmin);
 	fBoundingSphereDiameter = fmax(fBoundingSphereDiameter, m_fZmax - m_fZmin);
 
+	// The world is normalized to a diameter of ~2
+	const GLdouble WORLD_DIAMETER = 2.0;
+
 	// Zoom
 	m_fZoomMin = -(m_fZmin + m_fZmax) / 2.f;
 	m_fZoomMin -= (fBoundingSphereDiameter * 4.f);
 	m_fZoomMax = ((m_fZmin + m_fZmax) / 2.f);
-	m_fZoomInterval = m_fZoomMax - m_fZoomMin;
+	m_fZoomInterval = fmax(fBoundingSphereDiameter, WORLD_DIAMETER) * 4.f;
+
+	ASSERT_REAL_VALID(m_fZoomMin);
+	ASSERT_REAL_VALID(m_fZoomMax);
+	ASSERT_REAL_VALID(m_fZoomInterval);
 
 	// Pan X
 	m_fPanXMin = -(m_fXmax - m_fXmin) / 2.f;
@@ -1584,16 +1775,32 @@ void _oglRenderer::_prepare(
 	// aspect   - Aspect ratio of the viewport
 	// zNear    - The near clipping distance
 	// zFar     - The far clipping distance
-	GLdouble fovY = m_dFieldOfView;
-	if (!m_bCameraSettings) {
-		m_dAspectRatio = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	const bool useCameraSettings = m_bCameraSettings && bTranslate;
+	const GLdouble fovY = useCameraSettings ? m_dFieldOfView : 45.;
+	const GLdouble aspect = (GLdouble)iViewportWidth / (GLdouble)iViewportHeight;
+	if (bTranslate && !m_bDrawSelectInstanceBufferInProgress) {
+		// BCF: keep the current viewport aspect, so it is exported to BCF correctly
+		m_dAspectRatio = aspect;
 	}
-	GLdouble aspect = m_dAspectRatio;
 
 	// Znear and Zfar
 	GLdouble dCenterZ = (fZmin + fZmax) / 2.0;
-	GLdouble dCameraDistance = abs(m_fZTranslation + dCenterZ);
-	GLdouble dEffectiveDiameter = fmax(fBoundingSphereDiameter, 0.001);
+	GLdouble dCameraDistance = abs(
+		(m_bCameraSettings && !bTranslate ? DEFAULT_TRANSLATION : m_fZTranslation) +
+		dCenterZ);
+	if (useCameraSettings) {
+		const GLdouble dCenterX = (fXmin + fXmax) / 2.0;
+		const GLdouble dCenterY = (fYmin + fYmax) / 2.0;
+		const GLdouble dX = m_vecViewPoint.x - dCenterX;
+		const GLdouble dY = m_vecViewPoint.y - dCenterY;
+		const GLdouble dZ = m_vecViewPoint.z - dCenterZ;
+		// The camera distance is the distance from the view point to the center of the model, minus the Z translation (which is negative)
+		dCameraDistance = sqrt(dX * dX + dY * dY + dZ * dZ) - m_fZTranslation;
+		dCameraDistance = fmax(dCameraDistance, 0.);
+	}
+
+	// The clip range must cover the whole model, not only the zoomed instances	
+	GLdouble dEffectiveDiameter = fmax(fmax(fBoundingSphereDiameter, WORLD_DIAMETER), 0.001);
 	GLdouble zNear = fmax(1e-6, fmin(dCameraDistance * 0.001, (dEffectiveDiameter / 2.0) * 0.01));
 	GLdouble zFar = dCameraDistance + dEffectiveDiameter * 2.0;
 	if (zFar < zNear * 1000.0) {
@@ -1619,53 +1826,160 @@ void _oglRenderer::_prepare(
 	}
 
 	// Model-View Matrix
-	m_matModelView = glm::identity<glm::mat4>();
+	if (useCameraSettings) {
+		const glm::vec3 eye(
+			m_vecViewPoint.x, m_vecViewPoint.y, m_vecViewPoint.z);
+		const glm::vec3 direction(
+			m_vecDirection.x, m_vecDirection.y, m_vecDirection.z);
+		m_matModelView = glm::lookAt(
+			eye,
+			eye + direction,
+			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+		ASSERT_MATRIX_VALID(m_matModelView);
 
-	if (bTranslate) {
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		const glm::mat4 matCamera = m_matModelView;
+
+		glm::mat4 interaction = glm::translate(
+			glm::identity<glm::mat4>(),
+			glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		glm::mat4 rotation = glm::identity<glm::mat4>();
+		if (m_enRotationMode == enumRotationMode::XY) {
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			_quaterniond quaternion = _quaterniond::toQuaternion(
+				glm::radians(m_fZAngle),
+				glm::radians(m_fYAngle),
+				glm::radians(m_fXAngle));
+			m_rotation.cross(quaternion);
+			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+
+			const double* pRotationMatrix = m_rotation.toMatrix();
+			rotation = glm::make_mat4((GLdouble*)pRotationMatrix);
+			delete[] pRotationMatrix;
+		}
+		else {
+			assert(false);
+		}
+
+		// The mouse rotation is defined in screen space
+		rotation = toCameraSpaceRotation(matCamera, rotation);
+
+		const glm::vec3 modelCenter(
+			(fXmin + fXmax) / 2.f,
+			(fYmin + fYmax) / 2.f,
+			(fZmin + fZmax) / 2.f);
+		glm::mat4 modelRotation = glm::translate(
+			glm::identity<glm::mat4>(), modelCenter);
+		modelRotation *= rotation;
+		modelRotation = glm::translate(modelRotation, -modelCenter);
+
+		m_matModelView = interaction * matCamera * modelRotation;
+		ASSERT_MATRIX_VALID(m_matModelView);
+	}
+	else if (m_bCameraSettings) {
+		const glm::vec3 modelCenter(
+			(fXmin + fXmax) / 2.f,
+			(fYmin + fYmax) / 2.f,
+			(fZmin + fZmax) / 2.f);
+		const glm::mat4 cameraOrientation = glm::lookAt(
+			glm::vec3(0.f),
+			glm::vec3(m_vecDirection.x, m_vecDirection.y, m_vecDirection.z),
+			glm::vec3(m_vecUpVector.x, m_vecUpVector.y, m_vecUpVector.z));
+
+		glm::mat4 rotation = glm::identity<glm::mat4>();
+		if (m_enRotationMode == enumRotationMode::XY) {
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			rotation = glm::rotate(
+				rotation, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			const double* pRotationMatrix = m_rotation.toMatrix();
+			rotation = glm::make_mat4((GLdouble*)pRotationMatrix);
+			delete[] pRotationMatrix;
+		}
+		else {
+			assert(false);
+		}
+
+		m_matModelView = glm::translate(
+			glm::identity<glm::mat4>(),
+			glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		m_matModelView = glm::translate(m_matModelView, modelCenter);
+		m_matModelView *= cameraOrientation * rotation;
+		m_matModelView = glm::translate(m_matModelView, -modelCenter);
+		ASSERT_MATRIX_VALID(m_matModelView);
 	}
 	else {
-		m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		m_matModelView = glm::identity<glm::mat4>();
+
+		if (bTranslate) {
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(m_fXTranslation, m_fYTranslation, m_fZTranslation));
+		}
+		else {
+			m_matModelView = glm::translate(m_matModelView, glm::vec3(0.f, 0.f, DEFAULT_TRANSLATION));
+		}
+		ASSERT_MATRIX_VALID(m_matModelView);
+
+		float fXTranslation = fXmin;
+		fXTranslation += (fXmax - fXmin) / 2.f;
+		fXTranslation = -fXTranslation;
+
+		float fYTranslation = fYmin;
+		fYTranslation += (fYmax - fYmin) / 2.f;
+		fYTranslation = -fYTranslation;
+
+		float fZTranslation = fZmin;
+		fZTranslation += (fZmax - fZmin) / 2.f;
+		fZTranslation = -fZTranslation;
+
+		ASSERT_REAL_VALID(fXTranslation);
+		ASSERT_REAL_VALID(fYTranslation);
+		ASSERT_REAL_VALID(fZTranslation);
+
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
+		ASSERT_MATRIX_VALID(m_matModelView);
+
+		if (m_enRotationMode == enumRotationMode::XY) {
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
+			m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
+			ASSERT_MATRIX_VALID(m_matModelView);
+		}
+		else if (m_enRotationMode == enumRotationMode::XYZ) {
+			// Apply rotation...
+			_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
+			m_rotation.cross(rotation);
+
+			// ... and reset
+			m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+
+			const double* pRotationMatrix = m_rotation.toMatrix();
+			glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
+			delete[] pRotationMatrix;
+
+			m_matModelView = m_matModelView * matTransformation;
+			ASSERT_MATRIX_VALID(m_matModelView);
+		}
+		else {
+			assert(false);
+		}
+
+		ASSERT_REAL_VALID(fXTranslation);
+		ASSERT_REAL_VALID(fYTranslation);
+		ASSERT_REAL_VALID(fZTranslation);
+
+		m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
+		ASSERT_MATRIX_VALID(m_matModelView);
 	}
-
-	float fXTranslation = fXmin;
-	fXTranslation += (fXmax - fXmin) / 2.f;
-	fXTranslation = -fXTranslation;
-
-	float fYTranslation = fYmin;
-	fYTranslation += (fYmax - fYmin) / 2.f;
-	fYTranslation = -fYTranslation;
-
-	float fZTranslation = fZmin;
-	fZTranslation += (fZmax - fZmin) / 2.f;
-	fZTranslation = -fZTranslation;
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(-fXTranslation, -fYTranslation, -fZTranslation));
-
-	if (m_enRotationMode == enumRotationMode::XY) {
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fXAngle), glm::vec3(1.f, 0.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fYAngle), glm::vec3(0.f, 1.f, 0.f));
-		m_matModelView = glm::rotate(m_matModelView, glm::radians(m_fZAngle), glm::vec3(0.f, 0.f, 1.f));
-	}
-	else if (m_enRotationMode == enumRotationMode::XYZ) {
-		// Apply rotation...
-		_quaterniond rotation = _quaterniond::toQuaternion(glm::radians(m_fZAngle), glm::radians(m_fYAngle), glm::radians(m_fXAngle));
-		m_rotation.cross(rotation);
-
-		// ... and reset
-		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
-
-		const double* pRotationMatrix = m_rotation.toMatrix();
-		glm::mat4 matTransformation = glm::make_mat4((GLdouble*)pRotationMatrix);
-		delete pRotationMatrix;
-
-		m_matModelView = m_matModelView * matTransformation;
-	}
-	else {
-		assert(false);
-	}
-
-	m_matModelView = glm::translate(m_matModelView, glm::vec3(fXTranslation, fYTranslation, fZTranslation));
 	m_pOGLProgram->_setModelViewMatrix(m_matModelView);
 	m_pOGLProgram->_setNormalMatrix(m_matModelView);
 #ifdef _BLINN_PHONG_SHADERS
@@ -1762,20 +2076,41 @@ _oglView::_oglView()
 	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldYmax - fWorldYmin);
 	fWorldBoundingSphereDiameter = fmax(fWorldBoundingSphereDiameter, fWorldZmax - fWorldZmin);
 
-	m_fXTranslation = fWorldXmin;
-	m_fXTranslation += (fWorldXmax - fWorldXmin) / 2.f;
-	m_fXTranslation = -m_fXTranslation;
+	if (m_bCameraSettings) {
+		// Keep the direction/up vector, move the view point
+		const double dCenterX = (fWorldXmin + fWorldXmax) / 2.;
+		const double dCenterY = (fWorldYmin + fWorldYmax) / 2.;
+		const double dCenterZ = (fWorldZmin + fWorldZmax) / 2.;
 
-	m_fYTranslation = fWorldYmin;
-	m_fYTranslation += (fWorldYmax - fWorldYmin) / 2.f;
-	m_fYTranslation = -m_fYTranslation;
+		double dDistance = fWorldBoundingSphereDiameter * 2.;
+		if (m_enProjection == enumProjection::Perspective) {
+			const double dHalfFov = glm::radians(m_dFieldOfView > 0. ? m_dFieldOfView : 45.) / 2.;
+			dDistance = (fWorldBoundingSphereDiameter / 2.) / tan(dHalfFov) * 1.2;
+		}
 
-	m_fZTranslation = fWorldZmin;
-	m_fZTranslation += (fWorldZmax - fWorldZmin) / 2.f;
-	m_fZTranslation = -m_fZTranslation;
-	m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
+		m_vecViewPoint.x = dCenterX - m_vecDirection.x * dDistance;
+		m_vecViewPoint.y = dCenterY - m_vecDirection.y * dDistance;
+		m_vecViewPoint.z = dCenterZ - m_vecDirection.z * dDistance;
 
-	m_fScaleFactor = fWorldBoundingSphereDiameter;
+		// The view point already contains the zoom - no interaction offset
+		m_fXTranslation = 0.f;
+		m_fYTranslation = 0.f;
+		m_fZTranslation = 0.f;
+		m_fXAngle = m_fYAngle = m_fZAngle = 0.f;
+		m_rotation = _quaterniond();
+
+		m_fScaleFactor = fWorldBoundingSphereDiameter;
+
+		m_bCameraSettingsChanged = true;
+	}
+	else {
+		m_fXTranslation = -(fWorldXmin + (fWorldXmax - fWorldXmin) / 2.f);
+		m_fYTranslation = -(fWorldYmin + (fWorldYmax - fWorldYmin) / 2.f);
+		m_fZTranslation = -(fWorldZmin + (fWorldZmax - fWorldZmin) / 2.f);
+		m_fZTranslation -= (fWorldBoundingSphereDiameter * 2.f);
+
+		m_fScaleFactor = fWorldBoundingSphereDiameter;
+	}
 
 	_redraw();
 }
@@ -2436,7 +2771,7 @@ void _oglView::_drawFaces()
 
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawFaces() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** DrawFaces() : %lld [ï¿½s]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 
@@ -2504,7 +2839,7 @@ void _oglView::_drawFacesPolygons()
 
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** DrawFacesPolygons() : %lld [ï¿½s]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 
@@ -2572,7 +2907,7 @@ void _oglView::_drawConceptualFacesPolygons(_oglBuffers& oglBuffers, bool bApply
 
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** DrawConceptualFacesPolygons() : %lld [ï¿½s]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 
@@ -2640,7 +2975,7 @@ void _oglView::_drawLines(_oglBuffers& oglBuffers, bool bApplyApplicationSetting
 
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawLines() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** DrawLines() : %lld [ï¿½s]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 
@@ -2719,7 +3054,7 @@ void _oglView::_drawPoints()
 
 #ifdef _DEBUG_DRAW_DURATION
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	TRACE(L"\n*** DrawPoints() : %lld [µs]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
+	TRACE(L"\n*** DrawPoints() : %lld [ï¿½s]", std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 #endif
 }
 

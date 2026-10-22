@@ -10,7 +10,7 @@ _ap_model::_ap_model(_log* pLog, enumAP enAP)
 	: _model(pLog)
 	, m_sdaiModel(0)
 	, m_enAP(enAP)
-#ifdef _WINDOWS
+#ifndef __EMSCRIPTEN__
 	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
 #else
 	, m_bMultiThreadedLoad(false)
@@ -185,10 +185,10 @@ void _ap_model::getGeometriesByType(const char* szType, vector<_ap_geometry*>& v
 
 void _ap_model::setMultiThreadedLoad(bool bMultiThreadedLoad) 
 { 
-#ifdef _WINDOWS
+#ifndef __EMSCRIPTEN__
 	m_bMultiThreadedLoad = bMultiThreadedLoad; 
 #else
-	assert(false); // #todo: Not supported on non-Windows platforms
+	assert(false); // #todo: Not supported
 #endif
 }
 
@@ -229,7 +229,7 @@ _ap_controller* _ap_view::getAPController() const
 _ap_controller::_ap_controller()
 	: _controller()
 	, m_bFullDisplayName(true)
-#ifdef _WINDOWS
+#ifndef __EMSCRIPTEN__
 	, m_bMultiThreadedLoad(InitializeMultiThreading(0, 0) == 0)
 #else
 	, m_bMultiThreadedLoad(false)
@@ -372,10 +372,10 @@ void _ap_controller::setFullDisplayName(bool bFullDisplayName)
 
 void _ap_controller::setMultiThreadedLoad(bool bMultiThreadedLoad)
 {
-#ifdef _WINDOWS
+#ifndef __EMSCRIPTEN__
 	m_bMultiThreadedLoad = bMultiThreadedLoad;
 #else
-	assert(false); // #todo: Not supported on non-Windows platforms
+	assert(false); // #todo: Not supported
 #endif
 
 #ifdef _WINDOWS

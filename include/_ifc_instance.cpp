@@ -19,6 +19,15 @@ _ifc_instance::_ifc_instance(int64_t iID, _ifc_geometry* pGeometry, _matrix4x3* 
     return m_pOwner;
 }
 
+const char* _ifc_instance::getGlobalId() const
+{
+    const char* globalId = nullptr;
+    if (auto sdaiInstance = getSdaiInstance()) {
+        sdaiGetAttrBN(sdaiInstance, "GlobalId", sdaiSTRING, &globalId);
+    }
+    return globalId && *globalId ? globalId : nullptr;
+}
+
 void _ifc_instance::setDefaultEnableState()
 {
     wstring strEntity = getEntityName();

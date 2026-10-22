@@ -69,6 +69,9 @@ void _ifc_model::loadInstances(bool bClean /*= true*/)
 
 	if (getMultiThreadedLoad()) {
 		unsigned int threadsCount = thread::hardware_concurrency() / 4;
+		if (threadsCount < 2) {
+			threadsCount = 2;
+		}
 		InitializeMultiThreading(getSdaiModel(), threadsCount);
 
 		double arOffset[3] = { 0., 0., 0. };

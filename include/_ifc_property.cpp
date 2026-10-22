@@ -125,7 +125,8 @@ _ifc_property::_ifc_property(SdaiInstance sdaiInstance, const wstring& strName, 
 		(strEntity == L"IFCQUANTITYVOLUME") ||
 		(strEntity == L"IFCQUANTITYCOUNT") ||
 		(strEntity == L"IFCQUANTITYWEIGHT") ||
-		(strEntity == L"IFCQUANTITYTIME")) {
+		(strEntity == L"IFCQUANTITYTIME") ||
+        (strEntity == L"IFCPROPERTYBOUNDEDVALUE")) {
 		strIfcValueType = szEntityName;
 		strValueType = L"number";
 	}

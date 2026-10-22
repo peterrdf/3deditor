@@ -23,5 +23,6 @@ public:  // Methods
     // _instance
     virtual _instance* getOwner() const override;
 
+    const char* getGlobalId() const;
     void setDefaultEnableState();
 };

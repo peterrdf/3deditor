@@ -86,8 +86,7 @@ _model::_model(_log* pLog)
 			(m_fYmax == -FLT_MAX) ||
 			(m_fZmin == FLT_MAX) ||
 			(m_fZmax == -FLT_MAX)) {
-			// TODO: new status bar for messages
-
+			logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 			return;
 		}
 
@@ -202,8 +201,7 @@ _model::_model(_log* pLog)
 		(m_fYmax == -FLT_MAX) ||
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX)) {
-		// TODO: new status bar for messages
-
+		logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
 		return;
 	}
 
@@ -792,6 +790,14 @@ void _controller::addModel(_model* pModel)
 	m_bUpdatingModel = false;
 }
 
+void _controller::addModelDisabled(_model* model)
+{
+	if (model) {
+		model->setEnable(false);
+		m_vecModels.push_back(model);
+	}
+}
+
 bool _controller::removeModelByInstance(OwlModel owlModel)
 {
 	assert(owlModel != 0);
@@ -831,8 +837,33 @@ bool _controller::removeModelByInstance(OwlModel owlModel)
 	return true;
 }
 
-void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
+
+void _controller::enableModels(const std::vector<std::wstring>* enableModelsByPath)
 {
+    //check if there is something to change
+    bool changed = false;
+
+	//need to change if not enabled
+	for (auto pModel : m_vecModels) {
+
+		bool needEnable = true;
+		if (enableModelsByPath) {
+			if (find(enableModelsByPath->begin(), enableModelsByPath->end(), pModel->getPath()) == enableModelsByPath->end()) {
+				needEnable = false;
+			}
+		}
+
+		if (pModel->getEnable() != needEnable) {
+			changed = true;
+			break;
+        }
+	}
+
+	if (!changed) {
+		return;
+	}
+
+	//change
 	m_bUpdatingModel = true;
 
 	auto itView = m_setViews.begin();
@@ -842,20 +873,61 @@ void _controller::enableModelsAddIfNeeded(const vector<_model*>& vecModels)
 
 	cleanSelection();
 
-	// Disable all
+    // Disable all if list is provided, otherwise enable all
 	for (auto pModel : m_vecModels) {
-		pModel->setEnable(false);
+		pModel->setEnable(enableModelsByPath == nullptr);
 	}
 
-	// Add if needed and Enable
-	for (auto pModel : vecModels) {
-		if (find(m_vecModels.begin(), m_vecModels.end(), pModel) == m_vecModels.end()) {
-			m_vecModels.push_back(pModel);
+	// Enable by list
+	if (enableModelsByPath) {
+		for (auto& path : *enableModelsByPath) {
+			auto model = getModel(path.c_str());
+			assert(model);
+			if (model)
+				model->setEnable(true);
 		}
-
-		pModel->setEnable(true);
 	}
 
+	//
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->onModelLoaded();
+	}
+
+	itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->postModelLoaded();
+	}
+
+	m_bUpdatingModel = false;
+}
+
+void _controller::removeModels(const std::set<const _model*>& models, bool enableRemaining)
+{
+	m_bUpdatingModel = true;
+
+	auto itView = m_setViews.begin();
+	for (; itView != m_setViews.end(); itView++) {
+		(*itView)->preModelLoaded();
+	}
+
+	//remove listed
+	for (size_t i = 0; i < m_vecModels.size(); i++) {
+		auto pModel = m_vecModels[i];
+		if (models.find(pModel) != models.end()) {
+			delete pModel;
+			m_vecModels.erase(m_vecModels.begin() + i);
+			i--;
+		}
+		else if (enableRemaining) {
+			pModel->setEnable(true);
+		}
+	}
+
+	cleanSelection();
+	s_iInstanceID = 1;
+
+	//
 	itView = m_setViews.begin();
 	for (; itView != m_setViews.end(); itView++) {
 		(*itView)->onModelLoaded();
@@ -911,6 +983,15 @@ _instance* _controller::loadInstance(int64_t iInstance)
 	return pInstance;
 }
 
+static void EnsureDimensionValid(float& fmin, float& fmax)
+{
+	if (fmin > fmax){
+		fmin = -1;
+		fmax = 1;
+	}
+}
+
+
 void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float& fWorldYmin, float& fWorldYmax, float& fWorldZmin, float& fWorldZmax) const
 {
 	fWorldXmin = FLT_MAX;
@@ -941,14 +1022,10 @@ void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float
 			fWorldZmax = (float)fmax(fWorldZmax, fZmax);
 		}
 	} // if (!getModels().empty())
-	else {
-		fWorldXmin = -1.f;
-		fWorldXmax = 1.f;
-		fWorldYmin = -1.f;
-		fWorldYmax = 1.f;
-		fWorldZmin = -1.f;
-		fWorldZmax = 1.f;
-	}
+
+	EnsureDimensionValid(fWorldXmin, fWorldXmax);
+	EnsureDimensionValid(fWorldYmin, fWorldYmax);
+	EnsureDimensionValid(fWorldZmin, fWorldZmax);
 }
 
 float _controller::getWorldBoundingSphereDiameter() const
@@ -1345,16 +1422,30 @@ void _controller::showDecoration(const wchar_t* szName, bool bShow)
 	}
 }
 
-_model* _controller::getModel() const
+_model* _controller::getModel(bool assertOnlyOneModel) const
 {
+#ifdef _WINDOWS
+	UNREFERENCED_PARAMETER(assertOnlyOneModel);
+#endif
 	if (!m_vecModels.empty()) {
-		assert(m_vecModels.size() == 1);
+		assert(!assertOnlyOneModel || m_vecModels.size() == 1);
 
 		return m_vecModels.front();
 	}
 
 	return nullptr;
 }
+
+_model* _controller::getModel(const wchar_t* pathName)
+{
+	for (auto pModel : m_vecModels) {
+		if (wcscmp(pModel->getPath(), pathName) == 0) {
+			return pModel;
+		}
+    }
+	return nullptr;
+}
+
 
 void _controller::setShowProgressDialog(bool bNewValue)
 {

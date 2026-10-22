@@ -126,6 +126,9 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 
 		if (getMultiThreadedLoad()) {
 			unsigned int threadsCount = thread::hardware_concurrency() / 4;
+			if (threadsCount < 2) {
+				threadsCount = 2;
+			}
 			InitializeMultiThreading(getSdaiModel(), threadsCount);
 
 			double arOffset[3] = { 0., 0., 0. };
@@ -303,11 +306,11 @@ _ap242_assembly* _ap242_model::getAssemblyByInstance(SdaiInstance sdaiInstance) 
 		}
 
 		{
-			logInfo("Loading geometries...");
+			logInfo("Loading transformations...");
 			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 			loadGeometry();
 			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-			logInfof("Loading geometries: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+			logInfof("Loading transformations: %lld [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
 		}
 
 		// Progress
