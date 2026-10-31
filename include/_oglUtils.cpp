@@ -1786,7 +1786,7 @@ void _oglRenderer::_prepare(
 	// Znear and Zfar
 	GLdouble dCenterZ = (fZmin + fZmax) / 2.0;
 	GLdouble dCameraDistance = abs(
-		(m_bCameraSettings && !bTranslate ? DEFAULT_TRANSLATION : m_fZTranslation) +
+		(!bTranslate ? DEFAULT_TRANSLATION : m_fZTranslation) +
 		dCenterZ);
 	if (useCameraSettings) {
 		const GLdouble dCenterX = (fXmin + fXmax) / 2.0;

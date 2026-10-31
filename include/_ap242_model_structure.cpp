@@ -28,6 +28,20 @@ _ap242_node::_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap24
 	}
 }
 
+void _ap242_node::getPath(std::vector<_ap242_node*>& vecPath)
+{
+	vecPath.clear();
+	vecPath.push_back(this);
+
+	_ap242_node* pNode = this->getParent();
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+
+	std::reverse(vecPath.begin(), vecPath.end());
+}
+
 // ************************************************************************************************
 _ap242_model_node::_ap242_model_node(_ap242_model* pModel)
 	: _ap242_node(_ap242_node_type::Model, pModel->getSdaiModel(), nullptr, (LPCSTR)CW2A(pModel->getPath()), nullptr)

@@ -28,6 +28,8 @@ public: // Methods
 
 	bool hasChild(SdaiInstance sdaiInstance);
 
+	void getPath(std::vector<_ifc_node*>& vecPath);
+
 public: // Properties
 
 	_ifc_instance* getInstance() const { return m_pInstance; }

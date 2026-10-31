@@ -24,8 +24,8 @@ _model::_model(_log* pLog)
 	, m_fZmin(-1.f)
 	, m_fZmax(1.f)
 	, m_fBoundingSphereDiameter(2.f)
-	, m_vecBBMin({-1.f, -1.f, -1.f})
-	, m_vecBBMax({1.f, 1.f, 1.f })
+	, m_vecBBMin({ -1.f, -1.f, -1.f })
+	, m_vecBBMax({ 1.f, 1.f, 1.f })
 	, m_vecGeometries()
 	, m_vecInstances()
 	, m_mapID2Instance()
@@ -47,6 +47,7 @@ _model::_model(_log* pLog)
 	m_vecBBMin = { -1.f, -1.f, -1.f };
 	m_vecBBMax = { 1.f, 1.f, 1.f };
 
+	bool bGeometriesHaveFaces = true;
 	if (m_pWorld == nullptr) {
 		// Min/Max
 		m_fXmin = FLT_MAX;
@@ -63,14 +64,7 @@ _model::_model(_log* pLog)
 			}
 
 			for (auto pInstance : pGeometry->getInstances()) {
-				if (pGeometry->getTriangles().empty()) {
-					pGeometry->calculateBB(
-						pInstance,
-						m_fXmin, m_fXmax,
-						m_fYmin, m_fYmax,
-						m_fZmin, m_fZmax);
-				}
-				else {
+				if (!pGeometry->getTriangles().empty()) {
 					pGeometry->calculateBB_Faces(
 						pInstance,
 						m_fXmin, m_fXmax,
@@ -79,15 +73,34 @@ _model::_model(_log* pLog)
 				}
 			}
 		} // for (auto pGeometry : ...
-
+		
 		if ((m_fXmin == FLT_MAX) ||
 			(m_fXmax == -FLT_MAX) ||
 			(m_fYmin == FLT_MAX) ||
 			(m_fYmax == -FLT_MAX) ||
 			(m_fZmin == FLT_MAX) ||
 			(m_fZmax == -FLT_MAX)) {
-			logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
-			return;
+			if (m_vecGeometries.empty()) {
+				logWarnf("Scale: the model '%S' has no geometries.", getPath());
+				return;
+			}
+
+			// Special case: all geometries are lines/points
+			bGeometriesHaveFaces = false;
+			for (auto pGeometry : m_vecGeometries) {
+				if (!pGeometry->hasGeometry() ||
+					pGeometry->ignoreBB()) {
+					continue;
+				}
+
+				for (auto pInstance : pGeometry->getInstances()) {
+					pGeometry->calculateBB(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
+				}
+			} // for (auto pGeometry : ...
 		}
 
 		// World
@@ -151,15 +164,17 @@ _model::_model(_log* pLog)
 
 			iEnabledInstances++;
 
-			if (pGeometry->getTriangles().empty()) {
-				pGeometry->calculateBB(
-					pInstance,
-					m_fXmin, m_fXmax,
-					m_fYmin, m_fYmax,
-					m_fZmin, m_fZmax);
+			if (bGeometriesHaveFaces) {
+				if (!pGeometry->getTriangles().empty()) {
+					pGeometry->calculateBB_Faces(
+						pInstance,
+						m_fXmin, m_fXmax,
+						m_fYmin, m_fYmax,
+						m_fZmin, m_fZmax);
+				}
 			}
 			else {
-				pGeometry->calculateBB_Faces(
+				pGeometry->calculateBB(
 					pInstance,
 					m_fXmin, m_fXmax,
 					m_fYmin, m_fYmax,
@@ -201,7 +216,7 @@ _model::_model(_log* pLog)
 		(m_fYmax == -FLT_MAX) ||
 		(m_fZmin == FLT_MAX) ||
 		(m_fZmax == -FLT_MAX)) {
-		logErrf("Scale: failed to calculate the bounding box for the model '%s'.", getPath());
+		logErrf("Scale: failed to calculate the bounding box for the model '%S'.", getPath());
 		return;
 	}
 
@@ -840,8 +855,8 @@ bool _controller::removeModelByInstance(OwlModel owlModel)
 
 void _controller::enableModels(const std::vector<std::wstring>* enableModelsByPath)
 {
-    //check if there is something to change
-    bool changed = false;
+	//check if there is something to change
+	bool changed = false;
 
 	//need to change if not enabled
 	for (auto pModel : m_vecModels) {
@@ -856,7 +871,7 @@ void _controller::enableModels(const std::vector<std::wstring>* enableModelsByPa
 		if (pModel->getEnable() != needEnable) {
 			changed = true;
 			break;
-        }
+		}
 	}
 
 	if (!changed) {
@@ -873,7 +888,7 @@ void _controller::enableModels(const std::vector<std::wstring>* enableModelsByPa
 
 	cleanSelection();
 
-    // Disable all if list is provided, otherwise enable all
+	// Disable all if list is provided, otherwise enable all
 	for (auto pModel : m_vecModels) {
 		pModel->setEnable(enableModelsByPath == nullptr);
 	}
@@ -985,12 +1000,11 @@ _instance* _controller::loadInstance(int64_t iInstance)
 
 static void EnsureDimensionValid(float& fmin, float& fmax)
 {
-	if (fmin > fmax){
+	if (fmin > fmax) {
 		fmin = -1;
 		fmax = 1;
 	}
 }
-
 
 void _controller::getWorldDimensions(float& fWorldXmin, float& fWorldXmax, float& fWorldYmin, float& fWorldYmax, float& fWorldZmin, float& fWorldZmax) const
 {
@@ -1442,7 +1456,7 @@ _model* _controller::getModel(const wchar_t* pathName)
 		if (wcscmp(pModel->getPath(), pathName) == 0) {
 			return pModel;
 		}
-    }
+	}
 	return nullptr;
 }
 

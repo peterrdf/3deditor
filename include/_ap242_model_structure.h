@@ -42,6 +42,8 @@ public: // Methods
 	_ap242_node(_ap242_node_type type, SdaiInstance sdaiInstance, _ap242_instance* pInstance, const std::string& strId, _ap242_node* pParentNode);
 	virtual ~_ap242_node();
 
+	void getPath(std::vector<_ap242_node*>& vecPath);
+
 public: // Properties
 
 	_ap242_node_type getType() const { return m_type; }

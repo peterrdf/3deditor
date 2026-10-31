@@ -30,6 +30,20 @@ bool _ifc_node::hasChild(SdaiInstance sdaiInstance)
 	return false;
 }
 
+void _ifc_node::getPath(std::vector<_ifc_node*>& vecPath)
+{
+	vecPath.clear();
+	vecPath.push_back(this);
+
+	_ifc_node* pNode = this->getParent();
+	while (pNode != nullptr) {
+		vecPath.push_back(pNode);
+		pNode = pNode->getParent();
+	}
+
+	std::reverse(vecPath.begin(), vecPath.end());
+}
+
 const wchar_t* _ifc_node::getGlobalId() const
 {
 	wchar_t* szGlobalId = nullptr;
@@ -260,8 +274,9 @@ void _ifc_model_structure::loadGroupsNode()
 		auto pGroupNode = new _ifc_node(ifcInstance, m_pGroupsNode);
 		m_pGroupsNode->children().push_back(pGroupNode);
 
-		assert(m_mapInstance2Node.find(ifcInstance->getSdaiInstance()) == m_mapInstance2Node.end());
-		m_mapInstance2Node[ifcInstance->getSdaiInstance()] = pGroupNode;
+		if (m_mapInstance2Node.find(ifcInstance->getSdaiInstance()) == m_mapInstance2Node.end()) {
+			m_mapInstance2Node[ifcInstance->getSdaiInstance()] = pGroupNode;
+		}		
 
 		SdaiInstance sdaiIsGroupedByInstance = 0;
 		sdaiGetAttrBN(ifcInstance->getSdaiInstance(), "IsGroupedBy", sdaiINSTANCE, &sdaiIsGroupedByInstance);
